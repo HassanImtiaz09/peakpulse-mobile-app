@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import {
-  ScrollView, Text, View, TouchableOpacity, ActivityIndicator, Alert, ImageBackground,
+  ScrollView, Text, View, TouchableOpacity, ActivityIndicator,
+  Alert, ImageBackground, Image,
 } from "react-native";
 import { useRouter } from "expo-router";
-import { ScreenContainer } from "@/components/screen-container";
 import { useAuth } from "@/hooks/use-auth";
 import { useGuestAuth } from "@/lib/guest-auth";
 import { trpc } from "@/lib/trpc";
@@ -12,7 +12,28 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 const WORKOUT_BG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/workout_bg-UnSuPAnKQ8SeUHebtV2HTU.png";
 const MEAL_BG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/meal_bg-ULw7hvjMXJuqDPAXt9iqic.png";
 
-const TABS = ["Workout", "Meal Plan", "Meal Prep"];
+// Unsplash food photo URLs by meal type / keyword — used as fallback when AI doesn't return a photo
+const MEAL_PHOTO_MAP: Record<string, string> = {
+  breakfast: "https://images.unsplash.com/photo-1533089860892-a7c6f0a88666?w=400&q=80",
+  "morning snack": "https://images.unsplash.com/photo-1490474418585-ba9bad8fd0ea?w=400&q=80",
+  lunch: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&q=80",
+  "afternoon snack": "https://images.unsplash.com/photo-1505576399279-565b52d4ac71?w=400&q=80",
+  dinner: "https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=400&q=80",
+  snack: "https://images.unsplash.com/photo-1505576399279-565b52d4ac71?w=400&q=80",
+  default: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&q=80",
+};
+
+// Build a food photo URL from a search query using Unsplash source
+function getMealPhotoUrl(meal: any): string {
+  if (meal.photoQuery) {
+    const query = encodeURIComponent(meal.photoQuery);
+    return `https://source.unsplash.com/400x300/?${query},food`;
+  }
+  const type = (meal.type ?? "default").toLowerCase();
+  return MEAL_PHOTO_MAP[type] ?? MEAL_PHOTO_MAP.default;
+}
+
+const TABS = ["Workout", "Meal Plan"];
 
 const GOALS = [
   { key: "build_muscle", label: "Build Muscle", icon: "💪" },
@@ -55,10 +76,6 @@ export default function PlansScreen() {
   const [dietaryPref, setDietaryPref] = useState("omnivore");
   const [mealGoal, setMealGoal] = useState("build_muscle");
 
-  // Meal prep state
-  const [prepDiet, setPrepDiet] = useState("omnivore");
-  const [prepServings, setPrepServings] = useState(4);
-
   const { data: dbWorkoutPlan, refetch: refetchWorkout } = trpc.workoutPlan.getActive.useQuery(undefined, { enabled: isAuthenticated });
   const { data: dbMealPlan, refetch: refetchMeal } = trpc.mealPlan.getActive.useQuery(undefined, { enabled: isAuthenticated });
 
@@ -98,10 +115,6 @@ export default function PlansScreen() {
     onError: (e) => Alert.alert("Error", e.message),
   });
 
-  const generatePrep = trpc.mealPrep.generate.useMutation({
-    onError: (e) => Alert.alert("Error", e.message),
-  });
-
   if (!canUse) {
     return (
       <View style={{ flex: 1, backgroundColor: "#080810" }}>
@@ -125,7 +138,7 @@ export default function PlansScreen() {
   return (
     <View style={{ flex: 1, backgroundColor: "#080810" }}>
       {/* Hero Header */}
-      <ImageBackground source={{ uri: activeTab === 1 || activeTab === 2 ? MEAL_BG : WORKOUT_BG }} style={{ height: 160 }} resizeMode="cover">
+      <ImageBackground source={{ uri: activeTab === 1 ? MEAL_BG : WORKOUT_BG }} style={{ height: 160 }} resizeMode="cover">
         <View style={{ flex: 1, backgroundColor: "rgba(8,8,16,0.72)", justifyContent: "flex-end", padding: 20, paddingTop: 52 }}>
           <Text style={{ color: activeTab === 0 ? "#F97316" : "#22C55E", fontWeight: "700", fontSize: 12, letterSpacing: 1 }}>AI-POWERED</Text>
           <Text style={{ color: "#FFFFFF", fontWeight: "900", fontSize: 26, letterSpacing: -0.5 }}>Your Plans</Text>
@@ -133,19 +146,19 @@ export default function PlansScreen() {
       </ImageBackground>
 
       {/* Tab Bar */}
-      <View style={{ flexDirection: "row", paddingHorizontal: 20, marginBottom: 16, gap: 8 }}>
+      <View style={{ flexDirection: "row", paddingHorizontal: 20, marginTop: 12, marginBottom: 16, gap: 8 }}>
         {TABS.map((tab, i) => (
           <TouchableOpacity
             key={tab}
-            style={{ flex: 1, paddingVertical: 8, borderRadius: 12, alignItems: "center", backgroundColor: activeTab === i ? "#7C3AED" : "#13131F", borderWidth: 1, borderColor: activeTab === i ? "#7C3AED" : "#1F2937" }}
+            style={{ flex: 1, paddingVertical: 10, borderRadius: 12, alignItems: "center", backgroundColor: activeTab === i ? "#7C3AED" : "#13131F", borderWidth: 1, borderColor: activeTab === i ? "#7C3AED" : "#1F2937" }}
             onPress={() => setActiveTab(i)}
           >
-            <Text style={{ color: activeTab === i ? "#FFFFFF" : "#9CA3AF", fontWeight: "700", fontSize: 12 }}>{tab}</Text>
+            <Text style={{ color: activeTab === i ? "#FFFFFF" : "#9CA3AF", fontWeight: "700", fontSize: 13 }}>{tab}</Text>
           </TouchableOpacity>
         ))}
       </View>
 
-      <ScrollView contentContainerStyle={{ paddingBottom: 32 }} showsVerticalScrollIndicator={false} style={{ flex: 1 }}>
+      <ScrollView contentContainerStyle={{ paddingBottom: 40 }} showsVerticalScrollIndicator={false} style={{ flex: 1 }}>
         {/* ── Workout Tab ── */}
         {activeTab === 0 && (
           <View style={{ paddingHorizontal: 20 }}>
@@ -255,74 +268,21 @@ export default function PlansScreen() {
                     <Text style={{ color: "#22C55E", fontSize: 11, fontWeight: "700" }}>ACTIVE</Text>
                   </View>
                 </View>
-                <View style={{ flexDirection: "row", gap: 8, marginBottom: 12 }}>
+                {/* Macro summary */}
+                <View style={{ flexDirection: "row", gap: 8, marginBottom: 16 }}>
                   <MacroCard label="Calories" value={mealPlan.dailyCalories} unit="kcal" color="#F97316" />
                   <MacroCard label="Protein" value={mealPlan.proteinTarget} unit="g" color="#3B82F6" />
                   <MacroCard label="Carbs" value={mealPlan.carbTarget} unit="g" color="#22C55E" />
                   <MacroCard label="Fat" value={mealPlan.fatTarget} unit="g" color="#FBBF24" />
                 </View>
+                {mealPlan.insight && (
+                  <View style={{ backgroundColor: "#22C55E10", borderRadius: 12, padding: 12, marginBottom: 16, borderWidth: 1, borderColor: "#22C55E30" }}>
+                    <Text style={{ color: "#86EFAC", fontSize: 13, lineHeight: 18 }}>💡 {String(mealPlan.insight)}</Text>
+                  </View>
+                )}
                 {mealPlan.days?.map((day: any, i: number) => (
                   <MealDayCard key={i} day={day} />
                 ))}
-              </View>
-            )}
-          </View>
-        )}
-
-        {/* ── Meal Prep Tab ── */}
-        {activeTab === 2 && (
-          <View style={{ paddingHorizontal: 20 }}>
-            <SectionLabel>Dietary Preference</SectionLabel>
-            <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8, marginBottom: 16 }}>
-              {DIETARY_PREFS.map(d => (
-                <OptionChip key={d.key} icon={d.icon} label={d.label} selected={prepDiet === d.key} onPress={() => setPrepDiet(d.key)} />
-              ))}
-            </View>
-
-            <SectionLabel>Servings Per Recipe</SectionLabel>
-            <View style={{ flexDirection: "row", gap: 8, marginBottom: 24 }}>
-              {[2, 4, 6, 8].map(s => (
-                <TouchableOpacity
-                  key={s}
-                  style={{ flex: 1, paddingVertical: 10, borderRadius: 12, alignItems: "center", backgroundColor: prepServings === s ? "#F97316" : "#13131F", borderWidth: 1, borderColor: prepServings === s ? "#F97316" : "#1F2937" }}
-                  onPress={() => setPrepServings(s)}
-                >
-                  <Text style={{ color: prepServings === s ? "#FFFFFF" : "#9CA3AF", fontWeight: "700" }}>{s}</Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-
-            <TouchableOpacity
-              style={{ backgroundColor: "#F97316", borderRadius: 16, paddingVertical: 14, alignItems: "center", marginBottom: 24, opacity: generatePrep.isPending ? 0.7 : 1 }}
-              onPress={() => generatePrep.mutate({ dietaryPreference: prepDiet, servings: prepServings })}
-              disabled={generatePrep.isPending}
-            >
-              {generatePrep.isPending ? (
-                <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-                  <ActivityIndicator color="#FFFFFF" size="small" />
-                  <Text style={{ color: "#FFFFFF", fontWeight: "700", fontSize: 15 }}>Generating Prep Plan...</Text>
-                </View>
-              ) : (
-                <Text style={{ color: "#FFFFFF", fontWeight: "700", fontSize: 15 }}>🍳 Generate Meal Prep Plan</Text>
-              )}
-            </TouchableOpacity>
-
-            {generatePrep.data && (
-              <View>
-                <View style={{ backgroundColor: "#F9731620", borderRadius: 12, padding: 12, marginBottom: 16, borderWidth: 1, borderColor: "#F9731640" }}>
-                  <Text style={{ color: "#FED7AA", fontSize: 13 }}>⏱ Prep time: {generatePrep.data.prepTime}</Text>
-                </View>
-                {generatePrep.data.recipes?.map((recipe: any, i: number) => (
-                  <MealPrepCard key={i} recipe={recipe} />
-                ))}
-                {generatePrep.data.shoppingList?.length > 0 && (
-                  <View style={{ backgroundColor: "#13131F", borderRadius: 16, padding: 16, marginTop: 8, borderWidth: 1, borderColor: "#1F2937" }}>
-                    <Text style={{ color: "#FFFFFF", fontWeight: "700", fontSize: 14, marginBottom: 10 }}>🛒 Shopping List</Text>
-                    {generatePrep.data.shoppingList.map((item: string, i: number) => (
-                      <Text key={i} style={{ color: "#9CA3AF", fontSize: 13, marginBottom: 4 }}>• {item}</Text>
-                    ))}
-                  </View>
-                )}
               </View>
             )}
           </View>
@@ -345,6 +305,16 @@ function OptionChip({ icon, label, selected, onPress }: any) {
       <Text style={{ fontSize: 14 }}>{icon}</Text>
       <Text style={{ color: selected ? "#FFFFFF" : "#9CA3AF", fontWeight: "600", fontSize: 13 }}>{label}</Text>
     </TouchableOpacity>
+  );
+}
+
+function MacroCard({ label, value, unit, color }: any) {
+  return (
+    <View style={{ flex: 1, backgroundColor: "#13131F", borderRadius: 12, padding: 10, alignItems: "center", borderWidth: 1, borderColor: color + "30" }}>
+      <Text style={{ color, fontWeight: "800", fontSize: 15 }}>{value ?? "—"}</Text>
+      <Text style={{ color: "#6B7280", fontSize: 9, marginTop: 1 }}>{unit}</Text>
+      <Text style={{ color: "#9CA3AF", fontSize: 10, marginTop: 2 }}>{label}</Text>
+    </View>
   );
 }
 
@@ -378,86 +348,137 @@ function WorkoutDayCard({ day, onPress }: any) {
   );
 }
 
+// ── Meal Day Card ──
 function MealDayCard({ day }: any) {
   const [expanded, setExpanded] = useState(false);
   const dayCalories = day.meals?.reduce((s: number, m: any) => s + (m.calories ?? 0), 0) ?? 0;
   return (
-    <TouchableOpacity
-      style={{ backgroundColor: "#13131F", borderRadius: 16, padding: 14, marginBottom: 8, borderWidth: 1, borderColor: "#1F2937" }}
-      onPress={() => setExpanded(!expanded)}
-    >
-      <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-        <Text style={{ color: "#FFFFFF", fontWeight: "700", fontSize: 14 }}>{day.day}</Text>
-        <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-          <Text style={{ color: "#F97316", fontSize: 12, fontWeight: "600" }}>{dayCalories} kcal</Text>
-          <Text style={{ color: "#9CA3AF", fontSize: 14 }}>{expanded ? "▲" : "▼"}</Text>
-        </View>
-      </View>
-      {expanded && (
-        <View style={{ marginTop: 10, gap: 6 }}>
-          {day.meals?.map((meal: any, i: number) => (
-            <View key={i} style={{ backgroundColor: "#0D0D18", borderRadius: 10, padding: 10 }}>
-              <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-                <View style={{ flex: 1 }}>
-                  <Text style={{ color: "#9CA3AF", fontSize: 10, textTransform: "uppercase", marginBottom: 2 }}>{meal.type}</Text>
-                  <Text style={{ color: "#E5E7EB", fontWeight: "600", fontSize: 13 }}>{meal.name}</Text>
-                  {meal.prepTime && <Text style={{ color: "#6B7280", fontSize: 11, marginTop: 2 }}>⏱ {meal.prepTime}</Text>}
-                </View>
-                <View style={{ alignItems: "flex-end" }}>
-                  <Text style={{ color: "#F97316", fontWeight: "700", fontSize: 13 }}>{meal.calories} kcal</Text>
-                  <Text style={{ color: "#6B7280", fontSize: 10 }}>P:{meal.protein}g C:{meal.carbs}g F:{meal.fat}g</Text>
-                </View>
-              </View>
-            </View>
-          ))}
-        </View>
-      )}
-    </TouchableOpacity>
-  );
-}
-
-function MealPrepCard({ recipe }: any) {
-  const [expanded, setExpanded] = useState(false);
-  return (
-    <TouchableOpacity
-      style={{ backgroundColor: "#13131F", borderRadius: 16, padding: 14, marginBottom: 8, borderWidth: 1, borderColor: "#1F2937" }}
-      onPress={() => setExpanded(!expanded)}
-    >
-      <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-        <View style={{ flex: 1 }}>
-          <Text style={{ color: "#FFFFFF", fontWeight: "700", fontSize: 14 }}>{recipe.name}</Text>
-          <Text style={{ color: "#9CA3AF", fontSize: 12, marginTop: 2 }}>{recipe.servings} servings • {recipe.mealType}</Text>
-        </View>
-        <View style={{ alignItems: "flex-end" }}>
-          <Text style={{ color: "#F97316", fontWeight: "700", fontSize: 13 }}>{recipe.calories} kcal</Text>
-          <Text style={{ color: "#9CA3AF", fontSize: 14 }}>{expanded ? "▲" : "▼"}</Text>
-        </View>
-      </View>
-      {expanded && (
-        <View style={{ marginTop: 10 }}>
-          <Text style={{ color: "#9CA3AF", fontSize: 11, fontWeight: "700", marginBottom: 4 }}>INGREDIENTS</Text>
-          {recipe.ingredients?.map((ing: string, i: number) => (
-            <Text key={i} style={{ color: "#E5E7EB", fontSize: 12, marginBottom: 2 }}>• {ing}</Text>
-          ))}
-          <Text style={{ color: "#9CA3AF", fontSize: 11, fontWeight: "700", marginTop: 10, marginBottom: 4 }}>INSTRUCTIONS</Text>
-          {recipe.instructions?.map((step: string, i: number) => (
-            <Text key={i} style={{ color: "#E5E7EB", fontSize: 12, marginBottom: 4 }}>{i + 1}. {step}</Text>
-          ))}
-          <View style={{ backgroundColor: "#22C55E10", borderRadius: 8, padding: 8, marginTop: 8 }}>
-            <Text style={{ color: "#22C55E", fontSize: 11 }}>📦 {recipe.storageInstructions}</Text>
+    <View style={{ backgroundColor: "#13131F", borderRadius: 18, marginBottom: 10, borderWidth: 1, borderColor: "#1F2937", overflow: "hidden" }}>
+      <TouchableOpacity
+        style={{ padding: 16, flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}
+        onPress={() => setExpanded(!expanded)}
+      >
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+          <View style={{ width: 36, height: 36, borderRadius: 10, backgroundColor: "#22C55E20", alignItems: "center", justifyContent: "center" }}>
+            <Text style={{ fontSize: 16 }}>📅</Text>
+          </View>
+          <View>
+            <Text style={{ color: "#FFFFFF", fontWeight: "700", fontSize: 15 }}>{day.day}</Text>
+            <Text style={{ color: "#9CA3AF", fontSize: 12 }}>{day.meals?.length ?? 0} meals</Text>
           </View>
         </View>
+        <View style={{ alignItems: "flex-end" }}>
+          <Text style={{ color: "#F97316", fontWeight: "800", fontSize: 15 }}>{dayCalories} kcal</Text>
+          <Text style={{ color: "#9CA3AF", fontSize: 14, marginTop: 2 }}>{expanded ? "▲" : "▼"}</Text>
+        </View>
+      </TouchableOpacity>
+
+      {expanded && (
+        <View style={{ paddingHorizontal: 12, paddingBottom: 12, gap: 10 }}>
+          {day.meals?.map((meal: any, i: number) => (
+            <MealCard key={i} meal={meal} />
+          ))}
+        </View>
       )}
-    </TouchableOpacity>
+    </View>
   );
 }
 
-function MacroCard({ label, value, unit, color }: any) {
+// ── Individual Meal Card with Photo + Prep Instructions ──
+function MealCard({ meal }: { meal: any }) {
+  const [showPrep, setShowPrep] = useState(false);
+  const photoUrl = getMealPhotoUrl(meal);
+  const mealTypeColor: Record<string, string> = {
+    breakfast: "#F97316",
+    "morning snack": "#FBBF24",
+    lunch: "#22C55E",
+    "afternoon snack": "#3B82F6",
+    dinner: "#7C3AED",
+    snack: "#FBBF24",
+  };
+  const color = mealTypeColor[(meal.type ?? "").toLowerCase()] ?? "#9CA3AF";
+
   return (
-    <View style={{ flex: 1, backgroundColor: "#13131F", borderRadius: 12, padding: 10, alignItems: "center", borderWidth: 1, borderColor: "#1F2937" }}>
-      <Text style={{ color, fontWeight: "800", fontSize: 16 }}>{value}</Text>
-      <Text style={{ color: "#9CA3AF", fontSize: 9, marginTop: 2 }}>{unit}</Text>
-      <Text style={{ color: "#6B7280", fontSize: 9, marginTop: 1 }}>{label}</Text>
+    <View style={{ backgroundColor: "#0D0D18", borderRadius: 16, overflow: "hidden", borderWidth: 1, borderColor: "#1F2937" }}>
+      {/* Meal Photo */}
+      <Image
+        source={{ uri: photoUrl }}
+        style={{ width: "100%", height: 160 }}
+        resizeMode="cover"
+      />
+      {/* Meal type badge */}
+      <View style={{ position: "absolute", top: 10, left: 10, backgroundColor: color, borderRadius: 8, paddingHorizontal: 10, paddingVertical: 4 }}>
+        <Text style={{ color: "#FFFFFF", fontSize: 10, fontWeight: "700", textTransform: "uppercase" }}>{meal.type ?? "Meal"}</Text>
+      </View>
+      {/* Calorie badge */}
+      <View style={{ position: "absolute", top: 10, right: 10, backgroundColor: "rgba(0,0,0,0.7)", borderRadius: 8, paddingHorizontal: 10, paddingVertical: 4 }}>
+        <Text style={{ color: "#F97316", fontSize: 11, fontWeight: "700" }}>{meal.calories} kcal</Text>
+      </View>
+
+      <View style={{ padding: 14 }}>
+        {/* Meal name + macros */}
+        <Text style={{ color: "#FFFFFF", fontWeight: "700", fontSize: 15, marginBottom: 6 }}>{meal.name}</Text>
+        <View style={{ flexDirection: "row", gap: 12, marginBottom: 10 }}>
+          <Text style={{ color: "#3B82F6", fontSize: 12 }}>P: {meal.protein}g</Text>
+          <Text style={{ color: "#22C55E", fontSize: 12 }}>C: {meal.carbs}g</Text>
+          <Text style={{ color: "#FBBF24", fontSize: 12 }}>F: {meal.fat}g</Text>
+          {meal.prepTime && <Text style={{ color: "#9CA3AF", fontSize: 12 }}>⏱ {meal.prepTime}</Text>}
+        </View>
+
+        {/* Prep Guide Button */}
+        <TouchableOpacity
+          style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", backgroundColor: showPrep ? "#22C55E15" : "#13131F", borderRadius: 12, padding: 12, borderWidth: 1, borderColor: showPrep ? "#22C55E40" : "#2D2D3F" }}
+          onPress={() => setShowPrep(!showPrep)}
+        >
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+            <Text style={{ fontSize: 16 }}>🍳</Text>
+            <Text style={{ color: showPrep ? "#86EFAC" : "#9CA3AF", fontWeight: "600", fontSize: 13 }}>How to Prep This Meal</Text>
+          </View>
+          <Text style={{ color: "#9CA3AF", fontSize: 12 }}>{showPrep ? "▲ Hide" : "▼ Show"}</Text>
+        </TouchableOpacity>
+
+        {/* Expandable Prep Section */}
+        {showPrep && (
+          <View style={{ marginTop: 10, gap: 8 }}>
+            {/* Ingredients */}
+            {meal.ingredients?.length > 0 && (
+              <View style={{ backgroundColor: "#13131F", borderRadius: 12, padding: 12 }}>
+                <Text style={{ color: "#9CA3AF", fontSize: 11, fontWeight: "700", letterSpacing: 1, marginBottom: 8 }}>INGREDIENTS</Text>
+                {meal.ingredients.map((ing: string, i: number) => (
+                  <View key={i} style={{ flexDirection: "row", alignItems: "flex-start", gap: 8, marginBottom: 4 }}>
+                    <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: "#22C55E", marginTop: 5 }} />
+                    <Text style={{ color: "#E5E7EB", fontSize: 13, flex: 1, lineHeight: 18 }}>{ing}</Text>
+                  </View>
+                ))}
+              </View>
+            )}
+
+            {/* Instructions */}
+            {meal.instructions?.length > 0 && (
+              <View style={{ backgroundColor: "#13131F", borderRadius: 12, padding: 12 }}>
+                <Text style={{ color: "#9CA3AF", fontSize: 11, fontWeight: "700", letterSpacing: 1, marginBottom: 8 }}>PREP STEPS</Text>
+                {meal.instructions.map((step: string, i: number) => (
+                  <View key={i} style={{ flexDirection: "row", alignItems: "flex-start", gap: 10, marginBottom: 8 }}>
+                    <View style={{ width: 22, height: 22, borderRadius: 11, backgroundColor: "#7C3AED", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                      <Text style={{ color: "#FFFFFF", fontSize: 11, fontWeight: "700" }}>{i + 1}</Text>
+                    </View>
+                    <Text style={{ color: "#E5E7EB", fontSize: 13, flex: 1, lineHeight: 20 }}>{step}</Text>
+                  </View>
+                ))}
+              </View>
+            )}
+
+            {/* Fallback if no prep data */}
+            {(!meal.ingredients?.length && !meal.instructions?.length) && (
+              <View style={{ backgroundColor: "#13131F", borderRadius: 12, padding: 12 }}>
+                <Text style={{ color: "#9CA3AF", fontSize: 13, textAlign: "center" }}>
+                  Regenerate your meal plan to get detailed prep instructions for each meal.
+                </Text>
+              </View>
+            )}
+          </View>
+        )}
+      </View>
     </View>
   );
 }

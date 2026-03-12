@@ -51,9 +51,10 @@ function QuickActionCard({ icon, label, color, onPress }: { icon: string; label:
 
 export default function HomeScreen() {
   const router = useRouter();
-  const { user, isAuthenticated } = useAuth();
-  const { guestProfile, isGuest } = useGuestAuth();
+  const { user, isAuthenticated, loading: authLoading } = useAuth();
+  const { guestProfile, isGuest, loading: guestLoading } = useGuestAuth();
   const [localProfile, setLocalProfile] = useState<any>(null);
+  const [onboardingChecked, setOnboardingChecked] = useState(false);
 
   const canUse = isAuthenticated || isGuest;
   const displayName = user?.name?.split(" ")[0] ?? guestProfile?.name?.split(" ")[0] ?? "Athlete";
@@ -61,6 +62,19 @@ export default function HomeScreen() {
   const { data: profile } = trpc.profile.get.useQuery(undefined, { enabled: isAuthenticated });
   const { data: workoutPlan } = trpc.workoutPlan.getActive.useQuery(undefined, { enabled: isAuthenticated });
   const { data: mealPlan } = trpc.mealPlan.getActive.useQuery(undefined, { enabled: isAuthenticated });
+
+  // Check if onboarding has been completed on first launch
+  useEffect(() => {
+    if (authLoading || guestLoading) return;
+    AsyncStorage.getItem("@onboarding_complete").then(val => {
+      if (!val) {
+        // First launch — redirect to onboarding
+        router.replace("/onboarding" as any);
+      } else {
+        setOnboardingChecked(true);
+      }
+    });
+  }, [authLoading, guestLoading]);
 
   useEffect(() => {
     if (isGuest) {
@@ -71,6 +85,11 @@ export default function HomeScreen() {
   }, [isGuest]);
 
   const activeProfile = isAuthenticated ? profile : localProfile;
+
+  // Show nothing while checking onboarding status
+  if (!onboardingChecked && !authLoading && !guestLoading) {
+    return <View style={{ flex: 1, backgroundColor: "#080810" }} />;
+  }
 
   // Not logged in — show welcome/onboarding screen
   if (!canUse) {

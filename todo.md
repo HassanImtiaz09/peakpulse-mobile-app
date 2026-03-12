@@ -126,3 +126,13 @@
 - [x] Meal log / calorie estimator: must work for guest users (store locally)
 - [x] Progress photos: must work for guest users (store locally)
 - [x] Profile save: must work for guest users (store locally)
+
+## Feature Fixes (Round 4)
+
+- [x] First-launch onboarding flow (shown only once, gated by AsyncStorage flag)
+- [x] Onboarding: welcome slides → name/goal → workout style → dietary prefs → done
+- [x] Merge meal prep into meal plan: each meal card has a "How to Prep" expandable section
+- [x] Meal plan: AI-fetched meal photos (Unsplash/Pexels) shown per meal card
+- [x] Meal plan generated from user's workout plan choice (goal + style)
+- [x] Wearable sync: open real health apps via deep links (Apple Health, Google Fit, Fitbit, etc.)
+- [x] Wearable sync: show honest connection state, no fake data injection

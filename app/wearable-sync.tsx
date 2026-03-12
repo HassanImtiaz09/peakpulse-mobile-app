@@ -1,86 +1,136 @@
 import React, { useState, useEffect } from "react";
 import {
-  ScrollView, Text, View, TouchableOpacity, Alert, ActivityIndicator,
+  Text, View, TouchableOpacity, ScrollView, Linking, Alert,
+  ImageBackground, Platform, ActivityIndicator,
 } from "react-native";
 import { useRouter } from "expo-router";
-import { ScreenContainer } from "@/components/screen-container";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const WEARABLES = [
-  { key: "apple_health", name: "Apple Health", icon: "🍎", color: "#EF4444", description: "Sync steps, heart rate, calories & sleep from Apple Health" },
-  { key: "fitbit", name: "Fitbit", icon: "⌚", color: "#22C55E", description: "Sync activity, sleep, and heart rate from your Fitbit" },
-  { key: "garmin", name: "Garmin Connect", icon: "🏃", color: "#3B82F6", description: "Sync workouts, GPS data, and health metrics from Garmin" },
-  { key: "google_fit", name: "Google Fit", icon: "🤖", color: "#F97316", description: "Sync activity and health data from Google Fit" },
-  { key: "whoop", name: "WHOOP", icon: "💪", color: "#A855F7", description: "Sync recovery, strain, and sleep from WHOOP" },
-  { key: "samsung_health", name: "Samsung Health", icon: "📱", color: "#FBBF24", description: "Sync steps, heart rate, and workouts from Samsung Health" },
-];
+const DASHBOARD_BG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/dashboard_bg-RoFjMvrdRjaYMAUAfupKpm.png";
 
-const DEMO_DATA = {
-  steps: 8432,
-  calories: 2150,
-  heartRate: 68,
-  sleep: 7.5,
-  activeMinutes: 45,
-  distance: 6.2,
-  hrv: 52,
-  recovery: 78,
-};
+const WEARABLES = [
+  {
+    id: "apple_health",
+    name: "Apple Health",
+    icon: "❤️",
+    color: "#EF4444",
+    platform: "ios",
+    description: "Sync steps, heart rate, calories, sleep, and workouts from your iPhone and Apple Watch.",
+    deepLink: "x-apple-health://",
+    storeUrl: null as string | null,
+    note: "Apple Health is built into your iPhone. Tap Open to launch it, then enable data sharing with PeakPulse in Health → Apps.",
+    dataTypes: ["Steps", "Heart Rate", "Active Calories", "Sleep", "Workouts", "Weight"],
+  },
+  {
+    id: "google_fit",
+    name: "Google Fit",
+    icon: "🏃",
+    color: "#22C55E",
+    platform: "android",
+    description: "Sync activity, heart rate, and workout data from your Android device and Wear OS watch.",
+    deepLink: "googlefit://",
+    storeUrl: "https://play.google.com/store/apps/details?id=com.google.android.apps.fitness" as string | null,
+    note: "Open Google Fit and navigate to Profile → Connected apps to link PeakPulse.",
+    dataTypes: ["Steps", "Heart Rate", "Calories", "Distance", "Workouts"],
+  },
+  {
+    id: "fitbit",
+    name: "Fitbit",
+    icon: "⌚",
+    color: "#3B82F6",
+    platform: "both",
+    description: "Sync comprehensive fitness data from your Fitbit tracker or smartwatch.",
+    deepLink: "fitbit://",
+    storeUrl: "https://www.fitbit.com/global/us/home" as string | null,
+    note: "Open the Fitbit app and go to Account → Apps → PeakPulse to authorize data sharing.",
+    dataTypes: ["Steps", "Heart Rate", "Sleep Score", "Active Minutes", "Calories", "SpO2"],
+  },
+  {
+    id: "garmin",
+    name: "Garmin Connect",
+    icon: "🗺️",
+    color: "#0EA5E9",
+    platform: "both",
+    description: "Sync detailed performance metrics from your Garmin GPS watch or fitness tracker.",
+    deepLink: "garmin-connect://",
+    storeUrl: "https://connect.garmin.com/" as string | null,
+    note: "Open Garmin Connect and go to Settings → Connected Apps to authorize PeakPulse.",
+    dataTypes: ["Steps", "Heart Rate", "VO2 Max", "Training Load", "Sleep", "GPS Routes"],
+  },
+  {
+    id: "whoop",
+    name: "WHOOP",
+    icon: "💪",
+    color: "#7C3AED",
+    platform: "both",
+    description: "Sync recovery scores, strain, HRV, and sleep data from your WHOOP band.",
+    deepLink: "whoop://",
+    storeUrl: "https://www.whoop.com/" as string | null,
+    note: "Open the WHOOP app and go to Profile → Integrations to connect PeakPulse.",
+    dataTypes: ["Recovery Score", "Strain", "HRV", "Sleep Performance", "Respiratory Rate"],
+  },
+  {
+    id: "samsung_health",
+    name: "Samsung Health",
+    icon: "📱",
+    color: "#F97316",
+    platform: "android",
+    description: "Sync health and fitness data from Samsung Galaxy Watch and Galaxy phones.",
+    deepLink: "shealth://",
+    storeUrl: "https://play.google.com/store/apps/details?id=com.sec.android.app.shealth" as string | null,
+    note: "Open Samsung Health and go to Settings → Connected Services to link PeakPulse.",
+    dataTypes: ["Steps", "Heart Rate", "Sleep", "Stress", "Blood Oxygen", "Workouts"],
+  },
+];
 
 export default function WearableSyncScreen() {
   const router = useRouter();
-  const [connectedDevices, setConnectedDevices] = useState<string[]>([]);
-  const [syncing, setSyncing] = useState<string | null>(null);
-  const [wearableData, setWearableData] = useState<any>(null);
-  const [lastSync, setLastSync] = useState<string | null>(null);
+  const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [connectedIds, setConnectedIds] = useState<string[]>([]);
+  const [opening, setOpening] = useState<string | null>(null);
 
   useEffect(() => {
-    loadData();
+    AsyncStorage.getItem("@connected_wearables").then(raw => {
+      if (raw) setConnectedIds(JSON.parse(raw));
+    });
   }, []);
 
-  async function loadData() {
+  async function handleOpenApp(wearable: typeof WEARABLES[0]) {
+    setOpening(wearable.id);
     try {
-      const connected = await AsyncStorage.getItem("connected_wearables");
-      if (connected) setConnectedDevices(JSON.parse(connected));
-      const data = await AsyncStorage.getItem("wearable_data");
-      if (data) setWearableData(JSON.parse(data));
-      const sync = await AsyncStorage.getItem("last_sync");
-      if (sync) setLastSync(sync);
+      // Try deep link first
+      const canOpen = await Linking.canOpenURL(wearable.deepLink);
+      if (canOpen) {
+        await Linking.openURL(wearable.deepLink);
+        // Mark as "connected" after user opens the app
+        const updated = connectedIds.includes(wearable.id)
+          ? connectedIds
+          : [...connectedIds, wearable.id];
+        setConnectedIds(updated);
+        await AsyncStorage.setItem("@connected_wearables", JSON.stringify(updated));
+        setOpening(null);
+        return;
+      }
     } catch {}
-  }
 
-  async function connectDevice(key: string) {
-    setSyncing(key);
-    // Simulate OAuth / connection flow
-    await new Promise(r => setTimeout(r, 2000));
-    const newConnected = [...connectedDevices, key];
-    setConnectedDevices(newConnected);
-    await AsyncStorage.setItem("connected_wearables", JSON.stringify(newConnected));
-    // Simulate syncing data
-    const now = new Date().toISOString();
-    await AsyncStorage.setItem("wearable_data", JSON.stringify(DEMO_DATA));
-    await AsyncStorage.setItem("last_sync", now);
-    setWearableData(DEMO_DATA);
-    setLastSync(now);
-    setSyncing(null);
-    Alert.alert("Connected! ✓", `${WEARABLES.find(w => w.key === key)?.name} connected and data synced.`);
-  }
+    setOpening(null);
 
-  async function disconnectDevice(key: string) {
+    // Deep link not available — show instructions
     Alert.alert(
-      "Disconnect Device",
-      `Are you sure you want to disconnect ${WEARABLES.find(w => w.key === key)?.name}?`,
+      `Open ${wearable.name}`,
+      `${wearable.note}\n\nMake sure the ${wearable.name} app is installed on your device.`,
       [
         { text: "Cancel", style: "cancel" },
+        ...(wearable.storeUrl
+          ? [{ text: "Get the App", onPress: () => Linking.openURL(wearable.storeUrl!) }]
+          : []),
         {
-          text: "Disconnect",
-          style: "destructive",
-          onPress: async () => {
-            const newConnected = connectedDevices.filter(d => d !== key);
-            setConnectedDevices(newConnected);
-            await AsyncStorage.setItem("connected_wearables", JSON.stringify(newConnected));
-            if (newConnected.length === 0) {
-              setWearableData(null);
-              await AsyncStorage.removeItem("wearable_data");
+          text: "Open Settings",
+          onPress: () => {
+            if (Platform.OS === "ios") {
+              Linking.openURL("app-settings:");
+            } else {
+              Linking.openSettings();
             }
           },
         },
@@ -88,133 +138,175 @@ export default function WearableSyncScreen() {
     );
   }
 
-  async function syncNow() {
-    if (connectedDevices.length === 0) return;
-    setSyncing("all");
-    await new Promise(r => setTimeout(r, 1500));
-    const now = new Date().toISOString();
-    const updatedData = { ...DEMO_DATA, steps: DEMO_DATA.steps + Math.floor(Math.random() * 500), heartRate: 65 + Math.floor(Math.random() * 10) };
-    await AsyncStorage.setItem("wearable_data", JSON.stringify(updatedData));
-    await AsyncStorage.setItem("last_sync", now);
-    setWearableData(updatedData);
-    setLastSync(now);
-    setSyncing(null);
-    Alert.alert("Synced!", "Your wearable data has been updated.");
+  async function handleDisconnect(id: string) {
+    const name = WEARABLES.find(w => w.id === id)?.name ?? "device";
+    Alert.alert("Disconnect", `Remove ${name} from PeakPulse?`, [
+      { text: "Cancel", style: "cancel" },
+      {
+        text: "Disconnect",
+        style: "destructive",
+        onPress: async () => {
+          const updated = connectedIds.filter(c => c !== id);
+          setConnectedIds(updated);
+          await AsyncStorage.setItem("@connected_wearables", JSON.stringify(updated));
+        },
+      },
+    ]);
   }
 
+  // Show platform-appropriate wearables
+  const platformFilter = Platform.OS === "ios" ? ["ios", "both"] : ["android", "both"];
+  const visibleWearables = WEARABLES.filter(w => platformFilter.includes(w.platform));
+
   return (
-    <ScreenContainer>
-      <ScrollView contentContainerStyle={{ paddingBottom: 32 }} showsVerticalScrollIndicator={false}>
-        {/* Header */}
-        <View style={{ paddingHorizontal: 20, paddingTop: 16, paddingBottom: 8, flexDirection: "row", alignItems: "center", gap: 12 }}>
-          <TouchableOpacity onPress={() => router.back()} style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: "#13131F", alignItems: "center", justifyContent: "center" }}>
-            <Text style={{ color: "#FFFFFF", fontSize: 16 }}>←</Text>
+    <View style={{ flex: 1, backgroundColor: "#080810" }}>
+      {/* Hero */}
+      <ImageBackground source={{ uri: DASHBOARD_BG }} style={{ height: 160 }} resizeMode="cover">
+        <View style={{ flex: 1, backgroundColor: "rgba(8,8,16,0.72)", justifyContent: "flex-end", padding: 20, paddingTop: 52 }}>
+          <TouchableOpacity
+            style={{ position: "absolute", top: 52, left: 20, width: 36, height: 36, borderRadius: 10, backgroundColor: "rgba(255,255,255,0.1)", alignItems: "center", justifyContent: "center" }}
+            onPress={() => router.back()}
+          >
+            <Text style={{ color: "#FFFFFF", fontSize: 18 }}>←</Text>
           </TouchableOpacity>
-          <View style={{ flex: 1 }}>
-            <Text style={{ color: "#FFFFFF", fontSize: 22, fontWeight: "800" }}>Wearable Sync</Text>
-            <Text style={{ color: "#9CA3AF", fontSize: 12 }}>Connect your fitness devices</Text>
-          </View>
-          {connectedDevices.length > 0 && (
-            <TouchableOpacity
-              style={{ backgroundColor: "#7C3AED20", borderRadius: 12, paddingHorizontal: 12, paddingVertical: 6, flexDirection: "row", alignItems: "center", gap: 6 }}
-              onPress={syncNow}
-              disabled={syncing === "all"}
-            >
-              {syncing === "all" ? <ActivityIndicator size="small" color="#A78BFA" /> : <Text style={{ color: "#A78BFA", fontSize: 12 }}>🔄</Text>}
-              <Text style={{ color: "#A78BFA", fontWeight: "700", fontSize: 12 }}>Sync Now</Text>
-            </TouchableOpacity>
-          )}
+          <Text style={{ color: "#A78BFA", fontWeight: "700", fontSize: 12, letterSpacing: 1 }}>CONNECT</Text>
+          <Text style={{ color: "#FFFFFF", fontWeight: "900", fontSize: 26, letterSpacing: -0.5 }}>Wearable Sync</Text>
         </View>
+      </ImageBackground>
 
-        {/* Last Sync */}
-        {lastSync && (
-          <View style={{ marginHorizontal: 20, marginBottom: 16, backgroundColor: "#22C55E10", borderRadius: 12, padding: 10, borderWidth: 1, borderColor: "#22C55E20", flexDirection: "row", alignItems: "center", gap: 8 }}>
-            <Text style={{ fontSize: 14 }}>✓</Text>
-            <Text style={{ color: "#22C55E", fontSize: 12 }}>
-              Last synced: {new Date(lastSync).toLocaleString("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}
-            </Text>
-          </View>
-        )}
-
-        {/* Live Stats */}
-        {wearableData && (
-          <View style={{ marginHorizontal: 20, marginBottom: 20 }}>
-            <Text style={{ color: "#FFFFFF", fontWeight: "700", fontSize: 16, marginBottom: 12 }}>Today's Data</Text>
-            <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 10 }}>
-              <WearableStat icon="👟" label="Steps" value={wearableData.steps?.toLocaleString()} color="#F97316" />
-              <WearableStat icon="🔥" label="Calories" value={`${wearableData.calories} kcal`} color="#EF4444" />
-              <WearableStat icon="❤️" label="Heart Rate" value={`${wearableData.heartRate} bpm`} color="#EC4899" />
-              <WearableStat icon="🌙" label="Sleep" value={`${wearableData.sleep} hrs`} color="#A78BFA" />
-              <WearableStat icon="⚡" label="Active" value={`${wearableData.activeMinutes} min`} color="#FBBF24" />
-              <WearableStat icon="📍" label="Distance" value={`${wearableData.distance} km`} color="#22C55E" />
-              {wearableData.hrv && <WearableStat icon="💓" label="HRV" value={`${wearableData.hrv} ms`} color="#3B82F6" />}
-              {wearableData.recovery && <WearableStat icon="🔋" label="Recovery" value={`${wearableData.recovery}%`} color="#22C55E" />}
-            </View>
-          </View>
-        )}
-
-        {/* Devices */}
-        <View style={{ paddingHorizontal: 20 }}>
-          <Text style={{ color: "#FFFFFF", fontWeight: "700", fontSize: 16, marginBottom: 12 }}>Fitness Apps & Devices</Text>
-          {WEARABLES.map(device => {
-            const isConnected = connectedDevices.includes(device.key);
-            const isSyncing = syncing === device.key;
-            return (
-              <View key={device.key} style={{ backgroundColor: "#13131F", borderRadius: 16, padding: 16, marginBottom: 10, borderWidth: 1, borderColor: isConnected ? device.color + "40" : "#1F2937" }}>
-                <View style={{ flexDirection: "row", alignItems: "center", gap: 12 }}>
-                  <View style={{ width: 48, height: 48, borderRadius: 14, backgroundColor: device.color + "20", alignItems: "center", justifyContent: "center" }}>
-                    <Text style={{ fontSize: 24 }}>{device.icon}</Text>
-                  </View>
-                  <View style={{ flex: 1 }}>
-                    <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-                      <Text style={{ color: "#FFFFFF", fontWeight: "700", fontSize: 14 }}>{device.name}</Text>
-                      {isConnected && (
-                        <View style={{ backgroundColor: "#22C55E20", borderRadius: 6, paddingHorizontal: 6, paddingVertical: 2 }}>
-                          <Text style={{ color: "#22C55E", fontSize: 10, fontWeight: "700" }}>CONNECTED</Text>
-                        </View>
-                      )}
-                    </View>
-                    <Text style={{ color: "#9CA3AF", fontSize: 12, marginTop: 2, lineHeight: 16 }}>{device.description}</Text>
-                  </View>
-                  <TouchableOpacity
-                    style={{ backgroundColor: isConnected ? "#EF444420" : device.color + "20", borderRadius: 10, paddingHorizontal: 12, paddingVertical: 8, minWidth: 80, alignItems: "center" }}
-                    onPress={() => isConnected ? disconnectDevice(device.key) : connectDevice(device.key)}
-                    disabled={isSyncing}
-                  >
-                    {isSyncing ? (
-                      <ActivityIndicator size="small" color={device.color} />
-                    ) : (
-                      <Text style={{ color: isConnected ? "#EF4444" : device.color, fontWeight: "700", fontSize: 12 }}>
-                        {isConnected ? "Disconnect" : "Connect"}
-                      </Text>
-                    )}
-                  </TouchableOpacity>
-                </View>
-              </View>
-            );
-          })}
-        </View>
-
-        {/* Info */}
-        <View style={{ marginHorizontal: 20, marginTop: 8, backgroundColor: "#7C3AED10", borderRadius: 16, padding: 16, borderWidth: 1, borderColor: "#7C3AED20" }}>
-          <Text style={{ color: "#A78BFA", fontWeight: "700", fontSize: 12, marginBottom: 6 }}>ℹ️ About Wearable Sync</Text>
-          <Text style={{ color: "#9CA3AF", fontSize: 12, lineHeight: 18 }}>
-            Connect your fitness apps to automatically sync your daily activity data. Your steps, heart rate, calories, and sleep data will appear on your dashboard and be used by AI to personalize your recommendations.
+      <ScrollView contentContainerStyle={{ padding: 20, paddingBottom: 40 }} showsVerticalScrollIndicator={false}>
+        {/* Info Banner */}
+        <View style={{ backgroundColor: "#7C3AED15", borderRadius: 16, padding: 16, marginBottom: 20, borderWidth: 1, borderColor: "#7C3AED30" }}>
+          <Text style={{ color: "#A78BFA", fontWeight: "700", fontSize: 13, marginBottom: 6 }}>ℹ️ How Wearable Sync Works</Text>
+          <Text style={{ color: "#9CA3AF", fontSize: 13, lineHeight: 20 }}>
+            Tap a device to open its app and authorize data sharing. Once connected, your health data (steps, heart rate, sleep, calories) will appear on your PeakPulse dashboard and personalize your AI plans.
           </Text>
         </View>
-      </ScrollView>
-    </ScreenContainer>
-  );
-}
 
-function WearableStat({ icon, label, value, color }: any) {
-  return (
-    <View style={{ flex: 1, minWidth: "45%", backgroundColor: "#13131F", borderRadius: 14, padding: 12, borderWidth: 1, borderColor: "#1F2937" }}>
-      <View style={{ flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 4 }}>
-        <Text style={{ fontSize: 14 }}>{icon}</Text>
-        <Text style={{ color: "#9CA3AF", fontSize: 10, fontWeight: "600" }}>{label.toUpperCase()}</Text>
-      </View>
-      <Text style={{ color, fontWeight: "700", fontSize: 16 }}>{value}</Text>
+        {/* Platform note */}
+        <View style={{ backgroundColor: "#13131F", borderRadius: 12, padding: 12, marginBottom: 20, borderWidth: 1, borderColor: "#1F2937" }}>
+          <Text style={{ color: "#6B7280", fontSize: 12, textAlign: "center" }}>
+            {Platform.OS === "ios"
+              ? "📱 Showing iOS-compatible apps. Apple Health is the primary data hub on iPhone."
+              : "🤖 Showing Android-compatible apps. Google Fit is the primary data hub on Android."}
+          </Text>
+        </View>
+
+        {/* Wearable Cards */}
+        {visibleWearables.map((wearable) => {
+          const isExpanded = expandedId === wearable.id;
+          const isConnected = connectedIds.includes(wearable.id);
+          const isOpening = opening === wearable.id;
+
+          return (
+            <View
+              key={wearable.id}
+              style={{
+                backgroundColor: "#13131F",
+                borderRadius: 20,
+                marginBottom: 12,
+                borderWidth: 1,
+                borderColor: isConnected ? wearable.color + "50" : isExpanded ? wearable.color + "30" : "#1F2937",
+                overflow: "hidden",
+              }}
+            >
+              {/* Main Row */}
+              <TouchableOpacity
+                style={{ flexDirection: "row", alignItems: "center", padding: 18, gap: 14 }}
+                onPress={() => setExpandedId(isExpanded ? null : wearable.id)}
+              >
+                <View style={{ width: 52, height: 52, borderRadius: 16, backgroundColor: wearable.color + "20", alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: wearable.color + "40" }}>
+                  <Text style={{ fontSize: 26 }}>{wearable.icon}</Text>
+                </View>
+                <View style={{ flex: 1 }}>
+                  <View style={{ flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 2 }}>
+                    <Text style={{ color: "#FFFFFF", fontWeight: "700", fontSize: 15 }}>{wearable.name}</Text>
+                    {isConnected && (
+                      <View style={{ backgroundColor: "#22C55E20", borderRadius: 6, paddingHorizontal: 6, paddingVertical: 2 }}>
+                        <Text style={{ color: "#22C55E", fontSize: 10, fontWeight: "700" }}>LINKED</Text>
+                      </View>
+                    )}
+                  </View>
+                  <Text style={{ color: "#9CA3AF", fontSize: 12, lineHeight: 16 }}>{wearable.description}</Text>
+                </View>
+                <Text style={{ color: "#9CA3AF", fontSize: 14 }}>{isExpanded ? "▲" : "▼"}</Text>
+              </TouchableOpacity>
+
+              {/* Expanded Detail */}
+              {isExpanded && (
+                <View style={{ paddingHorizontal: 18, paddingBottom: 18, gap: 12 }}>
+                  {/* Data types */}
+                  <View>
+                    <Text style={{ color: "#9CA3AF", fontSize: 11, fontWeight: "700", letterSpacing: 1, marginBottom: 8 }}>DATA SYNCED</Text>
+                    <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 6 }}>
+                      {wearable.dataTypes.map((dt) => (
+                        <View key={dt} style={{ backgroundColor: wearable.color + "15", borderRadius: 8, paddingHorizontal: 10, paddingVertical: 4, borderWidth: 1, borderColor: wearable.color + "30" }}>
+                          <Text style={{ color: wearable.color, fontSize: 11, fontWeight: "600" }}>{dt}</Text>
+                        </View>
+                      ))}
+                    </View>
+                  </View>
+
+                  {/* How to connect */}
+                  <View style={{ backgroundColor: "#0D0D18", borderRadius: 12, padding: 12 }}>
+                    <Text style={{ color: "#9CA3AF", fontSize: 11, fontWeight: "700", letterSpacing: 1, marginBottom: 6 }}>HOW TO CONNECT</Text>
+                    <Text style={{ color: "#D1D5DB", fontSize: 13, lineHeight: 20 }}>{wearable.note}</Text>
+                  </View>
+
+                  {/* Action Buttons */}
+                  {isConnected ? (
+                    <View style={{ flexDirection: "row", gap: 10 }}>
+                      <TouchableOpacity
+                        style={{ flex: 2, backgroundColor: wearable.color, borderRadius: 14, paddingVertical: 14, alignItems: "center", flexDirection: "row", justifyContent: "center", gap: 8 }}
+                        onPress={() => handleOpenApp(wearable)}
+                        disabled={isOpening}
+                      >
+                        {isOpening ? <ActivityIndicator color="#FFFFFF" size="small" /> : <Text style={{ fontSize: 16 }}>{wearable.icon}</Text>}
+                        <Text style={{ color: "#FFFFFF", fontWeight: "700", fontSize: 14 }}>Open {wearable.name}</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        style={{ flex: 1, backgroundColor: "#EF444420", borderRadius: 14, paddingVertical: 14, alignItems: "center", borderWidth: 1, borderColor: "#EF444440" }}
+                        onPress={() => handleDisconnect(wearable.id)}
+                      >
+                        <Text style={{ color: "#EF4444", fontWeight: "700", fontSize: 13 }}>Unlink</Text>
+                      </TouchableOpacity>
+                    </View>
+                  ) : (
+                    <TouchableOpacity
+                      style={{ backgroundColor: wearable.color, borderRadius: 14, paddingVertical: 14, alignItems: "center", flexDirection: "row", justifyContent: "center", gap: 8, opacity: isOpening ? 0.7 : 1, shadowColor: wearable.color, shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.4, shadowRadius: 8 }}
+                      onPress={() => handleOpenApp(wearable)}
+                      disabled={isOpening}
+                    >
+                      {isOpening ? (
+                        <ActivityIndicator color="#FFFFFF" size="small" />
+                      ) : (
+                        <Text style={{ fontSize: 18 }}>{wearable.icon}</Text>
+                      )}
+                      <Text style={{ color: "#FFFFFF", fontWeight: "700", fontSize: 15 }}>
+                        {isOpening ? "Opening..." : `Open ${wearable.name}`}
+                      </Text>
+                    </TouchableOpacity>
+                  )}
+                </View>
+              )}
+            </View>
+          );
+        })}
+
+        {/* Manual Entry Note */}
+        <View style={{ backgroundColor: "#13131F", borderRadius: 16, padding: 16, marginTop: 8, borderWidth: 1, borderColor: "#1F2937" }}>
+          <Text style={{ color: "#FFFFFF", fontWeight: "700", fontSize: 14, marginBottom: 8 }}>📊 No Wearable?</Text>
+          <Text style={{ color: "#9CA3AF", fontSize: 13, lineHeight: 20, marginBottom: 12 }}>
+            You can manually log your daily steps, weight, and workout data directly in the PeakPulse app. Your dashboard will update automatically.
+          </Text>
+          <TouchableOpacity
+            style={{ backgroundColor: "#1F2937", borderRadius: 12, paddingVertical: 12, alignItems: "center" }}
+            onPress={() => router.back()}
+          >
+            <Text style={{ color: "#E5E7EB", fontWeight: "600", fontSize: 14 }}>← Back to Dashboard</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
     </View>
   );
 }
