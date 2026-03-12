@@ -1,11 +1,15 @@
 import React, { useState } from "react";
 import {
-  ScrollView, Text, View, TouchableOpacity, ActivityIndicator, Alert,
+  ScrollView, Text, View, TouchableOpacity, ActivityIndicator, Alert, ImageBackground,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { ScreenContainer } from "@/components/screen-container";
 import { useAuth } from "@/hooks/use-auth";
+import { useGuestAuth } from "@/lib/guest-auth";
 import { trpc } from "@/lib/trpc";
+
+const WORKOUT_BG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/workout_bg-UnSuPAnKQ8SeUHebtV2HTU.png";
+const MEAL_BG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/meal_bg-ULw7hvjMXJuqDPAXt9iqic.png";
 
 const TABS = ["Workout", "Meal Plan", "Meal Prep"];
 
@@ -37,6 +41,8 @@ const DAYS_OPTIONS = [3, 4, 5, 6];
 export default function PlansScreen() {
   const router = useRouter();
   const { isAuthenticated } = useAuth();
+  const { isGuest } = useGuestAuth();
+  const canUse = isAuthenticated || isGuest;
   const [activeTab, setActiveTab] = useState(0);
 
   // Workout state
@@ -69,27 +75,35 @@ export default function PlansScreen() {
     onError: (e) => Alert.alert("Error", e.message),
   });
 
-  if (!isAuthenticated) {
+  if (!canUse) {
     return (
-      <ScreenContainer className="flex-1 items-center justify-center p-6">
-        <Text className="text-foreground text-lg text-center">Please log in to access your plans</Text>
-        <TouchableOpacity
-          style={{ backgroundColor: "#7C3AED", paddingHorizontal: 24, paddingVertical: 12, borderRadius: 12, marginTop: 16 }}
-          onPress={() => router.push("/login" as any)}
-        >
-          <Text style={{ color: "#FFFFFF", fontWeight: "700" }}>Log In</Text>
-        </TouchableOpacity>
-      </ScreenContainer>
+      <View style={{ flex: 1, backgroundColor: "#080810" }}>
+        <ImageBackground source={{ uri: WORKOUT_BG }} style={{ flex: 1 }} resizeMode="cover">
+          <View style={{ flex: 1, backgroundColor: "rgba(8,8,16,0.8)", alignItems: "center", justifyContent: "center", padding: 32 }}>
+            <Text style={{ fontSize: 48, marginBottom: 16 }}>🏋️</Text>
+            <Text style={{ color: "#FFFFFF", fontWeight: "800", fontSize: 22, textAlign: "center", marginBottom: 8 }}>Unlock Your Plans</Text>
+            <Text style={{ color: "#9CA3AF", fontSize: 14, textAlign: "center", lineHeight: 20, marginBottom: 24 }}>Sign in or continue as guest to generate AI-powered workout and meal plans.</Text>
+            <TouchableOpacity
+              style={{ backgroundColor: "#7C3AED", paddingHorizontal: 32, paddingVertical: 14, borderRadius: 16, shadowColor: "#7C3AED", shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.5, shadowRadius: 12 }}
+              onPress={() => router.push("/login" as any)}
+            >
+              <Text style={{ color: "#FFFFFF", fontWeight: "800", fontSize: 16 }}>Get Started →</Text>
+            </TouchableOpacity>
+          </View>
+        </ImageBackground>
+      </View>
     );
   }
 
   return (
-    <ScreenContainer>
-      {/* Header */}
-      <View style={{ paddingHorizontal: 20, paddingTop: 16, paddingBottom: 8 }}>
-        <Text style={{ color: "#FFFFFF", fontSize: 24, fontWeight: "800" }}>AI Plans</Text>
-        <Text style={{ color: "#9CA3AF", fontSize: 13, marginTop: 2 }}>Personalized by AI for your goals</Text>
-      </View>
+    <View style={{ flex: 1, backgroundColor: "#080810" }}>
+      {/* Hero Header */}
+      <ImageBackground source={{ uri: activeTab === 1 || activeTab === 2 ? MEAL_BG : WORKOUT_BG }} style={{ height: 160 }} resizeMode="cover">
+        <View style={{ flex: 1, backgroundColor: "rgba(8,8,16,0.72)", justifyContent: "flex-end", padding: 20, paddingTop: 52 }}>
+          <Text style={{ color: activeTab === 0 ? "#F97316" : "#22C55E", fontWeight: "700", fontSize: 12, letterSpacing: 1 }}>AI-POWERED</Text>
+          <Text style={{ color: "#FFFFFF", fontWeight: "900", fontSize: 26, letterSpacing: -0.5 }}>Your Plans</Text>
+        </View>
+      </ImageBackground>
 
       {/* Tab Bar */}
       <View style={{ flexDirection: "row", paddingHorizontal: 20, marginBottom: 16, gap: 8 }}>
@@ -104,7 +118,7 @@ export default function PlansScreen() {
         ))}
       </View>
 
-      <ScrollView contentContainerStyle={{ paddingBottom: 32 }} showsVerticalScrollIndicator={false}>
+      <ScrollView contentContainerStyle={{ paddingBottom: 32 }} showsVerticalScrollIndicator={false} style={{ flex: 1 }}>
         {/* ── Workout Tab ── */}
         {activeTab === 0 && (
           <View style={{ paddingHorizontal: 20 }}>
@@ -287,7 +301,7 @@ export default function PlansScreen() {
           </View>
         )}
       </ScrollView>
-    </ScreenContainer>
+    </View>
   );
 }
 

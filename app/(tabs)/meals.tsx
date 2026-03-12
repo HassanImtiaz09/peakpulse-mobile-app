@@ -1,17 +1,22 @@
 import React, { useState } from "react";
 import {
-  ScrollView, Text, View, TouchableOpacity, ActivityIndicator, Alert, Image, TextInput, Platform,
+  ScrollView, Text, View, TouchableOpacity, ActivityIndicator, Alert, Image, TextInput, Platform, ImageBackground,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import * as FileSystem from "expo-file-system/legacy";
 import { ScreenContainer } from "@/components/screen-container";
 import { useAuth } from "@/hooks/use-auth";
+import { useGuestAuth } from "@/lib/guest-auth";
 import { trpc } from "@/lib/trpc";
+
+const MEAL_BG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/meal_bg-ULw7hvjMXJuqDPAXt9iqic.png";
 
 const MEAL_TYPES = ["breakfast", "lunch", "dinner", "snack"];
 
 export default function MealsScreen() {
   const { isAuthenticated } = useAuth();
+  const { isGuest } = useGuestAuth();
+  const canUse = isAuthenticated || isGuest;
   const [activeTab, setActiveTab] = useState<"log" | "analyze">("log");
   const [mealType, setMealType] = useState("breakfast");
   const [mealName, setMealName] = useState("");
@@ -88,21 +93,35 @@ export default function MealsScreen() {
     });
   }
 
-  if (!isAuthenticated) {
+  if (!canUse) {
     return (
-      <ScreenContainer className="flex-1 items-center justify-center p-6">
-        <Text className="text-foreground text-lg text-center">Please log in to track meals</Text>
-      </ScreenContainer>
+      <View style={{ flex: 1, backgroundColor: "#080810" }}>
+        <ImageBackground source={{ uri: MEAL_BG }} style={{ flex: 1 }} resizeMode="cover">
+          <View style={{ flex: 1, backgroundColor: "rgba(8,8,16,0.78)", alignItems: "center", justifyContent: "center", padding: 32 }}>
+            <Text style={{ fontSize: 48, marginBottom: 16 }}>🍽️</Text>
+            <Text style={{ color: "#FFFFFF", fontWeight: "800", fontSize: 22, textAlign: "center", marginBottom: 8 }}>Meal Log</Text>
+            <Text style={{ color: "#9CA3AF", fontSize: 14, textAlign: "center", lineHeight: 20, marginBottom: 24 }}>Sign in or continue as guest to track your nutrition and use the AI calorie estimator.</Text>
+            <TouchableOpacity
+              style={{ backgroundColor: "#22C55E", borderRadius: 16, paddingVertical: 14, paddingHorizontal: 32, shadowColor: "#22C55E", shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.4, shadowRadius: 12 }}
+              onPress={() => {}}
+            >
+              <Text style={{ color: "#FFFFFF", fontWeight: "800", fontSize: 16 }}>Get Started →</Text>
+            </TouchableOpacity>
+          </View>
+        </ImageBackground>
+      </View>
     );
   }
 
   return (
-    <ScreenContainer>
-      {/* Header */}
-      <View style={{ paddingHorizontal: 20, paddingTop: 16, paddingBottom: 8 }}>
-        <Text style={{ color: "#FFFFFF", fontSize: 24, fontWeight: "800" }}>Meal Log</Text>
-        <Text style={{ color: "#9CA3AF", fontSize: 13, marginTop: 2 }}>Track nutrition & estimate calories with AI</Text>
-      </View>
+    <View style={{ flex: 1, backgroundColor: "#080810" }}>
+      {/* Hero Header */}
+      <ImageBackground source={{ uri: MEAL_BG }} style={{ height: 160 }} resizeMode="cover">
+        <View style={{ flex: 1, backgroundColor: "rgba(8,8,16,0.68)", justifyContent: "flex-end", padding: 20, paddingTop: 52 }}>
+          <Text style={{ color: "#22C55E", fontWeight: "700", fontSize: 12, letterSpacing: 1 }}>NUTRITION TRACKING</Text>
+          <Text style={{ color: "#FFFFFF", fontWeight: "900", fontSize: 26, letterSpacing: -0.5 }}>Meal Log</Text>
+        </View>
+      </ImageBackground>
 
       {/* Daily Summary */}
       <View style={{ marginHorizontal: 20, marginBottom: 16, backgroundColor: "#13131F", borderRadius: 20, padding: 16, borderWidth: 1, borderColor: "#1F2937" }}>
@@ -326,7 +345,7 @@ export default function MealsScreen() {
           </View>
         )}
       </ScrollView>
-    </ScreenContainer>
+    </View>
   );
 }
 

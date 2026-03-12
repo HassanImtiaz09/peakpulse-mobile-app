@@ -100,3 +100,19 @@
 - [x] Image generation for body transformation previews
 - [x] S3 file storage for photos
 - [x] Daily AI coaching insight endpoint
+
+## New Requests (Round 2)
+
+- [x] Add email/password login option (not just Google OAuth)
+- [x] Add guest/skip mode — user can use app without any account
+- [x] Update onboarding to offer: Google, Email, or Skip options
+- [x] Store guest profile locally in AsyncStorage
+- [x] Fix body scan flow: after analysis show "Create My Plan" CTA that navigates to workout/meal plan generation
+- [x] Body scan results page: add goal selection, workout style picker, dietary prefs, then generate plans
+- [x] Full UI redesign: spectacular premium fitness aesthetic (nano banana image-based style)
+- [x] Redesign Dashboard with hero gradient, stats cards, animated feel
+- [x] Redesign Body Scan screen with immersive camera UI
+- [x] Redesign Plans screen with premium card design
+- [x] Redesign Meals screen with rich food imagery style
+- [x] Redesign Profile screen with sleek settings UI
+- [x] Redesign onboarding/login with full-screen gradient hero

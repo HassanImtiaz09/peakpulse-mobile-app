@@ -1,11 +1,16 @@
 import React, { useState, useEffect } from "react";
 import {
-  ScrollView, Text, View, TouchableOpacity, TextInput, Alert, ActivityIndicator,
+  ScrollView, Text, View, TouchableOpacity, TextInput, Alert, ActivityIndicator, ImageBackground, Image,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { ScreenContainer } from "@/components/screen-container";
 import { useAuth } from "@/hooks/use-auth";
+import { useGuestAuth } from "@/lib/guest-auth";
 import { trpc } from "@/lib/trpc";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+const HERO_BG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/hero_bg-YtJxLGZKqRBrxqD3Cfsn7p.png";
+const APP_LOGO = "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/app_logo-iTNC7xURufvjtUp3Y5ns3S.png";
 
 const GOALS = [
   { key: "build_muscle", label: "Build Muscle", icon: "💪" },
@@ -39,6 +44,8 @@ const GENDERS = [
 export default function ProfileScreen() {
   const router = useRouter();
   const { user, isAuthenticated } = useAuth();
+  const { isGuest, guestProfile, clearGuest } = useGuestAuth();
+  const canUse = isAuthenticated || isGuest;
   const [editing, setEditing] = useState(false);
 
   const [age, setAge] = useState("");
@@ -83,57 +90,65 @@ export default function ProfileScreen() {
     });
   }
 
-  if (!isAuthenticated) {
+  if (!canUse) {
     return (
-      <ScreenContainer className="flex-1 items-center justify-center p-6">
-        <View style={{ alignItems: "center", gap: 16 }}>
-          <Text style={{ fontSize: 48 }}>👤</Text>
-          <Text style={{ color: "#FFFFFF", fontWeight: "700", fontSize: 20 }}>Sign In Required</Text>
-          <Text style={{ color: "#9CA3AF", fontSize: 14, textAlign: "center" }}>Create an account to save your profile and sync across devices</Text>
-          <TouchableOpacity
-            style={{ backgroundColor: "#7C3AED", paddingHorizontal: 32, paddingVertical: 14, borderRadius: 16 }}
-            onPress={() => router.push("/login" as any)}
-          >
-            <Text style={{ color: "#FFFFFF", fontWeight: "700", fontSize: 16 }}>Sign In / Create Account</Text>
-          </TouchableOpacity>
-        </View>
-      </ScreenContainer>
+      <View style={{ flex: 1, backgroundColor: "#080810" }}>
+        <ImageBackground source={{ uri: HERO_BG }} style={{ flex: 1 }} resizeMode="cover">
+          <View style={{ flex: 1, backgroundColor: "rgba(8,8,16,0.78)", alignItems: "center", justifyContent: "center", padding: 32 }}>
+            <Image source={{ uri: APP_LOGO }} style={{ width: 80, height: 80, borderRadius: 20, marginBottom: 20 }} />
+            <Text style={{ color: "#FFFFFF", fontWeight: "800", fontSize: 22, textAlign: "center", marginBottom: 8 }}>Your Profile</Text>
+            <Text style={{ color: "#9CA3AF", fontSize: 14, textAlign: "center", lineHeight: 20, marginBottom: 24 }}>Sign in to save your profile and sync across devices, or continue as guest.</Text>
+            <TouchableOpacity
+              style={{ backgroundColor: "#7C3AED", borderRadius: 16, paddingVertical: 14, paddingHorizontal: 32, shadowColor: "#7C3AED", shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.5, shadowRadius: 12, marginBottom: 12 }}
+              onPress={() => router.push("/login" as any)}
+            >
+              <Text style={{ color: "#FFFFFF", fontWeight: "800", fontSize: 16 }}>Sign In / Create Account</Text>
+            </TouchableOpacity>
+          </View>
+        </ImageBackground>
+      </View>
     );
   }
 
-  return (
-    <ScreenContainer>
-      <ScrollView contentContainerStyle={{ paddingBottom: 32 }} showsVerticalScrollIndicator={false}>
-        {/* Header */}
-        <View style={{ paddingHorizontal: 20, paddingTop: 16, paddingBottom: 8, flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-          <View>
-            <Text style={{ color: "#FFFFFF", fontSize: 24, fontWeight: "800" }}>Profile</Text>
-            <Text style={{ color: "#9CA3AF", fontSize: 13, marginTop: 2 }}>{user?.email ?? user?.name ?? "Athlete"}</Text>
-          </View>
-          <TouchableOpacity
-            style={{ backgroundColor: editing ? "#22C55E" : "#7C3AED", borderRadius: 12, paddingHorizontal: 16, paddingVertical: 8 }}
-            onPress={editing ? saveProfile : () => setEditing(true)}
-          >
-            {upsertProfile.isPending ? (
-              <ActivityIndicator color="#FFFFFF" size="small" />
-            ) : (
-              <Text style={{ color: "#FFFFFF", fontWeight: "700", fontSize: 13 }}>{editing ? "Save" : "Edit"}</Text>
-            )}
-          </TouchableOpacity>
-        </View>
+  const displayName = isAuthenticated ? (user?.name ?? "Athlete") : (guestProfile?.name ?? "Guest Athlete");
+  const displayEmail = isAuthenticated ? (user?.email ?? "") : "Guest Mode";
 
-        {/* Avatar */}
-        <View style={{ alignItems: "center", paddingVertical: 20 }}>
-          <View style={{ width: 80, height: 80, borderRadius: 40, backgroundColor: "#7C3AED30", alignItems: "center", justifyContent: "center", borderWidth: 3, borderColor: "#7C3AED" }}>
-            <Text style={{ fontSize: 36 }}>💪</Text>
+  return (
+    <View style={{ flex: 1, backgroundColor: "#080810" }}>
+      <ScrollView contentContainerStyle={{ paddingBottom: 32 }} showsVerticalScrollIndicator={false} style={{ flex: 1 }}>
+        {/* Hero Header */}
+        <ImageBackground source={{ uri: HERO_BG }} style={{ height: 200 }} resizeMode="cover">
+          <View style={{ flex: 1, backgroundColor: "rgba(8,8,16,0.65)", justifyContent: "flex-end", padding: 20, paddingTop: 52 }}>
+            <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "flex-end" }}>
+              <View style={{ flexDirection: "row", alignItems: "center", gap: 14 }}>
+                <View style={{ width: 64, height: 64, borderRadius: 32, backgroundColor: "#7C3AED30", alignItems: "center", justifyContent: "center", borderWidth: 3, borderColor: "#7C3AED" }}>
+                  <Text style={{ fontSize: 28 }}>💪</Text>
+                </View>
+                <View>
+                  <Text style={{ color: "#FFFFFF", fontWeight: "800", fontSize: 20 }}>{displayName}</Text>
+                  <Text style={{ color: "#9CA3AF", fontSize: 12 }}>{displayEmail}</Text>
+                  {isGuest && (
+                    <View style={{ backgroundColor: "#EAB30820", borderRadius: 6, paddingHorizontal: 8, paddingVertical: 2, marginTop: 4, alignSelf: "flex-start" }}>
+                      <Text style={{ color: "#FDE68A", fontSize: 10, fontWeight: "700" }}>GUEST MODE</Text>
+                    </View>
+                  )}
+                </View>
+              </View>
+              {isAuthenticated && (
+                <TouchableOpacity
+                  style={{ backgroundColor: editing ? "#22C55E" : "rgba(124,58,237,0.4)", borderRadius: 12, paddingHorizontal: 16, paddingVertical: 8, borderWidth: 1, borderColor: editing ? "#22C55E" : "rgba(124,58,237,0.6)" }}
+                  onPress={editing ? saveProfile : () => setEditing(true)}
+                >
+                  {upsertProfile.isPending ? (
+                    <ActivityIndicator color="#FFFFFF" size="small" />
+                  ) : (
+                    <Text style={{ color: "#FFFFFF", fontWeight: "700", fontSize: 13 }}>{editing ? "Save" : "Edit"}</Text>
+                  )}
+                </TouchableOpacity>
+              )}
+            </View>
           </View>
-          <Text style={{ color: "#FFFFFF", fontWeight: "700", fontSize: 18, marginTop: 10 }}>{user?.name ?? "Athlete"}</Text>
-          {profile?.goal && (
-            <Text style={{ color: "#A78BFA", fontSize: 13, marginTop: 4 }}>
-              {GOALS.find(g => g.key === profile.goal)?.icon} {GOALS.find(g => g.key === profile.goal)?.label}
-            </Text>
-          )}
-        </View>
+        </ImageBackground>
 
         {/* Stats Row */}
         {profile && (
@@ -272,16 +287,32 @@ export default function ProfileScreen() {
             <FeatureLink icon="🗺️" label="Find Nearby Gyms" onPress={() => router.push("/gym-finder" as any)} />
           </View>
 
+          {/* Guest mode — upgrade CTA */}
+          {isGuest && (
+            <TouchableOpacity
+              style={{ backgroundColor: "#7C3AED", borderRadius: 16, paddingVertical: 14, alignItems: "center", marginBottom: 10, shadowColor: "#7C3AED", shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.4, shadowRadius: 8 }}
+              onPress={() => router.push("/login" as any)}
+            >
+              <Text style={{ color: "#FFFFFF", fontWeight: "700", fontSize: 14 }}>🔐 Sign In to Sync Your Data</Text>
+            </TouchableOpacity>
+          )}
+
           {/* Logout */}
           <TouchableOpacity
             style={{ backgroundColor: "#EF444420", borderRadius: 16, paddingVertical: 14, alignItems: "center", borderWidth: 1, borderColor: "#EF444440" }}
-            onPress={() => router.push("/logout" as any)}
+            onPress={() => {
+              if (isGuest) {
+                clearGuest();
+              } else {
+                router.push("/logout" as any);
+              }
+            }}
           >
-            <Text style={{ color: "#EF4444", fontWeight: "700", fontSize: 14 }}>Sign Out</Text>
+            <Text style={{ color: "#EF4444", fontWeight: "700", fontSize: 14 }}>{isGuest ? "Exit Guest Mode" : "Sign Out"}</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
-    </ScreenContainer>
+    </View>
   );
 }
 
