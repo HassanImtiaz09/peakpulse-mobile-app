@@ -2,10 +2,18 @@ import React, { useState, useEffect, useRef } from "react";
 import {
   ScrollView, Text, View, TouchableOpacity, ActivityIndicator, Alert, Linking, Platform,
 } from "react-native";
-import MapView, { Marker, Region } from "react-native-maps";
 import * as Location from "expo-location";
 import { useRouter } from "expo-router";
 import { ScreenContainer } from "@/components/screen-container";
+
+// Lazy-load react-native-maps only on native platforms to avoid web bundling errors
+let MapView: any = null;
+let Marker: any = null;
+if (Platform.OS !== "web") {
+  const maps = require("react-native-maps");
+  MapView = maps.default;
+  Marker = maps.Marker;
+}
 
 interface Gym {
   id: number;
@@ -21,13 +29,12 @@ interface Gym {
 
 export default function GymFinderScreen() {
   const router = useRouter();
-  const mapRef = useRef<MapView>(null);
+  const mapRef = useRef<any>(null);
   const [location, setLocation] = useState<{ lat: number; lon: number } | null>(null);
   const [gyms, setGyms] = useState<Gym[]>([]);
   const [loading, setLoading] = useState(false);
   const [selectedGym, setSelectedGym] = useState<Gym | null>(null);
   const [radius, setRadius] = useState(2000);
-  const [mapReady, setMapReady] = useState(false);
 
   useEffect(() => {
     requestLocation();
@@ -120,7 +127,7 @@ export default function GymFinderScreen() {
     });
   }
 
-  const initialRegion: Region | undefined = location ? {
+  const initialRegion = location ? {
     latitude: location.lat,
     longitude: location.lon,
     latitudeDelta: 0.05,
@@ -164,18 +171,17 @@ export default function GymFinderScreen() {
         ))}
       </View>
 
-      {/* Map */}
-      {Platform.OS !== "web" && initialRegion ? (
+      {/* Map — native only */}
+      {Platform.OS !== "web" && MapView && initialRegion ? (
         <View style={{ height: 260, marginHorizontal: 20, borderRadius: 16, overflow: "hidden", marginBottom: 12 }}>
           <MapView
             ref={mapRef}
             style={{ flex: 1 }}
             initialRegion={initialRegion}
-            onMapReady={() => setMapReady(true)}
             showsUserLocation
             showsMyLocationButton
           >
-            {gyms.map(gym => (
+            {Marker && gyms.map(gym => (
               <Marker
                 key={gym.id}
                 coordinate={{ latitude: gym.lat, longitude: gym.lon }}
@@ -188,9 +194,9 @@ export default function GymFinderScreen() {
           </MapView>
         </View>
       ) : (
-        <View style={{ height: 120, marginHorizontal: 20, borderRadius: 16, backgroundColor: "#13131F", alignItems: "center", justifyContent: "center", marginBottom: 12, borderWidth: 1, borderColor: "#1F2937" }}>
-          <Text style={{ fontSize: 32, marginBottom: 6 }}>🗺️</Text>
-          <Text style={{ color: "#9CA3AF", fontSize: 12 }}>Map available on iOS & Android</Text>
+        <View style={{ height: 100, marginHorizontal: 20, borderRadius: 16, backgroundColor: "#13131F", alignItems: "center", justifyContent: "center", marginBottom: 12, borderWidth: 1, borderColor: "#1F2937" }}>
+          <Text style={{ fontSize: 28, marginBottom: 4 }}>🗺️</Text>
+          <Text style={{ color: "#9CA3AF", fontSize: 12 }}>Interactive map available on iOS & Android</Text>
         </View>
       )}
 
@@ -200,9 +206,9 @@ export default function GymFinderScreen() {
           <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start" }}>
             <View style={{ flex: 1 }}>
               <Text style={{ color: "#FFFFFF", fontWeight: "700", fontSize: 15 }}>{selectedGym.name}</Text>
-              {selectedGym.address && <Text style={{ color: "#9CA3AF", fontSize: 12, marginTop: 2 }}>📍 {selectedGym.address}</Text>}
-              {selectedGym.opening_hours && <Text style={{ color: "#9CA3AF", fontSize: 12, marginTop: 2 }}>🕐 {selectedGym.opening_hours}</Text>}
-              {selectedGym.distance && <Text style={{ color: "#22C55E", fontSize: 12, marginTop: 2 }}>📏 {formatDistance(selectedGym.distance)} away</Text>}
+              {selectedGym.address ? <Text style={{ color: "#9CA3AF", fontSize: 12, marginTop: 2 }}>📍 {selectedGym.address}</Text> : null}
+              {selectedGym.opening_hours ? <Text style={{ color: "#9CA3AF", fontSize: 12, marginTop: 2 }}>🕐 {selectedGym.opening_hours}</Text> : null}
+              {selectedGym.distance ? <Text style={{ color: "#22C55E", fontSize: 12, marginTop: 2 }}>📏 {formatDistance(selectedGym.distance)} away</Text> : null}
             </View>
             <TouchableOpacity onPress={() => setSelectedGym(null)}>
               <Text style={{ color: "#6B7280", fontSize: 16 }}>✕</Text>
@@ -215,22 +221,22 @@ export default function GymFinderScreen() {
             >
               <Text style={{ color: "#FFFFFF", fontWeight: "700", fontSize: 12 }}>🗺️ Directions</Text>
             </TouchableOpacity>
-            {selectedGym.website && (
+            {selectedGym.website ? (
               <TouchableOpacity
                 style={{ flex: 1, backgroundColor: "#1F2937", borderRadius: 10, paddingVertical: 8, alignItems: "center" }}
                 onPress={() => Linking.openURL(selectedGym.website!)}
               >
                 <Text style={{ color: "#9CA3AF", fontWeight: "700", fontSize: 12 }}>🌐 Website</Text>
               </TouchableOpacity>
-            )}
-            {selectedGym.phone && (
+            ) : null}
+            {selectedGym.phone ? (
               <TouchableOpacity
                 style={{ flex: 1, backgroundColor: "#1F2937", borderRadius: 10, paddingVertical: 8, alignItems: "center" }}
                 onPress={() => Linking.openURL(`tel:${selectedGym.phone}`)}
               >
                 <Text style={{ color: "#9CA3AF", fontWeight: "700", fontSize: 12 }}>📞 Call</Text>
               </TouchableOpacity>
-            )}
+            ) : null}
           </View>
         </View>
       )}
@@ -249,7 +255,7 @@ export default function GymFinderScreen() {
             <Text style={{ color: "#9CA3AF", fontSize: 13, textAlign: "center" }}>Try increasing the search radius or check your location settings.</Text>
           </View>
         ) : (
-          gyms.map((gym, i) => (
+          gyms.map((gym) => (
             <TouchableOpacity
               key={gym.id}
               style={{ backgroundColor: "#13131F", borderRadius: 14, padding: 14, marginBottom: 8, borderWidth: 1, borderColor: selectedGym?.id === gym.id ? "#7C3AED" : "#1F2937" }}
@@ -271,9 +277,9 @@ export default function GymFinderScreen() {
                   ) : null}
                 </View>
                 <View style={{ alignItems: "flex-end" }}>
-                  {gym.distance && (
+                  {gym.distance ? (
                     <Text style={{ color: "#22C55E", fontWeight: "700", fontSize: 12 }}>{formatDistance(gym.distance)}</Text>
-                  )}
+                  ) : null}
                   <TouchableOpacity
                     style={{ backgroundColor: "#7C3AED20", borderRadius: 8, paddingHorizontal: 8, paddingVertical: 4, marginTop: 4 }}
                     onPress={() => openDirections(gym)}
