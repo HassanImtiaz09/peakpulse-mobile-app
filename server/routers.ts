@@ -2,7 +2,7 @@ import { z } from "zod";
 import { COOKIE_NAME } from "../shared/const.js";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
-import { router, protectedProcedure, publicProcedure } from "./_core/trpc";
+import { router, protectedProcedure, publicProcedure, guestOrUserProcedure } from "./_core/trpc";
 import { invokeLLM } from "./_core/llm";
 import { generateImage } from "./_core/imageGeneration";
 import { storagePut } from "./storage";
@@ -75,6 +75,7 @@ export const appRouter = router({
   }),
 
   profile: router({
+    // Protected — only for logged-in users
     get: protectedProcedure.query(async ({ ctx }) => db.getUserProfile(ctx.user.id)),
     upsert: protectedProcedure
       .input(z.object({
@@ -85,21 +86,24 @@ export const appRouter = router({
         targetBodyFat: z.number().optional(), units: z.string().optional(), daysPerWeek: z.number().optional(),
       }))
       .mutation(async ({ ctx, input }) => db.upsertUserProfile(ctx.user.id, input)),
-    getDailyInsight: protectedProcedure.query(async ({ ctx }) => {
-      const profile = await db.getUserProfile(ctx.user.id);
-      const goal = profile?.goal?.replace(/_/g, " ") ?? "general fitness";
-      const response = await invokeLLM({
-        messages: [
-          { role: "system", content: "You are an elite fitness coach. Give a 1-2 sentence personalised coaching tip. Be specific, motivating, and actionable." },
-          { role: "user", content: `My goal is "${goal}". Give me a daily coaching tip.` },
-        ],
-      });
-      return { insight: response.choices[0].message.content ?? "Stay consistent — small daily actions compound into big results." };
-    }),
+    // Daily insight — works for guests too (no user-specific data needed)
+    getDailyInsight: guestOrUserProcedure
+      .input(z.object({ goal: z.string().optional() }).optional())
+      .query(async ({ input }) => {
+        const goal = input?.goal?.replace(/_/g, " ") ?? "general fitness";
+        const response = await invokeLLM({
+          messages: [
+            { role: "system", content: "You are an elite fitness coach. Give a 1-2 sentence personalised coaching tip. Be specific, motivating, and actionable." },
+            { role: "user", content: `My goal is "${goal}". Give me a daily coaching tip.` },
+          ],
+        });
+        return { insight: response.choices[0].message.content ?? "Stay consistent — small daily actions compound into big results." };
+      }),
   }),
 
   bodyScan: router({
-    analyze: protectedProcedure
+    // AI analysis — works for guests (no DB save for guests)
+    analyze: guestOrUserProcedure
       .input(z.object({ photoUrl: z.string() }))
       .mutation(async ({ ctx, input }) => {
         const prompt = `You are an expert fitness assessment AI. Analyze this full-body photo and provide:
@@ -140,15 +144,19 @@ export const appRouter = router({
             } catch { return { ...t, imageUrl: null }; }
           })
         );
-        const scanId = await db.createBodyScan(ctx.user.id, {
-          photoUrl: input.photoUrl,
-          estimatedBodyFat: analysis.estimated_body_fat,
-          confidenceLow: analysis.confidence_low,
-          confidenceHigh: analysis.confidence_high,
-          muscleMassEstimate: analysis.muscle_mass_estimate,
-          analysisNotes: analysis.analysis_notes,
-          transformationsJson: JSON.stringify(transformationsWithImages),
-        });
+        // Only save to DB if user is authenticated
+        let scanId: number | undefined;
+        if (ctx.user) {
+          scanId = await db.createBodyScan(ctx.user.id, {
+            photoUrl: input.photoUrl,
+            estimatedBodyFat: analysis.estimated_body_fat,
+            confidenceLow: analysis.confidence_low,
+            confidenceHigh: analysis.confidence_high,
+            muscleMassEstimate: analysis.muscle_mass_estimate,
+            analysisNotes: analysis.analysis_notes,
+            transformationsJson: JSON.stringify(transformationsWithImages),
+          });
+        }
         return { id: scanId, estimatedBodyFat: analysis.estimated_body_fat, confidenceLow: analysis.confidence_low, confidenceHigh: analysis.confidence_high, muscleMassEstimate: analysis.muscle_mass_estimate, analysisNotes: analysis.analysis_notes, transformations: transformationsWithImages };
       }),
     getLatest: protectedProcedure.query(async ({ ctx }) => {
@@ -159,7 +167,8 @@ export const appRouter = router({
   }),
 
   workoutPlan: router({
-    generate: protectedProcedure
+    // AI generation — works for guests (no DB save for guests)
+    generate: guestOrUserProcedure
       .input(z.object({ goal: z.string(), workoutStyle: z.string(), daysPerWeek: z.number().default(4), fitnessLevel: z.string().default("intermediate") }))
       .mutation(async ({ ctx, input }) => {
         const prompt = `Generate a complete 7-day workout plan as JSON for: Goal: ${input.goal.replace(/_/g," ")}, Style: ${input.workoutStyle}, Days/week: ${input.daysPerWeek}, Level: ${input.fitnessLevel}. Return: {"schedule":[{"day":"Monday","focus":"Push Day","isRest":false,"exercises":[{"name":"Bench Press","sets":"4x8","rest":"90s","notes":""}]}],"insight":"coaching tip"}`;
@@ -167,7 +176,11 @@ export const appRouter = router({
         let planData: any;
         try { planData = JSON.parse((response.choices[0].message.content as string) ?? "{}"); }
         catch { planData = { schedule: getFallbackWorkoutPlan(input.goal), insight: "Stay consistent with your training." }; }
-        const planId = await db.createFitnessPlan(ctx.user.id, { planType: "workout", goal: input.goal, workoutStyle: input.workoutStyle, planJson: JSON.stringify(planData.schedule), insight: planData.insight });
+        // Only save to DB if user is authenticated
+        let planId: number | undefined;
+        if (ctx.user) {
+          planId = await db.createFitnessPlan(ctx.user.id, { planType: "workout", goal: input.goal, workoutStyle: input.workoutStyle, planJson: JSON.stringify(planData.schedule), insight: planData.insight });
+        }
         return { id: planId, schedule: planData.schedule, insight: planData.insight };
       }),
     getActive: protectedProcedure.query(async ({ ctx }) => {
@@ -182,7 +195,8 @@ export const appRouter = router({
   }),
 
   mealPlan: router({
-    generate: protectedProcedure
+    // AI generation — works for guests (no DB save for guests)
+    generate: guestOrUserProcedure
       .input(z.object({ goal: z.string(), dietaryPreference: z.string(), dailyCalories: z.number().optional(), weightKg: z.number().optional() }))
       .mutation(async ({ ctx, input }) => {
         const calories = input.dailyCalories ?? 2000;
@@ -191,7 +205,11 @@ export const appRouter = router({
         let planData: any;
         try { planData = JSON.parse((response.choices[0].message.content as string) ?? "{}"); }
         catch { planData = { dailyCalories: calories, days: [], insight: "Eat balanced meals and stay hydrated." }; }
-        const planId = await db.createFitnessPlan(ctx.user.id, { planType: "meal", goal: input.goal, dietaryPreference: input.dietaryPreference, planJson: JSON.stringify(planData), insight: planData.insight });
+        // Only save to DB if user is authenticated
+        let planId: number | undefined;
+        if (ctx.user) {
+          planId = await db.createFitnessPlan(ctx.user.id, { planType: "meal", goal: input.goal, dietaryPreference: input.dietaryPreference, planJson: JSON.stringify(planData), insight: planData.insight });
+        }
         return { id: planId, ...planData };
       }),
     getActive: protectedProcedure.query(async ({ ctx }) => {
@@ -203,9 +221,10 @@ export const appRouter = router({
   }),
 
   mealPrep: router({
-    generate: protectedProcedure
+    // AI generation — works for guests
+    generate: guestOrUserProcedure
       .input(z.object({ dietaryPreference: z.string(), servings: z.number().default(4), budget: z.string().default("moderate") }))
-      .mutation(async ({ ctx, input }) => {
+      .mutation(async ({ input }) => {
         const prompt = `Generate a weekly batch cooking meal prep plan as JSON. Diet: ${input.dietaryPreference}, Servings: ${input.servings}, Budget: ${input.budget}. Return: {"prepTime":"2-3 hours","recipes":[{"name":"Chicken Bowls","servings":${input.servings},"calories":450,"protein":40,"carbs":45,"fat":12,"ingredients":["500g chicken"],"instructions":["Step 1"],"storageInstructions":"4 days","mealType":"lunch"}],"shoppingList":["item1"],"tips":["tip1"]}. Respect dietary restrictions.`;
         const response = await invokeLLM({ messages: [{ role: "system", content: "You are a meal prep expert. Always respond with valid JSON." }, { role: "user", content: prompt }], response_format: { type: "json_object" } });
         let prepData: any;
@@ -216,9 +235,10 @@ export const appRouter = router({
   }),
 
   mealLog: router({
-    analyzePhoto: protectedProcedure
+    // Photo calorie analysis — works for guests
+    analyzePhoto: guestOrUserProcedure
       .input(z.object({ photoUrl: z.string() }))
-      .mutation(async ({ ctx, input }) => {
+      .mutation(async ({ input }) => {
         const response = await invokeLLM({
           messages: [
             { role: "system", content: `Analyze this food image. Return JSON: {"foods":[{"name":"string","portion":"string","calories":number,"protein":number,"carbs":number,"fat":number}],"totalCalories":number,"totalProtein":number,"totalCarbs":number,"totalFat":number,"confidence":"low"|"medium"|"high","notes":"description"}` },
@@ -231,6 +251,7 @@ export const appRouter = router({
         catch { result = { foods: [], totalCalories: 0, totalProtein: 0, totalCarbs: 0, totalFat: 0, confidence: "low", notes: "Could not analyze" }; }
         return result;
       }),
+    // Logging to DB — only for authenticated users
     log: protectedProcedure
       .input(z.object({ name: z.string(), mealType: z.string().optional(), calories: z.number().optional(), protein: z.number().optional(), carbs: z.number().optional(), fat: z.number().optional(), photoUrl: z.string().optional() }))
       .mutation(async ({ ctx, input }) => db.createMealLog(ctx.user.id, input)),
@@ -238,18 +259,23 @@ export const appRouter = router({
   }),
 
   progress: router({
-    uploadPhoto: protectedProcedure
+    // Photo upload and analysis — works for guests (no DB save for guests)
+    uploadPhoto: guestOrUserProcedure
       .input(z.object({ photoBase64: z.string(), note: z.string().optional(), isBaseline: z.boolean().optional() }))
       .mutation(async ({ ctx, input }) => {
         const buffer = Buffer.from(input.photoBase64, "base64");
-        const key = `progress/${ctx.user.id}/${Date.now()}-${randomSuffix()}.jpg`;
+        const key = `progress/${ctx.user?.id ?? "guest"}/${Date.now()}-${randomSuffix()}.jpg`;
         const { url } = await storagePut(key, buffer, "image/jpeg");
-        const photoId = await db.createProgressPhoto(ctx.user.id, { photoUrl: url, note: input.note, isBaseline: input.isBaseline ?? false });
+        // Only save to DB if user is authenticated
+        let photoId: number | undefined;
+        if (ctx.user) {
+          photoId = await db.createProgressPhoto(ctx.user.id, { photoUrl: url, note: input.note, isBaseline: input.isBaseline ?? false });
+        }
         return { id: photoId, photoUrl: url };
       }),
-    analyzeProgress: protectedProcedure
+    analyzeProgress: guestOrUserProcedure
       .input(z.object({ currentPhotoUrl: z.string(), baselinePhotoUrl: z.string().optional() }))
-      .mutation(async ({ ctx, input }) => {
+      .mutation(async ({ input }) => {
         const messages: any[] = [
           { role: "system", content: `You are an expert fitness coach analyzing progress photos. Return JSON: {"summary":"1-2 sentence assessment","details":["observation1","observation2","observation3","recommendation"],"improvements":["area1"],"recommendations":["rec1"]}` },
         ];
@@ -268,12 +294,13 @@ export const appRouter = router({
   }),
 
   upload: router({
-    photo: protectedProcedure
+    // Photo upload — works for guests (stored to S3 without user ID)
+    photo: guestOrUserProcedure
       .input(z.object({ base64: z.string(), mimeType: z.string().default("image/jpeg") }))
       .mutation(async ({ ctx, input }) => {
         const buffer = Buffer.from(input.base64, "base64");
         const ext = input.mimeType.includes("png") ? "png" : "jpg";
-        const key = `uploads/${ctx.user.id}/${Date.now()}-${randomSuffix()}.${ext}`;
+        const key = `uploads/${ctx.user?.id ?? "guest"}/${Date.now()}-${randomSuffix()}.${ext}`;
         const { url } = await storagePut(key, buffer, input.mimeType);
         return { url };
       }),

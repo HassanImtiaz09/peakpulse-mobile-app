@@ -23,19 +23,40 @@ export default function MealsScreen() {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [analyzing, setAnalyzing] = useState(false);
   const [analysisResult, setAnalysisResult] = useState<any>(null);
+  const [loggingMeal, setLoggingMeal] = useState(false);
 
-  const { data: todayMeals, refetch: refetchMeals } = trpc.mealLog.getToday.useQuery(undefined, { enabled: isAuthenticated });
+  // Local meal log for guest users (in-memory for session)
+  const [localMeals, setLocalMeals] = useState<any[]>([]);
+
+  const { data: dbMeals, refetch: refetchMeals } = trpc.mealLog.getToday.useQuery(undefined, { enabled: isAuthenticated });
+  const todayMeals = isAuthenticated ? dbMeals : localMeals;
+
   const uploadPhoto = trpc.upload.photo.useMutation();
   const analyzePhoto = trpc.mealLog.analyzePhoto.useMutation();
-  const logMeal = trpc.mealLog.log.useMutation({
+  const dbLogMeal = trpc.mealLog.log.useMutation({
     onSuccess: () => { refetchMeals(); setMealName(""); setSelectedImage(null); setAnalysisResult(null); Alert.alert("Logged!", "Meal added to your log."); },
     onError: (e) => Alert.alert("Error", e.message),
   });
+
+  async function logMealForGuest(data: { name: string; mealType: string; calories?: number; protein?: number; carbs?: number; fat?: number }) {
+    setLoggingMeal(true);
+    try {
+      setLocalMeals(prev => [...prev, { ...data, id: Date.now(), createdAt: new Date().toISOString() }]);
+      setMealName(""); setSelectedImage(null); setAnalysisResult(null);
+      Alert.alert("Logged!", "Meal added to your session log.");
+    } finally { setLoggingMeal(false); }
+  }
+
+  async function handleLogMeal(data: { name: string; mealType: string; calories?: number; protein?: number; carbs?: number; fat?: number }) {
+    if (isAuthenticated) { dbLogMeal.mutate(data); }
+    else { await logMealForGuest(data); }
+  }
 
   const todayCalories = todayMeals?.reduce((s: number, m: any) => s + (m.calories ?? 0), 0) ?? 0;
   const todayProtein = todayMeals?.reduce((s: number, m: any) => s + (m.protein ?? 0), 0) ?? 0;
   const todayCarbs = todayMeals?.reduce((s: number, m: any) => s + (m.carbs ?? 0), 0) ?? 0;
   const todayFat = todayMeals?.reduce((s: number, m: any) => s + (m.fat ?? 0), 0) ?? 0;
+  const isMealLogging = isAuthenticated ? dbLogMeal.isPending : loggingMeal;
 
   async function pickImage(useCamera: boolean) {
     try {
@@ -83,7 +104,7 @@ export default function MealsScreen() {
 
   async function logAnalyzedMeal() {
     if (!analysisResult) return;
-    await logMeal.mutateAsync({
+    await handleLogMeal({
       name: mealName || String(analysisResult.notes) || "Analyzed Meal",
       mealType,
       calories: analysisResult.totalCalories,
@@ -178,11 +199,11 @@ export default function MealsScreen() {
                 returnKeyType="done"
               />
               <TouchableOpacity
-                style={{ backgroundColor: "#7C3AED", borderRadius: 12, paddingVertical: 10, alignItems: "center", opacity: !mealName || logMeal.isPending ? 0.6 : 1 }}
-                onPress={() => logMeal.mutate({ name: mealName, mealType })}
-                disabled={!mealName || logMeal.isPending}
+                style={{ backgroundColor: "#7C3AED", borderRadius: 12, paddingVertical: 10, alignItems: "center", opacity: !mealName || isMealLogging ? 0.6 : 1 }}
+                onPress={() => handleLogMeal({ name: mealName, mealType })}
+                disabled={!mealName || isMealLogging}
               >
-                {logMeal.isPending ? <ActivityIndicator color="#FFFFFF" size="small" /> : <Text style={{ color: "#FFFFFF", fontWeight: "700" }}>+ Log Meal</Text>}
+                {isMealLogging ? <ActivityIndicator color="#FFFFFF" size="small" /> : <Text style={{ color: "#FFFFFF", fontWeight: "700" }}>+ Log Meal</Text>}
               </TouchableOpacity>
             </View>
 
@@ -334,11 +355,11 @@ export default function MealsScreen() {
                 />
 
                 <TouchableOpacity
-                  style={{ backgroundColor: "#22C55E", borderRadius: 16, paddingVertical: 14, alignItems: "center", opacity: logMeal.isPending ? 0.7 : 1 }}
+                  style={{ backgroundColor: "#22C55E", borderRadius: 16, paddingVertical: 14, alignItems: "center", opacity: isMealLogging ? 0.7 : 1 }}
                   onPress={logAnalyzedMeal}
-                  disabled={logMeal.isPending}
+                  disabled={isMealLogging}
                 >
-                  {logMeal.isPending ? <ActivityIndicator color="#FFFFFF" size="small" /> : <Text style={{ color: "#FFFFFF", fontWeight: "700", fontSize: 15 }}>+ Log This Meal</Text>}
+                  {isMealLogging ? <ActivityIndicator color="#FFFFFF" size="small" /> : <Text style={{ color: "#FFFFFF", fontWeight: "700", fontSize: 15 }}>+ Log This Meal</Text>}
                 </TouchableOpacity>
               </View>
             )}

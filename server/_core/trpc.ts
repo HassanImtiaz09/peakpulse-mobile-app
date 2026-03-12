@@ -27,6 +27,10 @@ const requireUser = t.middleware(async (opts) => {
 
 export const protectedProcedure = t.procedure.use(requireUser);
 
+// Procedure that works for both authenticated users AND guests (no auth required)
+// ctx.user will be null for guests
+export const guestOrUserProcedure = t.procedure;
+
 export const adminProcedure = t.procedure.use(
   t.middleware(async (opts) => {
     const { ctx, next } = opts;

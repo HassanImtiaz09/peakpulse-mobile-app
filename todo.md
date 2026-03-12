@@ -116,3 +116,13 @@
 - [x] Redesign Meals screen with rich food imagery style
 - [x] Redesign Profile screen with sleek settings UI
 - [x] Redesign onboarding/login with full-screen gradient hero
+
+## Bug Fixes (Round 3)
+
+- [x] Fix "Please login (10001)" error in guest mode for all AI features
+- [x] Body scan: AI analysis must work for guest users (no auth required)
+- [x] Workout plan generation: must work for guest users (store locally)
+- [x] Meal plan generation: must work for guest users (store locally)
+- [x] Meal log / calorie estimator: must work for guest users (store locally)
+- [x] Progress photos: must work for guest users (store locally)
+- [x] Profile save: must work for guest users (store locally)

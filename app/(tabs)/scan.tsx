@@ -109,39 +109,25 @@ export default function ScanScreen() {
     if (!selectedImage) return;
     setStep("analyzing");
     try {
-      if (isAuthenticated) {
-        let base64 = "";
-        if (Platform.OS === "web") {
-          const response = await fetch(selectedImage);
-          const blob = await response.blob();
-          base64 = await new Promise<string>((resolve) => {
-            const reader = new FileReader();
-            reader.onloadend = () => resolve((reader.result as string).split(",")[1]);
-            reader.readAsDataURL(blob);
-          });
-        } else {
-          base64 = await FileSystem.readAsStringAsync(selectedImage, { encoding: FileSystem.EncodingType.Base64 });
-        }
-        const { url } = await uploadPhoto.mutateAsync({ base64, mimeType: "image/jpeg" });
-        await analyzeScan.mutateAsync({ photoUrl: url });
+      // Both authenticated and guest users use real AI
+      let base64 = "";
+      if (Platform.OS === "web") {
+        const response = await fetch(selectedImage);
+        const blob = await response.blob();
+        base64 = await new Promise<string>((resolve) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve((reader.result as string).split(",")[1]);
+          reader.readAsDataURL(blob);
+        });
       } else {
-        // Guest mode — simulate analysis
-        await new Promise(r => setTimeout(r, 3000));
-        const guestScan = {
-          estimatedBodyFat: 22.5,
-          confidenceLow: 20,
-          confidenceHigh: 25,
-          muscleMassEstimate: "Average",
-          analysisNotes: "Based on your photo, you appear to have an average body composition. With consistent training and proper nutrition, you can achieve your target body fat percentage.",
-          transformations: [
-            { target_bf: 10, description: "Elite athletic physique — visible abs and muscle definition throughout.", estimated_weeks: 24, effort_level: "extreme" },
-            { target_bf: 12, description: "Lean and athletic — clear muscle definition, six-pack visible.", estimated_weeks: 18, effort_level: "very_high" },
-            { target_bf: 15, description: "Fit and lean — good muscle tone, flat stomach.", estimated_weeks: 12, effort_level: "high" },
-            { target_bf: 20, description: "Healthy and active — good overall fitness, slight muscle definition.", estimated_weeks: 6, effort_level: "moderate" },
-            { target_bf: 25, description: "Comfortable and healthy — maintaining current fitness level.", estimated_weeks: 2, effort_level: "moderate" },
-          ],
-        };
-        await AsyncStorage.setItem("@guest_scan", JSON.stringify(guestScan));
+        base64 = await FileSystem.readAsStringAsync(selectedImage, { encoding: FileSystem.EncodingType.Base64 });
+      }
+      const { url } = await uploadPhoto.mutateAsync({ base64, mimeType: "image/jpeg" });
+      const result = await analyzeScan.mutateAsync({ photoUrl: url });
+      if (!isAuthenticated) {
+        // Store result locally for guest users
+        await AsyncStorage.setItem("@guest_scan", JSON.stringify(result));
+        setGuestScanData(result);
         setStep("results");
       }
     } catch (e: any) {
@@ -170,13 +156,20 @@ export default function ScanScreen() {
         await generateWorkoutPlan.mutateAsync({ workoutStyle, daysPerWeek, goal: "lose_fat" });
         await generateMealPlan.mutateAsync({ dietaryPreference: dietaryPref, goal: "lose_fat", dailyCalories: 2000 });
       } else {
-        // Guest mode — save prefs locally
+        // Guest mode — save prefs locally AND generate real AI plans
         const existing = await AsyncStorage.getItem("@guest_profile") ?? "{}";
         const profile = JSON.parse(existing);
         await AsyncStorage.setItem("@guest_profile", JSON.stringify({
           ...profile, workoutStyle, dietaryPreference: dietaryPref, daysPerWeek,
         }));
-        await new Promise(r => setTimeout(r, 2000));
+        // Generate real AI plans (server routes now open to guests)
+        const [workoutResult, mealResult] = await Promise.all([
+          generateWorkoutPlan.mutateAsync({ workoutStyle, daysPerWeek, goal: "lose_fat" }),
+          generateMealPlan.mutateAsync({ dietaryPreference: dietaryPref, goal: "lose_fat", dailyCalories: 2000 }),
+        ]);
+        // Store generated plans locally for guest
+        await AsyncStorage.setItem("@guest_workout_plan", JSON.stringify(workoutResult));
+        await AsyncStorage.setItem("@guest_meal_plan", JSON.stringify(mealResult));
       }
       Alert.alert(
         "Plans Created! 🎉",

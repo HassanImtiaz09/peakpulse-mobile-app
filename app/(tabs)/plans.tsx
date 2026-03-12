@@ -7,6 +7,7 @@ import { ScreenContainer } from "@/components/screen-container";
 import { useAuth } from "@/hooks/use-auth";
 import { useGuestAuth } from "@/lib/guest-auth";
 import { trpc } from "@/lib/trpc";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const WORKOUT_BG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/workout_bg-UnSuPAnKQ8SeUHebtV2HTU.png";
 const MEAL_BG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/meal_bg-ULw7hvjMXJuqDPAXt9iqic.png";
@@ -58,16 +59,42 @@ export default function PlansScreen() {
   const [prepDiet, setPrepDiet] = useState("omnivore");
   const [prepServings, setPrepServings] = useState(4);
 
-  const { data: workoutPlan, refetch: refetchWorkout } = trpc.workoutPlan.getActive.useQuery(undefined, { enabled: isAuthenticated });
-  const { data: mealPlan, refetch: refetchMeal } = trpc.mealPlan.getActive.useQuery(undefined, { enabled: isAuthenticated });
+  const { data: dbWorkoutPlan, refetch: refetchWorkout } = trpc.workoutPlan.getActive.useQuery(undefined, { enabled: isAuthenticated });
+  const { data: dbMealPlan, refetch: refetchMeal } = trpc.mealPlan.getActive.useQuery(undefined, { enabled: isAuthenticated });
+
+  // Local state for guest-generated plans (not saved to DB)
+  const [localWorkoutPlan, setLocalWorkoutPlan] = useState<any>(null);
+  const [localMealPlan, setLocalMealPlan] = useState<any>(null);
+
+  // Load guest plans from AsyncStorage on mount (set by scan flow)
+  React.useEffect(() => {
+    if (isGuest) {
+      AsyncStorage.getItem("@guest_workout_plan").then(raw => {
+        if (raw && !localWorkoutPlan) setLocalWorkoutPlan(JSON.parse(raw));
+      });
+      AsyncStorage.getItem("@guest_meal_plan").then(raw => {
+        if (raw && !localMealPlan) setLocalMealPlan(JSON.parse(raw));
+      });
+    }
+  }, [isGuest]);
+
+  // Use DB plan for authenticated users, local state for guests
+  const workoutPlan = isAuthenticated ? dbWorkoutPlan : localWorkoutPlan;
+  const mealPlan = isAuthenticated ? dbMealPlan : localMealPlan;
 
   const generateWorkout = trpc.workoutPlan.generate.useMutation({
-    onSuccess: () => refetchWorkout(),
+    onSuccess: (data) => {
+      if (isAuthenticated) refetchWorkout();
+      else setLocalWorkoutPlan(data);
+    },
     onError: (e) => Alert.alert("Error", e.message),
   });
 
   const generateMeal = trpc.mealPlan.generate.useMutation({
-    onSuccess: () => refetchMeal(),
+    onSuccess: (data) => {
+      if (isAuthenticated) refetchMeal();
+      else setLocalMealPlan(data);
+    },
     onError: (e) => Alert.alert("Error", e.message),
   });
 
