@@ -193,3 +193,26 @@
 - [x] Upload and wire Platinum Pulse hero backgrounds for all 5 tabs (CDN)
 - [x] Update splash screen background to #080B0F (Platinum Pulse dark)
 - [x] Zero TypeScript errors after full rebrand
+
+## UI Rebrand — Aurora Titan (Round 9)
+
+- [ ] Generate Aurora Titan hero backgrounds for all 5 tabs
+- [ ] Install DM Sans + Outfit Google Fonts
+- [ ] Update theme.config.js to Aurora Titan emerald/teal palette
+- [ ] Rebuild tab bar with Aurora Titan design
+- [ ] Rebuild Dashboard screen with Aurora Titan UI
+- [ ] Apply Aurora Titan colour + font substitutions to all 17 screens
+- [ ] Upload and wire Aurora Titan hero backgrounds (CDN)
+- [ ] Update splash screen background to Aurora Titan dark colour
+
+## UI Rebrand — Aurora Titan (Round 9) — COMPLETED
+
+- [x] Generate Aurora Titan hero backgrounds for all 5 tabs (aurora borealis aesthetic)
+- [x] Install DM Sans + Outfit Google Fonts
+- [x] Update theme.config.js to Aurora Titan emerald/teal palette (#10B981 / #0D9488)
+- [x] Rebuild tab bar with Aurora Titan design (emerald glow dot, teal border)
+- [x] Rebuild Dashboard screen with Aurora Titan UI (Outfit headings, DM Sans body)
+- [x] Apply Aurora Titan colour + font substitutions to all 17 screens
+- [x] Wire Aurora Titan hero backgrounds to all tab screens
+- [x] Update splash screen background to #060F0A (Aurora Titan forest black)
+- [x] Zero TypeScript errors after full rebrand

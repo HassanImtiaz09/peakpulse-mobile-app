@@ -141,7 +141,7 @@ export default function ActiveWorkoutScreen() {
       <ScreenContainer className="flex-1 items-center justify-center p-6">
         <Text className="text-foreground text-lg text-center">No workout data found</Text>
         <TouchableOpacity onPress={() => router.back()} style={{ marginTop: 16 }}>
-          <Text style={{ color: "#E2E8F0", fontFamily: "Syne_700Bold" }}>← Go Back</Text>
+          <Text style={{ color: "#10B981", fontFamily: "Outfit_700Bold" }}>← Go Back</Text>
         </TouchableOpacity>
       </ScreenContainer>
     );
@@ -151,35 +151,35 @@ export default function ActiveWorkoutScreen() {
     <ScreenContainer>
       {/* Header */}
       <View style={{ paddingHorizontal: 20, paddingTop: 16, paddingBottom: 8, flexDirection: "row", alignItems: "center", gap: 12 }}>
-        <TouchableOpacity onPress={() => router.back()} style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: "#0E1218", alignItems: "center", justifyContent: "center" }}>
-          <Text style={{ color: "#F1F5F9", fontSize: 16 }}>←</Text>
+        <TouchableOpacity onPress={() => router.back()} style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: "#0D1F18", alignItems: "center", justifyContent: "center" }}>
+          <Text style={{ color: "#E6FFF5", fontSize: 16 }}>←</Text>
         </TouchableOpacity>
         <View style={{ flex: 1 }}>
-          <Text style={{ color: "#F1F5F9", fontSize: 18, fontFamily: "Syne_800ExtraBold" }}>{dayData.day} — {dayData.focus}</Text>
-          <Text style={{ color: "#64748B", fontSize: 12 }}>{exercises.length} exercises</Text>
+          <Text style={{ color: "#E6FFF5", fontSize: 18, fontFamily: "Outfit_800ExtraBold" }}>{dayData.day} — {dayData.focus}</Text>
+          <Text style={{ color: "#4D8C72", fontSize: 12 }}>{exercises.length} exercises</Text>
         </View>
-        <View style={{ backgroundColor: "rgba(226,232,240,0.08)", borderRadius: 12, paddingHorizontal: 12, paddingVertical: 6 }}>
-          <Text style={{ color: "#CBD5E1", fontFamily: "Syne_700Bold", fontSize: 14 }}>⏱ {formatTime(elapsedSeconds)}</Text>
+        <View style={{ backgroundColor: "rgba(16,185,129,0.10)", borderRadius: 12, paddingHorizontal: 12, paddingVertical: 6 }}>
+          <Text style={{ color: "#34D399", fontFamily: "Outfit_700Bold", fontSize: 14 }}>⏱ {formatTime(elapsedSeconds)}</Text>
         </View>
       </View>
 
       {/* Start Banner */}
       {!workoutStarted && (
         <TouchableOpacity
-          style={{ marginHorizontal: 20, marginBottom: 12, backgroundColor: "#E2E8F0", borderRadius: 16, paddingVertical: 14, alignItems: "center" }}
+          style={{ marginHorizontal: 20, marginBottom: 12, backgroundColor: "#10B981", borderRadius: 16, paddingVertical: 14, alignItems: "center" }}
           onPress={() => setWorkoutStarted(true)}
         >
-          <Text style={{ color: "#F1F5F9", fontFamily: "Syne_700Bold", fontSize: 16 }}>▶ Start Workout</Text>
+          <Text style={{ color: "#E6FFF5", fontFamily: "Outfit_700Bold", fontSize: 16 }}>▶ Start Workout</Text>
         </TouchableOpacity>
       )}
 
       {/* Rest Timer */}
       {restTimer !== null && (
         <View style={{ marginHorizontal: 20, marginBottom: 12, backgroundColor: "#F9731620", borderRadius: 16, padding: 12, borderWidth: 1, borderColor: "#F9731640", flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
-          <Text style={{ color: "#FED7AA", fontFamily: "Syne_700Bold", fontSize: 14 }}>🔄 Rest Timer</Text>
-          <Text style={{ color: "#CBD5E1", fontFamily: "Syne_800ExtraBold", fontSize: 24 }}>{formatTime(restTimer)}</Text>
+          <Text style={{ color: "#FED7AA", fontFamily: "Outfit_700Bold", fontSize: 14 }}>🔄 Rest Timer</Text>
+          <Text style={{ color: "#34D399", fontFamily: "Outfit_800ExtraBold", fontSize: 24 }}>{formatTime(restTimer)}</Text>
           <TouchableOpacity onPress={() => { setRestTimer(null); if (restRef.current) clearInterval(restRef.current); }}>
-            <Text style={{ color: "#64748B", fontSize: 12 }}>Skip</Text>
+            <Text style={{ color: "#4D8C72", fontSize: 12 }}>Skip</Text>
           </TouchableOpacity>
         </View>
       )}
@@ -187,11 +187,11 @@ export default function ActiveWorkoutScreen() {
       {/* Progress Bar */}
       <View style={{ marginHorizontal: 20, marginBottom: 12 }}>
         <View style={{ flexDirection: "row", justifyContent: "space-between", marginBottom: 4 }}>
-          <Text style={{ color: "#64748B", fontSize: 11 }}>Exercise {currentExercise + 1} of {exercises.length}</Text>
-          <Text style={{ color: "#94A3B8", fontSize: 11 }}>{totalCompleted} sets done</Text>
+          <Text style={{ color: "#4D8C72", fontSize: 11 }}>Exercise {currentExercise + 1} of {exercises.length}</Text>
+          <Text style={{ color: "#6EE7B7", fontSize: 11 }}>{totalCompleted} sets done</Text>
         </View>
-        <View style={{ height: 4, backgroundColor: "rgba(226,232,240,0.08)", borderRadius: 2 }}>
-          <View style={{ height: 4, backgroundColor: "#E2E8F0", borderRadius: 2, width: `${((currentExercise) / exercises.length) * 100}%` }} />
+        <View style={{ height: 4, backgroundColor: "rgba(16,185,129,0.10)", borderRadius: 2 }}>
+          <View style={{ height: 4, backgroundColor: "#10B981", borderRadius: 2, width: `${((currentExercise) / exercises.length) * 100}%` }} />
         </View>
       </View>
 
@@ -201,10 +201,10 @@ export default function ActiveWorkoutScreen() {
           {exercises.map((ex, i) => (
             <TouchableOpacity
               key={i}
-              style={{ paddingHorizontal: 14, paddingVertical: 8, borderRadius: 12, backgroundColor: currentExercise === i ? "#E2E8F0" : "#0E1218", borderWidth: 1, borderColor: currentExercise === i ? "#E2E8F0" : "rgba(226,232,240,0.08)" }}
+              style={{ paddingHorizontal: 14, paddingVertical: 8, borderRadius: 12, backgroundColor: currentExercise === i ? "#10B981" : "#0D1F18", borderWidth: 1, borderColor: currentExercise === i ? "#10B981" : "rgba(16,185,129,0.10)" }}
               onPress={() => setCurrentExercise(i)}
             >
-              <Text style={{ color: currentExercise === i ? "#F1F5F9" : "#64748B", fontFamily: "Inter_600SemiBold", fontSize: 12 }} numberOfLines={1}>{ex.name}</Text>
+              <Text style={{ color: currentExercise === i ? "#E6FFF5" : "#4D8C72", fontFamily: "DMSans_600SemiBold", fontSize: 12 }} numberOfLines={1}>{ex.name}</Text>
             </TouchableOpacity>
           ))}
         </ScrollView>
@@ -212,70 +212,70 @@ export default function ActiveWorkoutScreen() {
         {/* Current Exercise */}
         {exercise && (
           <View style={{ paddingHorizontal: 20 }}>
-            <View style={{ backgroundColor: "#0E1218", borderRadius: 20, padding: 16, marginBottom: 16, borderWidth: 1, borderColor: "rgba(226,232,240,0.10)" }}>
+            <View style={{ backgroundColor: "#0D1F18", borderRadius: 20, padding: 16, marginBottom: 16, borderWidth: 1, borderColor: "rgba(16,185,129,0.12)" }}>
               <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
                 <View>
-                  <Text style={{ color: "#CBD5E1", fontSize: 11, fontFamily: "Syne_700Bold", marginBottom: 4 }}>{exercise.muscleGroup?.toUpperCase()}</Text>
-                  <Text style={{ color: "#F1F5F9", fontFamily: "Syne_800ExtraBold", fontSize: 20 }}>{exercise.name}</Text>
+                  <Text style={{ color: "#34D399", fontSize: 11, fontFamily: "Outfit_700Bold", marginBottom: 4 }}>{exercise.muscleGroup?.toUpperCase()}</Text>
+                  <Text style={{ color: "#E6FFF5", fontFamily: "Outfit_800ExtraBold", fontSize: 20 }}>{exercise.name}</Text>
                 </View>
                 <View style={{ alignItems: "flex-end" }}>
-                  <Text style={{ color: "#64748B", fontSize: 12 }}>{exercise.sets} sets × {exercise.reps}</Text>
-                  <Text style={{ color: "#64748B", fontSize: 11, marginTop: 2 }}>Rest: {exercise.rest}</Text>
+                  <Text style={{ color: "#4D8C72", fontSize: 12 }}>{exercise.sets} sets × {exercise.reps}</Text>
+                  <Text style={{ color: "#4D8C72", fontSize: 11, marginTop: 2 }}>Rest: {exercise.rest}</Text>
                 </View>
               </View>
               {exercise.notes && (
-                <View style={{ backgroundColor: "#0E1218", borderRadius: 10, padding: 10 }}>
-                  <Text style={{ color: "#64748B", fontSize: 12 }}>💡 {exercise.notes}</Text>
+                <View style={{ backgroundColor: "#0D1F18", borderRadius: 10, padding: 10 }}>
+                  <Text style={{ color: "#4D8C72", fontSize: 12 }}>💡 {exercise.notes}</Text>
                 </View>
               )}
             </View>
 
             {/* Set Tracker */}
-            <View style={{ backgroundColor: "#0E1218", borderRadius: 20, padding: 16, marginBottom: 16, borderWidth: 1, borderColor: "rgba(226,232,240,0.08)" }}>
+            <View style={{ backgroundColor: "#0D1F18", borderRadius: 20, padding: 16, marginBottom: 16, borderWidth: 1, borderColor: "rgba(16,185,129,0.10)" }}>
               <View style={{ flexDirection: "row", marginBottom: 10 }}>
-                <Text style={{ color: "#64748B", fontSize: 11, fontFamily: "Syne_700Bold", width: 40 }}>SET</Text>
-                <Text style={{ color: "#64748B", fontSize: 11, fontFamily: "Syne_700Bold", flex: 1, textAlign: "center" }}>WEIGHT (kg)</Text>
-                <Text style={{ color: "#64748B", fontSize: 11, fontFamily: "Syne_700Bold", flex: 1, textAlign: "center" }}>REPS</Text>
-                <Text style={{ color: "#64748B", fontSize: 11, fontFamily: "Syne_700Bold", width: 60, textAlign: "center" }}>DONE</Text>
+                <Text style={{ color: "#4D8C72", fontSize: 11, fontFamily: "Outfit_700Bold", width: 40 }}>SET</Text>
+                <Text style={{ color: "#4D8C72", fontSize: 11, fontFamily: "Outfit_700Bold", flex: 1, textAlign: "center" }}>WEIGHT (kg)</Text>
+                <Text style={{ color: "#4D8C72", fontSize: 11, fontFamily: "Outfit_700Bold", flex: 1, textAlign: "center" }}>REPS</Text>
+                <Text style={{ color: "#4D8C72", fontSize: 11, fontFamily: "Outfit_700Bold", width: 60, textAlign: "center" }}>DONE</Text>
               </View>
               {logs.map((log, setIdx) => (
                 <View key={setIdx} style={{ flexDirection: "row", alignItems: "center", marginBottom: 8, opacity: log.completed ? 0.6 : 1 }}>
-                  <View style={{ width: 40, height: 28, borderRadius: 8, backgroundColor: log.completed ? "rgba(226,232,240,0.08)" : "#0E1218", alignItems: "center", justifyContent: "center" }}>
-                    <Text style={{ color: log.completed ? "#94A3B8" : "#64748B", fontFamily: "Syne_700Bold", fontSize: 12 }}>{setIdx + 1}</Text>
+                  <View style={{ width: 40, height: 28, borderRadius: 8, backgroundColor: log.completed ? "rgba(16,185,129,0.10)" : "#0D1F18", alignItems: "center", justifyContent: "center" }}>
+                    <Text style={{ color: log.completed ? "#6EE7B7" : "#4D8C72", fontFamily: "Outfit_700Bold", fontSize: 12 }}>{setIdx + 1}</Text>
                   </View>
                   <TextInput
                     value={log.weight}
                     onChangeText={v => updateSetLog(currentExercise, setIdx, "weight", v)}
                     placeholder="0"
-                    placeholderTextColor="#334155"
+                    placeholderTextColor="#1A4A38"
                     keyboardType="numeric"
                     editable={!log.completed}
-                    style={{ flex: 1, backgroundColor: "#0E1218", borderRadius: 8, paddingHorizontal: 10, paddingVertical: 6, color: "#F1F5F9", fontSize: 14, textAlign: "center", marginHorizontal: 6 }}
+                    style={{ flex: 1, backgroundColor: "#0D1F18", borderRadius: 8, paddingHorizontal: 10, paddingVertical: 6, color: "#E6FFF5", fontSize: 14, textAlign: "center", marginHorizontal: 6 }}
                     returnKeyType="done"
                   />
                   <TextInput
                     value={log.reps}
                     onChangeText={v => updateSetLog(currentExercise, setIdx, "reps", v)}
                     placeholder={exercise.reps}
-                    placeholderTextColor="#334155"
+                    placeholderTextColor="#1A4A38"
                     keyboardType="numeric"
                     editable={!log.completed}
-                    style={{ flex: 1, backgroundColor: "#0E1218", borderRadius: 8, paddingHorizontal: 10, paddingVertical: 6, color: "#F1F5F9", fontSize: 14, textAlign: "center", marginHorizontal: 6 }}
+                    style={{ flex: 1, backgroundColor: "#0D1F18", borderRadius: 8, paddingHorizontal: 10, paddingVertical: 6, color: "#E6FFF5", fontSize: 14, textAlign: "center", marginHorizontal: 6 }}
                     returnKeyType="done"
                   />
                   <TouchableOpacity
-                    style={{ width: 60, height: 32, borderRadius: 8, backgroundColor: log.completed ? "#94A3B8" : "rgba(226,232,240,0.08)", alignItems: "center", justifyContent: "center" }}
+                    style={{ width: 60, height: 32, borderRadius: 8, backgroundColor: log.completed ? "#6EE7B7" : "rgba(16,185,129,0.10)", alignItems: "center", justifyContent: "center" }}
                     onPress={() => !log.completed && completeSet(currentExercise, setIdx)}
                     disabled={log.completed}
                   >
-                    <Text style={{ color: log.completed ? "#F1F5F9" : "#CBD5E1", fontFamily: "Syne_700Bold", fontSize: 12 }}>
+                    <Text style={{ color: log.completed ? "#E6FFF5" : "#34D399", fontFamily: "Outfit_700Bold", fontSize: 12 }}>
                       {log.completed ? "✓" : "Done"}
                     </Text>
                   </TouchableOpacity>
                 </View>
               ))}
               <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 8 }}>
-                <Text style={{ color: "#64748B", fontSize: 12 }}>{completedSets}/{logs.length} sets completed</Text>
+                <Text style={{ color: "#4D8C72", fontSize: 12 }}>{completedSets}/{logs.length} sets completed</Text>
               </View>
             </View>
 
@@ -283,25 +283,25 @@ export default function ActiveWorkoutScreen() {
             <View style={{ flexDirection: "row", gap: 10 }}>
               {currentExercise > 0 && (
                 <TouchableOpacity
-                  style={{ flex: 1, backgroundColor: "#0E1218", borderRadius: 14, paddingVertical: 12, alignItems: "center", borderWidth: 1, borderColor: "rgba(226,232,240,0.08)" }}
+                  style={{ flex: 1, backgroundColor: "#0D1F18", borderRadius: 14, paddingVertical: 12, alignItems: "center", borderWidth: 1, borderColor: "rgba(16,185,129,0.10)" }}
                   onPress={() => setCurrentExercise(currentExercise - 1)}
                 >
-                  <Text style={{ color: "#64748B", fontFamily: "Syne_700Bold" }}>← Previous</Text>
+                  <Text style={{ color: "#4D8C72", fontFamily: "Outfit_700Bold" }}>← Previous</Text>
                 </TouchableOpacity>
               )}
               {currentExercise < exercises.length - 1 ? (
                 <TouchableOpacity
-                  style={{ flex: 1, backgroundColor: "#E2E8F0", borderRadius: 14, paddingVertical: 12, alignItems: "center" }}
+                  style={{ flex: 1, backgroundColor: "#10B981", borderRadius: 14, paddingVertical: 12, alignItems: "center" }}
                   onPress={() => setCurrentExercise(currentExercise + 1)}
                 >
-                  <Text style={{ color: "#F1F5F9", fontFamily: "Syne_700Bold" }}>Next →</Text>
+                  <Text style={{ color: "#E6FFF5", fontFamily: "Outfit_700Bold" }}>Next →</Text>
                 </TouchableOpacity>
               ) : (
                 <TouchableOpacity
-                  style={{ flex: 1, backgroundColor: "#94A3B8", borderRadius: 14, paddingVertical: 12, alignItems: "center" }}
+                  style={{ flex: 1, backgroundColor: "#6EE7B7", borderRadius: 14, paddingVertical: 12, alignItems: "center" }}
                   onPress={finishWorkout}
                 >
-                  <Text style={{ color: "#F1F5F9", fontFamily: "Syne_700Bold" }}>🏁 Finish Workout</Text>
+                  <Text style={{ color: "#E6FFF5", fontFamily: "Outfit_700Bold" }}>🏁 Finish Workout</Text>
                 </TouchableOpacity>
               )}
             </View>

@@ -1,18 +1,16 @@
 /** @type {const} */
-// Platinum Pulse — monochrome luxury dark theme
 const themeColors = {
-  primary:    { light: '#E2E8F0', dark: '#E2E8F0' },   // platinum white
-  secondary:  { light: '#94A3B8', dark: '#94A3B8' },   // silver
-  accent:     { light: '#CBD5E1', dark: '#CBD5E1' },   // light silver
-  background: { light: '#080B0F', dark: '#080B0F' },   // near-black
-  surface:    { light: '#0E1218', dark: '#0E1218' },   // dark surface
-  surface2:   { light: '#141A22', dark: '#141A22' },   // elevated surface
-  foreground: { light: '#F1F5F9', dark: '#F1F5F9' },   // near-white text
-  muted:      { light: '#64748B', dark: '#64748B' },   // muted slate
-  border:     { light: '#1E2A38', dark: '#1E2A38' },   // dark border
-  success:    { light: '#94A3B8', dark: '#94A3B8' },   // silver-success
-  warning:    { light: '#CBD5E1', dark: '#CBD5E1' },   // silver-warning
-  error:      { light: '#94A3B8', dark: '#94A3B8' },   // silver-error
-  tint:       { light: '#E2E8F0', dark: '#E2E8F0' },   // active tab tint
+  // Aurora Titan — emerald green + teal, deep forest-black base
+  primary:    { light: '#10B981', dark: '#10B981' }, // Emerald green
+  background: { light: '#060F0A', dark: '#060F0A' }, // Deep forest black
+  surface:    { light: '#0D1F18', dark: '#0D1F18' }, // Dark forest surface
+  foreground: { light: '#E6FFF5', dark: '#E6FFF5' }, // Soft mint white
+  muted:      { light: '#4D8C72', dark: '#4D8C72' }, // Muted forest green
+  border:     { light: '#0D9488', dark: '#0D9488' }, // Teal border
+  success:    { light: '#10B981', dark: '#34D399' }, // Emerald
+  warning:    { light: '#F59E0B', dark: '#FBBF24' }, // Amber
+  error:      { light: '#EF4444', dark: '#F87171' }, // Red
+  tint:       { light: '#10B981', dark: '#34D399' }, // Tab bar active tint
 };
+
 module.exports = { themeColors };

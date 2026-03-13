@@ -1,26 +1,23 @@
 import { Tabs } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { HapticTab } from "@/components/haptic-tab";
-import { Platform, View, Text, StyleSheet } from "react-native";
-import { useColors } from "@/hooks/use-colors";
+import { Platform, View, StyleSheet } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
-// Platinum Pulse tab icon definitions
+// Aurora Titan tab icon definitions
 const TAB_ICONS: Record<string, { icon: keyof typeof MaterialIcons.glyphMap; label: string }> = {
-  index:   { icon: "speed",           label: "Dashboard" },
+  index:   { icon: "speed",            label: "Dashboard" },
   scan:    { icon: "document-scanner", label: "Body Scan" },
-  plans:   { icon: "fitness-center",  label: "Plans" },
-  meals:   { icon: "restaurant",      label: "Meals" },
-  profile: { icon: "person",          label: "Profile" },
+  plans:   { icon: "fitness-center",   label: "Plans" },
+  meals:   { icon: "restaurant",       label: "Meals" },
+  profile: { icon: "person",           label: "Profile" },
 };
 
-function PlatinumTabIcon({
+function AuroraTabIcon({
   route,
-  color,
   focused,
 }: {
   route: string;
-  color: string;
   focused: boolean;
 }) {
   const def = TAB_ICONS[route] ?? { icon: "help-outline" as keyof typeof MaterialIcons.glyphMap, label: route };
@@ -29,8 +26,9 @@ function PlatinumTabIcon({
       <MaterialIcons
         name={def.icon}
         size={22}
-        color={focused ? "#E2E8F0" : "#475569"}
+        color={focused ? "#10B981" : "#2D6A52"}
       />
+      {focused && <View style={styles.activeGlow} />}
     </View>
   );
 }
@@ -43,25 +41,24 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={({ route }) => ({
-        tabBarActiveTintColor: "#E2E8F0",
-        tabBarInactiveTintColor: "#475569",
+        tabBarActiveTintColor: "#10B981",
+        tabBarInactiveTintColor: "#2D6A52",
         headerShown: false,
         tabBarButton: HapticTab,
-        tabBarIcon: ({ focused, color }) => (
-          <PlatinumTabIcon route={route.name} color={color} focused={focused} />
+        tabBarIcon: ({ focused }) => (
+          <AuroraTabIcon route={route.name} focused={focused} />
         ),
         tabBarStyle: {
           paddingTop: 6,
           paddingBottom: bottomPadding,
           height: tabBarHeight,
-          backgroundColor: "rgba(8,11,15,0.97)",
-          borderTopColor: "rgba(226,232,240,0.06)",
+          backgroundColor: "rgba(6,15,10,0.97)",
+          borderTopColor: "rgba(16,185,129,0.15)",
           borderTopWidth: 1,
-          // Subtle glass blur on iOS
           ...(Platform.OS === "ios" && { position: "absolute" }),
         },
         tabBarLabelStyle: {
-          fontFamily: "Inter_500Medium",
+          fontFamily: "DMSans_500Medium",
           fontSize: 10,
           letterSpacing: 0.3,
           marginTop: 0,
@@ -86,8 +83,17 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   tabIconWrapperActive: {
-    backgroundColor: "rgba(226,232,240,0.08)",
+    backgroundColor: "rgba(16,185,129,0.10)",
     borderWidth: 1,
-    borderColor: "rgba(226,232,240,0.12)",
+    borderColor: "rgba(16,185,129,0.20)",
+  },
+  activeGlow: {
+    position: "absolute",
+    bottom: -2,
+    width: 16,
+    height: 2,
+    borderRadius: 1,
+    backgroundColor: "#10B981",
+    opacity: 0.8,
   },
 });

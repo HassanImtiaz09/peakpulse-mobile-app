@@ -9,8 +9,8 @@ import { useGuestAuth } from "@/lib/guest-auth";
 import { trpc } from "@/lib/trpc";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const WORKOUT_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/CHEQDYQzXvdnkYOs.jpg";
-const MEAL_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/tEVJIlpKDmrAmkng.jpg";
+const WORKOUT_BG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/at_hero_dashboard-VCWgAqUVtVq8md7vJyavvf.png";
+const MEAL_BG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/at_hero_dashboard-VCWgAqUVtVq8md7vJyavvf.png";
 
 // Unsplash food photo URLs by meal type / keyword — used as fallback when AI doesn't return a photo
 const MEAL_PHOTO_MAP: Record<string, string> = {
@@ -118,17 +118,17 @@ export default function PlansScreen() {
 
   if (!canUse) {
     return (
-      <View style={{ flex: 1, backgroundColor: "#080B0F" }}>
+      <View style={{ flex: 1, backgroundColor: "#060F0A" }}>
         <ImageBackground source={{ uri: WORKOUT_BG }} style={{ flex: 1 }} resizeMode="cover">
           <View style={{ flex: 1, backgroundColor: "rgba(8,8,16,0.8)", alignItems: "center", justifyContent: "center", padding: 32 }}>
             <Text style={{ fontSize: 48, marginBottom: 16 }}>🏋️</Text>
-            <Text style={{ color: "#F1F5F9", fontFamily: "Syne_800ExtraBold", fontSize: 22, textAlign: "center", marginBottom: 8 }}>Unlock Your Plans</Text>
-            <Text style={{ color: "#64748B", fontSize: 14, textAlign: "center", lineHeight: 20, marginBottom: 24 }}>Sign in or continue as guest to generate AI-powered workout and meal plans.</Text>
+            <Text style={{ color: "#E6FFF5", fontFamily: "Outfit_800ExtraBold", fontSize: 22, textAlign: "center", marginBottom: 8 }}>Unlock Your Plans</Text>
+            <Text style={{ color: "#4D8C72", fontSize: 14, textAlign: "center", lineHeight: 20, marginBottom: 24 }}>Sign in or continue as guest to generate AI-powered workout and meal plans.</Text>
             <TouchableOpacity
-              style={{ backgroundColor: "#E2E8F0", paddingHorizontal: 32, paddingVertical: 14, borderRadius: 16, shadowColor: "#E2E8F0", shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.5, shadowRadius: 12 }}
+              style={{ backgroundColor: "#10B981", paddingHorizontal: 32, paddingVertical: 14, borderRadius: 16, shadowColor: "#10B981", shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.5, shadowRadius: 12 }}
               onPress={() => router.push("/login" as any)}
             >
-              <Text style={{ color: "#F1F5F9", fontFamily: "Syne_800ExtraBold", fontSize: 16 }}>Get Started →</Text>
+              <Text style={{ color: "#E6FFF5", fontFamily: "Outfit_800ExtraBold", fontSize: 16 }}>Get Started →</Text>
             </TouchableOpacity>
           </View>
         </ImageBackground>
@@ -137,12 +137,12 @@ export default function PlansScreen() {
   }
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#080B0F" }}>
+    <View style={{ flex: 1, backgroundColor: "#060F0A" }}>
       {/* Hero Header */}
       <ImageBackground source={{ uri: activeTab === 1 ? MEAL_BG : WORKOUT_BG }} style={{ height: 160 }} resizeMode="cover">
         <View style={{ flex: 1, backgroundColor: "rgba(8,8,16,0.72)", justifyContent: "flex-end", padding: 20, paddingTop: 52 }}>
-          <Text style={{ color: activeTab === 0 ? "#CBD5E1" : "#94A3B8", fontFamily: "Syne_700Bold", fontSize: 12, letterSpacing: 1 }}>AI-POWERED</Text>
-          <Text style={{ color: "#F1F5F9", fontFamily: "Syne_800ExtraBold", fontSize: 26, letterSpacing: -0.5 }}>Your Plans</Text>
+          <Text style={{ color: activeTab === 0 ? "#34D399" : "#6EE7B7", fontFamily: "Outfit_700Bold", fontSize: 12, letterSpacing: 1 }}>AI-POWERED</Text>
+          <Text style={{ color: "#E6FFF5", fontFamily: "Outfit_800ExtraBold", fontSize: 26, letterSpacing: -0.5 }}>Your Plans</Text>
         </View>
       </ImageBackground>
 
@@ -151,10 +151,10 @@ export default function PlansScreen() {
         {TABS.map((tab, i) => (
           <TouchableOpacity
             key={tab}
-            style={{ flex: 1, paddingVertical: 10, borderRadius: 12, alignItems: "center", backgroundColor: activeTab === i ? "#E2E8F0" : "#0E1218", borderWidth: 1, borderColor: activeTab === i ? "#E2E8F0" : "rgba(226,232,240,0.08)" }}
+            style={{ flex: 1, paddingVertical: 10, borderRadius: 12, alignItems: "center", backgroundColor: activeTab === i ? "#10B981" : "#0D1F18", borderWidth: 1, borderColor: activeTab === i ? "#10B981" : "rgba(16,185,129,0.10)" }}
             onPress={() => setActiveTab(i)}
           >
-            <Text style={{ color: activeTab === i ? "#F1F5F9" : "#64748B", fontFamily: "Syne_700Bold", fontSize: 13 }}>{tab}</Text>
+            <Text style={{ color: activeTab === i ? "#E6FFF5" : "#4D8C72", fontFamily: "Outfit_700Bold", fontSize: 13 }}>{tab}</Text>
           </TouchableOpacity>
         ))}
       </View>
@@ -188,26 +188,26 @@ export default function PlansScreen() {
               {DAYS_OPTIONS.map(d => (
                 <TouchableOpacity
                   key={d}
-                  style={{ flex: 1, paddingVertical: 10, borderRadius: 12, alignItems: "center", backgroundColor: daysPerWeek === d ? "#E2E8F0" : "#0E1218", borderWidth: 1, borderColor: daysPerWeek === d ? "#E2E8F0" : "rgba(226,232,240,0.08)" }}
+                  style={{ flex: 1, paddingVertical: 10, borderRadius: 12, alignItems: "center", backgroundColor: daysPerWeek === d ? "#10B981" : "#0D1F18", borderWidth: 1, borderColor: daysPerWeek === d ? "#10B981" : "rgba(16,185,129,0.10)" }}
                   onPress={() => setDaysPerWeek(d)}
                 >
-                  <Text style={{ color: daysPerWeek === d ? "#F1F5F9" : "#64748B", fontFamily: "Syne_700Bold" }}>{d}x</Text>
+                  <Text style={{ color: daysPerWeek === d ? "#E6FFF5" : "#4D8C72", fontFamily: "Outfit_700Bold" }}>{d}x</Text>
                 </TouchableOpacity>
               ))}
             </View>
 
             <TouchableOpacity
-              style={{ backgroundColor: "#E2E8F0", borderRadius: 16, paddingVertical: 14, alignItems: "center", marginBottom: 24, opacity: generateWorkout.isPending ? 0.7 : 1 }}
+              style={{ backgroundColor: "#10B981", borderRadius: 16, paddingVertical: 14, alignItems: "center", marginBottom: 24, opacity: generateWorkout.isPending ? 0.7 : 1 }}
               onPress={() => generateWorkout.mutate({ goal, workoutStyle, daysPerWeek })}
               disabled={generateWorkout.isPending}
             >
               {generateWorkout.isPending ? (
                 <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-                  <ActivityIndicator color="#F1F5F9" size="small" />
-                  <Text style={{ color: "#F1F5F9", fontFamily: "Syne_700Bold", fontSize: 15 }}>Generating Plan...</Text>
+                  <ActivityIndicator color="#E6FFF5" size="small" />
+                  <Text style={{ color: "#E6FFF5", fontFamily: "Outfit_700Bold", fontSize: 15 }}>Generating Plan...</Text>
                 </View>
               ) : (
-                <Text style={{ color: "#F1F5F9", fontFamily: "Syne_700Bold", fontSize: 15 }}>✨ Generate Workout Plan</Text>
+                <Text style={{ color: "#E6FFF5", fontFamily: "Outfit_700Bold", fontSize: 15 }}>✨ Generate Workout Plan</Text>
               )}
             </TouchableOpacity>
 
@@ -215,14 +215,14 @@ export default function PlansScreen() {
             {workoutPlan && (
               <View>
                 <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-                  <Text style={{ color: "#F1F5F9", fontFamily: "Syne_700Bold", fontSize: 16 }}>Current Plan</Text>
-                  <View style={{ backgroundColor: "rgba(226,232,240,0.08)", borderRadius: 8, paddingHorizontal: 10, paddingVertical: 4 }}>
-                    <Text style={{ color: "#94A3B8", fontSize: 11, fontFamily: "Syne_700Bold" }}>ACTIVE</Text>
+                  <Text style={{ color: "#E6FFF5", fontFamily: "Outfit_700Bold", fontSize: 16 }}>Current Plan</Text>
+                  <View style={{ backgroundColor: "rgba(16,185,129,0.10)", borderRadius: 8, paddingHorizontal: 10, paddingVertical: 4 }}>
+                    <Text style={{ color: "#6EE7B7", fontSize: 11, fontFamily: "Outfit_700Bold" }}>ACTIVE</Text>
                   </View>
                 </View>
                 {workoutPlan.insight && (
-                  <View style={{ backgroundColor: "#7C3AED10", borderRadius: 12, padding: 12, marginBottom: 12, borderWidth: 1, borderColor: "rgba(226,232,240,0.10)" }}>
-                    <Text style={{ color: "#CBD5E1", fontSize: 13, lineHeight: 18 }}>✨ {String(workoutPlan.insight)}</Text>
+                  <View style={{ backgroundColor: "#7C3AED10", borderRadius: 12, padding: 12, marginBottom: 12, borderWidth: 1, borderColor: "rgba(16,185,129,0.12)" }}>
+                    <Text style={{ color: "#34D399", fontSize: 13, lineHeight: 18 }}>✨ {String(workoutPlan.insight)}</Text>
                   </View>
                 )}
                 {workoutPlan.schedule?.map((day: any, i: number) => (
@@ -255,18 +255,18 @@ export default function PlansScreen() {
             {/* Ramadan Mode Toggle */}
             {(dietaryPref === "halal" || ramadanMode) && (
               <TouchableOpacity
-                style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", backgroundColor: ramadanMode ? "rgba(226,232,240,0.08)" : "#0E1218", borderRadius: 12, padding: 14, marginBottom: 16, borderWidth: 1, borderColor: ramadanMode ? "#E2E8F0" : "rgba(226,232,240,0.08)" }}
+                style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", backgroundColor: ramadanMode ? "rgba(16,185,129,0.10)" : "#0D1F18", borderRadius: 12, padding: 14, marginBottom: 16, borderWidth: 1, borderColor: ramadanMode ? "#10B981" : "rgba(16,185,129,0.10)" }}
                 onPress={() => setRamadanMode(v => !v)}
               >
                 <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
                   <Text style={{ fontSize: 20 }}>🌙</Text>
                   <View>
-                    <Text style={{ color: "#F1F5F9", fontFamily: "Syne_700Bold", fontSize: 14 }}>Ramadan Mode</Text>
-                    <Text style={{ color: "#64748B", fontSize: 11, marginTop: 2 }}>Suhoor, Iftar & Isha meals</Text>
+                    <Text style={{ color: "#E6FFF5", fontFamily: "Outfit_700Bold", fontSize: 14 }}>Ramadan Mode</Text>
+                    <Text style={{ color: "#4D8C72", fontSize: 11, marginTop: 2 }}>Suhoor, Iftar & Isha meals</Text>
                   </View>
                 </View>
-                <View style={{ width: 44, height: 26, borderRadius: 13, backgroundColor: ramadanMode ? "#E2E8F0" : "rgba(226,232,240,0.12)", justifyContent: "center", paddingHorizontal: 2 }}>
-                  <View style={{ width: 22, height: 22, borderRadius: 11, backgroundColor: "#F1F5F9", alignSelf: ramadanMode ? "flex-end" : "flex-start" }} />
+                <View style={{ width: 44, height: 26, borderRadius: 13, backgroundColor: ramadanMode ? "#10B981" : "rgba(16,185,129,0.15)", justifyContent: "center", paddingHorizontal: 2 }}>
+                  <View style={{ width: 22, height: 22, borderRadius: 11, backgroundColor: "#E6FFF5", alignSelf: ramadanMode ? "flex-end" : "flex-start" }} />
                 </View>
               </TouchableOpacity>
             )}
@@ -278,38 +278,38 @@ export default function PlansScreen() {
             </View>
 
             <TouchableOpacity
-              style={{ backgroundColor: "#94A3B8", borderRadius: 16, paddingVertical: 14, alignItems: "center", marginBottom: 24, opacity: generateMeal.isPending ? 0.7 : 1 }}
+              style={{ backgroundColor: "#6EE7B7", borderRadius: 16, paddingVertical: 14, alignItems: "center", marginBottom: 24, opacity: generateMeal.isPending ? 0.7 : 1 }}
               onPress={() => generateMeal.mutate({ goal: mealGoal, dietaryPreference: dietaryPref, ramadanMode })}
               disabled={generateMeal.isPending}
             >
               {generateMeal.isPending ? (
                 <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-                  <ActivityIndicator color="#F1F5F9" size="small" />
-                  <Text style={{ color: "#F1F5F9", fontFamily: "Syne_700Bold", fontSize: 15 }}>Generating Plan...</Text>
+                  <ActivityIndicator color="#E6FFF5" size="small" />
+                  <Text style={{ color: "#E6FFF5", fontFamily: "Outfit_700Bold", fontSize: 15 }}>Generating Plan...</Text>
                 </View>
               ) : (
-                <Text style={{ color: "#F1F5F9", fontFamily: "Syne_700Bold", fontSize: 15 }}>✨ Generate Meal Plan</Text>
+                <Text style={{ color: "#E6FFF5", fontFamily: "Outfit_700Bold", fontSize: 15 }}>✨ Generate Meal Plan</Text>
               )}
             </TouchableOpacity>
 
             {mealPlan && (
               <View>
                 <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-                  <Text style={{ color: "#F1F5F9", fontFamily: "Syne_700Bold", fontSize: 16 }}>Current Meal Plan</Text>
-                  <View style={{ backgroundColor: "rgba(226,232,240,0.08)", borderRadius: 8, paddingHorizontal: 10, paddingVertical: 4 }}>
-                    <Text style={{ color: "#94A3B8", fontSize: 11, fontFamily: "Syne_700Bold" }}>ACTIVE</Text>
+                  <Text style={{ color: "#E6FFF5", fontFamily: "Outfit_700Bold", fontSize: 16 }}>Current Meal Plan</Text>
+                  <View style={{ backgroundColor: "rgba(16,185,129,0.10)", borderRadius: 8, paddingHorizontal: 10, paddingVertical: 4 }}>
+                    <Text style={{ color: "#6EE7B7", fontSize: 11, fontFamily: "Outfit_700Bold" }}>ACTIVE</Text>
                   </View>
                 </View>
                 {/* Macro summary */}
                 <View style={{ flexDirection: "row", gap: 8, marginBottom: 16 }}>
-                  <MacroCard label="Calories" value={mealPlan.dailyCalories} unit="kcal" color="#CBD5E1" />
+                  <MacroCard label="Calories" value={mealPlan.dailyCalories} unit="kcal" color="#34D399" />
                   <MacroCard label="Protein" value={mealPlan.proteinTarget} unit="g" color="#3B82F6" />
-                  <MacroCard label="Carbs" value={mealPlan.carbTarget} unit="g" color="#94A3B8" />
-                  <MacroCard label="Fat" value={mealPlan.fatTarget} unit="g" color="#CBD5E1" />
+                  <MacroCard label="Carbs" value={mealPlan.carbTarget} unit="g" color="#6EE7B7" />
+                  <MacroCard label="Fat" value={mealPlan.fatTarget} unit="g" color="#34D399" />
                 </View>
                 {mealPlan.insight && (
                   <View style={{ backgroundColor: "#22C55E10", borderRadius: 12, padding: 12, marginBottom: 16, borderWidth: 1, borderColor: "#22C55E30" }}>
-                    <Text style={{ color: "#CBD5E1", fontSize: 13, lineHeight: 18 }}>💡 {String(mealPlan.insight)}</Text>
+                    <Text style={{ color: "#34D399", fontSize: 13, lineHeight: 18 }}>💡 {String(mealPlan.insight)}</Text>
                   </View>
                 )}
                 {mealPlan.days?.map((day: any, i: number) => (
@@ -325,27 +325,27 @@ export default function PlansScreen() {
 }
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
-  return <Text style={{ color: "#64748B", fontSize: 11, fontFamily: "Syne_700Bold", letterSpacing: 1, marginBottom: 8, textTransform: "uppercase" }}>{children}</Text>;
+  return <Text style={{ color: "#4D8C72", fontSize: 11, fontFamily: "Outfit_700Bold", letterSpacing: 1, marginBottom: 8, textTransform: "uppercase" }}>{children}</Text>;
 }
 
 function OptionChip({ icon, label, selected, onPress }: any) {
   return (
     <TouchableOpacity
-      style={{ flexDirection: "row", alignItems: "center", gap: 6, paddingHorizontal: 14, paddingVertical: 8, borderRadius: 12, backgroundColor: selected ? "#E2E8F0" : "#0E1218", borderWidth: 1, borderColor: selected ? "#E2E8F0" : "rgba(226,232,240,0.08)" }}
+      style={{ flexDirection: "row", alignItems: "center", gap: 6, paddingHorizontal: 14, paddingVertical: 8, borderRadius: 12, backgroundColor: selected ? "#10B981" : "#0D1F18", borderWidth: 1, borderColor: selected ? "#10B981" : "rgba(16,185,129,0.10)" }}
       onPress={onPress}
     >
       <Text style={{ fontSize: 14 }}>{icon}</Text>
-      <Text style={{ color: selected ? "#F1F5F9" : "#64748B", fontFamily: "Inter_600SemiBold", fontSize: 13 }}>{label}</Text>
+      <Text style={{ color: selected ? "#E6FFF5" : "#4D8C72", fontFamily: "DMSans_600SemiBold", fontSize: 13 }}>{label}</Text>
     </TouchableOpacity>
   );
 }
 
 function MacroCard({ label, value, unit, color }: any) {
   return (
-    <View style={{ flex: 1, backgroundColor: "#0E1218", borderRadius: 12, padding: 10, alignItems: "center", borderWidth: 1, borderColor: color + "30" }}>
-      <Text style={{ color, fontFamily: "Syne_800ExtraBold", fontSize: 15 }}>{value ?? "—"}</Text>
-      <Text style={{ color: "#475569", fontSize: 9, marginTop: 1 }}>{unit}</Text>
-      <Text style={{ color: "#64748B", fontSize: 10, marginTop: 2 }}>{label}</Text>
+    <View style={{ flex: 1, backgroundColor: "#0D1F18", borderRadius: 12, padding: 10, alignItems: "center", borderWidth: 1, borderColor: color + "30" }}>
+      <Text style={{ color, fontFamily: "Outfit_800ExtraBold", fontSize: 15 }}>{value ?? "—"}</Text>
+      <Text style={{ color: "#2D6A52", fontSize: 9, marginTop: 1 }}>{unit}</Text>
+      <Text style={{ color: "#4D8C72", fontSize: 10, marginTop: 2 }}>{label}</Text>
     </View>
   );
 }
@@ -354,24 +354,24 @@ function WorkoutDayCard({ day, onPress }: any) {
   const [expanded, setExpanded] = useState(false);
   return (
     <TouchableOpacity
-      style={{ backgroundColor: "#0E1218", borderRadius: 16, padding: 14, marginBottom: 8, borderWidth: 1, borderColor: day.isRest ? "rgba(226,232,240,0.08)" : "rgba(226,232,240,0.08)" }}
+      style={{ backgroundColor: "#0D1F18", borderRadius: 16, padding: 14, marginBottom: 8, borderWidth: 1, borderColor: day.isRest ? "rgba(16,185,129,0.10)" : "rgba(16,185,129,0.10)" }}
       onPress={() => { setExpanded(!expanded); if (!day.isRest) onPress(); }}
     >
       <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
         <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
-          <View style={{ width: 36, height: 36, borderRadius: 10, backgroundColor: day.isRest ? "rgba(226,232,240,0.08)" : "rgba(226,232,240,0.08)", alignItems: "center", justifyContent: "center" }}>
+          <View style={{ width: 36, height: 36, borderRadius: 10, backgroundColor: day.isRest ? "rgba(16,185,129,0.10)" : "rgba(16,185,129,0.10)", alignItems: "center", justifyContent: "center" }}>
             <Text style={{ fontSize: 16 }}>{day.isRest ? "😴" : "💪"}</Text>
           </View>
           <View>
-            <Text style={{ color: "#F1F5F9", fontFamily: "Syne_700Bold", fontSize: 14 }}>{day.day}</Text>
-            <Text style={{ color: day.isRest ? "#94A3B8" : "#CBD5E1", fontSize: 12 }}>{day.focus}</Text>
+            <Text style={{ color: "#E6FFF5", fontFamily: "Outfit_700Bold", fontSize: 14 }}>{day.day}</Text>
+            <Text style={{ color: day.isRest ? "#6EE7B7" : "#34D399", fontSize: 12 }}>{day.focus}</Text>
           </View>
         </View>
         <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-          {!day.isRest && <Text style={{ color: "#64748B", fontSize: 12 }}>{day.exercises?.length ?? 0} exercises</Text>}
+          {!day.isRest && <Text style={{ color: "#4D8C72", fontSize: 12 }}>{day.exercises?.length ?? 0} exercises</Text>}
           {!day.isRest && (
-            <View style={{ backgroundColor: "rgba(226,232,240,0.08)", borderRadius: 8, paddingHorizontal: 10, paddingVertical: 4 }}>
-              <Text style={{ color: "#CBD5E1", fontSize: 11, fontFamily: "Syne_700Bold" }}>START →</Text>
+            <View style={{ backgroundColor: "rgba(16,185,129,0.10)", borderRadius: 8, paddingHorizontal: 10, paddingVertical: 4 }}>
+              <Text style={{ color: "#34D399", fontSize: 11, fontFamily: "Outfit_700Bold" }}>START →</Text>
             </View>
           )}
         </View>
@@ -385,23 +385,23 @@ function MealDayCard({ day }: any) {
   const [expanded, setExpanded] = useState(false);
   const dayCalories = day.meals?.reduce((s: number, m: any) => s + (m.calories ?? 0), 0) ?? 0;
   return (
-    <View style={{ backgroundColor: "#0E1218", borderRadius: 18, marginBottom: 10, borderWidth: 1, borderColor: "rgba(226,232,240,0.08)", overflow: "hidden" }}>
+    <View style={{ backgroundColor: "#0D1F18", borderRadius: 18, marginBottom: 10, borderWidth: 1, borderColor: "rgba(16,185,129,0.10)", overflow: "hidden" }}>
       <TouchableOpacity
         style={{ padding: 16, flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}
         onPress={() => setExpanded(!expanded)}
       >
         <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
-          <View style={{ width: 36, height: 36, borderRadius: 10, backgroundColor: "rgba(226,232,240,0.08)", alignItems: "center", justifyContent: "center" }}>
+          <View style={{ width: 36, height: 36, borderRadius: 10, backgroundColor: "rgba(16,185,129,0.10)", alignItems: "center", justifyContent: "center" }}>
             <Text style={{ fontSize: 16 }}>📅</Text>
           </View>
           <View>
-            <Text style={{ color: "#F1F5F9", fontFamily: "Syne_700Bold", fontSize: 15 }}>{day.day}</Text>
-            <Text style={{ color: "#64748B", fontSize: 12 }}>{day.meals?.length ?? 0} meals</Text>
+            <Text style={{ color: "#E6FFF5", fontFamily: "Outfit_700Bold", fontSize: 15 }}>{day.day}</Text>
+            <Text style={{ color: "#4D8C72", fontSize: 12 }}>{day.meals?.length ?? 0} meals</Text>
           </View>
         </View>
         <View style={{ alignItems: "flex-end" }}>
-          <Text style={{ color: "#CBD5E1", fontFamily: "Syne_800ExtraBold", fontSize: 15 }}>{dayCalories} kcal</Text>
-          <Text style={{ color: "#64748B", fontSize: 14, marginTop: 2 }}>{expanded ? "▲" : "▼"}</Text>
+          <Text style={{ color: "#34D399", fontFamily: "Outfit_800ExtraBold", fontSize: 15 }}>{dayCalories} kcal</Text>
+          <Text style={{ color: "#4D8C72", fontSize: 14, marginTop: 2 }}>{expanded ? "▲" : "▼"}</Text>
         </View>
       </TouchableOpacity>
 
@@ -421,17 +421,17 @@ function MealCard({ meal }: { meal: any }) {
   const [showPrep, setShowPrep] = useState(false);
   const photoUrl = getMealPhotoUrl(meal);
   const mealTypeColor: Record<string, string> = {
-    breakfast: "#CBD5E1",
-    "morning snack": "#CBD5E1",
-    lunch: "#94A3B8",
+    breakfast: "#34D399",
+    "morning snack": "#34D399",
+    lunch: "#6EE7B7",
     "afternoon snack": "#3B82F6",
-    dinner: "#E2E8F0",
-    snack: "#CBD5E1",
+    dinner: "#10B981",
+    snack: "#34D399",
   };
-  const color = mealTypeColor[(meal.type ?? "").toLowerCase()] ?? "#64748B";
+  const color = mealTypeColor[(meal.type ?? "").toLowerCase()] ?? "#4D8C72";
 
   return (
-    <View style={{ backgroundColor: "#0E1218", borderRadius: 16, overflow: "hidden", borderWidth: 1, borderColor: "rgba(226,232,240,0.08)" }}>
+    <View style={{ backgroundColor: "#0D1F18", borderRadius: 16, overflow: "hidden", borderWidth: 1, borderColor: "rgba(16,185,129,0.10)" }}>
       {/* Meal Photo */}
       <Image
         source={{ uri: photoUrl }}
@@ -440,33 +440,33 @@ function MealCard({ meal }: { meal: any }) {
       />
       {/* Meal type badge */}
       <View style={{ position: "absolute", top: 10, left: 10, backgroundColor: color, borderRadius: 8, paddingHorizontal: 10, paddingVertical: 4 }}>
-        <Text style={{ color: "#F1F5F9", fontSize: 10, fontFamily: "Syne_700Bold", textTransform: "uppercase" }}>{meal.type ?? "Meal"}</Text>
+        <Text style={{ color: "#E6FFF5", fontSize: 10, fontFamily: "Outfit_700Bold", textTransform: "uppercase" }}>{meal.type ?? "Meal"}</Text>
       </View>
       {/* Calorie badge */}
       <View style={{ position: "absolute", top: 10, right: 10, backgroundColor: "rgba(0,0,0,0.7)", borderRadius: 8, paddingHorizontal: 10, paddingVertical: 4 }}>
-        <Text style={{ color: "#CBD5E1", fontSize: 11, fontFamily: "Syne_700Bold" }}>{meal.calories} kcal</Text>
+        <Text style={{ color: "#34D399", fontSize: 11, fontFamily: "Outfit_700Bold" }}>{meal.calories} kcal</Text>
       </View>
 
       <View style={{ padding: 14 }}>
         {/* Meal name + macros */}
-        <Text style={{ color: "#F1F5F9", fontFamily: "Syne_700Bold", fontSize: 15, marginBottom: 6 }}>{meal.name}</Text>
+        <Text style={{ color: "#E6FFF5", fontFamily: "Outfit_700Bold", fontSize: 15, marginBottom: 6 }}>{meal.name}</Text>
         <View style={{ flexDirection: "row", gap: 12, marginBottom: 10 }}>
           <Text style={{ color: "#3B82F6", fontSize: 12 }}>P: {meal.protein}g</Text>
-          <Text style={{ color: "#94A3B8", fontSize: 12 }}>C: {meal.carbs}g</Text>
-          <Text style={{ color: "#CBD5E1", fontSize: 12 }}>F: {meal.fat}g</Text>
-          {meal.prepTime && <Text style={{ color: "#64748B", fontSize: 12 }}>⏱ {meal.prepTime}</Text>}
+          <Text style={{ color: "#6EE7B7", fontSize: 12 }}>C: {meal.carbs}g</Text>
+          <Text style={{ color: "#34D399", fontSize: 12 }}>F: {meal.fat}g</Text>
+          {meal.prepTime && <Text style={{ color: "#4D8C72", fontSize: 12 }}>⏱ {meal.prepTime}</Text>}
         </View>
 
         {/* Prep Guide Button */}
         <TouchableOpacity
-          style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", backgroundColor: showPrep ? "#22C55E15" : "#0E1218", borderRadius: 12, padding: 12, borderWidth: 1, borderColor: showPrep ? "rgba(226,232,240,0.14)" : "#2D2D3F" }}
+          style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", backgroundColor: showPrep ? "#22C55E15" : "#0D1F18", borderRadius: 12, padding: 12, borderWidth: 1, borderColor: showPrep ? "rgba(16,185,129,0.18)" : "#2D2D3F" }}
           onPress={() => setShowPrep(!showPrep)}
         >
           <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
             <Text style={{ fontSize: 16 }}>🍳</Text>
-            <Text style={{ color: showPrep ? "#CBD5E1" : "#64748B", fontFamily: "Inter_600SemiBold", fontSize: 13 }}>How to Prep This Meal</Text>
+            <Text style={{ color: showPrep ? "#34D399" : "#4D8C72", fontFamily: "DMSans_600SemiBold", fontSize: 13 }}>How to Prep This Meal</Text>
           </View>
-          <Text style={{ color: "#64748B", fontSize: 12 }}>{showPrep ? "▲ Hide" : "▼ Show"}</Text>
+          <Text style={{ color: "#4D8C72", fontSize: 12 }}>{showPrep ? "▲ Hide" : "▼ Show"}</Text>
         </TouchableOpacity>
 
         {/* Expandable Prep Section */}
@@ -474,12 +474,12 @@ function MealCard({ meal }: { meal: any }) {
           <View style={{ marginTop: 10, gap: 8 }}>
             {/* Ingredients */}
             {meal.ingredients?.length > 0 && (
-              <View style={{ backgroundColor: "#0E1218", borderRadius: 12, padding: 12 }}>
-                <Text style={{ color: "#64748B", fontSize: 11, fontFamily: "Syne_700Bold", letterSpacing: 1, marginBottom: 8 }}>INGREDIENTS</Text>
+              <View style={{ backgroundColor: "#0D1F18", borderRadius: 12, padding: 12 }}>
+                <Text style={{ color: "#4D8C72", fontSize: 11, fontFamily: "Outfit_700Bold", letterSpacing: 1, marginBottom: 8 }}>INGREDIENTS</Text>
                 {meal.ingredients.map((ing: string, i: number) => (
                   <View key={i} style={{ flexDirection: "row", alignItems: "flex-start", gap: 8, marginBottom: 4 }}>
-                    <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: "#94A3B8", marginTop: 5 }} />
-                    <Text style={{ color: "#E2E8F0", fontSize: 13, flex: 1, lineHeight: 18 }}>{ing}</Text>
+                    <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: "#6EE7B7", marginTop: 5 }} />
+                    <Text style={{ color: "#10B981", fontSize: 13, flex: 1, lineHeight: 18 }}>{ing}</Text>
                   </View>
                 ))}
               </View>
@@ -487,14 +487,14 @@ function MealCard({ meal }: { meal: any }) {
 
             {/* Instructions */}
             {meal.instructions?.length > 0 && (
-              <View style={{ backgroundColor: "#0E1218", borderRadius: 12, padding: 12 }}>
-                <Text style={{ color: "#64748B", fontSize: 11, fontFamily: "Syne_700Bold", letterSpacing: 1, marginBottom: 8 }}>PREP STEPS</Text>
+              <View style={{ backgroundColor: "#0D1F18", borderRadius: 12, padding: 12 }}>
+                <Text style={{ color: "#4D8C72", fontSize: 11, fontFamily: "Outfit_700Bold", letterSpacing: 1, marginBottom: 8 }}>PREP STEPS</Text>
                 {meal.instructions.map((step: string, i: number) => (
                   <View key={i} style={{ flexDirection: "row", alignItems: "flex-start", gap: 10, marginBottom: 8 }}>
-                    <View style={{ width: 22, height: 22, borderRadius: 11, backgroundColor: "#E2E8F0", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                      <Text style={{ color: "#F1F5F9", fontSize: 11, fontFamily: "Syne_700Bold" }}>{i + 1}</Text>
+                    <View style={{ width: 22, height: 22, borderRadius: 11, backgroundColor: "#10B981", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                      <Text style={{ color: "#E6FFF5", fontSize: 11, fontFamily: "Outfit_700Bold" }}>{i + 1}</Text>
                     </View>
-                    <Text style={{ color: "#E2E8F0", fontSize: 13, flex: 1, lineHeight: 20 }}>{step}</Text>
+                    <Text style={{ color: "#10B981", fontSize: 13, flex: 1, lineHeight: 20 }}>{step}</Text>
                   </View>
                 ))}
               </View>
@@ -502,8 +502,8 @@ function MealCard({ meal }: { meal: any }) {
 
             {/* Fallback if no prep data */}
             {(!meal.ingredients?.length && !meal.instructions?.length) && (
-              <View style={{ backgroundColor: "#0E1218", borderRadius: 12, padding: 12 }}>
-                <Text style={{ color: "#64748B", fontSize: 13, textAlign: "center" }}>
+              <View style={{ backgroundColor: "#0D1F18", borderRadius: 12, padding: 12 }}>
+                <Text style={{ color: "#4D8C72", fontSize: 13, textAlign: "center" }}>
                   Regenerate your meal plan to get detailed prep instructions for each meal.
                 </Text>
               </View>
