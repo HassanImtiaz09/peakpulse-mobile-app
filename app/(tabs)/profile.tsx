@@ -286,6 +286,8 @@ export default function ProfileScreen() {
             <FeatureLink icon="📸" label="Daily Check-In" onPress={() => router.push("/daily-checkin" as any)} />
             <FeatureLink icon="🎯" label="Form Checker" onPress={() => router.push("/form-checker" as any)} />
             <FeatureLink icon="👥" label="Social Feed" onPress={() => router.push("/social-feed" as any)} />
+            <FeatureLink icon="⚡" label="7-Day Challenge" onPress={() => router.push("/challenge-onboarding" as any)} />
+            <FeatureLink icon="🎁" label="Refer a Friend" onPress={() => router.push("/referral" as any)} />
             <FeatureLink icon="⌚" label="Wearable Sync" onPress={() => router.push("/wearable-sync" as any)} />
             <FeatureLink icon="🗺️" label="Find Nearby Gyms" onPress={() => router.push("/gym-finder" as any)} />
           </View>

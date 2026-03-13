@@ -150,3 +150,20 @@
 - [x] Daily body photo incentive: AI BF% assessment + motivational message per photo
 - [x] Meal log visual redesign: NanoBanana food images per meal + embedded recipe in dropdown
 - [x] Market research report: competitor analysis + revenue estimate document
+
+## Feature Additions (Round 6)
+
+- [x] Body scan: fullscreen transformation preview with pinch-to-zoom and before/after swipe comparison
+- [x] Body scan: enlarged image modal when user taps a transformation card
+- [x] Push notifications: daily workout reminder at user-preferred time
+- [x] Push notifications: meal log nudge if no meal logged by noon/evening
+- [x] 7-day challenge onboarding sequence (guided first week: 1 workout + 1 meal log + 1 progress photo)
+- [x] Dashboard: animated SVG progress rings (calories, steps, water, protein)
+- [x] Offline workout caching: store last generated plan in AsyncStorage for offline access
+- [x] AI plan disclaimers on all generated workout and meal plans
+- [x] Subscription: annual plan option ($39.99/yr Basic, $79.99/yr Advanced) with savings badge
+- [x] Referral programme: unique referral link + 1 free month for both referrer and referee
+- [x] Social feed: seed with AI-generated example posts (clearly labelled) until real users populate
+- [x] Social feed: weekly challenges with leaderboard (log 5 workouts, hit protein goal 7 days)
+- [x] Ramadan/halal mode: fasting-aware meal timing, prayer-time workout scheduling
+- [ ] Stripe secret integration: STRIPE_SECRET_KEY and STRIPE_WEBHOOK_SECRET via secrets panel (pending — user to configure)

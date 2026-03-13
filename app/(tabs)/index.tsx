@@ -1,6 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import Svg, { Circle } from "react-native-svg";
+import Animated, { useSharedValue, useAnimatedProps, withTiming, Easing } from "react-native-reanimated";
+import { useCalories, type MealEntry } from "@/lib/calorie-context";
+import { scheduleAllDefaultReminders } from "@/lib/notifications";
 import {
-  ScrollView, Text, View, TouchableOpacity, ImageBackground, Image, ActivityIndicator,
+  ScrollView, Text, View, TouchableOpacity, ImageBackground, Image, ActivityIndicator, Platform,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { ScreenContainer } from "@/components/screen-container";
@@ -13,17 +17,36 @@ const DASHBOARD_BG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/T
 const HERO_BG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/hero_bg-YtJxLGZKqRBrxqD3Cfsn7p.png";
 const APP_LOGO = "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/app_logo-iTNC7xURufvjtUp3Y5ns3S.png";
 
-function StatRing({ value, label, color, icon }: { value: string; label: string; color: string; icon: string }) {
+const AnimatedCircle = Animated.createAnimatedComponent(Circle);
+
+function StatRing({ value, label, color, icon, progress = 0 }: { value: string; label: string; color: string; icon: string; progress?: number }) {
+  const animProgress = useSharedValue(0);
+  const R = 26;
+  const circumference = 2 * Math.PI * R;
+
+  useEffect(() => {
+    animProgress.value = withTiming(Math.min(Math.max(progress, 0), 1), { duration: 1200, easing: Easing.out(Easing.cubic) });
+  }, [progress]);
+
+  const animatedProps = useAnimatedProps(() => ({
+    strokeDashoffset: circumference * (1 - animProgress.value),
+  }));
+
   return (
     <View style={{ alignItems: "center", flex: 1 }}>
-      <View style={{
-        width: 64, height: 64, borderRadius: 32,
-        borderWidth: 3, borderColor: color,
-        alignItems: "center", justifyContent: "center",
-        backgroundColor: color + "15",
-        marginBottom: 6,
-      }}>
-        <Text style={{ fontSize: 22 }}>{icon}</Text>
+      <View style={{ width: 64, height: 64, alignItems: "center", justifyContent: "center", marginBottom: 6 }}>
+        <Svg width={64} height={64} style={{ position: "absolute" }}>
+          <Circle cx={32} cy={32} r={R} stroke={color + "25"} strokeWidth={4} fill="none" />
+          <AnimatedCircle
+            cx={32} cy={32} r={R}
+            stroke={color} strokeWidth={4} fill="none"
+            strokeDasharray={circumference}
+            animatedProps={animatedProps}
+            strokeLinecap="round"
+            rotation="-90" origin="32,32"
+          />
+        </Svg>
+        <Text style={{ fontSize: 20 }}>{icon}</Text>
       </View>
       <Text style={{ color: "#FFFFFF", fontWeight: "800", fontSize: 14 }}>{value}</Text>
       <Text style={{ color: "#9CA3AF", fontSize: 10, marginTop: 1 }}>{label}</Text>
@@ -62,6 +85,42 @@ export default function HomeScreen() {
   const { data: profile } = trpc.profile.get.useQuery(undefined, { enabled: isAuthenticated });
   const { data: workoutPlan } = trpc.workoutPlan.getActive.useQuery(undefined, { enabled: isAuthenticated });
   const { data: mealPlan } = trpc.mealPlan.getActive.useQuery(undefined, { enabled: isAuthenticated });
+  const { totalCalories: todayCalories, calorieGoal, meals: todayMeals } = useCalories();
+  const [stats, setStats] = useState({ workouts: 0, streak: 0, meals: 0, photos: 0 });
+
+  // Schedule notifications on first load
+  useEffect(() => {
+    if (Platform.OS !== "web" && canUse) {
+      scheduleAllDefaultReminders().catch(() => {});
+    }
+  }, [canUse]);
+
+  // Load stats from AsyncStorage
+  useEffect(() => {
+    if (!canUse) return;
+    Promise.all([
+      AsyncStorage.getItem("@workout_count"),
+      AsyncStorage.getItem("@streak_count"),
+      AsyncStorage.getItem("@progress_photos"),
+    ]).then(([wc, sc, pp]) => {
+      setStats({
+        workouts: wc ? parseInt(wc) : 0,
+        streak: sc ? parseInt(sc) : 0,
+        meals: todayMeals.length,
+        photos: pp ? JSON.parse(pp).length : 0,
+      });
+    });
+  }, [canUse, todayMeals.length]);
+
+  // Offline workout plan caching
+  useEffect(() => {
+    if (workoutPlan) {
+      AsyncStorage.setItem("@cached_workout_plan", JSON.stringify(workoutPlan)).catch(() => {});
+    }
+  }, [workoutPlan]);
+
+  const caloriesRemaining = Math.max(0, calorieGoal - todayCalories);
+  const calorieProgress = calorieGoal > 0 ? Math.min(todayCalories / calorieGoal, 1) : 0;
 
   // Check if onboarding has been completed on first launch
   useEffect(() => {
@@ -180,14 +239,50 @@ export default function HomeScreen() {
 
         {/* Stats Row */}
         <View style={{ backgroundColor: "#0D0D18", marginHorizontal: 16, marginTop: -20, borderRadius: 24, padding: 20, borderWidth: 1, borderColor: "#1F2937", flexDirection: "row", gap: 8 }}>
-          <StatRing value="0" label="Workouts" color="#7C3AED" icon="🏋️" />
+          <StatRing value={String(stats.workouts)} label="Workouts" color="#7C3AED" icon="🏋️" progress={Math.min(stats.workouts / 30, 1)} />
           <View style={{ width: 1, backgroundColor: "#1F2937" }} />
-          <StatRing value="0" label="Streak" color="#F97316" icon="🔥" />
+          <StatRing value={String(stats.streak)} label="Streak" color="#F97316" icon="🔥" progress={Math.min(stats.streak / 7, 1)} />
           <View style={{ width: 1, backgroundColor: "#1F2937" }} />
-          <StatRing value="0" label="Meals" color="#22C55E" icon="🥗" />
+          <StatRing value={String(stats.meals)} label="Meals" color="#22C55E" icon="🥗" progress={Math.min(stats.meals / 3, 1)} />
           <View style={{ width: 1, backgroundColor: "#1F2937" }} />
-          <StatRing value="0" label="Photos" color="#06B6D4" icon="📸" />
+          <StatRing value={String(stats.photos)} label="Photos" color="#06B6D4" icon="📸" progress={Math.min(stats.photos / 30, 1)} />
         </View>
+
+        {/* Calorie Progress Bar */}
+        {calorieGoal > 0 && (
+          <View style={{ marginHorizontal: 16, marginTop: 12, backgroundColor: "#0D0D18", borderRadius: 20, padding: 16, borderWidth: 1, borderColor: "#1F2937" }}>
+            <View style={{ flexDirection: "row", justifyContent: "space-between", marginBottom: 10 }}>
+              <View>
+                <Text style={{ color: "#9CA3AF", fontSize: 11, fontWeight: "600" }}>TODAY'S CALORIES</Text>
+                <Text style={{ color: "#FFFFFF", fontWeight: "800", fontSize: 22 }}>{todayCalories} <Text style={{ color: "#9CA3AF", fontSize: 14, fontWeight: "400" }}>/ {calorieGoal} kcal</Text></Text>
+              </View>
+              <View style={{ alignItems: "flex-end" }}>
+                <Text style={{ color: "#9CA3AF", fontSize: 11, fontWeight: "600" }}>REMAINING</Text>
+                <Text style={{ color: caloriesRemaining < 200 ? "#EF4444" : "#22C55E", fontWeight: "800", fontSize: 22 }}>{caloriesRemaining} kcal</Text>
+              </View>
+            </View>
+            <View style={{ height: 10, backgroundColor: "#1F2937", borderRadius: 5, overflow: "hidden" }}>
+              <View style={{
+                height: 10, borderRadius: 5,
+                width: `${calorieProgress * 100}%`,
+                backgroundColor: calorieProgress > 0.9 ? "#EF4444" : calorieProgress > 0.7 ? "#F59E0B" : "#22C55E",
+              }} />
+            </View>
+            <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 8 }}>
+              {["Protein", "Carbs", "Fat"].map((macro, i) => {
+                const vals = [0, 0, 0];
+                (todayMeals as MealEntry[]).forEach(m => { vals[0] += m.protein ?? 0; vals[1] += m.carbs ?? 0; vals[2] += m.fat ?? 0; });
+                const colors = ["#7C3AED", "#22C55E", "#F97316"];
+                return (
+                  <View key={macro} style={{ alignItems: "center" }}>
+                    <Text style={{ color: colors[i], fontWeight: "700", fontSize: 13 }}>{Math.round(vals[i])}g</Text>
+                    <Text style={{ color: "#6B7280", fontSize: 10 }}>{macro}</Text>
+                  </View>
+                );
+              })}
+            </View>
+          </View>
+        )}
 
         {/* Quick Actions */}
         <View style={{ paddingHorizontal: 16, marginTop: 20 }}>
@@ -202,10 +297,15 @@ export default function HomeScreen() {
             <QuickActionCard icon="🗺️" label="Find Gym" color="#EC4899" onPress={() => router.push("/gym-finder" as any)} />
             <QuickActionCard icon="⌚" label="Wearables" color="#EAB308" onPress={() => router.push("/wearable-sync" as any)} />
           </View>
-          <View style={{ flexDirection: "row", gap: 10 }}>
+          <View style={{ flexDirection: "row", gap: 10, marginBottom: 10 }}>
             <QuickActionCard icon="📸" label="Daily Check-In" color="#8B5CF6" onPress={() => router.push("/daily-checkin" as any)} />
             <QuickActionCard icon="🎯" label="Form Check" color="#10B981" onPress={() => router.push("/form-checker" as any)} />
             <QuickActionCard icon="👥" label="Community" color="#F43F5E" onPress={() => router.push("/social-feed" as any)} />
+          </View>
+          <View style={{ flexDirection: "row", gap: 10 }}>
+            <QuickActionCard icon="⚡" label="7-Day Challenge" color="#F59E0B" onPress={() => router.push("/challenge-onboarding" as any)} />
+            <QuickActionCard icon="🎁" label="Refer a Friend" color="#EC4899" onPress={() => router.push("/referral" as any)} />
+            <QuickActionCard icon="⭐" label="Upgrade" color="#7C3AED" onPress={() => router.push("/subscription" as any)} />
           </View>
         </View>
 

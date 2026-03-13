@@ -75,6 +75,7 @@ export default function PlansScreen() {
   // Meal plan state
   const [dietaryPref, setDietaryPref] = useState("omnivore");
   const [mealGoal, setMealGoal] = useState("build_muscle");
+  const [ramadanMode, setRamadanMode] = useState(false);
 
   const { data: dbWorkoutPlan, refetch: refetchWorkout } = trpc.workoutPlan.getActive.useQuery(undefined, { enabled: isAuthenticated });
   const { data: dbMealPlan, refetch: refetchMeal } = trpc.mealPlan.getActive.useQuery(undefined, { enabled: isAuthenticated });
@@ -176,6 +177,12 @@ export default function PlansScreen() {
               ))}
             </View>
 
+            {/* AI Disclaimer for Workout */}
+            <View style={{ backgroundColor: "#FBBF2410", borderRadius: 10, padding: 10, marginBottom: 16, borderWidth: 1, borderColor: "#FBBF2430", flexDirection: "row", gap: 8 }}>
+              <Text style={{ fontSize: 14 }}>⚠️</Text>
+              <Text style={{ color: "#FCD34D", fontSize: 11, lineHeight: 16, flex: 1 }}>AI-generated plans are for guidance only. Consult a fitness professional before starting a new exercise programme, especially if you have injuries or health conditions.</Text>
+            </View>
+
             <SectionLabel>Days Per Week</SectionLabel>
             <View style={{ flexDirection: "row", gap: 8, marginBottom: 24 }}>
               {DAYS_OPTIONS.map(d => (
@@ -245,9 +252,34 @@ export default function PlansScreen() {
               ))}
             </View>
 
+            {/* Ramadan Mode Toggle */}
+            {(dietaryPref === "halal" || ramadanMode) && (
+              <TouchableOpacity
+                style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", backgroundColor: ramadanMode ? "#7C3AED20" : "#13131F", borderRadius: 12, padding: 14, marginBottom: 16, borderWidth: 1, borderColor: ramadanMode ? "#7C3AED" : "#1F2937" }}
+                onPress={() => setRamadanMode(v => !v)}
+              >
+                <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+                  <Text style={{ fontSize: 20 }}>🌙</Text>
+                  <View>
+                    <Text style={{ color: "#FFFFFF", fontWeight: "700", fontSize: 14 }}>Ramadan Mode</Text>
+                    <Text style={{ color: "#9CA3AF", fontSize: 11, marginTop: 2 }}>Suhoor, Iftar & Isha meals</Text>
+                  </View>
+                </View>
+                <View style={{ width: 44, height: 26, borderRadius: 13, backgroundColor: ramadanMode ? "#7C3AED" : "#374151", justifyContent: "center", paddingHorizontal: 2 }}>
+                  <View style={{ width: 22, height: 22, borderRadius: 11, backgroundColor: "#FFFFFF", alignSelf: ramadanMode ? "flex-end" : "flex-start" }} />
+                </View>
+              </TouchableOpacity>
+            )}
+
+            {/* AI Disclaimer */}
+            <View style={{ backgroundColor: "#FBBF2410", borderRadius: 10, padding: 10, marginBottom: 16, borderWidth: 1, borderColor: "#FBBF2430", flexDirection: "row", gap: 8 }}>
+              <Text style={{ fontSize: 14 }}>⚠️</Text>
+              <Text style={{ color: "#FCD34D", fontSize: 11, lineHeight: 16, flex: 1 }}>AI-generated plans are for guidance only. Consult a qualified nutritionist or dietitian before making significant dietary changes, especially if you have health conditions.</Text>
+            </View>
+
             <TouchableOpacity
               style={{ backgroundColor: "#22C55E", borderRadius: 16, paddingVertical: 14, alignItems: "center", marginBottom: 24, opacity: generateMeal.isPending ? 0.7 : 1 }}
-              onPress={() => generateMeal.mutate({ goal: mealGoal, dietaryPreference: dietaryPref })}
+              onPress={() => generateMeal.mutate({ goal: mealGoal, dietaryPreference: dietaryPref, ramadanMode })}
               disabled={generateMeal.isPending}
             >
               {generateMeal.isPending ? (

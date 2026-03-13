@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import {
   ScrollView, Text, View, TouchableOpacity, ActivityIndicator, Alert, Image, Platform, ImageBackground,
+  Modal, Dimensions, PanResponder, Animated,
 } from "react-native";
 
 import * as ImagePicker from "expo-image-picker";
@@ -187,6 +188,12 @@ export default function ScanScreen() {
   }
 
   // Get scan data (real or guest)
+  // Fullscreen preview state
+  const [previewModal, setPreviewModal] = useState<{ visible: boolean; imageUrl: string; bf: number; beforeUrl: string | null } | null>(null);
+  const [previewTab, setPreviewTab] = useState<"after" | "compare">("after");
+  const screenW = Dimensions.get("window").width;
+  const screenH = Dimensions.get("window").height;
+
   const [guestScanData, setGuestScanData] = useState<any>(null);
   React.useEffect(() => {
     if (isGuest && step === "results") {
@@ -197,6 +204,97 @@ export default function ScanScreen() {
   }, [isGuest, step]);
 
   const scan = isAuthenticated ? (latestScan ?? analyzeScan.data) : guestScanData;
+
+  // ── Fullscreen Transformation Preview Modal ──
+  function TransformationPreviewModal() {
+    if (!previewModal?.visible) return null;
+    const { imageUrl, bf, beforeUrl } = previewModal;
+    return (
+      <Modal
+        visible={previewModal.visible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setPreviewModal(null)}
+        statusBarTranslucent
+      >
+        <View style={{ flex: 1, backgroundColor: "#000000F0" }}>
+          {/* Header */}
+          <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingHorizontal: 20, paddingTop: 56, paddingBottom: 12 }}>
+            <TouchableOpacity onPress={() => setPreviewModal(null)} style={{ backgroundColor: "#FFFFFF20", borderRadius: 20, width: 40, height: 40, alignItems: "center", justifyContent: "center" }}>
+              <Text style={{ color: "#FFFFFF", fontSize: 18 }}>✕</Text>
+            </TouchableOpacity>
+            <Text style={{ color: "#FFFFFF", fontWeight: "800", fontSize: 18 }}>{bf}% Body Fat Goal</Text>
+            <View style={{ width: 40 }} />
+          </View>
+
+          {/* Tab Switcher */}
+          {beforeUrl ? (
+            <View style={{ flexDirection: "row", marginHorizontal: 20, marginBottom: 16, backgroundColor: "#1F2937", borderRadius: 12, padding: 4 }}>
+              <TouchableOpacity
+                style={{ flex: 1, paddingVertical: 8, borderRadius: 8, alignItems: "center", backgroundColor: previewTab === "after" ? "#7C3AED" : "transparent" }}
+                onPress={() => setPreviewTab("after")}
+              >
+                <Text style={{ color: previewTab === "after" ? "#FFFFFF" : "#9CA3AF", fontWeight: "700", fontSize: 13 }}>AI Transformation</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={{ flex: 1, paddingVertical: 8, borderRadius: 8, alignItems: "center", backgroundColor: previewTab === "compare" ? "#7C3AED" : "transparent" }}
+                onPress={() => setPreviewTab("compare")}
+              >
+                <Text style={{ color: previewTab === "compare" ? "#FFFFFF" : "#9CA3AF", fontWeight: "700", fontSize: 13 }}>Before / After</Text>
+              </TouchableOpacity>
+            </View>
+          ) : null}
+
+          {/* Image Display */}
+          {previewTab === "after" ? (
+            <View style={{ flex: 1, alignItems: "center", justifyContent: "center", paddingHorizontal: 16 }}>
+              <Image
+                source={{ uri: imageUrl }}
+                style={{ width: screenW - 32, height: screenH * 0.62, borderRadius: 20 }}
+                resizeMode="contain"
+              />
+              <View style={{ marginTop: 20, backgroundColor: "#7C3AED20", borderRadius: 16, paddingHorizontal: 20, paddingVertical: 12, borderWidth: 1, borderColor: "#7C3AED40" }}>
+                <Text style={{ color: "#A78BFA", fontWeight: "700", fontSize: 14, textAlign: "center" }}>AI-Generated Transformation Preview</Text>
+                <Text style={{ color: "#9CA3AF", fontSize: 12, textAlign: "center", marginTop: 4 }}>This is how you could look at {bf}% body fat with consistent training and nutrition</Text>
+              </View>
+            </View>
+          ) : (
+            <View style={{ flex: 1, paddingHorizontal: 16 }}>
+              <View style={{ flexDirection: "row", gap: 12, flex: 1 }}>
+                <View style={{ flex: 1, alignItems: "center" }}>
+                  <Text style={{ color: "#9CA3AF", fontWeight: "700", fontSize: 12, marginBottom: 8, textTransform: "uppercase", letterSpacing: 1 }}>Before</Text>
+                  <Image
+                    source={{ uri: beforeUrl! }}
+                    style={{ width: "100%", flex: 1, borderRadius: 16, maxHeight: screenH * 0.55 }}
+                    resizeMode="cover"
+                  />
+                </View>
+                <View style={{ flex: 1, alignItems: "center" }}>
+                  <Text style={{ color: "#7C3AED", fontWeight: "700", fontSize: 12, marginBottom: 8, textTransform: "uppercase", letterSpacing: 1 }}>After ({bf}% BF)</Text>
+                  <Image
+                    source={{ uri: imageUrl }}
+                    style={{ width: "100%", flex: 1, borderRadius: 16, maxHeight: screenH * 0.55 }}
+                    resizeMode="cover"
+                  />
+                </View>
+              </View>
+              <Text style={{ color: "#6B7280", fontSize: 11, textAlign: "center", marginTop: 12, marginBottom: 8 }}>AI-generated preview for motivational purposes only</Text>
+            </View>
+          )}
+
+          {/* CTA */}
+          <View style={{ paddingHorizontal: 20, paddingBottom: 40 }}>
+            <TouchableOpacity
+              style={{ backgroundColor: "#7C3AED", borderRadius: 16, paddingVertical: 16, alignItems: "center", shadowColor: "#7C3AED", shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.5, shadowRadius: 12 }}
+              onPress={() => { setPreviewModal(null); selectTargetAndProceed(bf); }}
+            >
+              <Text style={{ color: "#FFFFFF", fontWeight: "800", fontSize: 16 }}>🎯 Set {bf}% as My Goal</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+    );
+  }
 
   if (!canUse) {
     return (
@@ -220,6 +318,9 @@ export default function ScanScreen() {
 
   return (
     <View style={{ flex: 1, backgroundColor: "#080810" }}>
+      {/* Fullscreen Preview Modal */}
+      <TransformationPreviewModal />
+
       {/* Hero Header */}
       <ImageBackground source={{ uri: SCAN_BG }} style={{ height: 180 }} resizeMode="cover">
         <View style={{ flex: 1, backgroundColor: "rgba(8,8,16,0.65)", justifyContent: "flex-end", padding: 20, paddingTop: 52 }}>
@@ -364,26 +465,43 @@ export default function ScanScreen() {
             </Text>
 
             {scan.transformations?.map((t: any, i: number) => (
-              <TouchableOpacity
+              <View
                 key={i}
                 style={{
                   backgroundColor: "#13131F", borderRadius: 16, padding: 14, marginBottom: 10,
                   borderWidth: 2, borderColor: selectedTransform === t.target_bf ? "#7C3AED" : "#1F2937",
                 }}
-                onPress={() => selectTargetAndProceed(t.target_bf)}
               >
                 <View style={{ flexDirection: "row", gap: 12 }}>
-                  {t.imageUrl ? (
-                    <Image
-                      source={{ uri: t.imageUrl }}
-                      style={{ width: 80, height: 100, borderRadius: 12, backgroundColor: "#0D0D18" }}
-                      resizeMode="cover"
-                    />
-                  ) : (
-                    <View style={{ width: 80, height: 100, borderRadius: 12, backgroundColor: "#0D0D18", alignItems: "center", justifyContent: "center" }}>
-                      <Text style={{ fontSize: 28 }}>🏃</Text>
-                    </View>
-                  )}
+                  {/* Tappable image — opens fullscreen preview */}
+                  <TouchableOpacity
+                    onPress={() => {
+                      if (t.imageUrl) {
+                        setPreviewTab("after");
+                        setPreviewModal({ visible: true, imageUrl: t.imageUrl, bf: t.target_bf, beforeUrl: selectedImage });
+                      }
+                    }}
+                    activeOpacity={0.85}
+                  >
+                    {t.imageUrl ? (
+                      <View>
+                        <Image
+                          source={{ uri: t.imageUrl }}
+                          style={{ width: 90, height: 115, borderRadius: 12, backgroundColor: "#0D0D18" }}
+                          resizeMode="cover"
+                        />
+                        {/* Zoom hint overlay */}
+                        <View style={{ position: "absolute", bottom: 6, right: 6, backgroundColor: "rgba(0,0,0,0.7)", borderRadius: 8, paddingHorizontal: 5, paddingVertical: 3 }}>
+                          <Text style={{ color: "#FFFFFF", fontSize: 10 }}>🔍 View</Text>
+                        </View>
+                      </View>
+                    ) : (
+                      <View style={{ width: 90, height: 115, borderRadius: 12, backgroundColor: "#0D0D18", alignItems: "center", justifyContent: "center" }}>
+                        <Text style={{ fontSize: 28 }}>🏃</Text>
+                      </View>
+                    )}
+                  </TouchableOpacity>
+
                   <View style={{ flex: 1 }}>
                     <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
                       <Text style={{ color: "#FFFFFF", fontWeight: "800", fontSize: 22 }}>{t.target_bf}% BF</Text>
@@ -396,7 +514,7 @@ export default function ScanScreen() {
                     <Text style={{ color: "#9CA3AF", fontSize: 12, lineHeight: 16, marginBottom: 8 }}>
                       {String(t.description)}
                     </Text>
-                    <View style={{ flexDirection: "row", gap: 8 }}>
+                    <View style={{ flexDirection: "row", gap: 8, marginBottom: 8 }}>
                       <View style={{ backgroundColor: "#1F2937", borderRadius: 8, paddingHorizontal: 8, paddingVertical: 4 }}>
                         <Text style={{ color: "#9CA3AF", fontSize: 11 }}>⏱ {t.estimated_weeks}w</Text>
                       </View>
@@ -406,15 +524,32 @@ export default function ScanScreen() {
                         </Text>
                       </View>
                     </View>
+                    {/* Enlarge preview button */}
+                    {t.imageUrl && (
+                      <TouchableOpacity
+                        style={{ backgroundColor: "#7C3AED20", borderRadius: 10, paddingVertical: 6, paddingHorizontal: 10, borderWidth: 1, borderColor: "#7C3AED50", alignSelf: "flex-start" }}
+                        onPress={() => {
+                          setPreviewTab("after");
+                          setPreviewModal({ visible: true, imageUrl: t.imageUrl, bf: t.target_bf, beforeUrl: selectedImage });
+                        }}
+                      >
+                        <Text style={{ color: "#A78BFA", fontSize: 11, fontWeight: "700" }}>🔍 Enlarge Preview</Text>
+                      </TouchableOpacity>
+                    )}
                   </View>
                 </View>
-                {/* CTA arrow */}
-                <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "flex-end", marginTop: 8 }}>
-                  <Text style={{ color: "#7C3AED", fontSize: 12, fontWeight: "700" }}>
-                    Select this goal & create my plan →
-                  </Text>
+                {/* CTA row */}
+                <View style={{ flexDirection: "row", gap: 8, marginTop: 10 }}>
+                  <TouchableOpacity
+                    style={{ flex: 1, backgroundColor: selectedTransform === t.target_bf ? "#7C3AED" : "#1F2937", borderRadius: 12, paddingVertical: 10, alignItems: "center" }}
+                    onPress={() => selectTargetAndProceed(t.target_bf)}
+                  >
+                    <Text style={{ color: selectedTransform === t.target_bf ? "#FFFFFF" : "#9CA3AF", fontWeight: "700", fontSize: 13 }}>
+                      {selectedTransform === t.target_bf ? "✓ Selected — Create Plan" : "Select This Goal"}
+                    </Text>
+                  </TouchableOpacity>
                 </View>
-              </TouchableOpacity>
+              </View>
             ))}
 
             <TouchableOpacity
