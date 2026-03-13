@@ -179,3 +179,17 @@
 - [x] Notification preferences: persist to AsyncStorage and reschedule notifications on change
 - [x] Profile: link to Notification Preferences screen
 - [ ] App Store submission guide added to README
+
+## UI Rebrand — Platinum Pulse (Round 8)
+
+- [x] Generate 5 premium UI concept mockups (Obsidian Forge, Aurora Titan, Crimson Apex, Platinum Pulse, Solar Storm)
+- [x] User selected Concept 4 — Platinum Pulse
+- [x] Install Syne and Inter Google Fonts via @expo-google-fonts
+- [x] Load Syne + Inter fonts in _layout.tsx with SplashScreen.preventAutoHideAsync
+- [x] Update theme.config.js to Platinum Pulse silver/monochrome palette
+- [x] Redesign tab bar: silver icon highlights, glass border, Inter_500Medium labels
+- [x] Rebuild Dashboard screen with Platinum Pulse hero, Syne headings, silver rings
+- [x] Apply Platinum Pulse colour substitutions to all 17 screens (Python script)
+- [x] Upload and wire Platinum Pulse hero backgrounds for all 5 tabs (CDN)
+- [x] Update splash screen background to #080B0F (Platinum Pulse dark)
+- [x] Zero TypeScript errors after full rebrand

@@ -6,14 +6,14 @@ import {
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const DASHBOARD_BG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/dashboard_bg-RoFjMvrdRjaYMAUAfupKpm.png";
+const DASHBOARD_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/cRektLNCAgCjcXYF.jpg";
 
 const WEARABLES = [
   {
     id: "apple_health",
     name: "Apple Health",
     icon: "❤️",
-    color: "#EF4444",
+    color: "#64748B",
     platform: "ios",
     description: "Sync steps, heart rate, calories, sleep, and workouts from your iPhone and Apple Watch.",
     deepLink: "x-apple-health://",
@@ -25,7 +25,7 @@ const WEARABLES = [
     id: "google_fit",
     name: "Google Fit",
     icon: "🏃",
-    color: "#22C55E",
+    color: "#94A3B8",
     platform: "android",
     description: "Sync activity, heart rate, and workout data from your Android device and Wear OS watch.",
     deepLink: "googlefit://",
@@ -49,7 +49,7 @@ const WEARABLES = [
     id: "garmin",
     name: "Garmin Connect",
     icon: "🗺️",
-    color: "#0EA5E9",
+    color: "#94A3B8",
     platform: "both",
     description: "Sync detailed performance metrics from your Garmin GPS watch or fitness tracker.",
     deepLink: "garmin-connect://",
@@ -61,7 +61,7 @@ const WEARABLES = [
     id: "whoop",
     name: "WHOOP",
     icon: "💪",
-    color: "#7C3AED",
+    color: "#E2E8F0",
     platform: "both",
     description: "Sync recovery scores, strain, HRV, and sleep data from your WHOOP band.",
     deepLink: "whoop://",
@@ -73,7 +73,7 @@ const WEARABLES = [
     id: "samsung_health",
     name: "Samsung Health",
     icon: "📱",
-    color: "#F97316",
+    color: "#CBD5E1",
     platform: "android",
     description: "Sync health and fitness data from Samsung Galaxy Watch and Galaxy phones.",
     deepLink: "shealth://",
@@ -159,7 +159,7 @@ export default function WearableSyncScreen() {
   const visibleWearables = WEARABLES.filter(w => platformFilter.includes(w.platform));
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#080810" }}>
+    <View style={{ flex: 1, backgroundColor: "#080B0F" }}>
       {/* Hero */}
       <ImageBackground source={{ uri: DASHBOARD_BG }} style={{ height: 160 }} resizeMode="cover">
         <View style={{ flex: 1, backgroundColor: "rgba(8,8,16,0.72)", justifyContent: "flex-end", padding: 20, paddingTop: 52 }}>
@@ -167,25 +167,25 @@ export default function WearableSyncScreen() {
             style={{ position: "absolute", top: 52, left: 20, width: 36, height: 36, borderRadius: 10, backgroundColor: "rgba(255,255,255,0.1)", alignItems: "center", justifyContent: "center" }}
             onPress={() => router.back()}
           >
-            <Text style={{ color: "#FFFFFF", fontSize: 18 }}>←</Text>
+            <Text style={{ color: "#F1F5F9", fontSize: 18 }}>←</Text>
           </TouchableOpacity>
-          <Text style={{ color: "#A78BFA", fontWeight: "700", fontSize: 12, letterSpacing: 1 }}>CONNECT</Text>
-          <Text style={{ color: "#FFFFFF", fontWeight: "900", fontSize: 26, letterSpacing: -0.5 }}>Wearable Sync</Text>
+          <Text style={{ color: "#CBD5E1", fontFamily: "Syne_700Bold", fontSize: 12, letterSpacing: 1 }}>CONNECT</Text>
+          <Text style={{ color: "#F1F5F9", fontFamily: "Syne_800ExtraBold", fontSize: 26, letterSpacing: -0.5 }}>Wearable Sync</Text>
         </View>
       </ImageBackground>
 
       <ScrollView contentContainerStyle={{ padding: 20, paddingBottom: 40 }} showsVerticalScrollIndicator={false}>
         {/* Info Banner */}
-        <View style={{ backgroundColor: "#7C3AED15", borderRadius: 16, padding: 16, marginBottom: 20, borderWidth: 1, borderColor: "#7C3AED30" }}>
-          <Text style={{ color: "#A78BFA", fontWeight: "700", fontSize: 13, marginBottom: 6 }}>ℹ️ How Wearable Sync Works</Text>
-          <Text style={{ color: "#9CA3AF", fontSize: 13, lineHeight: 20 }}>
+        <View style={{ backgroundColor: "#7C3AED15", borderRadius: 16, padding: 16, marginBottom: 20, borderWidth: 1, borderColor: "rgba(226,232,240,0.10)" }}>
+          <Text style={{ color: "#CBD5E1", fontFamily: "Syne_700Bold", fontSize: 13, marginBottom: 6 }}>ℹ️ How Wearable Sync Works</Text>
+          <Text style={{ color: "#64748B", fontSize: 13, lineHeight: 20 }}>
             Tap a device to open its app and authorize data sharing. Once connected, your health data (steps, heart rate, sleep, calories) will appear on your PeakPulse dashboard and personalize your AI plans.
           </Text>
         </View>
 
         {/* Platform note */}
-        <View style={{ backgroundColor: "#13131F", borderRadius: 12, padding: 12, marginBottom: 20, borderWidth: 1, borderColor: "#1F2937" }}>
-          <Text style={{ color: "#6B7280", fontSize: 12, textAlign: "center" }}>
+        <View style={{ backgroundColor: "#0E1218", borderRadius: 12, padding: 12, marginBottom: 20, borderWidth: 1, borderColor: "rgba(226,232,240,0.08)" }}>
+          <Text style={{ color: "#475569", fontSize: 12, textAlign: "center" }}>
             {Platform.OS === "ios"
               ? "📱 Showing iOS-compatible apps. Apple Health is the primary data hub on iPhone."
               : "🤖 Showing Android-compatible apps. Google Fit is the primary data hub on Android."}
@@ -202,11 +202,11 @@ export default function WearableSyncScreen() {
             <View
               key={wearable.id}
               style={{
-                backgroundColor: "#13131F",
+                backgroundColor: "#0E1218",
                 borderRadius: 20,
                 marginBottom: 12,
                 borderWidth: 1,
-                borderColor: isConnected ? wearable.color + "50" : isExpanded ? wearable.color + "30" : "#1F2937",
+                borderColor: isConnected ? wearable.color + "50" : isExpanded ? wearable.color + "30" : "rgba(226,232,240,0.08)",
                 overflow: "hidden",
               }}
             >
@@ -220,16 +220,16 @@ export default function WearableSyncScreen() {
                 </View>
                 <View style={{ flex: 1 }}>
                   <View style={{ flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 2 }}>
-                    <Text style={{ color: "#FFFFFF", fontWeight: "700", fontSize: 15 }}>{wearable.name}</Text>
+                    <Text style={{ color: "#F1F5F9", fontFamily: "Syne_700Bold", fontSize: 15 }}>{wearable.name}</Text>
                     {isConnected && (
-                      <View style={{ backgroundColor: "#22C55E20", borderRadius: 6, paddingHorizontal: 6, paddingVertical: 2 }}>
-                        <Text style={{ color: "#22C55E", fontSize: 10, fontWeight: "700" }}>LINKED</Text>
+                      <View style={{ backgroundColor: "rgba(226,232,240,0.08)", borderRadius: 6, paddingHorizontal: 6, paddingVertical: 2 }}>
+                        <Text style={{ color: "#94A3B8", fontSize: 10, fontFamily: "Syne_700Bold" }}>LINKED</Text>
                       </View>
                     )}
                   </View>
-                  <Text style={{ color: "#9CA3AF", fontSize: 12, lineHeight: 16 }}>{wearable.description}</Text>
+                  <Text style={{ color: "#64748B", fontSize: 12, lineHeight: 16 }}>{wearable.description}</Text>
                 </View>
-                <Text style={{ color: "#9CA3AF", fontSize: 14 }}>{isExpanded ? "▲" : "▼"}</Text>
+                <Text style={{ color: "#64748B", fontSize: 14 }}>{isExpanded ? "▲" : "▼"}</Text>
               </TouchableOpacity>
 
               {/* Expanded Detail */}
@@ -237,19 +237,19 @@ export default function WearableSyncScreen() {
                 <View style={{ paddingHorizontal: 18, paddingBottom: 18, gap: 12 }}>
                   {/* Data types */}
                   <View>
-                    <Text style={{ color: "#9CA3AF", fontSize: 11, fontWeight: "700", letterSpacing: 1, marginBottom: 8 }}>DATA SYNCED</Text>
+                    <Text style={{ color: "#64748B", fontSize: 11, fontFamily: "Syne_700Bold", letterSpacing: 1, marginBottom: 8 }}>DATA SYNCED</Text>
                     <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 6 }}>
                       {wearable.dataTypes.map((dt) => (
                         <View key={dt} style={{ backgroundColor: wearable.color + "15", borderRadius: 8, paddingHorizontal: 10, paddingVertical: 4, borderWidth: 1, borderColor: wearable.color + "30" }}>
-                          <Text style={{ color: wearable.color, fontSize: 11, fontWeight: "600" }}>{dt}</Text>
+                          <Text style={{ color: wearable.color, fontSize: 11, fontFamily: "Inter_600SemiBold" }}>{dt}</Text>
                         </View>
                       ))}
                     </View>
                   </View>
 
                   {/* How to connect */}
-                  <View style={{ backgroundColor: "#0D0D18", borderRadius: 12, padding: 12 }}>
-                    <Text style={{ color: "#9CA3AF", fontSize: 11, fontWeight: "700", letterSpacing: 1, marginBottom: 6 }}>HOW TO CONNECT</Text>
+                  <View style={{ backgroundColor: "#0E1218", borderRadius: 12, padding: 12 }}>
+                    <Text style={{ color: "#64748B", fontSize: 11, fontFamily: "Syne_700Bold", letterSpacing: 1, marginBottom: 6 }}>HOW TO CONNECT</Text>
                     <Text style={{ color: "#D1D5DB", fontSize: 13, lineHeight: 20 }}>{wearable.note}</Text>
                   </View>
 
@@ -261,14 +261,14 @@ export default function WearableSyncScreen() {
                         onPress={() => handleOpenApp(wearable)}
                         disabled={isOpening}
                       >
-                        {isOpening ? <ActivityIndicator color="#FFFFFF" size="small" /> : <Text style={{ fontSize: 16 }}>{wearable.icon}</Text>}
-                        <Text style={{ color: "#FFFFFF", fontWeight: "700", fontSize: 14 }}>Open {wearable.name}</Text>
+                        {isOpening ? <ActivityIndicator color="#F1F5F9" size="small" /> : <Text style={{ fontSize: 16 }}>{wearable.icon}</Text>}
+                        <Text style={{ color: "#F1F5F9", fontFamily: "Syne_700Bold", fontSize: 14 }}>Open {wearable.name}</Text>
                       </TouchableOpacity>
                       <TouchableOpacity
                         style={{ flex: 1, backgroundColor: "#EF444420", borderRadius: 14, paddingVertical: 14, alignItems: "center", borderWidth: 1, borderColor: "#EF444440" }}
                         onPress={() => handleDisconnect(wearable.id)}
                       >
-                        <Text style={{ color: "#EF4444", fontWeight: "700", fontSize: 13 }}>Unlink</Text>
+                        <Text style={{ color: "#64748B", fontFamily: "Syne_700Bold", fontSize: 13 }}>Unlink</Text>
                       </TouchableOpacity>
                     </View>
                   ) : (
@@ -278,11 +278,11 @@ export default function WearableSyncScreen() {
                       disabled={isOpening}
                     >
                       {isOpening ? (
-                        <ActivityIndicator color="#FFFFFF" size="small" />
+                        <ActivityIndicator color="#F1F5F9" size="small" />
                       ) : (
                         <Text style={{ fontSize: 18 }}>{wearable.icon}</Text>
                       )}
-                      <Text style={{ color: "#FFFFFF", fontWeight: "700", fontSize: 15 }}>
+                      <Text style={{ color: "#F1F5F9", fontFamily: "Syne_700Bold", fontSize: 15 }}>
                         {isOpening ? "Opening..." : `Open ${wearable.name}`}
                       </Text>
                     </TouchableOpacity>
@@ -294,16 +294,16 @@ export default function WearableSyncScreen() {
         })}
 
         {/* Manual Entry Note */}
-        <View style={{ backgroundColor: "#13131F", borderRadius: 16, padding: 16, marginTop: 8, borderWidth: 1, borderColor: "#1F2937" }}>
-          <Text style={{ color: "#FFFFFF", fontWeight: "700", fontSize: 14, marginBottom: 8 }}>📊 No Wearable?</Text>
-          <Text style={{ color: "#9CA3AF", fontSize: 13, lineHeight: 20, marginBottom: 12 }}>
+        <View style={{ backgroundColor: "#0E1218", borderRadius: 16, padding: 16, marginTop: 8, borderWidth: 1, borderColor: "rgba(226,232,240,0.08)" }}>
+          <Text style={{ color: "#F1F5F9", fontFamily: "Syne_700Bold", fontSize: 14, marginBottom: 8 }}>📊 No Wearable?</Text>
+          <Text style={{ color: "#64748B", fontSize: 13, lineHeight: 20, marginBottom: 12 }}>
             You can manually log your daily steps, weight, and workout data directly in the PeakPulse app. Your dashboard will update automatically.
           </Text>
           <TouchableOpacity
-            style={{ backgroundColor: "#1F2937", borderRadius: 12, paddingVertical: 12, alignItems: "center" }}
+            style={{ backgroundColor: "rgba(226,232,240,0.08)", borderRadius: 12, paddingVertical: 12, alignItems: "center" }}
             onPress={() => router.back()}
           >
-            <Text style={{ color: "#E5E7EB", fontWeight: "600", fontSize: 14 }}>← Back to Dashboard</Text>
+            <Text style={{ color: "#E2E8F0", fontFamily: "Inter_600SemiBold", fontSize: 14 }}>← Back to Dashboard</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>

@@ -9,8 +9,8 @@ import { useGuestAuth } from "@/lib/guest-auth";
 import { trpc } from "@/lib/trpc";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const HERO_BG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/hero_bg-YtJxLGZKqRBrxqD3Cfsn7p.png";
-const APP_LOGO = "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/app_logo-iTNC7xURufvjtUp3Y5ns3S.png";
+const HERO_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/cRektLNCAgCjcXYF.jpg";
+const APP_LOGO = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/cRektLNCAgCjcXYF.jpg";
 
 const GOALS = [
   { key: "build_muscle", label: "Build Muscle", icon: "💪" },
@@ -92,17 +92,17 @@ export default function ProfileScreen() {
 
   if (!canUse) {
     return (
-      <View style={{ flex: 1, backgroundColor: "#080810" }}>
+      <View style={{ flex: 1, backgroundColor: "#080B0F" }}>
         <ImageBackground source={{ uri: HERO_BG }} style={{ flex: 1 }} resizeMode="cover">
           <View style={{ flex: 1, backgroundColor: "rgba(8,8,16,0.78)", alignItems: "center", justifyContent: "center", padding: 32 }}>
             <Image source={{ uri: APP_LOGO }} style={{ width: 80, height: 80, borderRadius: 20, marginBottom: 20 }} />
-            <Text style={{ color: "#FFFFFF", fontWeight: "800", fontSize: 22, textAlign: "center", marginBottom: 8 }}>Your Profile</Text>
-            <Text style={{ color: "#9CA3AF", fontSize: 14, textAlign: "center", lineHeight: 20, marginBottom: 24 }}>Sign in to save your profile and sync across devices, or continue as guest.</Text>
+            <Text style={{ color: "#F1F5F9", fontFamily: "Syne_800ExtraBold", fontSize: 22, textAlign: "center", marginBottom: 8 }}>Your Profile</Text>
+            <Text style={{ color: "#64748B", fontSize: 14, textAlign: "center", lineHeight: 20, marginBottom: 24 }}>Sign in to save your profile and sync across devices, or continue as guest.</Text>
             <TouchableOpacity
-              style={{ backgroundColor: "#7C3AED", borderRadius: 16, paddingVertical: 14, paddingHorizontal: 32, shadowColor: "#7C3AED", shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.5, shadowRadius: 12, marginBottom: 12 }}
+              style={{ backgroundColor: "#E2E8F0", borderRadius: 16, paddingVertical: 14, paddingHorizontal: 32, shadowColor: "#E2E8F0", shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.5, shadowRadius: 12, marginBottom: 12 }}
               onPress={() => router.push("/login" as any)}
             >
-              <Text style={{ color: "#FFFFFF", fontWeight: "800", fontSize: 16 }}>Sign In / Create Account</Text>
+              <Text style={{ color: "#F1F5F9", fontFamily: "Syne_800ExtraBold", fontSize: 16 }}>Sign In / Create Account</Text>
             </TouchableOpacity>
           </View>
         </ImageBackground>
@@ -114,35 +114,35 @@ export default function ProfileScreen() {
   const displayEmail = isAuthenticated ? (user?.email ?? "") : "Guest Mode";
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#080810" }}>
+    <View style={{ flex: 1, backgroundColor: "#080B0F" }}>
       <ScrollView contentContainerStyle={{ paddingBottom: 32 }} showsVerticalScrollIndicator={false} style={{ flex: 1 }}>
         {/* Hero Header */}
         <ImageBackground source={{ uri: HERO_BG }} style={{ height: 200 }} resizeMode="cover">
           <View style={{ flex: 1, backgroundColor: "rgba(8,8,16,0.65)", justifyContent: "flex-end", padding: 20, paddingTop: 52 }}>
             <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "flex-end" }}>
               <View style={{ flexDirection: "row", alignItems: "center", gap: 14 }}>
-                <View style={{ width: 64, height: 64, borderRadius: 32, backgroundColor: "#7C3AED30", alignItems: "center", justifyContent: "center", borderWidth: 3, borderColor: "#7C3AED" }}>
+                <View style={{ width: 64, height: 64, borderRadius: 32, backgroundColor: "rgba(226,232,240,0.10)", alignItems: "center", justifyContent: "center", borderWidth: 3, borderColor: "#E2E8F0" }}>
                   <Text style={{ fontSize: 28 }}>💪</Text>
                 </View>
                 <View>
-                  <Text style={{ color: "#FFFFFF", fontWeight: "800", fontSize: 20 }}>{displayName}</Text>
-                  <Text style={{ color: "#9CA3AF", fontSize: 12 }}>{displayEmail}</Text>
+                  <Text style={{ color: "#F1F5F9", fontFamily: "Syne_800ExtraBold", fontSize: 20 }}>{displayName}</Text>
+                  <Text style={{ color: "#64748B", fontSize: 12 }}>{displayEmail}</Text>
                   {isGuest && (
                     <View style={{ backgroundColor: "#EAB30820", borderRadius: 6, paddingHorizontal: 8, paddingVertical: 2, marginTop: 4, alignSelf: "flex-start" }}>
-                      <Text style={{ color: "#FDE68A", fontSize: 10, fontWeight: "700" }}>GUEST MODE</Text>
+                      <Text style={{ color: "#E2E8F0", fontSize: 10, fontFamily: "Syne_700Bold" }}>GUEST MODE</Text>
                     </View>
                   )}
                 </View>
               </View>
               {isAuthenticated && (
                 <TouchableOpacity
-                  style={{ backgroundColor: editing ? "#22C55E" : "rgba(124,58,237,0.4)", borderRadius: 12, paddingHorizontal: 16, paddingVertical: 8, borderWidth: 1, borderColor: editing ? "#22C55E" : "rgba(124,58,237,0.6)" }}
+                  style={{ backgroundColor: editing ? "#94A3B8" : "rgba(124,58,237,0.4)", borderRadius: 12, paddingHorizontal: 16, paddingVertical: 8, borderWidth: 1, borderColor: editing ? "#94A3B8" : "rgba(124,58,237,0.6)" }}
                   onPress={editing ? saveProfile : () => setEditing(true)}
                 >
                   {upsertProfile.isPending ? (
-                    <ActivityIndicator color="#FFFFFF" size="small" />
+                    <ActivityIndicator color="#F1F5F9" size="small" />
                   ) : (
-                    <Text style={{ color: "#FFFFFF", fontWeight: "700", fontSize: 13 }}>{editing ? "Save" : "Edit"}</Text>
+                    <Text style={{ color: "#F1F5F9", fontFamily: "Syne_700Bold", fontSize: 13 }}>{editing ? "Save" : "Edit"}</Text>
                   )}
                 </TouchableOpacity>
               )}
@@ -166,56 +166,56 @@ export default function ProfileScreen() {
           <SectionHeader>Basic Info</SectionHeader>
           <View style={{ flexDirection: "row", gap: 12, marginBottom: 12 }}>
             <View style={{ flex: 1 }}>
-              <Text style={{ color: "#9CA3AF", fontSize: 11, marginBottom: 4 }}>Age</Text>
+              <Text style={{ color: "#64748B", fontSize: 11, marginBottom: 4 }}>Age</Text>
               <TextInput
                 value={age}
                 onChangeText={setAge}
                 placeholder="25"
-                placeholderTextColor="#4B5563"
+                placeholderTextColor="#334155"
                 keyboardType="numeric"
                 editable={editing}
-                style={{ backgroundColor: "#13131F", borderRadius: 10, paddingHorizontal: 12, paddingVertical: 10, color: editing ? "#FFFFFF" : "#9CA3AF", fontSize: 14, borderWidth: 1, borderColor: "#1F2937" }}
+                style={{ backgroundColor: "#0E1218", borderRadius: 10, paddingHorizontal: 12, paddingVertical: 10, color: editing ? "#F1F5F9" : "#64748B", fontSize: 14, borderWidth: 1, borderColor: "rgba(226,232,240,0.08)" }}
                 returnKeyType="done"
               />
             </View>
             <View style={{ flex: 1 }}>
-              <Text style={{ color: "#9CA3AF", fontSize: 11, marginBottom: 4 }}>Height (cm)</Text>
+              <Text style={{ color: "#64748B", fontSize: 11, marginBottom: 4 }}>Height (cm)</Text>
               <TextInput
                 value={height}
                 onChangeText={setHeight}
                 placeholder="175"
-                placeholderTextColor="#4B5563"
+                placeholderTextColor="#334155"
                 keyboardType="numeric"
                 editable={editing}
-                style={{ backgroundColor: "#13131F", borderRadius: 10, paddingHorizontal: 12, paddingVertical: 10, color: editing ? "#FFFFFF" : "#9CA3AF", fontSize: 14, borderWidth: 1, borderColor: "#1F2937" }}
+                style={{ backgroundColor: "#0E1218", borderRadius: 10, paddingHorizontal: 12, paddingVertical: 10, color: editing ? "#F1F5F9" : "#64748B", fontSize: 14, borderWidth: 1, borderColor: "rgba(226,232,240,0.08)" }}
                 returnKeyType="done"
               />
             </View>
             <View style={{ flex: 1 }}>
-              <Text style={{ color: "#9CA3AF", fontSize: 11, marginBottom: 4 }}>Weight (kg)</Text>
+              <Text style={{ color: "#64748B", fontSize: 11, marginBottom: 4 }}>Weight (kg)</Text>
               <TextInput
                 value={weight}
                 onChangeText={setWeight}
                 placeholder="80"
-                placeholderTextColor="#4B5563"
+                placeholderTextColor="#334155"
                 keyboardType="numeric"
                 editable={editing}
-                style={{ backgroundColor: "#13131F", borderRadius: 10, paddingHorizontal: 12, paddingVertical: 10, color: editing ? "#FFFFFF" : "#9CA3AF", fontSize: 14, borderWidth: 1, borderColor: "#1F2937" }}
+                style={{ backgroundColor: "#0E1218", borderRadius: 10, paddingHorizontal: 12, paddingVertical: 10, color: editing ? "#F1F5F9" : "#64748B", fontSize: 14, borderWidth: 1, borderColor: "rgba(226,232,240,0.08)" }}
                 returnKeyType="done"
               />
             </View>
           </View>
 
           {/* Gender */}
-          <Text style={{ color: "#9CA3AF", fontSize: 11, marginBottom: 6 }}>Gender</Text>
+          <Text style={{ color: "#64748B", fontSize: 11, marginBottom: 6 }}>Gender</Text>
           <View style={{ flexDirection: "row", gap: 8, marginBottom: 16 }}>
             {GENDERS.map(g => (
               <TouchableOpacity
                 key={g.key}
-                style={{ flex: 1, paddingVertical: 8, borderRadius: 10, alignItems: "center", backgroundColor: gender === g.key ? "#7C3AED" : "#13131F", borderWidth: 1, borderColor: gender === g.key ? "#7C3AED" : "#1F2937", opacity: editing ? 1 : 0.7 }}
+                style={{ flex: 1, paddingVertical: 8, borderRadius: 10, alignItems: "center", backgroundColor: gender === g.key ? "#E2E8F0" : "#0E1218", borderWidth: 1, borderColor: gender === g.key ? "#E2E8F0" : "rgba(226,232,240,0.08)", opacity: editing ? 1 : 0.7 }}
                 onPress={() => editing && setGender(g.key)}
               >
-                <Text style={{ color: gender === g.key ? "#FFFFFF" : "#9CA3AF", fontWeight: "600", fontSize: 12 }}>{g.label}</Text>
+                <Text style={{ color: gender === g.key ? "#F1F5F9" : "#64748B", fontFamily: "Inter_600SemiBold", fontSize: 12 }}>{g.label}</Text>
               </TouchableOpacity>
             ))}
           </View>
@@ -226,11 +226,11 @@ export default function ProfileScreen() {
             {GOALS.map(g => (
               <TouchableOpacity
                 key={g.key}
-                style={{ flexDirection: "row", alignItems: "center", gap: 6, paddingHorizontal: 14, paddingVertical: 8, borderRadius: 12, backgroundColor: goal === g.key ? "#7C3AED" : "#13131F", borderWidth: 1, borderColor: goal === g.key ? "#7C3AED" : "#1F2937", opacity: editing ? 1 : 0.7 }}
+                style={{ flexDirection: "row", alignItems: "center", gap: 6, paddingHorizontal: 14, paddingVertical: 8, borderRadius: 12, backgroundColor: goal === g.key ? "#E2E8F0" : "#0E1218", borderWidth: 1, borderColor: goal === g.key ? "#E2E8F0" : "rgba(226,232,240,0.08)", opacity: editing ? 1 : 0.7 }}
                 onPress={() => editing && setGoal(g.key)}
               >
                 <Text style={{ fontSize: 14 }}>{g.icon}</Text>
-                <Text style={{ color: goal === g.key ? "#FFFFFF" : "#9CA3AF", fontWeight: "600", fontSize: 13 }}>{g.label}</Text>
+                <Text style={{ color: goal === g.key ? "#F1F5F9" : "#64748B", fontFamily: "Inter_600SemiBold", fontSize: 13 }}>{g.label}</Text>
               </TouchableOpacity>
             ))}
           </View>
@@ -241,11 +241,11 @@ export default function ProfileScreen() {
             {WORKOUT_STYLES.map(w => (
               <TouchableOpacity
                 key={w.key}
-                style={{ flexDirection: "row", alignItems: "center", gap: 6, paddingHorizontal: 14, paddingVertical: 8, borderRadius: 12, backgroundColor: workoutStyle === w.key ? "#7C3AED" : "#13131F", borderWidth: 1, borderColor: workoutStyle === w.key ? "#7C3AED" : "#1F2937", opacity: editing ? 1 : 0.7 }}
+                style={{ flexDirection: "row", alignItems: "center", gap: 6, paddingHorizontal: 14, paddingVertical: 8, borderRadius: 12, backgroundColor: workoutStyle === w.key ? "#E2E8F0" : "#0E1218", borderWidth: 1, borderColor: workoutStyle === w.key ? "#E2E8F0" : "rgba(226,232,240,0.08)", opacity: editing ? 1 : 0.7 }}
                 onPress={() => editing && setWorkoutStyle(w.key)}
               >
                 <Text style={{ fontSize: 14 }}>{w.icon}</Text>
-                <Text style={{ color: workoutStyle === w.key ? "#FFFFFF" : "#9CA3AF", fontWeight: "600", fontSize: 13 }}>{w.label}</Text>
+                <Text style={{ color: workoutStyle === w.key ? "#F1F5F9" : "#64748B", fontFamily: "Inter_600SemiBold", fontSize: 13 }}>{w.label}</Text>
               </TouchableOpacity>
             ))}
           </View>
@@ -256,11 +256,11 @@ export default function ProfileScreen() {
             {DIETARY_PREFS.map(d => (
               <TouchableOpacity
                 key={d.key}
-                style={{ flexDirection: "row", alignItems: "center", gap: 6, paddingHorizontal: 14, paddingVertical: 8, borderRadius: 12, backgroundColor: dietaryPref === d.key ? "#7C3AED" : "#13131F", borderWidth: 1, borderColor: dietaryPref === d.key ? "#7C3AED" : "#1F2937", opacity: editing ? 1 : 0.7 }}
+                style={{ flexDirection: "row", alignItems: "center", gap: 6, paddingHorizontal: 14, paddingVertical: 8, borderRadius: 12, backgroundColor: dietaryPref === d.key ? "#E2E8F0" : "#0E1218", borderWidth: 1, borderColor: dietaryPref === d.key ? "#E2E8F0" : "rgba(226,232,240,0.08)", opacity: editing ? 1 : 0.7 }}
                 onPress={() => editing && setDietaryPref(d.key)}
               >
                 <Text style={{ fontSize: 14 }}>{d.icon}</Text>
-                <Text style={{ color: dietaryPref === d.key ? "#FFFFFF" : "#9CA3AF", fontWeight: "600", fontSize: 13 }}>{d.label}</Text>
+                <Text style={{ color: dietaryPref === d.key ? "#F1F5F9" : "#64748B", fontFamily: "Inter_600SemiBold", fontSize: 13 }}>{d.label}</Text>
               </TouchableOpacity>
             ))}
           </View>
@@ -271,10 +271,10 @@ export default function ProfileScreen() {
             {[3, 4, 5, 6].map(d => (
               <TouchableOpacity
                 key={d}
-                style={{ flex: 1, paddingVertical: 10, borderRadius: 12, alignItems: "center", backgroundColor: daysPerWeek === d.toString() ? "#7C3AED" : "#13131F", borderWidth: 1, borderColor: daysPerWeek === d.toString() ? "#7C3AED" : "#1F2937", opacity: editing ? 1 : 0.7 }}
+                style={{ flex: 1, paddingVertical: 10, borderRadius: 12, alignItems: "center", backgroundColor: daysPerWeek === d.toString() ? "#E2E8F0" : "#0E1218", borderWidth: 1, borderColor: daysPerWeek === d.toString() ? "#E2E8F0" : "rgba(226,232,240,0.08)", opacity: editing ? 1 : 0.7 }}
                 onPress={() => editing && setDaysPerWeek(d.toString())}
               >
-                <Text style={{ color: daysPerWeek === d.toString() ? "#FFFFFF" : "#9CA3AF", fontWeight: "700" }}>{d}x</Text>
+                <Text style={{ color: daysPerWeek === d.toString() ? "#F1F5F9" : "#64748B", fontFamily: "Syne_700Bold" }}>{d}x</Text>
               </TouchableOpacity>
             ))}
           </View>
@@ -296,23 +296,23 @@ export default function ProfileScreen() {
           {/* Subscription */}
           <SectionHeader>Subscription</SectionHeader>
           <TouchableOpacity
-            style={{ backgroundColor: "#7C3AED", borderRadius: 16, paddingVertical: 14, paddingHorizontal: 16, flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 24, shadowColor: "#7C3AED", shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 8 }}
+            style={{ backgroundColor: "#E2E8F0", borderRadius: 16, paddingVertical: 14, paddingHorizontal: 16, flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 24, shadowColor: "#E2E8F0", shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 8 }}
             onPress={() => router.push("/subscription" as any)}
           >
             <View>
-              <Text style={{ color: "#FFFFFF", fontWeight: "700", fontSize: 14 }}>⭐ Upgrade to Advanced</Text>
-              <Text style={{ color: "#C4B5FD", fontSize: 12, marginTop: 2 }}>Unlock all AI features from $4.99/mo</Text>
+              <Text style={{ color: "#F1F5F9", fontFamily: "Syne_700Bold", fontSize: 14 }}>⭐ Upgrade to Advanced</Text>
+              <Text style={{ color: "#94A3B8", fontSize: 12, marginTop: 2 }}>Unlock all AI features from $4.99/mo</Text>
             </View>
-            <Text style={{ color: "#FFFFFF", fontSize: 18 }}>→</Text>
+            <Text style={{ color: "#F1F5F9", fontSize: 18 }}>→</Text>
           </TouchableOpacity>
 
           {/* Guest mode — upgrade CTA */}
           {isGuest && (
             <TouchableOpacity
-              style={{ backgroundColor: "#7C3AED", borderRadius: 16, paddingVertical: 14, alignItems: "center", marginBottom: 10, shadowColor: "#7C3AED", shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.4, shadowRadius: 8 }}
+              style={{ backgroundColor: "#E2E8F0", borderRadius: 16, paddingVertical: 14, alignItems: "center", marginBottom: 10, shadowColor: "#E2E8F0", shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.4, shadowRadius: 8 }}
               onPress={() => router.push("/login" as any)}
             >
-              <Text style={{ color: "#FFFFFF", fontWeight: "700", fontSize: 14 }}>🔐 Sign In to Sync Your Data</Text>
+              <Text style={{ color: "#F1F5F9", fontFamily: "Syne_700Bold", fontSize: 14 }}>🔐 Sign In to Sync Your Data</Text>
             </TouchableOpacity>
           )}
 
@@ -327,7 +327,7 @@ export default function ProfileScreen() {
               }
             }}
           >
-            <Text style={{ color: "#EF4444", fontWeight: "700", fontSize: 14 }}>{isGuest ? "Exit Guest Mode" : "Sign Out"}</Text>
+            <Text style={{ color: "#64748B", fontFamily: "Syne_700Bold", fontSize: 14 }}>{isGuest ? "Exit Guest Mode" : "Sign Out"}</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -336,14 +336,14 @@ export default function ProfileScreen() {
 }
 
 function SectionHeader({ children }: { children: React.ReactNode }) {
-  return <Text style={{ color: "#9CA3AF", fontSize: 11, fontWeight: "700", letterSpacing: 1, marginBottom: 8, textTransform: "uppercase" }}>{children}</Text>;
+  return <Text style={{ color: "#64748B", fontSize: 11, fontFamily: "Syne_700Bold", letterSpacing: 1, marginBottom: 8, textTransform: "uppercase" }}>{children}</Text>;
 }
 
 function StatBox({ label, value }: { label: string; value: string }) {
   return (
-    <View style={{ flex: 1, backgroundColor: "#13131F", borderRadius: 12, padding: 10, alignItems: "center", borderWidth: 1, borderColor: "#1F2937" }}>
-      <Text style={{ color: "#FFFFFF", fontWeight: "700", fontSize: 14 }}>{value}</Text>
-      <Text style={{ color: "#6B7280", fontSize: 10, marginTop: 2 }}>{label}</Text>
+    <View style={{ flex: 1, backgroundColor: "#0E1218", borderRadius: 12, padding: 10, alignItems: "center", borderWidth: 1, borderColor: "rgba(226,232,240,0.08)" }}>
+      <Text style={{ color: "#F1F5F9", fontFamily: "Syne_700Bold", fontSize: 14 }}>{value}</Text>
+      <Text style={{ color: "#475569", fontSize: 10, marginTop: 2 }}>{label}</Text>
     </View>
   );
 }
@@ -351,12 +351,12 @@ function StatBox({ label, value }: { label: string; value: string }) {
 function FeatureLink({ icon, label, onPress }: any) {
   return (
     <TouchableOpacity
-      style={{ flexDirection: "row", alignItems: "center", gap: 12, backgroundColor: "#13131F", borderRadius: 14, padding: 14, borderWidth: 1, borderColor: "#1F2937" }}
+      style={{ flexDirection: "row", alignItems: "center", gap: 12, backgroundColor: "#0E1218", borderRadius: 14, padding: 14, borderWidth: 1, borderColor: "rgba(226,232,240,0.08)" }}
       onPress={onPress}
     >
       <Text style={{ fontSize: 20 }}>{icon}</Text>
-      <Text style={{ color: "#E5E7EB", fontWeight: "600", fontSize: 14, flex: 1 }}>{label}</Text>
-      <Text style={{ color: "#9CA3AF", fontSize: 16 }}>→</Text>
+      <Text style={{ color: "#E2E8F0", fontFamily: "Inter_600SemiBold", fontSize: 14, flex: 1 }}>{label}</Text>
+      <Text style={{ color: "#64748B", fontSize: 16 }}>→</Text>
     </TouchableOpacity>
   );
 }

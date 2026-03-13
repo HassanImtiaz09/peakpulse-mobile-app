@@ -12,7 +12,7 @@ import { useCalories } from "@/lib/calorie-context";
 import { trpc } from "@/lib/trpc";
 import { useFocusEffect } from "expo-router";
 
-const MEAL_BG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/meal_bg-ULw7hvjMXJuqDPAXt9iqic.png";
+const MEAL_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/tEVJIlpKDmrAmkng.jpg";
 const MEAL_TYPES = ["breakfast", "lunch", "dinner", "snack"];
 
 const MEAL_ICONS: Record<string, string> = {
@@ -24,10 +24,10 @@ const MEAL_ICONS: Record<string, string> = {
 
 // NanoBanana AI-generated food photography images
 const MEAL_PHOTOS: Record<string, string> = {
-  breakfast: "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/meal_breakfast-Kkxj6HxYyAMyaMAkT4LTv9.webp",
-  lunch: "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/meal_lunch-hqJt3vNpEURW5Xtrr6fAxH.webp",
-  dinner: "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/meal_dinner-NWeRGriCSPqg7xLPyg6AVu.webp",
-  snack: "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/meal_snack-8KzvxS4ygJfx27Ym2PEMVC.webp",
+  breakfast: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/tEVJIlpKDmrAmkng.jpg",
+  lunch: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/tEVJIlpKDmrAmkng.jpg",
+  dinner: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/tEVJIlpKDmrAmkng.jpg",
+  snack: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/tEVJIlpKDmrAmkng.jpg",
 };
 
 const MEAL_RECIPES: Record<string, { title: string; time: string; steps: string[] }> = {
@@ -108,7 +108,7 @@ export default function MealsScreen() {
   }, [refreshFromStorage]));
 
   const caloriePercent = Math.min(100, (totalCalories / calorieGoal) * 100);
-  const calorieColor = caloriePercent > 90 ? "#EF4444" : caloriePercent > 70 ? "#F97316" : "#22C55E";
+  const calorieColor = caloriePercent > 90 ? "#64748B" : caloriePercent > 70 ? "#CBD5E1" : "#94A3B8";
 
   async function pickImage(useCamera: boolean) {
     try {
@@ -254,12 +254,12 @@ export default function MealsScreen() {
 
   if (!canUse) {
     return (
-      <View style={{ flex: 1, backgroundColor: "#080810" }}>
+      <View style={{ flex: 1, backgroundColor: "#080B0F" }}>
         <ImageBackground source={{ uri: MEAL_BG }} style={{ flex: 1 }} resizeMode="cover">
           <View style={{ flex: 1, backgroundColor: "rgba(8,8,16,0.78)", alignItems: "center", justifyContent: "center", padding: 32 }}>
             <Text style={{ fontSize: 48, marginBottom: 16 }}>🍽️</Text>
-            <Text style={{ color: "#FFFFFF", fontWeight: "800", fontSize: 22, textAlign: "center", marginBottom: 8 }}>Meal Log</Text>
-            <Text style={{ color: "#9CA3AF", fontSize: 14, textAlign: "center", lineHeight: 20 }}>Sign in or continue as guest to track your nutrition and use the AI calorie estimator.</Text>
+            <Text style={{ color: "#F1F5F9", fontFamily: "Syne_800ExtraBold", fontSize: 22, textAlign: "center", marginBottom: 8 }}>Meal Log</Text>
+            <Text style={{ color: "#64748B", fontSize: 14, textAlign: "center", lineHeight: 20 }}>Sign in or continue as guest to track your nutrition and use the AI calorie estimator.</Text>
           </View>
         </ImageBackground>
       </View>
@@ -267,32 +267,32 @@ export default function MealsScreen() {
   }
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#080810" }}>
+    <View style={{ flex: 1, backgroundColor: "#080B0F" }}>
       {/* Hero Header */}
       <ImageBackground source={{ uri: MEAL_BG }} style={{ height: 160 }} resizeMode="cover">
         <View style={{ flex: 1, backgroundColor: "rgba(8,8,16,0.68)", justifyContent: "flex-end", padding: 20, paddingTop: 52 }}>
-          <Text style={{ color: "#22C55E", fontWeight: "700", fontSize: 12, letterSpacing: 1 }}>NUTRITION TRACKING</Text>
-          <Text style={{ color: "#FFFFFF", fontWeight: "900", fontSize: 26, letterSpacing: -0.5 }}>Meal Log</Text>
+          <Text style={{ color: "#94A3B8", fontFamily: "Syne_700Bold", fontSize: 12, letterSpacing: 1 }}>NUTRITION TRACKING</Text>
+          <Text style={{ color: "#F1F5F9", fontFamily: "Syne_800ExtraBold", fontSize: 26, letterSpacing: -0.5 }}>Meal Log</Text>
         </View>
       </ImageBackground>
 
       {/* Daily Summary Card */}
-      <View style={{ marginHorizontal: 16, marginTop: -20, backgroundColor: "#13131F", borderRadius: 20, padding: 16, borderWidth: 1, borderColor: "#1F2937", shadowColor: "#000", shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.4, shadowRadius: 8, zIndex: 10 }}>
+      <View style={{ marginHorizontal: 16, marginTop: -20, backgroundColor: "#0E1218", borderRadius: 20, padding: 16, borderWidth: 1, borderColor: "rgba(226,232,240,0.08)", shadowColor: "#000", shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.4, shadowRadius: 8, zIndex: 10 }}>
         <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
-          <Text style={{ color: "#9CA3AF", fontSize: 11, fontWeight: "700", textTransform: "uppercase" }}>Today's Nutrition</Text>
-          <Text style={{ color: calorieColor, fontWeight: "700", fontSize: 12 }}>{Math.round(caloriesRemaining)} kcal left</Text>
+          <Text style={{ color: "#64748B", fontSize: 11, fontFamily: "Syne_700Bold", textTransform: "uppercase" }}>Today's Nutrition</Text>
+          <Text style={{ color: calorieColor, fontFamily: "Syne_700Bold", fontSize: 12 }}>{Math.round(caloriesRemaining)} kcal left</Text>
         </View>
 
         {/* Calorie Progress Bar */}
-        <View style={{ height: 8, backgroundColor: "#1F2937", borderRadius: 4, marginBottom: 10, overflow: "hidden" }}>
+        <View style={{ height: 8, backgroundColor: "rgba(226,232,240,0.08)", borderRadius: 4, marginBottom: 10, overflow: "hidden" }}>
           <View style={{ height: 8, width: `${caloriePercent}%` as any, backgroundColor: calorieColor, borderRadius: 4 }} />
         </View>
 
         <View style={{ flexDirection: "row", justifyContent: "space-around" }}>
-          <MacroStat label="Calories" value={Math.round(totalCalories)} unit="kcal" color="#F97316" goal={calorieGoal} />
+          <MacroStat label="Calories" value={Math.round(totalCalories)} unit="kcal" color="#CBD5E1" goal={calorieGoal} />
           <MacroStat label="Protein" value={Math.round(totalProtein)} unit="g" color="#3B82F6" />
-          <MacroStat label="Carbs" value={Math.round(totalCarbs)} unit="g" color="#22C55E" />
-          <MacroStat label="Fat" value={Math.round(totalFat)} unit="g" color="#FBBF24" />
+          <MacroStat label="Carbs" value={Math.round(totalCarbs)} unit="g" color="#94A3B8" />
+          <MacroStat label="Fat" value={Math.round(totalFat)} unit="g" color="#CBD5E1" />
         </View>
       </View>
 
@@ -301,10 +301,10 @@ export default function MealsScreen() {
         {(["log", "analyze"] as const).map(tab => (
           <TouchableOpacity
             key={tab}
-            style={{ flex: 1, paddingVertical: 10, borderRadius: 14, alignItems: "center", backgroundColor: activeTab === tab ? "#7C3AED" : "#13131F", borderWidth: 1, borderColor: activeTab === tab ? "#7C3AED" : "#1F2937" }}
+            style={{ flex: 1, paddingVertical: 10, borderRadius: 14, alignItems: "center", backgroundColor: activeTab === tab ? "#E2E8F0" : "#0E1218", borderWidth: 1, borderColor: activeTab === tab ? "#E2E8F0" : "rgba(226,232,240,0.08)" }}
             onPress={() => setActiveTab(tab)}
           >
-            <Text style={{ color: activeTab === tab ? "#FFFFFF" : "#9CA3AF", fontWeight: "700", fontSize: 13 }}>
+            <Text style={{ color: activeTab === tab ? "#F1F5F9" : "#64748B", fontFamily: "Syne_700Bold", fontSize: 13 }}>
               {tab === "log" ? "📋 Today's Log" : "📷 AI Estimator"}
             </Text>
           </TouchableOpacity>
@@ -321,38 +321,38 @@ export default function MealsScreen() {
               {MEAL_TYPES.map(t => (
                 <TouchableOpacity
                   key={t}
-                  style={{ flex: 1, paddingVertical: 10, borderRadius: 12, alignItems: "center", backgroundColor: mealType === t ? "#7C3AED" : "#13131F", borderWidth: 1, borderColor: mealType === t ? "#7C3AED" : "#1F2937" }}
+                  style={{ flex: 1, paddingVertical: 10, borderRadius: 12, alignItems: "center", backgroundColor: mealType === t ? "#E2E8F0" : "#0E1218", borderWidth: 1, borderColor: mealType === t ? "#E2E8F0" : "rgba(226,232,240,0.08)" }}
                   onPress={() => setMealType(t)}
                 >
                   <Text style={{ fontSize: 16 }}>{MEAL_ICONS[t]}</Text>
-                  <Text style={{ color: mealType === t ? "#FFFFFF" : "#9CA3AF", fontSize: 9, fontWeight: "700", marginTop: 2, textTransform: "capitalize" }}>{t}</Text>
+                  <Text style={{ color: mealType === t ? "#F1F5F9" : "#64748B", fontSize: 9, fontFamily: "Syne_700Bold", marginTop: 2, textTransform: "capitalize" }}>{t}</Text>
                 </TouchableOpacity>
               ))}
             </View>
 
             {/* Quick Log */}
-            <View style={{ backgroundColor: "#13131F", borderRadius: 16, padding: 16, marginBottom: 16, borderWidth: 1, borderColor: "#1F2937" }}>
-              <Text style={{ color: "#9CA3AF", fontSize: 11, fontWeight: "700", marginBottom: 10, textTransform: "uppercase" }}>Quick Log</Text>
+            <View style={{ backgroundColor: "#0E1218", borderRadius: 16, padding: 16, marginBottom: 16, borderWidth: 1, borderColor: "rgba(226,232,240,0.08)" }}>
+              <Text style={{ color: "#64748B", fontSize: 11, fontFamily: "Syne_700Bold", marginBottom: 10, textTransform: "uppercase" }}>Quick Log</Text>
               <TextInput
                 value={mealName}
                 onChangeText={setMealName}
                 placeholder="What did you eat? (e.g. Chicken rice bowl)"
-                placeholderTextColor="#4B5563"
-                style={{ backgroundColor: "#0D0D18", borderRadius: 10, paddingHorizontal: 14, paddingVertical: 12, color: "#FFFFFF", fontSize: 14, marginBottom: 12, borderWidth: 1, borderColor: "#1F2937" }}
+                placeholderTextColor="#334155"
+                style={{ backgroundColor: "#0E1218", borderRadius: 10, paddingHorizontal: 14, paddingVertical: 12, color: "#F1F5F9", fontSize: 14, marginBottom: 12, borderWidth: 1, borderColor: "rgba(226,232,240,0.08)" }}
                 returnKeyType="done"
                 onSubmitEditing={quickLogMeal}
               />
               <TouchableOpacity
-                style={{ backgroundColor: "#7C3AED", borderRadius: 12, paddingVertical: 12, alignItems: "center", opacity: !mealName.trim() ? 0.5 : 1 }}
+                style={{ backgroundColor: "#E2E8F0", borderRadius: 12, paddingVertical: 12, alignItems: "center", opacity: !mealName.trim() ? 0.5 : 1 }}
                 onPress={quickLogMeal}
                 disabled={!mealName.trim()}
               >
-                <Text style={{ color: "#FFFFFF", fontWeight: "700", fontSize: 14 }}>+ Log Meal</Text>
+                <Text style={{ color: "#F1F5F9", fontFamily: "Syne_700Bold", fontSize: 14 }}>+ Log Meal</Text>
               </TouchableOpacity>
             </View>
 
             {/* Suggested Meals Section with NanoBanana Photos */}
-            <Text style={{ color: "#FFFFFF", fontWeight: "700", fontSize: 15, marginBottom: 10 }}>Today's Suggested Meals</Text>
+            <Text style={{ color: "#F1F5F9", fontFamily: "Syne_700Bold", fontSize: 15, marginBottom: 10 }}>Today's Suggested Meals</Text>
             {MEAL_TYPES.map((type) => {
               const recipe = MEAL_RECIPES[type];
               const photo = MEAL_PHOTOS[type];
@@ -365,45 +365,45 @@ export default function MealsScreen() {
             })}
 
             {/* Today's Logged Meals */}
-            <Text style={{ color: "#FFFFFF", fontWeight: "700", fontSize: 15, marginBottom: 10, marginTop: 8 }}>
+            <Text style={{ color: "#F1F5F9", fontFamily: "Syne_700Bold", fontSize: 15, marginBottom: 10, marginTop: 8 }}>
               Today's Log {meals.length > 0 ? `(${meals.length})` : ""}
             </Text>
             {meals.length === 0 ? (
-              <View style={{ backgroundColor: "#13131F", borderRadius: 16, padding: 28, alignItems: "center", borderWidth: 1, borderColor: "#1F2937" }}>
+              <View style={{ backgroundColor: "#0E1218", borderRadius: 16, padding: 28, alignItems: "center", borderWidth: 1, borderColor: "rgba(226,232,240,0.08)" }}>
                 <Text style={{ fontSize: 36, marginBottom: 10 }}>🍽️</Text>
-                <Text style={{ color: "#9CA3AF", fontSize: 14, textAlign: "center", lineHeight: 20 }}>No meals logged yet today.</Text>
-                <Text style={{ color: "#6B7280", fontSize: 12, textAlign: "center", marginTop: 4 }}>Tap "+ Log" on a suggested meal or use the AI Estimator.</Text>
+                <Text style={{ color: "#64748B", fontSize: 14, textAlign: "center", lineHeight: 20 }}>No meals logged yet today.</Text>
+                <Text style={{ color: "#475569", fontSize: 12, textAlign: "center", marginTop: 4 }}>Tap "+ Log" on a suggested meal or use the AI Estimator.</Text>
               </View>
             ) : (
               meals.map((meal) => (
-                <View key={meal.id} style={{ backgroundColor: "#13131F", borderRadius: 16, padding: 14, marginBottom: 10, borderWidth: 1, borderColor: "#1F2937", flexDirection: "row", alignItems: "center", gap: 12 }}>
+                <View key={meal.id} style={{ backgroundColor: "#0E1218", borderRadius: 16, padding: 14, marginBottom: 10, borderWidth: 1, borderColor: "rgba(226,232,240,0.08)", flexDirection: "row", alignItems: "center", gap: 12 }}>
                   {meal.photoUri ? (
-                    <Image source={{ uri: meal.photoUri }} style={{ width: 60, height: 60, borderRadius: 12, backgroundColor: "#0D0D18" }} resizeMode="cover" />
+                    <Image source={{ uri: meal.photoUri }} style={{ width: 60, height: 60, borderRadius: 12, backgroundColor: "#0E1218" }} resizeMode="cover" />
                   ) : (
-                    <Image source={{ uri: MEAL_PHOTOS[meal.mealType] ?? MEAL_PHOTOS.snack }} style={{ width: 60, height: 60, borderRadius: 12, backgroundColor: "#0D0D18" }} resizeMode="cover" />
+                    <Image source={{ uri: MEAL_PHOTOS[meal.mealType] ?? MEAL_PHOTOS.snack }} style={{ width: 60, height: 60, borderRadius: 12, backgroundColor: "#0E1218" }} resizeMode="cover" />
                   )}
                   <View style={{ flex: 1 }}>
                     <View style={{ flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 3 }}>
-                      <View style={{ backgroundColor: "#7C3AED20", borderRadius: 6, paddingHorizontal: 6, paddingVertical: 2 }}>
-                        <Text style={{ color: "#A78BFA", fontSize: 10, fontWeight: "700", textTransform: "capitalize" }}>{meal.mealType}</Text>
+                      <View style={{ backgroundColor: "rgba(226,232,240,0.08)", borderRadius: 6, paddingHorizontal: 6, paddingVertical: 2 }}>
+                        <Text style={{ color: "#CBD5E1", fontSize: 10, fontFamily: "Syne_700Bold", textTransform: "capitalize" }}>{meal.mealType}</Text>
                       </View>
                     </View>
-                    <Text style={{ color: "#FFFFFF", fontWeight: "600", fontSize: 14 }}>{meal.name}</Text>
+                    <Text style={{ color: "#F1F5F9", fontFamily: "Inter_600SemiBold", fontSize: 14 }}>{meal.name}</Text>
                     {(meal.protein > 0 || meal.carbs > 0 || meal.fat > 0) && (
-                      <Text style={{ color: "#6B7280", fontSize: 11, marginTop: 2 }}>
+                      <Text style={{ color: "#475569", fontSize: 11, marginTop: 2 }}>
                         P:{Math.round(meal.protein)}g · C:{Math.round(meal.carbs)}g · F:{Math.round(meal.fat)}g
                       </Text>
                     )}
                   </View>
                   <View style={{ alignItems: "flex-end", gap: 6 }}>
                     {meal.calories > 0 && (
-                      <Text style={{ color: "#F97316", fontWeight: "700", fontSize: 15 }}>{Math.round(meal.calories)}</Text>
+                      <Text style={{ color: "#CBD5E1", fontFamily: "Syne_700Bold", fontSize: 15 }}>{Math.round(meal.calories)}</Text>
                     )}
                     <TouchableOpacity
                       style={{ backgroundColor: "#EF444420", borderRadius: 8, paddingHorizontal: 8, paddingVertical: 4 }}
                       onPress={() => removeMeal(meal.id)}
                     >
-                      <Text style={{ color: "#EF4444", fontSize: 11, fontWeight: "700" }}>✕</Text>
+                      <Text style={{ color: "#64748B", fontSize: 11, fontFamily: "Syne_700Bold" }}>✕</Text>
                     </TouchableOpacity>
                   </View>
                 </View>
@@ -415,8 +415,8 @@ export default function MealsScreen() {
         {/* ── AI Estimator Tab ── */}
         {activeTab === "analyze" && (
           <View>
-            <View style={{ backgroundColor: "#7C3AED10", borderRadius: 16, padding: 14, marginBottom: 16, borderWidth: 1, borderColor: "#7C3AED30" }}>
-              <Text style={{ color: "#A78BFA", fontSize: 13, lineHeight: 20 }}>
+            <View style={{ backgroundColor: "#7C3AED10", borderRadius: 16, padding: 14, marginBottom: 16, borderWidth: 1, borderColor: "rgba(226,232,240,0.10)" }}>
+              <Text style={{ color: "#CBD5E1", fontSize: 13, lineHeight: 20 }}>
                 📷 Take or choose a photo of your meal. Our AI will identify the food and estimate calories and macros automatically.
               </Text>
             </View>
@@ -424,48 +424,48 @@ export default function MealsScreen() {
             {/* Image Picker */}
             {selectedImage ? (
               <View style={{ marginBottom: 16 }}>
-                <Image source={{ uri: selectedImage }} style={{ width: "100%", height: 220, borderRadius: 16, backgroundColor: "#13131F" }} resizeMode="cover" />
+                <Image source={{ uri: selectedImage }} style={{ width: "100%", height: 220, borderRadius: 16, backgroundColor: "#0E1218" }} resizeMode="cover" />
                 <TouchableOpacity
-                  style={{ position: "absolute", top: 10, right: 10, backgroundColor: "#EF444490", borderRadius: 20, width: 32, height: 32, alignItems: "center", justifyContent: "center" }}
+                  style={{ position: "absolute", top: 10, right: 10, backgroundColor: "rgba(100,116,139,0.56)", borderRadius: 20, width: 32, height: 32, alignItems: "center", justifyContent: "center" }}
                   onPress={() => { setSelectedImage(null); setSelectedBase64(null); setAnalysisResult(null); }}
                 >
-                  <Text style={{ color: "#FFFFFF", fontWeight: "700", fontSize: 14 }}>✕</Text>
+                  <Text style={{ color: "#F1F5F9", fontFamily: "Syne_700Bold", fontSize: 14 }}>✕</Text>
                 </TouchableOpacity>
               </View>
             ) : (
               <View style={{ flexDirection: "row", gap: 12, marginBottom: 16 }}>
                 <TouchableOpacity
-                  style={{ flex: 1, backgroundColor: "#13131F", borderRadius: 16, paddingVertical: 24, alignItems: "center", borderWidth: 1, borderColor: "#1F2937", gap: 8 }}
+                  style={{ flex: 1, backgroundColor: "#0E1218", borderRadius: 16, paddingVertical: 24, alignItems: "center", borderWidth: 1, borderColor: "rgba(226,232,240,0.08)", gap: 8 }}
                   onPress={() => pickImage(true)}
                 >
                   <Text style={{ fontSize: 32 }}>📷</Text>
-                  <Text style={{ color: "#E5E7EB", fontWeight: "600", fontSize: 13 }}>Take Photo</Text>
-                  <Text style={{ color: "#6B7280", fontSize: 11 }}>Use camera</Text>
+                  <Text style={{ color: "#E2E8F0", fontFamily: "Inter_600SemiBold", fontSize: 13 }}>Take Photo</Text>
+                  <Text style={{ color: "#475569", fontSize: 11 }}>Use camera</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                  style={{ flex: 1, backgroundColor: "#13131F", borderRadius: 16, paddingVertical: 24, alignItems: "center", borderWidth: 1, borderColor: "#1F2937", gap: 8 }}
+                  style={{ flex: 1, backgroundColor: "#0E1218", borderRadius: 16, paddingVertical: 24, alignItems: "center", borderWidth: 1, borderColor: "rgba(226,232,240,0.08)", gap: 8 }}
                   onPress={() => pickImage(false)}
                 >
                   <Text style={{ fontSize: 32 }}>🖼️</Text>
-                  <Text style={{ color: "#E5E7EB", fontWeight: "600", fontSize: 13 }}>Choose Photo</Text>
-                  <Text style={{ color: "#6B7280", fontSize: 11 }}>From gallery</Text>
+                  <Text style={{ color: "#E2E8F0", fontFamily: "Inter_600SemiBold", fontSize: 13 }}>Choose Photo</Text>
+                  <Text style={{ color: "#475569", fontSize: 11 }}>From gallery</Text>
                 </TouchableOpacity>
               </View>
             )}
 
             {selectedImage && !analysisResult && (
               <TouchableOpacity
-                style={{ backgroundColor: "#7C3AED", borderRadius: 16, paddingVertical: 16, alignItems: "center", marginBottom: 16, opacity: analyzing ? 0.7 : 1, shadowColor: "#7C3AED", shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.4, shadowRadius: 8 }}
+                style={{ backgroundColor: "#E2E8F0", borderRadius: 16, paddingVertical: 16, alignItems: "center", marginBottom: 16, opacity: analyzing ? 0.7 : 1, shadowColor: "#E2E8F0", shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.4, shadowRadius: 8 }}
                 onPress={analyzeFood}
                 disabled={analyzing}
               >
                 {analyzing ? (
                   <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
-                    <ActivityIndicator color="#FFFFFF" size="small" />
-                    <Text style={{ color: "#FFFFFF", fontWeight: "700", fontSize: 15 }}>Analyzing food...</Text>
+                    <ActivityIndicator color="#F1F5F9" size="small" />
+                    <Text style={{ color: "#F1F5F9", fontFamily: "Syne_700Bold", fontSize: 15 }}>Analyzing food...</Text>
                   </View>
                 ) : (
-                  <Text style={{ color: "#FFFFFF", fontWeight: "700", fontSize: 15 }}>✨ Estimate Calories with AI</Text>
+                  <Text style={{ color: "#F1F5F9", fontFamily: "Syne_700Bold", fontSize: 15 }}>✨ Estimate Calories with AI</Text>
                 )}
               </TouchableOpacity>
             )}
@@ -473,34 +473,34 @@ export default function MealsScreen() {
             {/* Analysis Result */}
             {analysisResult && (
               <View>
-                <View style={{ backgroundColor: "#13131F", borderRadius: 16, padding: 16, marginBottom: 14, borderWidth: 1, borderColor: "#22C55E30" }}>
+                <View style={{ backgroundColor: "#0E1218", borderRadius: 16, padding: 16, marginBottom: 14, borderWidth: 1, borderColor: "#22C55E30" }}>
                   <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-                    <Text style={{ color: "#22C55E", fontWeight: "700", fontSize: 14 }}>✓ Analysis Complete</Text>
-                    <View style={{ backgroundColor: "#22C55E20", borderRadius: 8, paddingHorizontal: 8, paddingVertical: 3 }}>
-                      <Text style={{ color: "#22C55E", fontSize: 11, fontWeight: "700" }}>
+                    <Text style={{ color: "#94A3B8", fontFamily: "Syne_700Bold", fontSize: 14 }}>✓ Analysis Complete</Text>
+                    <View style={{ backgroundColor: "rgba(226,232,240,0.08)", borderRadius: 8, paddingHorizontal: 8, paddingVertical: 3 }}>
+                      <Text style={{ color: "#94A3B8", fontSize: 11, fontFamily: "Syne_700Bold" }}>
                         {analysisResult.confidence === "high" ? "High" : analysisResult.confidence === "medium" ? "Medium" : "Low"} confidence
                       </Text>
                     </View>
                   </View>
 
                   {analysisResult.notes && (
-                    <Text style={{ color: "#9CA3AF", fontSize: 13, marginBottom: 12, lineHeight: 18 }}>{String(analysisResult.notes)}</Text>
+                    <Text style={{ color: "#64748B", fontSize: 13, marginBottom: 12, lineHeight: 18 }}>{String(analysisResult.notes)}</Text>
                   )}
 
                   <View style={{ flexDirection: "row", justifyContent: "space-around", marginBottom: 12 }}>
-                    <MacroStat label="Calories" value={analysisResult.totalCalories ?? 0} unit="kcal" color="#F97316" />
+                    <MacroStat label="Calories" value={analysisResult.totalCalories ?? 0} unit="kcal" color="#CBD5E1" />
                     <MacroStat label="Protein" value={analysisResult.totalProtein ?? 0} unit="g" color="#3B82F6" />
-                    <MacroStat label="Carbs" value={analysisResult.totalCarbs ?? 0} unit="g" color="#22C55E" />
-                    <MacroStat label="Fat" value={analysisResult.totalFat ?? 0} unit="g" color="#FBBF24" />
+                    <MacroStat label="Carbs" value={analysisResult.totalCarbs ?? 0} unit="g" color="#94A3B8" />
+                    <MacroStat label="Fat" value={analysisResult.totalFat ?? 0} unit="g" color="#CBD5E1" />
                   </View>
 
                   {analysisResult.foods?.length > 0 && (
                     <View>
-                      <Text style={{ color: "#9CA3AF", fontSize: 11, fontWeight: "700", marginBottom: 8, textTransform: "uppercase" }}>Detected Foods</Text>
+                      <Text style={{ color: "#64748B", fontSize: 11, fontFamily: "Syne_700Bold", marginBottom: 8, textTransform: "uppercase" }}>Detected Foods</Text>
                       {analysisResult.foods.map((food: any, i: number) => (
-                        <View key={i} style={{ flexDirection: "row", justifyContent: "space-between", paddingVertical: 6, borderBottomWidth: i < analysisResult.foods.length - 1 ? 1 : 0, borderBottomColor: "#1F2937" }}>
-                          <Text style={{ color: "#E5E7EB", fontSize: 13 }}>{food.name} <Text style={{ color: "#6B7280" }}>({food.portion})</Text></Text>
-                          <Text style={{ color: "#F97316", fontSize: 13, fontWeight: "600" }}>{food.calories} kcal</Text>
+                        <View key={i} style={{ flexDirection: "row", justifyContent: "space-between", paddingVertical: 6, borderBottomWidth: i < analysisResult.foods.length - 1 ? 1 : 0, borderBottomColor: "rgba(226,232,240,0.08)" }}>
+                          <Text style={{ color: "#E2E8F0", fontSize: 13 }}>{food.name} <Text style={{ color: "#475569" }}>({food.portion})</Text></Text>
+                          <Text style={{ color: "#CBD5E1", fontSize: 13, fontFamily: "Inter_600SemiBold" }}>{food.calories} kcal</Text>
                         </View>
                       ))}
                     </View>
@@ -509,13 +509,13 @@ export default function MealsScreen() {
 
                 {/* Save Photo Toggle */}
                 <TouchableOpacity
-                  style={{ flexDirection: "row", alignItems: "center", gap: 10, backgroundColor: "#13131F", borderRadius: 12, padding: 14, marginBottom: 12, borderWidth: 1, borderColor: savePhoto ? "#7C3AED50" : "#1F2937" }}
+                  style={{ flexDirection: "row", alignItems: "center", gap: 10, backgroundColor: "#0E1218", borderRadius: 12, padding: 14, marginBottom: 12, borderWidth: 1, borderColor: savePhoto ? "rgba(226,232,240,0.18)" : "rgba(226,232,240,0.08)" }}
                   onPress={() => setSavePhoto(!savePhoto)}
                 >
-                  <View style={{ width: 22, height: 22, borderRadius: 6, backgroundColor: savePhoto ? "#7C3AED" : "#1F2937", alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: savePhoto ? "#7C3AED" : "#374151" }}>
-                    {savePhoto && <Text style={{ color: "#FFFFFF", fontSize: 12, fontWeight: "700" }}>✓</Text>}
+                  <View style={{ width: 22, height: 22, borderRadius: 6, backgroundColor: savePhoto ? "#E2E8F0" : "rgba(226,232,240,0.08)", alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: savePhoto ? "#E2E8F0" : "rgba(226,232,240,0.12)" }}>
+                    {savePhoto && <Text style={{ color: "#F1F5F9", fontSize: 12, fontFamily: "Syne_700Bold" }}>✓</Text>}
                   </View>
-                  <Text style={{ color: "#E5E7EB", fontSize: 13, fontWeight: "600" }}>Save photo to meal log</Text>
+                  <Text style={{ color: "#E2E8F0", fontSize: 13, fontFamily: "Inter_600SemiBold" }}>Save photo to meal log</Text>
                 </TouchableOpacity>
 
                 {/* Meal Type */}
@@ -523,11 +523,11 @@ export default function MealsScreen() {
                   {MEAL_TYPES.map(t => (
                     <TouchableOpacity
                       key={t}
-                      style={{ flex: 1, paddingVertical: 8, borderRadius: 10, alignItems: "center", backgroundColor: mealType === t ? "#7C3AED" : "#13131F", borderWidth: 1, borderColor: mealType === t ? "#7C3AED" : "#1F2937" }}
+                      style={{ flex: 1, paddingVertical: 8, borderRadius: 10, alignItems: "center", backgroundColor: mealType === t ? "#E2E8F0" : "#0E1218", borderWidth: 1, borderColor: mealType === t ? "#E2E8F0" : "rgba(226,232,240,0.08)" }}
                       onPress={() => setMealType(t)}
                     >
                       <Text style={{ fontSize: 14 }}>{MEAL_ICONS[t]}</Text>
-                      <Text style={{ color: mealType === t ? "#FFFFFF" : "#9CA3AF", fontSize: 9, fontWeight: "700", marginTop: 2, textTransform: "capitalize" }}>{t}</Text>
+                      <Text style={{ color: mealType === t ? "#F1F5F9" : "#64748B", fontSize: 9, fontFamily: "Syne_700Bold", marginTop: 2, textTransform: "capitalize" }}>{t}</Text>
                     </TouchableOpacity>
                   ))}
                 </View>
@@ -536,16 +536,16 @@ export default function MealsScreen() {
                   value={mealName}
                   onChangeText={setMealName}
                   placeholder="Meal name (optional)"
-                  placeholderTextColor="#4B5563"
-                  style={{ backgroundColor: "#13131F", borderRadius: 12, paddingHorizontal: 14, paddingVertical: 12, color: "#FFFFFF", fontSize: 14, marginBottom: 12, borderWidth: 1, borderColor: "#1F2937" }}
+                  placeholderTextColor="#334155"
+                  style={{ backgroundColor: "#0E1218", borderRadius: 12, paddingHorizontal: 14, paddingVertical: 12, color: "#F1F5F9", fontSize: 14, marginBottom: 12, borderWidth: 1, borderColor: "rgba(226,232,240,0.08)" }}
                   returnKeyType="done"
                 />
 
                 <TouchableOpacity
-                  style={{ backgroundColor: "#22C55E", borderRadius: 16, paddingVertical: 16, alignItems: "center", shadowColor: "#22C55E", shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.4, shadowRadius: 8 }}
+                  style={{ backgroundColor: "#94A3B8", borderRadius: 16, paddingVertical: 16, alignItems: "center", shadowColor: "#94A3B8", shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.4, shadowRadius: 8 }}
                   onPress={logAnalyzedMeal}
                 >
-                  <Text style={{ color: "#FFFFFF", fontWeight: "700", fontSize: 15 }}>+ Log This Meal</Text>
+                  <Text style={{ color: "#F1F5F9", fontFamily: "Syne_700Bold", fontSize: 15 }}>+ Log This Meal</Text>
                 </TouchableOpacity>
               </View>
             )}
@@ -559,10 +559,10 @@ export default function MealsScreen() {
 function MacroStat({ label, value, unit, color, goal }: { label: string; value: number; unit: string; color: string; goal?: number }) {
   return (
     <View style={{ alignItems: "center" }}>
-      <Text style={{ color, fontWeight: "800", fontSize: 18 }}>{Math.round(value)}</Text>
-      <Text style={{ color: "#9CA3AF", fontSize: 10, marginTop: 1 }}>{unit}</Text>
-      <Text style={{ color: "#6B7280", fontSize: 10 }}>{label}</Text>
-      {goal && <Text style={{ color: "#4B5563", fontSize: 9 }}>/ {goal}</Text>}
+      <Text style={{ color, fontFamily: "Syne_800ExtraBold", fontSize: 18 }}>{Math.round(value)}</Text>
+      <Text style={{ color: "#64748B", fontSize: 10, marginTop: 1 }}>{unit}</Text>
+      <Text style={{ color: "#475569", fontSize: 10 }}>{label}</Text>
+      {goal && <Text style={{ color: "#334155", fontSize: 9 }}>/ {goal}</Text>}
     </View>
   );
 }
@@ -585,64 +585,64 @@ function SuggestedMealCard({ type, recipe, photo, onLog }: {
   const macros = MEAL_MACROS[type] ?? { p: 20, c: 30, f: 10 };
 
   return (
-    <View style={{ backgroundColor: "#13131F", borderRadius: 18, marginBottom: 14, overflow: "hidden", borderWidth: 1, borderColor: "#1F2937" }}>
+    <View style={{ backgroundColor: "#0E1218", borderRadius: 18, marginBottom: 14, overflow: "hidden", borderWidth: 1, borderColor: "rgba(226,232,240,0.08)" }}>
       {/* Food Photo */}
       <Image source={{ uri: photo }} style={{ width: "100%", height: 160 }} resizeMode="cover" />
       {/* Meal Type Badge */}
       <View style={{ position: "absolute", top: 12, left: 12, backgroundColor: "rgba(0,0,0,0.7)", borderRadius: 8, paddingHorizontal: 10, paddingVertical: 4, flexDirection: "row", alignItems: "center", gap: 4 }}>
         <Text style={{ fontSize: 14 }}>{MEAL_ICONS_LOCAL[type] ?? "🍽️"}</Text>
-        <Text style={{ color: "#FFFFFF", fontSize: 11, fontWeight: "700", textTransform: "capitalize" }}>{type}</Text>
+        <Text style={{ color: "#F1F5F9", fontSize: 11, fontFamily: "Syne_700Bold", textTransform: "capitalize" }}>{type}</Text>
       </View>
       {/* Log Button */}
       <TouchableOpacity
-        style={{ position: "absolute", top: 12, right: 12, backgroundColor: "#7C3AED", borderRadius: 10, paddingHorizontal: 12, paddingVertical: 6 }}
+        style={{ position: "absolute", top: 12, right: 12, backgroundColor: "#E2E8F0", borderRadius: 10, paddingHorizontal: 12, paddingVertical: 6 }}
         onPress={onLog}
       >
-        <Text style={{ color: "#FFFFFF", fontSize: 12, fontWeight: "700" }}>+ Log</Text>
+        <Text style={{ color: "#F1F5F9", fontSize: 12, fontFamily: "Syne_700Bold" }}>+ Log</Text>
       </TouchableOpacity>
 
       <View style={{ padding: 14 }}>
         {/* Title & Time */}
         <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-          <Text style={{ color: "#FFFFFF", fontWeight: "700", fontSize: 16, flex: 1 }}>{recipe.title}</Text>
-          <Text style={{ color: "#6B7280", fontSize: 12 }}>⏱ {recipe.time}</Text>
+          <Text style={{ color: "#F1F5F9", fontFamily: "Syne_700Bold", fontSize: 16, flex: 1 }}>{recipe.title}</Text>
+          <Text style={{ color: "#475569", fontSize: 12 }}>⏱ {recipe.time}</Text>
         </View>
 
         {/* Macros Row */}
         <View style={{ flexDirection: "row", gap: 8, marginBottom: 12 }}>
           <View style={{ flex: 1, backgroundColor: "#F9731610", borderRadius: 8, padding: 8, alignItems: "center" }}>
-            <Text style={{ color: "#F97316", fontWeight: "800", fontSize: 15 }}>{MEAL_CALS[type]}</Text>
-            <Text style={{ color: "#9CA3AF", fontSize: 10 }}>kcal</Text>
+            <Text style={{ color: "#CBD5E1", fontFamily: "Syne_800ExtraBold", fontSize: 15 }}>{MEAL_CALS[type]}</Text>
+            <Text style={{ color: "#64748B", fontSize: 10 }}>kcal</Text>
           </View>
           <View style={{ flex: 1, backgroundColor: "#3B82F610", borderRadius: 8, padding: 8, alignItems: "center" }}>
-            <Text style={{ color: "#3B82F6", fontWeight: "800", fontSize: 15 }}>{macros.p}g</Text>
-            <Text style={{ color: "#9CA3AF", fontSize: 10 }}>protein</Text>
+            <Text style={{ color: "#3B82F6", fontFamily: "Syne_800ExtraBold", fontSize: 15 }}>{macros.p}g</Text>
+            <Text style={{ color: "#64748B", fontSize: 10 }}>protein</Text>
           </View>
           <View style={{ flex: 1, backgroundColor: "#22C55E10", borderRadius: 8, padding: 8, alignItems: "center" }}>
-            <Text style={{ color: "#22C55E", fontWeight: "800", fontSize: 15 }}>{macros.c}g</Text>
-            <Text style={{ color: "#9CA3AF", fontSize: 10 }}>carbs</Text>
+            <Text style={{ color: "#94A3B8", fontFamily: "Syne_800ExtraBold", fontSize: 15 }}>{macros.c}g</Text>
+            <Text style={{ color: "#64748B", fontSize: 10 }}>carbs</Text>
           </View>
           <View style={{ flex: 1, backgroundColor: "#FBBF2410", borderRadius: 8, padding: 8, alignItems: "center" }}>
-            <Text style={{ color: "#FBBF24", fontWeight: "800", fontSize: 15 }}>{macros.f}g</Text>
-            <Text style={{ color: "#9CA3AF", fontSize: 10 }}>fat</Text>
+            <Text style={{ color: "#CBD5E1", fontFamily: "Syne_800ExtraBold", fontSize: 15 }}>{macros.f}g</Text>
+            <Text style={{ color: "#64748B", fontSize: 10 }}>fat</Text>
           </View>
         </View>
 
         {/* Expandable Recipe */}
         <TouchableOpacity
-          style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", backgroundColor: "#0D0D18", borderRadius: 10, padding: 12, borderWidth: 1, borderColor: "#1F2937" }}
+          style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", backgroundColor: "#0E1218", borderRadius: 10, padding: 12, borderWidth: 1, borderColor: "rgba(226,232,240,0.08)" }}
           onPress={() => setExpanded(!expanded)}
         >
-          <Text style={{ color: "#A78BFA", fontWeight: "700", fontSize: 13 }}>🍳 How to Prep This Meal</Text>
-          <Text style={{ color: "#6B7280", fontSize: 14 }}>{expanded ? "▲" : "▼"}</Text>
+          <Text style={{ color: "#CBD5E1", fontFamily: "Syne_700Bold", fontSize: 13 }}>🍳 How to Prep This Meal</Text>
+          <Text style={{ color: "#475569", fontSize: 14 }}>{expanded ? "▲" : "▼"}</Text>
         </TouchableOpacity>
 
         {expanded && (
-          <View style={{ marginTop: 10, backgroundColor: "#0D0D18", borderRadius: 10, padding: 12, borderWidth: 1, borderColor: "#1F2937" }}>
+          <View style={{ marginTop: 10, backgroundColor: "#0E1218", borderRadius: 10, padding: 12, borderWidth: 1, borderColor: "rgba(226,232,240,0.08)" }}>
             {recipe.steps.map((step, i) => (
               <View key={i} style={{ flexDirection: "row", gap: 10, marginBottom: 8 }}>
-                <View style={{ width: 22, height: 22, borderRadius: 11, backgroundColor: "#7C3AED", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                  <Text style={{ color: "#FFFFFF", fontSize: 11, fontWeight: "700" }}>{i + 1}</Text>
+                <View style={{ width: 22, height: 22, borderRadius: 11, backgroundColor: "#E2E8F0", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                  <Text style={{ color: "#F1F5F9", fontSize: 11, fontFamily: "Syne_700Bold" }}>{i + 1}</Text>
                 </View>
                 <Text style={{ color: "#D1D5DB", fontSize: 13, lineHeight: 20, flex: 1 }}>{step}</Text>
               </View>

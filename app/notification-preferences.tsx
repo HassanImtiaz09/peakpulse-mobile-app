@@ -279,7 +279,7 @@ export default function NotificationPreferencesScreen() {
             <Switch
               value={prefs.workoutEnabled}
               onValueChange={() => toggleNotif("workout")}
-              trackColor={{ false: "#333", true: "#7C3AED" }}
+              trackColor={{ false: "#333", true: "#E2E8F0" }}
               thumbColor={prefs.workoutEnabled ? "#fff" : "#888"}
             />
           </View>
@@ -310,7 +310,7 @@ export default function NotificationPreferencesScreen() {
             <Switch
               value={prefs.mealEnabled}
               onValueChange={() => toggleNotif("meal")}
-              trackColor={{ false: "#333", true: "#7C3AED" }}
+              trackColor={{ false: "#333", true: "#E2E8F0" }}
               thumbColor={prefs.mealEnabled ? "#fff" : "#888"}
             />
           </View>
@@ -341,7 +341,7 @@ export default function NotificationPreferencesScreen() {
             <Switch
               value={prefs.checkinEnabled}
               onValueChange={() => toggleNotif("checkin")}
-              trackColor={{ false: "#333", true: "#7C3AED" }}
+              trackColor={{ false: "#333", true: "#E2E8F0" }}
               thumbColor={prefs.checkinEnabled ? "#fff" : "#888"}
             />
           </View>
@@ -387,7 +387,7 @@ export default function NotificationPreferencesScreen() {
         {/* Tip */}
         <View style={styles.tipCard}>
           <Text style={styles.tipText}>
-            💡 <Text style={{ fontWeight: "700" }}>Pro tip:</Text> Users who receive daily reminders are 3× more likely to hit their fitness goals. Keep at least one reminder on!
+            💡 <Text style={{ fontFamily: "Syne_700Bold" }}>Pro tip:</Text> Users who receive daily reminders are 3× more likely to hit their fitness goals. Keep at least one reminder on!
           </Text>
         </View>
       </ScrollView>
@@ -429,14 +429,14 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   backText: {
-    color: "#7C3AED",
+    color: "#E2E8F0",
     fontSize: 16,
-    fontWeight: "600",
+    fontFamily: "Inter_600SemiBold",
   },
   headerTitle: {
     color: "#fff",
     fontSize: 26,
-    fontWeight: "800",
+    fontFamily: "Syne_800ExtraBold",
     marginBottom: 4,
   },
   headerSub: {
@@ -451,7 +451,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 16,
     borderWidth: 1,
-    borderColor: "#7C3AED",
+    borderColor: "#E2E8F0",
     gap: 12,
   },
   permBannerIcon: {
@@ -460,7 +460,7 @@ const styles = StyleSheet.create({
   permBannerTitle: {
     color: "#fff",
     fontSize: 15,
-    fontWeight: "700",
+    fontFamily: "Syne_700Bold",
   },
   permBannerSub: {
     color: "#888",
@@ -468,9 +468,9 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   permBannerArrow: {
-    color: "#7C3AED",
+    color: "#E2E8F0",
     fontSize: 18,
-    fontWeight: "700",
+    fontFamily: "Syne_700Bold",
   },
   section: {
     backgroundColor: "#111",
@@ -493,7 +493,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     color: "#fff",
     fontSize: 16,
-    fontWeight: "700",
+    fontFamily: "Syne_700Bold",
   },
   sectionSub: {
     color: "#888",
@@ -520,9 +520,9 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   timeValueText: {
-    color: "#7C3AED",
+    color: "#E2E8F0",
     fontSize: 16,
-    fontWeight: "700",
+    fontFamily: "Syne_700Bold",
   },
   timeEditIcon: {
     fontSize: 14,
@@ -539,7 +539,7 @@ const styles = StyleSheet.create({
   summaryTitle: {
     color: "#fff",
     fontSize: 15,
-    fontWeight: "700",
+    fontFamily: "Syne_700Bold",
     marginBottom: 10,
   },
   summaryItem: {
@@ -555,7 +555,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 14,
     borderLeftWidth: 3,
-    borderLeftColor: "#7C3AED",
+    borderLeftColor: "#E2E8F0",
   },
   tipText: {
     color: "#aaa",
@@ -579,7 +579,7 @@ const styles = StyleSheet.create({
   modalTitle: {
     color: "#fff",
     fontSize: 18,
-    fontWeight: "800",
+    fontFamily: "Syne_800ExtraBold",
     textAlign: "center",
     marginBottom: 20,
   },
@@ -594,7 +594,7 @@ const styles = StyleSheet.create({
   pickerLabel: {
     color: "#888",
     fontSize: 12,
-    fontWeight: "600",
+    fontFamily: "Inter_600SemiBold",
     textAlign: "center",
     marginBottom: 8,
     textTransform: "uppercase",
@@ -619,13 +619,13 @@ const styles = StyleSheet.create({
     fontSize: 15,
   },
   pickerItemTextActive: {
-    color: "#7C3AED",
-    fontWeight: "700",
+    color: "#E2E8F0",
+    fontFamily: "Syne_700Bold",
   },
   previewTime: {
     color: "#fff",
     fontSize: 16,
-    fontWeight: "700",
+    fontFamily: "Syne_700Bold",
     textAlign: "center",
     marginBottom: 20,
   },
@@ -643,11 +643,11 @@ const styles = StyleSheet.create({
   cancelBtnText: {
     color: "#aaa",
     fontSize: 15,
-    fontWeight: "600",
+    fontFamily: "Inter_600SemiBold",
   },
   confirmBtn: {
     flex: 1,
-    backgroundColor: "#7C3AED",
+    backgroundColor: "#E2E8F0",
     borderRadius: 12,
     paddingVertical: 14,
     alignItems: "center",
@@ -655,6 +655,6 @@ const styles = StyleSheet.create({
   confirmBtnText: {
     color: "#fff",
     fontSize: 15,
-    fontWeight: "700",
+    fontFamily: "Syne_700Bold",
   },
 });

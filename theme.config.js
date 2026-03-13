@@ -1,18 +1,18 @@
 /** @type {const} */
+// Platinum Pulse — monochrome luxury dark theme
 const themeColors = {
-  primary:    { light: '#7C3AED', dark: '#7C3AED' },
-  secondary:  { light: '#3B82F6', dark: '#3B82F6' },
-  accent:     { light: '#F97316', dark: '#F97316' },
-  background: { light: '#0D0D18', dark: '#0D0D18' },
-  surface:    { light: '#13131F', dark: '#13131F' },
-  surface2:   { light: '#1A1A2E', dark: '#1A1A2E' },
-  foreground: { light: '#FFFFFF', dark: '#FFFFFF' },
-  muted:      { light: '#9CA3AF', dark: '#9CA3AF' },
-  border:     { light: '#1F2937', dark: '#1F2937' },
-  success:    { light: '#22C55E', dark: '#22C55E' },
-  warning:    { light: '#FBBF24', dark: '#FBBF24' },
-  error:      { light: '#EF4444', dark: '#EF4444' },
-  tint:       { light: '#7C3AED', dark: '#7C3AED' },
+  primary:    { light: '#E2E8F0', dark: '#E2E8F0' },   // platinum white
+  secondary:  { light: '#94A3B8', dark: '#94A3B8' },   // silver
+  accent:     { light: '#CBD5E1', dark: '#CBD5E1' },   // light silver
+  background: { light: '#080B0F', dark: '#080B0F' },   // near-black
+  surface:    { light: '#0E1218', dark: '#0E1218' },   // dark surface
+  surface2:   { light: '#141A22', dark: '#141A22' },   // elevated surface
+  foreground: { light: '#F1F5F9', dark: '#F1F5F9' },   // near-white text
+  muted:      { light: '#64748B', dark: '#64748B' },   // muted slate
+  border:     { light: '#1E2A38', dark: '#1E2A38' },   // dark border
+  success:    { light: '#94A3B8', dark: '#94A3B8' },   // silver-success
+  warning:    { light: '#CBD5E1', dark: '#CBD5E1' },   // silver-warning
+  error:      { light: '#94A3B8', dark: '#94A3B8' },   // silver-error
+  tint:       { light: '#E2E8F0', dark: '#E2E8F0' },   // active tab tint
 };
-
 module.exports = { themeColors };

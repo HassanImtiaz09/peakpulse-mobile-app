@@ -20,6 +20,26 @@ import type { EdgeInsets, Metrics, Rect } from "react-native-safe-area-context";
 
 import { trpc, createTRPCClient } from "@/lib/trpc";
 import { initManusRuntime, subscribeSafeAreaInsets } from "@/lib/_core/manus-runtime";
+import * as SplashScreen from "expo-splash-screen";
+import {
+  useFonts,
+  Syne_400Regular,
+  Syne_500Medium,
+  Syne_600SemiBold,
+  Syne_700Bold,
+  Syne_800ExtraBold,
+} from "@expo-google-fonts/syne";
+import {
+  Inter_300Light,
+  Inter_400Regular,
+  Inter_500Medium,
+  Inter_600SemiBold,
+  Inter_700Bold,
+  Inter_800ExtraBold,
+  Inter_900Black,
+} from "@expo-google-fonts/inter";
+
+SplashScreen.preventAutoHideAsync();
 
 const DEFAULT_WEB_INSETS: EdgeInsets = { top: 0, right: 0, bottom: 0, left: 0 };
 const DEFAULT_WEB_FRAME: Rect = { x: 0, y: 0, width: 0, height: 0 };
@@ -29,6 +49,21 @@ export const unstable_settings = {
 };
 
 export default function RootLayout() {
+  const [fontsLoaded] = useFonts({
+    Syne_400Regular,
+    Syne_500Medium,
+    Syne_600SemiBold,
+    Syne_700Bold,
+    Syne_800ExtraBold,
+    Inter_300Light,
+    Inter_400Regular,
+    Inter_500Medium,
+    Inter_600SemiBold,
+    Inter_700Bold,
+    Inter_800ExtraBold,
+    Inter_900Black,
+  });
+
   const initialInsets = initialWindowMetrics?.insets ?? DEFAULT_WEB_INSETS;
   const initialFrame = initialWindowMetrics?.frame ?? DEFAULT_WEB_FRAME;
 
@@ -39,6 +74,10 @@ export default function RootLayout() {
   useEffect(() => {
     initManusRuntime();
   }, []);
+
+  useEffect(() => {
+    if (fontsLoaded) SplashScreen.hideAsync();
+  }, [fontsLoaded]);
 
   const handleSafeAreaUpdate = useCallback((metrics: Metrics) => {
     setInsets(metrics.insets);
@@ -67,6 +106,8 @@ export default function RootLayout() {
   );
   const [trpcClient] = useState(() => createTRPCClient());
 
+  if (!fontsLoaded) return null;
+
   // Ensure minimum 8px padding for top and bottom on mobile
   const providerInitialMetrics = useMemo(() => {
     const metrics = initialWindowMetrics ?? { insets: initialInsets, frame: initialFrame };
@@ -93,7 +134,7 @@ export default function RootLayout() {
             <Stack.Screen name="(tabs)" />
             <Stack.Screen name="oauth/callback" />
           </Stack>
-          <StatusBar style="auto" />
+          <StatusBar style="light" />
         </QueryClientProvider>
       </trpc.Provider>
       </CalorieProvider>
