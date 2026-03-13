@@ -371,6 +371,38 @@ export const appRouter = router({
       }),
   }),
 
+  mealSwap: router({
+    // AI-powered meal swap — generates 6 personalised calorie-equivalent alternatives
+    generate: guestOrUserProcedure
+      .input(z.object({
+        mealName: z.string(),
+        mealType: z.string(),
+        calories: z.number(),
+        protein: z.number(),
+        carbs: z.number(),
+        fat: z.number(),
+        dietaryPreference: z.string().default("omnivore"),
+        fitnessGoal: z.string().default("build_muscle"),
+      }))
+      .mutation(async ({ input }) => {
+        const dietNote = input.dietaryPreference !== "omnivore"
+          ? `All alternatives MUST strictly comply with ${input.dietaryPreference} dietary requirements.`
+          : "";
+        const prompt = `You are an expert nutritionist. The user wants to swap their ${input.mealType} meal "${input.mealName}" (${input.calories} kcal, ${input.protein}g protein, ${input.carbs}g carbs, ${input.fat}g fat). Fitness goal: ${input.fitnessGoal.replace(/_/g, " ")}. ${dietNote}\n\nGenerate exactly 6 alternative meals with equivalent calories (within 50 kcal of ${input.calories} kcal). Each must be practical, delicious, and easy to make at home.\n\nReturn this exact JSON:\n{"alternatives":[{"name":"Grilled Chicken & Quinoa Bowl","calories":${input.calories},"protein":${input.protein},"carbs":${input.carbs},"fat":${input.fat},"prepTime":"20 min","dietaryTags":["high-protein","gluten-free"],"description":"A satisfying bowl packed with lean protein and complex carbs.","ingredients":["150g chicken breast","80g quinoa","1 cup mixed greens","1 tbsp olive oil","lemon juice","salt and pepper"],"instructions":["Cook quinoa per packet instructions (15 min)","Season chicken with salt, pepper and garlic powder","Grill or pan-fry chicken 6-7 min each side until cooked through","Slice chicken and serve over quinoa with greens","Drizzle with olive oil and lemon juice"]}]}`;
+        const response = await invokeLLM({
+          messages: [
+            { role: "system", content: "You are a professional nutritionist. Always respond with valid JSON only, no markdown." },
+            { role: "user", content: prompt },
+          ],
+          response_format: { type: "json_object" },
+        });
+        let result: any;
+        try { result = JSON.parse((response.choices[0].message.content as string) ?? "{}"); }
+        catch { result = { alternatives: [] }; }
+        return { alternatives: result.alternatives ?? [] };
+      }),
+  }),
+
   upload: router({
     // Photo upload — works for guests (stored to S3 without user ID)
     photo: guestOrUserProcedure

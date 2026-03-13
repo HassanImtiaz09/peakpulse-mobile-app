@@ -238,3 +238,13 @@
 - [x] Meal Swap: selecting an alternative shows full meal prep instructions for that swap
 - [x] User Guide screen: accessible from top-corner help button (?) on all tab screens
 - [x] Dashboard: rotating Tips & Tricks tile that changes every 5 minutes
+
+## AI Meal Swap Enhancement (Round 11)
+
+- [x] Server: add mealSwap.generate tRPC mutation (LLM generates 6 calorie-equivalent alternatives)
+- [x] Server: mutation accepts meal name, calories, macros, dietary preference, and fitness goal
+- [x] Server: each alternative includes name, calories, protein, carbs, fat, dietary tags, prep time, and step-by-step instructions
+- [x] meals.tsx: replace static SWAP_ALTERNATIVES with AI-generated results from the mutation
+- [x] meals.tsx: show loading state while AI generates alternatives
+- [x] meals.tsx: show error/fallback if AI call fails
+- [x] meals.tsx: tap alternative to see full prep detail before confirming swap

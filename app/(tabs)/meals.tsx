@@ -11,6 +11,7 @@ import { useGuestAuth } from "@/lib/guest-auth";
 import { useCalories } from "@/lib/calorie-context";
 import { trpc } from "@/lib/trpc";
 import { useFocusEffect, useRouter } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const MEAL_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/OTOphPKaSpDPZRjp.jpg";
 const MEAL_TYPES = ["breakfast", "lunch", "dinner", "snack"];
@@ -189,9 +190,23 @@ export default function MealsScreen() {
   const [savePhoto, setSavePhoto] = useState(true);
   const [swapMealType, setSwapMealType] = useState<string | null>(null);
   const [swappedMeals, setSwappedMeals] = useState<Record<string, { title: string; icon: string; photo: string; recipe: { time: string; steps: string[] }; calories: number; protein: number; carbs: number; fat: number }>>({});
+  const [swapMealData, setSwapMealData] = useState<{ name: string; calories: number; protein: number; carbs: number; fat: number } | null>(null);
+  const [userDietaryPref, setUserDietaryPref] = useState("omnivore");
+  const [userGoal, setUserGoal] = useState("build_muscle");
+  // Load user profile for personalised AI swaps
+  React.useEffect(() => {
+    AsyncStorage.getItem("@guest_profile").then(raw => {
+      if (raw) {
+        const p = JSON.parse(raw);
+        if (p.dietaryPreference) setUserDietaryPref(p.dietaryPreference);
+        if (p.goal) setUserGoal(p.goal);
+      }
+    });
+  }, []);
 
   const uploadPhoto = trpc.upload.photo.useMutation();
   const analyzePhoto = trpc.mealLog.analyzePhoto.useMutation();
+  const mealSwapGenerate = trpc.mealSwap.generate.useMutation();
   const dbLogMeal = trpc.mealLog.log.useMutation({
     onSuccess: () => {
       setMealName("");
@@ -475,7 +490,10 @@ export default function MealsScreen() {
                   recipe={recipe}
                   photo={photo}
                   isSwapped={!!swapped}
-                  onSwap={() => setSwapMealType(type)}
+                  onSwap={() => {
+                    setSwapMealType(type);
+                    setSwapMealData({ name: recipe.title, calories: cals, protein: prot, carbs, fat });
+                  }}
                   onLog={() => {
                     addMeal({ name: recipe.title, mealType: type, calories: cals, protein: prot, carbs, fat });
                     Alert.alert("✅ Logged!", `${recipe.title} added to your meal log.`);
@@ -675,17 +693,20 @@ export default function MealsScreen() {
       {swapMealType !== null && (
         <MealSwapModal
           mealType={swapMealType}
-          onClose={() => setSwapMealType(null)}
+          mealData={swapMealData}
+          dietaryPreference={userDietaryPref}
+          fitnessGoal={userGoal}
+          generateSwaps={mealSwapGenerate}
+          onClose={() => { setSwapMealType(null); setSwapMealData(null); }}
           onSelect={(item) => {
-            const swapRecipe = SWAP_RECIPES[item.title] ?? { time: "15 min", steps: ["Prepare ingredients as listed.", "Cook according to your preference.", "Season to taste and serve."] };
-            const swapPhoto = SWAP_PHOTOS[item.title] ?? MEAL_PHOTOS[swapMealType];
+            const swapPhoto = SWAP_PHOTOS[item.name] ?? MEAL_PHOTOS[swapMealType];
             setSwappedMeals(prev => ({
               ...prev,
               [swapMealType]: {
-                title: item.title,
-                icon: item.icon,
+                title: item.name,
+                icon: MEAL_ICONS[swapMealType] ?? "🍽️",
                 photo: swapPhoto,
-                recipe: swapRecipe,
+                recipe: { time: item.prepTime, steps: item.instructions },
                 calories: item.calories,
                 protein: item.protein,
                 carbs: item.carbs,
@@ -693,7 +714,8 @@ export default function MealsScreen() {
               },
             }));
             setSwapMealType(null);
-            Alert.alert("Meal Swapped!", item.title + " is now your " + swapMealType + ". Tap How to Prep to see the full recipe.");
+            setSwapMealData(null);
+            Alert.alert("✅ Meal Swapped!", `${item.name} is now your ${swapMealType}. Tap "How to Prep" to see the full recipe.`);
           }}
         />
       )}
@@ -814,25 +836,67 @@ function SuggestedMealCard({ type, recipe, photo, onLog, onSwap, isSwapped }: {
   );
 }
 
-function MealSwapModal({ mealType, onClose, onSelect }: {
+function MealSwapModal({ mealType, mealData, dietaryPreference, fitnessGoal, generateSwaps, onClose, onSelect }: {
   mealType: string;
+  mealData: { name: string; calories: number; protein: number; carbs: number; fat: number } | null;
+  dietaryPreference: string;
+  fitnessGoal: string;
+  generateSwaps: any;
   onClose: () => void;
-  onSelect: (item: { title: string; calories: number; protein: number; carbs: number; fat: number; icon: string }) => void;
+  onSelect: (item: { name: string; calories: number; protein: number; carbs: number; fat: number; prepTime: string; dietaryTags: string[]; description: string; ingredients: string[]; instructions: string[] }) => void;
 }) {
-  const alternatives = SWAP_ALTERNATIVES[mealType] ?? [];
   const MEAL_ICONS_LOCAL: Record<string, string> = { breakfast: "🌅", lunch: "☀️", dinner: "🌙", snack: "🍎" };
+  const [alternatives, setAlternatives] = React.useState<any[]>([]);
+  const [loading, setLoading] = React.useState(false);
+  const [error, setError] = React.useState<string | null>(null);
+  const [selectedItem, setSelectedItem] = React.useState<any | null>(null);
+
+  // Auto-generate alternatives when modal opens
+  React.useEffect(() => {
+    if (!mealData) return;
+    setLoading(true);
+    setError(null);
+    generateSwaps.mutate(
+      {
+        mealName: mealData.name,
+        mealType,
+        calories: mealData.calories,
+        protein: mealData.protein,
+        carbs: mealData.carbs,
+        fat: mealData.fat,
+        dietaryPreference,
+        fitnessGoal,
+      },
+      {
+        onSuccess: (data: any) => {
+          setAlternatives(data.alternatives ?? []);
+          setLoading(false);
+        },
+        onError: (e: any) => {
+          setError("Could not generate alternatives. Please try again.");
+          setLoading(false);
+        },
+      }
+    );
+  }, []);
+
   return (
     <View style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, backgroundColor: "rgba(10,5,0,0.88)", justifyContent: "flex-end", zIndex: 999 }}>
-      <View style={{ backgroundColor: "#0A0500", borderTopLeftRadius: 28, borderTopRightRadius: 28, paddingTop: 20, paddingBottom: 40, maxHeight: "85%", borderWidth: 1, borderColor: "rgba(245,158,11,0.20)" }}>
+      <View style={{ backgroundColor: "#0A0500", borderTopLeftRadius: 28, borderTopRightRadius: 28, paddingTop: 20, paddingBottom: 40, maxHeight: "90%", borderWidth: 1, borderColor: "rgba(245,158,11,0.20)" }}>
         {/* Handle */}
         <View style={{ width: 40, height: 4, borderRadius: 2, backgroundColor: "rgba(245,158,11,0.25)", alignSelf: "center", marginBottom: 16 }} />
         {/* Header */}
         <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingHorizontal: 20, marginBottom: 6 }}>
-          <View>
-            <Text style={{ color: "#F59E0B", fontSize: 11, fontFamily: "Outfit_700Bold", letterSpacing: 1.5 }}>MEAL SWAP</Text>
+          <View style={{ flex: 1 }}>
+            <Text style={{ color: "#F59E0B", fontSize: 11, fontFamily: "Outfit_700Bold", letterSpacing: 1.5 }}>AI MEAL SWAP</Text>
             <Text style={{ color: "#FFF7ED", fontSize: 20, fontFamily: "Outfit_800ExtraBold", marginTop: 2 }}>
               {MEAL_ICONS_LOCAL[mealType]} Swap {mealType.charAt(0).toUpperCase() + mealType.slice(1)}
             </Text>
+            {mealData && (
+              <Text style={{ color: "#92400E", fontSize: 11, fontFamily: "DMSans_400Regular", marginTop: 2 }}>
+                Replacing: {mealData.name} · {mealData.calories} kcal
+              </Text>
+            )}
           </View>
           <TouchableOpacity
             style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: "rgba(245,158,11,0.10)", alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: "rgba(245,158,11,0.20)" }}
@@ -841,44 +905,144 @@ function MealSwapModal({ mealType, onClose, onSelect }: {
             <Text style={{ color: "#F59E0B", fontSize: 18, fontFamily: "Outfit_700Bold" }}>✕</Text>
           </TouchableOpacity>
         </View>
-        <Text style={{ color: "#92400E", fontSize: 12, fontFamily: "DMSans_400Regular", paddingHorizontal: 20, marginBottom: 16, lineHeight: 18 }}>
-          All options below have equivalent calories to your original meal. Tap one to swap it in.
-        </Text>
-        <FlatList
-          data={alternatives}
-          keyExtractor={(item) => item.title}
-          contentContainerStyle={{ paddingHorizontal: 20, gap: 10 }}
-          showsVerticalScrollIndicator={false}
-          renderItem={({ item }) => (
+
+        {/* Diet badge */}
+        <View style={{ paddingHorizontal: 20, marginBottom: 14 }}>
+          <View style={{ flexDirection: "row", gap: 6, alignItems: "center" }}>
+            <View style={{ backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 8, paddingHorizontal: 8, paddingVertical: 3, borderWidth: 1, borderColor: "rgba(245,158,11,0.20)" }}>
+              <Text style={{ color: "#FBBF24", fontSize: 10, fontFamily: "Outfit_700Bold", textTransform: "uppercase" }}>
+                🤖 AI · {dietaryPreference}
+              </Text>
+            </View>
+            <Text style={{ color: "#78350F", fontSize: 11, fontFamily: "DMSans_400Regular" }}>
+              Personalised to your diet & goal
+            </Text>
+          </View>
+        </View>
+
+        {/* Loading state */}
+        {loading && (
+          <View style={{ alignItems: "center", paddingVertical: 40, gap: 12 }}>
+            <ActivityIndicator size="large" color="#F59E0B" />
+            <Text style={{ color: "#FBBF24", fontFamily: "Outfit_700Bold", fontSize: 15 }}>Generating alternatives...</Text>
+            <Text style={{ color: "#92400E", fontFamily: "DMSans_400Regular", fontSize: 12, textAlign: "center", paddingHorizontal: 30 }}>
+              AI is finding {dietaryPreference} meals with equivalent calories
+            </Text>
+          </View>
+        )}
+
+        {/* Error state */}
+        {error && !loading && (
+          <View style={{ alignItems: "center", paddingVertical: 30, paddingHorizontal: 20, gap: 12 }}>
+            <Text style={{ fontSize: 36 }}>⚠️</Text>
+            <Text style={{ color: "#DC2626", fontFamily: "Outfit_700Bold", fontSize: 15, textAlign: "center" }}>{error}</Text>
             <TouchableOpacity
-              style={{ backgroundColor: "#150A00", borderRadius: 16, padding: 14, borderWidth: 1, borderColor: "rgba(245,158,11,0.12)", flexDirection: "row", alignItems: "center", gap: 12 }}
-              onPress={() => onSelect(item)}
+              style={{ backgroundColor: "#F59E0B", borderRadius: 12, paddingHorizontal: 20, paddingVertical: 10 }}
+              onPress={onClose}
             >
-              <View style={{ width: 52, height: 52, borderRadius: 14, backgroundColor: "rgba(245,158,11,0.10)", alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: "rgba(245,158,11,0.15)" }}>
-                <Text style={{ fontSize: 26 }}>{item.icon}</Text>
-              </View>
-              <View style={{ flex: 1 }}>
-                <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 14, marginBottom: 4 }}>{item.title}</Text>
-                <View style={{ flexDirection: "row", gap: 8 }}>
-                  <Text style={{ color: "#FBBF24", fontSize: 11, fontFamily: "DMSans_600SemiBold" }}>{item.calories} kcal</Text>
-                  <Text style={{ color: "#3B82F6", fontSize: 11, fontFamily: "DMSans_500Medium" }}>P:{item.protein}g</Text>
-                  <Text style={{ color: "#FDE68A", fontSize: 11, fontFamily: "DMSans_500Medium" }}>C:{item.carbs}g</Text>
-                  <Text style={{ color: "#FBBF24", fontSize: 11, fontFamily: "DMSans_500Medium" }}>F:{item.fat}g</Text>
-                </View>
-                <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 4, marginTop: 6 }}>
-                  {item.tags.map((tag) => (
-                    <View key={tag} style={{ backgroundColor: "rgba(245,158,11,0.08)", borderRadius: 6, paddingHorizontal: 6, paddingVertical: 2, borderWidth: 1, borderColor: "rgba(245,158,11,0.15)" }}>
-                      <Text style={{ color: "#92400E", fontSize: 9, fontFamily: "Outfit_700Bold", textTransform: "uppercase", letterSpacing: 0.5 }}>{tag}</Text>
-                    </View>
-                  ))}
-                </View>
-              </View>
-              <View style={{ backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 10, paddingHorizontal: 10, paddingVertical: 8, borderWidth: 1, borderColor: "rgba(245,158,11,0.20)" }}>
-                <Text style={{ color: "#F59E0B", fontSize: 11, fontFamily: "Outfit_700Bold" }}>Select</Text>
-              </View>
+              <Text style={{ color: "#0A0500", fontFamily: "Outfit_700Bold", fontSize: 13 }}>Close</Text>
             </TouchableOpacity>
-          )}
-        />
+          </View>
+        )}
+
+        {/* Detail view for selected item */}
+        {selectedItem && !loading && (
+          <ScrollView contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 20 }} showsVerticalScrollIndicator={false}>
+            <TouchableOpacity
+              style={{ flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 16 }}
+              onPress={() => setSelectedItem(null)}
+            >
+              <Text style={{ color: "#F59E0B", fontSize: 14 }}>←</Text>
+              <Text style={{ color: "#F59E0B", fontFamily: "DMSans_500Medium", fontSize: 13 }}>Back to alternatives</Text>
+            </TouchableOpacity>
+            <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_800ExtraBold", fontSize: 20, marginBottom: 4 }}>{selectedItem.name}</Text>
+            <Text style={{ color: "#92400E", fontFamily: "DMSans_400Regular", fontSize: 13, lineHeight: 20, marginBottom: 12 }}>{selectedItem.description}</Text>
+            {/* Macros */}
+            <View style={{ flexDirection: "row", gap: 8, marginBottom: 16 }}>
+              {[
+                { label: "Calories", value: `${selectedItem.calories} kcal`, color: "#FBBF24" },
+                { label: "Protein", value: `${selectedItem.protein}g`, color: "#3B82F6" },
+                { label: "Carbs", value: `${selectedItem.carbs}g`, color: "#FDE68A" },
+                { label: "Fat", value: `${selectedItem.fat}g`, color: "#F97316" },
+              ].map(m => (
+                <View key={m.label} style={{ flex: 1, backgroundColor: "#150A00", borderRadius: 10, padding: 8, alignItems: "center", borderWidth: 1, borderColor: "rgba(245,158,11,0.12)" }}>
+                  <Text style={{ color: m.color, fontFamily: "Outfit_700Bold", fontSize: 13 }}>{m.value}</Text>
+                  <Text style={{ color: "#78350F", fontSize: 10, marginTop: 2 }}>{m.label}</Text>
+                </View>
+              ))}
+            </View>
+            {/* Prep time + tags */}
+            <View style={{ flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 14, flexWrap: "wrap" }}>
+              <View style={{ backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 8, paddingHorizontal: 8, paddingVertical: 4, borderWidth: 1, borderColor: "rgba(245,158,11,0.20)" }}>
+                <Text style={{ color: "#FBBF24", fontSize: 11, fontFamily: "DMSans_600SemiBold" }}>⏱ {selectedItem.prepTime}</Text>
+              </View>
+              {(selectedItem.dietaryTags ?? []).map((tag: string) => (
+                <View key={tag} style={{ backgroundColor: "rgba(245,158,11,0.06)", borderRadius: 6, paddingHorizontal: 6, paddingVertical: 3, borderWidth: 1, borderColor: "rgba(245,158,11,0.15)" }}>
+                  <Text style={{ color: "#92400E", fontSize: 10, fontFamily: "Outfit_700Bold", textTransform: "uppercase" }}>{tag}</Text>
+                </View>
+              ))}
+            </View>
+            {/* Ingredients */}
+            <Text style={{ color: "#F59E0B", fontFamily: "Outfit_700Bold", fontSize: 13, marginBottom: 8, letterSpacing: 0.5 }}>INGREDIENTS</Text>
+            {(selectedItem.ingredients ?? []).map((ing: string, i: number) => (
+              <View key={i} style={{ flexDirection: "row", gap: 8, marginBottom: 6, alignItems: "flex-start" }}>
+                <Text style={{ color: "#F59E0B", fontSize: 12, marginTop: 2 }}>•</Text>
+                <Text style={{ color: "#FFF7ED", fontFamily: "DMSans_400Regular", fontSize: 13, flex: 1, lineHeight: 20 }}>{ing}</Text>
+              </View>
+            ))}
+            {/* Instructions */}
+            <Text style={{ color: "#F59E0B", fontFamily: "Outfit_700Bold", fontSize: 13, marginTop: 14, marginBottom: 8, letterSpacing: 0.5 }}>HOW TO MAKE IT</Text>
+            {(selectedItem.instructions ?? []).map((step: string, i: number) => (
+              <View key={i} style={{ flexDirection: "row", gap: 10, marginBottom: 10, alignItems: "flex-start" }}>
+                <View style={{ width: 22, height: 22, borderRadius: 11, backgroundColor: "rgba(245,158,11,0.15)", alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: "rgba(245,158,11,0.25)", flexShrink: 0 }}>
+                  <Text style={{ color: "#F59E0B", fontSize: 11, fontFamily: "Outfit_700Bold" }}>{i + 1}</Text>
+                </View>
+                <Text style={{ color: "#FFF7ED", fontFamily: "DMSans_400Regular", fontSize: 13, flex: 1, lineHeight: 20 }}>{step}</Text>
+              </View>
+            ))}
+            {/* Confirm swap button */}
+            <TouchableOpacity
+              style={{ backgroundColor: "#F59E0B", borderRadius: 16, paddingVertical: 16, alignItems: "center", marginTop: 20 }}
+              onPress={() => onSelect(selectedItem)}
+            >
+              <Text style={{ color: "#0A0500", fontFamily: "Outfit_800ExtraBold", fontSize: 16 }}>✓ Swap to This Meal</Text>
+            </TouchableOpacity>
+          </ScrollView>
+        )}
+
+        {/* Alternatives list */}
+        {!loading && !error && !selectedItem && alternatives.length > 0 && (
+          <FlatList
+            data={alternatives}
+            keyExtractor={(item, i) => item.name + i}
+            contentContainerStyle={{ paddingHorizontal: 20, gap: 10, paddingBottom: 10 }}
+            showsVerticalScrollIndicator={false}
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                style={{ backgroundColor: "#150A00", borderRadius: 16, padding: 14, borderWidth: 1, borderColor: "rgba(245,158,11,0.12)", flexDirection: "row", alignItems: "center", gap: 12 }}
+                onPress={() => setSelectedItem(item)}
+              >
+                <View style={{ width: 52, height: 52, borderRadius: 14, backgroundColor: "rgba(245,158,11,0.10)", alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: "rgba(245,158,11,0.15)" }}>
+                  <Text style={{ fontSize: 26 }}>🍽️</Text>
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 14, marginBottom: 4 }} numberOfLines={1}>{item.name}</Text>
+                  <View style={{ flexDirection: "row", gap: 8, marginBottom: 4 }}>
+                    <Text style={{ color: "#FBBF24", fontSize: 11, fontFamily: "DMSans_600SemiBold" }}>{item.calories} kcal</Text>
+                    <Text style={{ color: "#3B82F6", fontSize: 11, fontFamily: "DMSans_500Medium" }}>P:{item.protein}g</Text>
+                    <Text style={{ color: "#FDE68A", fontSize: 11, fontFamily: "DMSans_500Medium" }}>C:{item.carbs}g</Text>
+                    <Text style={{ color: "#F97316", fontSize: 11, fontFamily: "DMSans_500Medium" }}>F:{item.fat}g</Text>
+                  </View>
+                  <Text style={{ color: "#78350F", fontSize: 11, fontFamily: "DMSans_400Regular" }} numberOfLines={1}>⏱ {item.prepTime}</Text>
+                </View>
+                <View style={{ backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 10, paddingHorizontal: 10, paddingVertical: 8, borderWidth: 1, borderColor: "rgba(245,158,11,0.20)", alignItems: "center", gap: 2 }}>
+                  <Text style={{ color: "#F59E0B", fontSize: 11, fontFamily: "Outfit_700Bold" }}>View</Text>
+                  <Text style={{ color: "#F59E0B", fontSize: 9, fontFamily: "DMSans_400Regular" }}>& Swap</Text>
+                </View>
+              </TouchableOpacity>
+            )}
+          />
+        )}
       </View>
     </View>
   );
