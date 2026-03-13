@@ -324,6 +324,13 @@ export default function ScanScreen() {
       {/* Hero Header */}
       <ImageBackground source={{ uri: SCAN_BG }} style={{ height: 180 }} resizeMode="cover">
         <View style={{ flex: 1, backgroundColor: "rgba(8,8,16,0.65)", justifyContent: "flex-end", padding: 20, paddingTop: 52 }}>
+          <TouchableOpacity
+            style={{ position: "absolute", top: 52, right: 20, flexDirection: "row", alignItems: "center", gap: 4, backgroundColor: "rgba(245,158,11,0.12)", borderRadius: 20, paddingHorizontal: 10, paddingVertical: 5, borderWidth: 1, borderColor: "rgba(245,158,11,0.20)" }}
+            onPress={() => router.push("/user-guide" as any)}
+          >
+            <Text style={{ color: "#FBBF24", fontSize: 13 }}>?</Text>
+            <Text style={{ color: "#FBBF24", fontFamily: "DMSans_500Medium", fontSize: 11 }}>Guide</Text>
+          </TouchableOpacity>
           <Text style={{ color: "#FDE68A", fontFamily: "Outfit_700Bold", fontSize: 12, letterSpacing: 1 }}>AI-POWERED ANALYSIS</Text>
           <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_800ExtraBold", fontSize: 26, letterSpacing: -0.5 }}>Body Scan</Text>
           <Text style={{ color: "#92400E", fontSize: 12, marginTop: 2 }}>Analyze your physique and visualize your transformation</Text>

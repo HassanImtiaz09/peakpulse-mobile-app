@@ -227,3 +227,14 @@
 - [x] Post-onboarding redirect: trigger AI plan generation and take user to Dashboard with plans ready
 - [x] Add Meal Swap feature to Meals tab with calorie-equivalent alternatives list
 - [x] Meal Swap: calorie-equivalent swap suggestions with matching macros and dietary tags
+
+## Fixes & Features (Round 10)
+
+- [x] Onboarding body scan: after photo capture, generate AI transformation images at different BF% (10/12/15/20/25%)
+- [x] Onboarding: skip transformation images if goal is "maintain"
+- [x] Onboarding: user picks preferred body target from transformation images
+- [x] Onboarding: after target selection, generate AI workout + meal plan and display as first screen
+- [x] Meals tab: each meal card shows its own unique food photo (not the same image for all)
+- [x] Meal Swap: selecting an alternative shows full meal prep instructions for that swap
+- [x] User Guide screen: accessible from top-corner help button (?) on all tab screens
+- [x] Dashboard: rotating Tips & Tricks tile that changes every 5 minutes

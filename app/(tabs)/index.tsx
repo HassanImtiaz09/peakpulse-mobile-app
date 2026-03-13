@@ -12,6 +12,24 @@ import { useAuth } from "@/hooks/use-auth";
 import { useGuestAuth } from "@/lib/guest-auth";
 import { trpc } from "@/lib/trpc";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+
+const TIPS_AND_TRICKS = [
+  { icon: "💧", tip: "Drink 500ml of water first thing in the morning to kickstart your metabolism and hydration." },
+  { icon: "🏋️", tip: "Compound lifts (squat, deadlift, bench) give you the most muscle-building bang for your time — prioritise them." },
+  { icon: "😴", tip: "Sleep is when your muscles grow. Aim for 7-9 hours — it's the most underrated recovery tool." },
+  { icon: "🥩", tip: "Aim for 1.6-2.2g of protein per kg of bodyweight daily to maximise muscle retention and growth." },
+  { icon: "🔥", tip: "Progressive overload is the key to results — add 1 rep or 2.5kg each week to keep your muscles adapting." },
+  { icon: "🧠", tip: "Mind-muscle connection matters. Slow down your reps and focus on feeling the target muscle contract." },
+  { icon: "📸", tip: "Take progress photos every 2 weeks in the same lighting — the scale lies, photos don't." },
+  { icon: "🍽️", tip: "Meal prepping on Sunday saves 45+ minutes per day and makes it 3x easier to hit your calorie targets." },
+  { icon: "⏱️", tip: "Rest 60-90 seconds between hypertrophy sets, 2-3 minutes for strength work. Timer matters." },
+  { icon: "🚶", tip: "10,000 steps a day burns an extra 300-500 calories without touching your workout recovery." },
+  { icon: "🥑", tip: "Don't fear fats — avocado, nuts and olive oil support hormone production including testosterone." },
+  { icon: "📊", tip: "Track your workouts. People who log their sessions progress 40% faster than those who don't." },
+  { icon: "🧘", tip: "Stress raises cortisol which promotes fat storage. Even 5 minutes of deep breathing post-workout helps." },
+  { icon: "🍌", tip: "Eat fast-digesting carbs (banana, white rice) within 30 min post-workout to replenish glycogen." },
+  { icon: "💊", tip: "Creatine monohydrate is the most researched supplement in sports science — 3-5g daily is proven to work." },
+];
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 // Aurora Titan — hero backgrounds
@@ -94,6 +112,14 @@ export default function HomeScreen() {
   const [localProfile, setLocalProfile] = useState<any>(null);
   const [onboardingChecked, setOnboardingChecked] = useState(false);
   const canUse = isAuthenticated || isGuest;
+  const [tipIndex, setTipIndex] = React.useState(0);
+  // Rotate tips every 5 minutes
+  React.useEffect(() => {
+    const interval = setInterval(() => {
+      setTipIndex(prev => (prev + 1) % TIPS_AND_TRICKS.length);
+    }, 5 * 60 * 1000);
+    return () => clearInterval(interval);
+  }, []);
   const displayName = user?.name?.split(" ")[0] ?? guestProfile?.name?.split(" ")[0] ?? "Athlete";
   const { data: profile } = trpc.profile.get.useQuery(undefined, { enabled: isAuthenticated });
   const { data: workoutPlan } = trpc.workoutPlan.getActive.useQuery(undefined, { enabled: isAuthenticated });
@@ -198,13 +224,22 @@ export default function HomeScreen() {
               <View style={styles.heroBadge}>
                 <Text style={styles.heroBadgeText}>⚡ PEAKPULSE AI</Text>
               </View>
-              <TouchableOpacity
-                style={styles.heroProfileBtn}
-                onPress={() => router.push("/(tabs)/profile" as any)}
-              >
-                <MaterialIcons name="person" size={16} color={SF.emerald2} />
-                <Text style={styles.heroProfileBtnText}>Profile</Text>
-              </TouchableOpacity>
+              <View style={{ flexDirection: "row", gap: 8, alignItems: "center" }}>
+                <TouchableOpacity
+                  style={[styles.heroProfileBtn, { paddingHorizontal: 10 }]}
+                  onPress={() => router.push("/user-guide" as any)}
+                >
+                  <MaterialIcons name="help-outline" size={16} color={SF.emerald2} />
+                  <Text style={styles.heroProfileBtnText}>Guide</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.heroProfileBtn}
+                  onPress={() => router.push("/(tabs)/profile" as any)}
+                >
+                  <MaterialIcons name="person" size={16} color={SF.emerald2} />
+                  <Text style={styles.heroProfileBtnText}>Profile</Text>
+                </TouchableOpacity>
+              </View>
             </View>
             {/* Greeting */}
             <View style={{ paddingBottom: 24 }}>
@@ -388,6 +423,33 @@ export default function HomeScreen() {
             </ImageBackground>
           </View>
         )}
+
+        {/* ── Tips & Tricks ── */}
+        <View style={styles.section}>
+          <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+            <Text style={styles.sectionTitle}>💡 Tips & Tricks</Text>
+            <TouchableOpacity
+              style={{ flexDirection: "row", alignItems: "center", gap: 4 }}
+              onPress={() => setTipIndex(prev => (prev + 1) % TIPS_AND_TRICKS.length)}
+            >
+              <MaterialIcons name="refresh" size={14} color={SF.muted} />
+              <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 11 }}>Next tip</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={{ backgroundColor: SF.surface, borderRadius: 18, padding: 18, borderWidth: 1, borderColor: SF.border2, flexDirection: "row", gap: 14, alignItems: "flex-start" }}>
+            <View style={{ width: 48, height: 48, borderRadius: 14, backgroundColor: "rgba(245,158,11,0.10)", alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: SF.border, flexShrink: 0 }}>
+              <Text style={{ fontSize: 24 }}>{TIPS_AND_TRICKS[tipIndex].icon}</Text>
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={{ color: SF.fg, fontFamily: "DMSans_400Regular", fontSize: 14, lineHeight: 22 }}>
+                {TIPS_AND_TRICKS[tipIndex].tip}
+              </Text>
+              <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 11, marginTop: 8 }}>
+                Tip {tipIndex + 1} of {TIPS_AND_TRICKS.length} · Updates every 5 min
+              </Text>
+            </View>
+          </View>
+        </View>
 
         {/* ── Guest banner ── */}
         {isGuest && (

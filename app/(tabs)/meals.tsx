@@ -10,7 +10,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useGuestAuth } from "@/lib/guest-auth";
 import { useCalories } from "@/lib/calorie-context";
 import { trpc } from "@/lib/trpc";
-import { useFocusEffect } from "expo-router";
+import { useFocusEffect, useRouter } from "expo-router";
 
 const MEAL_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/OTOphPKaSpDPZRjp.jpg";
 const MEAL_TYPES = ["breakfast", "lunch", "dinner", "snack"];
@@ -24,10 +24,70 @@ const MEAL_ICONS: Record<string, string> = {
 
 // NanoBanana AI-generated food photography images
 const MEAL_PHOTOS: Record<string, string> = {
-  breakfast: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/OTOphPKaSpDPZRjp.jpg",
-  lunch: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/OTOphPKaSpDPZRjp.jpg",
-  dinner: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/OTOphPKaSpDPZRjp.jpg",
-  snack: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/OTOphPKaSpDPZRjp.jpg",
+  breakfast: "https://images.unsplash.com/photo-1484723091739-30990106e7c6?w=800&q=80",
+  lunch: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800&q=80",
+  dinner: "https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=800&q=80",
+  snack: "https://images.unsplash.com/photo-1490474418585-ba9bad8fd0ea?w=800&q=80",
+};
+
+// Unique food photos for each swap alternative (keyed by title)
+const SWAP_PHOTOS: Record<string, string> = {
+  // Breakfast swaps
+  "Overnight Oats with Banana": "https://images.unsplash.com/photo-1517673132405-a56a62b18caf?w=600&q=80",
+  "Scrambled Eggs on Wholegrain Toast": "https://images.unsplash.com/photo-1525351484163-7529414344d8?w=600&q=80",
+  "Avocado Toast with Poached Egg": "https://images.unsplash.com/photo-1541519227354-08fa5d50c820?w=600&q=80",
+  "Smoothie Bowl (Acai & Berries)": "https://images.unsplash.com/photo-1511690743698-d9d85f2fbf38?w=600&q=80",
+  "Cottage Cheese & Fruit Plate": "https://images.unsplash.com/photo-1490474418585-ba9bad8fd0ea?w=600&q=80",
+  "Protein Pancakes (3 pcs)": "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=600&q=80",
+  // Lunch swaps
+  "Turkey & Avocado Wrap": "https://images.unsplash.com/photo-1626700051175-6818013e1d4f?w=600&q=80",
+  "Tuna Salad Sandwich": "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=600&q=80",
+  "Lentil & Vegetable Soup + Bread": "https://images.unsplash.com/photo-1547592180-85f173990554?w=600&q=80",
+  "Steak & Sweet Potato Bowl": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&q=80",
+  "Falafel Wrap with Hummus": "https://images.unsplash.com/photo-1593001872095-7d5b3868fb1d?w=600&q=80",
+  "Greek Salad with Grilled Chicken": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&q=80",
+  // Dinner swaps
+  "Baked Cod with Roasted Veg": "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=600&q=80",
+  "Chicken Stir-Fry with Brown Rice": "https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=600&q=80",
+  "Beef & Broccoli with Noodles": "https://images.unsplash.com/photo-1569050467447-ce54b3bbc37d?w=600&q=80",
+  "Prawn & Vegetable Curry + Rice": "https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=600&q=80",
+  "Tofu & Edamame Buddha Bowl": "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=600&q=80",
+  "Turkey Meatballs & Courgette Pasta": "https://images.unsplash.com/photo-1555949258-eb67b1ef0ceb?w=600&q=80",
+  // Snack swaps
+  "Rice Cakes with Peanut Butter": "https://images.unsplash.com/photo-1590301157890-4810ed352733?w=600&q=80",
+  "Boiled Eggs (2) with Cucumber": "https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=600&q=80",
+  "Dates & Almonds (30g each)": "https://images.unsplash.com/photo-1559181567-c3190bfa4cfe?w=600&q=80",
+  "Protein Bar (Quest / Fulfil)": "https://images.unsplash.com/photo-1622484212850-eb596d769edc?w=600&q=80",
+  "Banana & Almond Butter": "https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=600&q=80",
+  "Greek Yogurt with Honey": "https://images.unsplash.com/photo-1488477181946-6428a0291777?w=600&q=80",
+};
+
+// Full meal prep instructions for each swap alternative
+const SWAP_RECIPES: Record<string, { time: string; steps: string[] }> = {
+  "Overnight Oats with Banana": { time: "5 min + overnight", steps: ["Add 80g rolled oats to a jar", "Pour in 200ml oat milk or dairy milk", "Add 1 tbsp chia seeds and 1 tsp honey", "Stir well, seal and refrigerate overnight", "In the morning, top with sliced banana and a pinch of cinnamon"] },
+  "Scrambled Eggs on Wholegrain Toast": { time: "8 min", steps: ["Crack 3 eggs into a bowl, whisk with a pinch of salt and pepper", "Melt 1 tsp butter in a non-stick pan over low heat", "Add eggs and stir gently with a spatula every 30 seconds", "Remove from heat while still slightly wet — residual heat finishes them", "Serve on 2 slices of toasted wholegrain bread with a sprinkle of chives"] },
+  "Avocado Toast with Poached Egg": { time: "10 min", steps: ["Bring a pan of water to a gentle simmer, add 1 tsp white vinegar", "Crack an egg into a small cup, swirl the water and slide the egg in", "Poach for 3 minutes for a runny yolk", "Mash half an avocado with lemon juice, salt and chilli flakes", "Spread on toasted sourdough and top with the poached egg"] },
+  "Smoothie Bowl (Acai & Berries)": { time: "5 min", steps: ["Blend 100g frozen acai pulp with 50ml almond milk until thick", "Pour into a bowl — it should be thicker than a drink", "Top with 30g granola, fresh blueberries and strawberries", "Add a drizzle of honey and a sprinkle of hemp seeds", "Eat immediately before it melts"] },
+  "Cottage Cheese & Fruit Plate": { time: "3 min", steps: ["Spoon 200g low-fat cottage cheese into a bowl", "Slice 1 kiwi, a handful of strawberries and some melon", "Arrange fruit around the cottage cheese", "Drizzle with 1 tsp honey", "Optional: add a sprinkle of pumpkin seeds for crunch"] },
+  "Protein Pancakes (3 pcs)": { time: "15 min", steps: ["Mix 1 scoop vanilla protein powder, 1 egg, 50g oat flour and 100ml milk", "Stir until smooth — batter should be thick but pourable", "Heat a non-stick pan over medium heat with a little cooking spray", "Pour small circles of batter, cook 2 min each side until golden", "Stack and serve with fresh berries and a drizzle of maple syrup"] },
+  "Turkey & Avocado Wrap": { time: "5 min", steps: ["Lay a large wholegrain wrap flat on a board", "Spread 2 tbsp hummus across the centre", "Layer 100g sliced turkey breast, lettuce and tomato", "Add 1/4 sliced avocado and a squeeze of lemon", "Roll tightly, cut in half diagonally and serve"] },
+  "Tuna Salad Sandwich": { time: "5 min", steps: ["Drain a 120g tin of tuna and flake into a bowl", "Mix with 1 tbsp light mayo, 1 tsp Dijon mustard and diced celery", "Season with black pepper and a squeeze of lemon", "Pile onto 2 slices of wholegrain bread with lettuce and cucumber", "Press together and cut in half"] },
+  "Lentil & Vegetable Soup + Bread": { time: "30 min", steps: ["Sauté 1 diced onion, 2 carrots and 2 celery stalks in olive oil for 5 min", "Add 200g red lentils, 1 litre vegetable stock and 1 tsp cumin", "Bring to a boil, then simmer 20 min until lentils are soft", "Blend half the soup for a creamy texture, stir back in", "Season with salt, pepper and lemon juice. Serve with crusty bread"] },
+  "Steak & Sweet Potato Bowl": { time: "25 min", steps: ["Dice 1 medium sweet potato, toss in olive oil, salt and paprika", "Roast at 200°C for 20 min until caramelised", "Season a 150g sirloin steak with salt, pepper and garlic powder", "Sear in a hot cast iron pan 3 min each side for medium-rare", "Rest 5 min, slice thinly and serve over sweet potato with rocket"] },
+  "Falafel Wrap with Hummus": { time: "10 min (using shop-bought falafel)", steps: ["Warm 4-5 falafel balls in the oven at 180°C for 8 min or air fry 5 min", "Spread 3 tbsp hummus on a large flatbread", "Add shredded lettuce, diced tomato and cucumber", "Place warm falafel on top and drizzle with tahini sauce", "Roll up and serve immediately"] },
+  "Greek Salad with Grilled Chicken": { time: "20 min", steps: ["Season a 150g chicken breast with oregano, garlic, salt and olive oil", "Grill or pan-fry 6-7 min each side until cooked through", "Chop tomatoes, cucumber, red onion and kalamata olives", "Toss with olive oil, red wine vinegar and dried oregano", "Slice chicken and serve on top of the salad with crumbled feta"] },
+  "Baked Cod with Roasted Veg": { time: "25 min", steps: ["Preheat oven to 200°C. Chop courgette, cherry tomatoes and red pepper", "Toss veg in olive oil, salt, pepper and Italian herbs. Roast 15 min", "Place cod fillet on top of veg, drizzle with lemon juice and olive oil", "Bake a further 12-15 min until fish flakes easily with a fork", "Serve with a wedge of lemon and fresh parsley"] },
+  "Chicken Stir-Fry with Brown Rice": { time: "20 min", steps: ["Cook 80g brown rice per packet instructions (15-18 min)", "Slice 150g chicken breast thinly, season with soy sauce and ginger", "Stir-fry chicken in a hot wok with sesame oil for 5 min", "Add broccoli, snap peas and bell pepper, stir-fry 3 more min", "Add 2 tbsp oyster sauce and a splash of water. Serve over rice"] },
+  "Beef & Broccoli with Noodles": { time: "20 min", steps: ["Cook 80g egg noodles per packet instructions, drain and set aside", "Slice 150g beef sirloin thinly against the grain", "Sear beef in a hot wok with oil for 2 min, remove and set aside", "Stir-fry broccoli florets for 3 min, add garlic and ginger", "Return beef, add soy sauce, oyster sauce and sesame oil. Serve over noodles"] },
+  "Prawn & Vegetable Curry + Rice": { time: "20 min", steps: ["Cook 80g basmati rice per packet instructions", "Sauté 1 diced onion in oil for 3 min, add 2 tbsp curry paste", "Add 200ml coconut milk and bring to a simmer", "Add 200g raw prawns and mixed vegetables, cook 5-6 min until pink", "Season with salt and lime juice. Serve over rice with fresh coriander"] },
+  "Tofu & Edamame Buddha Bowl": { time: "20 min", steps: ["Press 200g firm tofu dry, cube and toss in soy sauce and sesame oil", "Pan-fry tofu cubes until golden on all sides (8-10 min)", "Cook 80g brown rice or quinoa per packet instructions", "Defrost 100g edamame in boiling water for 3 min", "Assemble bowl with rice, tofu, edamame, shredded carrot and miso dressing"] },
+  "Turkey Meatballs & Courgette Pasta": { time: "25 min", steps: ["Mix 200g turkey mince with garlic, parsley, salt and 1 egg yolk", "Roll into small balls and pan-fry in olive oil until browned all over (8 min)", "Spiralise 2 courgettes or use a peeler for ribbons", "Simmer meatballs in 200ml passata for 10 min", "Toss courgette noodles with meatballs and sauce. Top with parmesan"] },
+  "Rice Cakes with Peanut Butter": { time: "2 min", steps: ["Lay 4 plain rice cakes on a plate", "Spread 1 tbsp natural peanut butter on each", "Optional: top with banana slices or a drizzle of honey", "Pair with a glass of water or black coffee", "Great as a pre-workout snack 30 min before training"] },
+  "Boiled Eggs (2) with Cucumber": { time: "10 min", steps: ["Place 2 eggs in cold water, bring to a boil", "Boil 7 min for hard-boiled, 5 min for jammy yolk", "Transfer to ice water for 2 min to stop cooking", "Peel and slice in half, season with salt and pepper", "Serve alongside sliced cucumber and cherry tomatoes"] },
+  "Dates & Almonds (30g each)": { time: "1 min", steps: ["Portion 30g Medjool dates (roughly 3 dates) into a small bowl", "Add 30g raw almonds alongside", "Optional: add a pinch of sea salt to the almonds for contrast", "This snack requires no preparation — ideal for on-the-go", "Pairs well with a glass of water or herbal tea"] },
+  "Protein Bar (Quest / Fulfil)": { time: "0 min", steps: ["Choose a bar with 20g+ protein and under 10g sugar", "Quest, Fulfil, Grenade Carb Killa or similar brands work well", "Eat at room temperature for best texture", "Ideal post-workout or as a mid-afternoon snack", "Check the label — some bars are high in calories despite the protein"] },
+  "Banana & Almond Butter": { time: "2 min", steps: ["Peel 1 medium banana and slice into rounds", "Portion 2 tbsp almond butter into a small dipping bowl", "Dip banana slices into almond butter", "Optional: sprinkle with a pinch of cinnamon or cacao nibs", "Best eaten within 10 min of slicing to prevent browning"] },
+  "Greek Yogurt with Honey": { time: "2 min", steps: ["Spoon 200g full-fat or 0% Greek yogurt into a bowl", "Drizzle 1 tsp raw honey over the top", "Optional: add a handful of walnuts or granola for crunch", "Add a pinch of cinnamon for extra flavour", "Refrigerate if not eating immediately — keeps 2 days covered"] },
 };
 
 const MEAL_RECIPES: Record<string, { title: string; time: string; steps: string[] }> = {
@@ -113,6 +173,7 @@ const SWAP_ALTERNATIVES: Record<string, Array<{ title: string; calories: number;
 };
 
 export default function MealsScreen() {
+  const router = useRouter();
   const { isAuthenticated } = useAuth();
   const { isGuest } = useGuestAuth();
   const canUse = isAuthenticated || isGuest;
@@ -127,6 +188,7 @@ export default function MealsScreen() {
   const [analysisResult, setAnalysisResult] = useState<any>(null);
   const [savePhoto, setSavePhoto] = useState(true);
   const [swapMealType, setSwapMealType] = useState<string | null>(null);
+  const [swappedMeals, setSwappedMeals] = useState<Record<string, { title: string; icon: string; photo: string; recipe: { time: string; steps: string[] }; calories: number; protein: number; carbs: number; fat: number }>>({});
 
   const uploadPhoto = trpc.upload.photo.useMutation();
   const analyzePhoto = trpc.mealLog.analyzePhoto.useMutation();
@@ -309,6 +371,13 @@ export default function MealsScreen() {
       {/* Hero Header */}
       <ImageBackground source={{ uri: MEAL_BG }} style={{ height: 160 }} resizeMode="cover">
         <View style={{ flex: 1, backgroundColor: "rgba(8,8,16,0.68)", justifyContent: "flex-end", padding: 20, paddingTop: 52 }}>
+          <TouchableOpacity
+            style={{ position: "absolute", top: 52, right: 20, flexDirection: "row", alignItems: "center", gap: 4, backgroundColor: "rgba(245,158,11,0.12)", borderRadius: 20, paddingHorizontal: 10, paddingVertical: 5, borderWidth: 1, borderColor: "rgba(245,158,11,0.20)" }}
+            onPress={() => router.push("/user-guide" as any)}
+          >
+            <Text style={{ color: "#FBBF24", fontSize: 13 }}>?</Text>
+            <Text style={{ color: "#FBBF24", fontFamily: "DMSans_500Medium", fontSize: 11 }}>Guide</Text>
+          </TouchableOpacity>
           <Text style={{ color: "#FDE68A", fontFamily: "Outfit_700Bold", fontSize: 12, letterSpacing: 1 }}>NUTRITION TRACKING</Text>
           <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_800ExtraBold", fontSize: 26, letterSpacing: -0.5 }}>Meal Log</Text>
         </View>
@@ -392,13 +461,26 @@ export default function MealsScreen() {
             {/* Suggested Meals Section with NanoBanana Photos */}
             <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 15, marginBottom: 10 }}>Today's Suggested Meals</Text>
             {MEAL_TYPES.map((type) => {
-              const recipe = MEAL_RECIPES[type];
-              const photo = MEAL_PHOTOS[type];
+              const swapped = swappedMeals[type];
+              const recipe = swapped ? { title: swapped.title, time: swapped.recipe.time, steps: swapped.recipe.steps } : MEAL_RECIPES[type];
+              const photo = swapped ? swapped.photo : MEAL_PHOTOS[type];
+              const cals = swapped ? swapped.calories : (type === "breakfast" ? 320 : type === "lunch" ? 520 : type === "dinner" ? 480 : 210);
+              const prot = swapped ? swapped.protein : (type === "breakfast" ? 18 : type === "lunch" ? 42 : type === "dinner" ? 38 : 12);
+              const carbs = swapped ? swapped.carbs : (type === "breakfast" ? 38 : type === "lunch" ? 45 : type === "dinner" ? 28 : 18);
+              const fat = swapped ? swapped.fat : (type === "breakfast" ? 8 : type === "lunch" ? 12 : type === "dinner" ? 18 : 10);
               return (
-                <SuggestedMealCard key={type} type={type} recipe={recipe} photo={photo} onSwap={() => setSwapMealType(type)} onLog={() => {
-                  addMeal({ name: recipe.title, mealType: type, calories: type === "breakfast" ? 320 : type === "lunch" ? 520 : type === "dinner" ? 480 : 210, protein: type === "breakfast" ? 18 : type === "lunch" ? 42 : type === "dinner" ? 38 : 12, carbs: type === "breakfast" ? 38 : type === "lunch" ? 45 : type === "dinner" ? 28 : 18, fat: type === "breakfast" ? 8 : type === "lunch" ? 12 : type === "dinner" ? 18 : 10 });
-                  Alert.alert("✅ Logged!", `${recipe.title} added to your meal log.`);
-                }} />
+                <SuggestedMealCard
+                  key={type}
+                  type={type}
+                  recipe={recipe}
+                  photo={photo}
+                  isSwapped={!!swapped}
+                  onSwap={() => setSwapMealType(type)}
+                  onLog={() => {
+                    addMeal({ name: recipe.title, mealType: type, calories: cals, protein: prot, carbs, fat });
+                    Alert.alert("✅ Logged!", `${recipe.title} added to your meal log.`);
+                  }}
+                />
               );
             })}
 
@@ -590,6 +672,31 @@ export default function MealsScreen() {
           </View>
         )}
       </ScrollView>
+      {swapMealType !== null && (
+        <MealSwapModal
+          mealType={swapMealType}
+          onClose={() => setSwapMealType(null)}
+          onSelect={(item) => {
+            const swapRecipe = SWAP_RECIPES[item.title] ?? { time: "15 min", steps: ["Prepare ingredients as listed.", "Cook according to your preference.", "Season to taste and serve."] };
+            const swapPhoto = SWAP_PHOTOS[item.title] ?? MEAL_PHOTOS[swapMealType];
+            setSwappedMeals(prev => ({
+              ...prev,
+              [swapMealType]: {
+                title: item.title,
+                icon: item.icon,
+                photo: swapPhoto,
+                recipe: swapRecipe,
+                calories: item.calories,
+                protein: item.protein,
+                carbs: item.carbs,
+                fat: item.fat,
+              },
+            }));
+            setSwapMealType(null);
+            Alert.alert("Meal Swapped!", item.title + " is now your " + swapMealType + ". Tap How to Prep to see the full recipe.");
+          }}
+        />
+      )}
     </View>
   );
 }
@@ -605,9 +712,10 @@ function MacroStat({ label, value, unit, color, goal }: { label: string; value: 
   );
 }
 
-function SuggestedMealCard({ type, recipe, photo, onLog, onSwap }: {
+function SuggestedMealCard({ type, recipe, photo, onLog, onSwap, isSwapped }: {
   type: string;
   recipe: { title: string; time: string; steps: string[] };
+  isSwapped?: boolean;
   photo: string;
   onLog: () => void;
   onSwap: () => void;
@@ -632,6 +740,11 @@ function SuggestedMealCard({ type, recipe, photo, onLog, onSwap }: {
         <Text style={{ fontSize: 14 }}>{MEAL_ICONS_LOCAL[type] ?? "🍽️"}</Text>
         <Text style={{ color: "#FFF7ED", fontSize: 11, fontFamily: "Outfit_700Bold", textTransform: "capitalize" }}>{type}</Text>
       </View>
+      {isSwapped && (
+        <View style={{ position: "absolute", bottom: 12, left: 12, backgroundColor: "rgba(234,88,12,0.90)", borderRadius: 8, paddingHorizontal: 10, paddingVertical: 4 }}>
+          <Text style={{ color: "#FFF7ED", fontSize: 10, fontFamily: "Outfit_700Bold" }}>⇄ SWAPPED</Text>
+        </View>
+      )}
       {/* Log + Swap Buttons */}
       <View style={{ position: "absolute", top: 12, right: 12, gap: 6 }}>
         <TouchableOpacity

@@ -119,6 +119,13 @@ export default function ProfileScreen() {
         {/* Hero Header */}
         <ImageBackground source={{ uri: HERO_BG }} style={{ height: 200 }} resizeMode="cover">
           <View style={{ flex: 1, backgroundColor: "rgba(8,8,16,0.65)", justifyContent: "flex-end", padding: 20, paddingTop: 52 }}>
+          <TouchableOpacity
+            style={{ position: "absolute", top: 52, right: 20, flexDirection: "row", alignItems: "center", gap: 4, backgroundColor: "rgba(245,158,11,0.12)", borderRadius: 20, paddingHorizontal: 10, paddingVertical: 5, borderWidth: 1, borderColor: "rgba(245,158,11,0.20)" }}
+            onPress={() => router.push("/user-guide" as any)}
+          >
+            <Text style={{ color: "#FBBF24", fontSize: 13 }}>?</Text>
+            <Text style={{ color: "#FBBF24", fontFamily: "DMSans_500Medium", fontSize: 11 }}>Guide</Text>
+          </TouchableOpacity>
             <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "flex-end" }}>
               <View style={{ flexDirection: "row", alignItems: "center", gap: 14 }}>
                 <View style={{ width: 64, height: 64, borderRadius: 32, backgroundColor: "rgba(245,158,11,0.12)", alignItems: "center", justifyContent: "center", borderWidth: 3, borderColor: "#F59E0B" }}>
