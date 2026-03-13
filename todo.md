@@ -264,3 +264,18 @@
 - [x] Dashboard: paywall gates on Progress, Wearables, Form Check, Community, 7-Day Challenge quick actions
 - [x] Profile: paywall gates on all locked feature links
 - [x] Zero TypeScript errors after paywall implementation
+
+## 7-Day Free Trial — Advanced Plan (Round 13)
+
+- [x] useSubscription hook: add trialStartDate, trialEndDate, isTrialActive, daysLeftInTrial, hasUsedTrial, isPaid, hasAdvancedAccess fields
+- [x] useSubscription hook: startTrial() function that writes trial start to AsyncStorage
+- [x] useSubscription hook: canAccess() treats active trial as Advanced tier
+- [x] Subscription screen: "Start 7-Day Free Trial" CTA for Advanced plan (shown when no trial used)
+- [x] Subscription screen: trial countdown badge when trial is active ("X days left")
+- [x] Subscription screen: "Trial Expired — Upgrade to Keep Access" state after trial ends
+- [x] Dashboard: trial status banner (days remaining, Subscribe CTA)
+- [x] Dashboard: expired trial banner (Upgrade CTA)
+- [x] PaywallModal: offer "Start Free Trial" as primary CTA for Advanced features (trial not yet used)
+- [x] PaywallModal: startTrial() on tap, dismiss modal with success alert
+- [x] PaywallModal: fall back to Upgrade CTA when trial already used or for Basic features
+- [x] Zero TypeScript errors after full trial implementation

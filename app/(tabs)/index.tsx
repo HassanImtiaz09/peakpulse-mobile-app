@@ -109,7 +109,7 @@ function QuickActionCard({ icon, label, onPress }: { icon: string; label: string
 
 export default function HomeScreen() {
   const router = useRouter();
-  const { canAccess } = useSubscription();
+  const { canAccess, isTrialActive, daysLeftInTrial, hasUsedTrial, isPaid, hasAdvancedAccess } = useSubscription();
   const [paywallFeature, setPaywallFeature] = useState<{ name: string; icon: string; tier: "basic" | "advanced"; desc?: string } | null>(null);
   const { user, isAuthenticated, loading: authLoading } = useAuth();
   const { guestProfile, isGuest, loading: guestLoading } = useGuestAuth();
@@ -472,6 +472,37 @@ export default function HomeScreen() {
           </View>
         </View>
 
+        {/* ── Trial status banner ── */}
+        {isTrialActive && (
+          <View style={styles.trialBanner}>
+            <Text style={{ fontSize: 20 }}>⏳</Text>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.trialBannerTitle}>Advanced Trial — {daysLeftInTrial} day{daysLeftInTrial !== 1 ? "s" : ""} left</Text>
+              <Text style={styles.trialBannerSub}>Enjoying all Advanced features. Subscribe to keep access after the trial.</Text>
+            </View>
+            <TouchableOpacity
+              style={styles.trialBannerBtn}
+              onPress={() => router.push("/subscription" as any)}
+            >
+              <Text style={styles.trialBannerBtnText}>Subscribe</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+        {hasUsedTrial && !isTrialActive && !isPaid && (
+          <View style={[styles.trialBanner, styles.trialBannerExpired]}>
+            <Text style={{ fontSize: 20 }}>⚠️</Text>
+            <View style={{ flex: 1 }}>
+              <Text style={[styles.trialBannerTitle, { color: "#ef4444" }]}>Trial Expired</Text>
+              <Text style={styles.trialBannerSub}>Subscribe to restore Advanced features.</Text>
+            </View>
+            <TouchableOpacity
+              style={[styles.trialBannerBtn, { backgroundColor: "#ef4444" }]}
+              onPress={() => router.push("/subscription" as any)}
+            >
+              <Text style={styles.trialBannerBtnText}>Upgrade</Text>
+            </TouchableOpacity>
+          </View>
+        )}
         {/* ── Guest banner ── */}
         {isGuest && (
           <View style={styles.guestBanner}>
@@ -570,4 +601,11 @@ const styles = StyleSheet.create({
   guestBannerSub: { color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 12, marginTop: 2 },
   guestBannerBtn: { backgroundColor: SF.surface2, borderRadius: 10, paddingHorizontal: 12, paddingVertical: 7, borderWidth: 1, borderColor: SF.border2 },
   guestBannerBtnText: { color: SF.emerald, fontFamily: "DMSans_600SemiBold", fontSize: 12 },
+  // Trial banner styles
+  trialBanner: { flexDirection: "row", alignItems: "center", gap: 10, marginHorizontal: 16, marginTop: 16, backgroundColor: "#1c1000", borderRadius: 14, padding: 14, borderWidth: 1, borderColor: "#F59E0B40" },
+  trialBannerExpired: { backgroundColor: "#1a0000", borderColor: "#ef444440" },
+  trialBannerTitle: { color: "#F59E0B", fontFamily: "DMSans_600SemiBold", fontSize: 13, marginBottom: 2 },
+  trialBannerSub: { color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 11, lineHeight: 16 },
+  trialBannerBtn: { backgroundColor: "#F59E0B", borderRadius: 10, paddingHorizontal: 12, paddingVertical: 7 },
+  trialBannerBtnText: { color: "#0A0500", fontFamily: "DMSans_700Bold", fontSize: 12 },
 });

@@ -15,6 +15,7 @@ import { ScreenContainer } from "@/components/screen-container";
 import { useRouter } from "expo-router";
 import { trpc } from "@/lib/trpc";
 import { useGuestAuth } from "@/lib/guest-auth";
+import { useSubscription } from "@/hooks/use-subscription";
 
 const HERO_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/PZcnawJwIZkQHTEM.jpg";
 
@@ -51,7 +52,9 @@ export default function SubscriptionScreen() {
   const isAuthenticated = isGuest || !!guestProfile;
   const [selectedPlan, setSelectedPlan] = useState<"basic" | "advanced">("advanced");
   const [loading, setLoading] = useState(false);
+  const [trialLoading, setTrialLoading] = useState(false);
   const [billingCycle, setBillingCycle] = useState<"monthly" | "annual">("monthly");
+  const subscription = useSubscription();
 
   const monthlyPrices = { basic: 4.99, advanced: 9.99 };
   const annualPrices = { basic: 3.49, advanced: 6.99 };
@@ -100,6 +103,23 @@ export default function SubscriptionScreen() {
 
   const annualSaving = 30;
 
+  const handleStartTrial = async () => {
+    if (subscription.hasUsedTrial) return;
+    setTrialLoading(true);
+    try {
+      await subscription.startTrial();
+      Alert.alert(
+        "🎉 Trial Started!",
+        "Your 7-day free trial of Advanced is now active. Enjoy all premium features — no charge until you subscribe.",
+        [{ text: "Let's Go!", onPress: () => router.back() }]
+      );
+    } catch {
+      Alert.alert("Error", "Could not start trial. Please try again.");
+    } finally {
+      setTrialLoading(false);
+    }
+  };
+
   return (
     <ScreenContainer edges={["top", "left", "right"]} containerClassName="bg-black">
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -120,6 +140,27 @@ export default function SubscriptionScreen() {
         </ImageBackground>
 
         <View style={styles.body}>
+          {/* Trial Status Banner */}
+          {subscription.isTrialActive && (
+            <View style={styles.trialBanner}>
+              <Text style={styles.trialBannerEmoji}>⏳</Text>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.trialBannerTitle}>Advanced Trial Active</Text>
+                <Text style={styles.trialBannerSub}>
+                  {subscription.daysLeftInTrial} day{subscription.daysLeftInTrial !== 1 ? "s" : ""} remaining — subscribe before it ends to keep access
+                </Text>
+              </View>
+            </View>
+          )}
+          {subscription.hasUsedTrial && !subscription.isTrialActive && !subscription.isPaid && (
+            <View style={[styles.trialBanner, styles.trialBannerExpired]}>
+              <Text style={styles.trialBannerEmoji}>⚠️</Text>
+              <View style={{ flex: 1 }}>
+                <Text style={[styles.trialBannerTitle, { color: "#ef4444" }]}>Trial Expired</Text>
+                <Text style={styles.trialBannerSub}>Subscribe now to restore Advanced access</Text>
+              </View>
+            </View>
+          )}
           {/* Billing Toggle */}
           <View style={styles.toggleRow}>
             <TouchableOpacity
@@ -240,6 +281,24 @@ export default function SubscriptionScreen() {
             </Text>
           </View>
 
+          {/* Free Trial CTA — only shown for Advanced plan when trial not yet used */}
+          {selectedPlan === "advanced" && !subscription.hasUsedTrial && !subscription.isPaid && (
+            <TouchableOpacity
+              style={[styles.trialBtn, trialLoading && { opacity: 0.7 }]}
+              onPress={handleStartTrial}
+              disabled={trialLoading}
+            >
+              {trialLoading ? (
+                <ActivityIndicator color="#0A0500" />
+              ) : (
+                <>
+                  <Text style={styles.trialBtnText}>🎉 Start 7-Day Free Trial</Text>
+                  <Text style={styles.trialBtnSub}>No credit card required · Full Advanced access</Text>
+                </>
+              )}
+            </TouchableOpacity>
+          )}
+
           {/* CTA */}
           <TouchableOpacity
             style={[styles.ctaBtn, loading && { opacity: 0.7 }]}
@@ -342,4 +401,13 @@ const styles = StyleSheet.create({
   stripeNoteTitle: { color: "#60a5fa", fontSize: 14, fontFamily: "Outfit_700Bold", marginBottom: 8 },
   stripeNoteText: { color: "#92400E", fontSize: 12, lineHeight: 20 },
   legalText: { color: "#4b5563", fontSize: 11, textAlign: "center", lineHeight: 18 },
+  // Trial styles
+  trialBanner: { flexDirection: "row", alignItems: "center", gap: 12, backgroundColor: "#1c1000", borderRadius: 14, padding: 14, marginBottom: 16, borderWidth: 1, borderColor: "#F59E0B40" },
+  trialBannerExpired: { backgroundColor: "#1a0000", borderColor: "#ef444440" },
+  trialBannerEmoji: { fontSize: 22 },
+  trialBannerTitle: { color: "#F59E0B", fontFamily: "Outfit_700Bold", fontSize: 14, marginBottom: 2 },
+  trialBannerSub: { color: "#92400E", fontFamily: "DMSans_400Regular", fontSize: 12, lineHeight: 17 },
+  trialBtn: { backgroundColor: "#F59E0B", borderRadius: 16, paddingVertical: 18, alignItems: "center", marginBottom: 12 },
+  trialBtnText: { color: "#0A0500", fontSize: 17, fontFamily: "Outfit_800ExtraBold" },
+  trialBtnSub: { color: "rgba(10,5,0,0.65)", fontSize: 12, marginTop: 3 },
 });
