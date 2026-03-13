@@ -290,6 +290,7 @@ export default function ProfileScreen() {
             <FeatureLink icon="🎁" label="Refer a Friend" onPress={() => router.push("/referral" as any)} />
             <FeatureLink icon="⌚" label="Wearable Sync" onPress={() => router.push("/wearable-sync" as any)} />
             <FeatureLink icon="🗺️" label="Find Nearby Gyms" onPress={() => router.push("/gym-finder" as any)} />
+            <FeatureLink icon="🔔" label="Notification Preferences" onPress={() => router.push("/notification-preferences" as any)} />
           </View>
 
           {/* Subscription */}

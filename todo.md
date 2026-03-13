@@ -167,3 +167,15 @@
 - [x] Social feed: weekly challenges with leaderboard (log 5 workouts, hit protein goal 7 days)
 - [x] Ramadan/halal mode: fasting-aware meal timing, prayer-time workout scheduling
 - [ ] Stripe secret integration: STRIPE_SECRET_KEY and STRIPE_WEBHOOK_SECRET via secrets panel (pending — user to configure)
+
+## Follow-Up Integrations (Round 7)
+
+- [ ] Stripe: add STRIPE_SECRET_KEY and STRIPE_WEBHOOK_SECRET via secrets panel
+- [ ] Stripe: server-side checkout session creation for Basic and Advanced plans
+- [ ] Stripe: webhook handler for subscription activation/cancellation
+- [ ] Stripe: subscription status stored in DB and surfaced in Profile
+- [x] Notification preferences screen: custom workout reminder time picker
+- [x] Notification preferences screen: custom meal log nudge time picker
+- [x] Notification preferences: persist to AsyncStorage and reschedule notifications on change
+- [x] Profile: link to Notification Preferences screen
+- [ ] App Store submission guide added to README
