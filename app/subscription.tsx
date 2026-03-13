@@ -54,7 +54,9 @@ export default function SubscriptionScreen() {
   const [billingCycle, setBillingCycle] = useState<"monthly" | "annual">("monthly");
 
   const monthlyPrices = { basic: 4.99, advanced: 9.99 };
-  const annualPrices = { basic: 3.99, advanced: 7.99 };
+  const annualPrices = { basic: 3.49, advanced: 6.99 };
+  const annualTotals = { basic: 41.88, advanced: 83.88 };
+  const annualSavings = { basic: 18, advanced: 36 };
   const prices = billingCycle === "monthly" ? monthlyPrices : annualPrices;
 
   const handleSubscribe = async () => {
@@ -96,7 +98,7 @@ export default function SubscriptionScreen() {
     }
   };
 
-  const annualSaving = Math.round(((monthlyPrices[selectedPlan] - annualPrices[selectedPlan]) / monthlyPrices[selectedPlan]) * 100);
+  const annualSaving = 30;
 
   return (
     <ScreenContainer edges={["top", "left", "right"]} containerClassName="bg-black">
@@ -136,7 +138,7 @@ export default function SubscriptionScreen() {
                 Annual
               </Text>
               <View style={styles.saveBadge}>
-                <Text style={styles.saveBadgeText}>Save 20%</Text>
+                <Text style={styles.saveBadgeText}>Save 30%</Text>
               </View>
             </TouchableOpacity>
           </View>
@@ -155,7 +157,10 @@ export default function SubscriptionScreen() {
               </View>
               <Text style={styles.perMonth}>/ month</Text>
               {billingCycle === "annual" && (
-                <Text style={styles.annualNote}>billed annually</Text>
+                <>
+                  <Text style={styles.annualNote}>£{annualTotals.basic}/yr · save £{annualSavings.basic}/yr</Text>
+                  <View style={styles.savingsChip}><Text style={styles.savingsChipText}>30% OFF</Text></View>
+                </>
               )}
               <View style={[styles.selectIndicator, selectedPlan === "basic" && styles.selectIndicatorActive]}>
                 <Text style={styles.selectIndicatorText}>{selectedPlan === "basic" ? "✓ Selected" : "Select"}</Text>
@@ -177,7 +182,10 @@ export default function SubscriptionScreen() {
               </View>
               <Text style={[styles.perMonth, styles.perMonthAdvanced]}>/ month</Text>
               {billingCycle === "annual" && (
-                <Text style={[styles.annualNote, { color: "#F59E0B" }]}>billed annually</Text>
+                <>
+                  <Text style={[styles.annualNote, { color: "#F59E0B" }]}>£{annualTotals.advanced}/yr · save £{annualSavings.advanced}/yr</Text>
+                  <View style={[styles.savingsChip, { backgroundColor: "#EA580C20", borderColor: "#EA580C40" }]}><Text style={[styles.savingsChipText, { color: "#EA580C" }]}>30% OFF</Text></View>
+                </>
               )}
               <View style={[styles.selectIndicator, styles.selectIndicatorAdvanced, selectedPlan === "advanced" && styles.selectIndicatorActive]}>
                 <Text style={styles.selectIndicatorText}>{selectedPlan === "advanced" ? "✓ Selected" : "Select"}</Text>
@@ -304,7 +312,9 @@ const styles = StyleSheet.create({
   priceAdvanced: { color: "#F59E0B" },
   perMonth: { color: "#78350F", fontSize: 12, marginBottom: 4 },
   perMonthAdvanced: { color: "#EA580C" },
-  annualNote: { color: "#78350F", fontSize: 10, marginBottom: 8 },
+  annualNote: { color: "#78350F", fontSize: 10, marginBottom: 4 },
+  savingsChip: { backgroundColor: "#22C55E20", borderRadius: 6, paddingHorizontal: 8, paddingVertical: 3, borderWidth: 1, borderColor: "#22C55E40", marginBottom: 8 },
+  savingsChipText: { color: "#22C55E", fontFamily: "Outfit_700Bold", fontSize: 9, letterSpacing: 0.5 },
   selectIndicator: { marginTop: 8, backgroundColor: "#2A1200", borderRadius: 8, paddingVertical: 6, paddingHorizontal: 12 },
   selectIndicatorAdvanced: { backgroundColor: "#3D1A00" },
   selectIndicatorActive: { backgroundColor: "#EA580C" },

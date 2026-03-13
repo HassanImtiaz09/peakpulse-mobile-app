@@ -12,6 +12,8 @@ import { useAuth } from "@/hooks/use-auth";
 import { useGuestAuth } from "@/lib/guest-auth";
 import { trpc } from "@/lib/trpc";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useSubscription } from "@/hooks/use-subscription";
+import { PaywallModal } from "@/components/paywall-modal";
 
 const TIPS_AND_TRICKS = [
   { icon: "💧", tip: "Drink 500ml of water first thing in the morning to kickstart your metabolism and hydration." },
@@ -107,6 +109,8 @@ function QuickActionCard({ icon, label, onPress }: { icon: string; label: string
 
 export default function HomeScreen() {
   const router = useRouter();
+  const { canAccess } = useSubscription();
+  const [paywallFeature, setPaywallFeature] = useState<{ name: string; icon: string; tier: "basic" | "advanced"; desc?: string } | null>(null);
   const { user, isAuthenticated, loading: authLoading } = useAuth();
   const { guestProfile, isGuest, loading: guestLoading } = useGuestAuth();
   const [localProfile, setLocalProfile] = useState<any>(null);
@@ -204,8 +208,25 @@ export default function HomeScreen() {
     );
   }
 
+  const gatedNav = (path: string, feature: string, icon: string, tier: "basic" | "advanced", desc?: string) => {
+    if (canAccess(feature)) {
+      router.push(path as any);
+    } else {
+      setPaywallFeature({ name: feature.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase()), icon, tier, desc });
+    }
+  };
+
   // ── Main Dashboard ───────────────────────────────────────────────────────
   return (
+    <>
+    <PaywallModal
+      visible={!!paywallFeature}
+      onClose={() => setPaywallFeature(null)}
+      featureName={paywallFeature?.name ?? ""}
+      featureIcon={paywallFeature?.icon}
+      requiredTier={paywallFeature?.tier ?? "basic"}
+      description={paywallFeature?.desc}
+    />
     <View style={{ flex: 1, backgroundColor: SF.bg }}>
       <ScrollView
         showsVerticalScrollIndicator={false}
@@ -321,17 +342,17 @@ export default function HomeScreen() {
             <QuickActionCard icon="🥗" label="Log Meal"       onPress={() => router.push("/(tabs)/meals" as any)} />
           </View>
           <View style={styles.qaRow}>
-            <QuickActionCard icon="📊" label="Progress"       onPress={() => router.push("/progress-photos" as any)} />
+            <QuickActionCard icon="📊" label="Progress"       onPress={() => gatedNav("/progress-photos", "progress_photos", "📊", "basic", "Track your body transformation with progress photos — Basic plan and above.")} />
             <QuickActionCard icon="🗺️" label="Find Gym"       onPress={() => router.push("/gym-finder" as any)} />
-            <QuickActionCard icon="⌚" label="Wearables"      onPress={() => router.push("/wearable-sync" as any)} />
+            <QuickActionCard icon="⌚" label="Wearables"      onPress={() => gatedNav("/wearable-sync", "wearable_sync", "⌚", "basic", "Sync your fitness wearable with PeakPulse — Basic plan and above.")} />
           </View>
           <View style={styles.qaRow}>
             <QuickActionCard icon="✅" label="Daily Check-In" onPress={() => router.push("/daily-checkin" as any)} />
-            <QuickActionCard icon="🎯" label="Form Check"     onPress={() => router.push("/form-checker" as any)} />
-            <QuickActionCard icon="👥" label="Community"      onPress={() => router.push("/social-feed" as any)} />
+            <QuickActionCard icon="🎯" label="Form Check"     onPress={() => gatedNav("/form-checker", "form_checker", "🎯", "advanced", "AI-powered real-time exercise form analysis — Advanced plan exclusive.")} />
+            <QuickActionCard icon="👥" label="Community"      onPress={() => gatedNav("/social-feed", "social_feed", "👥", "advanced", "Join the PeakPulse community, share progress, and compete in challenges — Advanced plan only.")} />
           </View>
           <View style={styles.qaRow}>
-            <QuickActionCard icon="⚡" label="7-Day Challenge" onPress={() => router.push("/challenge-onboarding" as any)} />
+            <QuickActionCard icon="⚡" label="7-Day Challenge" onPress={() => gatedNav("/challenge-onboarding", "challenges", "⚡", "advanced", "Unlock 7-day fitness challenges and leaderboards — Advanced plan only.")} />
             <QuickActionCard icon="🎁" label="Refer a Friend"  onPress={() => router.push("/referral" as any)} />
             <QuickActionCard icon="⭐" label="Upgrade"         onPress={() => router.push("/subscription" as any)} />
           </View>
@@ -469,6 +490,7 @@ export default function HomeScreen() {
         )}
       </ScrollView>
     </View>
+    </>
   );
 }
 

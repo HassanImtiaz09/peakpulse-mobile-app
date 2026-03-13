@@ -8,6 +8,8 @@ import { useAuth } from "@/hooks/use-auth";
 import { useGuestAuth } from "@/lib/guest-auth";
 import { trpc } from "@/lib/trpc";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useSubscription } from "@/hooks/use-subscription";
+import { PaywallModal } from "@/components/paywall-modal";
 
 const HERO_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/hXdqoCBElSGntMHm.jpg";
 const APP_LOGO = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/hXdqoCBElSGntMHm.jpg";
@@ -46,6 +48,8 @@ export default function ProfileScreen() {
   const { user, isAuthenticated } = useAuth();
   const { isGuest, guestProfile, clearGuest } = useGuestAuth();
   const canUse = isAuthenticated || isGuest;
+  const { canAccess } = useSubscription();
+  const [paywallFeature, setPaywallFeature] = useState<{ name: string; icon: string; tier: "basic" | "advanced"; desc?: string } | null>(null);
   const [editing, setEditing] = useState(false);
 
   const [age, setAge] = useState("");
@@ -113,7 +117,24 @@ export default function ProfileScreen() {
   const displayName = isAuthenticated ? (user?.name ?? "Athlete") : (guestProfile?.name ?? "Guest Athlete");
   const displayEmail = isAuthenticated ? (user?.email ?? "") : "Guest Mode";
 
+  const gatedNav = (path: string, feature: string, icon: string, tier: "basic" | "advanced", desc?: string) => {
+    if (canAccess(feature)) {
+      router.push(path as any);
+    } else {
+      setPaywallFeature({ name: feature.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase()), icon, tier, desc });
+    }
+  };
+
   return (
+    <>
+    <PaywallModal
+      visible={!!paywallFeature}
+      onClose={() => setPaywallFeature(null)}
+      featureName={paywallFeature?.name ?? ""}
+      featureIcon={paywallFeature?.icon}
+      requiredTier={paywallFeature?.tier ?? "basic"}
+      description={paywallFeature?.desc}
+    />
     <View style={{ flex: 1, backgroundColor: "#0A0500" }}>
       <ScrollView contentContainerStyle={{ paddingBottom: 32 }} showsVerticalScrollIndicator={false} style={{ flex: 1 }}>
         {/* Hero Header */}
@@ -289,15 +310,15 @@ export default function ProfileScreen() {
           {/* Quick Links */}
           <SectionHeader>Features</SectionHeader>
           <View style={{ gap: 8, marginBottom: 16 }}>
-            <FeatureLink icon="📈" label="Progress Photos" onPress={() => router.push("/progress-photos" as any)} />
+            <FeatureLink icon="📈" label="Progress Photos" onPress={() => gatedNav("/progress-photos", "progress_photos", "📈", "basic", "Track your body transformation with up to 5 progress photos per month on Basic, unlimited on Advanced.")} />
             <FeatureLink icon="📸" label="Daily Check-In" onPress={() => router.push("/daily-checkin" as any)} />
-            <FeatureLink icon="🎯" label="Form Checker" onPress={() => router.push("/form-checker" as any)} />
-            <FeatureLink icon="👥" label="Social Feed" onPress={() => router.push("/social-feed" as any)} />
-            <FeatureLink icon="⚡" label="7-Day Challenge" onPress={() => router.push("/challenge-onboarding" as any)} />
-            <FeatureLink icon="🎁" label="Refer a Friend" onPress={() => router.push("/referral" as any)} />
-            <FeatureLink icon="⌚" label="Wearable Sync" onPress={() => router.push("/wearable-sync" as any)} />
+            <FeatureLink icon="🎯" label="Form Checker" onPress={() => gatedNav("/form-checker", "form_checker", "🎯", "advanced", "AI-powered real-time exercise form analysis is an Advanced plan exclusive feature.")} />
+            <FeatureLink icon="👥" label="Social Feed" onPress={() => gatedNav("/social-feed", "social_feed", "👥", "advanced", "Join the PeakPulse community, share progress, and compete in challenges — Advanced plan only.")} />
+            <FeatureLink icon="⚡" label="7-Day Challenge" onPress={() => gatedNav("/challenge-onboarding", "challenges", "⚡", "advanced", "Unlock 7-day fitness challenges and leaderboards with an Advanced plan.")} />
+            <FeatureLink icon="🎁" label="Refer a Friend" onPress={() => gatedNav("/referral", "referral", "🎁", "basic", "Refer friends and earn rewards — available on Basic and Advanced plans.")} />
+            <FeatureLink icon="⌚" label="Wearable Sync" onPress={() => gatedNav("/wearable-sync", "wearable_sync", "⌚", "basic", "Sync your fitness wearable (Apple Watch, Fitbit, Garmin) with PeakPulse — Basic plan and above.")} />
             <FeatureLink icon="🗺️" label="Find Nearby Gyms" onPress={() => router.push("/gym-finder" as any)} />
-            <FeatureLink icon="🔔" label="Notification Preferences" onPress={() => router.push("/notification-preferences" as any)} />
+            <FeatureLink icon="🔔" label="Notification Preferences" onPress={() => gatedNav("/notification-preferences", "notification_preferences", "🔔", "basic", "Customise your workout and meal reminder times — available on Basic and Advanced plans.")} />
           </View>
 
           {/* Subscription */}
@@ -339,6 +360,7 @@ export default function ProfileScreen() {
         </View>
       </ScrollView>
     </View>
+    </>
   );
 }
 

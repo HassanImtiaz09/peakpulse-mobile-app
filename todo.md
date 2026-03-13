@@ -248,3 +248,19 @@
 - [x] meals.tsx: show loading state while AI generates alternatives
 - [x] meals.tsx: show error/fallback if AI call fails
 - [x] meals.tsx: tap alternative to see full prep detail before confirming swap
+
+## Subscription Plans & Feature Gating (Round 12)
+
+- [x] Update annual pricing: Basic £3.49/mo (billed £41.88/yr, save 30%), Advanced £6.99/mo (billed £83.88/yr, save 30%)
+- [x] Subscription screen: show annual savings badge, monthly equivalent price, and total billed per year
+- [x] Define feature tier matrix: Free / Basic / Advanced
+- [x] Feature gate: Form Checker — Advanced only
+- [x] Feature gate: Social Feed & Challenges — Advanced only
+- [x] Feature gate: Progress Photos — Basic and above
+- [x] Feature gate: Wearable Sync — Basic and above
+- [x] Feature gate: 7-Day Challenge — Advanced only
+- [x] Add PaywallModal component (reusable) shown when free/guest user taps locked feature
+- [x] Add useSubscription hook reading plan tier from AsyncStorage
+- [x] Dashboard: paywall gates on Progress, Wearables, Form Check, Community, 7-Day Challenge quick actions
+- [x] Profile: paywall gates on all locked feature links
+- [x] Zero TypeScript errors after paywall implementation
