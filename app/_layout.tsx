@@ -22,8 +22,10 @@ import { trpc, createTRPCClient } from "@/lib/trpc";
 import { initManusRuntime, subscribeSafeAreaInsets } from "@/lib/_core/manus-runtime";
 import * as SplashScreen from "expo-splash-screen";
 import * as Notifications from "expo-notifications";
+import * as Linking from "expo-linking";
 import { useFonts } from "expo-font";
 import { useRouter } from "expo-router";
+import { extractReferralCodeFromUrl, storePendingReferralCode } from "@/lib/referral";
 import {
   DMSans_300Light,
   DMSans_400Regular,
@@ -80,8 +82,43 @@ function useNotificationDeepLink() {
   }, [router]);
 }
 
+/**
+ * Detects incoming referral deep-link URLs on app launch and stores the code
+ * as a pending referral to be applied when the user completes onboarding.
+ */
+function useReferralDeepLink() {
+  useEffect(() => {
+    if (Platform.OS === "web") return;
+
+    async function checkInitialUrl() {
+      try {
+        const initialUrl = await Linking.getInitialURL();
+        if (initialUrl) {
+          const code = extractReferralCodeFromUrl(initialUrl);
+          if (code) {
+            await storePendingReferralCode(code);
+          }
+        }
+      } catch {}
+    }
+
+    checkInitialUrl();
+
+    // Also listen for URLs while the app is running (e.g. user taps link while app is open)
+    const subscription = Linking.addEventListener("url", ({ url }) => {
+      const code = extractReferralCodeFromUrl(url);
+      if (code) {
+        storePendingReferralCode(code).catch(() => {});
+      }
+    });
+
+    return () => subscription.remove();
+  }, []);
+}
+
 export default function RootLayout() {
   useNotificationDeepLink();
+  useReferralDeepLink();
   const [fontsLoaded] = useFonts({
     DMSans_300Light,
     DMSans_400Regular,

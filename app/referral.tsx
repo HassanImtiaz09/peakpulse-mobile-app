@@ -1,70 +1,64 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
-  View, Text, TouchableOpacity, ScrollView, Share, Alert, Clipboard, ImageBackground,
+  View, Text, TouchableOpacity, ScrollView, Alert, Clipboard, ImageBackground, ActivityIndicator,
 } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import { useGuestAuth } from "@/lib/guest-auth";
+import {
+  loadOrCreateReferralData,
+  shareReferralCode,
+  buildReferralUrl,
+  type ReferralData,
+} from "@/lib/referral";
 
 const HERO_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/PZcnawJwIZkQHTEM.jpg";
-const REFERRAL_KEY = "@referral_data";
 
-function generateReferralCode(name: string): string {
-  const base = name.replace(/\s+/g, "").toUpperCase().slice(0, 5);
-  const suffix = Math.random().toString(36).slice(2, 6).toUpperCase();
-  return `${base}${suffix}`;
-}
-
-interface ReferralData {
-  code: string;
-  referrals: number;
-  creditsEarned: number;
-}
+const REWARD_TIERS = [
+  { referrals: 1, reward: "1 Month Basic FREE", description: "Your first friend unlocks a free Basic month for you", icon: "🥉" },
+  { referrals: 3, reward: "1 Month Advanced FREE", description: "3 friends referred earns you a full Advanced month", icon: "🥈" },
+  { referrals: 5, reward: "3 Months Advanced FREE", description: "5 referrals = 3 months of premium access", icon: "🥇" },
+  { referrals: 10, reward: "Lifetime 50% Discount", description: "10 referrals earns you a permanent 50% discount forever", icon: "👑" },
+];
 
 export default function ReferralScreen() {
   const router = useRouter();
   const { guestProfile } = useGuestAuth();
   const [referralData, setReferralData] = useState<ReferralData | null>(null);
+  const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
+  const [sharing, setSharing] = useState(false);
 
-  useEffect(() => {
-    loadOrCreateReferral();
-  }, []);
-
-  async function loadOrCreateReferral() {
-    const raw = await AsyncStorage.getItem(REFERRAL_KEY);
-    if (raw) {
-      setReferralData(JSON.parse(raw));
-    } else {
+  const loadData = useCallback(async () => {
+    setLoading(true);
+    try {
       const name = guestProfile?.name ?? "USER";
-      const code = generateReferralCode(name);
-      const data: ReferralData = { code, referrals: 0, creditsEarned: 0 };
-      await AsyncStorage.setItem(REFERRAL_KEY, JSON.stringify(data));
+      const data = await loadOrCreateReferralData(name);
       setReferralData(data);
-    }
-  }
+    } catch {}
+    finally { setLoading(false); }
+  }, [guestProfile?.name]);
+
+  useEffect(() => { loadData(); }, [loadData]);
 
   async function handleShare() {
-    if (!referralData) return;
-    const message = `🏋️ Join me on PeakPulse AI — the fitness app that uses AI to transform your body!\n\nUse my referral code: ${referralData.code}\n\nGet 1 month Advanced FREE when you sign up! 💪\n\nhttps://peakpulse.app/ref/${referralData.code}`;
-    try {
-      await Share.share({ message, title: "Join PeakPulse AI" });
-    } catch {}
+    if (!referralData || sharing) return;
+    setSharing(true);
+    try { await shareReferralCode(referralData.code); }
+    finally { setSharing(false); }
   }
 
-  async function handleCopy() {
+  function handleCopy() {
     if (!referralData) return;
     Clipboard.setString(referralData.code);
     setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    setTimeout(() => setCopied(false), 2500);
   }
 
-  const rewards = [
-    { referrals: 1, reward: "1 Month Basic FREE", icon: "🥉", achieved: (referralData?.referrals ?? 0) >= 1 },
-    { referrals: 3, reward: "1 Month Advanced FREE", icon: "🥈", achieved: (referralData?.referrals ?? 0) >= 3 },
-    { referrals: 5, reward: "3 Months Advanced FREE", icon: "🥇", achieved: (referralData?.referrals ?? 0) >= 5 },
-    { referrals: 10, reward: "Lifetime 50% Discount", icon: "👑", achieved: (referralData?.referrals ?? 0) >= 10 },
-  ];
+  const referralCount = referralData?.referrals ?? 0;
+  const creditsEarned = referralData?.creditsEarned ?? 0;
+  const nextTier = REWARD_TIERS.find((t) => t.referrals > referralCount);
+  const progressToNext = nextTier ? Math.min((referralCount / nextTier.referrals) * 100, 100) : 100;
+  const rewards = REWARD_TIERS.map((t: typeof REWARD_TIERS[number]) => ({ ...t, achieved: referralCount >= t.referrals }));
 
   return (
     <View style={{ flex: 1, backgroundColor: "#0A0500" }}>
@@ -79,7 +73,7 @@ export default function ReferralScreen() {
           </TouchableOpacity>
           <Text style={{ color: "#FDE68A", fontFamily: "Outfit_700Bold", fontSize: 12, letterSpacing: 1 }}>REFERRAL PROGRAMME</Text>
           <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_800ExtraBold", fontSize: 26 }}>Earn Free Months</Text>
-          <Text style={{ color: "#92400E", fontSize: 13, marginTop: 4 }}>Invite friends and earn free subscription months</Text>
+          <Text style={{ color: "#FDE68A", fontFamily: "DMSans_400Regular", fontSize: 13, marginTop: 6, opacity: 0.9 }}>Your friends get a FREE 14-day Advanced trial — double the standard 7 days!</Text>
         </View>
       </ImageBackground>
 
@@ -105,7 +99,7 @@ export default function ReferralScreen() {
               style={{ flex: 1, backgroundColor: "#F59E0B", borderRadius: 14, paddingVertical: 12, alignItems: "center" }}
               onPress={handleShare}
             >
-              <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 14 }}>📤 Share</Text>
+              <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 14 }}>📤 Share Link</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -113,11 +107,11 @@ export default function ReferralScreen() {
         {/* Stats */}
         <View style={{ flexDirection: "row", gap: 12, marginBottom: 20 }}>
           <View style={{ flex: 1, backgroundColor: "#150A00", borderRadius: 20, padding: 16, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)", alignItems: "center" }}>
-            <Text style={{ color: "#F59E0B", fontFamily: "Outfit_800ExtraBold", fontSize: 28 }}>{referralData?.referrals ?? 0}</Text>
+            <Text style={{ color: "#F59E0B", fontFamily: "Outfit_800ExtraBold", fontSize: 28 }}>{referralCount}</Text>
             <Text style={{ color: "#92400E", fontSize: 12, marginTop: 4 }}>Friends Referred</Text>
           </View>
           <View style={{ flex: 1, backgroundColor: "#150A00", borderRadius: 20, padding: 16, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)", alignItems: "center" }}>
-            <Text style={{ color: "#FDE68A", fontFamily: "Outfit_800ExtraBold", fontSize: 28 }}>{referralData?.creditsEarned ?? 0}</Text>
+            <Text style={{ color: "#FDE68A", fontFamily: "Outfit_800ExtraBold", fontSize: 28 }}>{creditsEarned}</Text>
             <Text style={{ color: "#92400E", fontSize: 12, marginTop: 4 }}>Months Earned</Text>
           </View>
         </View>
@@ -143,7 +137,7 @@ export default function ReferralScreen() {
             ) : (
               <View style={{ backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 10, paddingHorizontal: 10, paddingVertical: 5 }}>
                 <Text style={{ color: "#78350F", fontFamily: "Outfit_700Bold", fontSize: 12 }}>
-                  {r.referrals - (referralData?.referrals ?? 0)} to go
+                  {r.referrals - referralCount} to go
                 </Text>
               </View>
             )}
@@ -156,7 +150,7 @@ export default function ReferralScreen() {
           {[
             { step: "1", text: "Share your referral code with friends" },
             { step: "2", text: "Friend signs up and enters your code" },
-            { step: "3", text: "They get 1 month Advanced FREE" },
+            { step: "3", text: "They get a FREE 14-day Advanced trial — double the standard 7 days!" },
             { step: "4", text: "You earn a free month for every referral" },
           ].map((s, i) => (
             <View key={i} style={{ flexDirection: "row", alignItems: "flex-start", gap: 12, marginBottom: 12 }}>

@@ -81,7 +81,7 @@ export const FEATURE_TIERS: Record<string, SubscriptionTier> = {
   unlimited_meal_swaps: "advanced",
 };
 
-function computeTrialState(trialData: { startDate: string } | null): TrialState {
+function computeTrialState(trialData: { startDate: string; durationDays?: number } | null): TrialState {
   if (!trialData) {
     return {
       hasUsedTrial: false,
@@ -91,9 +91,10 @@ function computeTrialState(trialData: { startDate: string } | null): TrialState 
       daysLeftInTrial: 0,
     };
   }
+  const duration = trialData.durationDays ?? TRIAL_DURATION_DAYS;
   const startDate = new Date(trialData.startDate);
   const endDate = new Date(startDate);
-  endDate.setDate(endDate.getDate() + TRIAL_DURATION_DAYS);
+  endDate.setDate(endDate.getDate() + duration);
   const now = new Date();
   const isActive = now < endDate;
   const msLeft = endDate.getTime() - now.getTime();
@@ -110,7 +111,8 @@ function computeTrialState(trialData: { startDate: string } | null): TrialState 
 export function useSubscription(): FullSubscriptionState & {
   setSubscription: (tier: SubscriptionTier, billingCycle: "monthly" | "annual") => Promise<void>;
   clearSubscription: () => Promise<void>;
-  startTrial: () => Promise<void>;
+  /** Start a free trial. Pass `durationDays` to override the default 7-day duration (e.g. 14 for referral trial). */
+  startTrial: (durationDays?: number) => Promise<void>;
   canAccess: (feature: string) => boolean;
   refresh: () => Promise<void>;
 } {
@@ -180,12 +182,13 @@ export function useSubscription(): FullSubscriptionState & {
     await load();
   }, [load]);
 
-  const startTrial = useCallback(async () => {
+  const startTrial = useCallback(async (durationDays: number = TRIAL_DURATION_DAYS) => {
     // Only allow starting a trial if one has never been used
     const existing = await AsyncStorage.getItem(TRIAL_KEY);
     if (existing) return; // Trial already used — do not reset
     const startDate = new Date().toISOString();
-    const trialData = { startDate };
+    // Store duration so computeTrialState can use the correct end date
+    const trialData = { startDate, durationDays };
     await AsyncStorage.setItem(TRIAL_KEY, JSON.stringify(trialData));
     // Schedule Day 5 and Day 7 reminder notifications
     scheduleTrialReminders(startDate).catch(() => {}); // fire-and-forget; permission may be denied

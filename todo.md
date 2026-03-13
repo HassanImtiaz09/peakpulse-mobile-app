@@ -292,3 +292,28 @@
 - [x] useNotificationDeepLink hook in _layout.tsx: handles cold-start and foreground notification taps
 - [x] Notification tap navigates to /subscription screen via router.push
 - [x] Zero TypeScript errors
+
+## Referral Program (Round 15)
+
+- [ ] Referral service: generate unique 8-char alphanumeric code per user, persist to AsyncStorage
+- [ ] Referral service: build shareable deep-link URL (peakpulse://referral?code=XXXX)
+- [ ] Referral service: share via native share sheet (expo-sharing)
+- [ ] Referral service: detect referral code on app launch via deep link
+- [ ] useSubscription: support 14-day referral trial (trialDays param in startTrial)
+- [ ] Onboarding: detect referral code from launch URL, apply 14-day trial on completion
+- [ ] Referral screen: display unique code, copy-to-clipboard, share button
+- [ ] Referral screen: referral stats (how many friends joined, rewards earned)
+- [ ] Referral screen: reward tiers info (1 referral = 1 month free, etc.)
+- [ ] Profile: link to Referral screen (already gated to Advanced)
+- [ ] Zero TypeScript errors
+
+## Referral Program (Round 15) — COMPLETED
+
+- [x] lib/referral.ts: loadOrCreateReferralData, shareReferralCode, buildReferralUrl, applyPendingReferral
+- [x] useSubscription hook: startTrial(durationDays) supports custom duration (7 default, 14 for referral)
+- [x] _layout.tsx: useReferralDeepLink hook detects incoming referral code on app launch
+- [x] onboarding.tsx: applyPendingReferral() called on finish — grants 14-day trial if referral code present
+- [x] referral.tsx: rebuilt with referral service, 14-day trial messaging, REWARD_TIERS, progress bar
+- [x] Referral screen: "How It Works" step 3 updated to mention 14-day trial for friends
+- [x] Referral screen: hero subtitle updated to highlight 14-day friend benefit
+- [x] Zero TypeScript errors
