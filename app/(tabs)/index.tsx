@@ -197,10 +197,15 @@ export default function HomeScreen() {
             <QuickActionCard icon="🏋️" label="Start Workout" color="#F97316" onPress={() => router.push("/(tabs)/plans" as any)} />
             <QuickActionCard icon="🥗" label="Log Meal" color="#22C55E" onPress={() => router.push("/(tabs)/meals" as any)} />
           </View>
-          <View style={{ flexDirection: "row", gap: 10 }}>
+          <View style={{ flexDirection: "row", gap: 10, marginBottom: 10 }}>
             <QuickActionCard icon="📊" label="Progress" color="#06B6D4" onPress={() => router.push("/progress-photos" as any)} />
             <QuickActionCard icon="🗺️" label="Find Gym" color="#EC4899" onPress={() => router.push("/gym-finder" as any)} />
             <QuickActionCard icon="⌚" label="Wearables" color="#EAB308" onPress={() => router.push("/wearable-sync" as any)} />
+          </View>
+          <View style={{ flexDirection: "row", gap: 10 }}>
+            <QuickActionCard icon="📸" label="Daily Check-In" color="#8B5CF6" onPress={() => router.push("/daily-checkin" as any)} />
+            <QuickActionCard icon="🎯" label="Form Check" color="#10B981" onPress={() => router.push("/form-checker" as any)} />
+            <QuickActionCard icon="👥" label="Community" color="#F43F5E" onPress={() => router.push("/social-feed" as any)} />
           </View>
         </View>
 

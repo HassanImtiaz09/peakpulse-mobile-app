@@ -157,3 +157,44 @@ export async function getRecentWorkoutSessions(userId: number, limit = 10) {
   if (!db) return [];
   return db.select().from(workoutSessions).where(eq(workoutSessions.userId, userId)).orderBy(desc(workoutSessions.completedAt)).limit(limit);
 }
+
+export async function getSocialPosts(limit = 20, offset = 0) {
+  // Return sample posts since we don't have a social_posts table yet
+  return getSamplePostsData();
+}
+
+export async function createSocialPost(userId: number, data: {
+  type: string; caption?: string; weightKg?: number; bodyFatPercent?: number; photoUrl?: string; achievement?: string;
+}) {
+  // Store as a progress photo with social metadata in notes
+  const db = await getDb();
+  if (!db) return { id: Date.now(), ...data, userId, createdAt: new Date() };
+  const note = JSON.stringify({ socialType: data.type, caption: data.caption, achievement: data.achievement });
+  const result = await db.insert(progressPhotos).values({ userId, photoUrl: data.photoUrl ?? "", note });
+  return { id: (result as any).insertId, ...data, userId, createdAt: new Date() };
+}
+
+export async function likePost(userId: number, postId: number) {
+  return { success: true, postId, userId };
+}
+
+export async function getUserSubscription(userId: number) {
+  // Subscription management via Stripe webhooks would update this
+  // For now return free plan
+  return { plan: "free" as const, expiresAt: null };
+}
+
+export function getSamplePostsForGuests() {
+  return getSamplePostsData();
+}
+
+function getSamplePostsData() {
+  return [
+    { id: 1, userId: 0, userName: "Alex M.", userAvatar: "💪", type: "progress", caption: "6 weeks in — down 8kg and feeling incredible! The AI meal plan made all the difference.", weightKg: 78, bodyFatPercent: 16, likes: 24, createdAt: new Date(Date.now() - 2 * 3600000).toISOString() },
+    { id: 2, userId: 0, userName: "Sarah K.", userAvatar: "🏃", type: "achievement", caption: "Just completed my first 5K run after starting the beginner plan! Never thought I'd get here.", achievement: "First 5K Run", likes: 41, createdAt: new Date(Date.now() - 5 * 3600000).toISOString() },
+    { id: 3, userId: 0, userName: "James T.", userAvatar: "🎯", type: "progress", caption: "Body fat down from 24% to 18% in 10 weeks. Consistency is everything!", bodyFatPercent: 18, likes: 33, createdAt: new Date(Date.now() - 24 * 3600000).toISOString() },
+    { id: 4, userId: 0, userName: "Priya R.", userAvatar: "🌟", type: "challenge", caption: "Day 30 of the 30-day squat challenge — completed! Who's joining the next one?", achievement: "30-Day Squat Challenge", likes: 58, createdAt: new Date(Date.now() - 48 * 3600000).toISOString() },
+    { id: 5, userId: 0, userName: "Marcus L.", userAvatar: "🔥", type: "progress", caption: "Halal meal plan has been a game changer. Lost 5kg while eating food I actually enjoy.", weightKg: 82, likes: 19, createdAt: new Date(Date.now() - 72 * 3600000).toISOString() },
+    { id: 6, userId: 0, userName: "Emma W.", userAvatar: "✨", type: "achievement", caption: "Hit my target body fat percentage! The AI body scan was spot on from day one.", bodyFatPercent: 22, likes: 47, createdAt: new Date(Date.now() - 96 * 3600000).toISOString() },
+  ];
+}

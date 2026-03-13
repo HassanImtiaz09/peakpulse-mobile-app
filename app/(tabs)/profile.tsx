@@ -281,11 +281,27 @@ export default function ProfileScreen() {
 
           {/* Quick Links */}
           <SectionHeader>Features</SectionHeader>
-          <View style={{ gap: 8, marginBottom: 24 }}>
+          <View style={{ gap: 8, marginBottom: 16 }}>
             <FeatureLink icon="📈" label="Progress Photos" onPress={() => router.push("/progress-photos" as any)} />
+            <FeatureLink icon="📸" label="Daily Check-In" onPress={() => router.push("/daily-checkin" as any)} />
+            <FeatureLink icon="🎯" label="Form Checker" onPress={() => router.push("/form-checker" as any)} />
+            <FeatureLink icon="👥" label="Social Feed" onPress={() => router.push("/social-feed" as any)} />
             <FeatureLink icon="⌚" label="Wearable Sync" onPress={() => router.push("/wearable-sync" as any)} />
             <FeatureLink icon="🗺️" label="Find Nearby Gyms" onPress={() => router.push("/gym-finder" as any)} />
           </View>
+
+          {/* Subscription */}
+          <SectionHeader>Subscription</SectionHeader>
+          <TouchableOpacity
+            style={{ backgroundColor: "#7C3AED", borderRadius: 16, paddingVertical: 14, paddingHorizontal: 16, flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 24, shadowColor: "#7C3AED", shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 8 }}
+            onPress={() => router.push("/subscription" as any)}
+          >
+            <View>
+              <Text style={{ color: "#FFFFFF", fontWeight: "700", fontSize: 14 }}>⭐ Upgrade to Advanced</Text>
+              <Text style={{ color: "#C4B5FD", fontSize: 12, marginTop: 2 }}>Unlock all AI features from $4.99/mo</Text>
+            </View>
+            <Text style={{ color: "#FFFFFF", fontSize: 18 }}>→</Text>
+          </TouchableOpacity>
 
           {/* Guest mode — upgrade CTA */}
           {isGuest && (

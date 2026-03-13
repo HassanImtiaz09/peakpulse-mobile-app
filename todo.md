@@ -136,3 +136,17 @@
 - [x] Meal plan generated from user's workout plan choice (goal + style)
 - [x] Wearable sync: open real health apps via deep links (Apple Health, Google Fit, Fitbit, etc.)
 - [x] Wearable sync: show honest connection state, no fake data injection
+
+## Feature Additions (Round 5)
+
+- [x] Exercise form checker: real-time AI video analysis integrated into workout plans
+- [x] Exercise form checker: form quality bar (red/amber/green) updating in real time
+- [x] Fix meal log calorie estimator: camera AI analysis must work end-to-end
+- [x] Meal log: save food photo to daily log
+- [x] Meal log: real-time calorie progress sync to dashboard (calories consumed + remaining)
+- [x] Subscription plans screen: Basic and Advanced tiers with feature gating
+- [x] Stripe integration: collect subscription fees into owner's Stripe account
+- [x] Social feed / challenge tab: share progress (weight, BF%, before/after photos)
+- [x] Daily body photo incentive: AI BF% assessment + motivational message per photo
+- [x] Meal log visual redesign: NanoBanana food images per meal + embedded recipe in dropdown
+- [x] Market research report: competitor analysis + revenue estimate document

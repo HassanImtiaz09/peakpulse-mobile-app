@@ -9,6 +9,7 @@ import { Platform } from "react-native";
 import "@/lib/_core/nativewind-pressable";
 import { ThemeProvider } from "@/lib/theme-provider";
 import { GuestAuthProvider } from "@/lib/guest-auth";
+import { CalorieProvider } from "@/lib/calorie-context";
 import {
   SafeAreaFrameContext,
   SafeAreaInsetsContext,
@@ -82,6 +83,7 @@ export default function RootLayout() {
   const content = (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <GuestAuthProvider>
+      <CalorieProvider>
       <trpc.Provider client={trpcClient} queryClient={queryClient}>
         <QueryClientProvider client={queryClient}>
           {/* Default to hiding native headers so raw route segments don't appear (e.g. "(tabs)", "products/[id]"). */}
@@ -94,6 +96,7 @@ export default function RootLayout() {
           <StatusBar style="auto" />
         </QueryClientProvider>
       </trpc.Provider>
+      </CalorieProvider>
       </GuestAuthProvider>
     </GestureHandlerRootView>
   );

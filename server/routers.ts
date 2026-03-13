@@ -293,6 +293,82 @@ export const appRouter = router({
     getAll: protectedProcedure.query(async ({ ctx }) => db.getProgressPhotos(ctx.user.id)),
   }),
 
+  workout: router({
+    // AI form analysis — works for guests
+    analyzeForm: guestOrUserProcedure
+      .input(z.object({ exerciseName: z.string(), videoBase64: z.string().optional(), hasVideo: z.boolean().default(false) }))
+      .mutation(async ({ input }) => {
+        const prompt = `You are an expert personal trainer and biomechanics coach. Analyse the ${input.exerciseName} exercise form${input.hasVideo ? " from the provided video" : " based on common form mistakes"}. Return a JSON object with this exact structure: {"score":75,"grade":"good","exerciseName":"${input.exerciseName}","positives":["Good depth achieved","Neutral spine maintained"],"corrections":["Knees caving inward slightly","Elbows flaring too wide"],"feedback":["Overall your form is solid. Focus on keeping your knees tracking over your toes throughout the movement.","Remember to brace your core before each rep."]}. Score 0-100: 0-44 poor, 45-64 fair, 65-79 good, 80-100 excellent. Be specific and actionable.`;
+        const messages: any[] = [{ role: "system", content: "You are an expert personal trainer. Always respond with valid JSON." }, { role: "user", content: prompt }];
+        if (input.hasVideo && input.videoBase64 && input.videoBase64.length > 0) {
+          messages[1].content = [{ type: "text", text: prompt }, { type: "image_url", image_url: { url: `data:video/mp4;base64,${input.videoBase64.slice(0, 100000)}` } }];
+        }
+        const response = await invokeLLM({ messages, response_format: { type: "json_object" } });
+        let result: any;
+        try { result = JSON.parse((response.choices[0].message.content as string) ?? "{}"); }
+        catch { result = { score: 65, grade: "good", exerciseName: input.exerciseName, positives: ["Good effort on the exercise"], corrections: ["Focus on controlled movement throughout"], feedback: ["Keep practising and your form will improve with each session."] }; }
+        return result;
+      }),
+  }),
+
+  social: router({
+    // Get community feed posts
+    getFeed: guestOrUserProcedure
+      .input(z.object({ limit: z.number().default(20), offset: z.number().default(0) }))
+      .query(async ({ ctx, input }) => {
+        if (!ctx.user) {
+          // Return sample posts for guests
+          return { posts: db.getSamplePostsForGuests(), total: 6 };
+        }
+        const posts = await db.getSocialPosts(input.limit, input.offset);
+        return { posts, total: posts.length };
+      }),
+    createPost: protectedProcedure
+      .input(z.object({ type: z.enum(["progress", "achievement", "challenge"]), caption: z.string().optional(), weightKg: z.number().optional(), bodyFatPercent: z.number().optional(), photoUrl: z.string().optional(), achievement: z.string().optional() }))
+      .mutation(async ({ ctx, input }) => {
+        return db.createSocialPost(ctx.user.id, { type: input.type, caption: input.caption, weightKg: input.weightKg, bodyFatPercent: input.bodyFatPercent, photoUrl: input.photoUrl, achievement: input.achievement });
+      }),
+    likePost: protectedProcedure
+      .input(z.object({ postId: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        return db.likePost(ctx.user.id, input.postId);
+      }),
+  }),
+
+  subscription: router({
+    getPlans: publicProcedure.query(() => ({
+      plans: [
+        { id: "basic", name: "Basic", price: 4.99, currency: "GBP", interval: "month", features: ["AI Meal Plans", "AI Workout Plans", "Calorie Estimator", "Progress Photos (5/month)", "Gym Finder", "Basic Body Scan"], notIncluded: ["Exercise Form Checker", "Social Feed", "Advanced AI Coaching", "Unlimited Progress Photos", "Priority AI"] },
+        { id: "advanced", name: "Advanced", price: 9.99, currency: "GBP", interval: "month", popular: true, features: ["Everything in Basic", "Exercise Form Checker", "Social Feed & Challenges", "Unlimited Progress Photos", "Advanced AI Body Scan", "Real-time Form Analysis", "Priority AI Processing", "Wearable Sync", "Personalised AI Coaching", "Meal Prep Plans"], notIncluded: [] },
+      ],
+    })),
+    getCurrentPlan: guestOrUserProcedure.query(async ({ ctx }) => {
+      if (!ctx.user) return { plan: "free", expiresAt: null };
+      const sub = await db.getUserSubscription(ctx.user.id);
+      return sub ?? { plan: "free", expiresAt: null };
+    }),
+  }),
+
+  dailyCheckIn: router({
+    // AI body fat assessment from photo
+    assessPhoto: guestOrUserProcedure
+      .input(z.object({ photoUrl: z.string(), previousBF: z.number().optional(), goal: z.string().optional() }))
+      .mutation(async ({ input }) => {
+        const prompt = `You are a fitness coach and body composition expert. Analyse this progress photo and provide an assessment. Return JSON: {"estimatedBF":18,"trend":"improving","bfChange":${input.previousBF ? `${input.previousBF}-18` : "null"},"motivationalMessage":"Great progress! Your muscle definition is improving.","tips":["Increase protein intake to preserve muscle","Add 2 more cardio sessions per week"],"bodyComposition":{"muscleDefinition":"moderate","visibleProgress":true,"areasImproving":["shoulders","arms"],"areasToFocus":["core","legs"]}}. Be encouraging and specific. Goal: ${input.goal ?? "general fitness"}.`;
+        const messages: any[] = [{ role: "system", content: "You are a supportive fitness coach. Always respond with valid JSON." }, { role: "user", content: [{ type: "text", text: prompt }, { type: "image_url", image_url: { url: input.photoUrl } }] }];
+        const response = await invokeLLM({ messages, response_format: { type: "json_object" } });
+        let result: any;
+        try { result = JSON.parse((response.choices[0].message.content as string) ?? "{}"); }
+        catch { result = { estimatedBF: 18, trend: "stable", motivationalMessage: "Keep going! Consistency is the key to transformation.", tips: ["Stay hydrated", "Get 7-8 hours of sleep"] }; }
+        return result;
+      }),
+    saveCheckIn: protectedProcedure
+      .input(z.object({ photoUrl: z.string().optional(), weightKg: z.number().optional(), bodyFatPercent: z.number().optional(), notes: z.string().optional() }))
+      .mutation(async ({ ctx, input }) => {
+        return db.createProgressPhoto(ctx.user.id, { photoUrl: input.photoUrl ?? "", note: input.notes });
+      }),
+  }),
+
   upload: router({
     // Photo upload — works for guests (stored to S3 without user ID)
     photo: guestOrUserProcedure
