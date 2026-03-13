@@ -26,7 +26,7 @@ function AuroraTabIcon({
       <MaterialIcons
         name={def.icon}
         size={22}
-        color={focused ? "#10B981" : "#2D6A52"}
+        color={focused ? "#F59E0B" : "#78350F"}
       />
       {focused && <View style={styles.activeGlow} />}
     </View>
@@ -41,8 +41,8 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={({ route }) => ({
-        tabBarActiveTintColor: "#10B981",
-        tabBarInactiveTintColor: "#2D6A52",
+        tabBarActiveTintColor: "#F59E0B",
+        tabBarInactiveTintColor: "#78350F",
         headerShown: false,
         tabBarButton: HapticTab,
         tabBarIcon: ({ focused }) => (
@@ -52,8 +52,8 @@ export default function TabLayout() {
           paddingTop: 6,
           paddingBottom: bottomPadding,
           height: tabBarHeight,
-          backgroundColor: "rgba(6,15,10,0.97)",
-          borderTopColor: "rgba(16,185,129,0.15)",
+          backgroundColor: "rgba(10,5,0,0.97)",
+          borderTopColor: "rgba(245,158,11,0.15)",
           borderTopWidth: 1,
           ...(Platform.OS === "ios" && { position: "absolute" }),
         },
@@ -83,9 +83,9 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   tabIconWrapperActive: {
-    backgroundColor: "rgba(16,185,129,0.10)",
+    backgroundColor: "rgba(245,158,11,0.10)",
     borderWidth: 1,
-    borderColor: "rgba(16,185,129,0.20)",
+    borderColor: "rgba(245,158,11,0.20)",
   },
   activeGlow: {
     position: "absolute",
@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
     width: 16,
     height: 2,
     borderRadius: 1,
-    backgroundColor: "#10B981",
+    backgroundColor: "#F59E0B",
     opacity: 0.8,
   },
 });

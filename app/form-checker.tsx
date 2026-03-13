@@ -15,7 +15,7 @@ import * as FileSystem from "expo-file-system/legacy";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { trpc } from "@/lib/trpc";
 
-const WORKOUT_BG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/at_hero_dashboard-VCWgAqUVtVq8md7vJyavvf.png";
+const WORKOUT_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/PZcnawJwIZkQHTEM.jpg";
 
 const EXERCISES_WITH_TIPS: Record<string, { tips: string[]; keyPoints: string[] }> = {
   "Squat": {
@@ -64,9 +64,9 @@ interface FormScore {
 }
 
 function getFormColor(score: number): string {
-  if (score >= 80) return "#6EE7B7";
-  if (score >= 55) return "#34D399";
-  return "#4D8C72";
+  if (score >= 80) return "#FDE68A";
+  if (score >= 55) return "#FBBF24";
+  return "#92400E";
 }
 
 function getFormLabel(score: number): string {
@@ -191,14 +191,14 @@ export default function FormCheckerScreen() {
     }
   }
 
-  const formColor = formScore ? getFormColor(formScore.score) : "#10B981";
+  const formColor = formScore ? getFormColor(formScore.score) : "#F59E0B";
   const barWidth = animatedScore.interpolate({
     inputRange: [0, 100],
     outputRange: ["0%", "100%"],
   });
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#060F0A" }}>
+    <View style={{ flex: 1, backgroundColor: "#0A0500" }}>
       {/* Hero */}
       <ImageBackground source={{ uri: WORKOUT_BG }} style={{ height: 160 }} resizeMode="cover">
         <View style={{ flex: 1, backgroundColor: "rgba(8,8,16,0.72)", justifyContent: "flex-end", padding: 20, paddingTop: 52 }}>
@@ -206,10 +206,10 @@ export default function FormCheckerScreen() {
             style={{ position: "absolute", top: 52, left: 20, width: 36, height: 36, borderRadius: 10, backgroundColor: "rgba(255,255,255,0.1)", alignItems: "center", justifyContent: "center" }}
             onPress={() => router.back()}
           >
-            <Text style={{ color: "#E6FFF5", fontSize: 18 }}>←</Text>
+            <Text style={{ color: "#FFF7ED", fontSize: 18 }}>←</Text>
           </TouchableOpacity>
-          <Text style={{ color: "#10B981", fontFamily: "Outfit_700Bold", fontSize: 12, letterSpacing: 1 }}>AI POWERED</Text>
-          <Text style={{ color: "#E6FFF5", fontFamily: "Outfit_800ExtraBold", fontSize: 26, letterSpacing: -0.5 }}>Form Checker</Text>
+          <Text style={{ color: "#F59E0B", fontFamily: "Outfit_700Bold", fontSize: 12, letterSpacing: 1 }}>AI POWERED</Text>
+          <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_800ExtraBold", fontSize: 26, letterSpacing: -0.5 }}>Form Checker</Text>
         </View>
       </ImageBackground>
 
@@ -217,16 +217,16 @@ export default function FormCheckerScreen() {
 
         {/* Exercise Selector */}
         <View style={{ marginBottom: 20 }}>
-          <Text style={{ color: "#4D8C72", fontSize: 11, fontFamily: "Outfit_700Bold", letterSpacing: 1, marginBottom: 10 }}>SELECT EXERCISE</Text>
+          <Text style={{ color: "#92400E", fontSize: 11, fontFamily: "Outfit_700Bold", letterSpacing: 1, marginBottom: 10 }}>SELECT EXERCISE</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             <View style={{ flexDirection: "row", gap: 8 }}>
               {Object.keys(EXERCISES_WITH_TIPS).map(ex => (
                 <TouchableOpacity
                   key={ex}
-                  style={{ paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20, backgroundColor: selectedExercise === ex ? "#10B981" : "#0D1F18", borderWidth: 1, borderColor: selectedExercise === ex ? "#10B981" : "rgba(16,185,129,0.10)" }}
+                  style={{ paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20, backgroundColor: selectedExercise === ex ? "#F59E0B" : "#150A00", borderWidth: 1, borderColor: selectedExercise === ex ? "#F59E0B" : "rgba(245,158,11,0.10)" }}
                   onPress={() => { setSelectedExercise(ex); setFormScore(null); setVideoUri(null); }}
                 >
-                  <Text style={{ color: selectedExercise === ex ? "#E6FFF5" : "#4D8C72", fontFamily: "DMSans_600SemiBold", fontSize: 13 }}>{ex}</Text>
+                  <Text style={{ color: selectedExercise === ex ? "#FFF7ED" : "#92400E", fontFamily: "DMSans_600SemiBold", fontSize: 13 }}>{ex}</Text>
                 </TouchableOpacity>
               ))}
             </View>
@@ -234,11 +234,11 @@ export default function FormCheckerScreen() {
         </View>
 
         {/* Form Tips */}
-        <View style={{ backgroundColor: "#0D1F18", borderRadius: 16, padding: 16, marginBottom: 20, borderWidth: 1, borderColor: "rgba(16,185,129,0.10)" }}>
-          <Text style={{ color: "#E6FFF5", fontFamily: "Outfit_700Bold", fontSize: 14, marginBottom: 10 }}>📋 {selectedExercise} — Key Form Points</Text>
+        <View style={{ backgroundColor: "#150A00", borderRadius: 16, padding: 16, marginBottom: 20, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}>
+          <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 14, marginBottom: 10 }}>📋 {selectedExercise} — Key Form Points</Text>
           {exerciseTips.tips.map((tip, i) => (
             <View key={i} style={{ flexDirection: "row", gap: 10, marginBottom: 6 }}>
-              <Text style={{ color: "#10B981", fontFamily: "Outfit_700Bold", fontSize: 13 }}>{i + 1}.</Text>
+              <Text style={{ color: "#F59E0B", fontFamily: "Outfit_700Bold", fontSize: 13 }}>{i + 1}.</Text>
               <Text style={{ color: "#D1D5DB", fontSize: 13, flex: 1, lineHeight: 18 }}>{tip}</Text>
             </View>
           ))}
@@ -247,30 +247,30 @@ export default function FormCheckerScreen() {
         {/* Video Capture */}
         {!videoUri ? (
           <View>
-            <Text style={{ color: "#4D8C72", fontSize: 11, fontFamily: "Outfit_700Bold", letterSpacing: 1, marginBottom: 10 }}>RECORD OR UPLOAD</Text>
+            <Text style={{ color: "#92400E", fontSize: 11, fontFamily: "Outfit_700Bold", letterSpacing: 1, marginBottom: 10 }}>RECORD OR UPLOAD</Text>
             <View style={{ flexDirection: "row", gap: 12, marginBottom: 16 }}>
               <TouchableOpacity
-                style={{ flex: 1, backgroundColor: "#10B981", borderRadius: 16, paddingVertical: 24, alignItems: "center", gap: 8, shadowColor: "#10B981", shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.4, shadowRadius: 8 }}
+                style={{ flex: 1, backgroundColor: "#F59E0B", borderRadius: 16, paddingVertical: 24, alignItems: "center", gap: 8, shadowColor: "#F59E0B", shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.4, shadowRadius: 8 }}
                 onPress={recordVideo}
               >
                 <Text style={{ fontSize: 32 }}>🎥</Text>
-                <Text style={{ color: "#E6FFF5", fontFamily: "Outfit_700Bold", fontSize: 14 }}>Record Video</Text>
-                <Text style={{ color: "#6EE7B7", fontSize: 11 }}>Up to 30 seconds</Text>
+                <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 14 }}>Record Video</Text>
+                <Text style={{ color: "#FDE68A", fontSize: 11 }}>Up to 30 seconds</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={{ flex: 1, backgroundColor: "#0D1F18", borderRadius: 16, paddingVertical: 24, alignItems: "center", gap: 8, borderWidth: 1, borderColor: "rgba(16,185,129,0.10)" }}
+                style={{ flex: 1, backgroundColor: "#150A00", borderRadius: 16, paddingVertical: 24, alignItems: "center", gap: 8, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}
                 onPress={pickVideo}
               >
                 <Text style={{ fontSize: 32 }}>📁</Text>
-                <Text style={{ color: "#10B981", fontFamily: "Outfit_700Bold", fontSize: 14 }}>Upload Video</Text>
-                <Text style={{ color: "#2D6A52", fontSize: 11 }}>From gallery</Text>
+                <Text style={{ color: "#F59E0B", fontFamily: "Outfit_700Bold", fontSize: 14 }}>Upload Video</Text>
+                <Text style={{ color: "#78350F", fontSize: 11 }}>From gallery</Text>
               </TouchableOpacity>
             </View>
 
             {/* Instructions */}
-            <View style={{ backgroundColor: "#0D1F18", borderRadius: 14, padding: 14, borderWidth: 1, borderColor: "rgba(16,185,129,0.10)" }}>
-              <Text style={{ color: "#4D8C72", fontSize: 11, fontFamily: "Outfit_700Bold", letterSpacing: 1, marginBottom: 8 }}>TIPS FOR BEST RESULTS</Text>
-              <Text style={{ color: "#2D6A52", fontSize: 12, lineHeight: 18 }}>
+            <View style={{ backgroundColor: "#150A00", borderRadius: 14, padding: 14, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}>
+              <Text style={{ color: "#92400E", fontSize: 11, fontFamily: "Outfit_700Bold", letterSpacing: 1, marginBottom: 8 }}>TIPS FOR BEST RESULTS</Text>
+              <Text style={{ color: "#78350F", fontSize: 12, lineHeight: 18 }}>
                 • Film from the side for best form analysis{"\n"}
                 • Ensure good lighting so your full body is visible{"\n"}
                 • Record the full movement — start to finish{"\n"}
@@ -281,33 +281,33 @@ export default function FormCheckerScreen() {
         ) : (
           <View>
             {/* Video Preview */}
-            <View style={{ backgroundColor: "#0D1F18", borderRadius: 16, padding: 14, marginBottom: 16, borderWidth: 1, borderColor: "rgba(16,185,129,0.10)", alignItems: "center" }}>
+            <View style={{ backgroundColor: "#150A00", borderRadius: 16, padding: 14, marginBottom: 16, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)", alignItems: "center" }}>
               <Text style={{ fontSize: 48, marginBottom: 8 }}>🎬</Text>
-              <Text style={{ color: "#E6FFF5", fontFamily: "Outfit_700Bold", fontSize: 14, marginBottom: 4 }}>Video Ready</Text>
-              <Text style={{ color: "#4D8C72", fontSize: 12, textAlign: "center" }}>
+              <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 14, marginBottom: 4 }}>Video Ready</Text>
+              <Text style={{ color: "#92400E", fontSize: 12, textAlign: "center" }}>
                 {selectedExercise} form check — tap Analyse to get AI feedback
               </Text>
               <TouchableOpacity
                 style={{ marginTop: 10, backgroundColor: "#EF444420", borderRadius: 10, paddingHorizontal: 14, paddingVertical: 6 }}
                 onPress={() => { setVideoUri(null); setFormScore(null); }}
               >
-                <Text style={{ color: "#4D8C72", fontSize: 12, fontFamily: "DMSans_600SemiBold" }}>✕ Remove</Text>
+                <Text style={{ color: "#92400E", fontSize: 12, fontFamily: "DMSans_600SemiBold" }}>✕ Remove</Text>
               </TouchableOpacity>
             </View>
 
             {!formScore && (
               <TouchableOpacity
-                style={{ backgroundColor: "#10B981", borderRadius: 16, paddingVertical: 16, alignItems: "center", marginBottom: 16, opacity: analyzing ? 0.7 : 1, shadowColor: "#10B981", shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.4, shadowRadius: 8 }}
+                style={{ backgroundColor: "#F59E0B", borderRadius: 16, paddingVertical: 16, alignItems: "center", marginBottom: 16, opacity: analyzing ? 0.7 : 1, shadowColor: "#F59E0B", shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.4, shadowRadius: 8 }}
                 onPress={analyzeForm}
                 disabled={analyzing}
               >
                 {analyzing ? (
                   <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
-                    <ActivityIndicator color="#E6FFF5" size="small" />
-                    <Text style={{ color: "#E6FFF5", fontFamily: "Outfit_700Bold", fontSize: 15 }}>Analysing form...</Text>
+                    <ActivityIndicator color="#FFF7ED" size="small" />
+                    <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 15 }}>Analysing form...</Text>
                   </View>
                 ) : (
-                  <Text style={{ color: "#E6FFF5", fontFamily: "Outfit_700Bold", fontSize: 15 }}>🤖 Analyse My Form</Text>
+                  <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 15 }}>🤖 Analyse My Form</Text>
                 )}
               </TouchableOpacity>
             )}
@@ -318,13 +318,13 @@ export default function FormCheckerScreen() {
         {formScore && (
           <View>
             {/* Score Card */}
-            <View style={{ backgroundColor: "#0D1F18", borderRadius: 20, padding: 20, marginBottom: 16, borderWidth: 1, borderColor: formColor + "40", shadowColor: formColor, shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 12 }}>
+            <View style={{ backgroundColor: "#150A00", borderRadius: 20, padding: 20, marginBottom: 16, borderWidth: 1, borderColor: formColor + "40", shadowColor: formColor, shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 12 }}>
               <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
                 <View>
-                  <Text style={{ color: "#4D8C72", fontSize: 11, fontFamily: "Outfit_700Bold", letterSpacing: 1 }}>FORM SCORE</Text>
+                  <Text style={{ color: "#92400E", fontSize: 11, fontFamily: "Outfit_700Bold", letterSpacing: 1 }}>FORM SCORE</Text>
                   <View style={{ flexDirection: "row", alignItems: "baseline", gap: 4, marginTop: 4 }}>
                     <Text style={{ color: formColor, fontFamily: "Outfit_800ExtraBold", fontSize: 48 }}>{formScore.score}</Text>
-                    <Text style={{ color: "#2D6A52", fontSize: 18, fontFamily: "Outfit_700Bold" }}>/100</Text>
+                    <Text style={{ color: "#78350F", fontSize: 18, fontFamily: "Outfit_700Bold" }}>/100</Text>
                   </View>
                 </View>
                 <View style={{ alignItems: "center" }}>
@@ -336,11 +336,11 @@ export default function FormCheckerScreen() {
               {/* Animated Form Bar */}
               <View style={{ marginBottom: 8 }}>
                 <View style={{ flexDirection: "row", justifyContent: "space-between", marginBottom: 6 }}>
-                  <Text style={{ color: "#4D8C72", fontSize: 10, fontFamily: "Outfit_700Bold" }}>Poor</Text>
-                  <Text style={{ color: "#34D399", fontSize: 10, fontFamily: "Outfit_700Bold" }}>Fair</Text>
-                  <Text style={{ color: "#6EE7B7", fontSize: 10, fontFamily: "Outfit_700Bold" }}>Excellent</Text>
+                  <Text style={{ color: "#92400E", fontSize: 10, fontFamily: "Outfit_700Bold" }}>Poor</Text>
+                  <Text style={{ color: "#FBBF24", fontSize: 10, fontFamily: "Outfit_700Bold" }}>Fair</Text>
+                  <Text style={{ color: "#FDE68A", fontSize: 10, fontFamily: "Outfit_700Bold" }}>Excellent</Text>
                 </View>
-                <View style={{ height: 14, backgroundColor: "rgba(16,185,129,0.10)", borderRadius: 7, overflow: "hidden" }}>
+                <View style={{ height: 14, backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 7, overflow: "hidden" }}>
                   {/* Static colored zones */}
                   <View style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: "45%", backgroundColor: "#EF444430", borderRadius: 7 }} />
                   <View style={{ position: "absolute", left: "45%", top: 0, bottom: 0, width: "35%", backgroundColor: "#F9731630" }} />
@@ -350,10 +350,10 @@ export default function FormCheckerScreen() {
                 </View>
                 {/* Score markers */}
                 <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 4 }}>
-                  <Text style={{ color: "#1A4A38", fontSize: 9 }}>0</Text>
-                  <Text style={{ color: "#1A4A38", fontSize: 9 }}>45</Text>
-                  <Text style={{ color: "#1A4A38", fontSize: 9 }}>80</Text>
-                  <Text style={{ color: "#1A4A38", fontSize: 9 }}>100</Text>
+                  <Text style={{ color: "#451A03", fontSize: 9 }}>0</Text>
+                  <Text style={{ color: "#451A03", fontSize: 9 }}>45</Text>
+                  <Text style={{ color: "#451A03", fontSize: 9 }}>80</Text>
+                  <Text style={{ color: "#451A03", fontSize: 9 }}>100</Text>
                 </View>
               </View>
             </View>
@@ -361,10 +361,10 @@ export default function FormCheckerScreen() {
             {/* Positives */}
             {formScore.positives?.length > 0 && (
               <View style={{ backgroundColor: "#22C55E10", borderRadius: 16, padding: 16, marginBottom: 12, borderWidth: 1, borderColor: "#22C55E30" }}>
-                <Text style={{ color: "#6EE7B7", fontFamily: "Outfit_700Bold", fontSize: 13, marginBottom: 10 }}>✅ What You're Doing Well</Text>
+                <Text style={{ color: "#FDE68A", fontFamily: "Outfit_700Bold", fontSize: 13, marginBottom: 10 }}>✅ What You're Doing Well</Text>
                 {formScore.positives.map((p, i) => (
                   <View key={i} style={{ flexDirection: "row", gap: 8, marginBottom: 6 }}>
-                    <Text style={{ color: "#6EE7B7", fontSize: 13 }}>•</Text>
+                    <Text style={{ color: "#FDE68A", fontSize: 13 }}>•</Text>
                     <Text style={{ color: "#D1D5DB", fontSize: 13, flex: 1, lineHeight: 18 }}>{p}</Text>
                   </View>
                 ))}
@@ -374,10 +374,10 @@ export default function FormCheckerScreen() {
             {/* Corrections */}
             {formScore.corrections?.length > 0 && (
               <View style={{ backgroundColor: "#EF444410", borderRadius: 16, padding: 16, marginBottom: 12, borderWidth: 1, borderColor: "#EF444430" }}>
-                <Text style={{ color: "#4D8C72", fontFamily: "Outfit_700Bold", fontSize: 13, marginBottom: 10 }}>⚠️ Form Corrections Needed</Text>
+                <Text style={{ color: "#92400E", fontFamily: "Outfit_700Bold", fontSize: 13, marginBottom: 10 }}>⚠️ Form Corrections Needed</Text>
                 {formScore.corrections.map((c, i) => (
                   <View key={i} style={{ flexDirection: "row", gap: 8, marginBottom: 6 }}>
-                    <Text style={{ color: "#4D8C72", fontSize: 13 }}>•</Text>
+                    <Text style={{ color: "#92400E", fontSize: 13 }}>•</Text>
                     <Text style={{ color: "#D1D5DB", fontSize: 13, flex: 1, lineHeight: 18 }}>{c}</Text>
                   </View>
                 ))}
@@ -386,8 +386,8 @@ export default function FormCheckerScreen() {
 
             {/* General Feedback */}
             {formScore.feedback?.length > 0 && (
-              <View style={{ backgroundColor: "#7C3AED10", borderRadius: 16, padding: 16, marginBottom: 16, borderWidth: 1, borderColor: "rgba(16,185,129,0.12)" }}>
-                <Text style={{ color: "#34D399", fontFamily: "Outfit_700Bold", fontSize: 13, marginBottom: 10 }}>💡 AI Coach Feedback</Text>
+              <View style={{ backgroundColor: "#7C3AED10", borderRadius: 16, padding: 16, marginBottom: 16, borderWidth: 1, borderColor: "rgba(245,158,11,0.12)" }}>
+                <Text style={{ color: "#FBBF24", fontFamily: "Outfit_700Bold", fontSize: 13, marginBottom: 10 }}>💡 AI Coach Feedback</Text>
                 {formScore.feedback.map((f, i) => (
                   <Text key={i} style={{ color: "#D1D5DB", fontSize: 13, lineHeight: 20, marginBottom: 4 }}>{f}</Text>
                 ))}
@@ -396,16 +396,16 @@ export default function FormCheckerScreen() {
 
             {/* Try Again */}
             <TouchableOpacity
-              style={{ backgroundColor: "#10B981", borderRadius: 16, paddingVertical: 14, alignItems: "center", marginBottom: 12 }}
+              style={{ backgroundColor: "#F59E0B", borderRadius: 16, paddingVertical: 14, alignItems: "center", marginBottom: 12 }}
               onPress={() => { setVideoUri(null); setFormScore(null); }}
             >
-              <Text style={{ color: "#E6FFF5", fontFamily: "Outfit_700Bold", fontSize: 14 }}>🎥 Record Another Rep</Text>
+              <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 14 }}>🎥 Record Another Rep</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={{ backgroundColor: "#0D1F18", borderRadius: 16, paddingVertical: 14, alignItems: "center", borderWidth: 1, borderColor: "rgba(16,185,129,0.10)" }}
+              style={{ backgroundColor: "#150A00", borderRadius: 16, paddingVertical: 14, alignItems: "center", borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}
               onPress={() => router.back()}
             >
-              <Text style={{ color: "#10B981", fontFamily: "DMSans_600SemiBold", fontSize: 14 }}>← Back to Workout</Text>
+              <Text style={{ color: "#F59E0B", fontFamily: "DMSans_600SemiBold", fontSize: 14 }}>← Back to Workout</Text>
             </TouchableOpacity>
           </View>
         )}

@@ -216,3 +216,14 @@
 - [x] Wire Aurora Titan hero backgrounds to all tab screens
 - [x] Update splash screen background to #060F0A (Aurora Titan forest black)
 - [x] Zero TypeScript errors after full rebrand
+
+## Solar Forge Theme + Onboarding Overhaul + Meal Swap
+
+- [x] Generate Solar Forge hero backgrounds for all 5 tabs (gold/orange/red/black)
+- [x] Generate 4 unique onboarding athlete backgrounds (halo/dramatic lighting, different exercise per slide)
+- [x] Apply Solar Forge theme across all 17 screens (gold #F59E0B, orange #EA580C, red #DC2626, black #0A0500)
+- [x] Rebuild onboarding: 4 slides each with unique athlete background
+- [x] Add photo capture step to onboarding (AI body scan preview)
+- [x] Post-onboarding redirect: trigger AI plan generation and take user to Dashboard with plans ready
+- [x] Add Meal Swap feature to Meals tab with calorie-equivalent alternatives list
+- [x] Meal Swap: calorie-equivalent swap suggestions with matching macros and dietary tags

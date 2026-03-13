@@ -16,7 +16,7 @@ import { useRouter } from "expo-router";
 import { trpc } from "@/lib/trpc";
 import { useGuestAuth } from "@/lib/guest-auth";
 
-const HERO_BG = "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&q=80";
+const HERO_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/PZcnawJwIZkQHTEM.jpg";
 
 const BASIC_FEATURES = [
   { label: "AI Meal Plans", included: true },
@@ -177,7 +177,7 @@ export default function SubscriptionScreen() {
               </View>
               <Text style={[styles.perMonth, styles.perMonthAdvanced]}>/ month</Text>
               {billingCycle === "annual" && (
-                <Text style={[styles.annualNote, { color: "#a78bfa" }]}>billed annually</Text>
+                <Text style={[styles.annualNote, { color: "#F59E0B" }]}>billed annually</Text>
               )}
               <View style={[styles.selectIndicator, styles.selectIndicatorAdvanced, selectedPlan === "advanced" && styles.selectIndicatorActive]}>
                 <Text style={styles.selectIndicatorText}>{selectedPlan === "advanced" ? "✓ Selected" : "Select"}</Text>
@@ -239,7 +239,7 @@ export default function SubscriptionScreen() {
             disabled={loading}
           >
             {loading ? (
-              <ActivityIndicator color="#fff" />
+              <ActivityIndicator color="#FFF7ED" />
             ) : (
               <>
                 <Text style={styles.ctaBtnText}>
@@ -274,62 +274,62 @@ export default function SubscriptionScreen() {
 
 const styles = StyleSheet.create({
   hero: { height: 280 },
-  heroOverlay: { flex: 1, backgroundColor: "rgba(0,0,0,0.6)", padding: 20, justifyContent: "space-between" },
+  heroOverlay: { flex: 1, backgroundColor: "rgba(10,5,0,0.65)", padding: 20, justifyContent: "space-between" },
   backBtn: { alignSelf: "flex-start", paddingVertical: 8, paddingHorizontal: 4 },
-  backText: { color: "#fff", fontSize: 16 },
+  backText: { color: "#FFF7ED", fontSize: 16 },
   heroContent: { paddingBottom: 20 },
-  heroLabel: { color: "#a78bfa", fontSize: 12, fontFamily: "Outfit_700Bold", letterSpacing: 2, marginBottom: 8 },
-  heroTitle: { color: "#fff", fontSize: 32, fontFamily: "Outfit_800ExtraBold", lineHeight: 40, marginBottom: 8 },
+  heroLabel: { color: "#F59E0B", fontSize: 12, fontFamily: "Outfit_700Bold", letterSpacing: 2, marginBottom: 8 },
+  heroTitle: { color: "#FFF7ED", fontSize: 32, fontFamily: "Outfit_800ExtraBold", lineHeight: 40, marginBottom: 8 },
   heroSub: { color: "rgba(255,255,255,0.8)", fontSize: 15, lineHeight: 22 },
-  body: { backgroundColor: "#0a0a0a", padding: 20, paddingBottom: 60 },
-  toggleRow: { flexDirection: "row", backgroundColor: "#1a1a2e", borderRadius: 12, padding: 4, marginBottom: 24 },
+  body: { backgroundColor: "#0A0500", padding: 20, paddingBottom: 60 },
+  toggleRow: { flexDirection: "row", backgroundColor: "#150A00", borderRadius: 12, padding: 4, marginBottom: 24 },
   toggleBtn: { flex: 1, paddingVertical: 10, alignItems: "center", borderRadius: 10, flexDirection: "row", justifyContent: "center", gap: 6 },
-  toggleActive: { backgroundColor: "#7c3aed" },
-  toggleText: { color: "#9ca3af", fontSize: 14, fontFamily: "DMSans_600SemiBold" },
-  toggleTextActive: { color: "#fff" },
-  saveBadge: { backgroundColor: "#22c55e", borderRadius: 6, paddingHorizontal: 6, paddingVertical: 2 },
-  saveBadgeText: { color: "#fff", fontSize: 10, fontFamily: "Outfit_700Bold" },
+  toggleActive: { backgroundColor: "#EA580C" },
+  toggleText: { color: "#92400E", fontSize: 14, fontFamily: "DMSans_600SemiBold" },
+  toggleTextActive: { color: "#FFF7ED" },
+  saveBadge: { backgroundColor: "#F59E0B", borderRadius: 6, paddingHorizontal: 6, paddingVertical: 2 },
+  saveBadgeText: { color: "#FFF7ED", fontSize: 10, fontFamily: "Outfit_700Bold" },
   plansRow: { flexDirection: "row", gap: 12, marginBottom: 28 },
-  planCard: { flex: 1, backgroundColor: "#1a1a2e", borderRadius: 16, padding: 16, borderWidth: 2, borderColor: "#2d2d4e", alignItems: "center" },
-  planCardAdvanced: { backgroundColor: "#1e0a3c" },
-  planCardSelected: { borderColor: "#7c3aed" },
-  popularBadge: { backgroundColor: "#7c3aed", borderRadius: 8, paddingHorizontal: 8, paddingVertical: 3, marginBottom: 8 },
-  popularText: { color: "#fff", fontSize: 9, fontFamily: "Outfit_800ExtraBold", letterSpacing: 1 },
-  planName: { color: "#9ca3af", fontSize: 14, fontFamily: "Outfit_700Bold", marginBottom: 8 },
-  planNameAdvanced: { color: "#c4b5fd" },
+  planCard: { flex: 1, backgroundColor: "#150A00", borderRadius: 16, padding: 16, borderWidth: 2, borderColor: "#2A1200", alignItems: "center" },
+  planCardAdvanced: { backgroundColor: "#1F0D00" },
+  planCardSelected: { borderColor: "#EA580C" },
+  popularBadge: { backgroundColor: "#EA580C", borderRadius: 8, paddingHorizontal: 8, paddingVertical: 3, marginBottom: 8 },
+  popularText: { color: "#FFF7ED", fontSize: 9, fontFamily: "Outfit_800ExtraBold", letterSpacing: 1 },
+  planName: { color: "#92400E", fontSize: 14, fontFamily: "Outfit_700Bold", marginBottom: 8 },
+  planNameAdvanced: { color: "#FBBF24" },
   priceRow: { flexDirection: "row", alignItems: "flex-start" },
-  currency: { color: "#fff", fontSize: 18, fontFamily: "Outfit_700Bold", marginTop: 6 },
-  currencyAdvanced: { color: "#a78bfa" },
-  price: { color: "#fff", fontSize: 36, fontFamily: "Outfit_800ExtraBold", lineHeight: 44 },
-  priceAdvanced: { color: "#a78bfa" },
-  perMonth: { color: "#6b7280", fontSize: 12, marginBottom: 4 },
-  perMonthAdvanced: { color: "#7c3aed" },
-  annualNote: { color: "#6b7280", fontSize: 10, marginBottom: 8 },
-  selectIndicator: { marginTop: 8, backgroundColor: "#2d2d4e", borderRadius: 8, paddingVertical: 6, paddingHorizontal: 12 },
-  selectIndicatorAdvanced: { backgroundColor: "#2d1b69" },
-  selectIndicatorActive: { backgroundColor: "#7c3aed" },
-  selectIndicatorText: { color: "#fff", fontSize: 12, fontFamily: "DMSans_600SemiBold" },
+  currency: { color: "#FFF7ED", fontSize: 18, fontFamily: "Outfit_700Bold", marginTop: 6 },
+  currencyAdvanced: { color: "#F59E0B" },
+  price: { color: "#FFF7ED", fontSize: 36, fontFamily: "Outfit_800ExtraBold", lineHeight: 44 },
+  priceAdvanced: { color: "#F59E0B" },
+  perMonth: { color: "#78350F", fontSize: 12, marginBottom: 4 },
+  perMonthAdvanced: { color: "#EA580C" },
+  annualNote: { color: "#78350F", fontSize: 10, marginBottom: 8 },
+  selectIndicator: { marginTop: 8, backgroundColor: "#2A1200", borderRadius: 8, paddingVertical: 6, paddingHorizontal: 12 },
+  selectIndicatorAdvanced: { backgroundColor: "#3D1A00" },
+  selectIndicatorActive: { backgroundColor: "#EA580C" },
+  selectIndicatorText: { color: "#FFF7ED", fontSize: 12, fontFamily: "DMSans_600SemiBold" },
   section: { marginBottom: 28 },
-  sectionTitle: { color: "#fff", fontSize: 18, fontFamily: "Outfit_700Bold", marginBottom: 14 },
-  featureRow: { flexDirection: "row", alignItems: "center", paddingVertical: 8, borderBottomWidth: 1, borderBottomColor: "#1a1a2e" },
+  sectionTitle: { color: "#FFF7ED", fontSize: 18, fontFamily: "Outfit_700Bold", marginBottom: 14 },
+  featureRow: { flexDirection: "row", alignItems: "center", paddingVertical: 8, borderBottomWidth: 1, borderBottomColor: "#150A00" },
   featureIcon: { fontSize: 16, fontFamily: "Outfit_700Bold", width: 28 },
-  featureIconIncluded: { color: "#22c55e" },
+  featureIconIncluded: { color: "#F59E0B" },
   featureIconExcluded: { color: "#ef4444" },
   featureLabel: { color: "#e5e7eb", fontSize: 14, flex: 1 },
-  featureLabelExcluded: { color: "#6b7280" },
-  compareTable: { borderRadius: 12, overflow: "hidden", borderWidth: 1, borderColor: "#2d2d4e" },
-  compareHeader: { flexDirection: "row", backgroundColor: "#1a1a2e", paddingVertical: 10, paddingHorizontal: 12 },
-  compareHeaderText: { color: "#9ca3af", fontSize: 12, fontFamily: "Outfit_700Bold" },
-  compareRow: { flexDirection: "row", paddingVertical: 10, paddingHorizontal: 12, borderTopWidth: 1, borderTopColor: "#1a1a2e" },
-  compareRowHighlight: { backgroundColor: "#1e0a3c" },
+  featureLabelExcluded: { color: "#78350F" },
+  compareTable: { borderRadius: 12, overflow: "hidden", borderWidth: 1, borderColor: "#2A1200" },
+  compareHeader: { flexDirection: "row", backgroundColor: "#150A00", paddingVertical: 10, paddingHorizontal: 12 },
+  compareHeaderText: { color: "#92400E", fontSize: 12, fontFamily: "Outfit_700Bold" },
+  compareRow: { flexDirection: "row", paddingVertical: 10, paddingHorizontal: 12, borderTopWidth: 1, borderTopColor: "#150A00" },
+  compareRowHighlight: { backgroundColor: "#1F0D00" },
   compareCell: { flex: 1, color: "#e5e7eb", fontSize: 13, textAlign: "center" },
-  compareHighlightText: { color: "#a78bfa", fontFamily: "Outfit_700Bold" },
-  compareNote: { color: "#6b7280", fontSize: 12, marginTop: 10, textAlign: "center", lineHeight: 18 },
-  ctaBtn: { backgroundColor: "#7c3aed", borderRadius: 16, paddingVertical: 18, alignItems: "center", marginBottom: 20 },
-  ctaBtnText: { color: "#fff", fontSize: 17, fontFamily: "Outfit_800ExtraBold" },
+  compareHighlightText: { color: "#F59E0B", fontFamily: "Outfit_700Bold" },
+  compareNote: { color: "#78350F", fontSize: 12, marginTop: 10, textAlign: "center", lineHeight: 18 },
+  ctaBtn: { backgroundColor: "#EA580C", borderRadius: 16, paddingVertical: 18, alignItems: "center", marginBottom: 20 },
+  ctaBtnText: { color: "#FFF7ED", fontSize: 17, fontFamily: "Outfit_800ExtraBold" },
   ctaSubText: { color: "rgba(255,255,255,0.7)", fontSize: 12, marginTop: 4 },
   stripeNote: { backgroundColor: "#0f172a", borderRadius: 12, padding: 16, marginBottom: 20, borderWidth: 1, borderColor: "#1e3a5f" },
   stripeNoteTitle: { color: "#60a5fa", fontSize: 14, fontFamily: "Outfit_700Bold", marginBottom: 8 },
-  stripeNoteText: { color: "#9ca3af", fontSize: 12, lineHeight: 20 },
+  stripeNoteText: { color: "#92400E", fontSize: 12, lineHeight: 20 },
   legalText: { color: "#4b5563", fontSize: 11, textAlign: "center", lineHeight: 18 },
 });

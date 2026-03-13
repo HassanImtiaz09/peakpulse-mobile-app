@@ -8,8 +8,8 @@ import { ScreenContainer } from "@/components/screen-container";
 import { startOAuthLogin } from "@/constants/oauth";
 import { useGuestAuth } from "@/lib/guest-auth";
 
-const HERO_BG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/at_hero_dashboard-VCWgAqUVtVq8md7vJyavvf.png";
-const APP_LOGO = "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/at_hero_dashboard-VCWgAqUVtVq8md7vJyavvf.png";
+const HERO_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/PZcnawJwIZkQHTEM.jpg";
+const APP_LOGO = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/PZcnawJwIZkQHTEM.jpg";
 
 type AuthMode = "choose" | "email";
 
@@ -52,7 +52,7 @@ export default function LoginScreen() {
   }
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#060F0A" }}>
+    <View style={{ flex: 1, backgroundColor: "#0A0500" }}>
       <ImageBackground
         source={{ uri: HERO_BG }}
         style={{ flex: 1 }}
@@ -74,13 +74,13 @@ export default function LoginScreen() {
                   resizeMode="cover"
                 />
                 <Text style={{
-                  color: "#E6FFF5", fontSize: 38, fontFamily: "Outfit_800ExtraBold",
+                  color: "#FFF7ED", fontSize: 38, fontFamily: "Outfit_800ExtraBold",
                   letterSpacing: -1, textAlign: "center",
-                  textShadowColor: "#10B981", textShadowOffset: { width: 0, height: 0 }, textShadowRadius: 20,
+                  textShadowColor: "#F59E0B", textShadowOffset: { width: 0, height: 0 }, textShadowRadius: 20,
                 }}>
                   PeakPulse AI
                 </Text>
-                <Text style={{ color: "#6EE7B7", fontSize: 15, textAlign: "center", marginTop: 8, lineHeight: 22, fontFamily: "DMSans_500Medium" }}>
+                <Text style={{ color: "#FDE68A", fontSize: 15, textAlign: "center", marginTop: 8, lineHeight: 22, fontFamily: "DMSans_500Medium" }}>
                   Transform your body with AI-powered{"\n"}personalized fitness plans
                 </Text>
               </View>
@@ -100,7 +100,7 @@ export default function LoginScreen() {
                     borderRadius: 20, paddingHorizontal: 14, paddingVertical: 7,
                     borderWidth: 1, borderColor: "rgba(124,58,237,0.4)",
                   }}>
-                    <Text style={{ color: "#10B981", fontSize: 12, fontFamily: "DMSans_600SemiBold" }}>{f}</Text>
+                    <Text style={{ color: "#F59E0B", fontSize: 12, fontFamily: "DMSans_600SemiBold" }}>{f}</Text>
                   </View>
                 ))}
               </View>
@@ -117,14 +117,14 @@ export default function LoginScreen() {
               }}>
                 {mode === "choose" && (
                   <View style={{ gap: 12 }}>
-                    <Text style={{ color: "#E6FFF5", fontSize: 20, fontFamily: "Outfit_800ExtraBold", textAlign: "center", marginBottom: 4 }}>
+                    <Text style={{ color: "#FFF7ED", fontSize: 20, fontFamily: "Outfit_800ExtraBold", textAlign: "center", marginBottom: 4 }}>
                       Get Started
                     </Text>
 
                     {/* Google OAuth */}
                     <TouchableOpacity
                       style={{
-                        backgroundColor: "#E6FFF5",
+                        backgroundColor: "#FFF7ED",
                         borderRadius: 16, paddingVertical: 15,
                         flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 10,
                       }}
@@ -137,21 +137,21 @@ export default function LoginScreen() {
                     {/* Email */}
                     <TouchableOpacity
                       style={{
-                        backgroundColor: "#10B981",
+                        backgroundColor: "#F59E0B",
                         borderRadius: 16, paddingVertical: 15,
                         flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 10,
                       }}
                       onPress={() => setMode("email")}
                     >
                       <Text style={{ fontSize: 18 }}>✉️</Text>
-                      <Text style={{ color: "#E6FFF5", fontFamily: "Outfit_700Bold", fontSize: 15 }}>Continue with Email</Text>
+                      <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 15 }}>Continue with Email</Text>
                     </TouchableOpacity>
 
                     {/* Divider */}
                     <View style={{ flexDirection: "row", alignItems: "center", gap: 12, marginVertical: 2 }}>
-                      <View style={{ flex: 1, height: 1, backgroundColor: "rgba(16,185,129,0.10)" }} />
-                      <Text style={{ color: "#1A4A38", fontSize: 12 }}>or</Text>
-                      <View style={{ flex: 1, height: 1, backgroundColor: "rgba(16,185,129,0.10)" }} />
+                      <View style={{ flex: 1, height: 1, backgroundColor: "rgba(245,158,11,0.10)" }} />
+                      <Text style={{ color: "#451A03", fontSize: 12 }}>or</Text>
+                      <View style={{ flex: 1, height: 1, backgroundColor: "rgba(245,158,11,0.10)" }} />
                     </View>
 
                     {/* Guest / Skip */}
@@ -160,22 +160,22 @@ export default function LoginScreen() {
                         backgroundColor: "transparent",
                         borderRadius: 16, paddingVertical: 15,
                         flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 10,
-                        borderWidth: 1, borderColor: "rgba(16,185,129,0.15)",
+                        borderWidth: 1, borderColor: "rgba(245,158,11,0.15)",
                       }}
                       onPress={handleGuestContinue}
                       disabled={loading}
                     >
                       {loading ? (
-                        <ActivityIndicator size="small" color="#4D8C72" />
+                        <ActivityIndicator size="small" color="#92400E" />
                       ) : (
                         <>
                           <Text style={{ fontSize: 18 }}>👤</Text>
-                          <Text style={{ color: "#4D8C72", fontFamily: "DMSans_600SemiBold", fontSize: 15 }}>Skip — Use as Guest</Text>
+                          <Text style={{ color: "#92400E", fontFamily: "DMSans_600SemiBold", fontSize: 15 }}>Skip — Use as Guest</Text>
                         </>
                       )}
                     </TouchableOpacity>
 
-                    <Text style={{ color: "#1A4A38", fontSize: 11, textAlign: "center", lineHeight: 16, marginTop: 4 }}>
+                    <Text style={{ color: "#451A03", fontSize: 11, textAlign: "center", lineHeight: 16, marginTop: 4 }}>
                       Guest mode stores your data locally on this device only.{"\n"}
                       By continuing, you agree to our Terms of Service.
                     </Text>
@@ -188,27 +188,27 @@ export default function LoginScreen() {
                       style={{ flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 4 }}
                       onPress={() => { setMode("choose"); setEmailError(""); }}
                     >
-                      <Text style={{ color: "#10B981", fontSize: 18 }}>←</Text>
-                      <Text style={{ color: "#10B981", fontFamily: "DMSans_600SemiBold", fontSize: 14 }}>Back</Text>
+                      <Text style={{ color: "#F59E0B", fontSize: 18 }}>←</Text>
+                      <Text style={{ color: "#F59E0B", fontFamily: "DMSans_600SemiBold", fontSize: 14 }}>Back</Text>
                     </TouchableOpacity>
 
-                    <Text style={{ color: "#E6FFF5", fontSize: 20, fontFamily: "Outfit_800ExtraBold" }}>Enter your details</Text>
-                    <Text style={{ color: "#4D8C72", fontSize: 13 }}>
+                    <Text style={{ color: "#FFF7ED", fontSize: 20, fontFamily: "Outfit_800ExtraBold" }}>Enter your details</Text>
+                    <Text style={{ color: "#92400E", fontSize: 13 }}>
                       Your data stays on your device. No password required.
                     </Text>
 
                     <View>
-                      <Text style={{ color: "#4D8C72", fontSize: 11, fontFamily: "Outfit_700Bold", marginBottom: 6, letterSpacing: 0.5 }}>YOUR NAME</Text>
+                      <Text style={{ color: "#92400E", fontSize: 11, fontFamily: "Outfit_700Bold", marginBottom: 6, letterSpacing: 0.5 }}>YOUR NAME</Text>
                       <TextInput
                         value={name}
                         onChangeText={setName}
                         placeholder="e.g. Alex Johnson"
-                        placeholderTextColor="#1A4A38"
+                        placeholderTextColor="#451A03"
                         style={{
-                          backgroundColor: "#0D1F18", borderRadius: 14,
+                          backgroundColor: "#150A00", borderRadius: 14,
                           paddingHorizontal: 16, paddingVertical: 14,
-                          color: "#E6FFF5", fontSize: 16,
-                          borderWidth: 1, borderColor: "rgba(16,185,129,0.10)",
+                          color: "#FFF7ED", fontSize: 16,
+                          borderWidth: 1, borderColor: "rgba(245,158,11,0.10)",
                         }}
                         returnKeyType="next"
                         autoCapitalize="words"
@@ -216,32 +216,32 @@ export default function LoginScreen() {
                     </View>
 
                     <View>
-                      <Text style={{ color: "#4D8C72", fontSize: 11, fontFamily: "Outfit_700Bold", marginBottom: 6, letterSpacing: 0.5 }}>EMAIL ADDRESS</Text>
+                      <Text style={{ color: "#92400E", fontSize: 11, fontFamily: "Outfit_700Bold", marginBottom: 6, letterSpacing: 0.5 }}>EMAIL ADDRESS</Text>
                       <TextInput
                         value={email}
                         onChangeText={setEmail}
                         placeholder="you@example.com"
-                        placeholderTextColor="#1A4A38"
+                        placeholderTextColor="#451A03"
                         keyboardType="email-address"
                         autoCapitalize="none"
                         autoCorrect={false}
                         style={{
-                          backgroundColor: "#0D1F18", borderRadius: 14,
+                          backgroundColor: "#150A00", borderRadius: 14,
                           paddingHorizontal: 16, paddingVertical: 14,
-                          color: "#E6FFF5", fontSize: 16,
-                          borderWidth: 1, borderColor: emailError ? "#4D8C72" : "rgba(16,185,129,0.10)",
+                          color: "#FFF7ED", fontSize: 16,
+                          borderWidth: 1, borderColor: emailError ? "#92400E" : "rgba(245,158,11,0.10)",
                         }}
                         returnKeyType="done"
                         onSubmitEditing={handleEmailContinue}
                       />
                       {emailError ? (
-                        <Text style={{ color: "#4D8C72", fontSize: 12, marginTop: 6 }}>{emailError}</Text>
+                        <Text style={{ color: "#92400E", fontSize: 12, marginTop: 6 }}>{emailError}</Text>
                       ) : null}
                     </View>
 
                     <TouchableOpacity
                       style={{
-                        backgroundColor: "#10B981", borderRadius: 16,
+                        backgroundColor: "#F59E0B", borderRadius: 16,
                         paddingVertical: 16, alignItems: "center",
                         marginTop: 4, opacity: loading ? 0.7 : 1,
                       }}
@@ -249,13 +249,13 @@ export default function LoginScreen() {
                       disabled={loading}
                     >
                       {loading ? (
-                        <ActivityIndicator color="#E6FFF5" />
+                        <ActivityIndicator color="#FFF7ED" />
                       ) : (
-                        <Text style={{ color: "#E6FFF5", fontFamily: "Outfit_700Bold", fontSize: 16 }}>Continue →</Text>
+                        <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 16 }}>Continue →</Text>
                       )}
                     </TouchableOpacity>
 
-                    <Text style={{ color: "#1A4A38", fontSize: 11, textAlign: "center", lineHeight: 16 }}>
+                    <Text style={{ color: "#451A03", fontSize: 11, textAlign: "center", lineHeight: 16 }}>
                       Your email is stored locally for personalization only.{"\n"}
                       No account is created on our servers.
                     </Text>

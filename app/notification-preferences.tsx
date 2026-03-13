@@ -279,7 +279,7 @@ export default function NotificationPreferencesScreen() {
             <Switch
               value={prefs.workoutEnabled}
               onValueChange={() => toggleNotif("workout")}
-              trackColor={{ false: "#333", true: "#10B981" }}
+              trackColor={{ false: "#333", true: "#F59E0B" }}
               thumbColor={prefs.workoutEnabled ? "#fff" : "#888"}
             />
           </View>
@@ -310,7 +310,7 @@ export default function NotificationPreferencesScreen() {
             <Switch
               value={prefs.mealEnabled}
               onValueChange={() => toggleNotif("meal")}
-              trackColor={{ false: "#333", true: "#10B981" }}
+              trackColor={{ false: "#333", true: "#F59E0B" }}
               thumbColor={prefs.mealEnabled ? "#fff" : "#888"}
             />
           </View>
@@ -341,7 +341,7 @@ export default function NotificationPreferencesScreen() {
             <Switch
               value={prefs.checkinEnabled}
               onValueChange={() => toggleNotif("checkin")}
-              trackColor={{ false: "#333", true: "#10B981" }}
+              trackColor={{ false: "#333", true: "#F59E0B" }}
               thumbColor={prefs.checkinEnabled ? "#fff" : "#888"}
             />
           </View>
@@ -429,7 +429,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   backText: {
-    color: "#10B981",
+    color: "#F59E0B",
     fontSize: 16,
     fontFamily: "DMSans_600SemiBold",
   },
@@ -451,7 +451,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 16,
     borderWidth: 1,
-    borderColor: "#10B981",
+    borderColor: "#F59E0B",
     gap: 12,
   },
   permBannerIcon: {
@@ -468,7 +468,7 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   permBannerArrow: {
-    color: "#10B981",
+    color: "#F59E0B",
     fontSize: 18,
     fontFamily: "Outfit_700Bold",
   },
@@ -520,7 +520,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   timeValueText: {
-    color: "#10B981",
+    color: "#F59E0B",
     fontSize: 16,
     fontFamily: "Outfit_700Bold",
   },
@@ -555,7 +555,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 14,
     borderLeftWidth: 3,
-    borderLeftColor: "#10B981",
+    borderLeftColor: "#F59E0B",
   },
   tipText: {
     color: "#aaa",
@@ -619,7 +619,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
   },
   pickerItemTextActive: {
-    color: "#10B981",
+    color: "#F59E0B",
     fontFamily: "Outfit_700Bold",
   },
   previewTime: {
@@ -647,7 +647,7 @@ const styles = StyleSheet.create({
   },
   confirmBtn: {
     flex: 1,
-    backgroundColor: "#10B981",
+    backgroundColor: "#F59E0B",
     borderRadius: 12,
     paddingVertical: 14,
     alignItems: "center",

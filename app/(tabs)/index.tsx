@@ -15,24 +15,31 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 // Aurora Titan — hero backgrounds
-const AT_DASHBOARD_BG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/at_hero_dashboard-VCWgAqUVtVq8md7vJyavvf.png";
-const AT_PLANS_BG     = "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/at_hero_plans-i8Q29QJ7ZSsVX8vwXcoaET.png";
-const AT_MEALS_BG     = "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/at_hero_meals-nYVEmKzMAcSzUTBpHX2vhB.png";
-const APP_LOGO        = "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/app_logo-iTNC7xURufvjtUp3Y5ns3S.png";
+const AT_DASHBOARD_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/PZcnawJwIZkQHTEM.jpg"; // Solar Forge dashboard bg
+const AT_PLANS_BG     = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/PZcnawJwIZkQHTEM.jpg";
+const AT_MEALS_BG     = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/PZcnawJwIZkQHTEM.jpg";
+const APP_LOGO        = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/PZcnawJwIZkQHTEM.jpg";
 
 // Aurora Titan colour tokens
-const AT = {
-  bg:        "#060F0A",
-  surface:   "#0D1F18",
-  surface2:  "#122B20",
-  border:    "rgba(16,185,129,0.12)",
-  border2:   "rgba(16,185,129,0.20)",
-  fg:        "#E6FFF5",
-  muted:     "#4D8C72",
-  emerald:   "#10B981",
-  teal:      "#0D9488",
-  emerald2:  "#34D399",
-  emerald3:  "#6EE7B7",
+const SF = {
+  bg:        "#0A0500",
+  surface:   "#150A00",
+  surface2:  "#1F0D00",
+  border:    "rgba(245,158,11,0.12)",
+  border2:   "rgba(245,158,11,0.20)",
+  fg:        "#FFF7ED",
+  muted:     "#92400E",
+  gold:      "#F59E0B",
+  orange:    "#EA580C",
+  gold2:     "#FBBF24",
+  gold3:     "#FDE68A",
+  red:       "#DC2626",
+  // Solar Forge aliases for Aurora Titan colour tokens
+  emerald:   "#F59E0B",
+  emerald2:  "#FBBF24",
+  emerald3:  "#FDE68A",
+  teal:      "#EA580C",
+  teal2:     "#F97316",
 };
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
@@ -51,10 +58,10 @@ function StatRing({ value, label, icon, progress = 0 }: { value: string; label: 
     <View style={styles.ringItem}>
       <View style={styles.ringContainer}>
         <Svg width={64} height={64} style={StyleSheet.absoluteFill}>
-          <Circle cx={32} cy={32} r={R} stroke="rgba(16,185,129,0.12)" strokeWidth={3.5} fill="none" />
+          <Circle cx={32} cy={32} r={R} stroke="rgba(245,158,11,0.12)" strokeWidth={3.5} fill="none" />
           <AnimatedCircle
             cx={32} cy={32} r={R}
-            stroke={AT.emerald} strokeWidth={3.5} fill="none"
+            stroke={SF.emerald} strokeWidth={3.5} fill="none"
             strokeDasharray={circumference}
             animatedProps={animatedProps}
             strokeLinecap="round"
@@ -147,13 +154,13 @@ export default function HomeScreen() {
   const activeProfile = isAuthenticated ? profile : localProfile;
 
   if (!onboardingChecked && !authLoading && !guestLoading) {
-    return <View style={{ flex: 1, backgroundColor: AT.bg }} />;
+    return <View style={{ flex: 1, backgroundColor: SF.bg }} />;
   }
 
   // ── Welcome / not logged in ──────────────────────────────────────────────
   if (!canUse) {
     return (
-      <View style={{ flex: 1, backgroundColor: AT.bg }}>
+      <View style={{ flex: 1, backgroundColor: SF.bg }}>
         <ImageBackground source={{ uri: AT_DASHBOARD_BG }} style={{ flex: 1 }} resizeMode="cover">
           <View style={styles.welcomeOverlay}>
             <Image source={{ uri: APP_LOGO }} style={styles.welcomeLogo} />
@@ -163,7 +170,7 @@ export default function HomeScreen() {
             </Text>
             <TouchableOpacity style={styles.welcomeBtn} onPress={() => router.push("/login" as any)}>
               <Text style={styles.welcomeBtnText}>Get Started</Text>
-              <MaterialIcons name="arrow-forward" size={18} color={AT.bg} style={{ marginLeft: 6 }} />
+              <MaterialIcons name="arrow-forward" size={18} color={SF.bg} style={{ marginLeft: 6 }} />
             </TouchableOpacity>
           </View>
         </ImageBackground>
@@ -173,7 +180,7 @@ export default function HomeScreen() {
 
   // ── Main Dashboard ───────────────────────────────────────────────────────
   return (
-    <View style={{ flex: 1, backgroundColor: AT.bg }}>
+    <View style={{ flex: 1, backgroundColor: SF.bg }}>
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 40 }}
@@ -195,7 +202,7 @@ export default function HomeScreen() {
                 style={styles.heroProfileBtn}
                 onPress={() => router.push("/(tabs)/profile" as any)}
               >
-                <MaterialIcons name="person" size={16} color={AT.emerald2} />
+                <MaterialIcons name="person" size={16} color={SF.emerald2} />
                 <Text style={styles.heroProfileBtnText}>Profile</Text>
               </TouchableOpacity>
             </View>
@@ -245,7 +252,7 @@ export default function HomeScreen() {
               </View>
               <View style={{ alignItems: "flex-end" }}>
                 <Text style={styles.cardEyebrow}>REMAINING</Text>
-                <Text style={[styles.calorieValue, { color: caloriesRemaining < 200 ? AT.teal : AT.emerald }]}>
+                <Text style={[styles.calorieValue, { color: caloriesRemaining < 200 ? SF.teal : SF.emerald }]}>
                   {caloriesRemaining} kcal
                 </Text>
               </View>
@@ -313,7 +320,7 @@ export default function HomeScreen() {
                   onPress={() => router.push("/(tabs)/plans" as any)}
                 >
                   <Text style={styles.planCardBtnText}>Start Workout</Text>
-                  <MaterialIcons name="arrow-forward" size={16} color={AT.bg} />
+                  <MaterialIcons name="arrow-forward" size={16} color={SF.bg} />
                 </TouchableOpacity>
               </View>
             </ImageBackground>
@@ -349,7 +356,7 @@ export default function HomeScreen() {
                   onPress={() => router.push("/(tabs)/meals" as any)}
                 >
                   <Text style={styles.planCardBtnText}>View Meal Plan</Text>
-                  <MaterialIcons name="arrow-forward" size={16} color={AT.bg} />
+                  <MaterialIcons name="arrow-forward" size={16} color={SF.bg} />
                 </TouchableOpacity>
               </View>
             </ImageBackground>
@@ -365,7 +372,7 @@ export default function HomeScreen() {
               resizeMode="cover"
             >
               <View style={styles.ctaOverlay}>
-                <MaterialIcons name="rocket-launch" size={48} color={AT.emerald} style={{ marginBottom: 12 }} />
+                <MaterialIcons name="rocket-launch" size={48} color={SF.emerald} style={{ marginBottom: 12 }} />
                 <Text style={styles.ctaTitle}>Ready to Transform?</Text>
                 <Text style={styles.ctaSub}>
                   Start with an AI Body Scan to analyse your physique, then get a personalised workout and meal plan.
@@ -375,7 +382,7 @@ export default function HomeScreen() {
                   onPress={() => router.push("/(tabs)/scan" as any)}
                 >
                   <Text style={styles.ctaBtnText}>Start AI Body Scan</Text>
-                  <MaterialIcons name="arrow-forward" size={16} color={AT.bg} />
+                  <MaterialIcons name="arrow-forward" size={16} color={SF.bg} />
                 </TouchableOpacity>
               </View>
             </ImageBackground>
@@ -385,7 +392,7 @@ export default function HomeScreen() {
         {/* ── Guest banner ── */}
         {isGuest && (
           <View style={styles.guestBanner}>
-            <MaterialIcons name="info-outline" size={20} color={AT.emerald2} />
+            <MaterialIcons name="info-outline" size={20} color={SF.emerald2} />
             <View style={{ flex: 1 }}>
               <Text style={styles.guestBannerTitle}>Using as Guest</Text>
               <Text style={styles.guestBannerSub}>Your data is stored locally. Sign in to sync across devices.</Text>
@@ -405,78 +412,78 @@ export default function HomeScreen() {
 
 const styles = StyleSheet.create({
   // Welcome screen
-  welcomeOverlay: { flex: 1, backgroundColor: "rgba(6,15,10,0.72)", alignItems: "center", justifyContent: "center", padding: 32 },
+  welcomeOverlay: { flex: 1, backgroundColor: "rgba(10,5,0,0.72)", alignItems: "center", justifyContent: "center", padding: 32 },
   welcomeLogo: { width: 80, height: 80, borderRadius: 20, marginBottom: 24 },
-  welcomeTitle: { color: AT.fg, fontSize: 38, fontFamily: "Outfit_800ExtraBold", textAlign: "center", letterSpacing: -1 },
-  welcomeSub: { color: AT.emerald3, fontSize: 15, textAlign: "center", marginTop: 12, lineHeight: 22, fontFamily: "DMSans_400Regular" },
-  welcomeBtn: { marginTop: 40, backgroundColor: AT.emerald, borderRadius: 20, paddingVertical: 16, paddingHorizontal: 40, flexDirection: "row", alignItems: "center" },
-  welcomeBtnText: { color: AT.bg, fontFamily: "DMSans_700Bold", fontSize: 16 },
+  welcomeTitle: { color: SF.fg, fontSize: 38, fontFamily: "Outfit_800ExtraBold", textAlign: "center", letterSpacing: -1 },
+  welcomeSub: { color: SF.emerald3, fontSize: 15, textAlign: "center", marginTop: 12, lineHeight: 22, fontFamily: "DMSans_400Regular" },
+  welcomeBtn: { marginTop: 40, backgroundColor: SF.emerald, borderRadius: 20, paddingVertical: 16, paddingHorizontal: 40, flexDirection: "row", alignItems: "center" },
+  welcomeBtnText: { color: SF.bg, fontFamily: "DMSans_700Bold", fontSize: 16 },
 
   // Hero
-  heroOverlay: { flex: 1, backgroundColor: "rgba(6,15,10,0.55)", padding: 20, justifyContent: "space-between" },
+  heroOverlay: { flex: 1, backgroundColor: "rgba(10,5,0,0.55)", padding: 20, justifyContent: "space-between" },
   heroTopBar: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", paddingTop: 44 },
-  heroBadge: { backgroundColor: "rgba(16,185,129,0.12)", borderRadius: 20, paddingHorizontal: 12, paddingVertical: 5, borderWidth: 1, borderColor: AT.border2 },
-  heroBadgeText: { color: AT.emerald, fontFamily: "DMSans_600SemiBold", fontSize: 10, letterSpacing: 1.5 },
-  heroProfileBtn: { flexDirection: "row", alignItems: "center", gap: 4, backgroundColor: "rgba(16,185,129,0.10)", borderRadius: 20, paddingHorizontal: 12, paddingVertical: 6, borderWidth: 1, borderColor: AT.border },
-  heroProfileBtnText: { color: AT.emerald2, fontFamily: "DMSans_500Medium", fontSize: 13 },
-  heroGreeting: { color: AT.emerald3, fontFamily: "DMSans_500Medium", fontSize: 14 },
-  heroName: { color: AT.fg, fontFamily: "Outfit_800ExtraBold", fontSize: 30, letterSpacing: -0.5, marginTop: 2 },
-  heroPill: { backgroundColor: "rgba(16,185,129,0.12)", borderRadius: 10, paddingHorizontal: 10, paddingVertical: 4, borderWidth: 1, borderColor: AT.border2 },
-  heroPillText: { color: AT.emerald2, fontFamily: "DMSans_500Medium", fontSize: 12 },
+  heroBadge: { backgroundColor: "rgba(245,158,11,0.12)", borderRadius: 20, paddingHorizontal: 12, paddingVertical: 5, borderWidth: 1, borderColor: SF.border2 },
+  heroBadgeText: { color: SF.emerald, fontFamily: "DMSans_600SemiBold", fontSize: 10, letterSpacing: 1.5 },
+  heroProfileBtn: { flexDirection: "row", alignItems: "center", gap: 4, backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 20, paddingHorizontal: 12, paddingVertical: 6, borderWidth: 1, borderColor: SF.border },
+  heroProfileBtnText: { color: SF.emerald2, fontFamily: "DMSans_500Medium", fontSize: 13 },
+  heroGreeting: { color: SF.emerald3, fontFamily: "DMSans_500Medium", fontSize: 14 },
+  heroName: { color: SF.fg, fontFamily: "Outfit_800ExtraBold", fontSize: 30, letterSpacing: -0.5, marginTop: 2 },
+  heroPill: { backgroundColor: "rgba(245,158,11,0.12)", borderRadius: 10, paddingHorizontal: 10, paddingVertical: 4, borderWidth: 1, borderColor: SF.border2 },
+  heroPillText: { color: SF.emerald2, fontFamily: "DMSans_500Medium", fontSize: 12 },
 
   // Stats card
-  statsCard: { backgroundColor: AT.surface, marginHorizontal: 16, marginTop: -20, borderRadius: 24, padding: 20, borderWidth: 1, borderColor: AT.border, flexDirection: "row", gap: 8 },
-  statsDivider: { width: 1, backgroundColor: AT.border },
+  statsCard: { backgroundColor: SF.surface, marginHorizontal: 16, marginTop: -20, borderRadius: 24, padding: 20, borderWidth: 1, borderColor: SF.border, flexDirection: "row", gap: 8 },
+  statsDivider: { width: 1, backgroundColor: SF.border },
   ringItem: { alignItems: "center", flex: 1 },
   ringContainer: { width: 64, height: 64, alignItems: "center", justifyContent: "center", marginBottom: 6 },
   ringIcon: { fontSize: 20 },
-  ringValue: { color: AT.fg, fontFamily: "Outfit_700Bold", fontSize: 14 },
-  ringLabel: { color: AT.muted, fontFamily: "DMSans_400Regular", fontSize: 10, marginTop: 1 },
+  ringValue: { color: SF.fg, fontFamily: "Outfit_700Bold", fontSize: 14 },
+  ringLabel: { color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 10, marginTop: 1 },
 
   // Calorie card
-  calorieCard: { marginHorizontal: 16, marginTop: 12, backgroundColor: AT.surface, borderRadius: 20, padding: 16, borderWidth: 1, borderColor: AT.border },
+  calorieCard: { marginHorizontal: 16, marginTop: 12, backgroundColor: SF.surface, borderRadius: 20, padding: 16, borderWidth: 1, borderColor: SF.border },
   calorieHeader: { flexDirection: "row", justifyContent: "space-between", marginBottom: 12 },
-  cardEyebrow: { color: AT.muted, fontFamily: "DMSans_600SemiBold", fontSize: 10, letterSpacing: 1.5, textTransform: "uppercase", marginBottom: 3 },
-  calorieValue: { color: AT.fg, fontFamily: "Outfit_700Bold", fontSize: 22 },
-  calorieGoal: { color: AT.muted, fontFamily: "DMSans_400Regular", fontSize: 14 },
-  progressTrack: { height: 6, backgroundColor: AT.border, borderRadius: 3, overflow: "hidden" },
-  progressFill: { height: 6, borderRadius: 3, backgroundColor: AT.emerald },
-  macroValue: { color: AT.emerald2, fontFamily: "DMSans_700Bold", fontSize: 13 },
-  macroLabel: { color: AT.muted, fontFamily: "DMSans_400Regular", fontSize: 10 },
+  cardEyebrow: { color: SF.muted, fontFamily: "DMSans_600SemiBold", fontSize: 10, letterSpacing: 1.5, textTransform: "uppercase", marginBottom: 3 },
+  calorieValue: { color: SF.fg, fontFamily: "Outfit_700Bold", fontSize: 22 },
+  calorieGoal: { color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 14 },
+  progressTrack: { height: 6, backgroundColor: SF.border, borderRadius: 3, overflow: "hidden" },
+  progressFill: { height: 6, borderRadius: 3, backgroundColor: SF.emerald },
+  macroValue: { color: SF.emerald2, fontFamily: "DMSans_700Bold", fontSize: 13 },
+  macroLabel: { color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 10 },
 
   // Section
   section: { paddingHorizontal: 16, marginTop: 24 },
-  sectionTitle: { color: AT.fg, fontFamily: "Outfit_700Bold", fontSize: 18, marginBottom: 12 },
+  sectionTitle: { color: SF.fg, fontFamily: "Outfit_700Bold", fontSize: 18, marginBottom: 12 },
 
   // Quick actions
   qaRow: { flexDirection: "row", gap: 10, marginBottom: 10 },
-  qaCard: { flex: 1, backgroundColor: AT.surface, borderRadius: 18, padding: 14, alignItems: "center", gap: 8, borderWidth: 1, borderColor: AT.border },
-  qaIconBox: { width: 44, height: 44, borderRadius: 12, backgroundColor: "rgba(16,185,129,0.08)", alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: AT.border },
-  qaLabel: { color: AT.emerald3, fontFamily: "DMSans_500Medium", fontSize: 11, textAlign: "center" },
+  qaCard: { flex: 1, backgroundColor: SF.surface, borderRadius: 18, padding: 14, alignItems: "center", gap: 8, borderWidth: 1, borderColor: SF.border },
+  qaIconBox: { width: 44, height: 44, borderRadius: 12, backgroundColor: "rgba(245,158,11,0.08)", alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: SF.border },
+  qaLabel: { color: SF.emerald3, fontFamily: "DMSans_500Medium", fontSize: 11, textAlign: "center" },
 
   // Plan / meal card
-  planCardOverlay: { backgroundColor: "rgba(6,15,10,0.78)", padding: 20 },
-  planCardTitle: { color: AT.fg, fontFamily: "Outfit_700Bold", fontSize: 20, marginTop: 4 },
-  planCardSub: { color: AT.muted, fontFamily: "DMSans_400Regular", fontSize: 13, marginTop: 4 },
-  planCardBtn: { backgroundColor: AT.emerald, borderRadius: 14, paddingVertical: 12, alignItems: "center", marginTop: 16, flexDirection: "row", justifyContent: "center", gap: 6 },
-  planCardBtnText: { color: AT.bg, fontFamily: "DMSans_700Bold", fontSize: 14 },
+  planCardOverlay: { backgroundColor: "rgba(10,5,0,0.78)", padding: 20 },
+  planCardTitle: { color: SF.fg, fontFamily: "Outfit_700Bold", fontSize: 20, marginTop: 4 },
+  planCardSub: { color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 13, marginTop: 4 },
+  planCardBtn: { backgroundColor: SF.emerald, borderRadius: 14, paddingVertical: 12, alignItems: "center", marginTop: 16, flexDirection: "row", justifyContent: "center", gap: 6 },
+  planCardBtnText: { color: SF.bg, fontFamily: "DMSans_700Bold", fontSize: 14 },
 
   // Macro pills
-  macroPill: { backgroundColor: "rgba(16,185,129,0.10)", borderRadius: 10, paddingHorizontal: 12, paddingVertical: 6, borderWidth: 1, borderColor: AT.border },
-  macroPillValue: { color: AT.emerald, fontFamily: "DMSans_700Bold", fontSize: 13 },
-  macroPillLabel: { color: AT.muted, fontFamily: "DMSans_400Regular", fontSize: 10 },
+  macroPill: { backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 10, paddingHorizontal: 12, paddingVertical: 6, borderWidth: 1, borderColor: SF.border },
+  macroPillValue: { color: SF.emerald, fontFamily: "DMSans_700Bold", fontSize: 13 },
+  macroPillLabel: { color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 10 },
 
   // CTA
-  ctaOverlay: { backgroundColor: "rgba(6,15,10,0.82)", padding: 28, alignItems: "center" },
-  ctaTitle: { color: AT.fg, fontFamily: "Outfit_800ExtraBold", fontSize: 22, textAlign: "center", marginBottom: 8 },
-  ctaSub: { color: AT.muted, fontFamily: "DMSans_400Regular", fontSize: 14, textAlign: "center", lineHeight: 20, marginBottom: 20 },
-  ctaBtn: { backgroundColor: AT.emerald, borderRadius: 16, paddingVertical: 14, paddingHorizontal: 32, flexDirection: "row", alignItems: "center", gap: 8 },
-  ctaBtnText: { color: AT.bg, fontFamily: "DMSans_700Bold", fontSize: 16 },
+  ctaOverlay: { backgroundColor: "rgba(10,5,0,0.82)", padding: 28, alignItems: "center" },
+  ctaTitle: { color: SF.fg, fontFamily: "Outfit_800ExtraBold", fontSize: 22, textAlign: "center", marginBottom: 8 },
+  ctaSub: { color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 14, textAlign: "center", lineHeight: 20, marginBottom: 20 },
+  ctaBtn: { backgroundColor: SF.emerald, borderRadius: 16, paddingVertical: 14, paddingHorizontal: 32, flexDirection: "row", alignItems: "center", gap: 8 },
+  ctaBtnText: { color: SF.bg, fontFamily: "DMSans_700Bold", fontSize: 16 },
 
   // Guest banner
-  guestBanner: { marginHorizontal: 16, marginTop: 20, backgroundColor: AT.surface, borderRadius: 16, padding: 16, borderWidth: 1, borderColor: AT.border, flexDirection: "row", alignItems: "center", gap: 12 },
-  guestBannerTitle: { color: AT.emerald2, fontFamily: "DMSans_600SemiBold", fontSize: 13 },
-  guestBannerSub: { color: AT.muted, fontFamily: "DMSans_400Regular", fontSize: 12, marginTop: 2 },
-  guestBannerBtn: { backgroundColor: AT.surface2, borderRadius: 10, paddingHorizontal: 12, paddingVertical: 7, borderWidth: 1, borderColor: AT.border2 },
-  guestBannerBtnText: { color: AT.emerald, fontFamily: "DMSans_600SemiBold", fontSize: 12 },
+  guestBanner: { marginHorizontal: 16, marginTop: 20, backgroundColor: SF.surface, borderRadius: 16, padding: 16, borderWidth: 1, borderColor: SF.border, flexDirection: "row", alignItems: "center", gap: 12 },
+  guestBannerTitle: { color: SF.emerald2, fontFamily: "DMSans_600SemiBold", fontSize: 13 },
+  guestBannerSub: { color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 12, marginTop: 2 },
+  guestBannerBtn: { backgroundColor: SF.surface2, borderRadius: 10, paddingHorizontal: 12, paddingVertical: 7, borderWidth: 1, borderColor: SF.border2 },
+  guestBannerBtnText: { color: SF.emerald, fontFamily: "DMSans_600SemiBold", fontSize: 12 },
 });

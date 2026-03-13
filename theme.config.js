@@ -1,16 +1,16 @@
 /** @type {const} */
 const themeColors = {
-  // Aurora Titan — emerald green + teal, deep forest-black base
-  primary:    { light: '#10B981', dark: '#10B981' }, // Emerald green
-  background: { light: '#060F0A', dark: '#060F0A' }, // Deep forest black
-  surface:    { light: '#0D1F18', dark: '#0D1F18' }, // Dark forest surface
-  foreground: { light: '#E6FFF5', dark: '#E6FFF5' }, // Soft mint white
-  muted:      { light: '#4D8C72', dark: '#4D8C72' }, // Muted forest green
-  border:     { light: '#0D9488', dark: '#0D9488' }, // Teal border
-  success:    { light: '#10B981', dark: '#34D399' }, // Emerald
-  warning:    { light: '#F59E0B', dark: '#FBBF24' }, // Amber
-  error:      { light: '#EF4444', dark: '#F87171' }, // Red
-  tint:       { light: '#10B981', dark: '#34D399' }, // Tab bar active tint
+  // Solar Forge — gold, orange, red, black
+  primary:    { light: '#F59E0B', dark: '#F59E0B' }, // Gold
+  background: { light: '#0A0500', dark: '#0A0500' }, // Forge black
+  surface:    { light: '#150A00', dark: '#150A00' }, // Dark ember surface
+  foreground: { light: '#FFF7ED', dark: '#FFF7ED' }, // Warm white
+  muted:      { light: '#92400E', dark: '#92400E' }, // Dark amber muted
+  border:     { light: '#EA580C', dark: '#EA580C' }, // Orange border
+  success:    { light: '#10B981', dark: '#34D399' }, // Emerald (keep for success)
+  warning:    { light: '#F59E0B', dark: '#FBBF24' }, // Gold warning
+  error:      { light: '#DC2626', dark: '#F87171' }, // Crimson red
+  tint:       { light: '#F59E0B', dark: '#FBBF24' }, // Gold tab tint
 };
 
 module.exports = { themeColors };
