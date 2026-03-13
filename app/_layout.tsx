@@ -21,7 +21,9 @@ import type { EdgeInsets, Metrics, Rect } from "react-native-safe-area-context";
 import { trpc, createTRPCClient } from "@/lib/trpc";
 import { initManusRuntime, subscribeSafeAreaInsets } from "@/lib/_core/manus-runtime";
 import * as SplashScreen from "expo-splash-screen";
+import * as Notifications from "expo-notifications";
 import { useFonts } from "expo-font";
+import { useRouter } from "expo-router";
 import {
   DMSans_300Light,
   DMSans_400Regular,
@@ -50,7 +52,36 @@ export const unstable_settings = {
   anchor: "(tabs)",
 };
 
+/**
+ * Listens for notification taps and deep-links to the URL stored in notification data.
+ * Handles both cold-start (app launched from notification) and foreground tap scenarios.
+ */
+function useNotificationDeepLink() {
+  const router = useRouter();
+  useEffect(() => {
+    if (Platform.OS === "web") return;
+    // Handle notification that launched the app from a closed/background state
+    const lastResponse = Notifications.getLastNotificationResponse();
+    if (lastResponse) {
+      const url = lastResponse.notification.request.content.data?.url;
+      if (typeof url === "string") {
+        // Defer slightly to let the navigator mount before pushing
+        setTimeout(() => router.push(url as any), 400);
+      }
+    }
+    // Handle notification taps while the app is already running
+    const subscription = Notifications.addNotificationResponseReceivedListener((response) => {
+      const url = response.notification.request.content.data?.url;
+      if (typeof url === "string") {
+        router.push(url as any);
+      }
+    });
+    return () => subscription.remove();
+  }, [router]);
+}
+
 export default function RootLayout() {
+  useNotificationDeepLink();
   const [fontsLoaded] = useFonts({
     DMSans_300Light,
     DMSans_400Regular,

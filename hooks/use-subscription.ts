@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { scheduleTrialReminders, cancelTrialReminders } from "@/lib/notifications";
 
 export type SubscriptionTier = "free" | "basic" | "advanced";
 
@@ -169,6 +170,8 @@ export function useSubscription(): FullSubscriptionState & {
     expiresAt.setMonth(expiresAt.getMonth() + months);
     const data = { tier, billingCycle, expiresAt: expiresAt.toISOString() };
     await AsyncStorage.setItem(SUBSCRIPTION_KEY, JSON.stringify(data));
+    // Cancel trial reminders — user has subscribed, no longer needs the nudge
+    cancelTrialReminders().catch(() => {});
     await load();
   }, [load]);
 
@@ -181,8 +184,11 @@ export function useSubscription(): FullSubscriptionState & {
     // Only allow starting a trial if one has never been used
     const existing = await AsyncStorage.getItem(TRIAL_KEY);
     if (existing) return; // Trial already used — do not reset
-    const trialData = { startDate: new Date().toISOString() };
+    const startDate = new Date().toISOString();
+    const trialData = { startDate };
     await AsyncStorage.setItem(TRIAL_KEY, JSON.stringify(trialData));
+    // Schedule Day 5 and Day 7 reminder notifications
+    scheduleTrialReminders(startDate).catch(() => {}); // fire-and-forget; permission may be denied
     await load();
   }, [load]);
 

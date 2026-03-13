@@ -279,3 +279,16 @@
 - [x] PaywallModal: startTrial() on tap, dismiss modal with success alert
 - [x] PaywallModal: fall back to Upgrade CTA when trial already used or for Basic features
 - [x] Zero TypeScript errors after full trial implementation
+
+## Day 5 Trial Reminder Push Notification (Round 14)
+
+- [x] Read Expo notifications docs and audit existing notification setup
+- [x] Add scheduleTrialReminders(trialStartDate) and cancelTrialReminders() to lib/notifications.ts
+- [x] Day 5 notification: fires at 10:00 AM on day 5 of trial, deep links to /subscription
+- [x] Day 7 notification: fires at 09:00 AM on last day of trial as final warning
+- [x] Wire scheduleTrialReminders() into useSubscription startTrial() — fire-and-forget
+- [x] Wire cancelTrialReminders() into useSubscription setSubscription() — cancels on paid upgrade
+- [x] Request notification permissions before scheduling (graceful fallback if denied)
+- [x] useNotificationDeepLink hook in _layout.tsx: handles cold-start and foreground notification taps
+- [x] Notification tap navigates to /subscription screen via router.push
+- [x] Zero TypeScript errors

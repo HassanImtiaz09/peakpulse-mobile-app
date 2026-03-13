@@ -17,6 +17,8 @@ const NOTIF_PERM_KEY = "@notif_permission_requested";
 const WORKOUT_NOTIF_ID_KEY = "@workout_notif_id";
 const MEAL_NOTIF_ID_KEY = "@meal_notif_id";
 const CHECKIN_NOTIF_ID_KEY = "@checkin_notif_id";
+const TRIAL_DAY5_NOTIF_ID_KEY = "@trial_day5_notif_id";
+const TRIAL_DAY7_NOTIF_ID_KEY = "@trial_day7_notif_id";
 
 export async function requestNotificationPermissions(): Promise<boolean> {
   if (Platform.OS === "web") return false;
@@ -140,4 +142,84 @@ export async function sendImmediateNotification(title: string, body: string): Pr
     content: { title, body },
     trigger: null,
   });
+}
+
+/**
+ * Schedule Day 5 and Day 7 trial reminder notifications.
+ * Call this immediately after the user starts their free trial.
+ * @param trialStartDate ISO date string of when the trial started
+ */
+export async function scheduleTrialReminders(trialStartDate: string): Promise<void> {
+  if (Platform.OS === "web") return;
+
+  const granted = await requestNotificationPermissions();
+  if (!granted) return;
+
+  // Cancel any existing trial notifications first
+  await cancelTrialReminders();
+
+  const startDate = new Date(trialStartDate);
+
+  // Day 5 reminder: fires at 10:00 AM on day 5 of the trial
+  const day5Date = new Date(startDate);
+  day5Date.setDate(day5Date.getDate() + 4); // 0-indexed: day 5 = +4 days
+  day5Date.setHours(10, 0, 0, 0);
+
+  // Only schedule if the trigger date is in the future
+  if (day5Date > new Date()) {
+    const day5Id = await Notifications.scheduleNotificationAsync({
+      content: {
+        title: "⚡ 2 Days Left on Your Free Trial!",
+        body: "You've unlocked all Advanced features. Don't lose access — subscribe now and keep your momentum going.",
+        data: { url: "/subscription", type: "trial_day5_reminder" },
+        categoryIdentifier: "peakpulse",
+      },
+      trigger: {
+        type: Notifications.SchedulableTriggerInputTypes.DATE,
+        date: day5Date,
+      },
+    });
+    await AsyncStorage.setItem(TRIAL_DAY5_NOTIF_ID_KEY, day5Id);
+  }
+
+  // Day 7 reminder: fires at 09:00 AM on the last day of the trial
+  const day7Date = new Date(startDate);
+  day7Date.setDate(day7Date.getDate() + 6); // day 7 = +6 days
+  day7Date.setHours(9, 0, 0, 0);
+
+  if (day7Date > new Date()) {
+    const day7Id = await Notifications.scheduleNotificationAsync({
+      content: {
+        title: "🔥 Last Day of Your Free Trial!",
+        body: "Your Advanced access expires today. Subscribe now to keep your AI workout plans, Form Checker, and more.",
+        data: { url: "/subscription", type: "trial_day7_reminder" },
+        categoryIdentifier: "peakpulse",
+      },
+      trigger: {
+        type: Notifications.SchedulableTriggerInputTypes.DATE,
+        date: day7Date,
+      },
+    });
+    await AsyncStorage.setItem(TRIAL_DAY7_NOTIF_ID_KEY, day7Id);
+  }
+}
+
+/**
+ * Cancel all scheduled trial reminder notifications.
+ * Call this when the user subscribes to a paid plan.
+ */
+export async function cancelTrialReminders(): Promise<void> {
+  if (Platform.OS === "web") return;
+
+  const [day5Id, day7Id] = await Promise.all([
+    AsyncStorage.getItem(TRIAL_DAY5_NOTIF_ID_KEY),
+    AsyncStorage.getItem(TRIAL_DAY7_NOTIF_ID_KEY),
+  ]);
+
+  await Promise.all([
+    day5Id ? Notifications.cancelScheduledNotificationAsync(day5Id).catch(() => {}) : Promise.resolve(),
+    day7Id ? Notifications.cancelScheduledNotificationAsync(day7Id).catch(() => {}) : Promise.resolve(),
+  ]);
+
+  await AsyncStorage.multiRemove([TRIAL_DAY5_NOTIF_ID_KEY, TRIAL_DAY7_NOTIF_ID_KEY]);
 }
