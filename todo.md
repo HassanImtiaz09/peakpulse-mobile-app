@@ -391,3 +391,9 @@
 - [x] Feature: Add "Regenerate Plans" button to the meals tab for refreshing AI meal plans after goal changes
 - [x] Feature: 7-day meal plan day selector in the meals tab — browse all days of the AI-generated meal plan
 - [x] Feature: Social sharing for AI target body image on the dashboard (share to social media)
+
+## Round 25 — Shopping List, Save to Photo Library, Regenerate Workout on Meals Tab
+
+- [x] Feature: Weekly meal prep shopping list aggregating ingredients across all 7 days of the AI meal plan into a checklist
+- [x] Feature: Save target body image to device photo library using expo-media-library (alongside share option on dashboard)
+- [x] Feature: Add "Regenerate Workout Plan" button on the meals tab so users can refresh both plans from one place

@@ -196,7 +196,10 @@ export default function MealsScreen() {
   const [aiMealPlan, setAiMealPlan] = useState<any>(null);
   const [selectedDayIndex, setSelectedDayIndex] = useState(0);
   const [regenerating, setRegenerating] = useState(false);
+  const [regeneratingWorkout, setRegeneratingWorkout] = useState(false);
   const [localProfile, setLocalProfile] = useState<any>(null);
+  const [showShoppingList, setShowShoppingList] = useState(false);
+  const [checkedIngredients, setCheckedIngredients] = useState<Record<string, boolean>>({});
   // Load user profile and AI-generated meal plan for personalised suggestions
   React.useEffect(() => {
     AsyncStorage.getItem("@guest_profile").then(raw => {
@@ -216,6 +219,21 @@ export default function MealsScreen() {
       }
     });
   }, []);
+
+  // Regenerate workout plan mutation (accessible from meals tab)
+  const regenerateWorkoutPlan = trpc.workoutPlan.generate.useMutation({
+    onSuccess: (data) => {
+      setRegeneratingWorkout(false);
+      const json = JSON.stringify(data);
+      AsyncStorage.setItem("@guest_workout_plan", json);
+      AsyncStorage.setItem("@cached_workout_plan", json);
+      Alert.alert("\u2705 Workout Plan Updated", "Your new AI workout plan has been generated. Check the Plans tab to view it.");
+    },
+    onError: (e) => {
+      setRegeneratingWorkout(false);
+      Alert.alert("Error", e.message);
+    },
+  });
 
   // Regenerate meal plan mutation
   const regenerateMealPlan = trpc.mealPlan.generate.useMutation({
@@ -504,14 +522,11 @@ export default function MealsScreen() {
               </TouchableOpacity>
             </View>
 
-            {/* Suggested Meals Section — uses AI-generated plan when available */}
-            <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
-              <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 15 }}>
-                {aiMealPlan ? "Your AI Meal Plan" : "Today's Suggested Meals"}
-              </Text>
-              {aiMealPlan && (
+            {/* Regenerate Both Plans Section */}
+            {aiMealPlan && (
+              <View style={{ flexDirection: "row", gap: 8, marginBottom: 14 }}>
                 <TouchableOpacity
-                  style={{ flexDirection: "row", alignItems: "center", gap: 4, backgroundColor: "rgba(245,158,11,0.12)", borderRadius: 10, paddingHorizontal: 10, paddingVertical: 6, borderWidth: 1, borderColor: "rgba(245,158,11,0.25)", opacity: regenerating ? 0.7 : 1 }}
+                  style={{ flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6, backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 12, paddingVertical: 10, borderWidth: 1, borderColor: "rgba(245,158,11,0.18)", opacity: regenerating ? 0.7 : 1 }}
                   onPress={() => {
                     Alert.alert(
                       "Regenerate Meal Plan?",
@@ -543,11 +558,51 @@ export default function MealsScreen() {
                   {regenerating ? (
                     <ActivityIndicator color="#F59E0B" size="small" />
                   ) : (
-                    <Text style={{ fontSize: 12 }}>🔄</Text>
+                    <Text style={{ fontSize: 13 }}>🍽️</Text>
                   )}
-                  <Text style={{ color: "#F59E0B", fontFamily: "Outfit_700Bold", fontSize: 11 }}>{regenerating ? "Regenerating..." : "Regenerate"}</Text>
+                  <Text style={{ color: "#F59E0B", fontFamily: "Outfit_700Bold", fontSize: 11 }}>{regenerating ? "Regenerating..." : "New Meal Plan"}</Text>
                 </TouchableOpacity>
-              )}
+                <TouchableOpacity
+                  style={{ flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6, backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 12, paddingVertical: 10, borderWidth: 1, borderColor: "rgba(245,158,11,0.18)", opacity: regeneratingWorkout ? 0.7 : 1 }}
+                  onPress={() => {
+                    Alert.alert(
+                      "Regenerate Workout Plan?",
+                      "This will replace your current workout plan with a new AI-generated one based on your goals.",
+                      [
+                        { text: "Cancel", style: "cancel" },
+                        {
+                          text: "Regenerate",
+                          style: "destructive",
+                          onPress: () => {
+                            setRegeneratingWorkout(true);
+                            regenerateWorkoutPlan.mutate({
+                              goal: userGoal,
+                              workoutStyle: localProfile?.workoutStyle ?? "gym",
+                              daysPerWeek: localProfile?.daysPerWeek ?? 4,
+                              fitnessLevel: localProfile?.activityLevel ?? undefined,
+                            });
+                          },
+                        },
+                      ]
+                    );
+                  }}
+                  disabled={regeneratingWorkout}
+                >
+                  {regeneratingWorkout ? (
+                    <ActivityIndicator color="#F59E0B" size="small" />
+                  ) : (
+                    <Text style={{ fontSize: 13 }}>🏋️</Text>
+                  )}
+                  <Text style={{ color: "#F59E0B", fontFamily: "Outfit_700Bold", fontSize: 11 }}>{regeneratingWorkout ? "Regenerating..." : "New Workout Plan"}</Text>
+                </TouchableOpacity>
+              </View>
+            )}
+
+            {/* Suggested Meals Section — uses AI-generated plan when available */}
+            <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+              <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 15 }}>
+                {aiMealPlan ? "Your AI Meal Plan" : "Today's Suggested Meals"}
+              </Text>
             </View>
 
             {/* 7-Day Meal Plan Day Selector */}
@@ -629,6 +684,121 @@ export default function MealsScreen() {
                   />
                 );
               });
+            })()}
+
+            {/* ── Weekly Shopping List ── */}
+            {aiMealPlan?.days && aiMealPlan.days.length > 0 && (() => {
+              // Aggregate all ingredients across all days
+              const ingredientMap: Record<string, { count: number; sources: string[] }> = {};
+              for (const day of aiMealPlan.days) {
+                for (const meal of (day.meals ?? [])) {
+                  const ingredients = meal.ingredients ?? meal.steps ?? [];
+                  for (const ing of ingredients) {
+                    const normalized = (typeof ing === "string" ? ing : String(ing)).trim();
+                    if (!normalized) continue;
+                    // Normalize to lowercase for grouping, keep original for display
+                    const key = normalized.toLowerCase();
+                    if (!ingredientMap[key]) {
+                      ingredientMap[key] = { count: 0, sources: [] };
+                    }
+                    ingredientMap[key].count += 1;
+                    const mealName = meal.name ?? "Meal";
+                    if (!ingredientMap[key].sources.includes(mealName)) {
+                      ingredientMap[key].sources.push(mealName);
+                    }
+                  }
+                }
+              }
+              const sortedIngredients = Object.entries(ingredientMap)
+                .sort((a, b) => b[1].count - a[1].count)
+                .map(([key, val]) => ({ key, display: key.charAt(0).toUpperCase() + key.slice(1), count: val.count, sources: val.sources }));
+              const checkedCount = sortedIngredients.filter(i => checkedIngredients[i.key]).length;
+
+              return (
+                <View style={{ marginTop: 16, marginBottom: 8 }}>
+                  <TouchableOpacity
+                    style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: showShoppingList ? 12 : 0 }}
+                    onPress={() => setShowShoppingList(!showShoppingList)}
+                  >
+                    <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+                      <Text style={{ fontSize: 16 }}>🛒</Text>
+                      <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 15 }}>Weekly Shopping List</Text>
+                      <View style={{ backgroundColor: "rgba(245,158,11,0.15)", borderRadius: 8, paddingHorizontal: 8, paddingVertical: 2 }}>
+                        <Text style={{ color: "#F59E0B", fontFamily: "Outfit_700Bold", fontSize: 11 }}>{checkedCount}/{sortedIngredients.length}</Text>
+                      </View>
+                    </View>
+                    <Text style={{ color: "#78350F", fontSize: 16 }}>{showShoppingList ? "▲" : "▼"}</Text>
+                  </TouchableOpacity>
+
+                  {showShoppingList && (
+                    <View style={{ backgroundColor: "#150A00", borderRadius: 16, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)", overflow: "hidden" }}>
+                      {/* Progress bar */}
+                      <View style={{ height: 3, backgroundColor: "rgba(245,158,11,0.10)" }}>
+                        <View style={{ height: 3, backgroundColor: "#F59E0B", width: `${sortedIngredients.length > 0 ? (checkedCount / sortedIngredients.length) * 100 : 0}%` as any, borderRadius: 2 }} />
+                      </View>
+                      <View style={{ padding: 14 }}>
+                        {/* Clear / Check All */}
+                        <View style={{ flexDirection: "row", justifyContent: "flex-end", gap: 12, marginBottom: 10 }}>
+                          <TouchableOpacity onPress={() => {
+                            const allChecked: Record<string, boolean> = {};
+                            sortedIngredients.forEach(i => { allChecked[i.key] = true; });
+                            setCheckedIngredients(allChecked);
+                          }}>
+                            <Text style={{ color: "#F59E0B", fontFamily: "Outfit_700Bold", fontSize: 11 }}>✓ Check All</Text>
+                          </TouchableOpacity>
+                          <TouchableOpacity onPress={() => setCheckedIngredients({})}>
+                            <Text style={{ color: "#78350F", fontFamily: "Outfit_700Bold", fontSize: 11 }}>✕ Clear All</Text>
+                          </TouchableOpacity>
+                        </View>
+                        {sortedIngredients.map((item, idx) => {
+                          const isChecked = !!checkedIngredients[item.key];
+                          return (
+                            <TouchableOpacity
+                              key={item.key}
+                              style={{
+                                flexDirection: "row",
+                                alignItems: "center",
+                                gap: 10,
+                                paddingVertical: 10,
+                                borderBottomWidth: idx < sortedIngredients.length - 1 ? 1 : 0,
+                                borderBottomColor: "rgba(245,158,11,0.06)",
+                                opacity: isChecked ? 0.5 : 1,
+                              }}
+                              onPress={() => setCheckedIngredients(prev => ({ ...prev, [item.key]: !prev[item.key] }))}
+                            >
+                              {/* Checkbox */}
+                              <View style={{
+                                width: 22, height: 22, borderRadius: 6,
+                                borderWidth: 2,
+                                borderColor: isChecked ? "#F59E0B" : "rgba(245,158,11,0.25)",
+                                backgroundColor: isChecked ? "#F59E0B" : "transparent",
+                                alignItems: "center", justifyContent: "center",
+                              }}>
+                                {isChecked && <Text style={{ color: "#FFF7ED", fontSize: 12, fontFamily: "Outfit_700Bold", lineHeight: 14 }}>✓</Text>}
+                              </View>
+                              {/* Ingredient name */}
+                              <View style={{ flex: 1 }}>
+                                <Text style={{
+                                  color: isChecked ? "#78350F" : "#FFF7ED",
+                                  fontFamily: "DMSans_500Medium",
+                                  fontSize: 14,
+                                  textDecorationLine: isChecked ? "line-through" : "none",
+                                }}>{item.display}</Text>
+                                {item.count > 1 && (
+                                  <Text style={{ color: "#78350F", fontSize: 10, marginTop: 1 }}>Used in {item.count} meals</Text>
+                                )}
+                              </View>
+                            </TouchableOpacity>
+                          );
+                        })}
+                        {sortedIngredients.length === 0 && (
+                          <Text style={{ color: "#78350F", fontSize: 13, textAlign: "center", paddingVertical: 16 }}>No ingredients found in your meal plan.</Text>
+                        )}
+                      </View>
+                    </View>
+                  )}
+                </View>
+              );
             })()}
 
             {/* Today's Logged Meals */}

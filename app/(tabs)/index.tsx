@@ -14,6 +14,7 @@ import { trpc } from "@/lib/trpc";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Sharing from "expo-sharing";
 import * as FileSystem from "expo-file-system/legacy";
+import * as MediaLibrary from "expo-media-library";
 import { useSubscription } from "@/hooks/use-subscription";
 import { PaywallModal } from "@/components/paywall-modal";
 import { TutorialOverlay, useTutorial } from "@/components/tutorial-overlay";
@@ -100,6 +101,7 @@ export default function HomeScreen() {
   const [targetBF, setTargetBF] = useState<{ target_bf: number; imageUrl?: string } | null>(null);
   const [showTargetImageModal, setShowTargetImageModal] = useState(false);
   const [sharing, setSharing] = useState(false);
+  const [savingToLibrary, setSavingToLibrary] = useState(false);
   const [onboardingChecked, setOnboardingChecked] = useState(false);
   const canUse = isAuthenticated || isGuest;
   const [tipIndex, setTipIndex] = React.useState(0);
@@ -412,16 +414,53 @@ export default function HomeScreen() {
                   <Text style={{ color: SF.gold, fontFamily: "Outfit_800ExtraBold", fontSize: 28, textAlign: "center" }}>{targetBF?.target_bf}% Body Fat</Text>
                   <Text style={{ color: SF.gold3, fontFamily: "DMSans_400Regular", fontSize: 14, textAlign: "center", marginTop: 4 }}>Your AI-generated target physique</Text>
                 </View>
-                <View style={{ flexDirection: "row", gap: 12 }}>
+                <View style={{ flexDirection: "row", gap: 10 }}>
+                  {/* Save to Photos Button */}
+                  <TouchableOpacity
+                    style={{ flex: 1, backgroundColor: "rgba(245,158,11,0.15)", borderRadius: 18, paddingVertical: 14, alignItems: "center", borderWidth: 1.5, borderColor: SF.gold, flexDirection: "row", justifyContent: "center", gap: 6, opacity: savingToLibrary ? 0.7 : 1 }}
+                    onPress={async () => {
+                      if (!targetBF?.imageUrl || Platform.OS === "web") {
+                        if (Platform.OS === "web") Alert.alert("Not Available", "Saving to photo library is only available on mobile devices.");
+                        return;
+                      }
+                      setSavingToLibrary(true);
+                      try {
+                        // Request permission
+                        const { status } = await MediaLibrary.requestPermissionsAsync();
+                        if (status !== "granted") {
+                          Alert.alert("Permission Required", "Please allow access to your photo library to save images.");
+                          return;
+                        }
+                        // Download to local cache
+                        const ext = targetBF.imageUrl.includes(".png") ? "png" : "jpg";
+                        const localUri = FileSystem.cacheDirectory + `target_body_save_${Date.now()}.${ext}`;
+                        const download = await FileSystem.downloadAsync(targetBF.imageUrl, localUri);
+                        // Save to photo library
+                        await MediaLibrary.saveToLibraryAsync(download.uri);
+                        Alert.alert("✅ Saved!", "Your target body image has been saved to your photo library.");
+                      } catch (e: any) {
+                        Alert.alert("Save Failed", e.message ?? "Could not save the image.");
+                      } finally {
+                        setSavingToLibrary(false);
+                      }
+                    }}
+                    disabled={savingToLibrary}
+                  >
+                    {savingToLibrary ? (
+                      <ActivityIndicator color={SF.gold} size="small" />
+                    ) : (
+                      <MaterialIcons name="save-alt" size={18} color={SF.gold} />
+                    )}
+                    <Text style={{ color: SF.gold, fontFamily: "Outfit_800ExtraBold", fontSize: 13 }}>{savingToLibrary ? "Saving..." : "Save"}</Text>
+                  </TouchableOpacity>
                   {/* Share Button */}
                   <TouchableOpacity
-                    style={{ flex: 1, backgroundColor: "rgba(245,158,11,0.15)", borderRadius: 18, paddingVertical: 16, alignItems: "center", borderWidth: 1.5, borderColor: SF.gold, flexDirection: "row", justifyContent: "center", gap: 8, opacity: sharing ? 0.7 : 1 }}
+                    style={{ flex: 1, backgroundColor: "rgba(245,158,11,0.15)", borderRadius: 18, paddingVertical: 14, alignItems: "center", borderWidth: 1.5, borderColor: SF.gold, flexDirection: "row", justifyContent: "center", gap: 6, opacity: sharing ? 0.7 : 1 }}
                     onPress={async () => {
                       if (!targetBF?.imageUrl) return;
                       setSharing(true);
                       try {
                         if (Platform.OS === "web") {
-                          // Web: use Web Share API with the URL directly
                           const available = await Sharing.isAvailableAsync();
                           if (available) {
                             await Sharing.shareAsync(targetBF.imageUrl, { dialogTitle: "Share your target physique" });
@@ -429,7 +468,6 @@ export default function HomeScreen() {
                             Alert.alert("Sharing not available", "Sharing is not supported on this browser.");
                           }
                         } else {
-                          // Native: download image to local cache, then share the file
                           const ext = targetBF.imageUrl.includes(".png") ? "png" : "jpg";
                           const localUri = FileSystem.cacheDirectory + `target_body_${Date.now()}.${ext}`;
                           const download = await FileSystem.downloadAsync(targetBF.imageUrl, localUri);
@@ -449,16 +487,16 @@ export default function HomeScreen() {
                     {sharing ? (
                       <ActivityIndicator color={SF.gold} size="small" />
                     ) : (
-                      <MaterialIcons name="share" size={20} color={SF.gold} />
+                      <MaterialIcons name="share" size={18} color={SF.gold} />
                     )}
-                    <Text style={{ color: SF.gold, fontFamily: "Outfit_800ExtraBold", fontSize: 15 }}>{sharing ? "Preparing..." : "Share"}</Text>
+                    <Text style={{ color: SF.gold, fontFamily: "Outfit_800ExtraBold", fontSize: 13 }}>{sharing ? "Preparing..." : "Share"}</Text>
                   </TouchableOpacity>
                   {/* Close Button */}
                   <TouchableOpacity
-                    style={{ flex: 1, backgroundColor: SF.gold, borderRadius: 18, paddingVertical: 16, alignItems: "center" }}
+                    style={{ flex: 1, backgroundColor: SF.gold, borderRadius: 18, paddingVertical: 14, alignItems: "center" }}
                     onPress={() => setShowTargetImageModal(false)}
                   >
-                    <Text style={{ color: SF.bg, fontFamily: "Outfit_800ExtraBold", fontSize: 17 }}>Close</Text>
+                    <Text style={{ color: SF.bg, fontFamily: "Outfit_800ExtraBold", fontSize: 15 }}>Close</Text>
                   </TouchableOpacity>
                 </View>
               </View>
