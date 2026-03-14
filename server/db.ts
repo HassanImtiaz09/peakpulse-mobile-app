@@ -108,7 +108,7 @@ export async function getActiveFitnessPlan(userId: number, planType: "workout" |
 }
 
 export async function createProgressPhoto(userId: number, data: {
-  photoUrl: string; note?: string; aiCommentary?: string; isBaseline?: boolean;
+  photoUrl: string; note?: string; aiCommentary?: string; isBaseline?: boolean; weightKg?: number; bodyFatPercent?: number;
 }) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");

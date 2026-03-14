@@ -1,0 +1,9 @@
+{
+  "query": "ALTER TABLE `progress_photos` ADD `weightKg` float;\nALTER TABLE `progress_photos` ADD `bodyFatPercent` float;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 24SvJuQr6QY484E.root --database TCxddYfhYS3he4wae2YPUE --execute ALTER TABLE `progress_photos` ADD `weightKg` float;\nALTER TABLE `progress_photos` ADD `bodyFatPercent` float;",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 1460
+}

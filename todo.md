@@ -345,3 +345,8 @@
 
 ## Round 19 — Collage Caption
 - [x] Pre-filled editable caption sheet before collage share: auto-generated from profile, copy to clipboard + share
+
+## Round 20 — Collage Enhancements
+- [x] Weight & BF% delta overlays on live comparison card and exported collage
+- [x] Timeline scrubber: select any two months to compare, drives comparison slider
+- [x] Collage export reflects scrubber-selected photos + stats overlay

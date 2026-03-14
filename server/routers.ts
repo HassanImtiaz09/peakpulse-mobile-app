@@ -279,7 +279,7 @@ export const appRouter = router({
   progress: router({
     // Photo upload and analysis — works for guests (no DB save for guests)
     uploadPhoto: guestOrUserProcedure
-      .input(z.object({ photoBase64: z.string(), note: z.string().optional(), isBaseline: z.boolean().optional() }))
+      .input(z.object({ photoBase64: z.string(), note: z.string().optional(), isBaseline: z.boolean().optional(), weightKg: z.number().optional(), bodyFatPercent: z.number().optional() }))
       .mutation(async ({ ctx, input }) => {
         const buffer = Buffer.from(input.photoBase64, "base64");
         const key = `progress/${ctx.user?.id ?? "guest"}/${Date.now()}-${randomSuffix()}.jpg`;
@@ -287,7 +287,7 @@ export const appRouter = router({
         // Only save to DB if user is authenticated
         let photoId: number | undefined;
         if (ctx.user) {
-          photoId = await db.createProgressPhoto(ctx.user.id, { photoUrl: url, note: input.note, isBaseline: input.isBaseline ?? false });
+          photoId = await db.createProgressPhoto(ctx.user.id, { photoUrl: url, note: input.note, isBaseline: input.isBaseline ?? false, weightKg: input.weightKg, bodyFatPercent: input.bodyFatPercent });
         }
         return { id: photoId, photoUrl: url };
       }),

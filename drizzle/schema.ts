@@ -73,6 +73,8 @@ export const progressPhotos = mysqlTable("progress_photos", {
   note: text("note"),
   aiCommentary: text("aiCommentary"),
   isBaseline: boolean("isBaseline").default(false).notNull(),
+  weightKg: float("weightKg"),
+  bodyFatPercent: float("bodyFatPercent"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 
