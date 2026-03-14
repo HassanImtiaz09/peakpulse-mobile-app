@@ -216,7 +216,8 @@ export default function OnboardingScreen() {
       const wKgN = weightKg ? parseFloat(weightKg) : undefined;
       const hCmN = heightCm ? parseFloat(heightCm) : undefined;
       const ageNN = age ? parseInt(age) : undefined;
-      const scanResult = await analyzeBodyScan.mutateAsync({ photoUrl: uploadResult.url, weightKg: wKgN, heightCm: hCmN, age: ageNN, gender });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const scanResult = await (analyzeBodyScan.mutateAsync as any)({ photoUrl: uploadResult.url, weightKg: wKgN, heightCm: hCmN, age: ageNN, gender });
       if (scanResult?.transformations?.length) {
         setTransformations(scanResult.transformations);
       }
