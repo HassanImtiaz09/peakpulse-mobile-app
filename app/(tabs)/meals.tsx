@@ -732,7 +732,19 @@ export default function MealsScreen() {
           style={{ flex: 1, paddingVertical: 10, borderRadius: 14, alignItems: "center", backgroundColor: "#150A00", borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}
           onPress={() => router.push("/barcode-scanner" as any)}
         >
-          <Text style={{ color: "#92400E", fontFamily: "Outfit_700Bold", fontSize: 12 }}>\ud83d\udd0d Barcode</Text>
+          <Text style={{ color: "#92400E", fontFamily: "Outfit_700Bold", fontSize: 12 }}>🔍 Barcode</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={{ flex: 1, paddingVertical: 10, borderRadius: 14, alignItems: "center", backgroundColor: "#150A00", borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}
+          onPress={() => router.push("/nutrition-charts" as any)}
+        >
+          <Text style={{ color: "#92400E", fontFamily: "Outfit_700Bold", fontSize: 12 }}>📊 Charts</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={{ flex: 1, paddingVertical: 10, borderRadius: 14, alignItems: "center", backgroundColor: "#150A00", borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}
+          onPress={() => router.push("/meal-photo-gallery" as any)}
+        >
+          <Text style={{ color: "#92400E", fontFamily: "Outfit_700Bold", fontSize: 12 }}>🖼️ Gallery</Text>
         </TouchableOpacity>
       </View>
 

@@ -128,3 +128,42 @@ export function CalorieProvider({ children }: { children: React.ReactNode }) {
 export function useCalories() {
   return useContext(CalorieContext);
 }
+
+/**
+ * Load meal entries for a range of past days (including today).
+ * Returns a map of date string (YYYY-MM-DD) to MealEntry[].
+ */
+export async function getHistoricalMeals(days: number): Promise<Record<string, MealEntry[]>> {
+  const result: Record<string, MealEntry[]> = {};
+  const today = new Date();
+  for (let i = 0; i < days; i++) {
+    const d = new Date(today);
+    d.setDate(d.getDate() - i);
+    const key = d.toISOString().split("T")[0];
+    try {
+      const raw = await AsyncStorage.getItem(`${MEALS_KEY}_${key}`);
+      result[key] = raw ? JSON.parse(raw) : [];
+    } catch {
+      result[key] = [];
+    }
+  }
+  return result;
+}
+
+/**
+ * Get all meal entries that have a photoUri, across the last N days.
+ * Returns entries sorted by loggedAt descending (newest first).
+ */
+export async function getMealPhotos(days: number): Promise<(MealEntry & { date: string })[]> {
+  const history = await getHistoricalMeals(days);
+  const photos: (MealEntry & { date: string })[] = [];
+  for (const [date, meals] of Object.entries(history)) {
+    for (const m of meals) {
+      if (m.photoUri) {
+        photos.push({ ...m, date });
+      }
+    }
+  }
+  photos.sort((a, b) => new Date(b.loggedAt).getTime() - new Date(a.loggedAt).getTime());
+  return photos;
+}

@@ -435,3 +435,14 @@
 - [x] Feature: Save custom food entry to meal log with full macro data
 - [x] Feature: Option to save custom food to favourites for quick re-logging
 - [x] Feature: Input validation for nutritional fields (numeric, non-negative)
+
+## Round 31 — Nutrition Charts + Meal Photo Gallery
+
+- [x] Feature: Daily nutrition summary chart showing calorie intake vs goal with bar chart
+- [x] Feature: Weekly nutrition trend chart showing 7-day calorie and macro history
+- [x] Feature: Toggle between daily and weekly chart views
+- [x] Feature: Macro breakdown pie/donut chart (protein, carbs, fat percentages)
+- [x] Feature: Meal photo gallery screen collecting all AI-estimated meal photos
+- [x] Feature: Food diary timeline with date grouping and meal type labels
+- [x] Feature: Tap photo to view fullscreen with meal details and macros
+- [x] Feature: Navigation to photo gallery from meals tab
