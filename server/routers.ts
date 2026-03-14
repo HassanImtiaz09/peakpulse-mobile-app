@@ -104,15 +104,12 @@ export const appRouter = router({
   bodyScan: router({
     // AI analysis — works for guests (no DB save for guests)
     analyze: guestOrUserProcedure
-      .input(z.object({ photoUrl: z.string() }))
+      .input(z.object({ photoUrl: z.string(), weightKg: z.number().optional(), heightCm: z.number().optional(), age: z.number().optional(), gender: z.string().optional() }))
       .mutation(async ({ ctx, input }) => {
-        const prompt = `You are an expert fitness assessment AI. Analyze this full-body photo and provide:
-1. estimated_body_fat: estimated body fat percentage (number)
-2. confidence_low: lower bound (number)
-3. confidence_high: upper bound (number)
-4. muscle_mass_estimate: "low"|"moderate"|"high"|"very_high"
-5. analysis_notes: 2-3 sentences about physique
-6. transformations: array of 5 objects for target BF levels [25,20,15,12,10], each with: target_bf, description, estimated_weeks, effort_level`;
+        const metricsNote = (input.weightKg && input.heightCm && input.age)
+          ? `User body metrics: weight ${input.weightKg}kg, height ${input.heightCm}cm, age ${input.age}, gender ${input.gender ?? 'male'}. Use these metrics alongside the photo to compute a more accurate body fat estimate using the BMI-based Deurenberg formula as a cross-check: BF% = (1.20 × BMI) + (0.23 × age) − (10.8 × (gender=male?1:0)) − 5.4. Reconcile the formula result with the visual assessment from the photo and report the best estimate.`
+          : 'No body metrics provided — estimate from photo only.';
+        const prompt = `You are an expert fitness assessment AI and body composition specialist. Analyze this full-body photo and provide:\n${metricsNote}\n\nReturn JSON with:\n1. estimated_body_fat: best estimated body fat percentage (number, 1 decimal place)\n2. confidence_low: lower bound (number)\n3. confidence_high: upper bound (number)\n4. muscle_mass_estimate: "low"|"moderate"|"high"|"very_high"\n5. analysis_notes: 2-3 sentences about physique and how metrics influenced the estimate\n6. transformations: array of 5 objects for target BF levels [25,20,15,12,10], each with: target_bf, description, estimated_weeks, effort_level`;
         const aiResult = await invokeLLM({
           messages: [
             { role: "system", content: prompt },

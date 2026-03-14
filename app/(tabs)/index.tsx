@@ -14,6 +14,7 @@ import { trpc } from "@/lib/trpc";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useSubscription } from "@/hooks/use-subscription";
 import { PaywallModal } from "@/components/paywall-modal";
+import { TutorialOverlay, useTutorial } from "@/components/tutorial-overlay";
 
 const TIPS_AND_TRICKS = [
   { icon: "💧", tip: "Drink 500ml of water first thing in the morning to kickstart your metabolism and hydration." },
@@ -89,6 +90,7 @@ export default function HomeScreen() {
   const router = useRouter();
   const { canAccess, isTrialActive, daysLeftInTrial, hasUsedTrial, isPaid, hasAdvancedAccess } = useSubscription();
   const [paywallFeature, setPaywallFeature] = useState<{ name: string; icon: string; tier: "basic" | "advanced"; desc?: string } | null>(null);
+  const { showTutorial, dismissTutorial } = useTutorial();
   const { user, isAuthenticated, loading: authLoading } = useAuth();
   const { guestProfile, isGuest, loading: guestLoading } = useGuestAuth();
   const [localProfile, setLocalProfile] = useState<any>(null);
@@ -115,7 +117,19 @@ export default function HomeScreen() {
   // Progress photos list — used for the photo count stat ring (syncs across devices)
   const { data: progressPhotos } = trpc.progress.getAll.useQuery(undefined, { enabled: isAuthenticated });
 
-  const { totalCalories: todayCalories, calorieGoal, meals: todayMeals } = useCalories();
+  const { totalCalories: todayCalories, calorieGoal, meals: todayMeals, setCalorieGoal } = useCalories();
+  // Sync TDEE from onboarding into CalorieProvider on first mount
+  useEffect(() => {
+    AsyncStorage.getItem("@user_tdee").then(raw => {
+      if (raw) {
+        const tdee = parseInt(raw, 10);
+        if (!isNaN(tdee) && tdee > 0 && tdee !== calorieGoal) {
+          setCalorieGoal(tdee);
+        }
+      }
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // ── Onboarding guard ─────────────────────────────────────────────────
   // For authenticated users: redirect to onboarding if profile not yet created.
@@ -245,6 +259,7 @@ export default function HomeScreen() {
       <PaywallModal visible={!!paywallFeature} onClose={() => setPaywallFeature(null)}
         featureName={paywallFeature?.name ?? ""} featureIcon={paywallFeature?.icon}
         requiredTier={paywallFeature?.tier ?? "basic"} description={paywallFeature?.desc} />
+      <TutorialOverlay visible={showTutorial} onDismiss={dismissTutorial} />
       <View style={{ flex: 1, backgroundColor: SF.bg }}>
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 40 }} style={{ flex: 1 }}>
           {/* ── Hero Header ── */}

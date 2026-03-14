@@ -350,3 +350,17 @@
 - [x] Weight & BF% delta overlays on live comparison card and exported collage
 - [x] Timeline scrubber: select any two months to compare, drives comparison slider
 - [x] Collage export reflects scrubber-selected photos + stats overlay
+
+## Round 21 — Onboarding Fixes & New Screens
+- [ ] Fix BF% estimation: body scan AI route must use photo + body metrics (weight, height, age, gender) to compute accurate BF%
+- [ ] Fix calorie sync: dashboard calorie target must read TDEE saved during onboarding, not hardcoded 2000 kcal
+- [x] Post-onboarding summary screen: show AI workout plan, meal recommendations, and before/after target photo
+- [x] Subscription plan selection screen: Free Trial (14 days) / Basic / Advanced shown once after summary
+- [x] First-time dashboard tutorial overlay: walkthrough of tabs and feature highlights per plan
+
+## Round 21
+- [ ] Fix BF% estimation from photo + body metrics
+- [ ] Fix calorie sync dashboard vs onboarding TDEE
+- [x] Post-onboarding summary screen
+- [x] Subscription plan selection screen
+- [x] First-time dashboard tutorial overlay

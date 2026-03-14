@@ -209,7 +209,10 @@ export default function OnboardingScreen() {
       const uploadResult = await uploadPhoto.mutateAsync({ base64, mimeType: "image/jpeg" });
       setScanPhotoUrl(uploadResult.url);
       await AsyncStorage.setItem("@onboarding_scan_photo", scanPhoto);
-      const scanResult = await analyzeBodyScan.mutateAsync({ photoUrl: uploadResult.url });
+      const wKgN = weightKg ? parseFloat(weightKg) : undefined;
+      const hCmN = heightCm ? parseFloat(heightCm) : undefined;
+      const ageNN = age ? parseInt(age) : undefined;
+      const scanResult = await analyzeBodyScan.mutateAsync({ photoUrl: uploadResult.url, weightKg: wKgN, heightCm: hCmN, age: ageNN, gender });
       if (scanResult?.transformations?.length) {
         setTransformations(scanResult.transformations);
       }
@@ -257,14 +260,8 @@ export default function OnboardingScreen() {
       // Plans generated on demand from tabs if this fails
     } finally {
       setGeneratingPlans(false);
-      // Navigate to visual reminder if we have both photos
-      const hasInitialPhoto = !!scanPhoto;
-      const hasTarget = !!selectedTransformation;
-      if (hasInitialPhoto && hasTarget) {
-        router.replace("/transformation-reminder" as any);
-      } else {
-        router.replace("/(tabs)" as any);
-      }
+      // Always go to the onboarding summary screen first (shows workout/meal/before-after)
+      router.replace("/onboarding-summary" as any);
     }
   }
 
