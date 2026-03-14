@@ -193,13 +193,20 @@ export default function MealsScreen() {
   const [swapMealData, setSwapMealData] = useState<{ name: string; calories: number; protein: number; carbs: number; fat: number } | null>(null);
   const [userDietaryPref, setUserDietaryPref] = useState("omnivore");
   const [userGoal, setUserGoal] = useState("build_muscle");
-  // Load user profile for personalised AI swaps
+  const [aiMealPlan, setAiMealPlan] = useState<any>(null);
+  // Load user profile and AI-generated meal plan for personalised suggestions
   React.useEffect(() => {
     AsyncStorage.getItem("@guest_profile").then(raw => {
       if (raw) {
         const p = JSON.parse(raw);
         if (p.dietaryPreference) setUserDietaryPref(p.dietaryPreference);
         if (p.goal) setUserGoal(p.goal);
+      }
+    });
+    // Load AI-generated meal plan from onboarding or plans tab
+    AsyncStorage.getItem("@guest_meal_plan").then(raw => {
+      if (raw) {
+        try { setAiMealPlan(JSON.parse(raw)); } catch {}
       }
     });
   }, []);
@@ -473,34 +480,53 @@ export default function MealsScreen() {
               </TouchableOpacity>
             </View>
 
-            {/* Suggested Meals Section with NanoBanana Photos */}
-            <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 15, marginBottom: 10 }}>Today's Suggested Meals</Text>
-            {MEAL_TYPES.map((type) => {
-              const swapped = swappedMeals[type];
-              const recipe = swapped ? { title: swapped.title, time: swapped.recipe.time, steps: swapped.recipe.steps } : MEAL_RECIPES[type];
-              const photo = swapped ? swapped.photo : MEAL_PHOTOS[type];
-              const cals = swapped ? swapped.calories : (type === "breakfast" ? 320 : type === "lunch" ? 520 : type === "dinner" ? 480 : 210);
-              const prot = swapped ? swapped.protein : (type === "breakfast" ? 18 : type === "lunch" ? 42 : type === "dinner" ? 38 : 12);
-              const carbs = swapped ? swapped.carbs : (type === "breakfast" ? 38 : type === "lunch" ? 45 : type === "dinner" ? 28 : 18);
-              const fat = swapped ? swapped.fat : (type === "breakfast" ? 8 : type === "lunch" ? 12 : type === "dinner" ? 18 : 10);
-              return (
-                <SuggestedMealCard
-                  key={type}
-                  type={type}
-                  recipe={recipe}
-                  photo={photo}
-                  isSwapped={!!swapped}
-                  onSwap={() => {
-                    setSwapMealType(type);
-                    setSwapMealData({ name: recipe.title, calories: cals, protein: prot, carbs, fat });
-                  }}
-                  onLog={() => {
-                    addMeal({ name: recipe.title, mealType: type, calories: cals, protein: prot, carbs, fat });
-                    Alert.alert("✅ Logged!", `${recipe.title} added to your meal log.`);
-                  }}
-                />
-              );
-            })}
+            {/* Suggested Meals Section — uses AI-generated plan when available */}
+            <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 15, marginBottom: 10 }}>
+              {aiMealPlan ? "Your AI Meal Plan" : "Today's Suggested Meals"}
+            </Text>
+            {(() => {
+              // If we have an AI-generated meal plan, extract meals from the first day
+              const aiDayMeals = aiMealPlan?.days?.[0]?.meals ?? [];
+              // Build a lookup: meal type -> AI meal data
+              const aiMealByType: Record<string, any> = {};
+              for (const m of aiDayMeals) {
+                const t = (m.type ?? "").toLowerCase();
+                const mapped = t.includes("breakfast") ? "breakfast" : t.includes("lunch") ? "lunch" : t.includes("dinner") ? "dinner" : "snack";
+                if (!aiMealByType[mapped]) aiMealByType[mapped] = m;
+              }
+              return MEAL_TYPES.map((type) => {
+                const swapped = swappedMeals[type];
+                const aiMeal = aiMealByType[type];
+                // Priority: swapped > AI plan > hardcoded default
+                const recipe = swapped
+                  ? { title: swapped.title, time: swapped.recipe.time, steps: swapped.recipe.steps }
+                  : aiMeal
+                    ? { title: aiMeal.name ?? "AI Meal", time: aiMeal.prepTime ?? "15 min", steps: aiMeal.ingredients ?? aiMeal.steps ?? [] }
+                    : MEAL_RECIPES[type];
+                const photo = swapped ? swapped.photo : MEAL_PHOTOS[type];
+                const cals = swapped ? swapped.calories : (aiMeal?.calories ?? (type === "breakfast" ? 320 : type === "lunch" ? 520 : type === "dinner" ? 480 : 210));
+                const prot = swapped ? swapped.protein : (aiMeal?.protein ?? (type === "breakfast" ? 18 : type === "lunch" ? 42 : type === "dinner" ? 38 : 12));
+                const carbs = swapped ? swapped.carbs : (aiMeal?.carbs ?? (type === "breakfast" ? 38 : type === "lunch" ? 45 : type === "dinner" ? 28 : 18));
+                const fat = swapped ? swapped.fat : (aiMeal?.fat ?? (type === "breakfast" ? 8 : type === "lunch" ? 12 : type === "dinner" ? 18 : 10));
+                return (
+                  <SuggestedMealCard
+                    key={type}
+                    type={type}
+                    recipe={recipe}
+                    photo={photo}
+                    isSwapped={!!swapped}
+                    onSwap={() => {
+                      setSwapMealType(type);
+                      setSwapMealData({ name: recipe.title, calories: cals, protein: prot, carbs, fat });
+                    }}
+                    onLog={() => {
+                      addMeal({ name: recipe.title, mealType: type, calories: cals, protein: prot, carbs, fat });
+                      Alert.alert("✅ Logged!", `${recipe.title} added to your meal log.`);
+                    }}
+                  />
+                );
+              });
+            })()}
 
             {/* Today's Logged Meals */}
             <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 15, marginBottom: 10, marginTop: 8 }}>

@@ -212,7 +212,8 @@ export default function OnboardingScreen() {
       });
       const uploadResult = await uploadPhoto.mutateAsync({ base64, mimeType: "image/jpeg" });
       setScanPhotoUrl(uploadResult.url);
-      await AsyncStorage.setItem("@onboarding_scan_photo", scanPhoto);
+      // Save the uploaded S3 URL (not the local URI) so the summary screen can display it
+      await AsyncStorage.setItem("@onboarding_scan_photo", uploadResult.url);
       const wKgN = weightKg ? parseFloat(weightKg) : undefined;
       const hCmN = heightCm ? parseFloat(heightCm) : undefined;
       const ageNN = age ? parseInt(age) : undefined;
@@ -227,6 +228,19 @@ export default function OnboardingScreen() {
         setScanBFHigh(scanResult.confidenceHigh ?? null);
         setScanNotes(scanResult.analysisNotes ?? null);
         await AsyncStorage.setItem("@scan_bf_estimate", String(scanResult.estimatedBodyFat));
+        // Save to body_scan_history so the dashboard BF% card picks it up
+        const scanEntry = {
+          estimatedBodyFat: scanResult.estimatedBodyFat,
+          confidenceLow: scanResult.confidenceLow,
+          confidenceHigh: scanResult.confidenceHigh,
+          analysisNotes: scanResult.analysisNotes,
+          date: new Date().toISOString(),
+          photoUrl: uploadResult.url,
+        };
+        const existingRaw = await AsyncStorage.getItem("@body_scan_history");
+        const existing = existingRaw ? JSON.parse(existingRaw) : [];
+        existing.push(scanEntry);
+        await AsyncStorage.setItem("@body_scan_history", JSON.stringify(existing));
       }
     } catch {
       animateTransition(10);
@@ -235,7 +249,11 @@ export default function OnboardingScreen() {
     }
   }
 
+  // Auto-generate plans ref to prevent double-invocation
+  const autoGenTriggered = useRef(false);
+
   async function handleGeneratePlansAndGo() {
+    if (generatingPlans) return;
     setGeneratingPlans(true);
     try {
       const effectiveGoal = selectedTransformation
@@ -262,11 +280,16 @@ export default function OnboardingScreen() {
         generateWorkout.mutateAsync({ goal: effectiveGoal, workoutStyle, daysPerWeek, fitnessLevel: "intermediate" }),
         generateMeal.mutateAsync({ goal: effectiveGoal, dietaryPreference: dietaryPref, dailyCalories: tdee ?? undefined }),
       ]);
+      // Save to BOTH keys so plans.tsx can read them (guest keys + cached keys)
       if (workoutResult.status === "fulfilled") {
-        await AsyncStorage.setItem("@cached_workout_plan", JSON.stringify(workoutResult.value));
+        const wpJson = JSON.stringify(workoutResult.value);
+        await AsyncStorage.setItem("@cached_workout_plan", wpJson);
+        await AsyncStorage.setItem("@guest_workout_plan", wpJson);
       }
       if (mealResult.status === "fulfilled") {
-        await AsyncStorage.setItem("@cached_meal_plan", JSON.stringify(mealResult.value));
+        const mpJson = JSON.stringify(mealResult.value);
+        await AsyncStorage.setItem("@cached_meal_plan", mpJson);
+        await AsyncStorage.setItem("@guest_meal_plan", mpJson);
       }
     } catch {
       // Plans generated on demand from tabs if this fails
@@ -510,7 +533,15 @@ export default function OnboardingScreen() {
     );
   }
 
-  // ── Plan generation / done screen (step 10) ──────────────────────────────
+  // ── Plan generation / done screen (step 10) — auto-generates plans ──────
+  // Auto-trigger plan generation when step 10 is reached
+  React.useEffect(() => {
+    if (step === 10 && !autoGenTriggered.current && !generatingPlans) {
+      autoGenTriggered.current = true;
+      handleGeneratePlansAndGo();
+    }
+  }, [step]);
+
   if (step === 10) {
     const wKg = weightKg ? parseFloat(weightKg) : null;
     const hCm = heightCm ? parseFloat(heightCm) : null;
@@ -526,7 +557,7 @@ export default function OnboardingScreen() {
             <View style={{ width: 100, height: 100, borderRadius: 30, backgroundColor: "rgba(245,158,11,0.15)", alignItems: "center", justifyContent: "center", marginBottom: 24, borderWidth: 2, borderColor: SF.gold }}>
               <Text style={{ fontSize: 52 }}>🔥</Text>
             </View>
-            <Text style={{ color: SF.gold, fontFamily: "Outfit_700Bold", fontSize: 11, letterSpacing: 2.5, marginBottom: 10 }}>YOU ARE ALL SET</Text>
+            <Text style={{ color: SF.gold, fontFamily: "Outfit_700Bold", fontSize: 11, letterSpacing: 2.5, marginBottom: 10 }}>BUILDING YOUR PLAN</Text>
             <Text style={{ color: SF.fg, fontFamily: "Outfit_800ExtraBold", fontSize: 32, textAlign: "center", marginBottom: 12 }}>
               {"Welcome,\n"}{name || "Athlete"}{"!"}
             </Text>
@@ -536,7 +567,7 @@ export default function OnboardingScreen() {
               </Text>
             ) : (
               <Text style={{ color: SF.gold3, fontSize: 15, textAlign: "center", lineHeight: 22, marginBottom: 20, fontFamily: "DMSans_400Regular" }}>
-                Tap below to generate your personalised AI workout and meal plan.
+                We're generating your personalised AI workout and meal plan now...
               </Text>
             )}
             {estimatedTDEE && (
@@ -562,25 +593,16 @@ export default function OnboardingScreen() {
                 </View>
               ))}
             </View>
-            <TouchableOpacity
-              style={{ width: "100%", backgroundColor: SF.gold, paddingVertical: 18, borderRadius: 18, alignItems: "center", shadowColor: SF.gold, shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.55, shadowRadius: 18, opacity: generatingPlans ? 0.7 : 1 }}
-              onPress={handleGeneratePlansAndGo}
-              disabled={generatingPlans}
-            >
-              {generatingPlans ? (
-                <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
-                  <ActivityIndicator color={SF.bg} size="small" />
-                  <Text style={{ color: SF.bg, fontFamily: "Outfit_800ExtraBold", fontSize: 17 }}>Generating Your Plans...</Text>
-                </View>
-              ) : (
-                <Text style={{ color: SF.bg, fontFamily: "Outfit_800ExtraBold", fontSize: 18 }}>Generate My Plans ⚡</Text>
-              )}
-            </TouchableOpacity>
-            {generatingPlans && (
-              <Text style={{ color: SF.muted, fontSize: 12, textAlign: "center", marginTop: 14, fontFamily: "DMSans_400Regular" }}>
-                {"AI is crafting your personalised workout and meal plan...\nThis takes about 10-15 seconds."}
-              </Text>
-            )}
+            {/* Auto-generating — show progress */}
+            <View style={{ width: "100%", backgroundColor: SF.gold, paddingVertical: 18, borderRadius: 18, alignItems: "center", shadowColor: SF.gold, shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.55, shadowRadius: 18, opacity: 0.9 }}>
+              <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+                <ActivityIndicator color={SF.bg} size="small" />
+                <Text style={{ color: SF.bg, fontFamily: "Outfit_800ExtraBold", fontSize: 17 }}>Generating Your Plans...</Text>
+              </View>
+            </View>
+            <Text style={{ color: SF.muted, fontSize: 12, textAlign: "center", marginTop: 14, fontFamily: "DMSans_400Regular" }}>
+              {"AI is crafting your personalised workout and meal plan...\nThis takes about 10-15 seconds."}
+            </Text>
           </View>
         </ImageBackground>
       </View>

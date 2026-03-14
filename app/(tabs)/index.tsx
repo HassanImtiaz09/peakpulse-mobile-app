@@ -4,7 +4,7 @@ import Animated, { useSharedValue, useAnimatedProps, withTiming, Easing } from "
 import { useCalories, type MealEntry } from "@/lib/calorie-context";
 import { scheduleAllDefaultReminders } from "@/lib/notifications";
 import {
-  ScrollView, Text, View, TouchableOpacity, ImageBackground, Image, StyleSheet, Platform,
+  ScrollView, Text, View, TouchableOpacity, ImageBackground, Image, StyleSheet, Platform, Modal,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { ScreenContainer } from "@/components/screen-container";
@@ -96,6 +96,7 @@ export default function HomeScreen() {
   const [localProfile, setLocalProfile] = useState<any>(null);
   const [latestBF, setLatestBF] = useState<{ bf: number; date: string; confidence: string } | null>(null);
   const [targetBF, setTargetBF] = useState<{ target_bf: number; imageUrl?: string } | null>(null);
+  const [showTargetImageModal, setShowTargetImageModal] = useState(false);
   const [onboardingChecked, setOnboardingChecked] = useState(false);
   const canUse = isAuthenticated || isGuest;
   const [tipIndex, setTipIndex] = React.useState(0);
@@ -371,6 +372,23 @@ export default function HomeScreen() {
                   )}
                 </View>
               </View>
+              {/* Target Body Image Preview */}
+              {targetBF?.imageUrl && (
+                <TouchableOpacity
+                  style={{ marginTop: 14, borderRadius: 16, overflow: "hidden", borderWidth: 1.5, borderColor: SF.gold }}
+                  activeOpacity={0.85}
+                  onPress={() => setShowTargetImageModal(true)}
+                >
+                  <Image source={{ uri: targetBF.imageUrl }} style={{ width: "100%", height: 180 }} resizeMode="cover" />
+                  <View style={{ position: "absolute", bottom: 0, left: 0, right: 0, backgroundColor: "rgba(10,5,0,0.80)", paddingVertical: 8, paddingHorizontal: 14, flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+                    <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+                      <Text style={{ fontSize: 14 }}>🎯</Text>
+                      <Text style={{ color: SF.gold, fontFamily: "Outfit_700Bold", fontSize: 13 }}>Your Goal: {targetBF.target_bf}% BF</Text>
+                    </View>
+                    <Text style={{ color: SF.gold2, fontFamily: "DMSans_500Medium", fontSize: 11 }}>Tap to expand</Text>
+                  </View>
+                </TouchableOpacity>
+              )}
               <TouchableOpacity
                 style={{ marginTop: 14, backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 12, paddingVertical: 10, alignItems: "center", borderWidth: 1, borderColor: SF.border2 }}
                 onPress={() => router.push("/(tabs)/scan" as any)}
@@ -379,6 +397,27 @@ export default function HomeScreen() {
               </TouchableOpacity>
             </View>
           )}
+
+          {/* ── Fullscreen Target Image Modal ── */}
+          <Modal visible={showTargetImageModal} animationType="fade" transparent statusBarTranslucent>
+            <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.95)" }}>
+              {targetBF?.imageUrl && (
+                <Image source={{ uri: targetBF.imageUrl }} style={{ flex: 1, width: "100%" }} resizeMode="contain" />
+              )}
+              <View style={{ position: "absolute", bottom: 0, left: 0, right: 0, paddingBottom: 60, paddingHorizontal: 24 }}>
+                <View style={{ alignSelf: "center", backgroundColor: "rgba(10,5,0,0.85)", borderRadius: 20, paddingHorizontal: 24, paddingVertical: 16, marginBottom: 20, borderWidth: 2, borderColor: SF.gold }}>
+                  <Text style={{ color: SF.gold, fontFamily: "Outfit_800ExtraBold", fontSize: 28, textAlign: "center" }}>{targetBF?.target_bf}% Body Fat</Text>
+                  <Text style={{ color: SF.gold3, fontFamily: "DMSans_400Regular", fontSize: 14, textAlign: "center", marginTop: 4 }}>Your AI-generated target physique</Text>
+                </View>
+                <TouchableOpacity
+                  style={{ backgroundColor: SF.gold, borderRadius: 18, paddingVertical: 16, alignItems: "center" }}
+                  onPress={() => setShowTargetImageModal(false)}
+                >
+                  <Text style={{ color: SF.bg, fontFamily: "Outfit_800ExtraBold", fontSize: 17 }}>Close</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </Modal>
 
           {/* ── Quick Actions ── */}
           <View style={styles.section}>

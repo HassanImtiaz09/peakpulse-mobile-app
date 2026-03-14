@@ -156,8 +156,9 @@ export const appRouter = router({
           (analysis.transformations ?? []).map(async (t: any) => {
             try {
               const bfDesc = getBFDescription(t.target_bf);
+              const genderHint = input.gender ?? 'male';
               const { url } = await generateImage({
-                prompt: `Fitness transformation visualization: athletic person with ${bfDesc}. Professional fitness photography, clean background, physique clearly visible. No face. Motivational and realistic.`,
+                prompt: `Realistic fitness transformation photo of the same ${genderHint} person shown in the reference image. The person should have ${bfDesc}. Keep the person's face, facial features, skin tone, and overall appearance identical to the reference photo. Show the full body from head to mid-thigh in a natural standing pose. Professional fitness photography with clean studio lighting and a neutral background. Photorealistic, motivational, and anatomically accurate.`,
                 originalImages: [{ url: input.photoUrl, mimeType: "image/jpeg" }],
               });
               return { ...t, imageUrl: url };

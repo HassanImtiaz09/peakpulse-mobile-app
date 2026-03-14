@@ -376,3 +376,11 @@
 - [x] Exercise demo videos in workout day view
 - [ ] Fullscreen active exercise timer screen with demo video
 - [ ] Per-session AI Coach & Form Check (Advanced-only, 3-day trial)
+
+## Round 23 — Body Scan Photo Fix + Auto Plan Generation
+
+- [x] Bug fix: onboarding body scan shows stale/old photo in transformation previews instead of the newly captured photo
+- [x] Bug fix: AI transformation image generation hides the user's face — prompt must preserve full face and body likeness
+- [x] Feature: persistent AI target body image reference visible on dashboard or body scan screen (goal visualization)
+- [x] Feature: auto-generate workout and meal plans during onboarding completion (no manual "Generate" button needed)
+- [x] Feature: display auto-generated plans in workout and meal tabs immediately after onboarding

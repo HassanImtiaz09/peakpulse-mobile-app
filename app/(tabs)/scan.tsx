@@ -57,6 +57,7 @@ export default function ScanScreen() {
   const canUse = isAuthenticated || isGuest;
 
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [uploadedPhotoUrl, setUploadedPhotoUrl] = useState<string | null>(null);
   const [step, setStep] = useState<Step>("upload");
   const [selectedTransform, setSelectedTransform] = useState<number | null>(null);
 
@@ -124,11 +125,27 @@ export default function ScanScreen() {
         base64 = await FileSystem.readAsStringAsync(selectedImage, { encoding: FileSystem.EncodingType.Base64 });
       }
       const { url } = await uploadPhoto.mutateAsync({ base64, mimeType: "image/jpeg" });
+      setUploadedPhotoUrl(url);
       const result = await analyzeScan.mutateAsync({ photoUrl: url });
+      // Save to body_scan_history so the dashboard BF% card picks it up
+      if (result?.estimatedBodyFat) {
+        const scanEntry = {
+          estimatedBodyFat: result.estimatedBodyFat,
+          confidenceLow: result.confidenceLow,
+          confidenceHigh: result.confidenceHigh,
+          analysisNotes: result.analysisNotes,
+          date: new Date().toISOString(),
+          photoUrl: url,
+        };
+        const existingRaw = await AsyncStorage.getItem("@body_scan_history");
+        const existing = existingRaw ? JSON.parse(existingRaw) : [];
+        existing.push(scanEntry);
+        await AsyncStorage.setItem("@body_scan_history", JSON.stringify(existing));
+      }
       if (!isAuthenticated) {
-        // Store result locally for guest users
-        await AsyncStorage.setItem("@guest_scan", JSON.stringify(result));
-        setGuestScanData(result);
+        // Store result locally for guest users (include the uploaded photo URL)
+        await AsyncStorage.setItem("@guest_scan", JSON.stringify({ ...result, uploadedPhotoUrl: url }));
+        setGuestScanData({ ...result, uploadedPhotoUrl: url });
         setStep("results");
       }
     } catch (e: any) {
@@ -139,6 +156,11 @@ export default function ScanScreen() {
 
   async function selectTargetAndProceed(bf: number) {
     setSelectedTransform(bf);
+    // Find the matching transformation to get the imageUrl
+    const matchingTransform = scan?.transformations?.find((t: any) => t.target_bf === bf);
+    if (matchingTransform) {
+      await AsyncStorage.setItem("@target_transformation", JSON.stringify(matchingTransform));
+    }
     if (isAuthenticated) {
       await updateProfile.mutateAsync({ targetBodyFat: bf });
     } else {
@@ -485,7 +507,7 @@ export default function ScanScreen() {
                     onPress={() => {
                       if (t.imageUrl) {
                         setPreviewTab("after");
-                        setPreviewModal({ visible: true, imageUrl: t.imageUrl, bf: t.target_bf, beforeUrl: selectedImage });
+                        setPreviewModal({ visible: true, imageUrl: t.imageUrl, bf: t.target_bf, beforeUrl: uploadedPhotoUrl ?? selectedImage });
                       }
                     }}
                     activeOpacity={0.85}
@@ -537,7 +559,7 @@ export default function ScanScreen() {
                         style={{ backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 10, paddingVertical: 6, paddingHorizontal: 10, borderWidth: 1, borderColor: "rgba(245,158,11,0.22)", alignSelf: "flex-start" }}
                         onPress={() => {
                           setPreviewTab("after");
-                          setPreviewModal({ visible: true, imageUrl: t.imageUrl, bf: t.target_bf, beforeUrl: selectedImage });
+                          setPreviewModal({ visible: true, imageUrl: t.imageUrl, bf: t.target_bf, beforeUrl: uploadedPhotoUrl ?? selectedImage });
                         }}
                       >
                         <Text style={{ color: "#FBBF24", fontSize: 11, fontFamily: "Outfit_700Bold" }}>🔍 Enlarge Preview</Text>
