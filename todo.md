@@ -342,3 +342,6 @@
 
 ## Round 18 — Progress Collage Export
 - [x] Progress tab: export branded side-by-side collage (first + latest) to camera roll and share sheet
+
+## Round 19 — Collage Caption
+- [x] Pre-filled editable caption sheet before collage share: auto-generated from profile, copy to clipboard + share

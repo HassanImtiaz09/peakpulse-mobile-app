@@ -2,13 +2,14 @@ import React, { useState, useRef, useCallback } from "react";
 import {
   ScrollView, Text, View, TouchableOpacity, ActivityIndicator, Alert, Image,
   TextInput, Platform, PanResponder, Animated, Dimensions, LayoutChangeEvent,
-  StyleSheet,
+  Modal, KeyboardAvoidingView,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import * as FileSystem from "expo-file-system/legacy";
 import * as MediaLibrary from "expo-media-library";
 import * as Sharing from "expo-sharing";
-import ViewShot, { captureRef } from "react-native-view-shot";
+import * as Clipboard from "expo-clipboard";
+import { captureRef } from "react-native-view-shot";
 import { useRouter } from "expo-router";
 import { ScreenContainer } from "@/components/screen-container";
 import { useAuth } from "@/hooks/use-auth";
@@ -21,7 +22,7 @@ const SLIDER_H = Math.round(CARD_W * (4 / 3));
 
 // ─── Collage template (captured off-screen by ViewShot) ──────────────────────
 const COLLAGE_W = 1080;
-const COLLAGE_H = 1350; // 4:5 portrait — ideal for Instagram
+const COLLAGE_H = 1350;
 const PHOTO_W = COLLAGE_W / 2;
 
 const CollageTemplate = React.forwardRef<View, {
@@ -32,24 +33,14 @@ const CollageTemplate = React.forwardRef<View, {
 }>(({ firstUrl, latestUrl, firstDate, latestDate }, ref) => (
   <View
     ref={ref as any}
-    style={{
-      width: COLLAGE_W,
-      height: COLLAGE_H,
-      backgroundColor: "#0A0500",
-      flexDirection: "column",
-      overflow: "hidden",
-    }}
+    style={{ width: COLLAGE_W, height: COLLAGE_H, backgroundColor: "#0A0500", flexDirection: "column", overflow: "hidden" }}
     collapsable={false}
   >
-    {/* Top label bar */}
     <View style={{ height: 100, backgroundColor: "#0A0500", flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 12 }}>
       <Text style={{ color: "#F59E0B", fontSize: 36, fontFamily: "Outfit_800ExtraBold", letterSpacing: 2 }}>⚡ PEAKPULSE</Text>
       <Text style={{ color: "#92400E", fontSize: 28, fontFamily: "DMSans_400Regular" }}>TRANSFORMATION</Text>
     </View>
-
-    {/* Side-by-side photos */}
     <View style={{ flex: 1, flexDirection: "row" }}>
-      {/* THEN */}
       <View style={{ width: PHOTO_W, position: "relative" }}>
         <Image source={{ uri: firstUrl }} style={{ width: PHOTO_W, height: COLLAGE_H - 100 - 110 }} resizeMode="cover" />
         <View style={{ position: "absolute", bottom: 0, left: 0, right: 0, backgroundColor: "rgba(10,5,0,0.72)", paddingVertical: 16, alignItems: "center" }}>
@@ -57,11 +48,7 @@ const CollageTemplate = React.forwardRef<View, {
           <Text style={{ color: "#92400E", fontSize: 20, fontFamily: "DMSans_400Regular", marginTop: 4 }}>{firstDate}</Text>
         </View>
       </View>
-
-      {/* Divider */}
       <View style={{ width: 3, backgroundColor: "#F59E0B" }} />
-
-      {/* NOW */}
       <View style={{ width: PHOTO_W - 3, position: "relative" }}>
         <Image source={{ uri: latestUrl }} style={{ width: PHOTO_W - 3, height: COLLAGE_H - 100 - 110 }} resizeMode="cover" />
         <View style={{ position: "absolute", bottom: 0, left: 0, right: 0, backgroundColor: "rgba(10,5,0,0.72)", paddingVertical: 16, alignItems: "center" }}>
@@ -70,8 +57,6 @@ const CollageTemplate = React.forwardRef<View, {
         </View>
       </View>
     </View>
-
-    {/* Bottom tag */}
     <View style={{ height: 110, backgroundColor: "#0A0500", alignItems: "center", justifyContent: "center" }}>
       <Text style={{ color: "#451A03", fontSize: 22, fontFamily: "DMSans_400Regular", letterSpacing: 1 }}>peakpulse.ai  •  #PeakPulseTransformation</Text>
     </View>
@@ -79,18 +64,184 @@ const CollageTemplate = React.forwardRef<View, {
 ));
 CollageTemplate.displayName = "CollageTemplate";
 
+// ─── Caption bottom sheet ─────────────────────────────────────────────────────
+function CaptionSheet({ visible, caption, onChangeCaption, onClose, onShare, sharing }: {
+  visible: boolean;
+  caption: string;
+  onChangeCaption: (t: string) => void;
+  onClose: () => void;
+  onShare: () => void;
+  sharing: boolean;
+}) {
+  const [copied, setCopied] = useState(false);
+
+  async function copyCaption() {
+    await Clipboard.setStringAsync(caption);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  }
+
+  return (
+    <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
+      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{ flex: 1 }}>
+        <TouchableOpacity style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.6)" }} activeOpacity={1} onPress={onClose} />
+        <View style={{
+          backgroundColor: "#0A0500",
+          borderTopLeftRadius: 28,
+          borderTopRightRadius: 28,
+          paddingHorizontal: 20,
+          paddingTop: 16,
+          paddingBottom: 36,
+          borderTopWidth: 1,
+          borderColor: "rgba(245,158,11,0.2)",
+        }}>
+          {/* Handle */}
+          <View style={{ width: 40, height: 4, backgroundColor: "#451A03", borderRadius: 2, alignSelf: "center", marginBottom: 16 }} />
+
+          {/* Title */}
+          <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 17, marginBottom: 4 }}>Customise Your Caption</Text>
+          <Text style={{ color: "#92400E", fontFamily: "DMSans_400Regular", fontSize: 12, marginBottom: 16 }}>
+            Edit the caption below — it will be copied to your clipboard so you can paste it when you post.
+          </Text>
+
+          {/* Caption textarea */}
+          <View style={{ backgroundColor: "#150A00", borderRadius: 16, borderWidth: 1, borderColor: "rgba(245,158,11,0.15)", marginBottom: 12 }}>
+            <TextInput
+              value={caption}
+              onChangeText={onChangeCaption}
+              multiline
+              numberOfLines={6}
+              style={{
+                color: "#FFF7ED",
+                fontFamily: "DMSans_400Regular",
+                fontSize: 14,
+                lineHeight: 22,
+                padding: 14,
+                minHeight: 130,
+                textAlignVertical: "top",
+              }}
+              placeholderTextColor="#451A03"
+            />
+          </View>
+
+          {/* Character count */}
+          <Text style={{ color: "#451A03", fontFamily: "DMSans_400Regular", fontSize: 11, textAlign: "right", marginBottom: 14 }}>
+            {caption.length} characters
+          </Text>
+
+          {/* Suggested hashtags */}
+          <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 6, marginBottom: 18 }}>
+            {["#Transformation", "#FitnessJourney", "#BodyRecomposition", "#PeakPulse", "#GymLife", "#FatLoss", "#BulkSeason"].map((tag) => (
+              <TouchableOpacity
+                key={tag}
+                style={{ backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 20, paddingHorizontal: 10, paddingVertical: 5, borderWidth: 1, borderColor: "rgba(245,158,11,0.18)" }}
+                onPress={() => {
+                  if (!caption.includes(tag)) onChangeCaption(caption.trimEnd() + " " + tag);
+                }}
+              >
+                <Text style={{ color: "#F59E0B", fontFamily: "DMSans_400Regular", fontSize: 12 }}>{tag}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+
+          {/* Action buttons */}
+          <View style={{ flexDirection: "row", gap: 10 }}>
+            {/* Copy to clipboard */}
+            <TouchableOpacity
+              style={{ flex: 1, backgroundColor: "rgba(245,158,11,0.12)", borderRadius: 14, paddingVertical: 14, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6, borderWidth: 1, borderColor: "rgba(245,158,11,0.2)" }}
+              onPress={copyCaption}
+            >
+              <Text style={{ fontSize: 16 }}>{copied ? "✅" : "📋"}</Text>
+              <Text style={{ color: "#F59E0B", fontFamily: "Outfit_700Bold", fontSize: 13 }}>
+                {copied ? "Copied!" : "Copy Caption"}
+              </Text>
+            </TouchableOpacity>
+
+            {/* Share collage */}
+            <TouchableOpacity
+              style={{ flex: 1.4, backgroundColor: sharing ? "rgba(245,158,11,0.4)" : "#F59E0B", borderRadius: 14, paddingVertical: 14, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6 }}
+              onPress={onShare}
+              disabled={sharing}
+            >
+              {sharing ? (
+                <>
+                  <ActivityIndicator size="small" color="#0A0500" />
+                  <Text style={{ color: "#0A0500", fontFamily: "Outfit_700Bold", fontSize: 13 }}>Saving…</Text>
+                </>
+              ) : (
+                <>
+                  <Text style={{ fontSize: 16 }}>📤</Text>
+                  <Text style={{ color: "#0A0500", fontFamily: "Outfit_700Bold", fontSize: 13 }}>Share Collage</Text>
+                </>
+              )}
+            </TouchableOpacity>
+          </View>
+
+          <Text style={{ color: "#451A03", fontFamily: "DMSans_400Regular", fontSize: 10, textAlign: "center", marginTop: 10 }}>
+            Caption is copied to clipboard automatically when you tap Share
+          </Text>
+        </View>
+      </KeyboardAvoidingView>
+    </Modal>
+  );
+}
+
+// ─── Helper: build default caption ───────────────────────────────────────────
+function buildDefaultCaption(params: {
+  name?: string;
+  goal?: string;
+  firstDate: string;
+  latestDate: string;
+}) {
+  const { name, goal, firstDate, latestDate } = params;
+
+  // Calculate weeks between first and latest
+  let weekStr = "";
+  try {
+    const first = new Date(firstDate);
+    const latest = new Date(latestDate);
+    const diffMs = latest.getTime() - first.getTime();
+    const weeks = Math.round(diffMs / (1000 * 60 * 60 * 24 * 7));
+    if (weeks > 0) weekStr = `${weeks} week${weeks !== 1 ? "s" : ""} of consistency`;
+  } catch { /* ignore */ }
+
+  const goalLabel = goal
+    ? goal.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())
+    : "my fitness goal";
+
+  const greeting = name ? `${name}'s ` : "";
+
+  const lines = [
+    `${weekStr ? weekStr.charAt(0).toUpperCase() + weekStr.slice(1) + " 💪" : "Consistency pays off 💪"}`,
+    ``,
+    `${greeting}transformation journey — working towards ${goalLabel}.`,
+    ``,
+    `Tracking every step with @PeakPulseAI ⚡`,
+    ``,
+    `#PeakPulseTransformation #FitnessJourney #Transformation #BodyRecomposition`,
+  ];
+
+  return lines.join("\n");
+}
+
 // ─── Drag-to-reveal comparison component ─────────────────────────────────────
-function ComparisonSlider({ firstUrl, latestUrl, firstDate, latestDate }: {
+function ComparisonSlider({ firstUrl, latestUrl, firstDate, latestDate, userName, userGoal }: {
   firstUrl: string;
   latestUrl: string;
   firstDate: string;
   latestDate: string;
+  userName?: string;
+  userGoal?: string;
 }) {
   const sliderX = useRef(new Animated.Value(CARD_W / 2)).current;
   const lastX = useRef(CARD_W / 2);
   const [containerW, setContainerW] = useState(CARD_W);
   const collageRef = useRef<View>(null);
   const [exporting, setExporting] = useState(false);
+  const [captionVisible, setCaptionVisible] = useState(false);
+  const [caption, setCaption] = useState(() =>
+    buildDefaultCaption({ name: userName, goal: userGoal, firstDate, latestDate })
+  );
 
   const panResponder = useRef(
     PanResponder.create({
@@ -122,14 +273,25 @@ function ComparisonSlider({ firstUrl, latestUrl, firstDate, latestDate }: {
     extrapolate: "clamp",
   });
 
-  async function exportCollage() {
+  // Step 1: open caption sheet
+  function openCaptionSheet() {
     if (Platform.OS === "web") {
       Alert.alert("Not supported", "Collage export is available on iOS and Android only.");
       return;
     }
+    // Refresh caption in case profile data changed
+    setCaption(buildDefaultCaption({ name: userName, goal: userGoal, firstDate, latestDate }));
+    setCaptionVisible(true);
+  }
+
+  // Step 2: capture + save + share (called from inside caption sheet)
+  async function doExport() {
     setExporting(true);
     try {
-      // Capture the off-screen collage template
+      // Copy caption to clipboard first so it's ready to paste
+      await Clipboard.setStringAsync(caption);
+
+      // Capture off-screen collage
       const uri = await captureRef(collageRef, {
         format: "jpg",
         quality: 0.95,
@@ -138,7 +300,7 @@ function ComparisonSlider({ firstUrl, latestUrl, firstDate, latestDate }: {
         result: "tmpfile",
       });
 
-      // Ask for media library permission
+      // Request media library permission
       const { status } = await MediaLibrary.requestPermissionsAsync();
       if (status !== "granted") {
         Alert.alert("Permission needed", "Allow PeakPulse to save to your photo library to export the collage.");
@@ -149,6 +311,9 @@ function ComparisonSlider({ firstUrl, latestUrl, firstDate, latestDate }: {
       // Save to camera roll
       await MediaLibrary.saveToLibraryAsync(uri);
 
+      // Close sheet before share sheet opens
+      setCaptionVisible(false);
+
       // Open share sheet
       const canShare = await Sharing.isAvailableAsync();
       if (canShare) {
@@ -158,7 +323,7 @@ function ComparisonSlider({ firstUrl, latestUrl, firstDate, latestDate }: {
           UTI: "public.jpeg",
         });
       } else {
-        Alert.alert("Saved!", "Your transformation collage has been saved to your photo library.");
+        Alert.alert("Saved! 🎉", "Your transformation collage has been saved to your photo library.\n\nYour caption is already copied to the clipboard — paste it when you post!");
       }
     } catch (e: any) {
       Alert.alert("Export failed", e?.message ?? "Something went wrong. Please try again.");
@@ -169,16 +334,20 @@ function ComparisonSlider({ firstUrl, latestUrl, firstDate, latestDate }: {
 
   return (
     <>
-      {/* Off-screen collage template — rendered at full resolution but hidden */}
+      {/* Off-screen collage template */}
       <View style={{ position: "absolute", top: -9999, left: -9999, width: COLLAGE_W, height: COLLAGE_H, opacity: 0 }} pointerEvents="none">
-        <CollageTemplate
-          ref={collageRef}
-          firstUrl={firstUrl}
-          latestUrl={latestUrl}
-          firstDate={firstDate}
-          latestDate={latestDate}
-        />
+        <CollageTemplate ref={collageRef} firstUrl={firstUrl} latestUrl={latestUrl} firstDate={firstDate} latestDate={latestDate} />
       </View>
+
+      {/* Caption sheet */}
+      <CaptionSheet
+        visible={captionVisible}
+        caption={caption}
+        onChangeCaption={setCaption}
+        onClose={() => setCaptionVisible(false)}
+        onShare={doExport}
+        sharing={exporting}
+      />
 
       <View
         style={{ marginHorizontal: 20, marginBottom: 24, borderRadius: 20, overflow: "hidden", backgroundColor: "#150A00", borderWidth: 1, borderColor: "rgba(245,158,11,0.18)" }}
@@ -192,18 +361,11 @@ function ComparisonSlider({ firstUrl, latestUrl, firstDate, latestDate }: {
 
         {/* Image comparison area */}
         <View style={{ width: "100%", height: SLIDER_H, position: "relative" }} {...panResponder.panHandlers}>
-          {/* LATEST photo (full-width background) */}
           <Image source={{ uri: latestUrl }} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: SLIDER_H }} resizeMode="cover" />
-
-          {/* FIRST photo clipped to left of divider */}
           <Animated.View style={{ position: "absolute", top: 0, left: 0, width: clipWidth, height: SLIDER_H, overflow: "hidden" }}>
             <Image source={{ uri: firstUrl }} style={{ width: containerW, height: SLIDER_H }} resizeMode="cover" />
           </Animated.View>
-
-          {/* Divider line */}
           <Animated.View style={{ position: "absolute", top: 0, left: sliderX, width: 2, height: SLIDER_H, backgroundColor: "#F59E0B", transform: [{ translateX: -1 }] }} />
-
-          {/* Drag handle */}
           <Animated.View style={{
             position: "absolute", top: SLIDER_H / 2 - 22, left: sliderX,
             transform: [{ translateX: -22 }], width: 44, height: 44, borderRadius: 22,
@@ -212,21 +374,17 @@ function ComparisonSlider({ firstUrl, latestUrl, firstDate, latestDate }: {
           }}>
             <Text style={{ color: "#0A0500", fontSize: 16, fontFamily: "Outfit_700Bold" }}>⇔</Text>
           </Animated.View>
-
-          {/* THEN label */}
           <View style={{ position: "absolute", top: 10, left: 10, backgroundColor: "rgba(10,5,0,0.72)", borderRadius: 8, paddingHorizontal: 10, paddingVertical: 4, borderWidth: 1, borderColor: "#F59E0B60" }}>
             <Text style={{ color: "#F59E0B", fontFamily: "Outfit_700Bold", fontSize: 10, letterSpacing: 1 }}>THEN</Text>
             <Text style={{ color: "#92400E", fontFamily: "DMSans_400Regular", fontSize: 9 }}>{firstDate}</Text>
           </View>
-
-          {/* NOW label */}
           <View style={{ position: "absolute", top: 10, right: 10, backgroundColor: "rgba(10,5,0,0.72)", borderRadius: 8, paddingHorizontal: 10, paddingVertical: 4, borderWidth: 1, borderColor: "#10B98160" }}>
             <Text style={{ color: "#10B981", fontFamily: "Outfit_700Bold", fontSize: 10, letterSpacing: 1 }}>NOW</Text>
             <Text style={{ color: "#92400E", fontFamily: "DMSans_400Regular", fontSize: 9 }}>{latestDate}</Text>
           </View>
         </View>
 
-        {/* Footer: dates + export button */}
+        {/* Footer */}
         <View style={{ paddingHorizontal: 16, paddingTop: 12, paddingBottom: 14 }}>
           <View style={{ flexDirection: "row", justifyContent: "space-between", marginBottom: 12 }}>
             <View style={{ alignItems: "center" }}>
@@ -240,30 +398,16 @@ function ComparisonSlider({ firstUrl, latestUrl, firstDate, latestDate }: {
             </View>
           </View>
 
-          {/* Export / Share button */}
+          {/* Export button — opens caption sheet */}
           <TouchableOpacity
-            style={{
-              backgroundColor: exporting ? "rgba(245,158,11,0.4)" : "#F59E0B",
-              borderRadius: 14, paddingVertical: 13,
-              flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8,
-            }}
-            onPress={exportCollage}
-            disabled={exporting}
+            style={{ backgroundColor: "#F59E0B", borderRadius: 14, paddingVertical: 13, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8 }}
+            onPress={openCaptionSheet}
           >
-            {exporting ? (
-              <>
-                <ActivityIndicator size="small" color="#0A0500" />
-                <Text style={{ color: "#0A0500", fontFamily: "Outfit_700Bold", fontSize: 14 }}>Generating collage…</Text>
-              </>
-            ) : (
-              <>
-                <Text style={{ fontSize: 16 }}>📤</Text>
-                <Text style={{ color: "#0A0500", fontFamily: "Outfit_700Bold", fontSize: 14 }}>Export & Share Collage</Text>
-              </>
-            )}
+            <Text style={{ fontSize: 16 }}>📤</Text>
+            <Text style={{ color: "#0A0500", fontFamily: "Outfit_700Bold", fontSize: 14 }}>Export & Share Collage</Text>
           </TouchableOpacity>
           <Text style={{ color: "#451A03", fontFamily: "DMSans_400Regular", fontSize: 10, textAlign: "center", marginTop: 6 }}>
-            Saves a 1080×1350 branded image to your photo library
+            Saves a 1080×1350 branded image · caption auto-copied to clipboard
           </Text>
         </View>
       </View>
@@ -282,6 +426,7 @@ export default function ProgressPhotosScreen() {
   const [analysis, setAnalysis] = useState<any>(null);
 
   const { data: photos, refetch } = trpc.progress.getAll.useQuery(undefined, { enabled: isAuthenticated });
+  const { data: profile } = trpc.profile.get.useQuery(undefined, { enabled: isAuthenticated });
   const uploadPhoto = trpc.progress.uploadPhoto.useMutation({
     onSuccess: () => { refetch(); setSelectedImage(null); setNote(""); Alert.alert("Saved!", "Progress photo saved."); },
     onError: (e) => Alert.alert("Error", e.message),
@@ -379,13 +524,15 @@ export default function ProgressPhotosScreen() {
           </View>
         </View>
 
-        {/* ── Transformation Comparison Slider (with Export) ── */}
+        {/* ── Transformation Comparison Slider (with Export + Caption) ── */}
         {showComparison ? (
           <ComparisonSlider
             firstUrl={firstPhoto.photoUrl}
             latestUrl={latestPhoto.photoUrl}
             firstDate={formatDate(firstPhoto.createdAt)}
             latestDate={formatDate(latestPhoto.createdAt)}
+            userName={(profile as any)?.name}
+            userGoal={(profile as any)?.goal}
           />
         ) : photos && photos.length === 1 ? (
           <View style={{ marginHorizontal: 20, marginBottom: 20, backgroundColor: "#150A00", borderRadius: 20, padding: 18, borderWidth: 1, borderColor: "rgba(245,158,11,0.12)", alignItems: "center" }}>
