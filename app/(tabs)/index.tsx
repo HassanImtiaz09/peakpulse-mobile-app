@@ -4,7 +4,7 @@ import Animated, { useSharedValue, useAnimatedProps, withTiming, Easing } from "
 import { useCalories, type MealEntry } from "@/lib/calorie-context";
 import { scheduleAllDefaultReminders } from "@/lib/notifications";
 import {
-  ScrollView, Text, View, TouchableOpacity, ImageBackground, Image, StyleSheet, Platform, Modal,
+  ScrollView, Text, View, TouchableOpacity, ImageBackground, Image, StyleSheet, Platform, Modal, ActivityIndicator, Alert,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { ScreenContainer } from "@/components/screen-container";
@@ -12,6 +12,8 @@ import { useAuth } from "@/hooks/use-auth";
 import { useGuestAuth } from "@/lib/guest-auth";
 import { trpc } from "@/lib/trpc";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as Sharing from "expo-sharing";
+import * as FileSystem from "expo-file-system/legacy";
 import { useSubscription } from "@/hooks/use-subscription";
 import { PaywallModal } from "@/components/paywall-modal";
 import { TutorialOverlay, useTutorial } from "@/components/tutorial-overlay";
@@ -97,6 +99,7 @@ export default function HomeScreen() {
   const [latestBF, setLatestBF] = useState<{ bf: number; date: string; confidence: string } | null>(null);
   const [targetBF, setTargetBF] = useState<{ target_bf: number; imageUrl?: string } | null>(null);
   const [showTargetImageModal, setShowTargetImageModal] = useState(false);
+  const [sharing, setSharing] = useState(false);
   const [onboardingChecked, setOnboardingChecked] = useState(false);
   const canUse = isAuthenticated || isGuest;
   const [tipIndex, setTipIndex] = React.useState(0);
@@ -409,12 +412,55 @@ export default function HomeScreen() {
                   <Text style={{ color: SF.gold, fontFamily: "Outfit_800ExtraBold", fontSize: 28, textAlign: "center" }}>{targetBF?.target_bf}% Body Fat</Text>
                   <Text style={{ color: SF.gold3, fontFamily: "DMSans_400Regular", fontSize: 14, textAlign: "center", marginTop: 4 }}>Your AI-generated target physique</Text>
                 </View>
-                <TouchableOpacity
-                  style={{ backgroundColor: SF.gold, borderRadius: 18, paddingVertical: 16, alignItems: "center" }}
-                  onPress={() => setShowTargetImageModal(false)}
-                >
-                  <Text style={{ color: SF.bg, fontFamily: "Outfit_800ExtraBold", fontSize: 17 }}>Close</Text>
-                </TouchableOpacity>
+                <View style={{ flexDirection: "row", gap: 12 }}>
+                  {/* Share Button */}
+                  <TouchableOpacity
+                    style={{ flex: 1, backgroundColor: "rgba(245,158,11,0.15)", borderRadius: 18, paddingVertical: 16, alignItems: "center", borderWidth: 1.5, borderColor: SF.gold, flexDirection: "row", justifyContent: "center", gap: 8, opacity: sharing ? 0.7 : 1 }}
+                    onPress={async () => {
+                      if (!targetBF?.imageUrl) return;
+                      setSharing(true);
+                      try {
+                        if (Platform.OS === "web") {
+                          // Web: use Web Share API with the URL directly
+                          const available = await Sharing.isAvailableAsync();
+                          if (available) {
+                            await Sharing.shareAsync(targetBF.imageUrl, { dialogTitle: "Share your target physique" });
+                          } else {
+                            Alert.alert("Sharing not available", "Sharing is not supported on this browser.");
+                          }
+                        } else {
+                          // Native: download image to local cache, then share the file
+                          const ext = targetBF.imageUrl.includes(".png") ? "png" : "jpg";
+                          const localUri = FileSystem.cacheDirectory + `target_body_${Date.now()}.${ext}`;
+                          const download = await FileSystem.downloadAsync(targetBF.imageUrl, localUri);
+                          await Sharing.shareAsync(download.uri, {
+                            mimeType: ext === "png" ? "image/png" : "image/jpeg",
+                            dialogTitle: "Share your AI target physique",
+                          });
+                        }
+                      } catch (e: any) {
+                        Alert.alert("Share Failed", e.message ?? "Could not share the image.");
+                      } finally {
+                        setSharing(false);
+                      }
+                    }}
+                    disabled={sharing}
+                  >
+                    {sharing ? (
+                      <ActivityIndicator color={SF.gold} size="small" />
+                    ) : (
+                      <MaterialIcons name="share" size={20} color={SF.gold} />
+                    )}
+                    <Text style={{ color: SF.gold, fontFamily: "Outfit_800ExtraBold", fontSize: 15 }}>{sharing ? "Preparing..." : "Share"}</Text>
+                  </TouchableOpacity>
+                  {/* Close Button */}
+                  <TouchableOpacity
+                    style={{ flex: 1, backgroundColor: SF.gold, borderRadius: 18, paddingVertical: 16, alignItems: "center" }}
+                    onPress={() => setShowTargetImageModal(false)}
+                  >
+                    <Text style={{ color: SF.bg, fontFamily: "Outfit_800ExtraBold", fontSize: 17 }}>Close</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
             </View>
           </Modal>

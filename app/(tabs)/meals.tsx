@@ -194,13 +194,19 @@ export default function MealsScreen() {
   const [userDietaryPref, setUserDietaryPref] = useState("omnivore");
   const [userGoal, setUserGoal] = useState("build_muscle");
   const [aiMealPlan, setAiMealPlan] = useState<any>(null);
+  const [selectedDayIndex, setSelectedDayIndex] = useState(0);
+  const [regenerating, setRegenerating] = useState(false);
+  const [localProfile, setLocalProfile] = useState<any>(null);
   // Load user profile and AI-generated meal plan for personalised suggestions
   React.useEffect(() => {
     AsyncStorage.getItem("@guest_profile").then(raw => {
       if (raw) {
-        const p = JSON.parse(raw);
-        if (p.dietaryPreference) setUserDietaryPref(p.dietaryPreference);
-        if (p.goal) setUserGoal(p.goal);
+        try {
+          const p = JSON.parse(raw);
+          if (p.dietaryPreference) setUserDietaryPref(p.dietaryPreference);
+          if (p.goal) setUserGoal(p.goal);
+          setLocalProfile(p);
+        } catch {}
       }
     });
     // Load AI-generated meal plan from onboarding or plans tab
@@ -210,6 +216,24 @@ export default function MealsScreen() {
       }
     });
   }, []);
+
+  // Regenerate meal plan mutation
+  const regenerateMealPlan = trpc.mealPlan.generate.useMutation({
+    onSuccess: (data) => {
+      setAiMealPlan(data);
+      setSelectedDayIndex(0);
+      setRegenerating(false);
+      // Persist to AsyncStorage for both keys
+      const json = JSON.stringify(data);
+      AsyncStorage.setItem("@guest_meal_plan", json);
+      AsyncStorage.setItem("@cached_meal_plan", json);
+      Alert.alert("\u2705 Meal Plan Updated", "Your new AI meal plan has been generated based on your current preferences.");
+    },
+    onError: (e) => {
+      setRegenerating(false);
+      Alert.alert("Error", e.message);
+    },
+  });
 
   const uploadPhoto = trpc.upload.photo.useMutation();
   const analyzePhoto = trpc.mealLog.analyzePhoto.useMutation();
@@ -481,12 +505,87 @@ export default function MealsScreen() {
             </View>
 
             {/* Suggested Meals Section — uses AI-generated plan when available */}
-            <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 15, marginBottom: 10 }}>
-              {aiMealPlan ? "Your AI Meal Plan" : "Today's Suggested Meals"}
-            </Text>
+            <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+              <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 15 }}>
+                {aiMealPlan ? "Your AI Meal Plan" : "Today's Suggested Meals"}
+              </Text>
+              {aiMealPlan && (
+                <TouchableOpacity
+                  style={{ flexDirection: "row", alignItems: "center", gap: 4, backgroundColor: "rgba(245,158,11,0.12)", borderRadius: 10, paddingHorizontal: 10, paddingVertical: 6, borderWidth: 1, borderColor: "rgba(245,158,11,0.25)", opacity: regenerating ? 0.7 : 1 }}
+                  onPress={() => {
+                    Alert.alert(
+                      "Regenerate Meal Plan?",
+                      "This will replace your current meal plan with a new AI-generated one based on your preferences.",
+                      [
+                        { text: "Cancel", style: "cancel" },
+                        {
+                          text: "Regenerate",
+                          style: "destructive",
+                          onPress: () => {
+                            setRegenerating(true);
+                            regenerateMealPlan.mutate({
+                              goal: userGoal,
+                              dietaryPreference: userDietaryPref,
+                              ramadanMode: false,
+                              weightKg: localProfile?.weightKg ?? undefined,
+                              heightCm: localProfile?.heightCm ?? undefined,
+                              age: localProfile?.age ?? undefined,
+                              gender: localProfile?.gender ?? undefined,
+                              activityLevel: localProfile?.activityLevel ?? undefined,
+                            });
+                          },
+                        },
+                      ]
+                    );
+                  }}
+                  disabled={regenerating}
+                >
+                  {regenerating ? (
+                    <ActivityIndicator color="#F59E0B" size="small" />
+                  ) : (
+                    <Text style={{ fontSize: 12 }}>🔄</Text>
+                  )}
+                  <Text style={{ color: "#F59E0B", fontFamily: "Outfit_700Bold", fontSize: 11 }}>{regenerating ? "Regenerating..." : "Regenerate"}</Text>
+                </TouchableOpacity>
+              )}
+            </View>
+
+            {/* 7-Day Meal Plan Day Selector */}
+            {aiMealPlan?.days && aiMealPlan.days.length > 1 && (
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 14 }} contentContainerStyle={{ gap: 6 }}>
+                {aiMealPlan.days.map((day: any, i: number) => {
+                  const dayLabel = day.day ?? `Day ${i + 1}`;
+                  const shortLabel = dayLabel.replace(/^Day\s*/i, "D").replace(/Monday/i, "Mon").replace(/Tuesday/i, "Tue").replace(/Wednesday/i, "Wed").replace(/Thursday/i, "Thu").replace(/Friday/i, "Fri").replace(/Saturday/i, "Sat").replace(/Sunday/i, "Sun");
+                  return (
+                    <TouchableOpacity
+                      key={i}
+                      style={{
+                        paddingHorizontal: 14,
+                        paddingVertical: 8,
+                        borderRadius: 12,
+                        backgroundColor: selectedDayIndex === i ? "#F59E0B" : "#150A00",
+                        borderWidth: 1,
+                        borderColor: selectedDayIndex === i ? "#F59E0B" : "rgba(245,158,11,0.10)",
+                        minWidth: 48,
+                        alignItems: "center",
+                      }}
+                      onPress={() => { setSelectedDayIndex(i); setSwappedMeals({}); }}
+                    >
+                      <Text style={{ color: selectedDayIndex === i ? "#FFF7ED" : "#92400E", fontFamily: "Outfit_700Bold", fontSize: 12 }}>{shortLabel}</Text>
+                      {day.meals && (
+                        <Text style={{ color: selectedDayIndex === i ? "rgba(255,247,237,0.7)" : "#78350F", fontSize: 9, marginTop: 2 }}>
+                          {day.meals.reduce((s: number, m: any) => s + (m.calories ?? 0), 0)} kcal
+                        </Text>
+                      )}
+                    </TouchableOpacity>
+                  );
+                })}
+              </ScrollView>
+            )}
+
             {(() => {
-              // If we have an AI-generated meal plan, extract meals from the first day
-              const aiDayMeals = aiMealPlan?.days?.[0]?.meals ?? [];
+              // If we have an AI-generated meal plan, extract meals from the selected day
+              const aiDayMeals = aiMealPlan?.days?.[selectedDayIndex]?.meals ?? [];
               // Build a lookup: meal type -> AI meal data
               const aiMealByType: Record<string, any> = {};
               for (const m of aiDayMeals) {
@@ -515,13 +614,17 @@ export default function MealsScreen() {
                     recipe={recipe}
                     photo={photo}
                     isSwapped={!!swapped}
+                    calories={cals}
+                    protein={prot}
+                    carbs={carbs}
+                    fat={fat}
                     onSwap={() => {
                       setSwapMealType(type);
                       setSwapMealData({ name: recipe.title, calories: cals, protein: prot, carbs, fat });
                     }}
                     onLog={() => {
                       addMeal({ name: recipe.title, mealType: type, calories: cals, protein: prot, carbs, fat });
-                      Alert.alert("✅ Logged!", `${recipe.title} added to your meal log.`);
+                      Alert.alert("\u2705 Logged!", `${recipe.title} added to your meal log.`);
                     }}
                   />
                 );
@@ -760,24 +863,20 @@ function MacroStat({ label, value, unit, color, goal }: { label: string; value: 
   );
 }
 
-function SuggestedMealCard({ type, recipe, photo, onLog, onSwap, isSwapped }: {
+function SuggestedMealCard({ type, recipe, photo, onLog, onSwap, isSwapped, calories, protein, carbs, fat }: {
   type: string;
   recipe: { title: string; time: string; steps: string[] };
   isSwapped?: boolean;
   photo: string;
+  calories: number;
+  protein: number;
+  carbs: number;
+  fat: number;
   onLog: () => void;
   onSwap: () => void;
 }) {
   const [expanded, setExpanded] = React.useState(false);
   const MEAL_ICONS_LOCAL: Record<string, string> = { breakfast: "🌅", lunch: "☀️", dinner: "🌙", snack: "🍎" };
-  const MEAL_CALS: Record<string, number> = { breakfast: 320, lunch: 520, dinner: 480, snack: 210 };
-  const MEAL_MACROS: Record<string, { p: number; c: number; f: number }> = {
-    breakfast: { p: 18, c: 38, f: 8 },
-    lunch: { p: 42, c: 45, f: 12 },
-    dinner: { p: 38, c: 28, f: 18 },
-    snack: { p: 12, c: 18, f: 10 },
-  };
-  const macros = MEAL_MACROS[type] ?? { p: 20, c: 30, f: 10 };
 
   return (
     <View style={{ backgroundColor: "#150A00", borderRadius: 18, marginBottom: 14, overflow: "hidden", borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}>
@@ -819,19 +918,19 @@ function SuggestedMealCard({ type, recipe, photo, onLog, onSwap, isSwapped }: {
         {/* Macros Row */}
         <View style={{ flexDirection: "row", gap: 8, marginBottom: 12 }}>
           <View style={{ flex: 1, backgroundColor: "#F9731610", borderRadius: 8, padding: 8, alignItems: "center" }}>
-            <Text style={{ color: "#FBBF24", fontFamily: "Outfit_800ExtraBold", fontSize: 15 }}>{MEAL_CALS[type]}</Text>
+            <Text style={{ color: "#FBBF24", fontFamily: "Outfit_800ExtraBold", fontSize: 15 }}>{calories}</Text>
             <Text style={{ color: "#92400E", fontSize: 10 }}>kcal</Text>
           </View>
           <View style={{ flex: 1, backgroundColor: "#3B82F610", borderRadius: 8, padding: 8, alignItems: "center" }}>
-            <Text style={{ color: "#3B82F6", fontFamily: "Outfit_800ExtraBold", fontSize: 15 }}>{macros.p}g</Text>
+            <Text style={{ color: "#3B82F6", fontFamily: "Outfit_800ExtraBold", fontSize: 15 }}>{protein}g</Text>
             <Text style={{ color: "#92400E", fontSize: 10 }}>protein</Text>
           </View>
           <View style={{ flex: 1, backgroundColor: "#22C55E10", borderRadius: 8, padding: 8, alignItems: "center" }}>
-            <Text style={{ color: "#FDE68A", fontFamily: "Outfit_800ExtraBold", fontSize: 15 }}>{macros.c}g</Text>
+            <Text style={{ color: "#FDE68A", fontFamily: "Outfit_800ExtraBold", fontSize: 15 }}>{carbs}g</Text>
             <Text style={{ color: "#92400E", fontSize: 10 }}>carbs</Text>
           </View>
           <View style={{ flex: 1, backgroundColor: "#FBBF2410", borderRadius: 8, padding: 8, alignItems: "center" }}>
-            <Text style={{ color: "#FBBF24", fontFamily: "Outfit_800ExtraBold", fontSize: 15 }}>{macros.f}g</Text>
+            <Text style={{ color: "#FBBF24", fontFamily: "Outfit_800ExtraBold", fontSize: 15 }}>{fat}g</Text>
             <Text style={{ color: "#92400E", fontSize: 10 }}>fat</Text>
           </View>
         </View>

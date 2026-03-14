@@ -229,10 +229,43 @@ export default function PlansScreen() {
               <View>
                 <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
                   <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 16 }}>Current Plan</Text>
-                  <View style={{ backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 8, paddingHorizontal: 10, paddingVertical: 4 }}>
-                    <Text style={{ color: "#FDE68A", fontSize: 11, fontFamily: "Outfit_700Bold" }}>ACTIVE</Text>
+                  <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+                    <View style={{ backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 8, paddingHorizontal: 10, paddingVertical: 4 }}>
+                      <Text style={{ color: "#FDE68A", fontSize: 11, fontFamily: "Outfit_700Bold" }}>ACTIVE</Text>
+                    </View>
                   </View>
                 </View>
+                {/* Regenerate Workout Plan Button */}
+                <TouchableOpacity
+                  style={{ backgroundColor: "rgba(245,158,11,0.12)", borderRadius: 14, paddingVertical: 12, alignItems: "center", marginBottom: 16, borderWidth: 1, borderColor: "rgba(245,158,11,0.25)", flexDirection: "row", justifyContent: "center", gap: 8, opacity: generateWorkout.isPending ? 0.7 : 1 }}
+                  onPress={() => {
+                    Alert.alert(
+                      "Regenerate Workout Plan?",
+                      "This will replace your current workout plan with a new AI-generated one based on your selected preferences.",
+                      [
+                        { text: "Cancel", style: "cancel" },
+                        {
+                          text: "Regenerate",
+                          style: "destructive",
+                          onPress: () => generateWorkout.mutate({ goal, workoutStyle, daysPerWeek }),
+                        },
+                      ]
+                    );
+                  }}
+                  disabled={generateWorkout.isPending}
+                >
+                  {generateWorkout.isPending ? (
+                    <>
+                      <ActivityIndicator color="#F59E0B" size="small" />
+                      <Text style={{ color: "#F59E0B", fontFamily: "Outfit_700Bold", fontSize: 13 }}>Regenerating...</Text>
+                    </>
+                  ) : (
+                    <>
+                      <Text style={{ fontSize: 14 }}>🔄</Text>
+                      <Text style={{ color: "#F59E0B", fontFamily: "Outfit_700Bold", fontSize: 13 }}>Regenerate Workout Plan</Text>
+                    </>
+                  )}
+                </TouchableOpacity>
                 {workoutPlan.insight && (
                   <View style={{ backgroundColor: "#7C3AED10", borderRadius: 12, padding: 12, marginBottom: 12, borderWidth: 1, borderColor: "rgba(245,158,11,0.12)" }}>
                     <Text style={{ color: "#FBBF24", fontSize: 13, lineHeight: 18 }}>✨ {String(workoutPlan.insight)}</Text>
@@ -327,6 +360,37 @@ export default function PlansScreen() {
                     <Text style={{ color: "#FDE68A", fontSize: 11, fontFamily: "Outfit_700Bold" }}>ACTIVE</Text>
                   </View>
                 </View>
+                {/* Regenerate Meal Plan Button */}
+                <TouchableOpacity
+                  style={{ backgroundColor: "rgba(245,158,11,0.12)", borderRadius: 14, paddingVertical: 12, alignItems: "center", marginBottom: 16, borderWidth: 1, borderColor: "rgba(245,158,11,0.25)", flexDirection: "row", justifyContent: "center", gap: 8, opacity: generateMeal.isPending ? 0.7 : 1 }}
+                  onPress={() => {
+                    Alert.alert(
+                      "Regenerate Meal Plan?",
+                      "This will replace your current meal plan with a new AI-generated one based on your selected preferences.",
+                      [
+                        { text: "Cancel", style: "cancel" },
+                        {
+                          text: "Regenerate",
+                          style: "destructive",
+                          onPress: () => generateMeal.mutate({ goal: mealGoal, dietaryPreference: dietaryPref, ramadanMode, weightKg: activeProfile?.weightKg ?? undefined, heightCm: activeProfile?.heightCm ?? undefined, age: activeProfile?.age ?? undefined, gender: activeProfile?.gender ?? undefined, activityLevel: activeProfile?.activityLevel ?? undefined }),
+                        },
+                      ]
+                    );
+                  }}
+                  disabled={generateMeal.isPending}
+                >
+                  {generateMeal.isPending ? (
+                    <>
+                      <ActivityIndicator color="#F59E0B" size="small" />
+                      <Text style={{ color: "#F59E0B", fontFamily: "Outfit_700Bold", fontSize: 13 }}>Regenerating...</Text>
+                    </>
+                  ) : (
+                    <>
+                      <Text style={{ fontSize: 14 }}>🔄</Text>
+                      <Text style={{ color: "#F59E0B", fontFamily: "Outfit_700Bold", fontSize: 13 }}>Regenerate Meal Plan</Text>
+                    </>
+                  )}
+                </TouchableOpacity>
                 {/* Macro summary */}
                 <View style={{ flexDirection: "row", gap: 8, marginBottom: 16 }}>
                   <MacroCard label="Calories" value={mealPlan.dailyCalories} unit="kcal" color="#FBBF24" />

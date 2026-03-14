@@ -384,3 +384,10 @@
 - [x] Feature: persistent AI target body image reference visible on dashboard or body scan screen (goal visualization)
 - [x] Feature: auto-generate workout and meal plans during onboarding completion (no manual "Generate" button needed)
 - [x] Feature: display auto-generated plans in workout and meal tabs immediately after onboarding
+
+## Round 24 — Regenerate Plans, 7-Day Meal Selector, Social Share Target Image
+
+- [x] Feature: Add "Regenerate Plans" button to the plans tab for refreshing AI workout plans after goal changes
+- [x] Feature: Add "Regenerate Plans" button to the meals tab for refreshing AI meal plans after goal changes
+- [x] Feature: 7-day meal plan day selector in the meals tab — browse all days of the AI-generated meal plan
+- [x] Feature: Social sharing for AI target body image on the dashboard (share to social media)
