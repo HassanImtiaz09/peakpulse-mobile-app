@@ -5,6 +5,7 @@ import {
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import * as FileSystem from "expo-file-system/legacy";
+import * as Clipboard from "expo-clipboard";
 import { ScreenContainer } from "@/components/screen-container";
 import { useAuth } from "@/hooks/use-auth";
 import { useGuestAuth } from "@/lib/guest-auth";
@@ -200,6 +201,24 @@ export default function MealsScreen() {
   const [localProfile, setLocalProfile] = useState<any>(null);
   const [showShoppingList, setShowShoppingList] = useState(false);
   const [checkedIngredients, setCheckedIngredients] = useState<Record<string, boolean>>({});
+
+  // Persist shopping list checked state
+  React.useEffect(() => {
+    AsyncStorage.getItem("@shopping_list_checked").then(raw => {
+      if (raw) {
+        try { setCheckedIngredients(JSON.parse(raw)); } catch {}
+      }
+    });
+  }, []);
+
+  // Save checked state whenever it changes
+  const updateCheckedIngredients = React.useCallback((updater: Record<string, boolean> | ((prev: Record<string, boolean>) => Record<string, boolean>)) => {
+    setCheckedIngredients(prev => {
+      const next = typeof updater === "function" ? updater(prev) : updater;
+      AsyncStorage.setItem("@shopping_list_checked", JSON.stringify(next));
+      return next;
+    });
+  }, []);
   // Load user profile and AI-generated meal plan for personalised suggestions
   React.useEffect(() => {
     AsyncStorage.getItem("@guest_profile").then(raw => {
@@ -737,16 +756,30 @@ export default function MealsScreen() {
                         <View style={{ height: 3, backgroundColor: "#F59E0B", width: `${sortedIngredients.length > 0 ? (checkedCount / sortedIngredients.length) * 100 : 0}%` as any, borderRadius: 2 }} />
                       </View>
                       <View style={{ padding: 14 }}>
-                        {/* Clear / Check All */}
+                        {/* Copy / Check All / Clear All */}
                         <View style={{ flexDirection: "row", justifyContent: "flex-end", gap: 12, marginBottom: 10 }}>
-                          <TouchableOpacity onPress={() => {
+                          <TouchableOpacity onPress={async () => {
+                            const uncheckedItems = sortedIngredients.filter(i => !checkedIngredients[i.key]);
+                            const allItems = uncheckedItems.length > 0 ? uncheckedItems : sortedIngredients;
+                            const text = allItems.map(i => `□ ${i.display}${i.count > 1 ? ` (x${i.count})` : ""}`).join("\n");
+                            const header = uncheckedItems.length > 0 && uncheckedItems.length < sortedIngredients.length
+                              ? `PeakPulse Shopping List (${uncheckedItems.length} remaining):\n\n`
+                              : `PeakPulse Shopping List (${allItems.length} items):\n\n`;
+                            await Clipboard.setStringAsync(header + text);
+                            Alert.alert("✅ Copied!", uncheckedItems.length > 0 && uncheckedItems.length < sortedIngredients.length
+                              ? `${uncheckedItems.length} unchecked items copied to clipboard.`
+                              : `${allItems.length} items copied to clipboard.`);
+                          }}>
+                            <Text style={{ color: "#3B82F6", fontFamily: "Outfit_700Bold", fontSize: 11 }}>📋 Copy</Text>
+                          </TouchableOpacity>
+                           <TouchableOpacity onPress={() => {
                             const allChecked: Record<string, boolean> = {};
                             sortedIngredients.forEach(i => { allChecked[i.key] = true; });
-                            setCheckedIngredients(allChecked);
+                            updateCheckedIngredients(allChecked);
                           }}>
                             <Text style={{ color: "#F59E0B", fontFamily: "Outfit_700Bold", fontSize: 11 }}>✓ Check All</Text>
                           </TouchableOpacity>
-                          <TouchableOpacity onPress={() => setCheckedIngredients({})}>
+                          <TouchableOpacity onPress={() => updateCheckedIngredients({})}>
                             <Text style={{ color: "#78350F", fontFamily: "Outfit_700Bold", fontSize: 11 }}>✕ Clear All</Text>
                           </TouchableOpacity>
                         </View>
@@ -764,7 +797,7 @@ export default function MealsScreen() {
                                 borderBottomColor: "rgba(245,158,11,0.06)",
                                 opacity: isChecked ? 0.5 : 1,
                               }}
-                              onPress={() => setCheckedIngredients(prev => ({ ...prev, [item.key]: !prev[item.key] }))}
+                              onPress={() => updateCheckedIngredients(prev => ({ ...prev, [item.key]: !prev[item.key] }))}
                             >
                               {/* Checkbox */}
                               <View style={{

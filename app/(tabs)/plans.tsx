@@ -8,6 +8,8 @@ import { useAuth } from "@/hooks/use-auth";
 import { useGuestAuth } from "@/lib/guest-auth";
 import { trpc } from "@/lib/trpc";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { VideoView, useVideoPlayer } from "expo-video";
+import { getExerciseDemo } from "@/lib/exercise-demos";
 
 const WORKOUT_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/yauqLuTRvanJUzsJ.jpg";
 const MEAL_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/yauqLuTRvanJUzsJ.jpg";
@@ -444,30 +446,126 @@ function MacroCard({ label, value, unit, color }: any) {
 function WorkoutDayCard({ day, onPress }: any) {
   const [expanded, setExpanded] = useState(false);
   return (
-    <TouchableOpacity
-      style={{ backgroundColor: "#150A00", borderRadius: 16, padding: 14, marginBottom: 8, borderWidth: 1, borderColor: day.isRest ? "rgba(245,158,11,0.10)" : "rgba(245,158,11,0.10)" }}
-      onPress={() => { setExpanded(!expanded); if (!day.isRest) onPress(); }}
-    >
-      <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-        <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
-          <View style={{ width: 36, height: 36, borderRadius: 10, backgroundColor: day.isRest ? "rgba(245,158,11,0.10)" : "rgba(245,158,11,0.10)", alignItems: "center", justifyContent: "center" }}>
-            <Text style={{ fontSize: 16 }}>{day.isRest ? "😴" : "💪"}</Text>
+    <View style={{ backgroundColor: "#150A00", borderRadius: 16, marginBottom: 8, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)", overflow: "hidden" }}>
+      <TouchableOpacity
+        style={{ padding: 14 }}
+        onPress={() => setExpanded(!expanded)}
+      >
+        <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+            <View style={{ width: 36, height: 36, borderRadius: 10, backgroundColor: "rgba(245,158,11,0.10)", alignItems: "center", justifyContent: "center" }}>
+              <Text style={{ fontSize: 16 }}>{day.isRest ? "😴" : "💪"}</Text>
+            </View>
+            <View>
+              <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 14 }}>{day.day}</Text>
+              <Text style={{ color: day.isRest ? "#FDE68A" : "#FBBF24", fontSize: 12 }}>{day.focus}</Text>
+            </View>
           </View>
-          <View>
-            <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 14 }}>{day.day}</Text>
-            <Text style={{ color: day.isRest ? "#FDE68A" : "#FBBF24", fontSize: 12 }}>{day.focus}</Text>
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+            {!day.isRest && <Text style={{ color: "#92400E", fontSize: 12 }}>{day.exercises?.length ?? 0} exercises</Text>}
+            <Text style={{ color: "#92400E", fontSize: 14 }}>{expanded ? "▲" : "▼"}</Text>
           </View>
         </View>
-        <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-          {!day.isRest && <Text style={{ color: "#92400E", fontSize: 12 }}>{day.exercises?.length ?? 0} exercises</Text>}
-          {!day.isRest && (
-            <View style={{ backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 8, paddingHorizontal: 10, paddingVertical: 4 }}>
-              <Text style={{ color: "#FBBF24", fontSize: 11, fontFamily: "Outfit_700Bold" }}>START →</Text>
-            </View>
-          )}
+      </TouchableOpacity>
+
+      {/* Expanded exercise list with video previews */}
+      {expanded && !day.isRest && (
+        <View style={{ paddingHorizontal: 14, paddingBottom: 14, gap: 10 }}>
+          {/* Start Workout button */}
+          <TouchableOpacity
+            style={{ backgroundColor: "#F59E0B", borderRadius: 12, paddingVertical: 10, alignItems: "center", marginBottom: 4 }}
+            onPress={onPress}
+          >
+            <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 13 }}>START WORKOUT →</Text>
+          </TouchableOpacity>
+
+          {day.exercises?.map((ex: any, idx: number) => (
+            <ExercisePreviewCard key={idx} exercise={ex} />
+          ))}
+        </View>
+      )}
+
+      {expanded && day.isRest && (
+        <View style={{ paddingHorizontal: 14, paddingBottom: 14 }}>
+          <Text style={{ color: "#FDE68A", fontFamily: "DMSans_400Regular", fontSize: 13, lineHeight: 18 }}>
+            Rest day — focus on recovery, stretching, and light movement. Your muscles grow during rest!
+          </Text>
+        </View>
+      )}
+    </View>
+  );
+}
+
+// ── Exercise Preview Card with Video Demo ──
+function ExercisePreviewCard({ exercise }: { exercise: any }) {
+  const [showVideo, setShowVideo] = useState(false);
+  const demo = getExerciseDemo(exercise.name ?? "");
+
+  return (
+    <View style={{ backgroundColor: "#0A0500", borderRadius: 14, borderWidth: 1, borderColor: "rgba(245,158,11,0.08)", overflow: "hidden" }}>
+      {/* Exercise info header */}
+      <View style={{ padding: 12 }}>
+        <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start" }}>
+          <View style={{ flex: 1 }}>
+            <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 14 }}>{exercise.name}</Text>
+            <View style={{ flexDirection: "row", gap: 12, marginTop: 4 }}>
+              <Text style={{ color: "#FBBF24", fontSize: 12 }}>{exercise.sets} sets</Text>
+              <Text style={{ color: "#FDE68A", fontSize: 12 }}>{exercise.reps} reps</Text>
+              {exercise.rest && <Text style={{ color: "#92400E", fontSize: 12 }}>⏱ {exercise.rest}</Text>}</View>
+            {exercise.muscleGroup && (
+              <View style={{ marginTop: 4, alignSelf: "flex-start", backgroundColor: "rgba(245,158,11,0.08)", borderRadius: 6, paddingHorizontal: 8, paddingVertical: 2 }}>
+                <Text style={{ color: "#92400E", fontSize: 10 }}>{exercise.muscleGroup}</Text>
+              </View>
+            )}
+          </View>
+          <TouchableOpacity
+            style={{ backgroundColor: showVideo ? "#F59E0B" : "rgba(245,158,11,0.12)", borderRadius: 8, paddingHorizontal: 10, paddingVertical: 6, borderWidth: 1, borderColor: "rgba(245,158,11,0.25)" }}
+            onPress={() => setShowVideo(!showVideo)}
+          >
+            <Text style={{ color: showVideo ? "#FFF7ED" : "#F59E0B", fontFamily: "Outfit_700Bold", fontSize: 11 }}>{showVideo ? "▲ Hide" : "▶ Demo"}</Text>
+          </TouchableOpacity>
+        </View>
+        {exercise.notes && (
+          <Text style={{ color: "#78350F", fontSize: 11, marginTop: 6, lineHeight: 15 }}>💡 {exercise.notes}</Text>
+        )}
+      </View>
+
+      {/* Video preview */}
+      {showVideo && (
+        <View style={{ paddingHorizontal: 12, paddingBottom: 12 }}>
+          <ExerciseMiniVideo videoUrl={demo.videoUrl} cue={demo.cue} />
+        </View>
+      )}
+    </View>
+  );
+}
+
+// ── Mini Video Player for Exercise Demos ──
+function ExerciseMiniVideo({ videoUrl, cue }: { videoUrl: string; cue: string }) {
+  const player = useVideoPlayer(videoUrl, (p) => {
+    p.loop = true;
+    p.muted = true;
+    p.play();
+  });
+
+  return (
+    <View>
+      <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 6 }}>
+        <Text style={{ color: "#F59E0B", fontFamily: "Outfit_700Bold", fontSize: 10, letterSpacing: 1 }}>FORM GUIDE</Text>
+        <View style={{ backgroundColor: "rgba(245,158,11,0.08)", borderRadius: 6, paddingHorizontal: 8, paddingVertical: 3 }}>
+          <Text style={{ color: "#92400E", fontSize: 9 }}>🔇 Muted · Looping</Text>
         </View>
       </View>
-    </TouchableOpacity>
+      <VideoView
+        player={player}
+        style={{ width: "100%", height: 160, borderRadius: 12, backgroundColor: "#000" }}
+        contentFit="cover"
+        nativeControls={false}
+      />
+      <Text style={{ color: "#FDE68A", fontFamily: "DMSans_400Regular", fontSize: 11, marginTop: 6, lineHeight: 16 }}>
+        💡 {cue}
+      </Text>
+    </View>
   );
 }
 

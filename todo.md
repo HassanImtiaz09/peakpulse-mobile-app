@@ -397,3 +397,9 @@
 - [x] Feature: Weekly meal prep shopping list aggregating ingredients across all 7 days of the AI meal plan into a checklist
 - [x] Feature: Save target body image to device photo library using expo-media-library (alongside share option on dashboard)
 - [x] Feature: Add "Regenerate Workout Plan" button on the meals tab so users can refresh both plans from one place
+
+## Round 26 — Shopping List Persistence, Copy to Clipboard, Exercise Video Previews
+
+- [x] Feature: Persist shopping list checked items to AsyncStorage so they survive app restarts
+- [x] Feature: Add "Copy to Clipboard" button on the weekly shopping list for pasting into other apps
+- [x] Feature: Add exercise video/GIF previews to workout plan cards for correct form guidance
