@@ -87,6 +87,14 @@ const config: ExpoConfig = {
   plugins: [
     "expo-router",
     [
+      "expo-media-library",
+      {
+        "photosPermission": "Allow PeakPulse to save your progress collage to your photo library.",
+        "savePhotosPermission": "Allow PeakPulse to save your progress collage to your photo library.",
+        "isAccessMediaLocationEnabled": true
+      }
+    ],
+    [
       "expo-audio",
       {
         microphonePermission: "Allow $(PRODUCT_NAME) to access your microphone.",

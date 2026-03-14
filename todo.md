@@ -339,3 +339,6 @@
 
 ## Round 17 — Progress Photo Comparison
 - [x] Progress tab: swipe/drag-to-reveal comparison slider between first and latest photo
+
+## Round 18 — Progress Collage Export
+- [x] Progress tab: export branded side-by-side collage (first + latest) to camera roll and share sheet
