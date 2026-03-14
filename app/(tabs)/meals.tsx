@@ -185,6 +185,13 @@ export default function MealsScreen() {
   const [activeTab, setActiveTab] = useState<"log" | "analyze">("log");
   const [mealType, setMealType] = useState("breakfast");
   const [mealName, setMealName] = useState("");
+  const [showCustomEntry, setShowCustomEntry] = useState(false);
+  const [customCalories, setCustomCalories] = useState("");
+  const [customProtein, setCustomProtein] = useState("");
+  const [customCarbs, setCustomCarbs] = useState("");
+  const [customFat, setCustomFat] = useState("");
+  const [customServing, setCustomServing] = useState("");
+  const [saveToFavOnLog, setSaveToFavOnLog] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [selectedBase64, setSelectedBase64] = useState<string | null>(null);
   const [analyzing, setAnalyzing] = useState(false);
@@ -611,12 +618,50 @@ export default function MealsScreen() {
 
   async function quickLogMeal() {
     if (!mealName.trim()) return;
-    await addMeal({ name: mealName.trim(), mealType, calories: 0, protein: 0, carbs: 0, fat: 0 });
-    if (isAuthenticated) {
-      dbLogMeal.mutate({ name: mealName.trim(), mealType });
+    if (showCustomEntry) {
+      // Custom entry with full macros
+      const cal = parseFloat(customCalories) || 0;
+      const prot = parseFloat(customProtein) || 0;
+      const carb = parseFloat(customCarbs) || 0;
+      const f = parseFloat(customFat) || 0;
+      const name = mealName.trim();
+      const serving = customServing.trim();
+
+      await addMeal({ name: serving ? `${name} (${serving})` : name, mealType, calories: cal, protein: prot, carbs: carb, fat: f });
+      if (isAuthenticated) {
+        dbLogMeal.mutate({ name: serving ? `${name} (${serving})` : name, mealType, calories: cal, protein: prot, carbs: carb, fat: f });
+      }
+
+      // Optionally save to favourites
+      if (saveToFavOnLog && cal > 0) {
+        addToFavourites({
+          name: serving ? `${name} (${serving})` : name,
+          mealType,
+          calories: Math.round(cal),
+          protein: Math.round(prot),
+          carbs: Math.round(carb),
+          fat: Math.round(f),
+          source: "manual",
+        });
+      }
+
+      setMealName("");
+      setCustomCalories("");
+      setCustomProtein("");
+      setCustomCarbs("");
+      setCustomFat("");
+      setCustomServing("");
+      setSaveToFavOnLog(false);
+      Alert.alert("\u2705 Logged!", `${name} — ${cal} kcal added to your log.`);
+    } else {
+      // Quick log (name only, no macros)
+      await addMeal({ name: mealName.trim(), mealType, calories: 0, protein: 0, carbs: 0, fat: 0 });
+      if (isAuthenticated) {
+        dbLogMeal.mutate({ name: mealName.trim(), mealType });
+      }
+      setMealName("");
+      Alert.alert("\u2705 Logged!", `${mealName} added to your log.`);
     }
-    setMealName("");
-    Alert.alert("✅ Logged!", `${mealName} added to your log.`);
   }
 
   if (!canUse) {
@@ -710,24 +755,134 @@ export default function MealsScreen() {
               ))}
             </View>
 
-            {/* Quick Log */}
+            {/* Quick Log / Custom Food Entry */}
             <View style={{ backgroundColor: "#150A00", borderRadius: 16, padding: 16, marginBottom: 16, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}>
-              <Text style={{ color: "#92400E", fontSize: 11, fontFamily: "Outfit_700Bold", marginBottom: 10, textTransform: "uppercase" }}>Quick Log</Text>
+              {/* Header with toggle */}
+              <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+                <Text style={{ color: "#92400E", fontSize: 11, fontFamily: "Outfit_700Bold", textTransform: "uppercase" }}>
+                  {showCustomEntry ? "Custom Food Entry" : "Quick Log"}
+                </Text>
+                <TouchableOpacity
+                  style={{ flexDirection: "row", alignItems: "center", gap: 4, backgroundColor: showCustomEntry ? "rgba(245,158,11,0.15)" : "rgba(245,158,11,0.06)", borderRadius: 8, paddingHorizontal: 8, paddingVertical: 4, borderWidth: 1, borderColor: showCustomEntry ? "rgba(245,158,11,0.25)" : "rgba(245,158,11,0.08)" }}
+                  onPress={() => setShowCustomEntry(!showCustomEntry)}
+                >
+                  <MaterialIcons name={showCustomEntry ? "edit-off" : "edit-note"} size={14} color={showCustomEntry ? "#F59E0B" : "#92400E"} />
+                  <Text style={{ color: showCustomEntry ? "#F59E0B" : "#92400E", fontSize: 10, fontFamily: "Outfit_700Bold" }}>
+                    {showCustomEntry ? "Simple" : "+ Nutrition"}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+
+              {/* Food name input */}
               <TextInput
                 value={mealName}
                 onChangeText={setMealName}
-                placeholder="What did you eat? (e.g. Chicken rice bowl)"
+                placeholder={showCustomEntry ? "Food name (e.g. Grilled chicken breast)" : "What did you eat? (e.g. Chicken rice bowl)"}
                 placeholderTextColor="#451A03"
-                style={{ backgroundColor: "#150A00", borderRadius: 10, paddingHorizontal: 14, paddingVertical: 12, color: "#FFF7ED", fontSize: 14, marginBottom: 12, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}
-                returnKeyType="done"
-                onSubmitEditing={quickLogMeal}
+                style={{ backgroundColor: "#150A00", borderRadius: 10, paddingHorizontal: 14, paddingVertical: 12, color: "#FFF7ED", fontSize: 14, marginBottom: showCustomEntry ? 10 : 12, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}
+                returnKeyType={showCustomEntry ? "next" : "done"}
+                onSubmitEditing={showCustomEntry ? undefined : quickLogMeal}
               />
+
+              {/* Custom nutrition fields */}
+              {showCustomEntry && (
+                <View style={{ gap: 8, marginBottom: 12 }}>
+                  {/* Serving size */}
+                  <TextInput
+                    value={customServing}
+                    onChangeText={setCustomServing}
+                    placeholder="Serving size (e.g. 150g, 1 cup, 2 slices)"
+                    placeholderTextColor="#451A03"
+                    style={{ backgroundColor: "#150A00", borderRadius: 10, paddingHorizontal: 14, paddingVertical: 10, color: "#FFF7ED", fontSize: 13, borderWidth: 1, borderColor: "rgba(245,158,11,0.08)" }}
+                    returnKeyType="next"
+                  />
+
+                  {/* Calories — full width */}
+                  <View style={{ flexDirection: "row", alignItems: "center", backgroundColor: "rgba(245,158,11,0.06)", borderRadius: 10, paddingHorizontal: 14, paddingVertical: 10, borderWidth: 1, borderColor: "rgba(245,158,11,0.12)" }}>
+                    <Text style={{ color: "#F59E0B", fontSize: 12, fontFamily: "Outfit_700Bold", width: 70 }}>Calories</Text>
+                    <TextInput
+                      value={customCalories}
+                      onChangeText={setCustomCalories}
+                      placeholder="0"
+                      placeholderTextColor="#451A03"
+                      keyboardType="numeric"
+                      style={{ flex: 1, color: "#FFF7ED", fontSize: 15, fontFamily: "Outfit_700Bold", paddingVertical: 0 }}
+                      returnKeyType="next"
+                    />
+                    <Text style={{ color: "#92400E", fontSize: 11 }}>kcal</Text>
+                  </View>
+
+                  {/* Macros row — 3 columns */}
+                  <View style={{ flexDirection: "row", gap: 6 }}>
+                    <View style={{ flex: 1, backgroundColor: "rgba(59,130,246,0.08)", borderRadius: 10, paddingHorizontal: 10, paddingVertical: 8, borderWidth: 1, borderColor: "rgba(59,130,246,0.12)" }}>
+                      <Text style={{ color: "#3B82F6", fontSize: 9, fontFamily: "Outfit_700Bold", marginBottom: 4 }}>PROTEIN</Text>
+                      <View style={{ flexDirection: "row", alignItems: "center" }}>
+                        <TextInput
+                          value={customProtein}
+                          onChangeText={setCustomProtein}
+                          placeholder="0"
+                          placeholderTextColor="#451A03"
+                          keyboardType="numeric"
+                          style={{ flex: 1, color: "#FFF7ED", fontSize: 14, fontFamily: "Outfit_700Bold", paddingVertical: 0 }}
+                          returnKeyType="next"
+                        />
+                        <Text style={{ color: "#3B82F6", fontSize: 10 }}>g</Text>
+                      </View>
+                    </View>
+                    <View style={{ flex: 1, backgroundColor: "rgba(253,232,138,0.08)", borderRadius: 10, paddingHorizontal: 10, paddingVertical: 8, borderWidth: 1, borderColor: "rgba(253,232,138,0.12)" }}>
+                      <Text style={{ color: "#FDE68A", fontSize: 9, fontFamily: "Outfit_700Bold", marginBottom: 4 }}>CARBS</Text>
+                      <View style={{ flexDirection: "row", alignItems: "center" }}>
+                        <TextInput
+                          value={customCarbs}
+                          onChangeText={setCustomCarbs}
+                          placeholder="0"
+                          placeholderTextColor="#451A03"
+                          keyboardType="numeric"
+                          style={{ flex: 1, color: "#FFF7ED", fontSize: 14, fontFamily: "Outfit_700Bold", paddingVertical: 0 }}
+                          returnKeyType="next"
+                        />
+                        <Text style={{ color: "#FDE68A", fontSize: 10 }}>g</Text>
+                      </View>
+                    </View>
+                    <View style={{ flex: 1, backgroundColor: "rgba(251,191,36,0.08)", borderRadius: 10, paddingHorizontal: 10, paddingVertical: 8, borderWidth: 1, borderColor: "rgba(251,191,36,0.12)" }}>
+                      <Text style={{ color: "#FBBF24", fontSize: 9, fontFamily: "Outfit_700Bold", marginBottom: 4 }}>FAT</Text>
+                      <View style={{ flexDirection: "row", alignItems: "center" }}>
+                        <TextInput
+                          value={customFat}
+                          onChangeText={setCustomFat}
+                          placeholder="0"
+                          placeholderTextColor="#451A03"
+                          keyboardType="numeric"
+                          style={{ flex: 1, color: "#FFF7ED", fontSize: 14, fontFamily: "Outfit_700Bold", paddingVertical: 0 }}
+                          returnKeyType="done"
+                        />
+                        <Text style={{ color: "#FBBF24", fontSize: 10 }}>g</Text>
+                      </View>
+                    </View>
+                  </View>
+
+                  {/* Save to favourites toggle */}
+                  <TouchableOpacity
+                    style={{ flexDirection: "row", alignItems: "center", gap: 8, paddingVertical: 4 }}
+                    onPress={() => setSaveToFavOnLog(!saveToFavOnLog)}
+                  >
+                    <View style={{ width: 20, height: 20, borderRadius: 4, borderWidth: 1.5, borderColor: saveToFavOnLog ? "#F59E0B" : "#451A03", backgroundColor: saveToFavOnLog ? "#F59E0B" : "transparent", alignItems: "center", justifyContent: "center" }}>
+                      {saveToFavOnLog && <MaterialIcons name="check" size={14} color="#FFF7ED" />}
+                    </View>
+                    <Text style={{ color: "#92400E", fontSize: 12, fontFamily: "Outfit_700Bold" }}>Save to Favourites for quick re-logging</Text>
+                  </TouchableOpacity>
+                </View>
+              )}
+
+              {/* Log button */}
               <TouchableOpacity
                 style={{ backgroundColor: "#F59E0B", borderRadius: 12, paddingVertical: 12, alignItems: "center", opacity: !mealName.trim() ? 0.5 : 1 }}
                 onPress={quickLogMeal}
                 disabled={!mealName.trim()}
               >
-                <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 14 }}>+ Log Meal</Text>
+                <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 14 }}>
+                  {showCustomEntry ? "+ Log Custom Food" : "+ Log Meal"}
+                </Text>
               </TouchableOpacity>
             </View>
 

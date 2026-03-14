@@ -427,3 +427,11 @@
 - [x] Feature: Add to favourites button on logged meals and scanned products
 - [x] Feature: One-tap logging from favourites list with correct macros
 - [x] Feature: Remove from favourites functionality
+
+## Round 30 — Custom Food Entry
+
+- [x] Feature: Custom food entry form with name, calories, protein, carbs, fat, and serving size fields
+- [x] Feature: Meal type selector (breakfast/lunch/dinner/snack) for custom entries
+- [x] Feature: Save custom food entry to meal log with full macro data
+- [x] Feature: Option to save custom food to favourites for quick re-logging
+- [x] Feature: Input validation for nutritional fields (numeric, non-negative)
