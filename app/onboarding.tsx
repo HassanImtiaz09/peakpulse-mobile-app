@@ -1,7 +1,7 @@
 import React, { useState, useRef } from "react";
 import {
   Text, View, TouchableOpacity, TextInput, ImageBackground,
-  ScrollView, Dimensions, Animated, Image, ActivityIndicator, Alert, Modal,
+  ScrollView, Dimensions, Animated, Image, ActivityIndicator, Alert, Modal, Platform,
 } from "react-native";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -10,6 +10,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { trpc } from "@/lib/trpc";
 import * as ImagePicker from "expo-image-picker";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { scheduleAllDefaultReminders } from "@/lib/notifications";
 
 const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get("window");
 
@@ -295,6 +296,10 @@ export default function OnboardingScreen() {
       // Plans generated on demand from tabs if this fails
     } finally {
       setGeneratingPlans(false);
+      // Schedule push notification reminders for workouts, meals, and water
+      if (Platform.OS !== "web") {
+        scheduleAllDefaultReminders().catch(() => {});
+      }
       // Always go to the onboarding summary screen first (shows workout/meal/before-after)
       router.replace("/onboarding-summary" as any);
     }

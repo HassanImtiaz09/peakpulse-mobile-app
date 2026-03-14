@@ -21,6 +21,10 @@ import {
   scheduleDailyCheckInReminder,
   cancelAllReminders,
   setAICoachReminderEnabled,
+  scheduleMealTimeReminders,
+  cancelMealTimeReminders,
+  scheduleWaterReminder,
+  cancelWaterReminder,
 } from "@/lib/notifications";
 
 const PREF_KEY = "@notif_preferences";
@@ -38,6 +42,15 @@ interface NotifPrefs {
   aiCoachEnabled: boolean;
   aiCoachHour: number;
   aiCoachMinute: number;
+  mealTimesEnabled: boolean;
+  breakfastHour: number;
+  breakfastMinute: number;
+  lunchHour: number;
+  lunchMinute: number;
+  dinnerHour: number;
+  dinnerMinute: number;
+  waterEnabled: boolean;
+  waterIntervalHours: number;
 }
 
 const DEFAULT_PREFS: NotifPrefs = {
@@ -53,6 +66,15 @@ const DEFAULT_PREFS: NotifPrefs = {
   aiCoachEnabled: true,
   aiCoachHour: 19,
   aiCoachMinute: 0,
+  mealTimesEnabled: true,
+  breakfastHour: 8,
+  breakfastMinute: 0,
+  lunchHour: 12,
+  lunchMinute: 30,
+  dinnerHour: 18,
+  dinnerMinute: 30,
+  waterEnabled: true,
+  waterIntervalHours: 2,
 };
 
 function formatTime(hour: number, minute: number): string {
@@ -153,7 +175,7 @@ export default function NotificationPreferencesScreen() {
   const [prefs, setPrefs] = useState<NotifPrefs>(DEFAULT_PREFS);
   const [saving, setSaving] = useState(false);
   const [hasPermission, setHasPermission] = useState(false);
-  const [activePicker, setActivePicker] = useState<"workout" | "meal" | "checkin" | "aiCoach" | null>(null);
+  const [activePicker, setActivePicker] = useState<"workout" | "meal" | "checkin" | "aiCoach" | "breakfast" | "lunch" | "dinner" | null>(null);
 
   useEffect(() => {
     loadPrefs();
@@ -204,6 +226,24 @@ export default function NotificationPreferencesScreen() {
       }
       await setAICoachReminderEnabled(newPrefs.aiCoachEnabled, newPrefs.aiCoachHour, newPrefs.aiCoachMinute);
 
+      // Meal-time reminders
+      if (newPrefs.mealTimesEnabled) {
+        await scheduleMealTimeReminders(
+          newPrefs.breakfastHour, newPrefs.breakfastMinute,
+          newPrefs.lunchHour, newPrefs.lunchMinute,
+          newPrefs.dinnerHour, newPrefs.dinnerMinute,
+        );
+      } else {
+        await cancelMealTimeReminders();
+      }
+
+      // Water reminder
+      if (newPrefs.waterEnabled) {
+        await scheduleWaterReminder(newPrefs.waterIntervalHours);
+      } else {
+        await cancelWaterReminder();
+      }
+
       Alert.alert("✅ Saved", "Your notification preferences have been updated.");
     } catch (e) {
       Alert.alert("Error", "Could not save preferences. Please try again.");
@@ -212,12 +252,14 @@ export default function NotificationPreferencesScreen() {
     }
   };
 
-  const toggleNotif = async (type: "workout" | "meal" | "checkin" | "aiCoach") => {
+  const toggleNotif = async (type: "workout" | "meal" | "checkin" | "aiCoach" | "mealTimes" | "water") => {
     const updated = { ...prefs };
     if (type === "workout") updated.workoutEnabled = !prefs.workoutEnabled;
     if (type === "meal") updated.mealEnabled = !prefs.mealEnabled;
     if (type === "checkin") updated.checkinEnabled = !prefs.checkinEnabled;
     if (type === "aiCoach") updated.aiCoachEnabled = !prefs.aiCoachEnabled;
+    if (type === "mealTimes") updated.mealTimesEnabled = !prefs.mealTimesEnabled;
+    if (type === "water") updated.waterEnabled = !prefs.waterEnabled;
     setPrefs(updated);
     await savePrefs(updated);
   };
@@ -236,6 +278,15 @@ export default function NotificationPreferencesScreen() {
     } else if (activePicker === "aiCoach") {
       updated.aiCoachHour = hour;
       updated.aiCoachMinute = minute;
+    } else if (activePicker === "breakfast") {
+      updated.breakfastHour = hour;
+      updated.breakfastMinute = minute;
+    } else if (activePicker === "lunch") {
+      updated.lunchHour = hour;
+      updated.lunchMinute = minute;
+    } else if (activePicker === "dinner") {
+      updated.dinnerHour = hour;
+      updated.dinnerMinute = minute;
     }
     setPrefs(updated);
     setActivePicker(null);
@@ -373,6 +424,88 @@ export default function NotificationPreferencesScreen() {
           )}
         </View>
 
+        {/* Meal-Time Reminders */}
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionIcon}>🍽️</Text>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.sectionTitle}>Meal-Time Reminders</Text>
+              <Text style={styles.sectionSub}>Get notified at breakfast, lunch, and dinner</Text>
+            </View>
+            <Switch
+              value={prefs.mealTimesEnabled}
+              onValueChange={() => toggleNotif("mealTimes")}
+              trackColor={{ false: "#333", true: "#F59E0B" }}
+              thumbColor={prefs.mealTimesEnabled ? "#fff" : "#888"}
+            />
+          </View>
+          {prefs.mealTimesEnabled && (
+            <>
+              <TouchableOpacity style={styles.timeRow} onPress={() => setActivePicker("breakfast")}>
+                <Text style={styles.timeLabel}>🍳 Breakfast</Text>
+                <View style={styles.timeValue}>
+                  <Text style={styles.timeValueText}>{formatTime(prefs.breakfastHour, prefs.breakfastMinute)}</Text>
+                  <Text style={styles.timeEditIcon}>✏️</Text>
+                </View>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.timeRow} onPress={() => setActivePicker("lunch")}>
+                <Text style={styles.timeLabel}>🥗 Lunch</Text>
+                <View style={styles.timeValue}>
+                  <Text style={styles.timeValueText}>{formatTime(prefs.lunchHour, prefs.lunchMinute)}</Text>
+                  <Text style={styles.timeEditIcon}>✏️</Text>
+                </View>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.timeRow} onPress={() => setActivePicker("dinner")}>
+                <Text style={styles.timeLabel}>🍲 Dinner</Text>
+                <View style={styles.timeValue}>
+                  <Text style={styles.timeValueText}>{formatTime(prefs.dinnerHour, prefs.dinnerMinute)}</Text>
+                  <Text style={styles.timeEditIcon}>✏️</Text>
+                </View>
+              </TouchableOpacity>
+            </>
+          )}
+        </View>
+
+        {/* Water Intake Reminder */}
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionIcon}>💧</Text>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.sectionTitle}>Water Reminder</Text>
+              <Text style={styles.sectionSub}>Periodic hydration nudges throughout the day</Text>
+            </View>
+            <Switch
+              value={prefs.waterEnabled}
+              onValueChange={() => toggleNotif("water")}
+              trackColor={{ false: "#333", true: "#F59E0B" }}
+              thumbColor={prefs.waterEnabled ? "#fff" : "#888"}
+            />
+          </View>
+          {prefs.waterEnabled && (
+            <View style={styles.timeRow}>
+              <Text style={styles.timeLabel}>Remind every</Text>
+              <View style={{ flexDirection: "row", gap: 8 }}>
+                {[1, 2, 3, 4].map((h) => (
+                  <TouchableOpacity
+                    key={h}
+                    style={[{
+                      backgroundColor: prefs.waterIntervalHours === h ? "#F59E0B" : "#1e1e3a",
+                      borderRadius: 8, paddingHorizontal: 12, paddingVertical: 8,
+                    }]}
+                    onPress={async () => {
+                      const updated = { ...prefs, waterIntervalHours: h };
+                      setPrefs(updated);
+                      await savePrefs(updated);
+                    }}
+                  >
+                    <Text style={{ color: prefs.waterIntervalHours === h ? "#fff" : "#888", fontSize: 13, fontFamily: "Outfit_700Bold" }}>{h}h</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
+          )}
+        </View>
+
         {/* AI Coach Weekly Reminder */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
@@ -427,7 +560,25 @@ export default function NotificationPreferencesScreen() {
               🤖 AI Coach report every Sunday at {formatTime(prefs.aiCoachHour, prefs.aiCoachMinute)}
             </Text>
           )}
-          {!prefs.workoutEnabled && !prefs.mealEnabled && !prefs.checkinEnabled && !prefs.aiCoachEnabled && (
+          {prefs.mealTimesEnabled && (
+            <>
+              <Text style={styles.summaryItem}>
+                🍳 Breakfast at {formatTime(prefs.breakfastHour, prefs.breakfastMinute)} daily
+              </Text>
+              <Text style={styles.summaryItem}>
+                🥗 Lunch at {formatTime(prefs.lunchHour, prefs.lunchMinute)} daily
+              </Text>
+              <Text style={styles.summaryItem}>
+                🍲 Dinner at {formatTime(prefs.dinnerHour, prefs.dinnerMinute)} daily
+              </Text>
+            </>
+          )}
+          {prefs.waterEnabled && (
+            <Text style={styles.summaryItem}>
+              💧 Water reminder every {prefs.waterIntervalHours} hour{prefs.waterIntervalHours > 1 ? "s" : ""}
+            </Text>
+          )}
+          {!prefs.workoutEnabled && !prefs.mealEnabled && !prefs.checkinEnabled && !prefs.aiCoachEnabled && !prefs.mealTimesEnabled && !prefs.waterEnabled && (
             <Text style={styles.summaryItem}>All reminders are currently off.</Text>
           )}
         </View>
@@ -447,18 +598,27 @@ export default function NotificationPreferencesScreen() {
           activePicker === "workout" ? prefs.workoutHour :
           activePicker === "meal" ? prefs.mealHour :
           activePicker === "aiCoach" ? prefs.aiCoachHour :
+          activePicker === "breakfast" ? prefs.breakfastHour :
+          activePicker === "lunch" ? prefs.lunchHour :
+          activePicker === "dinner" ? prefs.dinnerHour :
           prefs.checkinHour
         }
         minute={
           activePicker === "workout" ? prefs.workoutMinute :
           activePicker === "meal" ? prefs.mealMinute :
           activePicker === "aiCoach" ? prefs.aiCoachMinute :
+          activePicker === "breakfast" ? prefs.breakfastMinute :
+          activePicker === "lunch" ? prefs.lunchMinute :
+          activePicker === "dinner" ? prefs.dinnerMinute :
           prefs.checkinMinute
         }
         title={
           activePicker === "workout" ? "Set Workout Reminder" :
           activePicker === "meal" ? "Set Meal Log Reminder" :
           activePicker === "aiCoach" ? "Set AI Coach Reminder (Sunday)" :
+          activePicker === "breakfast" ? "Set Breakfast Reminder" :
+          activePicker === "lunch" ? "Set Lunch Reminder" :
+          activePicker === "dinner" ? "Set Dinner Reminder" :
           "Set Check-In Reminder"
         }
         onConfirm={handleTimeConfirm}

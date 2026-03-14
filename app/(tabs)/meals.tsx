@@ -202,6 +202,53 @@ export default function MealsScreen() {
   const [showShoppingList, setShowShoppingList] = useState(false);
   const [checkedIngredients, setCheckedIngredients] = useState<Record<string, boolean>>({});
 
+  // Water intake tracker
+  const [waterIntake, setWaterIntake] = useState(0); // in ml
+  const [waterGoal, setWaterGoal] = useState(2500); // daily goal in ml
+  const WATER_QUICK_ADD = [250, 500, 750]; // ml options
+
+  // Load water intake from AsyncStorage (keyed by date)
+  React.useEffect(() => {
+    const today = new Date().toISOString().split("T")[0];
+    AsyncStorage.getItem(`@water_intake_${today}`).then(raw => {
+      if (raw) try { setWaterIntake(JSON.parse(raw)); } catch {}
+    });
+    AsyncStorage.getItem("@water_goal").then(raw => {
+      if (raw) try { setWaterGoal(JSON.parse(raw)); } catch {}
+    });
+  }, []);
+
+  const addWater = React.useCallback((ml: number) => {
+    setWaterIntake(prev => {
+      const next = Math.max(0, prev + ml);
+      const today = new Date().toISOString().split("T")[0];
+      AsyncStorage.setItem(`@water_intake_${today}`, JSON.stringify(next));
+      if (ml > 0 && Platform.OS !== "web") {
+        const Haptics = require("expo-haptics");
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      }
+      return next;
+    });
+  }, []);
+
+  const updateWaterGoal = React.useCallback(() => {
+    Alert.prompt
+      ? Alert.prompt("Daily Water Goal", "Enter your daily water goal in ml:", [
+          { text: "Cancel", style: "cancel" },
+          { text: "Save", onPress: (val?: string) => {
+            const n = parseInt(val ?? "", 10);
+            if (n > 0) { setWaterGoal(n); AsyncStorage.setItem("@water_goal", JSON.stringify(n)); }
+          }},
+        ], "plain-text", String(waterGoal))
+      : (() => {
+          const goals = [2000, 2500, 3000, 3500, 4000];
+          Alert.alert("Daily Water Goal", "Select your daily water goal:", [
+            ...goals.map(g => ({ text: `${g} ml (${(g / 1000).toFixed(1)}L)`, onPress: () => { setWaterGoal(g); AsyncStorage.setItem("@water_goal", JSON.stringify(g)); } })),
+            { text: "Cancel", style: "cancel" as const },
+          ]);
+        })();
+  }, [waterGoal]);
+
   // Persist shopping list checked state
   React.useEffect(() => {
     AsyncStorage.getItem("@shopping_list_checked").then(raw => {
@@ -618,6 +665,78 @@ export default function MealsScreen() {
             )}
 
             {/* Suggested Meals Section — uses AI-generated plan when available */}
+            {/* ── Water Intake Tracker ── */}
+            <View style={{ backgroundColor: "#150A00", borderRadius: 20, padding: 16, marginBottom: 16, borderWidth: 1, borderColor: "rgba(59,130,246,0.15)" }}>
+              <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+                <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+                  <Text style={{ fontSize: 20 }}>💧</Text>
+                  <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 16 }}>Water Intake</Text>
+                </View>
+                <TouchableOpacity onPress={updateWaterGoal}>
+                  <Text style={{ color: "#3B82F6", fontFamily: "Outfit_700Bold", fontSize: 11 }}>Goal: {waterGoal}ml</Text>
+                </TouchableOpacity>
+              </View>
+
+              {/* Progress bar */}
+              <View style={{ marginBottom: 12 }}>
+                <View style={{ flexDirection: "row", justifyContent: "space-between", marginBottom: 6 }}>
+                  <Text style={{ color: "#FBBF24", fontFamily: "Outfit_800ExtraBold", fontSize: 20 }}>{waterIntake} ml</Text>
+                  <Text style={{ color: "#92400E", fontSize: 12, alignSelf: "flex-end" }}>{Math.min(100, Math.round((waterIntake / waterGoal) * 100))}%</Text>
+                </View>
+                <View style={{ height: 8, backgroundColor: "rgba(59,130,246,0.10)", borderRadius: 4 }}>
+                  <View style={{ height: 8, backgroundColor: waterIntake >= waterGoal ? "#22C55E" : "#3B82F6", borderRadius: 4, width: `${Math.min(100, (waterIntake / waterGoal) * 100)}%` as any }} />
+                </View>
+                {waterIntake >= waterGoal && (
+                  <Text style={{ color: "#22C55E", fontSize: 11, marginTop: 4, fontFamily: "Outfit_700Bold" }}>✓ Daily goal reached! Stay hydrated.</Text>
+                )}
+              </View>
+
+              {/* Quick-add buttons */}
+              <View style={{ flexDirection: "row", gap: 8, marginBottom: 8 }}>
+                {WATER_QUICK_ADD.map(ml => (
+                  <TouchableOpacity
+                    key={ml}
+                    style={{ flex: 1, backgroundColor: "rgba(59,130,246,0.12)", borderRadius: 12, paddingVertical: 10, alignItems: "center", borderWidth: 1, borderColor: "rgba(59,130,246,0.20)" }}
+                    onPress={() => addWater(ml)}
+                  >
+                    <Text style={{ color: "#3B82F6", fontFamily: "Outfit_700Bold", fontSize: 13 }}>+{ml}ml</Text>
+                    <Text style={{ color: "#64748B", fontSize: 9, marginTop: 2 }}>{ml === 250 ? "Glass" : ml === 500 ? "Bottle" : "Large"}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+
+              {/* Custom add and undo */}
+              <View style={{ flexDirection: "row", gap: 8 }}>
+                <TouchableOpacity
+                  style={{ flex: 1, backgroundColor: "rgba(59,130,246,0.06)", borderRadius: 10, paddingVertical: 8, alignItems: "center", borderWidth: 1, borderColor: "rgba(59,130,246,0.10)" }}
+                  onPress={() => addWater(100)}
+                >
+                  <Text style={{ color: "#64748B", fontSize: 11 }}>+100ml (Sip)</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={{ flex: 1, backgroundColor: "rgba(239,68,68,0.06)", borderRadius: 10, paddingVertical: 8, alignItems: "center", borderWidth: 1, borderColor: "rgba(239,68,68,0.10)" }}
+                  onPress={() => addWater(-250)}
+                >
+                  <Text style={{ color: "#EF4444", fontSize: 11 }}>Undo (-250ml)</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={{ flex: 1, backgroundColor: "rgba(239,68,68,0.06)", borderRadius: 10, paddingVertical: 8, alignItems: "center", borderWidth: 1, borderColor: "rgba(239,68,68,0.10)" }}
+                  onPress={() => {
+                    Alert.alert("Reset Water?", "Clear today's water intake?", [
+                      { text: "Cancel", style: "cancel" },
+                      { text: "Reset", style: "destructive", onPress: () => {
+                        setWaterIntake(0);
+                        const today = new Date().toISOString().split("T")[0];
+                        AsyncStorage.setItem(`@water_intake_${today}`, JSON.stringify(0));
+                      }},
+                    ]);
+                  }}
+                >
+                  <Text style={{ color: "#EF4444", fontSize: 11 }}>Reset</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+
             <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
               <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 15 }}>
                 {aiMealPlan ? "Your AI Meal Plan" : "Today's Suggested Meals"}

@@ -137,6 +137,8 @@ export async function scheduleAllDefaultReminders(): Promise<void> {
   await scheduleMealLogReminder(12, 30);
   await scheduleDailyCheckInReminder(7, 0);
   await scheduleWeeklyAICoachReminder(19, 0);
+  await scheduleMealTimeReminders(8, 0, 12, 30, 18, 30);
+  await scheduleWaterReminder(2);
 }
 
 export async function sendImmediateNotification(title: string, body: string): Promise<void> {
@@ -283,6 +285,113 @@ export async function setAICoachReminderEnabled(enabled: boolean, hour: number =
  * Cancel all scheduled trial reminder notifications.
  * Call this when the user subscribes to a paid plan.
  */
+const BREAKFAST_NOTIF_ID_KEY = "@breakfast_notif_id";
+const LUNCH_NOTIF_ID_KEY = "@lunch_notif_id";
+const DINNER_NOTIF_ID_KEY = "@dinner_notif_id";
+const WATER_NOTIF_ID_KEY = "@water_notif_id";
+
+/**
+ * Schedule breakfast, lunch, and dinner meal-time reminders.
+ * These are separate from the general meal log reminder — they fire at each meal time.
+ */
+export async function scheduleMealTimeReminders(
+  breakfastHour = 8, breakfastMinute = 0,
+  lunchHour = 12, lunchMinute = 30,
+  dinnerHour = 18, dinnerMinute = 30,
+): Promise<void> {
+  if (Platform.OS === "web") return;
+
+  // Cancel existing
+  for (const key of [BREAKFAST_NOTIF_ID_KEY, LUNCH_NOTIF_ID_KEY, DINNER_NOTIF_ID_KEY]) {
+    const existingId = await AsyncStorage.getItem(key);
+    if (existingId) await Notifications.cancelScheduledNotificationAsync(existingId).catch(() => {});
+  }
+
+  const bId = await Notifications.scheduleNotificationAsync({
+    content: {
+      title: "🍳 Breakfast Time!",
+      body: "Start your day right — check your AI meal plan for today's breakfast.",
+      data: { type: "meal_breakfast", url: "/(tabs)/meals" },
+    },
+    trigger: { type: Notifications.SchedulableTriggerInputTypes.DAILY, hour: breakfastHour, minute: breakfastMinute },
+  });
+  await AsyncStorage.setItem(BREAKFAST_NOTIF_ID_KEY, bId);
+
+  const lId = await Notifications.scheduleNotificationAsync({
+    content: {
+      title: "🥗 Lunch Time!",
+      body: "Midday fuel-up — your planned lunch is waiting in PeakPulse.",
+      data: { type: "meal_lunch", url: "/(tabs)/meals" },
+    },
+    trigger: { type: Notifications.SchedulableTriggerInputTypes.DAILY, hour: lunchHour, minute: lunchMinute },
+  });
+  await AsyncStorage.setItem(LUNCH_NOTIF_ID_KEY, lId);
+
+  const dId = await Notifications.scheduleNotificationAsync({
+    content: {
+      title: "🍽️ Dinner Time!",
+      body: "End the day strong — check your AI meal plan for tonight's dinner.",
+      data: { type: "meal_dinner", url: "/(tabs)/meals" },
+    },
+    trigger: { type: Notifications.SchedulableTriggerInputTypes.DAILY, hour: dinnerHour, minute: dinnerMinute },
+  });
+  await AsyncStorage.setItem(DINNER_NOTIF_ID_KEY, dId);
+}
+
+/**
+ * Cancel all meal-time reminders.
+ */
+export async function cancelMealTimeReminders(): Promise<void> {
+  if (Platform.OS === "web") return;
+  for (const key of [BREAKFAST_NOTIF_ID_KEY, LUNCH_NOTIF_ID_KEY, DINNER_NOTIF_ID_KEY]) {
+    const existingId = await AsyncStorage.getItem(key);
+    if (existingId) await Notifications.cancelScheduledNotificationAsync(existingId).catch(() => {});
+  }
+  await AsyncStorage.multiRemove([BREAKFAST_NOTIF_ID_KEY, LUNCH_NOTIF_ID_KEY, DINNER_NOTIF_ID_KEY]);
+}
+
+/**
+ * Schedule a repeating water intake reminder.
+ * @param intervalHours Hours between each reminder (default 2)
+ */
+export async function scheduleWaterReminder(intervalHours: number = 2): Promise<void> {
+  if (Platform.OS === "web") return;
+
+  const existingId = await AsyncStorage.getItem(WATER_NOTIF_ID_KEY);
+  if (existingId) await Notifications.cancelScheduledNotificationAsync(existingId).catch(() => {});
+
+  const messages = [
+    { title: "💧 Stay Hydrated!", body: "Time for a glass of water. Your body needs it!" },
+    { title: "💧 Water Break!", body: "Don't forget to drink water — staying hydrated boosts performance." },
+    { title: "💧 Hydration Reminder", body: "Grab some water! Proper hydration helps recovery and focus." },
+  ];
+  const msg = messages[Math.floor(Math.random() * messages.length)];
+
+  const id = await Notifications.scheduleNotificationAsync({
+    content: {
+      title: msg.title,
+      body: msg.body,
+      data: { type: "water_reminder", url: "/(tabs)/meals" },
+    },
+    trigger: {
+      type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
+      seconds: intervalHours * 3600,
+      repeats: true,
+    },
+  });
+  await AsyncStorage.setItem(WATER_NOTIF_ID_KEY, id);
+}
+
+/**
+ * Cancel the water intake reminder.
+ */
+export async function cancelWaterReminder(): Promise<void> {
+  if (Platform.OS === "web") return;
+  const existingId = await AsyncStorage.getItem(WATER_NOTIF_ID_KEY);
+  if (existingId) await Notifications.cancelScheduledNotificationAsync(existingId).catch(() => {});
+  await AsyncStorage.removeItem(WATER_NOTIF_ID_KEY);
+}
+
 export async function cancelTrialReminders(): Promise<void> {
   if (Platform.OS === "web") return;
 

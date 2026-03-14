@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import {
   ScrollView, Text, View, TouchableOpacity, ActivityIndicator,
-  Alert, ImageBackground, Image,
+  Alert, ImageBackground, Image, Platform,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { useAuth } from "@/hooks/use-auth";
@@ -10,6 +10,8 @@ import { trpc } from "@/lib/trpc";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { VideoView, useVideoPlayer } from "expo-video";
 import { getExerciseDemo } from "@/lib/exercise-demos";
+import Svg, { Circle } from "react-native-svg";
+import * as Haptics from "expo-haptics";
 
 const WORKOUT_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/yauqLuTRvanJUzsJ.jpg";
 const MEAL_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/yauqLuTRvanJUzsJ.jpg";
@@ -91,6 +93,37 @@ export default function PlansScreen() {
   // Local state for guest-generated plans (not saved to DB)
   const [localWorkoutPlan, setLocalWorkoutPlan] = useState<any>(null);
   const [localMealPlan, setLocalMealPlan] = useState<any>(null);
+
+  // Workout completion tracking
+  const [completedDays, setCompletedDays] = useState<Record<string, boolean>>({});
+
+  // Load completed days from AsyncStorage
+  React.useEffect(() => {
+    AsyncStorage.getItem("@workout_completed_days").then(raw => {
+      if (raw) try { setCompletedDays(JSON.parse(raw)); } catch {}
+    });
+  }, []);
+
+  const toggleDayComplete = React.useCallback((dayName: string) => {
+    setCompletedDays(prev => {
+      const next = { ...prev, [dayName]: !prev[dayName] };
+      AsyncStorage.setItem("@workout_completed_days", JSON.stringify(next));
+      if (!prev[dayName] && Platform.OS !== "web") {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      }
+      return next;
+    });
+  }, []);
+
+  const resetWeekProgress = React.useCallback(() => {
+    Alert.alert("Reset Week?", "This will clear all completed workout days for this week.", [
+      { text: "Cancel", style: "cancel" },
+      { text: "Reset", style: "destructive", onPress: () => {
+        setCompletedDays({});
+        AsyncStorage.setItem("@workout_completed_days", JSON.stringify({}));
+      }},
+    ]);
+  }, []);
 
   // Load guest plans from AsyncStorage on mount (set by scan flow)
   React.useEffect(() => {
@@ -229,6 +262,47 @@ export default function PlansScreen() {
             {/* Active Workout Plan */}
             {workoutPlan && (
               <View>
+                {/* Weekly Progress Ring */}
+                {(() => {
+                  const schedule = workoutPlan.schedule ?? [];
+                  const workoutDays = schedule.filter((d: any) => !d.isRest);
+                  const totalWorkoutDays = workoutDays.length;
+                  const completedCount = workoutDays.filter((d: any) => completedDays[d.day]).length;
+                  const pct = totalWorkoutDays > 0 ? completedCount / totalWorkoutDays : 0;
+                  const size = 100;
+                  const strokeWidth = 8;
+                  const radius = (size - strokeWidth) / 2;
+                  const circumference = 2 * Math.PI * radius;
+                  const strokeDashoffset = circumference * (1 - pct);
+                  return (
+                    <View style={{ backgroundColor: "#150A00", borderRadius: 20, padding: 20, marginBottom: 16, borderWidth: 1, borderColor: "rgba(245,158,11,0.12)", alignItems: "center" }}>
+                      <View style={{ flexDirection: "row", alignItems: "center", gap: 20 }}>
+                        {/* Progress Ring */}
+                        <View style={{ width: size, height: size, alignItems: "center", justifyContent: "center" }}>
+                          <Svg width={size} height={size}>
+                            <Circle cx={size / 2} cy={size / 2} r={radius} stroke="rgba(245,158,11,0.10)" strokeWidth={strokeWidth} fill="none" />
+                            <Circle cx={size / 2} cy={size / 2} r={radius} stroke={pct >= 1 ? "#22C55E" : "#F59E0B"} strokeWidth={strokeWidth} fill="none" strokeLinecap="round" strokeDasharray={`${circumference}`} strokeDashoffset={strokeDashoffset} transform={`rotate(-90 ${size / 2} ${size / 2})`} />
+                          </Svg>
+                          <View style={{ position: "absolute", alignItems: "center" }}>
+                            <Text style={{ color: pct >= 1 ? "#22C55E" : "#FBBF24", fontFamily: "Outfit_800ExtraBold", fontSize: 22 }}>{Math.round(pct * 100)}%</Text>
+                          </View>
+                        </View>
+                        {/* Stats */}
+                        <View style={{ flex: 1 }}>
+                          <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 16, marginBottom: 4 }}>Weekly Progress</Text>
+                          <Text style={{ color: "#FBBF24", fontSize: 13, marginBottom: 2 }}>{completedCount} of {totalWorkoutDays} workouts done</Text>
+                          <Text style={{ color: "#92400E", fontSize: 11, lineHeight: 16 }}>
+                            {pct >= 1 ? "All workouts complete! Great week!" : pct >= 0.5 ? "Over halfway — keep going!" : "Tap a day below to mark it done."}
+                          </Text>
+                          <TouchableOpacity onPress={resetWeekProgress} style={{ marginTop: 8, alignSelf: "flex-start" }}>
+                            <Text style={{ color: "#78350F", fontSize: 11, fontFamily: "Outfit_700Bold" }}>Reset Week</Text>
+                          </TouchableOpacity>
+                        </View>
+                      </View>
+                    </View>
+                  );
+                })()}
+
                 <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
                   <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 16 }}>Current Plan</Text>
                   <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
@@ -274,9 +348,15 @@ export default function PlansScreen() {
                   </View>
                 )}
                 {workoutPlan.schedule?.map((day: any, i: number) => (
-                  <WorkoutDayCard key={i} day={day} onPress={() => {
-                    if (!day.isRest) router.push({ pathname: "/active-workout", params: { dayData: JSON.stringify(day) } } as any);
-                  }} />
+                  <WorkoutDayCard
+                    key={i}
+                    day={day}
+                    isCompleted={!!completedDays[day.day]}
+                    onToggleComplete={() => toggleDayComplete(day.day)}
+                    onPress={() => {
+                      if (!day.isRest) router.push({ pathname: "/active-workout", params: { dayData: JSON.stringify(day) } } as any);
+                    }}
+                  />
                 ))}
                 {/* AI Form Check CTA */}
                 <TouchableOpacity
@@ -443,22 +523,37 @@ function MacroCard({ label, value, unit, color }: any) {
   );
 }
 
-function WorkoutDayCard({ day, onPress }: any) {
+function WorkoutDayCard({ day, onPress, isCompleted, onToggleComplete }: { day: any; onPress: () => void; isCompleted?: boolean; onToggleComplete?: () => void }) {
   const [expanded, setExpanded] = useState(false);
   return (
-    <View style={{ backgroundColor: "#150A00", borderRadius: 16, marginBottom: 8, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)", overflow: "hidden" }}>
+    <View style={{ backgroundColor: isCompleted ? "rgba(34,197,94,0.06)" : "#150A00", borderRadius: 16, marginBottom: 8, borderWidth: 1, borderColor: isCompleted ? "rgba(34,197,94,0.25)" : "rgba(245,158,11,0.10)", overflow: "hidden" }}>
       <TouchableOpacity
         style={{ padding: 14 }}
         onPress={() => setExpanded(!expanded)}
       >
         <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
           <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
-            <View style={{ width: 36, height: 36, borderRadius: 10, backgroundColor: "rgba(245,158,11,0.10)", alignItems: "center", justifyContent: "center" }}>
-              <Text style={{ fontSize: 16 }}>{day.isRest ? "😴" : "💪"}</Text>
-            </View>
+            {/* Completion checkbox */}
+            {!day.isRest && onToggleComplete ? (
+              <TouchableOpacity
+                onPress={onToggleComplete}
+                style={{
+                  width: 36, height: 36, borderRadius: 10,
+                  backgroundColor: isCompleted ? "#22C55E" : "rgba(245,158,11,0.10)",
+                  alignItems: "center", justifyContent: "center",
+                  borderWidth: isCompleted ? 0 : 1, borderColor: "rgba(245,158,11,0.20)",
+                }}
+              >
+                <Text style={{ fontSize: 16 }}>{isCompleted ? "✓" : "💪"}</Text>
+              </TouchableOpacity>
+            ) : (
+              <View style={{ width: 36, height: 36, borderRadius: 10, backgroundColor: "rgba(245,158,11,0.10)", alignItems: "center", justifyContent: "center" }}>
+                <Text style={{ fontSize: 16 }}>{day.isRest ? "😴" : "💪"}</Text>
+              </View>
+            )}
             <View>
-              <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 14 }}>{day.day}</Text>
-              <Text style={{ color: day.isRest ? "#FDE68A" : "#FBBF24", fontSize: 12 }}>{day.focus}</Text>
+              <Text style={{ color: isCompleted ? "#22C55E" : "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 14, textDecorationLine: isCompleted ? "line-through" : "none" }}>{day.day}</Text>
+              <Text style={{ color: isCompleted ? "#4ADE80" : (day.isRest ? "#FDE68A" : "#FBBF24"), fontSize: 12 }}>{isCompleted ? "Completed ✔" : day.focus}</Text>
             </View>
           </View>
           <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>

@@ -403,3 +403,10 @@
 - [x] Feature: Persist shopping list checked items to AsyncStorage so they survive app restarts
 - [x] Feature: Add "Copy to Clipboard" button on the weekly shopping list for pasting into other apps
 - [x] Feature: Add exercise video/GIF previews to workout plan cards for correct form guidance
+
+## Round 27 — Workout Completion Tracking, Water Intake Tracker, Push Notification Reminders
+
+- [x] Feature: Workout completion tracking — mark workout days as completed with AsyncStorage persistence
+- [x] Feature: Weekly progress ring on the plans tab showing completed vs total workout days
+- [x] Feature: Water intake tracker on the meals tab with daily goal, quick-add buttons, and progress display
+- [x] Feature: Push notification reminders for upcoming workouts and meal times based on user's plan schedule
