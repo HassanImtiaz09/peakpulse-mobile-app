@@ -336,3 +336,6 @@
 - [x] AI Coach screen built: insights tab (form analysis, progress, tips, weekly plan, milestone) + chat tab
 - [x] AI Coach server routes: getInsights + chat with full context awareness
 - [x] Meal plan generation in plans.tsx now passes user profile metrics to server
+
+## Round 17 — Progress Photo Comparison
+- [x] Progress tab: swipe/drag-to-reveal comparison slider between first and latest photo
