@@ -364,3 +364,15 @@
 - [x] Post-onboarding summary screen
 - [x] Subscription plan selection screen
 - [x] First-time dashboard tutorial overlay
+
+## Round 22
+- [x] BF% commentary in onboarding photo analysis
+- [x] Exercise demo videos in workout day view
+- [ ] Fullscreen active exercise timer screen with demo video
+- [ ] Per-session AI Coach & Form Check (Advanced-only, 3-day trial) in workout sessions
+
+## Round 22
+- [x] BF% commentary in onboarding photo analysis
+- [x] Exercise demo videos in workout day view
+- [ ] Fullscreen active exercise timer screen with demo video
+- [ ] Per-session AI Coach & Form Check (Advanced-only, 3-day trial)

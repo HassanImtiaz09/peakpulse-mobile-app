@@ -136,6 +136,10 @@ export default function OnboardingScreen() {
   const [analyzingScan, setAnalyzingScan] = useState(false);
   const [transformations, setTransformations] = useState<any[]>([]);
   const [selectedTransformation, setSelectedTransformation] = useState<any | null>(null);
+  const [scanBF, setScanBF] = useState<number | null>(null);
+  const [scanBFLow, setScanBFLow] = useState<number | null>(null);
+  const [scanBFHigh, setScanBFHigh] = useState<number | null>(null);
+  const [scanNotes, setScanNotes] = useState<string | null>(null);
   // Fullscreen image modal
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [previewBF, setPreviewBF] = useState<number | null>(null);
@@ -215,6 +219,13 @@ export default function OnboardingScreen() {
       const scanResult = await analyzeBodyScan.mutateAsync({ photoUrl: uploadResult.url, weightKg: wKgN, heightCm: hCmN, age: ageNN, gender });
       if (scanResult?.transformations?.length) {
         setTransformations(scanResult.transformations);
+      }
+      if (scanResult?.estimatedBodyFat) {
+        setScanBF(scanResult.estimatedBodyFat);
+        setScanBFLow(scanResult.confidenceLow ?? null);
+        setScanBFHigh(scanResult.confidenceHigh ?? null);
+        setScanNotes(scanResult.analysisNotes ?? null);
+        await AsyncStorage.setItem("@scan_bf_estimate", String(scanResult.estimatedBodyFat));
       }
     } catch {
       animateTransition(10);
@@ -366,6 +377,25 @@ export default function OnboardingScreen() {
             </View>
           ) : transformations.length > 0 ? (
             <>
+              {/* Current BF% result card */}
+              {scanBF !== null && (
+                <View style={{ backgroundColor: "rgba(245,158,11,0.12)", borderRadius: 16, padding: 16, marginBottom: 16, borderWidth: 1.5, borderColor: SF.gold }}>
+                  <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
+                    <Text style={{ color: SF.gold, fontFamily: "Outfit_700Bold", fontSize: 12, letterSpacing: 1 }}>YOUR CURRENT BODY FAT</Text>
+                    <View style={{ backgroundColor: SF.gold, borderRadius: 10, paddingHorizontal: 12, paddingVertical: 5 }}>
+                      <Text style={{ color: SF.bg, fontFamily: "Outfit_800ExtraBold", fontSize: 20 }}>{scanBF.toFixed(1)}%</Text>
+                    </View>
+                  </View>
+                  {scanBFLow !== null && scanBFHigh !== null && (
+                    <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 12, marginBottom: 8 }}>
+                      AI confidence range: {scanBFLow.toFixed(1)}% – {scanBFHigh.toFixed(1)}%
+                    </Text>
+                  )}
+                  {scanNotes ? (
+                    <Text style={{ color: SF.gold3, fontFamily: "DMSans_400Regular", fontSize: 13, lineHeight: 19 }}>{scanNotes}</Text>
+                  ) : null}
+                </View>
+              )}
               <Text style={{ color: SF.gold3, fontFamily: "DMSans_400Regular", fontSize: 14, marginBottom: 8, lineHeight: 20 }}>
                 Based on your photo, here are AI-generated previews of what you could look like at different body fat levels.
               </Text>
