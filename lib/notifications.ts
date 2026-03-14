@@ -19,6 +19,8 @@ const MEAL_NOTIF_ID_KEY = "@meal_notif_id";
 const CHECKIN_NOTIF_ID_KEY = "@checkin_notif_id";
 const TRIAL_DAY5_NOTIF_ID_KEY = "@trial_day5_notif_id";
 const TRIAL_DAY7_NOTIF_ID_KEY = "@trial_day7_notif_id";
+const AI_COACH_NOTIF_ID_KEY = "@ai_coach_weekly_notif_id";
+export const AI_COACH_NOTIF_ENABLED_KEY = "@ai_coach_notif_enabled";
 
 export async function requestNotificationPermissions(): Promise<boolean> {
   if (Platform.OS === "web") return false;
@@ -134,6 +136,7 @@ export async function scheduleAllDefaultReminders(): Promise<void> {
   await scheduleWorkoutReminder(8, 0);
   await scheduleMealLogReminder(12, 30);
   await scheduleDailyCheckInReminder(7, 0);
+  await scheduleWeeklyAICoachReminder(19, 0);
 }
 
 export async function sendImmediateNotification(title: string, body: string): Promise<void> {
@@ -201,6 +204,78 @@ export async function scheduleTrialReminders(trialStartDate: string): Promise<vo
       },
     });
     await AsyncStorage.setItem(TRIAL_DAY7_NOTIF_ID_KEY, day7Id);
+  }
+}
+
+/**
+ * Schedule a weekly AI Coach progress update reminder.
+ * Fires every Sunday at 19:00 (7 PM) by default.
+ * Respects the user's opt-in preference stored in AsyncStorage.
+ * @param hour  Hour of day to fire (0-23, default 19)
+ * @param minute Minute of hour (default 0)
+ */
+export async function scheduleWeeklyAICoachReminder(hour: number = 19, minute: number = 0): Promise<void> {
+  if (Platform.OS === "web") return;
+
+  // Check opt-in preference (default enabled)
+  const prefRaw = await AsyncStorage.getItem(AI_COACH_NOTIF_ENABLED_KEY);
+  const enabled = prefRaw === null ? true : prefRaw === "true";
+  if (!enabled) return;
+
+  const granted = await requestNotificationPermissions();
+  if (!granted) return;
+
+  // Cancel any existing weekly AI Coach notification
+  await cancelWeeklyAICoachReminder();
+
+  const messages = [
+    { title: "🤖 Your Weekly AI Coach Report is Ready", body: "See how your form, progress, and consistency have improved this week. Open AI Coach now." },
+    { title: "⚡ Weekly Progress Check-In", body: "Your AI Coach has analysed your week. Tap to see personalised insights and your next focus area." },
+    { title: "💪 Time for Your Weekly Review", body: "How did this week go? Your AI Coach has tips and a plan to make next week even better." },
+    { title: "📊 AI Coach: Weekly Insights Available", body: "Your form scores, calorie trends, and progress photos have been analysed. Check your report." },
+  ];
+  const msg = messages[Math.floor(Math.random() * messages.length)];
+
+  const id = await Notifications.scheduleNotificationAsync({
+    content: {
+      title: msg.title,
+      body: msg.body,
+      data: { url: "/ai-coach", type: "ai_coach_weekly" },
+      categoryIdentifier: "peakpulse",
+    },
+    trigger: {
+      weekday: 1, // 1 = Sunday in Expo (1=Sun, 2=Mon, ... 7=Sat)
+      hour,
+      minute,
+      repeats: true,
+    } as any,
+  });
+
+  await AsyncStorage.setItem(AI_COACH_NOTIF_ID_KEY, id);
+}
+
+/**
+ * Cancel the weekly AI Coach reminder notification.
+ */
+export async function cancelWeeklyAICoachReminder(): Promise<void> {
+  if (Platform.OS === "web") return;
+  const existingId = await AsyncStorage.getItem(AI_COACH_NOTIF_ID_KEY);
+  if (existingId) {
+    await Notifications.cancelScheduledNotificationAsync(existingId).catch(() => {});
+    await AsyncStorage.removeItem(AI_COACH_NOTIF_ID_KEY);
+  }
+}
+
+/**
+ * Toggle the weekly AI Coach reminder on or off.
+ * Schedules or cancels the notification based on the new enabled state.
+ */
+export async function setAICoachReminderEnabled(enabled: boolean, hour: number = 19, minute: number = 0): Promise<void> {
+  await AsyncStorage.setItem(AI_COACH_NOTIF_ENABLED_KEY, String(enabled));
+  if (enabled) {
+    await scheduleWeeklyAICoachReminder(hour, minute);
+  } else {
+    await cancelWeeklyAICoachReminder();
   }
 }
 

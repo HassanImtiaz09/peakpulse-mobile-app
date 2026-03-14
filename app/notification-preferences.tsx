@@ -20,6 +20,7 @@ import {
   scheduleMealLogReminder,
   scheduleDailyCheckInReminder,
   cancelAllReminders,
+  setAICoachReminderEnabled,
 } from "@/lib/notifications";
 
 const PREF_KEY = "@notif_preferences";
@@ -34,6 +35,9 @@ interface NotifPrefs {
   checkinEnabled: boolean;
   checkinHour: number;
   checkinMinute: number;
+  aiCoachEnabled: boolean;
+  aiCoachHour: number;
+  aiCoachMinute: number;
 }
 
 const DEFAULT_PREFS: NotifPrefs = {
@@ -46,6 +50,9 @@ const DEFAULT_PREFS: NotifPrefs = {
   checkinEnabled: true,
   checkinHour: 7,
   checkinMinute: 0,
+  aiCoachEnabled: true,
+  aiCoachHour: 19,
+  aiCoachMinute: 0,
 };
 
 function formatTime(hour: number, minute: number): string {
@@ -146,7 +153,7 @@ export default function NotificationPreferencesScreen() {
   const [prefs, setPrefs] = useState<NotifPrefs>(DEFAULT_PREFS);
   const [saving, setSaving] = useState(false);
   const [hasPermission, setHasPermission] = useState(false);
-  const [activePicker, setActivePicker] = useState<"workout" | "meal" | "checkin" | null>(null);
+  const [activePicker, setActivePicker] = useState<"workout" | "meal" | "checkin" | "aiCoach" | null>(null);
 
   useEffect(() => {
     loadPrefs();
@@ -195,6 +202,7 @@ export default function NotificationPreferencesScreen() {
       if (newPrefs.checkinEnabled) {
         await scheduleDailyCheckInReminder(newPrefs.checkinHour, newPrefs.checkinMinute);
       }
+      await setAICoachReminderEnabled(newPrefs.aiCoachEnabled, newPrefs.aiCoachHour, newPrefs.aiCoachMinute);
 
       Alert.alert("✅ Saved", "Your notification preferences have been updated.");
     } catch (e) {
@@ -204,11 +212,12 @@ export default function NotificationPreferencesScreen() {
     }
   };
 
-  const toggleNotif = async (type: "workout" | "meal" | "checkin") => {
+  const toggleNotif = async (type: "workout" | "meal" | "checkin" | "aiCoach") => {
     const updated = { ...prefs };
     if (type === "workout") updated.workoutEnabled = !prefs.workoutEnabled;
     if (type === "meal") updated.mealEnabled = !prefs.mealEnabled;
     if (type === "checkin") updated.checkinEnabled = !prefs.checkinEnabled;
+    if (type === "aiCoach") updated.aiCoachEnabled = !prefs.aiCoachEnabled;
     setPrefs(updated);
     await savePrefs(updated);
   };
@@ -224,6 +233,9 @@ export default function NotificationPreferencesScreen() {
     } else if (activePicker === "checkin") {
       updated.checkinHour = hour;
       updated.checkinMinute = minute;
+    } else if (activePicker === "aiCoach") {
+      updated.aiCoachHour = hour;
+      updated.aiCoachMinute = minute;
     }
     setPrefs(updated);
     setActivePicker(null);
@@ -361,6 +373,37 @@ export default function NotificationPreferencesScreen() {
           )}
         </View>
 
+        {/* AI Coach Weekly Reminder */}
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionIcon}>🤖</Text>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.sectionTitle}>Weekly AI Coach Report</Text>
+              <Text style={styles.sectionSub}>Every Sunday — your weekly progress insights</Text>
+            </View>
+            <Switch
+              value={prefs.aiCoachEnabled}
+              onValueChange={() => toggleNotif("aiCoach")}
+              trackColor={{ false: "#333", true: "#F59E0B" }}
+              thumbColor={prefs.aiCoachEnabled ? "#fff" : "#888"}
+            />
+          </View>
+          {prefs.aiCoachEnabled && (
+            <TouchableOpacity
+              style={styles.timeRow}
+              onPress={() => setActivePicker("aiCoach")}
+            >
+              <Text style={styles.timeLabel}>Reminder Time (Sunday)</Text>
+              <View style={styles.timeValue}>
+                <Text style={styles.timeValueText}>
+                  {formatTime(prefs.aiCoachHour, prefs.aiCoachMinute)}
+                </Text>
+                <Text style={styles.timeEditIcon}>✏️</Text>
+              </View>
+            </TouchableOpacity>
+          )}
+        </View>
+
         {/* Summary card */}
         <View style={styles.summaryCard}>
           <Text style={styles.summaryTitle}>📅 Your Schedule</Text>
@@ -379,7 +422,12 @@ export default function NotificationPreferencesScreen() {
               📸 Check-in reminder at {formatTime(prefs.checkinHour, prefs.checkinMinute)} daily
             </Text>
           )}
-          {!prefs.workoutEnabled && !prefs.mealEnabled && !prefs.checkinEnabled && (
+          {prefs.aiCoachEnabled && (
+            <Text style={styles.summaryItem}>
+              🤖 AI Coach report every Sunday at {formatTime(prefs.aiCoachHour, prefs.aiCoachMinute)}
+            </Text>
+          )}
+          {!prefs.workoutEnabled && !prefs.mealEnabled && !prefs.checkinEnabled && !prefs.aiCoachEnabled && (
             <Text style={styles.summaryItem}>All reminders are currently off.</Text>
           )}
         </View>
@@ -398,16 +446,19 @@ export default function NotificationPreferencesScreen() {
         hour={
           activePicker === "workout" ? prefs.workoutHour :
           activePicker === "meal" ? prefs.mealHour :
+          activePicker === "aiCoach" ? prefs.aiCoachHour :
           prefs.checkinHour
         }
         minute={
           activePicker === "workout" ? prefs.workoutMinute :
           activePicker === "meal" ? prefs.mealMinute :
+          activePicker === "aiCoach" ? prefs.aiCoachMinute :
           prefs.checkinMinute
         }
         title={
           activePicker === "workout" ? "Set Workout Reminder" :
           activePicker === "meal" ? "Set Meal Log Reminder" :
+          activePicker === "aiCoach" ? "Set AI Coach Reminder (Sunday)" :
           "Set Check-In Reminder"
         }
         onConfirm={handleTimeConfirm}
