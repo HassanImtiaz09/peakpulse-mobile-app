@@ -10,6 +10,28 @@ import * as db from "./db";
 
 function randomSuffix() { return Math.random().toString(36).slice(2, 8); }
 
+/** Get the subscription plan for a user (defaults to 'free' for guests) */
+async function getUserPlan(userId: number | undefined): Promise<string> {
+  if (!userId) return "free";
+  const sub = await db.getUserSubscription(userId);
+  return sub?.plan ?? "free";
+}
+
+/** Enforce AI limit for a user. Throws TRPCError if limit exceeded. */
+async function checkAiLimit(userId: number | undefined, endpoint: string): Promise<void> {
+  if (!userId) return; // guests bypass metering (limited by auth anyway)
+  const plan = await getUserPlan(userId);
+  try {
+    await db.enforceAiLimit(userId, plan, endpoint);
+  } catch (err: any) {
+    if (typeof err?.message === "string" && err.message.startsWith("AI_LIMIT_EXCEEDED")) {
+      const [, tierName, limit] = err.message.split(":");
+      throw new Error(`AI_LIMIT_EXCEEDED:You have used all ${limit} AI calls for this month on the ${tierName} plan. Upgrade to Advanced for unlimited access.`);
+    }
+    throw err;
+  }
+}
+
 function getBFDescription(bf: number): string {
   const descriptions: Record<number, string> = {
     5: "extremely lean, stage-ready competition physique with full muscle separation and prominent veins",
@@ -106,6 +128,7 @@ export const appRouter = router({
     analyze: guestOrUserProcedure
       .input(z.object({ photoUrl: z.string(), weightKg: z.number().optional(), heightCm: z.number().optional(), age: z.number().optional(), gender: z.string().optional() }))
       .mutation(async ({ ctx, input }) => {
+        await checkAiLimit(ctx.user?.id, "bodyScan.analyze");
         const metricsNote = (input.weightKg && input.heightCm && input.age)
           ? `User body metrics: weight ${input.weightKg}kg, height ${input.heightCm}cm, age ${input.age}, gender ${input.gender ?? 'male'}. Use these metrics alongside the photo to compute a more accurate body fat estimate using the BMI-based Deurenberg formula as a cross-check: BF% = (1.20 × BMI) + (0.23 × age) − (10.8 × (gender=male?1:0)) − 5.4. Reconcile the formula result with the visual assessment from the photo and report the best estimate.`
           : 'No body metrics provided — estimate from photo only.';
@@ -168,6 +191,7 @@ export const appRouter = router({
     generate: guestOrUserProcedure
       .input(z.object({ goal: z.string(), workoutStyle: z.string(), daysPerWeek: z.number().default(4), fitnessLevel: z.string().default("intermediate") }))
       .mutation(async ({ ctx, input }) => {
+        await checkAiLimit(ctx.user?.id, "workoutPlan.generate");
         const prompt = `Generate a complete 7-day workout plan as JSON for: Goal: ${input.goal.replace(/_/g," ")}, Style: ${input.workoutStyle}, Days/week: ${input.daysPerWeek}, Level: ${input.fitnessLevel}. Return: {"schedule":[{"day":"Monday","focus":"Push Day","isRest":false,"exercises":[{"name":"Bench Press","sets":"4x8","rest":"90s","notes":""}]}],"insight":"coaching tip"}`;
         const response = await invokeLLM({ messages: [{ role: "system", content: "You are an expert personal trainer. Always respond with valid JSON." }, { role: "user", content: prompt }], response_format: { type: "json_object" } });
         let planData: any;
@@ -196,6 +220,7 @@ export const appRouter = router({
     generate: guestOrUserProcedure
       .input(z.object({ goal: z.string(), dietaryPreference: z.string(), dailyCalories: z.number().optional(), weightKg: z.number().optional(), heightCm: z.number().optional(), age: z.number().optional(), gender: z.string().optional(), activityLevel: z.string().optional(), ramadanMode: z.boolean().optional() }))
       .mutation(async ({ ctx, input }) => {
+        await checkAiLimit(ctx.user?.id, "mealPlan.generate");
         // Personalised TDEE via Mifflin-St Jeor if body metrics are provided
         function calcTDEE(w: number, h: number, a: number, g: string, activity: string, goal: string): number {
           const bmr = g === 'female' ? (10*w + 6.25*h - 5*a - 161) : (10*w + 6.25*h - 5*a + 5);
@@ -241,7 +266,7 @@ export const appRouter = router({
       .input(z.object({ dietaryPreference: z.string(), servings: z.number().default(4), budget: z.string().default("moderate") }))
       .mutation(async ({ input }) => {
         const prompt = `Generate a weekly batch cooking meal prep plan as JSON. Diet: ${input.dietaryPreference}, Servings: ${input.servings}, Budget: ${input.budget}. Return: {"prepTime":"2-3 hours","recipes":[{"name":"Chicken Bowls","servings":${input.servings},"calories":450,"protein":40,"carbs":45,"fat":12,"ingredients":["500g chicken"],"instructions":["Step 1"],"storageInstructions":"4 days","mealType":"lunch"}],"shoppingList":["item1"],"tips":["tip1"]}. Respect dietary restrictions.`;
-        const response = await invokeLLM({ messages: [{ role: "system", content: "You are a meal prep expert. Always respond with valid JSON." }, { role: "user", content: prompt }], response_format: { type: "json_object" } });
+        const response = await invokeLLM({ messages: [{ role: "system", content: "You are a meal prep expert. Always respond with valid JSON." }, { role: "user", content: prompt }], response_format: { type: "json_object" }, model: "flash-lite" });
         let prepData: any;
         try { prepData = JSON.parse((response.choices[0].message.content as string) ?? "{}"); }
         catch { prepData = { prepTime: "2-3 hours", recipes: [], shoppingList: [], tips: [] }; }
@@ -253,7 +278,8 @@ export const appRouter = router({
     // Photo calorie analysis — works for guests
     analyzePhoto: guestOrUserProcedure
       .input(z.object({ photoUrl: z.string() }))
-      .mutation(async ({ input }) => {
+      .mutation(async ({ ctx, input }) => {
+        await checkAiLimit(ctx.user?.id, "mealLog.analyzePhoto");
         const response = await invokeLLM({
           messages: [
             { role: "system", content: `Analyze this food image. Return JSON: {"foods":[{"name":"string","portion":"string","calories":number,"protein":number,"carbs":number,"fat":number}],"totalCalories":number,"totalProtein":number,"totalCarbs":number,"totalFat":number,"confidence":"low"|"medium"|"high","notes":"description"}` },
@@ -312,7 +338,8 @@ export const appRouter = router({
     // AI form analysis — works for guests
     analyzeForm: guestOrUserProcedure
       .input(z.object({ exerciseName: z.string(), videoBase64: z.string().optional(), hasVideo: z.boolean().default(false) }))
-      .mutation(async ({ input }) => {
+      .mutation(async ({ ctx, input }) => {
+        await checkAiLimit(ctx.user?.id, "workout.analyzeForm");
         const prompt = `You are an expert personal trainer and biomechanics coach. Analyse the ${input.exerciseName} exercise form${input.hasVideo ? " from the provided video" : " based on common form mistakes"}. Return a JSON object with this exact structure: {"score":75,"grade":"good","exerciseName":"${input.exerciseName}","positives":["Good depth achieved","Neutral spine maintained"],"corrections":["Knees caving inward slightly","Elbows flaring too wide"],"feedback":["Overall your form is solid. Focus on keeping your knees tracking over your toes throughout the movement.","Remember to brace your core before each rep."]}. Score 0-100: 0-44 poor, 45-64 fair, 65-79 good, 80-100 excellent. Be specific and actionable.`;
         const messages: any[] = [{ role: "system", content: "You are an expert personal trainer. Always respond with valid JSON." }, { role: "user", content: prompt }];
         if (input.hasVideo && input.videoBase64 && input.videoBase64.length > 0) {
@@ -368,7 +395,8 @@ export const appRouter = router({
     // AI body fat assessment from photo
     assessPhoto: guestOrUserProcedure
       .input(z.object({ photoUrl: z.string(), previousBF: z.number().optional(), goal: z.string().optional() }))
-      .mutation(async ({ input }) => {
+      .mutation(async ({ ctx, input }) => {
+        await checkAiLimit(ctx.user?.id, "dailyCheckIn.assessPhoto");
         const prompt = `You are a fitness coach and body composition expert. Analyse this progress photo and provide an assessment. Return JSON: {"estimatedBF":18,"trend":"improving","bfChange":${input.previousBF ? `${input.previousBF}-18` : "null"},"motivationalMessage":"Great progress! Your muscle definition is improving.","tips":["Increase protein intake to preserve muscle","Add 2 more cardio sessions per week"],"bodyComposition":{"muscleDefinition":"moderate","visibleProgress":true,"areasImproving":["shoulders","arms"],"areasToFocus":["core","legs"]}}. Be encouraging and specific. Goal: ${input.goal ?? "general fitness"}.`;
         const messages: any[] = [{ role: "system", content: "You are a supportive fitness coach. Always respond with valid JSON." }, { role: "user", content: [{ type: "text", text: prompt }, { type: "image_url", image_url: { url: input.photoUrl } }] }];
         const response = await invokeLLM({ messages, response_format: { type: "json_object" } });
@@ -443,7 +471,8 @@ export const appRouter = router({
           streakDays: z.number().optional(),
         }).optional(),
       }))
-      .mutation(async ({ input }) => {
+      .mutation(async ({ ctx, input }) => {
+        await checkAiLimit(ctx.user?.id, "aiCoach.getInsights");
         const { formHistory = [], progressPhotos = [], profile = {} } = input;
         const formSummary = formHistory.length > 0
           ? formHistory.map(f => `${f.exercise}: ${f.score}/100 on ${f.date}${f.corrections?.length ? ` (issues: ${f.corrections.slice(0,2).join(", ")})` : ""}`).join("; ")
@@ -535,14 +564,15 @@ Return a JSON coaching report with this exact structure:
           workoutsCompleted: z.number().optional(),
         }).optional(),
       }))
-      .mutation(async ({ input }) => {
+      .mutation(async ({ ctx, input }) => {
+        await checkAiLimit(ctx.user?.id, "aiCoach.chat");
         const systemPrompt = `You are PeakPulse AI Coach — an elite, no-nonsense fitness coach. You give specific, evidence-based advice. You know the user's profile: Goal: ${input.profile?.goal ?? "general fitness"}, Current BF: ${input.profile?.currentBF ?? "unknown"}%, Target BF: ${input.profile?.targetBF ?? "unknown"}%, Workouts completed: ${input.profile?.workoutsCompleted ?? 0}. Keep responses concise (2-4 sentences max) and always end with one actionable next step.`;
         const messages: any[] = [
           { role: "system", content: systemPrompt },
           ...(input.history ?? []),
           { role: "user", content: input.message },
         ];
-        const response = await invokeLLM({ messages });
+        const response = await invokeLLM({ messages, model: "flash-lite" });
         return { reply: (response.choices[0].message.content as string) ?? "I'm here to help. What would you like to work on today?" };
       }),
   }),

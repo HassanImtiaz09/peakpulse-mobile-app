@@ -2,7 +2,7 @@ import { eq, desc, and } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import {
   InsertUser, users, userProfiles, InsertUserProfile,
-  bodyScans, fitnessPlans, progressPhotos, mealLogs, workoutSessions,
+  bodyScans, fitnessPlans, progressPhotos, mealLogs, workoutSessions, aiUsage,
 } from "../drizzle/schema";
 import { ENV } from "./_core/env";
 
@@ -182,6 +182,66 @@ export async function getUserSubscription(userId: number) {
   // Subscription management via Stripe webhooks would update this
   // For now return free plan
   return { plan: "free" as const, expiresAt: null };
+}
+
+// ── AI Usage Metering ─────────────────────────────────────────────────────────
+
+/** Monthly AI call limits per subscription tier */
+export const AI_CALL_LIMITS: Record<string, number> = {
+  free: 5,
+  basic: 30,
+  advanced: Infinity,
+};
+
+function currentMonth(): string {
+  const now = new Date();
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+}
+
+export async function incrementAiUsage(userId: number, endpoint: string): Promise<number> {
+  const db = await getDb();
+  if (!db) return 0;
+  const month = currentMonth();
+  await (db as any).execute(
+    `INSERT INTO ai_usage (userId, endpoint, month, callCount) VALUES (?, ?, ?, 1)
+     ON DUPLICATE KEY UPDATE callCount = callCount + 1`,
+    [userId, endpoint, month]
+  );
+  const rows = await db
+    .select({ callCount: aiUsage.callCount })
+    .from(aiUsage)
+    .where(and(eq(aiUsage.userId, userId), eq(aiUsage.endpoint, endpoint), eq(aiUsage.month, month)))
+    .limit(1);
+  return rows[0]?.callCount ?? 1;
+}
+
+export async function getMonthlyAiCallCount(userId: number): Promise<number> {
+  const db = await getDb();
+  if (!db) return 0;
+  const month = currentMonth();
+  const rows = await db
+    .select({ callCount: aiUsage.callCount })
+    .from(aiUsage)
+    .where(and(eq(aiUsage.userId, userId), eq(aiUsage.month, month)));
+  return rows.reduce((sum, r) => sum + r.callCount, 0);
+}
+
+/**
+ * Checks the user's monthly AI call count against their plan limit.
+ * Increments the counter if allowed; throws with code AI_LIMIT_EXCEEDED if not.
+ */
+export async function enforceAiLimit(userId: number, plan: string, endpoint: string): Promise<void> {
+  const limit = AI_CALL_LIMITS[plan] ?? AI_CALL_LIMITS.free;
+  if (!isFinite(limit)) {
+    // Advanced = unlimited; still track for analytics
+    await incrementAiUsage(userId, endpoint);
+    return;
+  }
+  const count = await getMonthlyAiCallCount(userId);
+  if (count >= limit) {
+    throw new Error(`AI_LIMIT_EXCEEDED:${plan}:${limit}:${count}`);
+  }
+  await incrementAiUsage(userId, endpoint);
 }
 
 export function getSamplePostsForGuests() {

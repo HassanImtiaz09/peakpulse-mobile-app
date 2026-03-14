@@ -102,6 +102,16 @@ export const workoutSessions = mysqlTable("workout_sessions", {
   completedAt: timestamp("completedAt").defaultNow().notNull(),
 });
 
+export const aiUsage = mysqlTable("ai_usage", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  endpoint: varchar("endpoint", { length: 100 }).notNull(),
+  month: varchar("month", { length: 7 }).notNull(), // YYYY-MM
+  callCount: int("callCount").default(0).notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type AiUsage = typeof aiUsage.$inferSelect;
+
 export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
 export type UserProfile = typeof userProfiles.$inferSelect;
