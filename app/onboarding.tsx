@@ -152,6 +152,18 @@ export default function OnboardingScreen() {
   const uploadPhoto = trpc.upload.photo.useMutation();
   const analyzeBodyScan = trpc.bodyScan.analyze.useMutation();
 
+  // Auto-generate plans ref to prevent double-invocation
+  const autoGenTriggered = useRef(false);
+
+  // Auto-trigger plan generation when step 10 is reached
+  // IMPORTANT: This useEffect MUST be before all early returns to satisfy React rules of hooks
+  React.useEffect(() => {
+    if (step === 10 && !autoGenTriggered.current && !generatingPlans) {
+      autoGenTriggered.current = true;
+      handleGeneratePlansAndGo();
+    }
+  }, [step]);
+
   function animateTransition(nextStep: number) {
     Animated.sequence([
       Animated.timing(fadeAnim, { toValue: 0, duration: 150, useNativeDriver: true }),
@@ -250,8 +262,7 @@ export default function OnboardingScreen() {
     }
   }
 
-  // Auto-generate plans ref to prevent double-invocation
-  const autoGenTriggered = useRef(false);
+
 
   async function handleGeneratePlansAndGo() {
     if (generatingPlans) return;
@@ -538,14 +549,7 @@ export default function OnboardingScreen() {
     );
   }
 
-  // ── Plan generation / done screen (step 10) — auto-generates plans ──────
-  // Auto-trigger plan generation when step 10 is reached
-  React.useEffect(() => {
-    if (step === 10 && !autoGenTriggered.current && !generatingPlans) {
-      autoGenTriggered.current = true;
-      handleGeneratePlansAndGo();
-    }
-  }, [step]);
+
 
   if (step === 10) {
     const wKg = weightKg ? parseFloat(weightKg) : null;

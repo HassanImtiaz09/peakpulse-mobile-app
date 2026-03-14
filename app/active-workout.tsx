@@ -226,7 +226,12 @@ export default function ActiveWorkoutScreen() {
   const { isAuthenticated } = useAuth();
   const params = useLocalSearchParams<{ dayData: string }>();
 
-  const dayData = params.dayData ? JSON.parse(params.dayData) : null;
+  let dayData: any = null;
+  try {
+    dayData = params.dayData ? JSON.parse(params.dayData) : null;
+  } catch (_) {
+    // Malformed JSON — will show empty workout
+  }
   const exercises: Exercise[] = dayData?.exercises ?? [];
 
   const [currentExercise, setCurrentExercise] = useState(0);

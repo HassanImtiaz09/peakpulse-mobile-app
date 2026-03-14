@@ -446,3 +446,12 @@
 - [x] Feature: Food diary timeline with date grouping and meal type labels
 - [x] Feature: Tap photo to view fullscreen with meal details and macros
 - [x] Feature: Navigation to photo gallery from meals tab
+
+## Round 32 — Hooks Bug Fix + Comprehensive Bug Check
+
+- [x] BUG: "Rendered more hooks than during the previous render" error in onboarding.tsx:543 — useEffect inside conditional step rendering
+- [x] Task: Run comprehensive bug check across all app files for similar hook violations and other issues
+- [x] BUG: Notifications.getLastNotificationResponse() used as sync but is async — crashes on native cold-start (_layout.tsx)
+- [x] BUG: useRouter() called before navigator is mounted in deep-link hooks (_layout.tsx)
+- [x] BUG: JSON.parse(params.dayData) in active-workout.tsx lacks try/catch — crashes on malformed params
+- [x] AUDIT: Verified all router.push route paths match existing route files (16 routes checked)

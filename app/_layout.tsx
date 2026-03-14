@@ -58,19 +58,23 @@ export const unstable_settings = {
  * Listens for notification taps and deep-links to the URL stored in notification data.
  * Handles both cold-start (app launched from notification) and foreground tap scenarios.
  */
-function useNotificationDeepLink() {
+function useNotificationDeepLink(ready: boolean) {
   const router = useRouter();
   useEffect(() => {
-    if (Platform.OS === "web") return;
+    if (Platform.OS === "web" || !ready) return;
     // Handle notification that launched the app from a closed/background state
-    const lastResponse = Notifications.getLastNotificationResponse();
-    if (lastResponse) {
-      const url = lastResponse.notification.request.content.data?.url;
-      if (typeof url === "string") {
-        // Defer slightly to let the navigator mount before pushing
-        setTimeout(() => router.push(url as any), 400);
-      }
-    }
+    (async () => {
+      try {
+        const lastResponse = await Notifications.getLastNotificationResponseAsync();
+        if (lastResponse) {
+          const url = lastResponse.notification.request.content.data?.url;
+          if (typeof url === "string") {
+            // Defer slightly to let the navigator mount before pushing
+            setTimeout(() => router.push(url as any), 400);
+          }
+        }
+      } catch (_) { /* cold-start: navigator may not be ready */ }
+    })();
     // Handle notification taps while the app is already running
     const subscription = Notifications.addNotificationResponseReceivedListener((response) => {
       const url = response.notification.request.content.data?.url;
@@ -79,16 +83,16 @@ function useNotificationDeepLink() {
       }
     });
     return () => subscription.remove();
-  }, [router]);
+  }, [router, ready]);
 }
 
 /**
  * Detects incoming referral deep-link URLs on app launch and stores the code
  * as a pending referral to be applied when the user completes onboarding.
  */
-function useReferralDeepLink() {
+function useReferralDeepLink(ready: boolean) {
   useEffect(() => {
-    if (Platform.OS === "web") return;
+    if (Platform.OS === "web" || !ready) return;
 
     async function checkInitialUrl() {
       try {
@@ -113,12 +117,10 @@ function useReferralDeepLink() {
     });
 
     return () => subscription.remove();
-  }, []);
+  }, [ready]);
 }
 
 export default function RootLayout() {
-  useNotificationDeepLink();
-  useReferralDeepLink();
   const [fontsLoaded] = useFonts({
     DMSans_300Light,
     DMSans_400Regular,
@@ -177,6 +179,10 @@ export default function RootLayout() {
       }),
   );
   const [trpcClient] = useState(() => createTRPCClient());
+
+  // Deep-link hooks run on every render (rules of hooks) but skip work until fonts are loaded
+  useNotificationDeepLink(fontsLoaded);
+  useReferralDeepLink(fontsLoaded);
 
   if (!fontsLoaded) return null;
 
