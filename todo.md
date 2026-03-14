@@ -418,3 +418,12 @@
 - [x] Feature: Barcode scan result card showing product name, calories, protein, carbs, fat
 - [x] Feature: Quick-add scanned food item to meal log with one tap
 - [x] Feature: Scan button accessible from the meals tab for easy access
+
+## Round 29 — Barcode Scan History + Favourites/Frequent Foods
+
+- [x] Feature: Barcode scan history persisted in AsyncStorage — stores last 50 scanned products
+- [x] Feature: Scan history UI in barcode scanner screen with quick re-log button per item
+- [x] Feature: Favourites/frequent foods list on the meals tab Log section
+- [x] Feature: Add to favourites button on logged meals and scanned products
+- [x] Feature: One-tap logging from favourites list with correct macros
+- [x] Feature: Remove from favourites functionality

@@ -13,6 +13,7 @@ import { useCalories } from "@/lib/calorie-context";
 import { trpc } from "@/lib/trpc";
 import { useFocusEffect, useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 const MEAL_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/OTOphPKaSpDPZRjp.jpg";
 const MEAL_TYPES = ["breakfast", "lunch", "dinner", "snack"];
@@ -201,6 +202,105 @@ export default function MealsScreen() {
   const [localProfile, setLocalProfile] = useState<any>(null);
   const [showShoppingList, setShowShoppingList] = useState(false);
   const [checkedIngredients, setCheckedIngredients] = useState<Record<string, boolean>>({});
+
+  // Favourites / frequent foods
+  interface FavouriteFood {
+    id: string;
+    name: string;
+    mealType: string;
+    calories: number;
+    protein: number;
+    carbs: number;
+    fat: number;
+    source: "manual" | "barcode" | "ai";
+    barcode?: string;
+    addedAt: number;
+    logCount: number;
+  }
+  const [favourites, setFavourites] = useState<FavouriteFood[]>([]);
+  const [showFavourites, setShowFavourites] = useState(false);
+
+  // Load favourites on mount
+  React.useEffect(() => {
+    AsyncStorage.getItem("@favourite_foods").then(raw => {
+      if (raw) try { setFavourites(JSON.parse(raw)); } catch {}
+    });
+  }, []);
+
+  const saveFavourites = React.useCallback((updated: FavouriteFood[]) => {
+    setFavourites(updated);
+    AsyncStorage.setItem("@favourite_foods", JSON.stringify(updated));
+  }, []);
+
+  const addToFavourites = React.useCallback((food: { name: string; mealType: string; calories: number; protein: number; carbs: number; fat: number; source?: "manual" | "barcode" | "ai"; barcode?: string }) => {
+    setFavourites(prev => {
+      // Check for duplicate by name (case-insensitive)
+      const exists = prev.find(f => f.name.toLowerCase() === food.name.toLowerCase());
+      if (exists) {
+        Alert.alert("Already in Favourites", `${food.name} is already in your favourites list.`);
+        return prev;
+      }
+      const entry: FavouriteFood = {
+        id: `fav_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+        name: food.name,
+        mealType: food.mealType,
+        calories: food.calories,
+        protein: food.protein,
+        carbs: food.carbs,
+        fat: food.fat,
+        source: food.source ?? "manual",
+        barcode: food.barcode,
+        addedAt: Date.now(),
+        logCount: 0,
+      };
+      const updated = [entry, ...prev];
+      AsyncStorage.setItem("@favourite_foods", JSON.stringify(updated));
+      if (Platform.OS !== "web") {
+        try { const H = require("expo-haptics"); H.notificationAsync(H.NotificationFeedbackType.Success); } catch {}
+      }
+      Alert.alert("\u2b50 Added to Favourites", `${food.name} saved for quick logging.`);
+      return updated;
+    });
+  }, []);
+
+  const removeFromFavourites = React.useCallback((id: string) => {
+    setFavourites(prev => {
+      const updated = prev.filter(f => f.id !== id);
+      AsyncStorage.setItem("@favourite_foods", JSON.stringify(updated));
+      return updated;
+    });
+  }, []);
+
+  const logFromFavourite = React.useCallback(async (fav: FavouriteFood) => {
+    await addMeal({
+      name: fav.name,
+      mealType: fav.mealType,
+      calories: fav.calories,
+      protein: fav.protein,
+      carbs: fav.carbs,
+      fat: fav.fat,
+    });
+    if (isAuthenticated) {
+      dbLogMeal.mutate({
+        name: fav.name,
+        mealType: fav.mealType,
+        calories: fav.calories,
+        protein: fav.protein,
+        carbs: fav.carbs,
+        fat: fav.fat,
+      });
+    }
+    // Increment log count
+    setFavourites(prev => {
+      const updated = prev.map(f => f.id === fav.id ? { ...f, logCount: f.logCount + 1 } : f);
+      AsyncStorage.setItem("@favourite_foods", JSON.stringify(updated));
+      return updated;
+    });
+    if (Platform.OS !== "web") {
+      try { const H = require("expo-haptics"); H.notificationAsync(H.NotificationFeedbackType.Success); } catch {}
+    }
+    Alert.alert("\u2705 Logged!", `${fav.name} — ${fav.calories} kcal`);
+  }, [addMeal, isAuthenticated]);
 
   // Water intake tracker
   const [waterIntake, setWaterIntake] = useState(0); // in ml
@@ -631,6 +731,75 @@ export default function MealsScreen() {
               </TouchableOpacity>
             </View>
 
+            {/* ── Favourites / Frequent Foods ── */}
+            <View style={{ backgroundColor: "#150A00", borderRadius: 16, padding: 16, marginBottom: 16, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}>
+              <TouchableOpacity
+                style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}
+                onPress={() => setShowFavourites(!showFavourites)}
+              >
+                <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+                  <Text style={{ fontSize: 18 }}>{"\u2b50"}</Text>
+                  <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 15 }}>Favourites</Text>
+                  {favourites.length > 0 && (
+                    <View style={{ backgroundColor: "rgba(245,158,11,0.15)", borderRadius: 8, paddingHorizontal: 6, paddingVertical: 2 }}>
+                      <Text style={{ color: "#F59E0B", fontSize: 10, fontFamily: "Outfit_700Bold" }}>{favourites.length}</Text>
+                    </View>
+                  )}
+                </View>
+                <MaterialIcons name={showFavourites ? "keyboard-arrow-up" : "keyboard-arrow-down"} size={22} color="#92400E" />
+              </TouchableOpacity>
+
+              {showFavourites && (
+                <View style={{ marginTop: 12 }}>
+                  {favourites.length === 0 ? (
+                    <View style={{ alignItems: "center", paddingVertical: 16 }}>
+                      <Text style={{ color: "#92400E", fontSize: 13, textAlign: "center", lineHeight: 20 }}>
+                        No favourites yet. Log a meal and tap the star to save it here for quick one-tap logging.
+                      </Text>
+                    </View>
+                  ) : (
+                    <View style={{ gap: 8 }}>
+                      {/* Sort by most logged first */}
+                      {[...favourites].sort((a, b) => b.logCount - a.logCount).map(fav => (
+                        <View key={fav.id} style={{ flexDirection: "row", alignItems: "center", backgroundColor: "rgba(245,158,11,0.05)", borderRadius: 12, padding: 10, borderWidth: 1, borderColor: "rgba(245,158,11,0.08)", gap: 10 }}>
+                          <View style={{ flex: 1 }}>
+                            <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 13 }} numberOfLines={1}>{fav.name}</Text>
+                            <View style={{ flexDirection: "row", gap: 6, marginTop: 3 }}>
+                              <Text style={{ color: "#F59E0B", fontSize: 10, fontFamily: "Outfit_700Bold" }}>{fav.calories} kcal</Text>
+                              <Text style={{ color: "#3B82F6", fontSize: 10 }}>P:{fav.protein}g</Text>
+                              <Text style={{ color: "#FDE68A", fontSize: 10 }}>C:{fav.carbs}g</Text>
+                              <Text style={{ color: "#FBBF24", fontSize: 10 }}>F:{fav.fat}g</Text>
+                              {fav.logCount > 0 && (
+                                <Text style={{ color: "rgba(146,64,14,0.5)", fontSize: 10 }}>{"\u00b7"} logged {fav.logCount}x</Text>
+                              )}
+                            </View>
+                          </View>
+                          <TouchableOpacity
+                            style={{ backgroundColor: "#F59E0B", borderRadius: 8, paddingVertical: 6, paddingHorizontal: 10, flexDirection: "row", alignItems: "center", gap: 4 }}
+                            onPress={() => logFromFavourite(fav)}
+                          >
+                            <MaterialIcons name="add" size={14} color="#FFF7ED" />
+                            <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 10 }}>Log</Text>
+                          </TouchableOpacity>
+                          <TouchableOpacity
+                            style={{ padding: 4 }}
+                            onPress={() => {
+                              Alert.alert("Remove Favourite?", `Remove ${fav.name} from favourites?`, [
+                                { text: "Cancel", style: "cancel" },
+                                { text: "Remove", style: "destructive", onPress: () => removeFromFavourites(fav.id) },
+                              ]);
+                            }}
+                          >
+                            <MaterialIcons name="close" size={16} color="#EF4444" />
+                          </TouchableOpacity>
+                        </View>
+                      ))}
+                    </View>
+                  )}
+                </View>
+              )}
+            </View>
+
             {/* Regenerate Both Plans Section */}
             {aiMealPlan && (
               <View style={{ flexDirection: "row", gap: 8, marginBottom: 14 }}>
@@ -1031,12 +1200,28 @@ export default function MealsScreen() {
                     {meal.calories > 0 && (
                       <Text style={{ color: "#FBBF24", fontFamily: "Outfit_700Bold", fontSize: 15 }}>{Math.round(meal.calories)}</Text>
                     )}
-                    <TouchableOpacity
-                      style={{ backgroundColor: "#EF444420", borderRadius: 8, paddingHorizontal: 8, paddingVertical: 4 }}
-                      onPress={() => removeMeal(meal.id)}
-                    >
-                      <Text style={{ color: "#92400E", fontSize: 11, fontFamily: "Outfit_700Bold" }}>✕</Text>
-                    </TouchableOpacity>
+                    <View style={{ flexDirection: "row", gap: 6 }}>
+                      <TouchableOpacity
+                        style={{ backgroundColor: favourites.some(f => f.name.toLowerCase() === meal.name.toLowerCase()) ? "rgba(245,158,11,0.20)" : "rgba(245,158,11,0.08)", borderRadius: 8, paddingHorizontal: 8, paddingVertical: 4 }}
+                        onPress={() => addToFavourites({
+                          name: meal.name,
+                          mealType: meal.mealType,
+                          calories: Math.round(meal.calories),
+                          protein: Math.round(meal.protein),
+                          carbs: Math.round(meal.carbs),
+                          fat: Math.round(meal.fat),
+                          source: "manual",
+                        })}
+                      >
+                        <Text style={{ fontSize: 13 }}>{favourites.some(f => f.name.toLowerCase() === meal.name.toLowerCase()) ? "\u2b50" : "\u2606"}</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        style={{ backgroundColor: "#EF444420", borderRadius: 8, paddingHorizontal: 8, paddingVertical: 4 }}
+                        onPress={() => removeMeal(meal.id)}
+                      >
+                        <Text style={{ color: "#92400E", fontSize: 11, fontFamily: "Outfit_700Bold" }}>✕</Text>
+                      </TouchableOpacity>
+                    </View>
                   </View>
                 </View>
               ))

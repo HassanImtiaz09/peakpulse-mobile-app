@@ -7,6 +7,7 @@ import { CameraView, useCameraPermissions, type BarcodeScanningResult } from "ex
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { FlatList } from "react-native";
 
 const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get("window");
 const SCAN_AREA_SIZE = SCREEN_W * 0.7;
@@ -82,6 +83,52 @@ async function lookupBarcode(barcode: string): Promise<NutritionResult> {
   }
 }
 
+const HISTORY_KEY = "@barcode_scan_history";
+const MAX_HISTORY = 50;
+
+interface HistoryItem {
+  barcode: string;
+  name: string;
+  brand: string;
+  calories: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+  servingSize: string;
+  imageUrl: string | null;
+  scannedAt: number;
+}
+
+async function loadHistory(): Promise<HistoryItem[]> {
+  try {
+    const raw = await AsyncStorage.getItem(HISTORY_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch {
+    return [];
+  }
+}
+
+async function saveToHistory(item: NutritionResult): Promise<void> {
+  const history = await loadHistory();
+  // Remove duplicate barcodes
+  const filtered = history.filter(h => h.barcode !== item.barcode);
+  const entry: HistoryItem = {
+    barcode: item.barcode,
+    name: item.name,
+    brand: item.brand,
+    calories: item.calories,
+    protein: item.protein,
+    carbs: item.carbs,
+    fat: item.fat,
+    servingSize: item.servingSize,
+    imageUrl: item.imageUrl,
+    scannedAt: Date.now(),
+  };
+  // Prepend and cap at MAX_HISTORY
+  const updated = [entry, ...filtered].slice(0, MAX_HISTORY);
+  await AsyncStorage.setItem(HISTORY_KEY, JSON.stringify(updated));
+}
+
 export default function BarcodeScannerScreen() {
   const router = useRouter();
   const [permission, requestPermission] = useCameraPermissions();
@@ -89,6 +136,13 @@ export default function BarcodeScannerScreen() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<NutritionResult | null>(null);
   const [torchOn, setTorchOn] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);
+  const [history, setHistory] = useState<HistoryItem[]>([]);
+
+  // Load history on mount
+  useEffect(() => {
+    loadHistory().then(setHistory);
+  }, []);
 
   const handleBarcodeScanned = useCallback(async ({ type, data }: BarcodeScanningResult) => {
     if (scanned || loading) return;
@@ -105,6 +159,12 @@ export default function BarcodeScannerScreen() {
     const nutrition = await lookupBarcode(data);
     setResult(nutrition);
     setLoading(false);
+
+    // Save to history if found
+    if (nutrition.found) {
+      await saveToHistory(nutrition);
+      loadHistory().then(setHistory);
+    }
   }, [scanned, loading]);
 
   const handleAddToLog = async () => {
@@ -137,6 +197,50 @@ export default function BarcodeScannerScreen() {
     setScanned(false);
     setResult(null);
     setLoading(false);
+    setShowHistory(false);
+  };
+
+  const handleRelogFromHistory = async (item: HistoryItem) => {
+    await AsyncStorage.setItem("@barcode_scan_result", JSON.stringify({
+      name: item.brand ? `${item.name} (${item.brand})` : item.name,
+      calories: item.calories,
+      protein: item.protein,
+      carbs: item.carbs,
+      fat: item.fat,
+      servingSize: item.servingSize,
+      barcode: item.barcode,
+      imageUrl: item.imageUrl,
+      timestamp: Date.now(),
+    }));
+
+    if (Platform.OS !== "web") {
+      try {
+        const Haptics = await import("expo-haptics");
+        await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      } catch {}
+    }
+
+    router.back();
+  };
+
+  const handleDeleteHistoryItem = async (barcode: string) => {
+    const updated = history.filter(h => h.barcode !== barcode);
+    setHistory(updated);
+    await AsyncStorage.setItem(HISTORY_KEY, JSON.stringify(updated));
+  };
+
+  const handleClearHistory = () => {
+    Alert.alert("Clear Scan History?", "This will remove all previously scanned products.", [
+      { text: "Cancel", style: "cancel" },
+      {
+        text: "Clear All",
+        style: "destructive",
+        onPress: async () => {
+          setHistory([]);
+          await AsyncStorage.removeItem(HISTORY_KEY);
+        },
+      },
+    ]);
   };
 
   // Permission not yet loaded
@@ -188,7 +292,7 @@ export default function BarcodeScannerScreen() {
       )}
 
       {/* Overlay */}
-      {!result && (
+      {!result && !showHistory && (
         <View style={StyleSheet.absoluteFillObject} pointerEvents="box-none">
           {/* Top bar */}
           <View style={styles.topBar}>
@@ -196,9 +300,14 @@ export default function BarcodeScannerScreen() {
               <MaterialIcons name="close" size={24} color={SF.fg} />
             </TouchableOpacity>
             <Text style={styles.topTitle}>Scan Barcode</Text>
-            <TouchableOpacity style={styles.topBtn} onPress={() => setTorchOn(!torchOn)}>
-              <MaterialIcons name={torchOn ? "flash-on" : "flash-off"} size={24} color={torchOn ? SF.gold : SF.fg} />
-            </TouchableOpacity>
+            <View style={{ flexDirection: "row", gap: 8 }}>
+              <TouchableOpacity style={styles.topBtn} onPress={() => setShowHistory(true)}>
+                <MaterialIcons name="history" size={24} color={SF.fg} />
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.topBtn} onPress={() => setTorchOn(!torchOn)}>
+                <MaterialIcons name={torchOn ? "flash-on" : "flash-off"} size={24} color={torchOn ? SF.gold : SF.fg} />
+              </TouchableOpacity>
+            </View>
           </View>
 
           {/* Scan area frame */}
@@ -232,6 +341,69 @@ export default function BarcodeScannerScreen() {
               </View>
             </View>
           </View>
+        </View>
+      )}
+
+      {/* History View */}
+      {showHistory && !result && (
+        <View style={[StyleSheet.absoluteFillObject, { backgroundColor: SF.bg }]}>
+          {/* History Header */}
+          <View style={styles.topBar}>
+            <TouchableOpacity style={styles.topBtn} onPress={() => setShowHistory(false)}>
+              <MaterialIcons name="arrow-back" size={24} color={SF.fg} />
+            </TouchableOpacity>
+            <Text style={styles.topTitle}>Scan History</Text>
+            <TouchableOpacity style={styles.topBtn} onPress={history.length > 0 ? handleClearHistory : undefined}>
+              <MaterialIcons name="delete-outline" size={24} color={history.length > 0 ? SF.red : "transparent"} />
+            </TouchableOpacity>
+          </View>
+
+          {history.length === 0 ? (
+            <View style={{ flex: 1, justifyContent: "center", alignItems: "center", padding: 32 }}>
+              <Text style={{ fontSize: 48, marginBottom: 16 }}>📷</Text>
+              <Text style={{ color: SF.muted, fontSize: 15, textAlign: "center", lineHeight: 22 }}>
+                No scan history yet. Scan a product barcode and it will appear here for quick re-logging.
+              </Text>
+            </View>
+          ) : (
+            <FlatList
+              data={history}
+              keyExtractor={(item) => item.barcode}
+              contentContainerStyle={{ padding: 16, paddingBottom: 40, gap: 10 }}
+              renderItem={({ item }) => (
+                <View style={styles.historyCard}>
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.historyName} numberOfLines={1}>{item.name}</Text>
+                    {item.brand ? <Text style={styles.historyBrand} numberOfLines={1}>{item.brand}</Text> : null}
+                    <View style={styles.historyMacros}>
+                      <Text style={styles.historyMacroText}>{item.calories} kcal</Text>
+                      <Text style={[styles.historyMacroText, { color: "#3B82F6" }]}>P: {item.protein}g</Text>
+                      <Text style={[styles.historyMacroText, { color: "#FDE68A" }]}>C: {item.carbs}g</Text>
+                      <Text style={[styles.historyMacroText, { color: "#FBBF24" }]}>F: {item.fat}g</Text>
+                    </View>
+                    <Text style={{ color: "rgba(146,64,14,0.5)", fontSize: 10, marginTop: 4 }}>
+                      {new Date(item.scannedAt).toLocaleDateString()} • {item.barcode}
+                    </Text>
+                  </View>
+                  <View style={{ gap: 6 }}>
+                    <TouchableOpacity
+                      style={styles.historyLogBtn}
+                      onPress={() => handleRelogFromHistory(item)}
+                    >
+                      <MaterialIcons name="add-circle" size={16} color={SF.fg} />
+                      <Text style={{ color: SF.fg, fontFamily: "Outfit_700Bold", fontSize: 11 }}>Log</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={styles.historyDeleteBtn}
+                      onPress={() => handleDeleteHistoryItem(item.barcode)}
+                    >
+                      <MaterialIcons name="close" size={14} color={SF.red} />
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              )}
+            />
+          )}
         </View>
       )}
 
@@ -283,6 +455,43 @@ export default function BarcodeScannerScreen() {
                 <TouchableOpacity style={styles.addBtn} onPress={handleAddToLog}>
                   <MaterialIcons name="add-circle" size={20} color={SF.fg} />
                   <Text style={styles.addBtnText}>Add to Meal Log</Text>
+                </TouchableOpacity>
+
+                {/* Save to Favourites Button */}
+                <TouchableOpacity
+                  style={[styles.addBtn, { backgroundColor: "rgba(245,158,11,0.15)", marginTop: -8, shadowOpacity: 0 }]}
+                  onPress={async () => {
+                    if (!result) return;
+                    const existing = await AsyncStorage.getItem("@favourite_foods");
+                    const favs = existing ? JSON.parse(existing) : [];
+                    const name = result.brand ? `${result.name} (${result.brand})` : result.name;
+                    if (favs.some((f: any) => f.name.toLowerCase() === name.toLowerCase())) {
+                      Alert.alert("Already in Favourites", `${name} is already saved.`);
+                      return;
+                    }
+                    const entry = {
+                      id: `fav_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+                      name,
+                      mealType: "snack",
+                      calories: result.calories,
+                      protein: result.protein,
+                      carbs: result.carbs,
+                      fat: result.fat,
+                      source: "barcode" as const,
+                      barcode: result.barcode,
+                      addedAt: Date.now(),
+                      logCount: 0,
+                    };
+                    const updated = [entry, ...favs];
+                    await AsyncStorage.setItem("@favourite_foods", JSON.stringify(updated));
+                    if (Platform.OS !== "web") {
+                      try { const H = await import("expo-haptics"); await H.notificationAsync(H.NotificationFeedbackType.Success); } catch {}
+                    }
+                    Alert.alert("\u2b50 Saved to Favourites", `${name} added for quick one-tap logging.`);
+                  }}
+                >
+                  <Text style={{ fontSize: 16 }}>{"\u2b50"}</Text>
+                  <Text style={[styles.addBtnText, { color: SF.gold }]}>Save to Favourites</Text>
                 </TouchableOpacity>
               </>
             ) : (
@@ -614,5 +823,57 @@ const styles = StyleSheet.create({
     color: SF.muted,
     fontSize: 14,
     fontFamily: "DMSans_600SemiBold",
+  },
+  // History styles
+  historyCard: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: SF.surface,
+    borderRadius: 16,
+    padding: 14,
+    borderWidth: 1,
+    borderColor: "rgba(245,158,11,0.10)",
+    gap: 12,
+  },
+  historyName: {
+    color: SF.fg,
+    fontSize: 15,
+    fontFamily: "Outfit_700Bold",
+    marginBottom: 2,
+  },
+  historyBrand: {
+    color: SF.muted,
+    fontSize: 12,
+    fontFamily: "DMSans_600SemiBold",
+    marginBottom: 4,
+  },
+  historyMacros: {
+    flexDirection: "row",
+    gap: 8,
+    marginTop: 4,
+  },
+  historyMacroText: {
+    color: SF.gold,
+    fontSize: 11,
+    fontFamily: "Outfit_700Bold",
+  },
+  historyLogBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    backgroundColor: SF.gold,
+    borderRadius: 10,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+  },
+  historyDeleteBtn: {
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(220,38,38,0.10)",
+    borderRadius: 8,
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    borderWidth: 1,
+    borderColor: "rgba(220,38,38,0.20)",
   },
 });
