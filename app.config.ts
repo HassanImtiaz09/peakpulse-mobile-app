@@ -86,6 +86,12 @@ const config: ExpoConfig = {
   plugins: [
     "expo-router",
     [
+      "expo-camera",
+      {
+        "cameraPermission": "Allow PeakPulse to access your camera for barcode scanning and food photos."
+      }
+    ],
+    [
       "expo-media-library",
       {
         "photosPermission": "Allow PeakPulse to save your progress collage to your photo library.",

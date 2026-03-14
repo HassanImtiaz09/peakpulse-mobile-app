@@ -410,3 +410,11 @@
 - [x] Feature: Weekly progress ring on the plans tab showing completed vs total workout days
 - [x] Feature: Water intake tracker on the meals tab with daily goal, quick-add buttons, and progress display
 - [x] Feature: Push notification reminders for upcoming workouts and meal times based on user's plan schedule
+
+## Round 28 — Barcode Scanner for Meal Log
+
+- [x] Feature: Barcode scanner screen using expo-camera with barcode detection
+- [x] Feature: Open Food Facts API integration to look up nutrition data from barcodes
+- [x] Feature: Barcode scan result card showing product name, calories, protein, carbs, fat
+- [x] Feature: Quick-add scanned food item to meal log with one tap
+- [x] Feature: Scan button accessible from the meals tab for easy access

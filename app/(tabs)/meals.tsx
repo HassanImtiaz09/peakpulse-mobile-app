@@ -332,10 +332,47 @@ export default function MealsScreen() {
     onError: (e) => Alert.alert("Error", e.message),
   });
 
-  // Refresh calorie data when screen comes into focus
+  // Pick up barcode scan result when returning from scanner
   useFocusEffect(useCallback(() => {
     refreshFromStorage();
-  }, [refreshFromStorage]));
+    AsyncStorage.getItem("@barcode_scan_result").then(raw => {
+      if (!raw) return;
+      try {
+        const scan = JSON.parse(raw);
+        // Only use if scanned within the last 30 seconds
+        if (Date.now() - scan.timestamp < 30000) {
+          AsyncStorage.removeItem("@barcode_scan_result");
+          // Auto-add to meal log
+          addMeal({
+            name: scan.name,
+            mealType,
+            calories: scan.calories || 0,
+            protein: scan.protein || 0,
+            carbs: scan.carbs || 0,
+            fat: scan.fat || 0,
+          });
+          if (isAuthenticated) {
+            dbLogMeal.mutate({
+              name: scan.name,
+              mealType,
+              calories: scan.calories || 0,
+              protein: scan.protein || 0,
+              carbs: scan.carbs || 0,
+              fat: scan.fat || 0,
+            });
+          }
+          Alert.alert(
+            "\u2705 Scanned & Logged!",
+            `${scan.name}\n${scan.calories} kcal \u2022 P: ${scan.protein}g \u2022 C: ${scan.carbs}g \u2022 F: ${scan.fat}g${scan.servingSize ? `\nServing: ${scan.servingSize}` : ""}`
+          );
+        } else {
+          AsyncStorage.removeItem("@barcode_scan_result");
+        }
+      } catch {
+        AsyncStorage.removeItem("@barcode_scan_result");
+      }
+    });
+  }, [refreshFromStorage, mealType, isAuthenticated]));
 
   const caloriePercent = Math.min(100, (totalCalories / calorieGoal) * 100);
   const calorieColor = caloriePercent > 90 ? "#92400E" : caloriePercent > 70 ? "#FBBF24" : "#FDE68A";
@@ -534,18 +571,24 @@ export default function MealsScreen() {
       </View>
 
       {/* Tab Bar */}
-      <View style={{ flexDirection: "row", paddingHorizontal: 16, marginTop: 16, marginBottom: 12, gap: 8 }}>
+      <View style={{ flexDirection: "row", paddingHorizontal: 16, marginTop: 16, marginBottom: 12, gap: 6 }}>
         {(["log", "analyze"] as const).map(tab => (
           <TouchableOpacity
             key={tab}
             style={{ flex: 1, paddingVertical: 10, borderRadius: 14, alignItems: "center", backgroundColor: activeTab === tab ? "#F59E0B" : "#150A00", borderWidth: 1, borderColor: activeTab === tab ? "#F59E0B" : "rgba(245,158,11,0.10)" }}
             onPress={() => setActiveTab(tab)}
           >
-            <Text style={{ color: activeTab === tab ? "#FFF7ED" : "#92400E", fontFamily: "Outfit_700Bold", fontSize: 13 }}>
-              {tab === "log" ? "📋 Today's Log" : "📷 AI Estimator"}
+            <Text style={{ color: activeTab === tab ? "#FFF7ED" : "#92400E", fontFamily: "Outfit_700Bold", fontSize: 12 }}>
+              {tab === "log" ? "\ud83d\udccb Log" : "\ud83d\udcf7 AI Scan"}
             </Text>
           </TouchableOpacity>
         ))}
+        <TouchableOpacity
+          style={{ flex: 1, paddingVertical: 10, borderRadius: 14, alignItems: "center", backgroundColor: "#150A00", borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}
+          onPress={() => router.push("/barcode-scanner" as any)}
+        >
+          <Text style={{ color: "#92400E", fontFamily: "Outfit_700Bold", fontSize: 12 }}>\ud83d\udd0d Barcode</Text>
+        </TouchableOpacity>
       </View>
 
       <ScrollView contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 40 }} showsVerticalScrollIndicator={false}>
