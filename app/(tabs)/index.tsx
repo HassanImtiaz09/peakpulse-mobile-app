@@ -91,6 +91,12 @@ export default function HomeScreen() {
   const [paywallFeature, setPaywallFeature] = useState<{ name: string; icon: string; tier: "basic" | "advanced"; desc?: string } | null>(null);
   const { user, isAuthenticated, loading: authLoading } = useAuth();
   const { guestProfile, isGuest, loading: guestLoading } = useGuestAuth();
+<<<<<<< Updated upstream
+=======
+  const [localProfile, setLocalProfile] = useState<any>(null);
+  const [latestBF, setLatestBF] = useState<{ bf: number; date: string; confidence: string } | null>(null);
+  const [targetBF, setTargetBF] = useState<{ target_bf: number; imageUrl?: string } | null>(null);
+>>>>>>> Stashed changes
   const [onboardingChecked, setOnboardingChecked] = useState(false);
   const canUse = isAuthenticated || isGuest;
   const [tipIndex, setTipIndex] = React.useState(0);
@@ -188,6 +194,25 @@ export default function HomeScreen() {
 
   // For guest users: guestProfile comes directly from useGuestAuth (no AsyncStorage re-read needed)
   const activeProfile = isAuthenticated ? profile : guestProfile;
+
+  // Load latest BF% estimate from body scan history
+  useEffect(() => {
+    AsyncStorage.getItem("@body_scan_history").then(raw => {
+      if (!raw) return;
+      try {
+        const scans = JSON.parse(raw) as any[];
+        if (scans.length > 0) {
+          const latest = scans[scans.length - 1];
+          setLatestBF({ bf: latest.estimatedBodyFat, date: latest.date ?? latest.createdAt ?? "", confidence: latest.confidenceLow && latest.confidenceHigh ? `${latest.confidenceLow}–${latest.confidenceHigh}%` : "" });
+        }
+      } catch {}
+    });
+    AsyncStorage.getItem("@target_transformation").then(raw => {
+      if (raw) {
+        try { setTargetBF(JSON.parse(raw)); } catch {}
+      }
+    });
+  }, [canUse]);
 
   if (!onboardingChecked && !authLoading && !guestLoading) {
     return <View style={{ flex: 1, backgroundColor: SF.bg }} />;
@@ -302,7 +327,95 @@ export default function HomeScreen() {
                 })}
               </View>
             </View>
+<<<<<<< Updated upstream
           )}
+=======
+            {/* Progress track */}
+            <View style={styles.progressTrack}>
+              <View style={[styles.progressFill, { width: `${calorieProgress * 100}%` as any }]} />
+            </View>
+            {/* Macros */}
+            <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 10 }}>
+              {["Protein", "Carbs", "Fat"].map((macro, i) => {
+                const vals = [0, 0, 0];
+                (todayMeals as MealEntry[]).forEach(m => { vals[0] += m.protein ?? 0; vals[1] += m.carbs ?? 0; vals[2] += m.fat ?? 0; });
+                return (
+                  <View key={macro} style={{ alignItems: "center" }}>
+                    <Text style={styles.macroValue}>{Math.round(vals[i])}g</Text>
+                    <Text style={styles.macroLabel}>{macro}</Text>
+                  </View>
+                );
+              })}
+            </View>
+          </View>
+        )}
+
+        {/* ── BF% Estimate Card ── */}
+        {latestBF && (
+          <View style={{ marginHorizontal: 20, marginBottom: 16, backgroundColor: SF.surface, borderRadius: 20, padding: 18, borderWidth: 1, borderColor: SF.border2 }}>
+            <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+              <Text style={{ color: SF.gold, fontFamily: "Outfit_700Bold", fontSize: 11, letterSpacing: 1.5 }}>BODY FAT ESTIMATE</Text>
+              <TouchableOpacity onPress={() => router.push("/(tabs)/scan" as any)}>
+                <Text style={{ color: SF.gold2, fontFamily: "DMSans_600SemiBold", fontSize: 12 }}>Update →</Text>
+              </TouchableOpacity>
+            </View>
+            <View style={{ flexDirection: "row", alignItems: "center", gap: 16 }}>
+              <View style={{ width: 72, height: 72, borderRadius: 36, backgroundColor: "rgba(245,158,11,0.12)", alignItems: "center", justifyContent: "center", borderWidth: 2, borderColor: SF.gold }}>
+                <Text style={{ color: SF.gold, fontFamily: "Outfit_800ExtraBold", fontSize: 22 }}>{latestBF.bf}%</Text>
+                <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 9 }}>BODY FAT</Text>
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={{ color: SF.fg, fontFamily: "Outfit_700Bold", fontSize: 16 }}>
+                  {latestBF.bf <= 12 ? "Competition Lean" : latestBF.bf <= 15 ? "Athletic & Defined" : latestBF.bf <= 18 ? "Fit & Healthy" : latestBF.bf <= 22 ? "Average Build" : "Above Average"}
+                </Text>
+                {latestBF.confidence ? (
+                  <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 12, marginTop: 2 }}>Range: {latestBF.confidence}</Text>
+                ) : null}
+                {targetBF && (
+                  <View style={{ flexDirection: "row", alignItems: "center", gap: 6, marginTop: 6 }}>
+                    <MaterialIcons name="flag" size={13} color={SF.gold2} />
+                    <Text style={{ color: SF.gold2, fontFamily: "DMSans_600SemiBold", fontSize: 12 }}>Target: {targetBF.target_bf}% BF</Text>
+                    <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 12 }}>({Math.abs(latestBF.bf - targetBF.target_bf).toFixed(1)}% to go)</Text>
+                  </View>
+                )}
+              </View>
+            </View>
+            <TouchableOpacity
+              style={{ marginTop: 14, backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 12, paddingVertical: 10, alignItems: "center", borderWidth: 1, borderColor: SF.border2 }}
+              onPress={() => router.push("/(tabs)/scan" as any)}
+            >
+              <Text style={{ color: SF.gold, fontFamily: "DMSans_600SemiBold", fontSize: 13 }}>📸 Take New Body Scan to Update</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+        {/* ── Quick Actions ── */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Quick Actions</Text>
+          <View style={styles.qaRow}>
+            <QuickActionCard icon="📸" label="AI Body Scan"   onPress={() => router.push("/(tabs)/scan" as any)} />
+            <QuickActionCard icon="🏋️" label="Start Workout"  onPress={() => router.push("/(tabs)/plans" as any)} />
+            <QuickActionCard icon="🥗" label="Log Meal"       onPress={() => router.push("/(tabs)/meals" as any)} />
+          </View>
+          <View style={styles.qaRow}>
+            <QuickActionCard icon="📊" label="Progress"       onPress={() => gatedNav("/progress-photos", "progress_photos", "📊", "basic", "Track your body transformation with progress photos — Basic plan and above.")} />
+            <QuickActionCard icon="🗺️" label="Find Gym"       onPress={() => router.push("/gym-finder" as any)} />
+            <QuickActionCard icon="⌚" label="Wearables"      onPress={() => gatedNav("/wearable-sync", "wearable_sync", "⌚", "basic", "Sync your fitness wearable with PeakPulse — Basic plan and above.")} />
+          </View>
+          <View style={styles.qaRow}>
+            <QuickActionCard icon="✅" label="Daily Check-In" onPress={() => router.push("/daily-checkin" as any)} />
+            <QuickActionCard icon="🎯" label="Form Check"     onPress={() => router.push("/form-checker" as any)} />
+            <QuickActionCard icon="🤖" label="AI Coach"       onPress={() => router.push("/ai-coach" as any)} />
+          </View>
+          <View style={styles.qaRow}>
+            <QuickActionCard icon="👥" label="Community"      onPress={() => gatedNav("/social-feed", "social_feed", "👥", "advanced", "Join the PeakPulse community, share progress, and compete in challenges — Advanced plan only.")} />
+            <QuickActionCard icon="⚡" label="7-Day Challenge" onPress={() => gatedNav("/challenge-onboarding", "challenges", "⚡", "advanced", "Unlock 7-day fitness challenges and leaderboards — Advanced plan only.")} />
+            <QuickActionCard icon="🎁" label="Refer a Friend"  onPress={() => router.push("/referral" as any)} />
+          </View>
+          <View style={styles.qaRow}>
+            <QuickActionCard icon="⭐" label="Upgrade"         onPress={() => router.push("/subscription" as any)} />
+          </View>
+        </View>
+>>>>>>> Stashed changes
 
           {/* ── Quick Actions ── */}
           <View style={styles.section}>

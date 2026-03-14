@@ -1,7 +1,7 @@
 import React, { useState, useRef } from "react";
 import {
   Text, View, TouchableOpacity, TextInput, ImageBackground,
-  ScrollView, Dimensions, Animated, Image, ActivityIndicator, Alert, FlatList,
+  ScrollView, Dimensions, Animated, Image, ActivityIndicator, Alert, Modal,
 } from "react-native";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -11,7 +11,7 @@ import { trpc } from "@/lib/trpc";
 import * as ImagePicker from "expo-image-picker";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
-const { width: SCREEN_W } = Dimensions.get("window");
+const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get("window");
 
 const SF = {
   bg:      "#0A0500",
@@ -66,15 +66,51 @@ const DIETARY_PREFS = [
   { key: "paleo",      label: "Paleo",      icon: "🥩" },
 ];
 
+const ACTIVITY_LEVELS = [
+  { key: "sedentary",   label: "Sedentary",     desc: "Little or no exercise",          multiplier: 1.2 },
+  { key: "light",       label: "Lightly Active", desc: "1-3 days/week",                 multiplier: 1.375 },
+  { key: "moderate",    label: "Moderately Active", desc: "3-5 days/week",              multiplier: 1.55 },
+  { key: "very_active", label: "Very Active",   desc: "6-7 days/week",                  multiplier: 1.725 },
+  { key: "extra",       label: "Extra Active",  desc: "Twice daily / physical job",     multiplier: 1.9 },
+];
+
+/**
+ * Calculate personalised TDEE using Mifflin-St Jeor BMR × activity multiplier
+ * then adjust for goal (deficit for fat loss, surplus for muscle gain).
+ */
+function calculateTDEE(
+  weightKg: number,
+  heightCm: number,
+  age: number,
+  gender: "male" | "female",
+  activityKey: string,
+  goal: string,
+): number {
+  // Mifflin-St Jeor BMR
+  const bmr = gender === "male"
+    ? 10 * weightKg + 6.25 * heightCm - 5 * age + 5
+    : 10 * weightKg + 6.25 * heightCm - 5 * age - 161;
+
+  const level = ACTIVITY_LEVELS.find(a => a.key === activityKey) ?? ACTIVITY_LEVELS[2];
+  const tdee = bmr * level.multiplier;
+
+  // Adjust for goal
+  if (goal === "lose_fat") return Math.round(tdee - 400);
+  if (goal === "build_muscle") return Math.round(tdee + 250);
+  return Math.round(tdee);
+}
+
 // Steps:
 // 0-3: intro slides
 // 4: name + goal
+// 4b: body metrics (height, weight, age, gender, activity)
 // 5: workout style
 // 6: dietary pref
 // 7: days per week
 // 8: photo capture
 // 9: transformation images (only if goal != maintain)
 // 10: plan generation + done
+// We encode step 4b as step === 4 + substep 1 via a separate flag
 
 export default function OnboardingScreen() {
   const router = useRouter();
@@ -86,6 +122,13 @@ export default function OnboardingScreen() {
   const [workoutStyle, setWorkoutStyle] = useState("gym");
   const [dietaryPref, setDietaryPref] = useState("omnivore");
   const [daysPerWeek, setDaysPerWeek] = useState(4);
+  // Body metrics
+  const [weightKg, setWeightKg] = useState("");
+  const [heightCm, setHeightCm] = useState("");
+  const [age, setAge] = useState("");
+  const [gender, setGender] = useState<"male" | "female">("male");
+  const [activityLevel, setActivityLevel] = useState("moderate");
+  // Scan / transformation
   const [scanPhoto, setScanPhoto] = useState<string | null>(null);
   const [scanPhotoUrl, setScanPhotoUrl] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
@@ -93,6 +136,9 @@ export default function OnboardingScreen() {
   const [analyzingScan, setAnalyzingScan] = useState(false);
   const [transformations, setTransformations] = useState<any[]>([]);
   const [selectedTransformation, setSelectedTransformation] = useState<any | null>(null);
+  // Fullscreen image modal
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [previewBF, setPreviewBF] = useState<number | null>(null);
   const fadeAnim = useRef(new Animated.Value(1)).current;
 
   const upsertProfile = trpc.profile.upsert.useMutation();
@@ -125,13 +171,15 @@ export default function OnboardingScreen() {
   }
 
   async function handlePhotoStepContinue() {
-    // Save profile first
     setSaving(true);
     try {
-      const profile = { name: name || "Athlete", goal, workoutStyle, dietaryPreference: dietaryPref, daysPerWeek };
+      const wKg = weightKg ? parseFloat(weightKg) : undefined;
+      const hCm = heightCm ? parseFloat(heightCm) : undefined;
+      const ageN = age ? parseInt(age) : undefined;
+      const profile = { name: name || "Athlete", goal, workoutStyle, dietaryPreference: dietaryPref, daysPerWeek, weightKg: wKg, heightCm: hCm, age: ageN, gender, activityLevel };
       await AsyncStorage.setItem("@guest_profile", JSON.stringify(profile));
       if (isAuthenticated) {
-        await upsertProfile.mutateAsync({ goal, workoutStyle, dietaryPreference: dietaryPref, daysPerWeek });
+        await upsertProfile.mutateAsync({ goal, workoutStyle, dietaryPreference: dietaryPref, daysPerWeek, weightKg: wKg, heightCm: hCm, age: ageN, gender });
       } else {
         await enterGuestMode(name || "Athlete");
       }
@@ -142,41 +190,30 @@ export default function OnboardingScreen() {
       setSaving(false);
     }
 
-    // If goal is maintain, skip transformation images
     if (goal === "maintain" || !scanPhoto) {
       animateTransition(10);
       return;
     }
 
-    // Upload photo and run body scan analysis
     setAnalyzingScan(true);
     animateTransition(9);
     try {
-      // Convert photo URI to base64
       const response = await fetch(scanPhoto);
       const blob = await response.blob();
       const reader = new FileReader();
       const base64 = await new Promise<string>((resolve, reject) => {
-        reader.onload = () => {
-          const result = reader.result as string;
-          resolve(result.split(",")[1]);
-        };
+        reader.onload = () => { const r = reader.result as string; resolve(r.split(",")[1]); };
         reader.onerror = reject;
         reader.readAsDataURL(blob);
       });
-
-      // Upload to S3
       const uploadResult = await uploadPhoto.mutateAsync({ base64, mimeType: "image/jpeg" });
       setScanPhotoUrl(uploadResult.url);
       await AsyncStorage.setItem("@onboarding_scan_photo", scanPhoto);
-
-      // Run AI body scan analysis
       const scanResult = await analyzeBodyScan.mutateAsync({ photoUrl: uploadResult.url });
       if (scanResult?.transformations?.length) {
         setTransformations(scanResult.transformations);
       }
-    } catch (e) {
-      // If analysis fails, skip to plan generation
+    } catch {
       animateTransition(10);
     } finally {
       setAnalyzingScan(false);
@@ -190,9 +227,25 @@ export default function OnboardingScreen() {
         ? (selectedTransformation.target_bf <= 12 ? "lose_fat" : selectedTransformation.target_bf <= 15 ? "athletic" : goal)
         : goal;
 
+      // Calculate personalised TDEE if we have the metrics
+      const wKg = weightKg ? parseFloat(weightKg) : null;
+      const hCm = heightCm ? parseFloat(heightCm) : null;
+      const ageN = age ? parseInt(age) : null;
+      const tdee = (wKg && hCm && ageN)
+        ? calculateTDEE(wKg, hCm, ageN, gender, activityLevel, effectiveGoal)
+        : null;
+
+      // Save TDEE to AsyncStorage for dashboard and meals tab
+      if (tdee) await AsyncStorage.setItem("@user_tdee", String(tdee));
+
+      // Save target BF and initial scan photo for the visual reminder screen
+      if (selectedTransformation) {
+        await AsyncStorage.setItem("@target_transformation", JSON.stringify(selectedTransformation));
+      }
+
       const [workoutResult, mealResult] = await Promise.allSettled([
         generateWorkout.mutateAsync({ goal: effectiveGoal, workoutStyle, daysPerWeek, fitnessLevel: "intermediate" }),
-        generateMeal.mutateAsync({ goal: effectiveGoal, dietaryPreference: dietaryPref, dailyCalories: 2000 }),
+        generateMeal.mutateAsync({ goal: effectiveGoal, dietaryPreference: dietaryPref, dailyCalories: tdee ?? undefined }),
       ]);
       if (workoutResult.status === "fulfilled") {
         await AsyncStorage.setItem("@cached_workout_plan", JSON.stringify(workoutResult.value));
@@ -204,8 +257,55 @@ export default function OnboardingScreen() {
       // Plans generated on demand from tabs if this fails
     } finally {
       setGeneratingPlans(false);
-      router.replace("/(tabs)" as any);
+      // Navigate to visual reminder if we have both photos
+      const hasInitialPhoto = !!scanPhoto;
+      const hasTarget = !!selectedTransformation;
+      if (hasInitialPhoto && hasTarget) {
+        router.replace("/transformation-reminder" as any);
+      } else {
+        router.replace("/(tabs)" as any);
+      }
     }
+  }
+
+  // ── Fullscreen image preview modal ──────────────────────────────────────
+  if (previewImage) {
+    return (
+      <View style={{ flex: 1, backgroundColor: "#000" }}>
+        <Image source={{ uri: previewImage }} style={{ flex: 1, width: "100%" }} resizeMode="contain" />
+        <View style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, justifyContent: "flex-end", paddingBottom: 60, paddingHorizontal: 24 }}>
+          {previewBF !== null && (
+            <View style={{ alignSelf: "center", backgroundColor: "rgba(10,5,0,0.85)", borderRadius: 20, paddingHorizontal: 24, paddingVertical: 16, marginBottom: 20, borderWidth: 2, borderColor: SF.gold }}>
+              <Text style={{ color: SF.gold, fontFamily: "Outfit_800ExtraBold", fontSize: 28, textAlign: "center" }}>{previewBF}% Body Fat</Text>
+              <Text style={{ color: SF.gold3, fontFamily: "DMSans_400Regular", fontSize: 14, textAlign: "center", marginTop: 4 }}>
+                {previewBF <= 12 ? "Competition lean — elite level" : previewBF <= 15 ? "Athletic & defined — visible abs" : previewBF <= 18 ? "Fit & healthy — great muscle tone" : "Average healthy build"}
+              </Text>
+            </View>
+          )}
+          <TouchableOpacity
+            style={{ backgroundColor: SF.gold, borderRadius: 18, paddingVertical: 16, alignItems: "center", shadowColor: SF.gold, shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.5, shadowRadius: 14 }}
+            onPress={() => {
+              if (previewBF !== null) {
+                const t = transformations.find(x => x.target_bf === previewBF);
+                if (t) setSelectedTransformation(t);
+              }
+              setPreviewImage(null);
+              setPreviewBF(null);
+            }}
+          >
+            <Text style={{ color: SF.bg, fontFamily: "Outfit_800ExtraBold", fontSize: 17 }}>
+              {previewBF !== null ? `Select ${previewBF}% as My Target →` : "Close"}
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={{ marginTop: 12, alignItems: "center", paddingVertical: 10 }}
+            onPress={() => { setPreviewImage(null); setPreviewBF(null); }}
+          >
+            <Text style={{ color: SF.gold3, fontFamily: "DMSans_400Regular", fontSize: 14 }}>← Back to all options</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
   }
 
   // ── Intro slides (steps 0-3) ─────────────────────────────────────────────
@@ -221,25 +321,23 @@ export default function OnboardingScreen() {
             >
               <Text style={{ color: SF.gold3, fontSize: 13, fontFamily: "DMSans_600SemiBold" }}>Skip</Text>
             </TouchableOpacity>
-            {/* Progress dots */}
             <View style={{ position: "absolute", top: 62, left: 0, right: 0, flexDirection: "row", justifyContent: "center", gap: 6 }}>
               {INTRO_SLIDES.map((_, i) => (
                 <View key={i} style={{ width: i === step ? 24 : 6, height: 6, borderRadius: 3, backgroundColor: i === step ? slide.accent : "rgba(255,255,255,0.25)" }} />
               ))}
             </View>
-            {/* Content */}
-            <View style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: 32, paddingBottom: 52 }}>
-              <View style={{ backgroundColor: "rgba(245,158,11,0.12)", borderRadius: 12, paddingHorizontal: 12, paddingVertical: 6, alignSelf: "flex-start", marginBottom: 16, borderWidth: 1, borderColor: SF.border2 }}>
-                <Text style={{ color: slide.accent, fontSize: 11, fontFamily: "Outfit_700Bold", letterSpacing: 1.5 }}>{slide.icon} {slide.label}</Text>
+            <View style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: 32, paddingBottom: 56 }}>
+              <View style={{ backgroundColor: "rgba(245,158,11,0.12)", borderRadius: 20, paddingHorizontal: 14, paddingVertical: 6, alignSelf: "flex-start", marginBottom: 14, borderWidth: 1, borderColor: SF.border2 }}>
+                <Text style={{ color: slide.accent, fontFamily: "Outfit_700Bold", fontSize: 11, letterSpacing: 2 }}>{slide.icon} {slide.label}</Text>
               </View>
-              <Text style={{ color: SF.fg, fontFamily: "Outfit_800ExtraBold", fontSize: 38, lineHeight: 44, marginBottom: 14 }}>{slide.title}</Text>
-              <Text style={{ color: SF.gold3, fontSize: 16, fontFamily: "DMSans_400Regular", lineHeight: 24, marginBottom: 40 }}>{slide.subtitle}</Text>
+              <Text style={{ color: SF.fg, fontFamily: "Outfit_800ExtraBold", fontSize: 36, lineHeight: 42, marginBottom: 12 }}>{slide.title}</Text>
+              <Text style={{ color: SF.gold3, fontFamily: "DMSans_400Regular", fontSize: 15, lineHeight: 22, marginBottom: 36 }}>{slide.subtitle}</Text>
               <TouchableOpacity
                 style={{ backgroundColor: slide.accent, borderRadius: 18, paddingVertical: 18, alignItems: "center", shadowColor: slide.accent, shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.5, shadowRadius: 16 }}
                 onPress={() => animateTransition(step + 1)}
               >
                 <Text style={{ color: SF.bg, fontFamily: "Outfit_800ExtraBold", fontSize: 17 }}>
-                  {step === 3 ? "Get Started →" : "Next →"}
+                  {step === 3 ? "Get Started ⚡" : "Next →"}
                 </Text>
               </TouchableOpacity>
             </View>
@@ -271,13 +369,18 @@ export default function OnboardingScreen() {
             </View>
           ) : transformations.length > 0 ? (
             <>
-              <Text style={{ color: SF.gold3, fontFamily: "DMSans_400Regular", fontSize: 14, marginBottom: 20, lineHeight: 20 }}>
-                Based on your photo, here are AI-generated previews of what you could look like at different body fat levels. Tap the one that matches your goal.
+              <Text style={{ color: SF.gold3, fontFamily: "DMSans_400Regular", fontSize: 14, marginBottom: 8, lineHeight: 20 }}>
+                Based on your photo, here are AI-generated previews of what you could look like at different body fat levels.
               </Text>
+              <View style={{ backgroundColor: "rgba(245,158,11,0.08)", borderRadius: 10, padding: 12, marginBottom: 20, borderWidth: 1, borderColor: SF.border }}>
+                <Text style={{ color: SF.gold2, fontFamily: "DMSans_600SemiBold", fontSize: 12 }}>
+                  💡 Tap any image to view it full-screen, then select it as your target.
+                </Text>
+              </View>
               {transformations.map((t: any, i: number) => {
                 const isSelected = selectedTransformation?.target_bf === t.target_bf;
                 return (
-                  <TouchableOpacity
+                  <View
                     key={i}
                     style={{
                       backgroundColor: isSelected ? "rgba(245,158,11,0.15)" : SF.surface,
@@ -287,15 +390,32 @@ export default function OnboardingScreen() {
                       borderColor: isSelected ? SF.gold : SF.border,
                       overflow: "hidden",
                     }}
-                    onPress={() => setSelectedTransformation(t)}
                   >
-                    {t.imageUrl ? (
-                      <Image source={{ uri: t.imageUrl }} style={{ width: "100%", height: 220 }} resizeMode="cover" />
-                    ) : (
-                      <View style={{ width: "100%", height: 120, backgroundColor: "rgba(245,158,11,0.05)", alignItems: "center", justifyContent: "center" }}>
-                        <Text style={{ fontSize: 40 }}>🏋️</Text>
-                      </View>
-                    )}
+                    {/* Image — tap to open fullscreen */}
+                    <TouchableOpacity
+                      activeOpacity={0.85}
+                      onPress={() => {
+                        if (t.imageUrl) {
+                          setPreviewImage(t.imageUrl);
+                          setPreviewBF(t.target_bf);
+                        }
+                      }}
+                    >
+                      {t.imageUrl ? (
+                        <View>
+                          <Image source={{ uri: t.imageUrl }} style={{ width: "100%", height: 260 }} resizeMode="cover" />
+                          <View style={{ position: "absolute", top: 12, right: 12, backgroundColor: "rgba(0,0,0,0.6)", borderRadius: 10, paddingHorizontal: 10, paddingVertical: 5, flexDirection: "row", alignItems: "center", gap: 4 }}>
+                            <MaterialIcons name="fullscreen" size={14} color={SF.gold} />
+                            <Text style={{ color: SF.gold, fontFamily: "DMSans_600SemiBold", fontSize: 11 }}>Full View</Text>
+                          </View>
+                        </View>
+                      ) : (
+                        <View style={{ width: "100%", height: 120, backgroundColor: "rgba(245,158,11,0.05)", alignItems: "center", justifyContent: "center" }}>
+                          <Text style={{ fontSize: 40 }}>🏋️</Text>
+                        </View>
+                      )}
+                    </TouchableOpacity>
+                    {/* Info row + select button */}
                     <View style={{ padding: 16 }}>
                       <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
                         <Text style={{ color: SF.fg, fontFamily: "Outfit_700Bold", fontSize: 16 }}>{t.target_bf}% Body Fat</Text>
@@ -306,7 +426,7 @@ export default function OnboardingScreen() {
                         )}
                       </View>
                       <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 13, lineHeight: 18 }}>{t.description}</Text>
-                      <View style={{ flexDirection: "row", gap: 8, marginTop: 10 }}>
+                      <View style={{ flexDirection: "row", gap: 8, marginTop: 10, marginBottom: 12 }}>
                         <View style={{ backgroundColor: "rgba(245,158,11,0.08)", borderRadius: 8, paddingHorizontal: 10, paddingVertical: 5, borderWidth: 1, borderColor: SF.border }}>
                           <Text style={{ color: SF.gold2, fontFamily: "DMSans_600SemiBold", fontSize: 11 }}>⏱ {t.estimated_weeks} weeks</Text>
                         </View>
@@ -314,8 +434,16 @@ export default function OnboardingScreen() {
                           <Text style={{ color: SF.gold2, fontFamily: "DMSans_600SemiBold", fontSize: 11 }}>💪 {t.effort_level}</Text>
                         </View>
                       </View>
+                      <TouchableOpacity
+                        style={{ backgroundColor: isSelected ? SF.gold : "rgba(245,158,11,0.12)", borderRadius: 12, paddingVertical: 12, alignItems: "center", borderWidth: 1, borderColor: isSelected ? SF.gold : SF.border2 }}
+                        onPress={() => setSelectedTransformation(isSelected ? null : t)}
+                      >
+                        <Text style={{ color: isSelected ? SF.bg : SF.gold, fontFamily: "Outfit_700Bold", fontSize: 14 }}>
+                          {isSelected ? "✓ This is my target" : `Select ${t.target_bf}% as My Target`}
+                        </Text>
+                      </TouchableOpacity>
                     </View>
-                  </TouchableOpacity>
+                  </View>
                 );
               })}
               <TouchableOpacity
@@ -356,6 +484,13 @@ export default function OnboardingScreen() {
 
   // ── Plan generation / done screen (step 10) ──────────────────────────────
   if (step === 10) {
+    const wKg = weightKg ? parseFloat(weightKg) : null;
+    const hCm = heightCm ? parseFloat(heightCm) : null;
+    const ageN = age ? parseInt(age) : null;
+    const estimatedTDEE = (wKg && hCm && ageN)
+      ? calculateTDEE(wKg, hCm, ageN, gender, activityLevel, goal)
+      : null;
+
     return (
       <View style={{ flex: 1, backgroundColor: SF.bg }}>
         <ImageBackground source={{ uri: BG.dashboard }} style={{ flex: 1 }} resizeMode="cover">
@@ -368,13 +503,23 @@ export default function OnboardingScreen() {
               {"Welcome,\n"}{name || "Athlete"}{"!"}
             </Text>
             {selectedTransformation ? (
-              <Text style={{ color: SF.gold3, fontSize: 15, textAlign: "center", lineHeight: 22, marginBottom: 36, fontFamily: "DMSans_400Regular" }}>
-                Your target: <Text style={{ color: SF.gold, fontFamily: "DMSans_700Bold" }}>{selectedTransformation.target_bf}% body fat</Text> in ~{selectedTransformation.estimated_weeks} weeks.{"\n"}Tap below to generate your personalised AI plan.
+              <Text style={{ color: SF.gold3, fontSize: 15, textAlign: "center", lineHeight: 22, marginBottom: 20, fontFamily: "DMSans_400Regular" }}>
+                Your target: <Text style={{ color: SF.gold, fontFamily: "DMSans_700Bold" }}>{selectedTransformation.target_bf}% body fat</Text> in ~{selectedTransformation.estimated_weeks} weeks.
               </Text>
             ) : (
-              <Text style={{ color: SF.gold3, fontSize: 15, textAlign: "center", lineHeight: 22, marginBottom: 36, fontFamily: "DMSans_400Regular" }}>
-                Tap below to generate your personalised AI workout and meal plan — built specifically for your goal.
+              <Text style={{ color: SF.gold3, fontSize: 15, textAlign: "center", lineHeight: 22, marginBottom: 20, fontFamily: "DMSans_400Regular" }}>
+                Tap below to generate your personalised AI workout and meal plan.
               </Text>
+            )}
+            {estimatedTDEE && (
+              <View style={{ backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 14, paddingHorizontal: 20, paddingVertical: 12, marginBottom: 20, borderWidth: 1, borderColor: SF.border2, alignSelf: "stretch" }}>
+                <Text style={{ color: SF.gold2, fontFamily: "Outfit_700Bold", fontSize: 14, textAlign: "center" }}>
+                  🎯 Your personalised daily target: {estimatedTDEE} kcal
+                </Text>
+                <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 12, textAlign: "center", marginTop: 4 }}>
+                  Calculated from your body metrics & {goal.replace("_", " ")} goal
+                </Text>
+              </View>
             )}
             <View style={{ width: "100%", gap: 10, marginBottom: 36 }}>
               {[
@@ -443,7 +588,7 @@ export default function OnboardingScreen() {
       <Animated.View style={{ flex: 1, opacity: fadeAnim }}>
         <ScrollView contentContainerStyle={{ padding: 24, paddingBottom: 20 }}>
 
-          {/* Step 4: Name + Goal */}
+          {/* Step 4: Name + Goal + Body Metrics */}
           {step === 4 && (
             <View>
               <Text style={{ color: SF.muted, fontSize: 12, fontFamily: "DMSans_600SemiBold", letterSpacing: 1, marginBottom: 8 }}>YOUR NAME</Text>
@@ -455,8 +600,9 @@ export default function OnboardingScreen() {
                 style={{ backgroundColor: SF.surface, borderRadius: 14, padding: 16, color: SF.fg, fontFamily: "DMSans_400Regular", fontSize: 16, borderWidth: 1, borderColor: SF.border, marginBottom: 24 }}
                 returnKeyType="done"
               />
+
               <Text style={{ color: SF.muted, fontSize: 12, fontFamily: "DMSans_600SemiBold", letterSpacing: 1, marginBottom: 12 }}>YOUR GOAL</Text>
-              <View style={{ gap: 10 }}>
+              <View style={{ gap: 10, marginBottom: 24 }}>
                 {GOALS.map(g => (
                   <TouchableOpacity
                     key={g.key}
@@ -469,6 +615,75 @@ export default function OnboardingScreen() {
                       <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 12, marginTop: 2 }}>{g.desc}</Text>
                     </View>
                     {goal === g.key && <MaterialIcons name="check-circle" size={22} color={SF.gold} />}
+                  </TouchableOpacity>
+                ))}
+              </View>
+
+              {/* Body metrics for personalised calorie calculation */}
+              <Text style={{ color: SF.muted, fontSize: 12, fontFamily: "DMSans_600SemiBold", letterSpacing: 1, marginBottom: 12 }}>BODY METRICS (for accurate calorie targets)</Text>
+              <View style={{ flexDirection: "row", gap: 10, marginBottom: 12 }}>
+                <View style={{ flex: 1 }}>
+                  <Text style={{ color: SF.muted, fontSize: 11, fontFamily: "DMSans_500Medium", marginBottom: 6 }}>Weight (kg)</Text>
+                  <TextInput
+                    value={weightKg}
+                    onChangeText={setWeightKg}
+                    placeholder="e.g. 80"
+                    placeholderTextColor={SF.muted}
+                    keyboardType="numeric"
+                    style={{ backgroundColor: SF.surface, borderRadius: 12, padding: 14, color: SF.fg, fontFamily: "DMSans_400Regular", fontSize: 15, borderWidth: 1, borderColor: SF.border }}
+                    returnKeyType="done"
+                  />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={{ color: SF.muted, fontSize: 11, fontFamily: "DMSans_500Medium", marginBottom: 6 }}>Height (cm)</Text>
+                  <TextInput
+                    value={heightCm}
+                    onChangeText={setHeightCm}
+                    placeholder="e.g. 178"
+                    placeholderTextColor={SF.muted}
+                    keyboardType="numeric"
+                    style={{ backgroundColor: SF.surface, borderRadius: 12, padding: 14, color: SF.fg, fontFamily: "DMSans_400Regular", fontSize: 15, borderWidth: 1, borderColor: SF.border }}
+                    returnKeyType="done"
+                  />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={{ color: SF.muted, fontSize: 11, fontFamily: "DMSans_500Medium", marginBottom: 6 }}>Age</Text>
+                  <TextInput
+                    value={age}
+                    onChangeText={setAge}
+                    placeholder="e.g. 28"
+                    placeholderTextColor={SF.muted}
+                    keyboardType="numeric"
+                    style={{ backgroundColor: SF.surface, borderRadius: 12, padding: 14, color: SF.fg, fontFamily: "DMSans_400Regular", fontSize: 15, borderWidth: 1, borderColor: SF.border }}
+                    returnKeyType="done"
+                  />
+                </View>
+              </View>
+              <Text style={{ color: SF.muted, fontSize: 11, fontFamily: "DMSans_500Medium", marginBottom: 8 }}>Gender</Text>
+              <View style={{ flexDirection: "row", gap: 10, marginBottom: 16 }}>
+                {(["male", "female"] as const).map(g => (
+                  <TouchableOpacity
+                    key={g}
+                    style={{ flex: 1, paddingVertical: 12, borderRadius: 12, alignItems: "center", backgroundColor: gender === g ? "rgba(245,158,11,0.15)" : SF.surface, borderWidth: gender === g ? 2 : 1, borderColor: gender === g ? SF.gold : SF.border }}
+                    onPress={() => setGender(g)}
+                  >
+                    <Text style={{ color: gender === g ? SF.gold : SF.fg, fontFamily: "Outfit_700Bold", fontSize: 14 }}>{g === "male" ? "♂ Male" : "♀ Female"}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+              <Text style={{ color: SF.muted, fontSize: 11, fontFamily: "DMSans_500Medium", marginBottom: 8 }}>Activity Level</Text>
+              <View style={{ gap: 8 }}>
+                {ACTIVITY_LEVELS.map(a => (
+                  <TouchableOpacity
+                    key={a.key}
+                    style={{ flexDirection: "row", alignItems: "center", gap: 12, backgroundColor: activityLevel === a.key ? "rgba(245,158,11,0.15)" : SF.surface, borderRadius: 12, padding: 14, borderWidth: activityLevel === a.key ? 2 : 1, borderColor: activityLevel === a.key ? SF.gold : SF.border }}
+                    onPress={() => setActivityLevel(a.key)}
+                  >
+                    <View style={{ flex: 1 }}>
+                      <Text style={{ color: SF.fg, fontFamily: "Outfit_700Bold", fontSize: 14 }}>{a.label}</Text>
+                      <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 12 }}>{a.desc}</Text>
+                    </View>
+                    {activityLevel === a.key && <MaterialIcons name="check-circle" size={20} color={SF.gold} />}
                   </TouchableOpacity>
                 ))}
               </View>

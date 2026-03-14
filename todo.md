@@ -317,3 +317,22 @@
 - [x] Referral screen: "How It Works" step 3 updated to mention 14-day trial for friends
 - [x] Referral screen: hero subtitle updated to highlight 14-day friend benefit
 - [x] Zero TypeScript errors
+
+## Round 16 — Bug Fixes & New Features
+
+- [ ] BF% model tap shows full-body AI-generated image (fullscreen preview)
+- [ ] Meal plan calorie targets personalised: weight, height, age, gender, activity level, goal BF%
+- [ ] Dashboard BF% estimate card from recent progress photo logs (AI analysis)
+- [ ] Post-onboarding visual reminder screen: initial photo vs AI target body image side-by-side
+- [ ] AI Form Check in workout section (camera-based rep analysis with AI feedback)
+- [ ] AI Coach feature: routine form analysis, progress insights, personalised tips based on track record
+
+## Round 16 — Bug Fixes & New Features
+- [x] BF% model tap opens fullscreen AI-generated body image
+- [x] Meal plan calorie targets use personalised TDEE (Mifflin-St Jeor) based on user profile
+- [x] Dashboard shows BF% estimate card from latest body scan with target comparison
+- [x] Post-onboarding transformation-reminder screen shows initial photo vs AI target body
+- [x] AI Form Check button added directly inside workout section (plans tab)
+- [x] AI Coach screen built: insights tab (form analysis, progress, tips, weekly plan, milestone) + chat tab
+- [x] AI Coach server routes: getInsights + chat with full context awareness
+- [x] Meal plan generation in plans.tsx now passes user profile metrics to server

@@ -79,6 +79,12 @@ export default function PlansScreen() {
 
   const { data: dbWorkoutPlan, refetch: refetchWorkout } = trpc.workoutPlan.getActive.useQuery(undefined, { enabled: isAuthenticated });
   const { data: dbMealPlan, refetch: refetchMeal } = trpc.mealPlan.getActive.useQuery(undefined, { enabled: isAuthenticated });
+  const { data: dbProfile } = trpc.profile.get.useQuery(undefined, { enabled: isAuthenticated });
+  const [localProfile, setLocalProfile] = React.useState<any>(null);
+  React.useEffect(() => {
+    AsyncStorage.getItem("@guest_profile").then(raw => { if (raw) { try { setLocalProfile(JSON.parse(raw)); } catch {} } });
+  }, [isGuest]);
+  const activeProfile = isAuthenticated ? dbProfile : localProfile;
 
   // Local state for guest-generated plans (not saved to DB)
   const [localWorkoutPlan, setLocalWorkoutPlan] = useState<any>(null);
@@ -237,6 +243,20 @@ export default function PlansScreen() {
                     if (!day.isRest) router.push({ pathname: "/active-workout", params: { dayData: JSON.stringify(day) } } as any);
                   }} />
                 ))}
+                {/* AI Form Check CTA */}
+                <TouchableOpacity
+                  style={{ backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 16, padding: 16, marginTop: 8, borderWidth: 1, borderColor: "rgba(245,158,11,0.25)", flexDirection: "row", alignItems: "center", gap: 14 }}
+                  onPress={() => router.push("/form-checker" as any)}
+                >
+                  <View style={{ width: 44, height: 44, borderRadius: 12, backgroundColor: "#F59E0B", alignItems: "center", justifyContent: "center" }}>
+                    <Text style={{ fontSize: 22 }}>🎯</Text>
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 15 }}>AI Form Check</Text>
+                    <Text style={{ color: "#92400E", fontFamily: "DMSans_400Regular", fontSize: 12, marginTop: 2 }}>Record a set — AI analyses your technique instantly</Text>
+                  </View>
+                  <Text style={{ color: "#F59E0B", fontSize: 18 }}>→</Text>
+                </TouchableOpacity>
               </View>
             )}
           </View>
@@ -286,7 +306,7 @@ export default function PlansScreen() {
 
             <TouchableOpacity
               style={{ backgroundColor: "#FDE68A", borderRadius: 16, paddingVertical: 14, alignItems: "center", marginBottom: 24, opacity: generateMeal.isPending ? 0.7 : 1 }}
-              onPress={() => generateMeal.mutate({ goal: mealGoal, dietaryPreference: dietaryPref, ramadanMode })}
+              onPress={() => generateMeal.mutate({ goal: mealGoal, dietaryPreference: dietaryPref, ramadanMode, weightKg: activeProfile?.weightKg ?? undefined, heightCm: activeProfile?.heightCm ?? undefined, age: activeProfile?.age ?? undefined, gender: activeProfile?.gender ?? undefined, activityLevel: activeProfile?.activityLevel ?? undefined })}
               disabled={generateMeal.isPending}
             >
               {generateMeal.isPending ? (
