@@ -237,6 +237,7 @@ export const appRouter = router({
       .input(z.object({ planId: z.number().optional(), dayName: z.string().optional(), focus: z.string().optional(), completedExercises: z.array(z.string()).optional(), durationMinutes: z.number().optional() }))
       .mutation(async ({ ctx, input }) => db.createWorkoutSession(ctx.user.id, { planId: input.planId, dayName: input.dayName, focus: input.focus, completedExercisesJson: JSON.stringify(input.completedExercises ?? []), durationMinutes: input.durationMinutes })),
     getRecentSessions: protectedProcedure.query(async ({ ctx }) => db.getRecentWorkoutSessions(ctx.user.id, 10)),
+    getAllSessions: protectedProcedure.query(async ({ ctx }) => db.getRecentWorkoutSessions(ctx.user.id, 500)),
   }),
 
   mealPlan: router({

@@ -528,6 +528,7 @@ export default function HomeScreen() {
             </View>
             <View style={styles.qaRow}>
               <QuickActionCard icon="⭐" label="Upgrade"         onPress={() => router.push("/subscription" as any)} />
+              <QuickActionCard icon="📅" label="Workout History" onPress={() => router.push("/workout-calendar" as any)} />
             </View>
           </View>
 

@@ -338,6 +338,15 @@ export default function ActiveWorkoutScreen() {
     if (nextIncomplete !== -1) completeSet(currentExercise, nextIncomplete);
   }
 
+  async function saveSessionLocally(session: { dayName: string; focus: string; completedExercisesJson: string; durationMinutes: number; completedAt: string }) {
+    try {
+      const raw = await AsyncStorage.getItem("@workout_sessions_local");
+      const existing = raw ? JSON.parse(raw) : [];
+      existing.unshift(session);
+      await AsyncStorage.setItem("@workout_sessions_local", JSON.stringify(existing));
+    } catch {}
+  }
+
   function finishWorkout() {
     Alert.alert(
       "Finish Workout?",
@@ -346,18 +355,33 @@ export default function ActiveWorkoutScreen() {
         { text: "Cancel", style: "cancel" },
         {
           text: "Finish",
-          onPress: () => {
+          onPress: async () => {
             const completedExercises = exercises.map((ex, i) => ({
               name: ex.name,
               sets: getSetLogs(i).filter(s => s.completed).length,
               logs: getSetLogs(i),
             }));
-            logSession.mutate({
+            const sessionData = {
               dayName: dayData?.day ?? "Workout",
               focus: dayData?.focus ?? "",
-              completedExercises: completedExercises.map(e => e.name),
+              completedExercisesJson: JSON.stringify(completedExercises.map(e => e.name)),
               durationMinutes: Math.floor(elapsedSeconds / 60),
-            });
+              completedAt: new Date().toISOString(),
+            };
+            if (isAuthenticated) {
+              logSession.mutate({
+                dayName: sessionData.dayName,
+                focus: sessionData.focus,
+                completedExercises: completedExercises.map(e => e.name),
+                durationMinutes: sessionData.durationMinutes,
+              });
+            } else {
+              // Guest: save locally
+              await saveSessionLocally(sessionData);
+              Alert.alert("Workout Complete! \u{1F389}", "Great job! Your session has been logged locally.", [
+                { text: "Done", onPress: () => router.back() },
+              ]);
+            }
           },
         },
       ]

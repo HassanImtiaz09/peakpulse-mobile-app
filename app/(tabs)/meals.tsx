@@ -898,15 +898,47 @@ export default function MealsScreen() {
               </TouchableOpacity>
             </View>
 
-            {/* ── Favourites / Frequent Foods ── */}
+            {/* ── Quick Add from Saved Foods ── */}
+            {favourites.length > 0 && (
+              <View style={{ marginBottom: 12 }}>
+                <Text style={{ color: "#92400E", fontSize: 10, fontFamily: "Outfit_700Bold", letterSpacing: 1, marginBottom: 8 }}>QUICK ADD FROM SAVED FOODS</Text>
+                <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
+                  {[...favourites].sort((a, b) => b.logCount - a.logCount).slice(0, 8).map(fav => (
+                    <TouchableOpacity
+                      key={`quick-${fav.id}`}
+                      style={{
+                        backgroundColor: "rgba(245,158,11,0.08)",
+                        borderRadius: 12,
+                        paddingVertical: 10,
+                        paddingHorizontal: 14,
+                        borderWidth: 1,
+                        borderColor: "rgba(245,158,11,0.15)",
+                        alignItems: "center",
+                        minWidth: 100,
+                      }}
+                      onPress={() => logFromFavourite(fav)}
+                    >
+                      <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 12 }} numberOfLines={1}>{fav.name}</Text>
+                      <Text style={{ color: "#F59E0B", fontSize: 10, marginTop: 2 }}>{fav.calories} kcal</Text>
+                      <View style={{ flexDirection: "row", alignItems: "center", gap: 4, marginTop: 4, backgroundColor: "#F59E0B", borderRadius: 6, paddingHorizontal: 8, paddingVertical: 3 }}>
+                        <MaterialIcons name="add" size={12} color="#0A0500" />
+                        <Text style={{ color: "#0A0500", fontFamily: "Outfit_700Bold", fontSize: 9 }}>TAP TO LOG</Text>
+                      </View>
+                    </TouchableOpacity>
+                  ))}
+                </ScrollView>
+              </View>
+            )}
+
+            {/* ── Favourites / Saved Foods (Full List) ── */}
             <View style={{ backgroundColor: "#150A00", borderRadius: 16, padding: 16, marginBottom: 16, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}>
               <TouchableOpacity
                 style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}
                 onPress={() => setShowFavourites(!showFavourites)}
               >
                 <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-                  <Text style={{ fontSize: 18 }}>{"\u2b50"}</Text>
-                  <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 15 }}>Favourites</Text>
+                  <Text style={{ fontSize: 18 }}>{"⭐"}</Text>
+                  <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 15 }}>Saved Foods</Text>
                   {favourites.length > 0 && (
                     <View style={{ backgroundColor: "rgba(245,158,11,0.15)", borderRadius: 8, paddingHorizontal: 6, paddingVertical: 2 }}>
                       <Text style={{ color: "#F59E0B", fontSize: 10, fontFamily: "Outfit_700Bold" }}>{favourites.length}</Text>
@@ -921,7 +953,7 @@ export default function MealsScreen() {
                   {favourites.length === 0 ? (
                     <View style={{ alignItems: "center", paddingVertical: 16 }}>
                       <Text style={{ color: "#92400E", fontSize: 13, textAlign: "center", lineHeight: 20 }}>
-                        No favourites yet. Log a meal and tap the star to save it here for quick one-tap logging.
+                        No saved foods yet. Log a meal and tap the star icon to save it here for one-tap logging next time.
                       </Text>
                     </View>
                   ) : (
@@ -937,7 +969,7 @@ export default function MealsScreen() {
                               <Text style={{ color: "#FDE68A", fontSize: 10 }}>C:{fav.carbs}g</Text>
                               <Text style={{ color: "#FBBF24", fontSize: 10 }}>F:{fav.fat}g</Text>
                               {fav.logCount > 0 && (
-                                <Text style={{ color: "rgba(146,64,14,0.5)", fontSize: 10 }}>{"\u00b7"} logged {fav.logCount}x</Text>
+                                <Text style={{ color: "rgba(146,64,14,0.5)", fontSize: 10 }}>{"·"} logged {fav.logCount}x</Text>
                               )}
                             </View>
                           </View>
@@ -945,13 +977,13 @@ export default function MealsScreen() {
                             style={{ backgroundColor: "#F59E0B", borderRadius: 8, paddingVertical: 6, paddingHorizontal: 10, flexDirection: "row", alignItems: "center", gap: 4 }}
                             onPress={() => logFromFavourite(fav)}
                           >
-                            <MaterialIcons name="add" size={14} color="#FFF7ED" />
-                            <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 10 }}>Log</Text>
+                            <MaterialIcons name="add" size={14} color="#0A0500" />
+                            <Text style={{ color: "#0A0500", fontFamily: "Outfit_700Bold", fontSize: 10 }}>Log</Text>
                           </TouchableOpacity>
                           <TouchableOpacity
                             style={{ padding: 4 }}
                             onPress={() => {
-                              Alert.alert("Remove Favourite?", `Remove ${fav.name} from favourites?`, [
+                              Alert.alert("Remove from Saved Foods?", `Remove ${fav.name}?`, [
                                 { text: "Cancel", style: "cancel" },
                                 { text: "Remove", style: "destructive", onPress: () => removeFromFavourites(fav.id) },
                               ]);

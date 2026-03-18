@@ -462,3 +462,18 @@
 - [x] FIX: Meal Log Calories — macro formula (p×4 + c×4 + f×9) + server-side recalculation validates every food item
 - [x] FIX: Exercise Demo Videos — replace broken Pixabay CDN URLs with YouTube search links (70+ exercises mapped)
 - [x] FIX: Body Transformation Images — sequential generation with retries + backoff prevents rate limit failures
+
+## Round 34 — Workout Calendar + Saved Foods
+
+- [x] Workout History Calendar: new screen with monthly calendar view showing completed workout days
+- [x] Workout History Calendar: streak tracking (current streak, longest streak, total workouts)
+- [x] Workout History Calendar: day detail view showing exercises completed on tapped date
+- [x] Workout History Calendar: month navigation (prev/next)
+- [x] Workout History Calendar: visual indicators (dots/fills) for workout days
+- [x] Saved Foods: save frequently logged foods to favorites list (AsyncStorage)
+- [x] Saved Foods: one-tap logging from saved foods list
+- [x] Saved Foods: add/remove favorites from meal log screen
+- [x] Saved Foods: display saved foods section in meal log with quick-add buttons (horizontal scroll chips)
+- [x] Navigation: wire both features into existing screens (dashboard + meals tab)
+- [x] Active Workout: guest users now save sessions locally via AsyncStorage
+- [x] Server: added getAllSessions route for calendar to fetch full workout history
