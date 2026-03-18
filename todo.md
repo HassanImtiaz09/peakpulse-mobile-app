@@ -477,3 +477,17 @@
 - [x] Navigation: wire both features into existing screens (dashboard + meals tab)
 - [x] Active Workout: guest users now save sessions locally via AsyncStorage
 - [x] Server: added getAllSessions route for calendar to fetch full workout history
+
+## Round 35 — Weekly Recap + Smart Meal Plans + Calendar Export
+
+- [x] Sunday evening weekly workout recap push notification (workouts completed, calories burned, streak status)
+- [x] Schedule recap notification for Sunday 7pm local time
+- [x] Recap notification content: total workouts, total duration, calories burned estimate, current streak
+- [x] Personalized AI meal plans from user's most-logged saved foods
+- [x] Meal plan generation includes user's favourite foods as preferred ingredients
+- [x] UI: "Generate from My Foods" button on meals tab
+- [x] Share/export workout calendar as shareable image
+- [x] Monthly workout summary card rendered as image for sharing
+- [x] Share via system share sheet (expo-sharing)
+- [x] Weekly recap toggle added to notification preferences screen
+- [x] Server: mealPlan.generate now accepts favouriteFoods array parameter

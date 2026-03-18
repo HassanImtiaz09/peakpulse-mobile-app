@@ -139,6 +139,7 @@ export async function scheduleAllDefaultReminders(): Promise<void> {
   await scheduleWeeklyAICoachReminder(19, 0);
   await scheduleMealTimeReminders(8, 0, 12, 30, 18, 30);
   await scheduleWaterReminder(2);
+  await scheduleWeeklyRecapNotification(19, 0);
 }
 
 export async function sendImmediateNotification(title: string, body: string): Promise<void> {
@@ -390,6 +391,115 @@ export async function cancelWaterReminder(): Promise<void> {
   const existingId = await AsyncStorage.getItem(WATER_NOTIF_ID_KEY);
   if (existingId) await Notifications.cancelScheduledNotificationAsync(existingId).catch(() => {});
   await AsyncStorage.removeItem(WATER_NOTIF_ID_KEY);
+}
+
+const WEEKLY_RECAP_NOTIF_ID_KEY = "@weekly_recap_notif_id";
+export const WEEKLY_RECAP_ENABLED_KEY = "@weekly_recap_enabled";
+
+/**
+ * Build the weekly workout recap content from local + server session data.
+ * Reads from AsyncStorage and returns a formatted notification body.
+ */
+async function buildWeeklyRecapContent(): Promise<{ title: string; body: string }> {
+  // Get sessions from the past 7 days
+  const raw = await AsyncStorage.getItem("@workout_sessions_local");
+  const localSessions: Array<{ durationMinutes?: number; completedAt: string; completedExercisesJson?: string }> = raw ? JSON.parse(raw) : [];
+
+  const now = new Date();
+  const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+
+  const thisWeekSessions = localSessions.filter(s => new Date(s.completedAt) >= weekAgo);
+  const totalWorkouts = thisWeekSessions.length;
+  const totalMinutes = thisWeekSessions.reduce((sum, s) => sum + (s.durationMinutes ?? 0), 0);
+  // Rough calorie estimate: ~7 kcal/min for moderate exercise
+  const estimatedCalories = totalMinutes * 7;
+
+  // Calculate current streak
+  const allDates = new Set(localSessions.map(s => s.completedAt.split("T")[0]));
+  let streak = 0;
+  const checkDate = new Date(now);
+  if (!allDates.has(checkDate.toISOString().split("T")[0])) {
+    checkDate.setDate(checkDate.getDate() - 1);
+  }
+  while (allDates.has(checkDate.toISOString().split("T")[0])) {
+    streak++;
+    checkDate.setDate(checkDate.getDate() - 1);
+  }
+
+  if (totalWorkouts === 0) {
+    return {
+      title: "\ud83d\udcca Weekly Recap",
+      body: "No workouts logged this week. Start fresh tomorrow \u2014 even one session builds momentum! \ud83d\udcaa",
+    };
+  }
+
+  const streakText = streak > 0 ? ` \ud83d\udd25 ${streak}-day streak!` : "";
+  return {
+    title: `\ud83d\udcca Weekly Recap: ${totalWorkouts} Workout${totalWorkouts !== 1 ? "s" : ""}!`,
+    body: `This week: ${totalWorkouts} workout${totalWorkouts !== 1 ? "s" : ""}, ${totalMinutes} min, ~${estimatedCalories} kcal burned.${streakText} Keep it up!`,
+  };
+}
+
+/**
+ * Schedule a weekly workout recap notification for Sunday at 7pm.
+ * The notification content is built dynamically when it fires.
+ * Since Expo local notifications need static content at schedule time,
+ * we reschedule every Sunday with fresh data.
+ */
+export async function scheduleWeeklyRecapNotification(hour: number = 19, minute: number = 0): Promise<void> {
+  if (Platform.OS === "web") return;
+
+  const prefRaw = await AsyncStorage.getItem(WEEKLY_RECAP_ENABLED_KEY);
+  const enabled = prefRaw === null ? true : prefRaw === "true";
+  if (!enabled) return;
+
+  const granted = await requestNotificationPermissions();
+  if (!granted) return;
+
+  await cancelWeeklyRecapNotification();
+
+  const { title, body } = await buildWeeklyRecapContent();
+
+  const id = await Notifications.scheduleNotificationAsync({
+    content: {
+      title,
+      body,
+      data: { url: "/workout-calendar", type: "weekly_recap" },
+      categoryIdentifier: "peakpulse",
+    },
+    trigger: {
+      weekday: 1, // 1 = Sunday in Expo
+      hour,
+      minute,
+      repeats: true,
+    } as any,
+  });
+
+  await AsyncStorage.setItem(WEEKLY_RECAP_NOTIF_ID_KEY, id);
+}
+
+/**
+ * Cancel the weekly recap notification.
+ */
+export async function cancelWeeklyRecapNotification(): Promise<void> {
+  if (Platform.OS === "web") return;
+  const existingId = await AsyncStorage.getItem(WEEKLY_RECAP_NOTIF_ID_KEY);
+  if (existingId) {
+    await Notifications.cancelScheduledNotificationAsync(existingId).catch(() => {});
+    await AsyncStorage.removeItem(WEEKLY_RECAP_NOTIF_ID_KEY);
+  }
+}
+
+/**
+ * Toggle the weekly recap notification on or off.
+ */
+export async function setWeeklyRecapEnabled(enabled: boolean, hour: number = 19, minute: number = 0): Promise<void> {
+  await AsyncStorage.setItem(WEEKLY_RECAP_ENABLED_KEY, String(enabled));
+  if (enabled) {
+    await scheduleWeeklyRecapNotification(hour, minute);
+  } else {
+    await cancelWeeklyRecapNotification();
+  }
 }
 
 export async function cancelTrialReminders(): Promise<void> {

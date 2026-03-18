@@ -1075,6 +1075,61 @@ export default function MealsScreen() {
               </View>
             )}
 
+            {/* Generate from My Saved Foods */}
+            {favourites.length >= 2 && (
+              <TouchableOpacity
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: 8,
+                  backgroundColor: "rgba(245,158,11,0.15)",
+                  borderRadius: 12,
+                  paddingVertical: 12,
+                  marginBottom: 14,
+                  borderWidth: 1,
+                  borderColor: "rgba(245,158,11,0.25)",
+                  opacity: regenerating ? 0.7 : 1,
+                }}
+                onPress={() => {
+                  const topFoods = [...favourites]
+                    .sort((a, b) => b.logCount - a.logCount)
+                    .slice(0, 10)
+                    .map(f => ({ name: f.name, calories: f.calories, protein: f.protein, carbs: f.carbs, fat: f.fat }));
+                  Alert.alert(
+                    "\u2728 Generate from My Foods",
+                    `Create a new meal plan using your ${topFoods.length} most-logged foods (${topFoods.map(f => f.name).join(", ")})?`,
+                    [
+                      { text: "Cancel", style: "cancel" },
+                      {
+                        text: "Generate",
+                        onPress: () => {
+                          setRegenerating(true);
+                          regenerateMealPlan.mutate({
+                            goal: userGoal,
+                            dietaryPreference: userDietaryPref,
+                            ramadanMode: false,
+                            weightKg: localProfile?.weightKg ?? undefined,
+                            heightCm: localProfile?.heightCm ?? undefined,
+                            age: localProfile?.age ?? undefined,
+                            gender: localProfile?.gender ?? undefined,
+                            activityLevel: localProfile?.activityLevel ?? undefined,
+                            favouriteFoods: topFoods,
+                          });
+                        },
+                      },
+                    ]
+                  );
+                }}
+                disabled={regenerating}
+              >
+                <Text style={{ fontSize: 16 }}>{"\u2b50"}</Text>
+                <Text style={{ color: "#F59E0B", fontFamily: "Outfit_700Bold", fontSize: 12 }}>
+                  {regenerating ? "Generating..." : "Generate Plan from My Saved Foods"}
+                </Text>
+              </TouchableOpacity>
+            )}
+
             {/* Suggested Meals Section — uses AI-generated plan when available */}
             {/* ── Water Intake Tracker ── */}
             <View style={{ backgroundColor: "#150A00", borderRadius: 20, padding: 16, marginBottom: 16, borderWidth: 1, borderColor: "rgba(59,130,246,0.15)" }}>

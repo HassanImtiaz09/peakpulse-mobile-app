@@ -1,7 +1,7 @@
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useRef } from "react";
 import {
   ScrollView, Text, View, TouchableOpacity, ActivityIndicator,
-  Platform, Modal, FlatList,
+  Platform, Modal, FlatList, Alert,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { ScreenContainer } from "@/components/screen-container";
@@ -10,6 +10,9 @@ import { trpc } from "@/lib/trpc";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "expo-router";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import ViewShot, { captureRef } from "react-native-view-shot";
+import * as Sharing from "expo-sharing";
+import * as FileSystem from "expo-file-system/legacy";
 
 // Solar Forge colour tokens
 const SF = {
@@ -179,6 +182,31 @@ export default function WorkoutCalendarScreen() {
   }
 
   const selectedSessions = selectedDay ? (sessionsByDate[selectedDay] ?? []) : [];
+  const shareCardRef = useRef<View>(null);
+  const [isSharing, setIsSharing] = useState(false);
+
+  async function handleShare() {
+    if (Platform.OS === "web") {
+      Alert.alert("Share", "Sharing is available on iOS and Android. Open this screen on your device to share.");
+      return;
+    }
+    try {
+      setIsSharing(true);
+      const uri = await captureRef(shareCardRef, {
+        format: "png",
+        quality: 1,
+        result: "tmpfile",
+      });
+      await Sharing.shareAsync(uri, {
+        mimeType: "image/png",
+        dialogTitle: "Share Workout Summary",
+      });
+    } catch (e: any) {
+      Alert.alert("Share Failed", e?.message ?? "Could not generate the share image.");
+    } finally {
+      setIsSharing(false);
+    }
+  }
 
   return (
     <ScreenContainer edges={["top", "left", "right"]} containerClassName="bg-background">
@@ -190,6 +218,32 @@ export default function WorkoutCalendarScreen() {
               <MaterialIcons name="arrow-back" size={24} color={SF.gold} />
             </TouchableOpacity>
             <Text style={{ color: SF.fg, fontFamily: "Outfit_700Bold", fontSize: 24 }}>Workout Calendar</Text>
+            <View style={{ flex: 1 }} />
+            <TouchableOpacity
+              onPress={handleShare}
+              disabled={isSharing}
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                gap: 4,
+                backgroundColor: "rgba(245,158,11,0.12)",
+                borderRadius: 10,
+                paddingHorizontal: 12,
+                paddingVertical: 7,
+                borderWidth: 1,
+                borderColor: SF.border2,
+                opacity: isSharing ? 0.6 : 1,
+              }}
+            >
+              {isSharing ? (
+                <ActivityIndicator size="small" color={SF.gold} />
+              ) : (
+                <MaterialIcons name="share" size={16} color={SF.gold} />
+              )}
+              <Text style={{ color: SF.gold, fontFamily: "Outfit_700Bold", fontSize: 12 }}>
+                {isSharing ? "..." : "Share"}
+              </Text>
+            </TouchableOpacity>
           </View>
         </View>
 
@@ -269,6 +323,74 @@ export default function WorkoutCalendarScreen() {
               )}
             </TouchableOpacity>
           ))}
+        </View>
+
+        {/* ── Shareable Summary Card (captured by ViewShot) ── */}
+        <View
+          ref={shareCardRef}
+          collapsable={false}
+          style={{ backgroundColor: SF.bg, paddingHorizontal: 20, paddingTop: 16, paddingBottom: 20 }}
+        >
+          <View style={{
+            backgroundColor: SF.surface,
+            borderRadius: 20,
+            padding: 20,
+            borderWidth: 1,
+            borderColor: SF.border2,
+          }}>
+            <Text style={{ color: SF.gold, fontFamily: "Outfit_700Bold", fontSize: 10, letterSpacing: 1.5, marginBottom: 8 }}>PEAKPULSE AI</Text>
+            <Text style={{ color: SF.fg, fontFamily: "Outfit_700Bold", fontSize: 18, marginBottom: 4 }}>
+              {MONTHS[currentMonth.month]} {currentMonth.year} Summary
+            </Text>
+            <View style={{ flexDirection: "row", gap: 16, marginTop: 12 }}>
+              <View style={{ alignItems: "center" }}>
+                <Text style={{ color: SF.gold, fontFamily: "Outfit_700Bold", fontSize: 28 }}>{thisMonthCount}</Text>
+                <Text style={{ color: SF.muted, fontSize: 10 }}>Workouts</Text>
+              </View>
+              <View style={{ alignItems: "center" }}>
+                <Text style={{ color: SF.gold2, fontFamily: "Outfit_700Bold", fontSize: 28 }}>{currentStreak}</Text>
+                <Text style={{ color: SF.muted, fontSize: 10 }}>Day Streak</Text>
+              </View>
+              <View style={{ alignItems: "center" }}>
+                <Text style={{ color: SF.gold3, fontFamily: "Outfit_700Bold", fontSize: 28 }}>{longestStreak}</Text>
+                <Text style={{ color: SF.muted, fontSize: 10 }}>Best Streak</Text>
+              </View>
+              <View style={{ alignItems: "center" }}>
+                <Text style={{ color: SF.fg, fontFamily: "Outfit_700Bold", fontSize: 28 }}>{totalWorkouts}</Text>
+                <Text style={{ color: SF.muted, fontSize: 10 }}>All Time</Text>
+              </View>
+            </View>
+
+            {/* Mini calendar in share card */}
+            <View style={{ marginTop: 16 }}>
+              <View style={{ flexDirection: "row", marginBottom: 6 }}>
+                {DAYS_OF_WEEK.map(d => (
+                  <View key={`share-hdr-${d}`} style={{ flex: 1, alignItems: "center" }}>
+                    <Text style={{ color: SF.muted, fontSize: 8 }}>{d}</Text>
+                  </View>
+                ))}
+              </View>
+              <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
+                {calendarDays.map(cell => (
+                  <View key={`share-${cell.key}`} style={{ width: `${100/7}%`, alignItems: "center", paddingVertical: 3 }}>
+                    {cell.day !== null ? (
+                      <View style={{
+                        width: 24, height: 24, borderRadius: 12,
+                        alignItems: "center", justifyContent: "center",
+                        backgroundColor: cell.hasWorkout ? SF.gold : "transparent",
+                      }}>
+                        <Text style={{
+                          color: cell.hasWorkout ? "#0A0500" : SF.muted,
+                          fontSize: 10,
+                          fontFamily: cell.hasWorkout ? "Outfit_700Bold" : "DMSans_400Regular",
+                        }}>{cell.day}</Text>
+                      </View>
+                    ) : <View style={{ width: 24, height: 24 }} />}
+                  </View>
+                ))}
+              </View>
+            </View>
+          </View>
         </View>
 
         {/* Legend */}
