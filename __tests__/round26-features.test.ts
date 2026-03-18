@@ -97,10 +97,11 @@ describe("Copy to Clipboard — Text Formatting", () => {
 });
 
 describe("Exercise Video Previews", () => {
-  it("returns a demo for known exercises", () => {
+  it("returns a demo for known exercises with YouTube URL", () => {
     const demo = getExerciseDemo("Bench Press");
     expect(demo).toBeDefined();
-    expect(demo.videoUrl).toBeTruthy();
+    expect(demo.youtubeUrl).toBeTruthy();
+    expect(demo.youtubeUrl).toContain("youtube.com/results");
     expect(demo.cue).toBeTruthy();
     expect(demo.cue).toContain("shoulder blades");
   });
@@ -108,13 +109,15 @@ describe("Exercise Video Previews", () => {
   it("returns a demo via keyword fallback for unknown variants", () => {
     const demo = getExerciseDemo("Incline Dumbbell Bench Press");
     expect(demo).toBeDefined();
-    expect(demo.videoUrl).toBeTruthy();
+    expect(demo.youtubeUrl).toBeTruthy();
+    expect(demo.youtubeUrl).toContain("youtube.com");
   });
 
-  it("returns generic demo for completely unknown exercises", () => {
+  it("returns dynamic YouTube search for completely unknown exercises", () => {
     const demo = getExerciseDemo("Underwater Basket Weaving");
     expect(demo).toBeDefined();
-    expect(demo.videoUrl).toBeTruthy();
+    expect(demo.youtubeUrl).toBeTruthy();
+    expect(demo.youtubeUrl).toContain("youtube.com/results");
     expect(demo.cue).toContain("proper form");
   });
 
@@ -125,12 +128,30 @@ describe("Exercise Video Previews", () => {
     expect(normaliseExerciseName("Bicep's Curl!")).toBe("biceps curl");
   });
 
-  it("maps common exercises to videos with form cues", () => {
+  it("maps common exercises to YouTube search URLs with form cues", () => {
     const exercises = ["squat", "deadlift", "bench press", "pull up", "plank", "bicep curl"];
     for (const name of exercises) {
       const demo = getExerciseDemo(name);
-      expect(demo.videoUrl).toMatch(/^https:\/\//);
+      expect(demo.youtubeUrl).toMatch(/^https:\/\/www\.youtube\.com\/results/);
       expect(demo.cue.length).toBeGreaterThan(10);
+    }
+  });
+
+  it("covers 70+ exercises in the demo map", () => {
+    const exercises = [
+      "bench press", "push up", "dumbbell fly", "incline bench press", "cable fly",
+      "pull up", "chin up", "lat pulldown", "bent over row", "deadlift", "dumbbell row",
+      "overhead press", "shoulder press", "lateral raise", "front raise", "face pull",
+      "bicep curl", "hammer curl", "tricep pushdown", "skull crusher",
+      "squat", "goblet squat", "lunge", "leg press", "leg curl", "leg extension",
+      "romanian deadlift", "hip thrust", "calf raise",
+      "plank", "crunch", "russian twist", "mountain climber", "leg raise",
+      "burpee", "jumping jack", "box jump", "kettlebell swing",
+    ];
+    for (const name of exercises) {
+      const demo = getExerciseDemo(name);
+      expect(demo.youtubeUrl).toContain("youtube.com");
+      expect(demo.cue).toBeTruthy();
     }
   });
 });

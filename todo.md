@@ -455,3 +455,10 @@
 - [x] BUG: useRouter() called before navigator is mounted in deep-link hooks (_layout.tsx)
 - [x] BUG: JSON.parse(params.dayData) in active-workout.tsx lacks try/catch — crashes on malformed params
 - [x] AUDIT: Verified all router.push route paths match existing route files (16 routes checked)
+
+## Round 33 — Four Critical Fixes
+
+- [x] FIX: AI Form Check — video uploads to Gemini File API via resumable upload instead of raw base64 in-body
+- [x] FIX: Meal Log Calories — macro formula (p×4 + c×4 + f×9) + server-side recalculation validates every food item
+- [x] FIX: Exercise Demo Videos — replace broken Pixabay CDN URLs with YouTube search links (70+ exercises mapped)
+- [x] FIX: Body Transformation Images — sequential generation with retries + backoff prevents rate limit failures

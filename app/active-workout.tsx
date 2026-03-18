@@ -8,9 +8,9 @@ import { ScreenContainer } from "@/components/screen-container";
 import { useAuth } from "@/hooks/use-auth";
 import { trpc } from "@/lib/trpc";
 import { useKeepAwake } from "expo-keep-awake";
-import { VideoView, useVideoPlayer } from "expo-video";
 import { getExerciseDemo } from "@/lib/exercise-demos";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as Linking from "expo-linking";
 
 const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get("window");
 
@@ -41,34 +41,33 @@ interface SetLog {
   completed: boolean;
 }
 
-// ── Demo Video Component ──────────────────────────────────────────────────────
+// ── Demo Video Component (YouTube link) ───────────────────────────────────────────
 function ExerciseDemoVideo({ exerciseName, compact = false }: { exerciseName: string; compact?: boolean }) {
   const demo = getExerciseDemo(exerciseName);
-  const player = useVideoPlayer(demo.videoUrl, (p) => {
-    p.loop = true;
-    p.muted = true;
-    p.play();
-  });
 
   return (
     <View style={{ marginBottom: 12 }}>
       <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 6 }}>
-        <Text style={{ color: SF.gold, fontFamily: "Outfit_700Bold", fontSize: 11, letterSpacing: 1 }}>DEMO</Text>
-        <View style={{ backgroundColor: "rgba(245,158,11,0.08)", borderRadius: 6, paddingHorizontal: 8, paddingVertical: 3 }}>
-          <Text style={{ color: SF.muted, fontSize: 10 }}>🔇 Muted · Looping</Text>
-        </View>
+        <Text style={{ color: SF.gold, fontFamily: "Outfit_700Bold", fontSize: 11, letterSpacing: 1 }}>FORM GUIDE</Text>
       </View>
-      <VideoView
-        player={player}
+      <TouchableOpacity
         style={{
           width: "100%",
-          height: compact ? 140 : 200,
+          height: compact ? 80 : 100,
           borderRadius: 12,
-          backgroundColor: "#000",
+          backgroundColor: "rgba(245,158,11,0.08)",
+          borderWidth: 1,
+          borderColor: "rgba(245,158,11,0.15)",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: 8,
         }}
-        contentFit="cover"
-        nativeControls={false}
-      />
+        onPress={() => Linking.openURL(demo.youtubeUrl)}
+      >
+        <Text style={{ fontSize: 28 }}>▶️</Text>
+        <Text style={{ color: "#F59E0B", fontFamily: "Outfit_700Bold", fontSize: 13 }}>Watch Demo on YouTube</Text>
+        <Text style={{ color: "#92400E", fontSize: 10 }}>Opens YouTube with form tutorials</Text>
+      </TouchableOpacity>
       <Text style={{ color: SF.gold3, fontFamily: "DMSans_400Regular", fontSize: 12, marginTop: 6, lineHeight: 17 }}>
         💡 {demo.cue}
       </Text>
@@ -76,7 +75,7 @@ function ExerciseDemoVideo({ exerciseName, compact = false }: { exerciseName: st
   );
 }
 
-// ── Fullscreen Timer Modal ────────────────────────────────────────────────────
+// ── Fullscreen Timer Modal ────────────────────────────────────────────────────────
 function FullscreenTimerModal({
   visible,
   exercise,
@@ -101,11 +100,6 @@ function FullscreenTimerModal({
   completedSets: number;
 }) {
   const demo = getExerciseDemo(exercise.name);
-  const player = useVideoPlayer(demo.videoUrl, (p) => {
-    p.loop = true;
-    p.muted = true;
-    p.play();
-  });
 
   function formatTime(s: number) {
     const m = Math.floor(s / 60).toString().padStart(2, "0");
@@ -190,12 +184,23 @@ function FullscreenTimerModal({
           {/* Demo Video */}
           <View style={{ backgroundColor: SF.surface, borderRadius: 16, padding: 14, borderWidth: 1, borderColor: SF.border }}>
             <Text style={{ color: SF.gold, fontFamily: "Outfit_700Bold", fontSize: 13, marginBottom: 10 }}>EXERCISE DEMO</Text>
-            <VideoView
-              player={player}
-              style={{ width: "100%", height: 220, borderRadius: 12, backgroundColor: "#000" }}
-              contentFit="cover"
-              nativeControls={false}
-            />
+            <TouchableOpacity
+              style={{
+                width: "100%",
+                height: 100,
+                borderRadius: 12,
+                backgroundColor: "rgba(245,158,11,0.08)",
+                borderWidth: 1,
+                borderColor: "rgba(245,158,11,0.15)",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 8,
+              }}
+              onPress={() => Linking.openURL(demo.youtubeUrl)}
+            >
+              <Text style={{ fontSize: 28 }}>▶️</Text>
+              <Text style={{ color: "#F59E0B", fontFamily: "Outfit_700Bold", fontSize: 13 }}>Watch Demo on YouTube</Text>
+            </TouchableOpacity>
             <Text style={{ color: SF.gold3, fontFamily: "DMSans_400Regular", fontSize: 13, marginTop: 8, lineHeight: 19 }}>
               💡 {demo.cue}
             </Text>

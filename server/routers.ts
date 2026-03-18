@@ -3,7 +3,7 @@ import { COOKIE_NAME } from "../shared/const.js";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { router, protectedProcedure, publicProcedure, guestOrUserProcedure } from "./_core/trpc";
-import { invokeLLM } from "./_core/llm";
+import { invokeLLM, uploadVideoToGeminiFileAPI } from "./_core/llm";
 import { generateImage } from "./_core/imageGeneration";
 import { storagePut } from "./storage";
 import * as db from "./db";
@@ -152,8 +152,12 @@ export const appRouter = router({
           { target_bf: 12, description: "Lean athletic physique.", estimated_weeks: 24, effort_level: "very_high" },
           { target_bf: 10, description: "Very lean with excellent definition.", estimated_weeks: 32, effort_level: "extreme" },
         ]}; }
-        const transformationsWithImages = await Promise.all(
-          (analysis.transformations ?? []).map(async (t: any) => {
+        // Sequential generation with retries + exponential backoff to prevent rate limit failures
+        const transformationsWithImages: any[] = [];
+        for (const t of (analysis.transformations ?? [])) {
+          let imageUrl: string | null = null;
+          const maxRetries = 3;
+          for (let attempt = 0; attempt < maxRetries; attempt++) {
             try {
               const bfDesc = getBFDescription(t.target_bf);
               const genderHint = input.gender ?? 'male';
@@ -161,10 +165,29 @@ export const appRouter = router({
                 prompt: `Realistic fitness transformation photo of the same ${genderHint} person shown in the reference image. The person should have ${bfDesc}. Keep the person's face, facial features, skin tone, and overall appearance identical to the reference photo. Show the full body from head to mid-thigh in a natural standing pose. Professional fitness photography with clean studio lighting and a neutral background. Photorealistic, motivational, and anatomically accurate.`,
                 originalImages: [{ url: input.photoUrl, mimeType: "image/jpeg" }],
               });
-              return { ...t, imageUrl: url };
-            } catch { return { ...t, imageUrl: null }; }
-          })
-        );
+              imageUrl = url ?? null;
+              break; // Success, exit retry loop
+            } catch (err: any) {
+              const isRateLimit = err.message?.includes("429") || err.message?.includes("rate") || err.message?.includes("quota");
+              if (attempt < maxRetries - 1 && isRateLimit) {
+                // Exponential backoff: 2s, 4s, 8s
+                const backoffMs = Math.pow(2, attempt + 1) * 1000;
+                console.warn(`Image generation rate limited for BF ${t.target_bf}%, retrying in ${backoffMs}ms (attempt ${attempt + 1}/${maxRetries})`);
+                await new Promise(r => setTimeout(r, backoffMs));
+              } else if (attempt < maxRetries - 1) {
+                // Non-rate-limit error, shorter retry delay
+                await new Promise(r => setTimeout(r, 1500));
+              } else {
+                console.warn(`Image generation failed for BF ${t.target_bf}% after ${maxRetries} attempts: ${err.message}`);
+              }
+            }
+          }
+          transformationsWithImages.push({ ...t, imageUrl });
+          // Brief pause between sequential requests to avoid rate limits
+          if (transformationsWithImages.length < (analysis.transformations?.length ?? 0)) {
+            await new Promise(r => setTimeout(r, 1000));
+          }
+        }
         // Only save to DB if user is authenticated
         let scanId: number | undefined;
         if (ctx.user) {
@@ -291,6 +314,29 @@ export const appRouter = router({
         let result: any;
         try { result = JSON.parse((response.choices[0].message.content as string) ?? "{}"); }
         catch { result = { foods: [], totalCalories: 0, totalProtein: 0, totalCarbs: 0, totalFat: 0, confidence: "low", notes: "Could not analyze" }; }
+
+        // Server-side macro recalculation: validate every food item with p×4 + c×4 + f×9
+        if (result.foods && Array.isArray(result.foods)) {
+          for (const food of result.foods) {
+            const p = Number(food.protein) || 0;
+            const c = Number(food.carbs) || 0;
+            const f = Number(food.fat) || 0;
+            const calculatedCal = Math.round(p * 4 + c * 4 + f * 9);
+            // If AI's calorie estimate deviates >15% from macro-derived value, correct it
+            const aiCal = Number(food.calories) || 0;
+            if (aiCal === 0 || Math.abs(aiCal - calculatedCal) / Math.max(calculatedCal, 1) > 0.15) {
+              food.calories = calculatedCal;
+            }
+          }
+          // Recalculate totals from corrected individual items
+          result.totalProtein = result.foods.reduce((s: number, f: any) => s + (Number(f.protein) || 0), 0);
+          result.totalCarbs = result.foods.reduce((s: number, f: any) => s + (Number(f.carbs) || 0), 0);
+          result.totalFat = result.foods.reduce((s: number, f: any) => s + (Number(f.fat) || 0), 0);
+          result.totalCalories = Math.round(
+            result.totalProtein * 4 + result.totalCarbs * 4 + result.totalFat * 9
+          );
+        }
+
         return result;
       }),
     // Logging to DB — only for authenticated users
@@ -337,15 +383,34 @@ export const appRouter = router({
 
   workout: router({
     // AI form analysis — works for guests
+    // Uses Gemini File API resumable upload for video instead of raw base64 in body
     analyzeForm: guestOrUserProcedure
       .input(z.object({ exerciseName: z.string(), videoBase64: z.string().optional(), hasVideo: z.boolean().default(false) }))
       .mutation(async ({ ctx, input }) => {
         await checkAiLimit(ctx.user?.id, "workout.analyzeForm");
         const prompt = `You are an expert personal trainer and biomechanics coach. Analyse the ${input.exerciseName} exercise form${input.hasVideo ? " from the provided video" : " based on common form mistakes"}. Return a JSON object with this exact structure: {"score":75,"grade":"good","exerciseName":"${input.exerciseName}","positives":["Good depth achieved","Neutral spine maintained"],"corrections":["Knees caving inward slightly","Elbows flaring too wide"],"feedback":["Overall your form is solid. Focus on keeping your knees tracking over your toes throughout the movement.","Remember to brace your core before each rep."]}. Score 0-100: 0-44 poor, 45-64 fair, 65-79 good, 80-100 excellent. Be specific and actionable.`;
         const messages: any[] = [{ role: "system", content: "You are an expert personal trainer. Always respond with valid JSON." }, { role: "user", content: prompt }];
+
         if (input.hasVideo && input.videoBase64 && input.videoBase64.length > 0) {
-          messages[1].content = [{ type: "text", text: prompt }, { type: "image_url", image_url: { url: `data:video/mp4;base64,${input.videoBase64.slice(0, 100000)}` } }];
+          try {
+            // Upload video via Gemini File API resumable upload (proper method)
+            const videoBuffer = Buffer.from(input.videoBase64, "base64");
+            const { fileUri, mimeType } = await uploadVideoToGeminiFileAPI(
+              videoBuffer,
+              "video/mp4",
+              `form-check-${input.exerciseName.replace(/\s+/g, "-").toLowerCase()}`,
+            );
+            // Reference the uploaded file URI in the prompt
+            messages[1].content = [
+              { type: "text", text: prompt },
+              { type: "file_url", file_url: { url: fileUri, mime_type: mimeType } },
+            ];
+          } catch (uploadErr: any) {
+            // If Gemini File API upload fails (e.g. no key), fall back to text-only analysis
+            console.warn("Gemini File API upload failed, falling back to text-only:", uploadErr.message);
+          }
         }
+
         const response = await invokeLLM({ messages, response_format: { type: "json_object" } });
         let result: any;
         try { result = JSON.parse((response.choices[0].message.content as string) ?? "{}"); }

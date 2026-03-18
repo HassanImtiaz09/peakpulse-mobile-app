@@ -174,6 +174,92 @@ function extractSystemInstruction(messages: Message[]): string | undefined {
   return parts.map((p) => (typeof p === "string" ? p : (p as TextContent).text ?? "")).join("\n");
 }
 
+// ── Gemini File API (Resumable Upload) ────────────────────────────────────────
+
+/**
+ * Upload a video to the Gemini File API using resumable upload.
+ * Returns a file URI that can be referenced in generateContent calls.
+ * This avoids sending large base64 payloads in the request body.
+ */
+export async function uploadVideoToGeminiFileAPI(
+  videoBuffer: Buffer,
+  mimeType: string = "video/mp4",
+  displayName: string = "exercise-form-video",
+): Promise<{ fileUri: string; mimeType: string }> {
+  const geminiKey = resolveGeminiApiKey();
+  if (!geminiKey) {
+    throw new Error("GEMINI_API_KEY is required for video file upload");
+  }
+
+  // Step 1: Initiate resumable upload
+  const initUrl = `https://generativelanguage.googleapis.com/upload/v1beta/files?key=${geminiKey}`;
+  const initResponse = await fetch(initUrl, {
+    method: "POST",
+    headers: {
+      "X-Goog-Upload-Protocol": "resumable",
+      "X-Goog-Upload-Command": "start",
+      "X-Goog-Upload-Header-Content-Length": String(videoBuffer.length),
+      "X-Goog-Upload-Header-Content-Type": mimeType,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ file: { display_name: displayName } }),
+  });
+
+  if (!initResponse.ok) {
+    const errText = await initResponse.text().catch(() => "");
+    throw new Error(`Gemini File API init failed: ${initResponse.status} – ${errText}`);
+  }
+
+  const uploadUrl = initResponse.headers.get("X-Goog-Upload-URL");
+  if (!uploadUrl) {
+    throw new Error("Gemini File API did not return an upload URL");
+  }
+
+  // Step 2: Upload the actual bytes
+  const uploadResponse = await fetch(uploadUrl, {
+    method: "PUT",
+    headers: {
+      "Content-Length": String(videoBuffer.length),
+      "X-Goog-Upload-Offset": "0",
+      "X-Goog-Upload-Command": "upload, finalize",
+    },
+    body: new Uint8Array(videoBuffer) as any,
+  });
+
+  if (!uploadResponse.ok) {
+    const errText = await uploadResponse.text().catch(() => "");
+    throw new Error(`Gemini File API upload failed: ${uploadResponse.status} – ${errText}`);
+  }
+
+  const result = (await uploadResponse.json()) as any;
+  const fileUri = result.file?.uri;
+  if (!fileUri) {
+    throw new Error("Gemini File API did not return a file URI");
+  }
+
+  // Step 3: Poll until file is ACTIVE (processing may take a few seconds for video)
+  const fileName = result.file?.name;
+  if (fileName) {
+    const maxWait = 60_000; // 60 seconds max
+    const pollInterval = 3_000; // 3 seconds
+    const start = Date.now();
+    while (Date.now() - start < maxWait) {
+      const statusUrl = `https://generativelanguage.googleapis.com/v1beta/${fileName}?key=${geminiKey}`;
+      const statusRes = await fetch(statusUrl);
+      if (statusRes.ok) {
+        const statusData = (await statusRes.json()) as any;
+        if (statusData.state === "ACTIVE") break;
+        if (statusData.state === "FAILED") {
+          throw new Error(`Gemini file processing failed: ${statusData.error?.message ?? "unknown"}`);
+        }
+      }
+      await new Promise((r) => setTimeout(r, pollInterval));
+    }
+  }
+
+  return { fileUri, mimeType };
+}
+
 // ── Gemini API Call ───────────────────────────────────────────────────────────
 
 function resolveGeminiApiKey(): string {
