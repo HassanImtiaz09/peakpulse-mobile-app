@@ -359,6 +359,18 @@ export default function ScanScreen() {
         </View>
       </ImageBackground>
       <ScrollView contentContainerStyle={{ paddingBottom: 32 }} showsVerticalScrollIndicator={false} style={{ flex: 1 }}>
+        {/* Progress Comparison link */}
+        <TouchableOpacity
+          style={{ marginHorizontal: 20, marginTop: 12, marginBottom: 8, backgroundColor: "rgba(245,158,11,0.08)", borderRadius: 14, padding: 14, flexDirection: "row", alignItems: "center", gap: 12, borderWidth: 1, borderColor: "rgba(245,158,11,0.15)" }}
+          onPress={() => router.push("/body-scan-compare" as any)}
+        >
+          <Text style={{ fontSize: 22 }}>📊</Text>
+          <View style={{ flex: 1 }}>
+            <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 14 }}>Progress Comparison</Text>
+            <Text style={{ color: "#92400E", fontSize: 11 }}>Side-by-side body scan comparison with stats</Text>
+          </View>
+          <Text style={{ color: "#FBBF24", fontSize: 16 }}>→</Text>
+        </TouchableOpacity>
 
         {/* ── STEP: Upload ── */}
         {step === "upload" && (

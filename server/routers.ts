@@ -208,6 +208,16 @@ export const appRouter = router({
       if (!scan) return null;
       return { ...scan, transformations: scan.transformationsJson ? JSON.parse(scan.transformationsJson) : [] };
     }),
+    getHistory: protectedProcedure.query(async ({ ctx }) => {
+      const scans = await db.getAllBodyScans(ctx.user.id);
+      return scans.map((s: any) => ({
+        date: s.createdAt ?? s.created_at ?? new Date().toISOString(),
+        bodyFatPercent: s.estimatedBodyFat ?? s.estimated_body_fat ?? undefined,
+        weightKg: s.weightKg ?? s.weight_kg ?? undefined,
+        photoUrl: s.photoUrl ?? s.photo_url ?? undefined,
+        transformations: s.transformationsJson ? JSON.parse(s.transformationsJson) : [],
+      }));
+    }),
   }),
 
   workoutPlan: router({

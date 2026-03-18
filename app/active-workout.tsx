@@ -11,6 +11,12 @@ import { useKeepAwake } from "expo-keep-awake";
 import { getExerciseDemo } from "@/lib/exercise-demos";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Linking from "expo-linking";
+import {
+  type RestTimerSettings,
+  DEFAULT_REST_TIMERS,
+  loadRestTimerSettings,
+  getRestTimeForExercise,
+} from "@/lib/rest-timer-settings";
 
 const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get("window");
 
@@ -249,15 +255,22 @@ export default function ActiveWorkoutScreen() {
   const [trialDaysLeft, setTrialDaysLeft] = useState<number | null>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const restRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const [restSettings, setRestSettings] = useState<RestTimerSettings>(DEFAULT_REST_TIMERS);
 
   const logSession = trpc.workoutPlan.logSession.useMutation({
     onSuccess: () => {
-      Alert.alert("Workout Complete! 🎉", "Great job! Your session has been logged.", [
+      Alert.alert("Workout Complete! \uD83C\uDF89", "Great job! Your session has been logged.", [
         { text: "Done", onPress: () => router.back() },
+        { text: "Share \uD83D\uDCF1", onPress: () => router.replace({ pathname: "/share-workout" as any, params: { type: "session", sessionName: dayData?.focus ?? "Workout", sessionDuration: String(Math.round(elapsedSeconds / 60)), sessionExercises: String(exercises.length) } }) },
       ]);
     },
     onError: (e) => Alert.alert("Error", e.message),
   });
+
+  // Load rest timer settings
+  useEffect(() => {
+    loadRestTimerSettings().then(setRestSettings);
+  }, []);
 
   // Load subscription state
   useEffect(() => {
@@ -328,7 +341,10 @@ export default function ActiveWorkoutScreen() {
   function completeSet(exerciseIndex: number, setIndex: number) {
     updateSetLog(exerciseIndex, setIndex, "completed", true);
     const ex = exercises[exerciseIndex];
-    const restSeconds = ex?.rest ? parseInt(ex.rest) : 60;
+    // Use custom rest timer based on exercise type classification
+    // Falls back to the exercise's own rest field, then to the custom default
+    const classifiedRest = getRestTimeForExercise(ex?.name ?? "", restSettings);
+    const restSeconds = classifiedRest;
     startRestTimer(restSeconds);
   }
 
@@ -380,6 +396,7 @@ export default function ActiveWorkoutScreen() {
               await saveSessionLocally(sessionData);
               Alert.alert("Workout Complete! \u{1F389}", "Great job! Your session has been logged locally.", [
                 { text: "Done", onPress: () => router.back() },
+                { text: "Share \uD83D\uDCF1", onPress: () => router.replace({ pathname: "/share-workout" as any, params: { type: "session", sessionName: dayData?.focus ?? "Workout", sessionDuration: String(Math.round(elapsedSeconds / 60)), sessionExercises: String(exercises.length) } }) },
               ]);
             }
           },

@@ -491,3 +491,25 @@
 - [x] Share via system share sheet (expo-sharing)
 - [x] Weekly recap toggle added to notification preferences screen
 - [x] Server: mealPlan.generate now accepts favouriteFoods array parameter
+
+## Round 36 — Custom Rest Timers + Progress Photos + Social Sharing
+
+- [x] Custom rest intervals: settings screen to configure rest time per exercise type (compound, isolation, cardio, stretching)
+- [x] Custom rest intervals: persist settings via AsyncStorage
+- [x] Custom rest intervals: active-workout uses exercise-type-specific rest timer instead of fixed timer
+- [x] Custom rest intervals: default 90s compound, 60s isolation, 30s cardio, 45s stretching
+- [x] Body scan progress comparison: new screen showing side-by-side photos from different dates
+- [x] Body scan progress comparison: date picker to select two scan dates for comparison
+- [x] Body scan progress comparison: slider/swipe to compare before/after photos
+- [x] Body scan progress comparison: display stats diff (weight, body fat, measurements) between dates
+- [x] Social sharing: branded template card for workout streaks and completed sessions
+- [x] Social sharing: share to Instagram Stories, TikTok, Facebook, WhatsApp via system share sheet
+- [x] Social sharing: template includes PeakPulse branding, streak count, workout stats
+- [x] Social sharing: capture branded card as image using ViewShot
+- [x] Rest Timer Settings link added to Profile screen
+- [x] Progress Comparison link added to Body Scan tab
+- [x] Share prompt added to workout completion alert
+- [x] Share Your Streak button added to Workout Calendar
+- [x] Server: added bodyScan.getHistory route and db.getAllBodyScans function
+- [x] Exercise type classifier with keyword matching (compound/isolation/cardio/stretching)
+- [x] 3 branded social templates: Streak, Session Complete, Milestone

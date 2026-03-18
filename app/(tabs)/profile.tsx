@@ -319,6 +319,7 @@ export default function ProfileScreen() {
             <FeatureLink icon="⌚" label="Wearable Sync" onPress={() => gatedNav("/wearable-sync", "wearable_sync", "⌚", "basic", "Sync your fitness wearable (Apple Watch, Fitbit, Garmin) with PeakPulse — Basic plan and above.")} />
             <FeatureLink icon="🗺️" label="Find Nearby Gyms" onPress={() => router.push("/gym-finder" as any)} />
             <FeatureLink icon="🔔" label="Notification Preferences" onPress={() => gatedNav("/notification-preferences", "notification_preferences", "🔔", "basic", "Customise your workout and meal reminder times — available on Basic and Advanced plans.")} />
+            <FeatureLink icon="⏱️" label="Rest Timer Settings" onPress={() => router.push("/rest-timer-settings" as any)} />
           </View>
 
           {/* Subscription */}

@@ -86,6 +86,12 @@ export async function getLatestBodyScan(userId: number) {
   return result[0] ?? null;
 }
 
+export async function getAllBodyScans(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(bodyScans).where(eq(bodyScans.userId, userId)).orderBy(bodyScans.createdAt);
+}
+
 export async function createFitnessPlan(userId: number, data: {
   planType: "workout" | "meal"; goal?: string; workoutStyle?: string;
   dietaryPreference?: string; planJson: string; insight?: string;

@@ -257,6 +257,19 @@ export default function WorkoutCalendarScreen() {
           <StatCard icon="📅" label="This Month" value={String(thisMonthCount)} />
         </View>
 
+        {/* Social Share Button */}
+        <TouchableOpacity
+          style={{ marginHorizontal: 20, marginBottom: 16, backgroundColor: "rgba(245,158,11,0.08)", borderRadius: 14, padding: 14, flexDirection: "row", alignItems: "center", gap: 12, borderWidth: 1, borderColor: SF.border2 }}
+          onPress={() => router.push("/share-workout" as any)}
+        >
+          <Text style={{ fontSize: 20 }}>📱</Text>
+          <View style={{ flex: 1 }}>
+            <Text style={{ color: SF.fg, fontFamily: "Outfit_700Bold", fontSize: 14 }}>Share Your Streak</Text>
+            <Text style={{ color: SF.muted, fontSize: 11 }}>Branded templates for Instagram, TikTok, WhatsApp & more</Text>
+          </View>
+          <Text style={{ color: SF.gold, fontSize: 16 }}>→</Text>
+        </TouchableOpacity>
+
         {/* Month Navigation */}
         <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingHorizontal: 20, marginBottom: 16 }}>
           <TouchableOpacity onPress={() => navigateMonth(-1)} style={{ padding: 8 }}>
