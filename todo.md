@@ -523,3 +523,17 @@
 - [x] Theme toggle: UI shows current selection with gold checkmark indicator
 - [x] Theme toggle: haptic feedback on selection change
 - [x] Theme toggle: Appearance section added to Profile screen between Features and Subscription
+
+## Round 38 — In-App Exercise Demo Video Player
+
+- [x] Replace YouTube search links with specific curated YouTube video IDs for 74 exercises
+- [x] Build in-app YouTubePlayer component using WebView with embedded YouTube iframe API
+- [x] Embed video player inline in active-workout exercise cards (ExerciseDemoVideo)
+- [x] Embed video player inline in plans tab exercise detail
+- [x] Fullscreen mode via Modal with landscape support and close button
+- [x] Remove external browser/YouTube app linking — all videos play in-app
+- [x] YouTubePlayerButton component for compact modal-based playback
+- [x] Form cue text displayed below each video player
+- [x] Loading indicator overlay while video loads
+- [x] Installed react-native-webview dependency
+- [x] Updated all tests to use videoId instead of youtubeUrl

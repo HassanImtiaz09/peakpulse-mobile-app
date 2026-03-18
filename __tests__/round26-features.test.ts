@@ -97,11 +97,11 @@ describe("Copy to Clipboard — Text Formatting", () => {
 });
 
 describe("Exercise Video Previews", () => {
-  it("returns a demo for known exercises with YouTube URL", () => {
+  it("returns a demo for known exercises with YouTube video ID", () => {
     const demo = getExerciseDemo("Bench Press");
     expect(demo).toBeDefined();
-    expect(demo.youtubeUrl).toBeTruthy();
-    expect(demo.youtubeUrl).toContain("youtube.com/results");
+    expect(demo.videoId).toBeTruthy();
+    expect(demo.videoId.length).toBeGreaterThan(5);
     expect(demo.cue).toBeTruthy();
     expect(demo.cue).toContain("shoulder blades");
   });
@@ -109,15 +109,13 @@ describe("Exercise Video Previews", () => {
   it("returns a demo via keyword fallback for unknown variants", () => {
     const demo = getExerciseDemo("Incline Dumbbell Bench Press");
     expect(demo).toBeDefined();
-    expect(demo.youtubeUrl).toBeTruthy();
-    expect(demo.youtubeUrl).toContain("youtube.com");
+    expect(demo.videoId).toBeTruthy();
   });
 
-  it("returns dynamic YouTube search for completely unknown exercises", () => {
+  it("returns a generic fallback for completely unknown exercises", () => {
     const demo = getExerciseDemo("Underwater Basket Weaving");
     expect(demo).toBeDefined();
-    expect(demo.youtubeUrl).toBeTruthy();
-    expect(demo.youtubeUrl).toContain("youtube.com/results");
+    expect(demo.videoId).toBeTruthy();
     expect(demo.cue).toContain("proper form");
   });
 
@@ -128,11 +126,12 @@ describe("Exercise Video Previews", () => {
     expect(normaliseExerciseName("Bicep's Curl!")).toBe("biceps curl");
   });
 
-  it("maps common exercises to YouTube search URLs with form cues", () => {
+  it("maps common exercises to specific YouTube video IDs with form cues", () => {
     const exercises = ["squat", "deadlift", "bench press", "pull up", "plank", "bicep curl"];
     for (const name of exercises) {
       const demo = getExerciseDemo(name);
-      expect(demo.youtubeUrl).toMatch(/^https:\/\/www\.youtube\.com\/results/);
+      expect(demo.videoId).toBeTruthy();
+      expect(demo.videoId.length).toBeGreaterThanOrEqual(8);
       expect(demo.cue.length).toBeGreaterThan(10);
     }
   });
@@ -150,7 +149,7 @@ describe("Exercise Video Previews", () => {
     ];
     for (const name of exercises) {
       const demo = getExerciseDemo(name);
-      expect(demo.youtubeUrl).toContain("youtube.com");
+      expect(demo.videoId).toBeTruthy();
       expect(demo.cue).toBeTruthy();
     }
   });

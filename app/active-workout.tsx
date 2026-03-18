@@ -10,7 +10,7 @@ import { trpc } from "@/lib/trpc";
 import { useKeepAwake } from "expo-keep-awake";
 import { getExerciseDemo } from "@/lib/exercise-demos";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import * as Linking from "expo-linking";
+import { YouTubePlayer, YouTubePlayerButton } from "@/components/youtube-player";
 import {
   type RestTimerSettings,
   DEFAULT_REST_TIMERS,
@@ -47,7 +47,7 @@ interface SetLog {
   completed: boolean;
 }
 
-// ── Demo Video Component (YouTube link) ───────────────────────────────────────────
+// ── Demo Video Component (In-App YouTube Player) ───────────────────────────────
 function ExerciseDemoVideo({ exerciseName, compact = false }: { exerciseName: string; compact?: boolean }) {
   const demo = getExerciseDemo(exerciseName);
 
@@ -56,27 +56,7 @@ function ExerciseDemoVideo({ exerciseName, compact = false }: { exerciseName: st
       <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 6 }}>
         <Text style={{ color: SF.gold, fontFamily: "Outfit_700Bold", fontSize: 11, letterSpacing: 1 }}>FORM GUIDE</Text>
       </View>
-      <TouchableOpacity
-        style={{
-          width: "100%",
-          height: compact ? 80 : 100,
-          borderRadius: 12,
-          backgroundColor: "rgba(245,158,11,0.08)",
-          borderWidth: 1,
-          borderColor: "rgba(245,158,11,0.15)",
-          alignItems: "center",
-          justifyContent: "center",
-          gap: 8,
-        }}
-        onPress={() => Linking.openURL(demo.youtubeUrl)}
-      >
-        <Text style={{ fontSize: 28 }}>▶️</Text>
-        <Text style={{ color: "#F59E0B", fontFamily: "Outfit_700Bold", fontSize: 13 }}>Watch Demo on YouTube</Text>
-        <Text style={{ color: "#92400E", fontSize: 10 }}>Opens YouTube with form tutorials</Text>
-      </TouchableOpacity>
-      <Text style={{ color: SF.gold3, fontFamily: "DMSans_400Regular", fontSize: 12, marginTop: 6, lineHeight: 17 }}>
-        💡 {demo.cue}
-      </Text>
+      <YouTubePlayer videoId={demo.videoId} cue={demo.cue} height={compact ? 140 : 200} />
     </View>
   );
 }
@@ -190,26 +170,7 @@ function FullscreenTimerModal({
           {/* Demo Video */}
           <View style={{ backgroundColor: SF.surface, borderRadius: 16, padding: 14, borderWidth: 1, borderColor: SF.border }}>
             <Text style={{ color: SF.gold, fontFamily: "Outfit_700Bold", fontSize: 13, marginBottom: 10 }}>EXERCISE DEMO</Text>
-            <TouchableOpacity
-              style={{
-                width: "100%",
-                height: 100,
-                borderRadius: 12,
-                backgroundColor: "rgba(245,158,11,0.08)",
-                borderWidth: 1,
-                borderColor: "rgba(245,158,11,0.15)",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: 8,
-              }}
-              onPress={() => Linking.openURL(demo.youtubeUrl)}
-            >
-              <Text style={{ fontSize: 28 }}>▶️</Text>
-              <Text style={{ color: "#F59E0B", fontFamily: "Outfit_700Bold", fontSize: 13 }}>Watch Demo on YouTube</Text>
-            </TouchableOpacity>
-            <Text style={{ color: SF.gold3, fontFamily: "DMSans_400Regular", fontSize: 13, marginTop: 8, lineHeight: 19 }}>
-              💡 {demo.cue}
-            </Text>
+            <YouTubePlayer videoId={demo.videoId} cue={demo.cue} height={180} />
             {exercise.notes && (
               <View style={{ marginTop: 10, backgroundColor: "rgba(245,158,11,0.06)", borderRadius: 10, padding: 10 }}>
                 <Text style={{ color: SF.muted, fontSize: 12 }}>📋 {exercise.notes}</Text>

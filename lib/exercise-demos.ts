@@ -1,21 +1,15 @@
 /**
  * Exercise Demo Video Library
  *
- * Maps common exercise names (normalised to lowercase) to YouTube search links
- * that open the YouTube app or browser with a relevant exercise demo search.
- * This replaces broken Pixabay CDN URLs with reliable YouTube search links.
- *
- * Fallback: if no exact match, we try a partial keyword match, then fall back
- * to a generic exercise search.
+ * Maps common exercise names to specific YouTube video IDs for in-app playback.
+ * Each exercise has a curated tutorial video from a top fitness creator.
  */
 
 export interface ExerciseDemo {
-  /** YouTube search URL for the exercise demo */
-  youtubeUrl: string;
+  /** YouTube video ID for in-app embedded playback */
+  videoId: string;
   /** Short cue text shown below the video */
   cue: string;
-  /** Optional: direct video URL if available (for inline playback) */
-  videoUrl?: string;
 }
 
 /** Normalise an exercise name for lookup */
@@ -23,407 +17,396 @@ export function normaliseExerciseName(name: string): string {
   return name.toLowerCase().replace(/[^a-z0-9 ]/g, "").trim();
 }
 
-/** Build a YouTube search URL for an exercise */
-function ytSearch(exercise: string): string {
-  return `https://www.youtube.com/results?search_query=${encodeURIComponent(exercise + " form tutorial")}`;
-}
-
 /**
  * Primary lookup map: normalised exercise name → demo
- * YouTube search links for 70+ exercises, grouped by muscle group.
+ * Curated YouTube video IDs for 70+ exercises, grouped by muscle group.
  */
 const DEMO_MAP: Record<string, ExerciseDemo> = {
-  // ── Chest ──────────────────────────────────────────────────────────────────
+  // ── Chest ─────────────────────────────────────────────────────────────────
   "bench press": {
-    youtubeUrl: ytSearch("bench press proper form"),
+    videoId: "hWbUlkb5Ms4",
     cue: "Keep shoulder blades retracted. Bar touches mid-chest.",
   },
   "push up": {
-    youtubeUrl: ytSearch("push up proper form"),
+    videoId: "_YrJc-kTYA0",
     cue: "Straight body line. Lower until chest nearly touches floor.",
   },
   "push-up": {
-    youtubeUrl: ytSearch("push up proper form"),
+    videoId: "_YrJc-kTYA0",
     cue: "Straight body line. Lower until chest nearly touches floor.",
   },
   "pushup": {
-    youtubeUrl: ytSearch("push up proper form"),
+    videoId: "_YrJc-kTYA0",
     cue: "Straight body line. Lower until chest nearly touches floor.",
   },
   "dumbbell fly": {
-    youtubeUrl: ytSearch("dumbbell fly form"),
+    videoId: "QENKPHhQVi4",
     cue: "Slight elbow bend throughout. Squeeze chest at top.",
   },
   "dumbbell flye": {
-    youtubeUrl: ytSearch("dumbbell fly form"),
+    videoId: "QENKPHhQVi4",
     cue: "Slight elbow bend throughout. Squeeze chest at top.",
   },
   "incline bench press": {
-    youtubeUrl: ytSearch("incline bench press form"),
+    videoId: "98HWfiRonkE",
     cue: "30-45° incline. Drive bar in a slight arc to upper chest.",
   },
   "incline dumbbell press": {
-    youtubeUrl: ytSearch("incline dumbbell press form"),
+    videoId: "8fXfwG4ftaQ",
     cue: "30-45° incline. Press dumbbells up and slightly inward.",
   },
   "decline bench press": {
-    youtubeUrl: ytSearch("decline bench press form"),
+    videoId: "6fotcWsMb0c",
     cue: "Slight decline. Bar to lower chest. Controlled movement.",
   },
   "cable fly": {
-    youtubeUrl: ytSearch("cable fly form"),
+    videoId: "M97ra0UR-40",
     cue: "Hinge forward slightly. Bring hands together in an arc.",
   },
   "cable crossover": {
-    youtubeUrl: ytSearch("cable crossover form"),
+    videoId: "JUDTGZh4rhg",
     cue: "Step forward. Squeeze chest as hands cross at bottom.",
   },
   "dip": {
-    youtubeUrl: ytSearch("chest dip form"),
+    videoId: "yN6Q1UI_xkE",
     cue: "Lean forward for chest. Lower until elbows reach 90°.",
   },
   "chest dip": {
-    youtubeUrl: ytSearch("chest dip form"),
+    videoId: "yN6Q1UI_xkE",
     cue: "Lean forward for chest. Lower until elbows reach 90°.",
   },
-
-  // ── Back ───────────────────────────────────────────────────────────────────
+  // ── Back ──────────────────────────────────────────────────────────────────
   "pull up": {
-    youtubeUrl: ytSearch("pull up proper form"),
+    videoId: "bxguzp1DCFw",
     cue: "Full hang at bottom. Drive elbows down to pull up.",
   },
   "pull-up": {
-    youtubeUrl: ytSearch("pull up proper form"),
+    videoId: "bxguzp1DCFw",
     cue: "Full hang at bottom. Drive elbows down to pull up.",
   },
   "pullup": {
-    youtubeUrl: ytSearch("pull up proper form"),
+    videoId: "bxguzp1DCFw",
     cue: "Full hang at bottom. Drive elbows down to pull up.",
   },
   "chin up": {
-    youtubeUrl: ytSearch("chin up form"),
+    videoId: "e1YSApl-QcM",
     cue: "Supinated grip. Chin clears bar at top.",
   },
   "chin-up": {
-    youtubeUrl: ytSearch("chin up form"),
+    videoId: "e1YSApl-QcM",
     cue: "Supinated grip. Chin clears bar at top.",
   },
   "lat pulldown": {
-    youtubeUrl: ytSearch("lat pulldown form"),
+    videoId: "SALxEARiMkw",
     cue: "Lean back slightly. Pull bar to upper chest.",
   },
   "bent over row": {
-    youtubeUrl: ytSearch("bent over row form"),
+    videoId: "qXrTDQG1oUQ",
     cue: "Hinge at hips, back flat. Pull bar to lower rib cage.",
   },
   "barbell row": {
-    youtubeUrl: ytSearch("barbell row form"),
+    videoId: "qXrTDQG1oUQ",
     cue: "Hinge at hips, back flat. Pull bar to lower rib cage.",
   },
   "dumbbell row": {
-    youtubeUrl: ytSearch("dumbbell row form"),
+    videoId: "gfUg6qWohTk",
     cue: "One arm on bench. Pull to hip, squeeze lat at top.",
   },
   "seated cable row": {
-    youtubeUrl: ytSearch("seated cable row form"),
+    videoId: "vwHG9Jfu4sw",
     cue: "Tall posture. Pull handle to navel, squeeze shoulder blades.",
   },
   "cable row": {
-    youtubeUrl: ytSearch("seated cable row form"),
+    videoId: "vwHG9Jfu4sw",
     cue: "Tall posture. Pull handle to navel, squeeze shoulder blades.",
   },
   "deadlift": {
-    youtubeUrl: ytSearch("deadlift proper form"),
+    videoId: "ZaTM37cfiDs",
     cue: "Bar over mid-foot. Hinge hips back, keep back neutral.",
   },
   "t-bar row": {
-    youtubeUrl: ytSearch("t-bar row form"),
+    videoId: "TyLoy3n_a10",
     cue: "Chest on pad. Pull to chest, squeeze shoulder blades.",
   },
   "pendlay row": {
-    youtubeUrl: ytSearch("pendlay row form"),
+    videoId: "h4nkoayPFWw",
     cue: "Bar returns to floor each rep. Explosive pull.",
   },
-
   // ── Shoulders ─────────────────────────────────────────────────────────────
   "overhead press": {
-    youtubeUrl: ytSearch("overhead press form"),
+    videoId: "zoN5EH50Dro",
     cue: "Brace core. Press bar in a straight line overhead.",
   },
   "shoulder press": {
-    youtubeUrl: ytSearch("shoulder press form"),
+    videoId: "zoN5EH50Dro",
     cue: "Elbows at 90° at bottom. Full extension at top.",
   },
   "military press": {
-    youtubeUrl: ytSearch("military press form"),
+    videoId: "zoN5EH50Dro",
     cue: "Strict press. No leg drive. Bar overhead.",
   },
   "dumbbell shoulder press": {
-    youtubeUrl: ytSearch("dumbbell shoulder press form"),
+    videoId: "E9ShwbwZ1zw",
     cue: "Press dumbbells up and slightly inward. Full lockout.",
   },
   "lateral raise": {
-    youtubeUrl: ytSearch("lateral raise form"),
+    videoId: "JMt_uxE8bBc",
     cue: "Slight forward lean. Raise to shoulder height, pinky up.",
   },
   "side lateral raise": {
-    youtubeUrl: ytSearch("lateral raise form"),
+    videoId: "JMt_uxE8bBc",
     cue: "Slight forward lean. Raise to shoulder height, pinky up.",
   },
   "front raise": {
-    youtubeUrl: ytSearch("front raise form"),
+    videoId: "4HXCYnztyh8",
     cue: "Controlled raise to eye level. Lower slowly.",
   },
   "face pull": {
-    youtubeUrl: ytSearch("face pull form"),
+    videoId: "8686PLZB_1Q",
     cue: "Pull rope to face. Elbows high and wide at end.",
   },
   "rear delt fly": {
-    youtubeUrl: ytSearch("rear delt fly form"),
+    videoId: "LsT-bR_zxLo",
     cue: "Bent over. Raise arms to sides, squeeze rear delts.",
   },
   "arnold press": {
-    youtubeUrl: ytSearch("arnold press form"),
+    videoId: "6K_N9AGhItQ",
     cue: "Rotate palms from facing you to facing forward as you press.",
   },
   "upright row": {
-    youtubeUrl: ytSearch("upright row form"),
+    videoId: "jaAV-rD45I0",
     cue: "Pull bar to chin. Elbows lead the movement.",
   },
   "shrug": {
-    youtubeUrl: ytSearch("barbell shrug form"),
+    videoId: "0Jmi-byV8ns",
     cue: "Straight up, hold at top. No rolling.",
   },
-
   // ── Arms ──────────────────────────────────────────────────────────────────
   "bicep curl": {
-    youtubeUrl: ytSearch("bicep curl form"),
+    videoId: "VCw_uIxW8WE",
     cue: "Elbows fixed at sides. Full range of motion.",
   },
   "biceps curl": {
-    youtubeUrl: ytSearch("bicep curl form"),
+    videoId: "VCw_uIxW8WE",
     cue: "Elbows fixed at sides. Full range of motion.",
   },
   "barbell curl": {
-    youtubeUrl: ytSearch("barbell curl form"),
+    videoId: "N6paU6TGFWU",
     cue: "Elbows fixed at sides. Squeeze at top.",
   },
   "dumbbell curl": {
-    youtubeUrl: ytSearch("dumbbell curl form"),
+    videoId: "XE_pHwbst04",
     cue: "Alternate or together. Full supination at top.",
   },
   "hammer curl": {
-    youtubeUrl: ytSearch("hammer curl form"),
+    videoId: "BRVDS6HVR9Q",
     cue: "Neutral grip throughout. Controlled eccentric.",
   },
   "preacher curl": {
-    youtubeUrl: ytSearch("preacher curl form"),
+    videoId: "Htw-s61mOw0",
     cue: "Arms on pad. Full stretch at bottom, squeeze at top.",
   },
   "concentration curl": {
-    youtubeUrl: ytSearch("concentration curl form"),
+    videoId: "cHxRJdSVIkA",
     cue: "Elbow on inner thigh. Isolate the bicep.",
   },
   "tricep pushdown": {
-    youtubeUrl: ytSearch("tricep pushdown form"),
+    videoId: "-zLyUAo1gMw",
     cue: "Elbows pinned to sides. Full extension at bottom.",
   },
   "tricep extension": {
-    youtubeUrl: ytSearch("tricep extension form"),
+    videoId: "b5le--KkyH0",
     cue: "Elbows point to ceiling. Full stretch and extension.",
   },
   "overhead tricep extension": {
-    youtubeUrl: ytSearch("overhead tricep extension form"),
+    videoId: "b5le--KkyH0",
     cue: "Elbows close to head. Full stretch behind head.",
   },
   "tricep dip": {
-    youtubeUrl: ytSearch("tricep dip form"),
+    videoId: "yN6Q1UI_xkE",
     cue: "Upright torso for triceps. Lower until elbows reach 90°.",
   },
   "skull crusher": {
-    youtubeUrl: ytSearch("skull crusher form"),
+    videoId: "D1y1-sXZDA0",
     cue: "Elbows point to ceiling. Lower bar to forehead slowly.",
   },
   "close grip bench press": {
-    youtubeUrl: ytSearch("close grip bench press form"),
+    videoId: "vEUyEOVn3yM",
     cue: "Hands shoulder-width. Elbows close to body.",
   },
-
   // ── Legs ──────────────────────────────────────────────────────────────────
   "squat": {
-    youtubeUrl: ytSearch("squat proper form"),
+    videoId: "MLoZuAkIyZI",
     cue: "Feet shoulder-width. Knees track toes. Depth to parallel.",
   },
   "back squat": {
-    youtubeUrl: ytSearch("back squat form"),
+    videoId: "MLoZuAkIyZI",
     cue: "Bar on traps. Brace core. Drive through heels.",
   },
   "barbell squat": {
-    youtubeUrl: ytSearch("barbell squat form"),
+    videoId: "MLoZuAkIyZI",
     cue: "Bar on traps. Brace core. Drive through heels.",
   },
   "front squat": {
-    youtubeUrl: ytSearch("front squat form"),
+    videoId: "nmUof3vszxM",
     cue: "Elbows high. Bar on front delts. Upright torso.",
   },
   "goblet squat": {
-    youtubeUrl: ytSearch("goblet squat form"),
+    videoId: "lRYBbchqxtI",
     cue: "Hold dumbbell at chest. Elbows inside knees at bottom.",
   },
   "bulgarian split squat": {
-    youtubeUrl: ytSearch("bulgarian split squat form"),
+    videoId: "uODWo4YqbT8",
     cue: "Rear foot on bench. Front knee over ankle.",
   },
   "lunge": {
-    youtubeUrl: ytSearch("lunge proper form"),
+    videoId: "1cS-6KsJW9g",
     cue: "Step forward. Back knee hovers above floor.",
   },
   "walking lunge": {
-    youtubeUrl: ytSearch("walking lunge form"),
+    videoId: "1cS-6KsJW9g",
     cue: "Continuous forward motion. Upright torso.",
   },
   "reverse lunge": {
-    youtubeUrl: ytSearch("reverse lunge form"),
+    videoId: "mzPFverp8tM",
     cue: "Step backward. Front knee stays over ankle.",
   },
   "leg press": {
-    youtubeUrl: ytSearch("leg press form"),
+    videoId: "nDh_BlnLCGc",
     cue: "Feet hip-width. Don't lock knees at top.",
   },
   "leg curl": {
-    youtubeUrl: ytSearch("leg curl form"),
+    videoId: "_lgE0gPvbik",
     cue: "Curl heels to glutes. Slow eccentric.",
   },
   "hamstring curl": {
-    youtubeUrl: ytSearch("hamstring curl form"),
+    videoId: "_lgE0gPvbik",
     cue: "Curl heels to glutes. Slow eccentric.",
   },
   "leg extension": {
-    youtubeUrl: ytSearch("leg extension form"),
+    videoId: "uM86QE59Tgc",
     cue: "Full extension at top. Pause 1 second.",
   },
   "romanian deadlift": {
-    youtubeUrl: ytSearch("romanian deadlift form"),
+    videoId: "5zmlnbWb-g4",
     cue: "Hinge at hips. Bar stays close to legs. Feel hamstring stretch.",
   },
   "stiff leg deadlift": {
-    youtubeUrl: ytSearch("stiff leg deadlift form"),
+    videoId: "CN_7cz3P-1U",
     cue: "Minimal knee bend. Hinge at hips. Stretch hamstrings.",
   },
   "sumo deadlift": {
-    youtubeUrl: ytSearch("sumo deadlift form"),
+    videoId: "e7oLkRlT2CQ",
     cue: "Wide stance. Toes out. Drive hips forward.",
   },
   "hip thrust": {
-    youtubeUrl: ytSearch("hip thrust form"),
+    videoId: "pF17m_CXfL0",
     cue: "Shoulders on bench. Drive hips up. Squeeze glutes at top.",
   },
   "glute bridge": {
-    youtubeUrl: ytSearch("glute bridge form"),
+    videoId: "OUgsJ8-Vi0E",
     cue: "Feet flat on floor. Drive hips up. Squeeze glutes.",
   },
   "calf raise": {
-    youtubeUrl: ytSearch("calf raise form"),
+    videoId: "baEXLy09Ncc",
     cue: "Full stretch at bottom. Full contraction at top.",
   },
   "standing calf raise": {
-    youtubeUrl: ytSearch("standing calf raise form"),
+    videoId: "baEXLy09Ncc",
     cue: "Full stretch at bottom. Full contraction at top.",
   },
   "seated calf raise": {
-    youtubeUrl: ytSearch("seated calf raise form"),
+    videoId: "ORY-ke6vcgk",
     cue: "Knees at 90°. Full range of motion.",
   },
   "hack squat": {
-    youtubeUrl: ytSearch("hack squat form"),
+    videoId: "g9i05umL5vc",
     cue: "Shoulders against pad. Feet forward. Full depth.",
   },
   "step up": {
-    youtubeUrl: ytSearch("step up exercise form"),
+    videoId: "8q9LVgN2RD4",
     cue: "Drive through front heel. Full extension at top.",
   },
-
   // ── Core ──────────────────────────────────────────────────────────────────
   "plank": {
-    youtubeUrl: ytSearch("plank proper form"),
+    videoId: "v25dawSzRTM",
     cue: "Straight line from head to heels. Don't let hips sag.",
   },
   "side plank": {
-    youtubeUrl: ytSearch("side plank form"),
+    videoId: "BFOyHDlY2UE",
     cue: "Stack feet. Hips up. Straight line from head to feet.",
   },
   "crunch": {
-    youtubeUrl: ytSearch("crunch proper form"),
+    videoId: "MKmrqcoCZ-M",
     cue: "Curl shoulders off floor. Lower slowly.",
   },
   "sit up": {
-    youtubeUrl: ytSearch("sit up form"),
+    videoId: "MKmrqcoCZ-M",
     cue: "Feet anchored. Full range of motion.",
   },
   "russian twist": {
-    youtubeUrl: ytSearch("russian twist form"),
+    videoId: "9V9csctSKj0",
     cue: "Lean back 45°. Rotate shoulders, not just arms.",
   },
   "mountain climber": {
-    youtubeUrl: ytSearch("mountain climber form"),
+    videoId: "7W4JEfEKuC4",
     cue: "Hips level. Drive knees to chest alternately.",
   },
   "leg raise": {
-    youtubeUrl: ytSearch("leg raise form"),
+    videoId: "2n4UqRIJyk4",
     cue: "Lower back pressed to floor. Slow eccentric.",
   },
   "hanging leg raise": {
-    youtubeUrl: ytSearch("hanging leg raise form"),
+    videoId: "2n4UqRIJyk4",
     cue: "Hang from bar. Raise legs to 90°. Control the descent.",
   },
   "ab wheel rollout": {
-    youtubeUrl: ytSearch("ab wheel rollout form"),
+    videoId: "9ZCoAbI7uX0",
     cue: "Core tight. Roll out slowly. Don't let hips sag.",
   },
   "bicycle crunch": {
-    youtubeUrl: ytSearch("bicycle crunch form"),
+    videoId: "PAEo-zRSanM",
     cue: "Elbow to opposite knee. Controlled rotation.",
   },
   "dead bug": {
-    youtubeUrl: ytSearch("dead bug exercise form"),
+    videoId: "Aoipu_fl3HA",
     cue: "Lower back flat. Opposite arm and leg extend.",
   },
   "cable woodchop": {
-    youtubeUrl: ytSearch("cable woodchop form"),
+    videoId: "ZDt4MCvjMAA",
     cue: "Rotate from hips. Arms stay extended.",
   },
-
   // ── Cardio / HIIT ─────────────────────────────────────────────────────────
   "burpee": {
-    youtubeUrl: ytSearch("burpee proper form"),
+    videoId: "G2hv_NYhM-A",
     cue: "Explosive jump at top. Chest to floor at bottom.",
   },
   "jumping jack": {
-    youtubeUrl: ytSearch("jumping jack form"),
+    videoId: "uLVt6u15L98",
     cue: "Arms and legs in sync. Land softly.",
   },
   "box jump": {
-    youtubeUrl: ytSearch("box jump form"),
+    videoId: "HJZh-12p6vg",
     cue: "Swing arms for momentum. Land softly with bent knees.",
   },
   "kettlebell swing": {
-    youtubeUrl: ytSearch("kettlebell swing form"),
+    videoId: "aSYap2yhW8s",
     cue: "Hip hinge, not squat. Snap hips forward explosively.",
   },
   "battle rope": {
-    youtubeUrl: ytSearch("battle rope exercise form"),
+    videoId: "pQb2xIGioyQ",
     cue: "Alternate arms. Keep core tight.",
   },
   "jump rope": {
-    youtubeUrl: ytSearch("jump rope technique"),
+    videoId: "vEJ7XbbAMAg",
     cue: "Wrists drive the rope. Light on feet.",
   },
   "high knees": {
-    youtubeUrl: ytSearch("high knees exercise form"),
+    videoId: "WrKc4YsgAEA",
     cue: "Drive knees to hip height. Pump arms.",
   },
   "sprint": {
-    youtubeUrl: ytSearch("sprint technique form"),
+    videoId: "6m_fjNhRhkY",
     cue: "Drive knees high. Pump arms. Stay on balls of feet.",
   },
 };
@@ -450,13 +433,13 @@ const KEYWORD_FALLBACKS: Array<{ keywords: string[]; demo: ExerciseDemo }> = [
 
 /** Generic fallback for unknown exercises */
 const GENERIC_DEMO: ExerciseDemo = {
-  youtubeUrl: ytSearch("exercise form tutorial"),
+  videoId: "MLoZuAkIyZI",
   cue: "Maintain proper form throughout. Control the movement.",
 };
 
 /**
  * Look up a demo for an exercise by name.
- * Returns a YouTube search URL and form cue for the exercise.
+ * Returns a YouTube video ID and form cue for the exercise.
  */
 export function getExerciseDemo(exerciseName: string): ExerciseDemo {
   const norm = normaliseExerciseName(exerciseName);
@@ -469,9 +452,6 @@ export function getExerciseDemo(exerciseName: string): ExerciseDemo {
     if (keywords.some(kw => norm.includes(kw))) return demo;
   }
 
-  // Dynamic fallback: generate a YouTube search URL for the specific exercise
-  return {
-    youtubeUrl: ytSearch(exerciseName + " exercise form"),
-    cue: "Maintain proper form throughout. Control the movement.",
-  };
+  // Fallback
+  return GENERIC_DEMO;
 }

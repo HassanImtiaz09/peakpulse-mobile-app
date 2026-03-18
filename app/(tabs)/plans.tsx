@@ -9,7 +9,7 @@ import { useGuestAuth } from "@/lib/guest-auth";
 import { trpc } from "@/lib/trpc";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getExerciseDemo } from "@/lib/exercise-demos";
-import * as Linking from "expo-linking";
+import { YouTubePlayer } from "@/components/youtube-player";
 import Svg, { Circle } from "react-native-svg";
 import * as Haptics from "expo-haptics";
 
@@ -628,43 +628,14 @@ function ExercisePreviewCard({ exercise }: { exercise: any }) {
       {/* Video preview */}
       {showVideo && (
         <View style={{ paddingHorizontal: 12, paddingBottom: 12 }}>
-          <ExerciseMiniVideo youtubeUrl={demo.youtubeUrl} cue={demo.cue} />
+          <YouTubePlayer videoId={demo.videoId} cue={demo.cue} height={160} />
         </View>
       )}
     </View>
   );
 }
 
-// ── Mini Exercise Demo (YouTube Link) ──
-function ExerciseMiniVideo({ youtubeUrl, cue }: { youtubeUrl: string; cue: string }) {
-  return (
-    <View>
-      <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 6 }}>
-        <Text style={{ color: "#F59E0B", fontFamily: "Outfit_700Bold", fontSize: 10, letterSpacing: 1 }}>FORM GUIDE</Text>
-      </View>
-      <TouchableOpacity
-        style={{
-          width: "100%",
-          height: 80,
-          borderRadius: 12,
-          backgroundColor: "rgba(245,158,11,0.08)",
-          borderWidth: 1,
-          borderColor: "rgba(245,158,11,0.15)",
-          alignItems: "center",
-          justifyContent: "center",
-          gap: 6,
-        }}
-        onPress={() => Linking.openURL(youtubeUrl)}
-      >
-        <Text style={{ fontSize: 24 }}>▶️</Text>
-        <Text style={{ color: "#F59E0B", fontFamily: "Outfit_700Bold", fontSize: 12 }}>Watch Demo on YouTube</Text>
-      </TouchableOpacity>
-      <Text style={{ color: "#FDE68A", fontFamily: "DMSans_400Regular", fontSize: 11, marginTop: 6, lineHeight: 16 }}>
-        💡 {cue}
-      </Text>
-    </View>
-  );
-}
+// ExerciseMiniVideo replaced by inline YouTubePlayer component
 
 // ── Meal Day Card ──
 function MealDayCard({ day }: any) {
