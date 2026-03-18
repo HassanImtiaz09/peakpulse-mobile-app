@@ -513,3 +513,13 @@
 - [x] Server: added bodyScan.getHistory route and db.getAllBodyScans function
 - [x] Exercise type classifier with keyword matching (compound/isolation/cardio/stretching)
 - [x] 3 branded social templates: Streak, Session Complete, Milestone
+
+## Round 37 — Dark/Light Theme Toggle
+
+- [x] Theme toggle: add manual dark/light/system selector to profile/settings screen
+- [x] Theme toggle: persist user preference via AsyncStorage
+- [x] Theme toggle: update ThemeProvider to respect manual override
+- [x] Theme toggle: useColorScheme hook returns resolved scheme from ThemeProvider context
+- [x] Theme toggle: UI shows current selection with gold checkmark indicator
+- [x] Theme toggle: haptic feedback on selection change
+- [x] Theme toggle: Appearance section added to Profile screen between Features and Subscription

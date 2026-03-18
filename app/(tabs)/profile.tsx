@@ -10,6 +10,9 @@ import { trpc } from "@/lib/trpc";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useSubscription } from "@/hooks/use-subscription";
 import { PaywallModal } from "@/components/paywall-modal";
+import { useThemeContext, type ThemePreference } from "@/lib/theme-provider";
+import * as Haptics from "expo-haptics";
+import { Platform } from "react-native";
 
 const HERO_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/hXdqoCBElSGntMHm.jpg";
 const APP_LOGO = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/hXdqoCBElSGntMHm.jpg";
@@ -322,6 +325,10 @@ export default function ProfileScreen() {
             <FeatureLink icon="⏱️" label="Rest Timer Settings" onPress={() => router.push("/rest-timer-settings" as any)} />
           </View>
 
+          {/* Appearance */}
+          <SectionHeader>Appearance</SectionHeader>
+          <ThemeToggle />
+
           {/* Subscription */}
           <SectionHeader>Subscription</SectionHeader>
           <TouchableOpacity
@@ -388,5 +395,50 @@ function FeatureLink({ icon, label, onPress }: any) {
       <Text style={{ color: "#F59E0B", fontFamily: "DMSans_600SemiBold", fontSize: 14, flex: 1 }}>{label}</Text>
       <Text style={{ color: "#92400E", fontSize: 16 }}>→</Text>
     </TouchableOpacity>
+  );
+}
+
+const THEME_OPTIONS: Array<{ key: ThemePreference; label: string; icon: string; desc: string }> = [
+  { key: "system", label: "System", icon: "📱", desc: "Follow device setting" },
+  { key: "light", label: "Light", icon: "☀️", desc: "Always light" },
+  { key: "dark", label: "Dark", icon: "🌙", desc: "Always dark" },
+];
+
+function ThemeToggle() {
+  const { themePreference, setThemePreference } = useThemeContext();
+
+  return (
+    <View style={{ gap: 8, marginBottom: 16 }}>
+      {THEME_OPTIONS.map((opt) => {
+        const active = themePreference === opt.key;
+        return (
+          <TouchableOpacity
+            key={opt.key}
+            style={{
+              flexDirection: "row", alignItems: "center", gap: 12,
+              backgroundColor: active ? "rgba(245,158,11,0.10)" : "#150A00",
+              borderRadius: 14, padding: 14,
+              borderWidth: 1,
+              borderColor: active ? "rgba(245,158,11,0.30)" : "rgba(245,158,11,0.10)",
+            }}
+            onPress={() => {
+              setThemePreference(opt.key);
+              if (Platform.OS !== "web") Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            }}
+          >
+            <Text style={{ fontSize: 20 }}>{opt.icon}</Text>
+            <View style={{ flex: 1 }}>
+              <Text style={{ color: active ? "#F59E0B" : "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 14 }}>{opt.label}</Text>
+              <Text style={{ color: "#92400E", fontSize: 11, marginTop: 1 }}>{opt.desc}</Text>
+            </View>
+            {active && (
+              <View style={{ width: 22, height: 22, borderRadius: 11, backgroundColor: "#F59E0B", alignItems: "center", justifyContent: "center" }}>
+                <Text style={{ color: "#0A0500", fontSize: 14, fontWeight: "900" }}>✓</Text>
+              </View>
+            )}
+          </TouchableOpacity>
+        );
+      })}
+    </View>
   );
 }
