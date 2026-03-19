@@ -26,6 +26,7 @@ import * as Linking from "expo-linking";
 import { useFonts } from "expo-font";
 import { useRouter } from "expo-router";
 import { extractReferralCodeFromUrl, storePendingReferralCode } from "@/lib/referral";
+import { FloatingAssistant } from "@/components/floating-assistant";
 import {
   DMSans_300Light,
   DMSans_400Regular,
@@ -212,6 +213,7 @@ export default function RootLayout() {
             <Stack.Screen name="(tabs)" />
             <Stack.Screen name="oauth/callback" />
           </Stack>
+          <FloatingAssistant />
           <StatusBar style="light" />
         </QueryClientProvider>
       </trpc.Provider>

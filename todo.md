@@ -537,3 +537,29 @@
 - [x] Loading indicator overlay while video loads
 - [x] Installed react-native-webview dependency
 - [x] Updated all tests to use videoId instead of youtubeUrl
+
+## Round 39 — Floating AI Assistant + Premium AI Coach Integration
+
+- [x] FloatingAssistant UI: persistent FAB (gold sparkle) in bottom-right corner on all screens (hidden on onboarding/subscription/ai-coach)
+- [x] FloatingAssistant UI: expandable chat dialog (85% screen height) with messages, input, quick actions, and premium upgrade banner
+- [x] FloatingAssistant UI: greeting bubble that appears 1.5s after app launch, auto-hides after 5s
+- [x] FloatingAssistant UI: smooth animated expand/collapse with spring FAB scale and fade greeting
+- [x] Greeting Engine: 20+ template greetings based on local data (streak, workouts, time of day, scans, meals, goal)
+- [x] Greeting Engine: premium users get full-context AI coaching; free users get template greetings
+- [x] Navigation Intent Classifier: keyword matching routes users to 12+ screens from chat
+- [x] Navigation Intent Classifier: covers meals, plans, scan, form check, calendar, settings, profile, coach, compare, share, subscription, notifications
+- [x] Voice Output: text-to-speech button using expo-speech to read assistant responses aloud
+- [x] Proactive Nudges: welcome-back nudge when user returns after 4+ hours of inactivity (AppState listener)
+- [x] Proactive Nudges: personalized nudge messages referencing streak, workout count, and user name
+- [x] Proactive Nudges: 3 randomized nudge templates for variety
+- [x] Premium AI Coach: form memory — loads last 5 form check scores and sends to AI context
+- [x] Premium AI Coach: body progress tracking — sends body fat %, total scans to AI context
+- [x] Premium AI Coach: meal log awareness — loads last 3 meals with calories into AI context
+- [x] Premium AI Coach: deep insights integrated into floating assistant via "Deep Insights" button (links to full AI Coach screen)
+- [x] Premium AI Coach: free users get template greetings + basic chat; premium gets full context-aware coaching with form/body/meal data
+- [x] Integration: FloatingAssistant added to app/_layout.tsx root layout inside TRPCProvider
+- [x] Integration: AI Coach screen remains as dedicated deep-analysis page (accessible from assistant header)
+- [x] Subscription gating: premium context (form history, body scans, meal logs) only sent for hasAdvancedAccess subscribers
+- [x] Server: aiCoach.chat upgraded to accept premiumContext with formHistory, bodyProgress, mealSummary, streakDays
+- [x] Installed expo-speech dependency for text-to-speech
+- [x] 6 quick action chips in empty state: meals, workouts, body scan, form check, workout history, AI coach

@@ -642,11 +642,30 @@ Return a JSON coaching report with this exact structure:
           currentBF: z.number().optional(),
           targetBF: z.number().optional(),
           workoutsCompleted: z.number().optional(),
+          // Premium context fields
+          streakDays: z.number().optional(),
+          totalMeals: z.number().optional(),
+          totalScans: z.number().optional(),
+          recentFormScores: z.string().optional(),
+          recentMeals: z.string().optional(),
         }).optional(),
       }))
       .mutation(async ({ ctx, input }) => {
         await checkAiLimit(ctx.user?.id, "aiCoach.chat");
-        const systemPrompt = `You are PeakPulse AI Coach — an elite, no-nonsense fitness coach. You give specific, evidence-based advice. You know the user's profile: Goal: ${input.profile?.goal ?? "general fitness"}, Current BF: ${input.profile?.currentBF ?? "unknown"}%, Target BF: ${input.profile?.targetBF ?? "unknown"}%, Workouts completed: ${input.profile?.workoutsCompleted ?? 0}. Keep responses concise (2-4 sentences max) and always end with one actionable next step.`;
+        const p = input.profile ?? {};
+        // Build base profile context
+        let profileContext = `Goal: ${p.goal ?? "general fitness"}, Current BF: ${p.currentBF ?? "unknown"}%, Target BF: ${p.targetBF ?? "unknown"}%, Workouts completed: ${p.workoutsCompleted ?? 0}`;
+        // Premium context: form memory, body progress, meal awareness
+        const hasPremiumContext = p.streakDays !== undefined || p.recentFormScores || p.recentMeals;
+        if (hasPremiumContext) {
+          profileContext += `, Streak: ${p.streakDays ?? 0} days, Total meals logged: ${p.totalMeals ?? 0}, Total body scans: ${p.totalScans ?? 0}`;
+          if (p.recentFormScores) profileContext += `. Recent form scores: ${p.recentFormScores}`;
+          if (p.recentMeals) profileContext += `. Recent meals: ${p.recentMeals}`;
+        }
+        const premiumInstructions = hasPremiumContext
+          ? " You have access to their form check history, body scan data, and meal logs. Reference specific data points when giving advice. Track their form improvements over time and celebrate progress. If their nutrition doesn't align with their goal, mention it tactfully."
+          : "";
+        const systemPrompt = `You are PeakPulse AI Coach — an elite, no-nonsense fitness coach. You give specific, evidence-based advice. You know the user's profile: ${profileContext}.${premiumInstructions} Keep responses concise (2-4 sentences max) and always end with one actionable next step.`;
         const messages: any[] = [
           { role: "system", content: systemPrompt },
           ...(input.history ?? []),
