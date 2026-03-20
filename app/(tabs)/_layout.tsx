@@ -2,15 +2,16 @@ import { Tabs, useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { HapticTab } from "@/components/haptic-tab";
 import { Platform, View, StyleSheet } from "react-native";
+import { BlurView } from "expo-blur";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useEffect } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { useGuestAuth } from "@/lib/guest-auth";
 
-// Aurora Titan tab icon definitions
+// Aurora Titan tab icon definitions (3B: uniform MaterialIcons)
 const TAB_ICONS: Record<string, { icon: keyof typeof MaterialIcons.glyphMap; label: string }> = {
-  index: { icon: "speed", label: "Dashboard" },
-  scan: { icon: "document-scanner", label: "Body Scan" },
+  index: { icon: "dashboard", label: "Dashboard" },
+  scan: { icon: "camera-alt", label: "Body Scan" },
   plans: { icon: "fitness-center", label: "Plans" },
   meals: { icon: "restaurant", label: "Meals" },
   profile: { icon: "person", label: "Profile" },
@@ -27,12 +28,26 @@ function AuroraTabIcon({ route, focused }: { route: string; focused: boolean }) 
 }
 
 /**
+ * 6A: Frosted glass tab bar background — uses BlurView on iOS/Android,
+ * falls back to a semi-transparent background on web.
+ */
+function TabBarBackground() {
+  if (Platform.OS === "web") {
+    return <View style={[StyleSheet.absoluteFill, { backgroundColor: "rgba(10,5,0,0.92)" }]} />;
+  }
+  return (
+    <BlurView
+      intensity={60}
+      tint="dark"
+      style={StyleSheet.absoluteFill}
+    />
+  );
+}
+
+/**
  * Auth guard: if a previously-authenticated session has expired (user is no longer
  * authenticated and is not in guest mode) redirect to /login so the user is never
  * stuck on a blank or broken tab screen.
- *
- * We wait until both auth hooks have finished loading before evaluating, which
- * prevents a flash-redirect on cold start before the token is read.
  */
 function useAuthGuard() {
   const router = useRouter();
@@ -40,10 +55,7 @@ function useAuthGuard() {
   const { isGuest, loading: guestLoading } = useGuestAuth();
 
   useEffect(() => {
-    // Don't act until both hooks have resolved
     if (authLoading || guestLoading) return;
-    // If the user is neither authenticated nor in guest mode, their session
-    // has expired (or they were never logged in) — send them to login.
     if (!isAuthenticated && !isGuest) {
       router.replace("/login" as any);
     }
@@ -55,7 +67,6 @@ export default function TabLayout() {
   const bottomPadding = Platform.OS === "web" ? 12 : Math.max(insets.bottom, 8);
   const tabBarHeight = 64 + bottomPadding;
 
-  // Redirect to /login if session has expired
   useAuthGuard();
 
   return (
@@ -66,14 +77,16 @@ export default function TabLayout() {
         headerShown: false,
         tabBarButton: HapticTab,
         tabBarIcon: ({ focused }) => <AuroraTabIcon route={route.name} focused={focused} />,
+        tabBarBackground: () => <TabBarBackground />,
         tabBarStyle: {
           paddingTop: 6,
           paddingBottom: bottomPadding,
           height: tabBarHeight,
-          backgroundColor: "rgba(10,5,0,0.97)",
+          // 6A: transparent background so BlurView shows through
+          backgroundColor: "transparent",
           borderTopColor: "rgba(245,158,11,0.15)",
           borderTopWidth: 1,
-          ...(Platform.OS === "ios" && { position: "absolute" }),
+          position: "absolute",
         },
         tabBarLabelStyle: {
           fontFamily: "DMSans_500Medium",

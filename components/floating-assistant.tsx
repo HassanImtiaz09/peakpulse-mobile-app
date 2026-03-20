@@ -43,13 +43,22 @@ const SF = {
 
 type ChatMessage = { role: "user" | "assistant"; content: string; isNav?: boolean };
 
+const QUICK_ACTION_ICONS: Record<string, keyof typeof MaterialIcons.glyphMap> = {
+  "My meals": "restaurant",
+  "My workouts": "fitness-center",
+  "Body scan": "photo-camera",
+  "Check my form": "center-focus-strong",
+  "Workout history": "calendar-today",
+  "AI Coach": "smart-toy",
+};
+
 const QUICK_ACTIONS = [
-  { label: "My meals", icon: "🍽️" },
-  { label: "My workouts", icon: "💪" },
-  { label: "Body scan", icon: "📸" },
-  { label: "Check my form", icon: "🎯" },
-  { label: "Workout history", icon: "📅" },
-  { label: "AI Coach", icon: "🤖" },
+  { label: "My meals", icon: "restaurant" },
+  { label: "My workouts", icon: "fitness-center" },
+  { label: "Body scan", icon: "photo-camera" },
+  { label: "Check my form", icon: "center-focus-strong" },
+  { label: "Workout history", icon: "calendar-today" },
+  { label: "AI Coach", icon: "smart-toy" },
 ];
 
 // Screens where the FAB should be hidden
@@ -445,7 +454,7 @@ export function FloatingAssistant() {
                       style={styles.quickActionChip}
                       onPress={() => sendMessage(action.label)}
                     >
-                      <Text style={{ fontSize: 16 }}>{action.icon}</Text>
+                      <MaterialIcons name={action.icon as any} size={16} color={SF.gold2} />
                       <Text style={styles.quickActionText}>{action.label}</Text>
                     </TouchableOpacity>
                   ))}
@@ -568,26 +577,28 @@ const styles = StyleSheet.create({
   },
   pulseRing: {
     position: "absolute",
-    width: 56,
-    height: 56,
-    borderRadius: 28,
+    width: 48,
+    height: 48,
+    borderRadius: 24,
     backgroundColor: SF.gold,
   },
   fab: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: SF.gold,
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: "rgba(245,158,11,0.85)",
     alignItems: "center",
     justifyContent: "center",
     shadowColor: SF.gold,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.5,
-    shadowRadius: 12,
-    elevation: 8,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.35,
+    shadowRadius: 8,
+    elevation: 6,
+    borderWidth: 1,
+    borderColor: "rgba(245,158,11,0.40)",
   },
   fabIcon: {
-    fontSize: 26,
+    fontSize: 22,
   },
   premiumBadge: {
     position: "absolute",

@@ -576,3 +576,29 @@
 - [x] Sharing: download/share PDF via system share sheet (expo-sharing)
 - [x] Works for both authenticated and guest users (no server dependency)
 - [x] 20 new tests passing (round40-pdf-export.test.ts), 190 total tests passing
+
+## Round 41 — UI/UX Overhaul (22 Improvements)
+
+- [x] 3A: Replace emoji icons with MaterialIcons throughout (Dashboard, Plans, Scan, Meals, Profile, Onboarding, Floating Assistant)
+- [x] 3B: Unify tab bar icons (speed→dashboard, document-scanner→camera-alt)
+- [x] 3C: Standardise icon sizes across cards (16/20/24/28 scale)
+- [x] 5A: Reduce gold monotony with accent colour variation (ember orange, deep amber)
+- [x] 5B: Increase surface/background contrast (surface dark→#1A1200 warmer)
+- [x] 2A: Collapse Quick Actions to 2×3 grid with "See All Features" expander
+- [x] 2B: Increase Dashboard section spacing (24→32px)
+- [x] 4A: Section title gold accent bar (3px left border)
+- [x] 4B: Two-tier card elevation system (primary vs secondary cards)
+- [x] 4C: Calorie card gradient progress bar + distinct macro colours
+- [x] 1A: Dashboard hero parallax scroll effect
+- [x] 1C: Staggered card entrance animations (waterfall fade-in)
+- [x] 6B: Stat ring pulse animation on value change
+- [x] 6C: Quick Action cards press scale animation
+- [x] 1B: Plans/Scan/Meals hero parallax scroll effect
+- [x] 6A: Tab bar frosted glass effect (BlurView)
+- [x] 2C: Profile screen collapsible feature link sections
+- [x] 2D: Meals tab swap recipe accordion (collapse steps by default)
+- [x] 6D: Floating assistant reduced visual weight (48px semi-transparent FAB, emoji→MaterialIcons)
+- [x] 6E: Onboarding page transition animations (slide+fade + emoji→MaterialIcons)
+- [x] 6F: Consistent back headers on secondary screens
+- [x] 5A-accent: Apply accent colour variation across screens
+- [x] 0 TypeScript errors, 189 tests passing

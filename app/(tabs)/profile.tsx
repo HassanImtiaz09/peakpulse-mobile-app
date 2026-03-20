@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import {
   ScrollView, Text, View, TouchableOpacity, TextInput, Alert, ActivityIndicator, ImageBackground, Image,
+  LayoutAnimation, Platform, UIManager,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { ScreenContainer } from "@/components/screen-container";
@@ -12,32 +13,37 @@ import { useSubscription } from "@/hooks/use-subscription";
 import { PaywallModal } from "@/components/paywall-modal";
 import { useThemeContext, type ThemePreference } from "@/lib/theme-provider";
 import * as Haptics from "expo-haptics";
-import { Platform } from "react-native";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+
+// Enable LayoutAnimation on Android
+if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
 
 const HERO_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/hXdqoCBElSGntMHm.jpg";
 const APP_LOGO = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/hXdqoCBElSGntMHm.jpg";
 
 const GOALS = [
-  { key: "build_muscle", label: "Build Muscle", icon: "💪" },
-  { key: "lose_fat", label: "Lose Fat", icon: "🔥" },
-  { key: "maintain", label: "Maintain", icon: "⚖️" },
-  { key: "athletic", label: "Athletic", icon: "🏃" },
+  { key: "build_muscle", label: "Build Muscle", iconName: "fitness-center" as const },
+  { key: "lose_fat", label: "Lose Fat", iconName: "local-fire-department" as const },
+  { key: "maintain", label: "Maintain", iconName: "balance" as const },
+  { key: "athletic", label: "Athletic", iconName: "directions-run" as const },
 ];
 
 const WORKOUT_STYLES = [
-  { key: "gym", label: "Gym", icon: "🏋️" },
-  { key: "home", label: "Home", icon: "🏠" },
-  { key: "mix", label: "Mix", icon: "🔄" },
-  { key: "calisthenics", label: "Calisthenics", icon: "🤸" },
+  { key: "gym", label: "Gym", iconName: "fitness-center" as const },
+  { key: "home", label: "Home", iconName: "home" as const },
+  { key: "mix", label: "Mix", iconName: "sync" as const },
+  { key: "calisthenics", label: "Calisthenics", iconName: "accessibility-new" as const },
 ];
 
 const DIETARY_PREFS = [
-  { key: "omnivore", label: "Omnivore", icon: "🍗" },
-  { key: "halal", label: "Halal", icon: "☪️" },
-  { key: "vegan", label: "Vegan", icon: "🌱" },
-  { key: "vegetarian", label: "Vegetarian", icon: "🥦" },
-  { key: "keto", label: "Keto", icon: "🥑" },
-  { key: "paleo", label: "Paleo", icon: "🥩" },
+  { key: "omnivore", label: "Omnivore", iconName: "restaurant" as const },
+  { key: "halal", label: "Halal", iconName: "verified" as const },
+  { key: "vegan", label: "Vegan", iconName: "eco" as const },
+  { key: "vegetarian", label: "Vegetarian", iconName: "spa" as const },
+  { key: "keto", label: "Keto", iconName: "egg-alt" as const },
+  { key: "paleo", label: "Paleo", iconName: "set-meal" as const },
 ];
 
 const GENDERS = [
@@ -153,7 +159,7 @@ export default function ProfileScreen() {
             <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "flex-end" }}>
               <View style={{ flexDirection: "row", alignItems: "center", gap: 14 }}>
                 <View style={{ width: 64, height: 64, borderRadius: 32, backgroundColor: "rgba(245,158,11,0.12)", alignItems: "center", justifyContent: "center", borderWidth: 3, borderColor: "#F59E0B" }}>
-                  <Text style={{ fontSize: 28 }}>💪</Text>
+                  <MaterialIcons name="fitness-center" size={28} color="#F59E0B" />
                 </View>
                 <View>
                   <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_800ExtraBold", fontSize: 20 }}>{displayName}</Text>
@@ -260,7 +266,7 @@ export default function ProfileScreen() {
                 style={{ flexDirection: "row", alignItems: "center", gap: 6, paddingHorizontal: 14, paddingVertical: 8, borderRadius: 12, backgroundColor: goal === g.key ? "#F59E0B" : "#150A00", borderWidth: 1, borderColor: goal === g.key ? "#F59E0B" : "rgba(245,158,11,0.10)", opacity: editing ? 1 : 0.7 }}
                 onPress={() => editing && setGoal(g.key)}
               >
-                <Text style={{ fontSize: 14 }}>{g.icon}</Text>
+                <MaterialIcons name={g.iconName as any} size={14} color={goal === g.key ? "#FFF7ED" : "#F59E0B"} />
                 <Text style={{ color: goal === g.key ? "#FFF7ED" : "#92400E", fontFamily: "DMSans_600SemiBold", fontSize: 13 }}>{g.label}</Text>
               </TouchableOpacity>
             ))}
@@ -275,7 +281,7 @@ export default function ProfileScreen() {
                 style={{ flexDirection: "row", alignItems: "center", gap: 6, paddingHorizontal: 14, paddingVertical: 8, borderRadius: 12, backgroundColor: workoutStyle === w.key ? "#F59E0B" : "#150A00", borderWidth: 1, borderColor: workoutStyle === w.key ? "#F59E0B" : "rgba(245,158,11,0.10)", opacity: editing ? 1 : 0.7 }}
                 onPress={() => editing && setWorkoutStyle(w.key)}
               >
-                <Text style={{ fontSize: 14 }}>{w.icon}</Text>
+                <MaterialIcons name={w.iconName as any} size={14} color={workoutStyle === w.key ? "#FFF7ED" : "#F59E0B"} />
                 <Text style={{ color: workoutStyle === w.key ? "#FFF7ED" : "#92400E", fontFamily: "DMSans_600SemiBold", fontSize: 13 }}>{w.label}</Text>
               </TouchableOpacity>
             ))}
@@ -290,7 +296,7 @@ export default function ProfileScreen() {
                 style={{ flexDirection: "row", alignItems: "center", gap: 6, paddingHorizontal: 14, paddingVertical: 8, borderRadius: 12, backgroundColor: dietaryPref === d.key ? "#F59E0B" : "#150A00", borderWidth: 1, borderColor: dietaryPref === d.key ? "#F59E0B" : "rgba(245,158,11,0.10)", opacity: editing ? 1 : 0.7 }}
                 onPress={() => editing && setDietaryPref(d.key)}
               >
-                <Text style={{ fontSize: 14 }}>{d.icon}</Text>
+                <MaterialIcons name={d.iconName as any} size={14} color={dietaryPref === d.key ? "#FFF7ED" : "#F59E0B"} />
                 <Text style={{ color: dietaryPref === d.key ? "#FFF7ED" : "#92400E", fontFamily: "DMSans_600SemiBold", fontSize: 13 }}>{d.label}</Text>
               </TouchableOpacity>
             ))}
@@ -310,19 +316,26 @@ export default function ProfileScreen() {
             ))}
           </View>
 
-          {/* Quick Links */}
-          <SectionHeader>Features</SectionHeader>
+          {/* Quick Links — Collapsible Sections (2C) */}
+          <CollapsibleSection title="Training Tools" count={5}>
+            <FeatureLink icon="trending-up" label="Progress Photos" onPress={() => gatedNav("/progress-photos", "progress_photos", "trending-up", "basic", "Track your body transformation with up to 5 progress photos per month on Basic, unlimited on Advanced.")} />
+            <FeatureLink icon="check-circle" label="Daily Check-In" onPress={() => router.push("/daily-checkin" as any)} />
+            <FeatureLink icon="center-focus-strong" label="Form Checker" onPress={() => gatedNav("/form-checker", "form_checker", "center-focus-strong", "advanced", "AI-powered real-time exercise form analysis is an Advanced plan exclusive feature.")} />
+            <FeatureLink icon="calendar-today" label="Workout History" onPress={() => router.push("/workout-calendar" as any)} />
+            <FeatureLink icon="timer" label="Rest Timer Settings" onPress={() => router.push("/rest-timer-settings" as any)} />
+          </CollapsibleSection>
+
+          <CollapsibleSection title="Social & Extras" count={5}>
+            <FeatureLink icon="group" label="Social Feed" onPress={() => gatedNav("/social-feed", "social_feed", "group", "advanced", "Join the PeakPulse community, share progress, and compete in challenges — Advanced plan only.")} />
+            <FeatureLink icon="bolt" label="7-Day Challenge" onPress={() => gatedNav("/challenge-onboarding", "challenges", "bolt", "advanced", "Unlock 7-day fitness challenges and leaderboards with an Advanced plan.")} />
+            <FeatureLink icon="card-giftcard" label="Refer a Friend" onPress={() => gatedNav("/referral", "referral", "card-giftcard", "basic", "Refer friends and earn rewards — available on Basic and Advanced plans.")} />
+            <FeatureLink icon="watch" label="Wearable Sync" onPress={() => gatedNav("/wearable-sync", "wearable_sync", "watch", "basic", "Sync your fitness wearable (Apple Watch, Fitbit, Garmin) with PeakPulse — Basic plan and above.")} />
+            <FeatureLink icon="location-on" label="Find Nearby Gyms" onPress={() => router.push("/gym-finder" as any)} />
+          </CollapsibleSection>
+
+          {/* Notifications */}
           <View style={{ gap: 8, marginBottom: 16 }}>
-            <FeatureLink icon="📈" label="Progress Photos" onPress={() => gatedNav("/progress-photos", "progress_photos", "📈", "basic", "Track your body transformation with up to 5 progress photos per month on Basic, unlimited on Advanced.")} />
-            <FeatureLink icon="📸" label="Daily Check-In" onPress={() => router.push("/daily-checkin" as any)} />
-            <FeatureLink icon="🎯" label="Form Checker" onPress={() => gatedNav("/form-checker", "form_checker", "🎯", "advanced", "AI-powered real-time exercise form analysis is an Advanced plan exclusive feature.")} />
-            <FeatureLink icon="👥" label="Social Feed" onPress={() => gatedNav("/social-feed", "social_feed", "👥", "advanced", "Join the PeakPulse community, share progress, and compete in challenges — Advanced plan only.")} />
-            <FeatureLink icon="⚡" label="7-Day Challenge" onPress={() => gatedNav("/challenge-onboarding", "challenges", "⚡", "advanced", "Unlock 7-day fitness challenges and leaderboards with an Advanced plan.")} />
-            <FeatureLink icon="🎁" label="Refer a Friend" onPress={() => gatedNav("/referral", "referral", "🎁", "basic", "Refer friends and earn rewards — available on Basic and Advanced plans.")} />
-            <FeatureLink icon="⌚" label="Wearable Sync" onPress={() => gatedNav("/wearable-sync", "wearable_sync", "⌚", "basic", "Sync your fitness wearable (Apple Watch, Fitbit, Garmin) with PeakPulse — Basic plan and above.")} />
-            <FeatureLink icon="🗺️" label="Find Nearby Gyms" onPress={() => router.push("/gym-finder" as any)} />
-            <FeatureLink icon="🔔" label="Notification Preferences" onPress={() => gatedNav("/notification-preferences", "notification_preferences", "🔔", "basic", "Customise your workout and meal reminder times — available on Basic and Advanced plans.")} />
-            <FeatureLink icon="⏱️" label="Rest Timer Settings" onPress={() => router.push("/rest-timer-settings" as any)} />
+            <FeatureLink icon="notifications" label="Notification Preferences" onPress={() => gatedNav("/notification-preferences", "notification_preferences", "notifications", "basic", "Customise your workout and meal reminder times — available on Basic and Advanced plans.")} />
           </View>
 
           {/* Appearance */}
@@ -335,20 +348,24 @@ export default function ProfileScreen() {
             style={{ backgroundColor: "#F59E0B", borderRadius: 16, paddingVertical: 14, paddingHorizontal: 16, flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 24, shadowColor: "#F59E0B", shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 8 }}
             onPress={() => router.push("/subscription" as any)}
           >
-            <View>
-              <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 14 }}>⭐ Upgrade to Advanced</Text>
-              <Text style={{ color: "#FDE68A", fontSize: 12, marginTop: 2 }}>Unlock all AI features from $4.99/mo</Text>
+            <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+              <MaterialIcons name="workspace-premium" size={20} color="#FFF7ED" />
+              <View>
+                <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 14 }}>Upgrade to Advanced</Text>
+                <Text style={{ color: "#FDE68A", fontSize: 12, marginTop: 2 }}>Unlock all AI features from $4.99/mo</Text>
+              </View>
             </View>
-            <Text style={{ color: "#FFF7ED", fontSize: 18 }}>→</Text>
+            <MaterialIcons name="chevron-right" size={20} color="#FFF7ED" />
           </TouchableOpacity>
 
           {/* Guest mode — upgrade CTA */}
           {isGuest && (
             <TouchableOpacity
-              style={{ backgroundColor: "#F59E0B", borderRadius: 16, paddingVertical: 14, alignItems: "center", marginBottom: 10, shadowColor: "#F59E0B", shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.4, shadowRadius: 8 }}
+              style={{ backgroundColor: "#F59E0B", borderRadius: 16, paddingVertical: 14, alignItems: "center", marginBottom: 10, shadowColor: "#F59E0B", shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.4, shadowRadius: 8, flexDirection: "row", justifyContent: "center", gap: 8 }}
               onPress={() => router.push("/login" as any)}
             >
-              <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 14 }}>🔐 Sign In to Sync Your Data</Text>
+              <MaterialIcons name="lock" size={16} color="#FFF7ED" />
+              <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 14 }}>Sign In to Sync Your Data</Text>
             </TouchableOpacity>
           )}
 
@@ -385,23 +402,51 @@ function StatBox({ label, value }: { label: string; value: string }) {
   );
 }
 
-function FeatureLink({ icon, label, onPress }: any) {
+function FeatureLink({ icon, label, onPress }: { icon: string; label: string; onPress: () => void }) {
   return (
     <TouchableOpacity
-      style={{ flexDirection: "row", alignItems: "center", gap: 12, backgroundColor: "#150A00", borderRadius: 14, padding: 14, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}
+      style={{ flexDirection: "row", alignItems: "center", gap: 12, backgroundColor: "#1C0E02", borderRadius: 14, padding: 14, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}
       onPress={onPress}
     >
-      <Text style={{ fontSize: 20 }}>{icon}</Text>
+      <View style={{ width: 36, height: 36, borderRadius: 10, backgroundColor: "rgba(245,158,11,0.08)", alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: "rgba(245,158,11,0.12)" }}>
+        <MaterialIcons name={icon as any} size={20} color="#F59E0B" />
+      </View>
       <Text style={{ color: "#F59E0B", fontFamily: "DMSans_600SemiBold", fontSize: 14, flex: 1 }}>{label}</Text>
-      <Text style={{ color: "#92400E", fontSize: 16 }}>→</Text>
+      <MaterialIcons name="chevron-right" size={20} color="#92400E" />
     </TouchableOpacity>
   );
 }
 
-const THEME_OPTIONS: Array<{ key: ThemePreference; label: string; icon: string; desc: string }> = [
-  { key: "system", label: "System", icon: "📱", desc: "Follow device setting" },
-  { key: "light", label: "Light", icon: "☀️", desc: "Always light" },
-  { key: "dark", label: "Dark", icon: "🌙", desc: "Always dark" },
+// 2C: Collapsible section component
+function CollapsibleSection({ title, count, children }: { title: string; count: number; children: React.ReactNode }) {
+  const [expanded, setExpanded] = useState(false);
+  return (
+    <View style={{ marginBottom: 16 }}>
+      <TouchableOpacity
+        style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: expanded ? 8 : 0 }}
+        onPress={() => {
+          LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+          setExpanded(!expanded);
+          if (Platform.OS !== "web") Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        }}
+      >
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+          <Text style={{ color: "#92400E", fontSize: 11, fontFamily: "Outfit_700Bold", letterSpacing: 1, textTransform: "uppercase" }}>{title}</Text>
+          <View style={{ backgroundColor: "rgba(245,158,11,0.12)", borderRadius: 8, paddingHorizontal: 6, paddingVertical: 2 }}>
+            <Text style={{ color: "#F59E0B", fontSize: 10, fontFamily: "DMSans_600SemiBold" }}>{count}</Text>
+          </View>
+        </View>
+        <MaterialIcons name={expanded ? "expand-less" : "expand-more"} size={20} color="#92400E" />
+      </TouchableOpacity>
+      {expanded && <View style={{ gap: 8 }}>{children}</View>}
+    </View>
+  );
+}
+
+const THEME_OPTIONS: Array<{ key: ThemePreference; label: string; icon: keyof typeof MaterialIcons.glyphMap; desc: string }> = [
+  { key: "system", label: "System", icon: "phone-iphone", desc: "Follow device setting" },
+  { key: "light", label: "Light", icon: "light-mode", desc: "Always light" },
+  { key: "dark", label: "Dark", icon: "dark-mode", desc: "Always dark" },
 ];
 
 function ThemeToggle() {
@@ -426,14 +471,14 @@ function ThemeToggle() {
               if (Platform.OS !== "web") Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
             }}
           >
-            <Text style={{ fontSize: 20 }}>{opt.icon}</Text>
+            <MaterialIcons name={opt.icon} size={20} color={active ? "#F59E0B" : "#92400E"} />
             <View style={{ flex: 1 }}>
               <Text style={{ color: active ? "#F59E0B" : "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 14 }}>{opt.label}</Text>
               <Text style={{ color: "#92400E", fontSize: 11, marginTop: 1 }}>{opt.desc}</Text>
             </View>
             {active && (
               <View style={{ width: 22, height: 22, borderRadius: 11, backgroundColor: "#F59E0B", alignItems: "center", justifyContent: "center" }}>
-                <Text style={{ color: "#0A0500", fontSize: 14, fontWeight: "900" }}>✓</Text>
+                <MaterialIcons name="check" size={14} color="#0A0500" />
               </View>
             )}
           </TouchableOpacity>

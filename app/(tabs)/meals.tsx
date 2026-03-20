@@ -1,8 +1,11 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   ScrollView, Text, View, TouchableOpacity, ActivityIndicator, Alert, Image,
   TextInput, Platform, ImageBackground, FlatList,
 } from "react-native";
+import ReAnimated, {
+  useSharedValue, useAnimatedStyle, interpolate, Extrapolation,
+} from "react-native-reanimated";
 import * as ImagePicker from "expo-image-picker";
 import * as FileSystem from "expo-file-system/legacy";
 import * as Clipboard from "expo-clipboard";
@@ -669,7 +672,7 @@ export default function MealsScreen() {
       <View style={{ flex: 1, backgroundColor: "#0A0500" }}>
         <ImageBackground source={{ uri: MEAL_BG }} style={{ flex: 1 }} resizeMode="cover">
           <View style={{ flex: 1, backgroundColor: "rgba(8,8,16,0.78)", alignItems: "center", justifyContent: "center", padding: 32 }}>
-            <Text style={{ fontSize: 48, marginBottom: 16 }}>🍽️</Text>
+            <MaterialIcons name="restaurant" size={48} color="#F59E0B" style={{ marginBottom: 16 }} />
             <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_800ExtraBold", fontSize: 22, textAlign: "center", marginBottom: 8 }}>Meal Log</Text>
             <Text style={{ color: "#92400E", fontSize: 14, textAlign: "center", lineHeight: 20 }}>Sign in or continue as guest to track your nutrition and use the AI calorie estimator.</Text>
           </View>
@@ -678,22 +681,35 @@ export default function MealsScreen() {
     );
   }
 
+  // 1B: Parallax scroll value for Meals hero
+  const mealScrollY = useSharedValue(0);
+  const mealHeroImgStyle = useAnimatedStyle(() => ({
+    transform: [{ translateY: interpolate(mealScrollY.value, [0, 200], [0, 100], Extrapolation.CLAMP) }],
+  }));
+  const mealHeroTxtStyle = useAnimatedStyle(() => ({
+    opacity: interpolate(mealScrollY.value, [0, 150], [1, 0], Extrapolation.CLAMP),
+  }));
+  const onMealScroll = useCallback((e: any) => { mealScrollY.value = e.nativeEvent.contentOffset.y; }, []);
+
   return (
     <View style={{ flex: 1, backgroundColor: "#0A0500" }}>
-      {/* Hero Header */}
-      <ImageBackground source={{ uri: MEAL_BG }} style={{ height: 160 }} resizeMode="cover">
-        <View style={{ flex: 1, backgroundColor: "rgba(8,8,16,0.68)", justifyContent: "flex-end", padding: 20, paddingTop: 52 }}>
+      {/* Hero Header with Parallax (1B) */}
+      <View style={{ width: "100%", height: 160, overflow: "hidden" }}>
+        <ReAnimated.View style={[{ position: "absolute", top: 0, left: 0, right: 0, height: 260 }, mealHeroImgStyle]}>
+          <ImageBackground source={{ uri: MEAL_BG }} style={{ width: "100%", height: "100%" }} resizeMode="cover" />
+        </ReAnimated.View>
+        <ReAnimated.View style={[{ flex: 1, backgroundColor: "rgba(8,8,16,0.68)", justifyContent: "flex-end", padding: 20, paddingTop: 52 }, mealHeroTxtStyle]}>
           <TouchableOpacity
             style={{ position: "absolute", top: 52, right: 20, flexDirection: "row", alignItems: "center", gap: 4, backgroundColor: "rgba(245,158,11,0.12)", borderRadius: 20, paddingHorizontal: 10, paddingVertical: 5, borderWidth: 1, borderColor: "rgba(245,158,11,0.20)" }}
             onPress={() => router.push("/user-guide" as any)}
           >
-            <Text style={{ color: "#FBBF24", fontSize: 13 }}>?</Text>
+            <MaterialIcons name="help-outline" size={14} color="#FBBF24" />
             <Text style={{ color: "#FBBF24", fontFamily: "DMSans_500Medium", fontSize: 11 }}>Guide</Text>
           </TouchableOpacity>
           <Text style={{ color: "#FDE68A", fontFamily: "Outfit_700Bold", fontSize: 12, letterSpacing: 1 }}>NUTRITION TRACKING</Text>
           <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_800ExtraBold", fontSize: 26, letterSpacing: -0.5 }}>Meal Log</Text>
-        </View>
-      </ImageBackground>
+        </ReAnimated.View>
+      </View>
 
       {/* Daily Summary Card */}
       <View style={{ marginHorizontal: 16, marginTop: -20, backgroundColor: "#150A00", borderRadius: 20, padding: 16, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)", shadowColor: "#000", shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.4, shadowRadius: 8, zIndex: 10 }}>

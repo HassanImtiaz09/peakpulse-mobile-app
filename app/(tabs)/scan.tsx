@@ -1,8 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   ScrollView, Text, View, TouchableOpacity, ActivityIndicator, Alert, Image, Platform, ImageBackground,
-  Modal, Dimensions, PanResponder, Animated,
+  Modal, Dimensions, PanResponder,
 } from "react-native";
+import ReAnimated, {
+  useSharedValue, useAnimatedStyle, interpolate, Extrapolation,
+} from "react-native-reanimated";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 import * as ImagePicker from "expo-image-picker";
 
@@ -33,19 +37,19 @@ const EFFORT_LABELS: Record<string, string> = {
 };
 
 const WORKOUT_STYLES = [
-  { key: "gym", label: "Gym", icon: "🏋️", desc: "Full equipment" },
-  { key: "home", label: "Home", icon: "🏠", desc: "Minimal gear" },
-  { key: "mix", label: "Mix", icon: "🔄", desc: "Gym & home" },
-  { key: "calisthenics", label: "Calisthenics", icon: "🤸", desc: "Bodyweight" },
+  { key: "gym", label: "Gym", iconName: "fitness-center" as const, desc: "Full equipment" },
+  { key: "home", label: "Home", iconName: "home" as const, desc: "Minimal gear" },
+  { key: "mix", label: "Mix", iconName: "sync" as const, desc: "Gym & home" },
+  { key: "calisthenics", label: "Calisthenics", iconName: "accessibility-new" as const, desc: "Bodyweight" },
 ];
 
 const DIETARY_PREFS = [
-  { key: "omnivore", label: "Omnivore", icon: "🍗" },
-  { key: "halal", label: "Halal", icon: "☪️" },
-  { key: "vegan", label: "Vegan", icon: "🌱" },
-  { key: "vegetarian", label: "Vegetarian", icon: "🥦" },
-  { key: "keto", label: "Keto", icon: "🥑" },
-  { key: "paleo", label: "Paleo", icon: "🥩" },
+  { key: "omnivore", label: "Omnivore", iconName: "restaurant" as const },
+  { key: "halal", label: "Halal", iconName: "verified" as const },
+  { key: "vegan", label: "Vegan", iconName: "eco" as const },
+  { key: "vegetarian", label: "Vegetarian", iconName: "spa" as const },
+  { key: "keto", label: "Keto", iconName: "egg-alt" as const },
+  { key: "paleo", label: "Paleo", iconName: "set-meal" as const },
 ];
 
 type Step = "upload" | "analyzing" | "results" | "goal_setup" | "generating";
@@ -310,7 +314,7 @@ export default function ScanScreen() {
               style={{ backgroundColor: "#F59E0B", borderRadius: 16, paddingVertical: 16, alignItems: "center", shadowColor: "#F59E0B", shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.5, shadowRadius: 12 }}
               onPress={() => { setPreviewModal(null); selectTargetAndProceed(bf); }}
             >
-              <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_800ExtraBold", fontSize: 16 }}>🎯 Set {bf}% as My Goal</Text>
+              <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}><MaterialIcons name="gps-fixed" size={16} color="#FFF7ED" /><Text style={{ color: "#FFF7ED", fontFamily: "Outfit_800ExtraBold", fontSize: 16 }}>Set {bf}% as My Goal</Text></View>
             </TouchableOpacity>
           </View>
         </View>
@@ -323,7 +327,7 @@ export default function ScanScreen() {
       <View style={{ flex: 1, backgroundColor: "#0A0500" }}>
         <ImageBackground source={{ uri: SCAN_BG }} style={{ flex: 1 }} resizeMode="cover">
           <View style={{ flex: 1, backgroundColor: "rgba(8,8,16,0.75)", alignItems: "center", justifyContent: "center", padding: 32 }}>
-            <Text style={{ fontSize: 48, marginBottom: 16 }}>📸</Text>
+            <MaterialIcons name="photo-camera" size={48} color="#F59E0B" style={{ marginBottom: 16 }} />
             <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_800ExtraBold", fontSize: 22, textAlign: "center", marginBottom: 8 }}>AI Body Scan</Text>
             <Text style={{ color: "#92400E", fontSize: 14, textAlign: "center", lineHeight: 20, marginBottom: 24 }}>Sign in or continue as guest to analyze your physique and visualize your transformation.</Text>
             <TouchableOpacity
@@ -338,38 +342,51 @@ export default function ScanScreen() {
     );
   }
 
+  // 1B: Parallax scroll value for Scan hero
+  const scrollY = useSharedValue(0);
+  const heroImgStyle = useAnimatedStyle(() => ({
+    transform: [{ translateY: interpolate(scrollY.value, [0, 200], [0, 100], Extrapolation.CLAMP) }],
+  }));
+  const heroTxtStyle = useAnimatedStyle(() => ({
+    opacity: interpolate(scrollY.value, [0, 150], [1, 0], Extrapolation.CLAMP),
+  }));
+  const onScroll = useCallback((e: any) => { scrollY.value = e.nativeEvent.contentOffset.y; }, []);
+
   return (
     <View style={{ flex: 1, backgroundColor: "#0A0500" }}>
       {/* Fullscreen Preview Modal */}
       <TransformationPreviewModal />
 
-      {/* Hero Header */}
-      <ImageBackground source={{ uri: SCAN_BG }} style={{ height: 180 }} resizeMode="cover">
-        <View style={{ flex: 1, backgroundColor: "rgba(8,8,16,0.65)", justifyContent: "flex-end", padding: 20, paddingTop: 52 }}>
+      {/* Hero Header with Parallax (1B) */}
+      <View style={{ width: "100%", height: 180, overflow: "hidden" }}>
+        <ReAnimated.View style={[{ position: "absolute", top: 0, left: 0, right: 0, height: 280 }, heroImgStyle]}>
+          <ImageBackground source={{ uri: SCAN_BG }} style={{ width: "100%", height: "100%" }} resizeMode="cover" />
+        </ReAnimated.View>
+        <ReAnimated.View style={[{ flex: 1, backgroundColor: "rgba(8,8,16,0.65)", justifyContent: "flex-end", padding: 20, paddingTop: 52 }, heroTxtStyle]}>
           <TouchableOpacity
             style={{ position: "absolute", top: 52, right: 20, flexDirection: "row", alignItems: "center", gap: 4, backgroundColor: "rgba(245,158,11,0.12)", borderRadius: 20, paddingHorizontal: 10, paddingVertical: 5, borderWidth: 1, borderColor: "rgba(245,158,11,0.20)" }}
             onPress={() => router.push("/user-guide" as any)}
           >
-            <Text style={{ color: "#FBBF24", fontSize: 13 }}>?</Text>
+            <MaterialIcons name="help-outline" size={14} color="#FBBF24" />
             <Text style={{ color: "#FBBF24", fontFamily: "DMSans_500Medium", fontSize: 11 }}>Guide</Text>
           </TouchableOpacity>
           <Text style={{ color: "#FDE68A", fontFamily: "Outfit_700Bold", fontSize: 12, letterSpacing: 1 }}>AI-POWERED ANALYSIS</Text>
           <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_800ExtraBold", fontSize: 26, letterSpacing: -0.5 }}>Body Scan</Text>
           <Text style={{ color: "#92400E", fontSize: 12, marginTop: 2 }}>Analyze your physique and visualize your transformation</Text>
-        </View>
-      </ImageBackground>
-      <ScrollView contentContainerStyle={{ paddingBottom: 32 }} showsVerticalScrollIndicator={false} style={{ flex: 1 }}>
+        </ReAnimated.View>
+      </View>
+      <ReAnimated.ScrollView contentContainerStyle={{ paddingBottom: 32 }} showsVerticalScrollIndicator={false} style={{ flex: 1 }} onScroll={onScroll} scrollEventThrottle={16}>
         {/* Progress Comparison link */}
         <TouchableOpacity
           style={{ marginHorizontal: 20, marginTop: 12, marginBottom: 8, backgroundColor: "rgba(245,158,11,0.08)", borderRadius: 14, padding: 14, flexDirection: "row", alignItems: "center", gap: 12, borderWidth: 1, borderColor: "rgba(245,158,11,0.15)" }}
           onPress={() => router.push("/body-scan-compare" as any)}
         >
-          <Text style={{ fontSize: 22 }}>📊</Text>
+          <MaterialIcons name="bar-chart" size={22} color="#FBBF24" />
           <View style={{ flex: 1 }}>
             <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 14 }}>Progress Comparison</Text>
             <Text style={{ color: "#92400E", fontSize: 11 }}>Side-by-side body scan comparison with stats</Text>
           </View>
-          <Text style={{ color: "#FBBF24", fontSize: 16 }}>→</Text>
+          <MaterialIcons name="chevron-right" size={20} color="#FBBF24" />
         </TouchableOpacity>
 
         {/* ── STEP: Upload ── */}
@@ -391,7 +408,7 @@ export default function ScanScreen() {
               </View>
             ) : (
               <View style={{ backgroundColor: "#150A00", borderRadius: 20, padding: 32, alignItems: "center", marginBottom: 20, borderWidth: 2, borderColor: "rgba(245,158,11,0.12)", borderStyle: "dashed" }}>
-                <Text style={{ fontSize: 48, marginBottom: 12 }}>📸</Text>
+                <MaterialIcons name="photo-camera" size={48} color="#F59E0B" style={{ marginBottom: 12 }} />
                 <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 16, marginBottom: 6 }}>Upload a Full-Body Photo</Text>
                 <Text style={{ color: "#92400E", fontSize: 13, textAlign: "center", lineHeight: 18 }}>
                   For best results, wear fitted clothing and stand in good lighting facing the camera
@@ -404,14 +421,14 @@ export default function ScanScreen() {
                 style={{ flex: 1, backgroundColor: "#150A00", borderRadius: 16, paddingVertical: 14, alignItems: "center", borderWidth: 1, borderColor: "rgba(245,158,11,0.10)", gap: 6 }}
                 onPress={() => pickImage(true)}
               >
-                <Text style={{ fontSize: 22 }}>📷</Text>
+                <MaterialIcons name="photo-camera" size={22} color="#F59E0B" />
                 <Text style={{ color: "#F59E0B", fontFamily: "DMSans_600SemiBold", fontSize: 13 }}>Take Photo</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={{ flex: 1, backgroundColor: "#150A00", borderRadius: 16, paddingVertical: 14, alignItems: "center", borderWidth: 1, borderColor: "rgba(245,158,11,0.10)", gap: 6 }}
                 onPress={() => pickImage(false)}
               >
-                <Text style={{ fontSize: 22 }}>🖼️</Text>
+                <MaterialIcons name="photo-library" size={22} color="#F59E0B" />
                 <Text style={{ color: "#F59E0B", fontFamily: "DMSans_600SemiBold", fontSize: 13 }}>Choose Photo</Text>
               </TouchableOpacity>
             </View>
@@ -421,7 +438,7 @@ export default function ScanScreen() {
                 style={{ backgroundColor: "#F59E0B", borderRadius: 16, paddingVertical: 14, alignItems: "center" }}
                 onPress={startAnalysis}
               >
-                <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 15 }}>✨ Analyze My Physique</Text>
+                <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}><MaterialIcons name="auto-awesome" size={16} color="#FFF7ED" /><Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 15 }}>Analyze My Physique</Text></View>
               </TouchableOpacity>
             )}
 
@@ -481,7 +498,7 @@ export default function ScanScreen() {
                 </View>
                 <View style={{ alignItems: "center" }}>
                   <View style={{ backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 16, padding: 16 }}>
-                    <Text style={{ fontSize: 32 }}>💪</Text>
+                    <MaterialIcons name="fitness-center" size={32} color="#F59E0B" />
                   </View>
                   <Text style={{ color: "#FBBF24", fontSize: 11, marginTop: 6 }}>
                     Muscle: {scan.muscleMassEstimate}
@@ -533,12 +550,12 @@ export default function ScanScreen() {
                         />
                         {/* Zoom hint overlay */}
                         <View style={{ position: "absolute", bottom: 6, right: 6, backgroundColor: "rgba(0,0,0,0.7)", borderRadius: 8, paddingHorizontal: 5, paddingVertical: 3 }}>
-                          <Text style={{ color: "#FFF7ED", fontSize: 10 }}>🔍 View</Text>
+                          <View style={{ flexDirection: "row", alignItems: "center", gap: 2 }}><MaterialIcons name="zoom-in" size={10} color="#FFF7ED" /><Text style={{ color: "#FFF7ED", fontSize: 10 }}>View</Text></View>
                         </View>
                       </View>
                     ) : (
                       <View style={{ width: 90, height: 115, borderRadius: 12, backgroundColor: "#150A00", alignItems: "center", justifyContent: "center" }}>
-                        <Text style={{ fontSize: 28 }}>🏃</Text>
+                        <MaterialIcons name="directions-run" size={28} color="#F59E0B" />
                       </View>
                     )}
                   </TouchableOpacity>
@@ -557,7 +574,7 @@ export default function ScanScreen() {
                     </Text>
                     <View style={{ flexDirection: "row", gap: 8, marginBottom: 8 }}>
                       <View style={{ backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 8, paddingHorizontal: 8, paddingVertical: 4 }}>
-                        <Text style={{ color: "#92400E", fontSize: 11 }}>⏱ {t.estimated_weeks}w</Text>
+                        <View style={{ flexDirection: "row", alignItems: "center", gap: 2 }}><MaterialIcons name="timer" size={11} color="#92400E" /><Text style={{ color: "#92400E", fontSize: 11 }}>{t.estimated_weeks}w</Text></View>
                       </View>
                       <View style={{ backgroundColor: (EFFORT_COLORS[t.effort_level] ?? "#92400E") + "20", borderRadius: 8, paddingHorizontal: 8, paddingVertical: 4 }}>
                         <Text style={{ color: EFFORT_COLORS[t.effort_level] ?? "#92400E", fontSize: 11, fontFamily: "DMSans_600SemiBold" }}>
@@ -574,7 +591,7 @@ export default function ScanScreen() {
                           setPreviewModal({ visible: true, imageUrl: t.imageUrl, bf: t.target_bf, beforeUrl: uploadedPhotoUrl ?? selectedImage });
                         }}
                       >
-                        <Text style={{ color: "#FBBF24", fontSize: 11, fontFamily: "Outfit_700Bold" }}>🔍 Enlarge Preview</Text>
+                        <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}><MaterialIcons name="zoom-in" size={12} color="#FBBF24" /><Text style={{ color: "#FBBF24", fontSize: 11, fontFamily: "Outfit_700Bold" }}>Enlarge Preview</Text></View>
                       </TouchableOpacity>
                     )}
                   </View>
@@ -597,7 +614,7 @@ export default function ScanScreen() {
               style={{ backgroundColor: "#150A00", borderRadius: 16, paddingVertical: 12, alignItems: "center", marginTop: 8, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}
               onPress={() => { setStep("upload"); setSelectedImage(null); }}
             >
-              <Text style={{ color: "#92400E", fontFamily: "DMSans_600SemiBold", fontSize: 14 }}>📷 New Scan</Text>
+              <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}><MaterialIcons name="photo-camera" size={14} color="#92400E" /><Text style={{ color: "#92400E", fontFamily: "DMSans_600SemiBold", fontSize: 14 }}>New Scan</Text></View>
             </TouchableOpacity>
           </View>
         )}
@@ -607,7 +624,7 @@ export default function ScanScreen() {
           <View style={{ paddingHorizontal: 20 }}>
             {/* Selected Goal Banner */}
             <View style={{ backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 16, padding: 16, marginBottom: 20, borderWidth: 1, borderColor: "rgba(245,158,11,0.18)", flexDirection: "row", alignItems: "center", gap: 12 }}>
-              <Text style={{ fontSize: 28 }}>🎯</Text>
+              <MaterialIcons name="gps-fixed" size={28} color="#FBBF24" />
               <View style={{ flex: 1 }}>
                 <Text style={{ color: "#FBBF24", fontFamily: "Outfit_700Bold", fontSize: 12 }}>TARGET SET</Text>
                 <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_800ExtraBold", fontSize: 20 }}>{selectedTransform}% Body Fat</Text>
@@ -630,7 +647,7 @@ export default function ScanScreen() {
                   }}
                   onPress={() => setWorkoutStyle(w.key)}
                 >
-                  <Text style={{ fontSize: 24 }}>{w.icon}</Text>
+                  <MaterialIcons name={w.iconName as any} size={24} color={workoutStyle === w.key ? "#FFF7ED" : "#F59E0B"} />
                   <Text style={{ color: workoutStyle === w.key ? "#FFF7ED" : "#F59E0B", fontFamily: "Outfit_700Bold", fontSize: 14 }}>{w.label}</Text>
                   <Text style={{ color: "#92400E", fontSize: 11 }}>{w.desc}</Text>
                 </TouchableOpacity>
@@ -667,7 +684,7 @@ export default function ScanScreen() {
                   }}
                   onPress={() => setDietaryPref(d.key)}
                 >
-                  <Text style={{ fontSize: 20 }}>{d.icon}</Text>
+                  <MaterialIcons name={d.iconName as any} size={20} color={dietaryPref === d.key ? "#FFF7ED" : "#F59E0B"} />
                   <Text style={{ color: dietaryPref === d.key ? "#FFF7ED" : "#92400E", fontSize: 11, fontFamily: "DMSans_600SemiBold" }}>{d.label}</Text>
                 </TouchableOpacity>
               ))}
@@ -678,7 +695,7 @@ export default function ScanScreen() {
               style={{ backgroundColor: "#F59E0B", borderRadius: 16, paddingVertical: 16, alignItems: "center", marginBottom: 12 }}
               onPress={generatePlans}
             >
-              <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_800ExtraBold", fontSize: 16 }}>🚀 Generate My Workout & Meal Plans</Text>
+              <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}><MaterialIcons name="rocket-launch" size={16} color="#FFF7ED" /><Text style={{ color: "#FFF7ED", fontFamily: "Outfit_800ExtraBold", fontSize: 16 }}>Generate My Workout & Meal Plans</Text></View>
             </TouchableOpacity>
             <TouchableOpacity
               style={{ borderRadius: 16, paddingVertical: 12, alignItems: "center" }}
@@ -713,7 +730,7 @@ export default function ScanScreen() {
             </View>
           </View>
         )}
-      </ScrollView>
+      </ReAnimated.ScrollView>
     </View>
   );
 }

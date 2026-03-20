@@ -38,33 +38,33 @@ const BG = {
 };
 
 const INTRO_SLIDES = [
-  { bg: BG.ob1, icon: "⚡", label: "WELCOME",        title: "Welcome to\nPeakPulse AI",  subtitle: "Your AI-powered fitness companion. Transform your body with science-backed plans.", accent: SF.gold },
-  { bg: BG.ob2, icon: "📸", label: "AI BODY SCAN",   title: "See Your\nTransformation",  subtitle: "Take a photo and get an AI analysis of your physique. See exactly how you will look at your goal.", accent: SF.orange },
-  { bg: BG.ob3, icon: "💪", label: "WORKOUT PLANS",  title: "Forge Your\nBest Body",     subtitle: "AI generates gym, home, or calisthenics plans tailored to your goal and schedule.", accent: SF.red },
-  { bg: BG.ob4, icon: "🥗", label: "SMART NUTRITION",title: "Fuel Like\na Champion",     subtitle: "Halal, vegan, keto and more — AI creates meal plans with prep guides and calorie tracking.", accent: SF.gold2 },
+  { bg: BG.ob1, iconName: "bolt" as const, label: "WELCOME",        title: "Welcome to\nPeakPulse AI",  subtitle: "Your AI-powered fitness companion. Transform your body with science-backed plans.", accent: SF.gold },
+  { bg: BG.ob2, iconName: "photo-camera" as const, label: "AI BODY SCAN",   title: "See Your\nTransformation",  subtitle: "Take a photo and get an AI analysis of your physique. See exactly how you will look at your goal.", accent: SF.orange },
+  { bg: BG.ob3, iconName: "fitness-center" as const, label: "WORKOUT PLANS",  title: "Forge Your\nBest Body",     subtitle: "AI generates gym, home, or calisthenics plans tailored to your goal and schedule.", accent: SF.red },
+  { bg: BG.ob4, iconName: "restaurant" as const, label: "SMART NUTRITION",title: "Fuel Like\na Champion",     subtitle: "Halal, vegan, keto and more — AI creates meal plans with prep guides and calorie tracking.", accent: SF.gold2 },
 ];
 
 const GOALS = [
-  { key: "build_muscle", label: "Build Muscle", icon: "💪", desc: "Gain lean muscle mass" },
-  { key: "lose_fat",     label: "Lose Fat",     icon: "🔥", desc: "Burn fat, get lean" },
-  { key: "maintain",     label: "Maintain",     icon: "⚖️", desc: "Stay at current level" },
-  { key: "athletic",     label: "Athletic",     icon: "🏃", desc: "Improve performance" },
+  { key: "build_muscle", label: "Build Muscle", iconName: "fitness-center" as const, desc: "Gain lean muscle mass" },
+  { key: "lose_fat",     label: "Lose Fat",     iconName: "local-fire-department" as const, desc: "Burn fat, get lean" },
+  { key: "maintain",     label: "Maintain",     iconName: "balance" as const, desc: "Stay at current level" },
+  { key: "athletic",     label: "Athletic",     iconName: "directions-run" as const, desc: "Improve performance" },
 ];
 
 const WORKOUT_STYLES = [
-  { key: "gym",          label: "Gym",          icon: "🏋️", desc: "Full gym equipment" },
-  { key: "home",         label: "Home",         icon: "🏠", desc: "Minimal equipment" },
-  { key: "mix",          label: "Mix",          icon: "🔄", desc: "Both gym & home" },
-  { key: "calisthenics", label: "Calisthenics", icon: "🤸", desc: "Bodyweight only" },
+  { key: "gym",          label: "Gym",          iconName: "fitness-center" as const, desc: "Full gym equipment" },
+  { key: "home",         label: "Home",         iconName: "home" as const, desc: "Minimal equipment" },
+  { key: "mix",          label: "Mix",          iconName: "sync" as const, desc: "Both gym & home" },
+  { key: "calisthenics", label: "Calisthenics", iconName: "accessibility-new" as const, desc: "Bodyweight only" },
 ];
 
 const DIETARY_PREFS = [
-  { key: "omnivore",   label: "Omnivore",   icon: "🍗" },
-  { key: "halal",      label: "Halal",      icon: "☪️" },
-  { key: "vegan",      label: "Vegan",      icon: "🌱" },
-  { key: "vegetarian", label: "Vegetarian", icon: "🥦" },
-  { key: "keto",       label: "Keto",       icon: "🥑" },
-  { key: "paleo",      label: "Paleo",      icon: "🥩" },
+  { key: "omnivore",   label: "Omnivore",   iconName: "restaurant" as const },
+  { key: "halal",      label: "Halal",      iconName: "verified" as const },
+  { key: "vegan",      label: "Vegan",      iconName: "eco" as const },
+  { key: "vegetarian", label: "Vegetarian", iconName: "spa" as const },
+  { key: "keto",       label: "Keto",       iconName: "egg-alt" as const },
+  { key: "paleo",      label: "Paleo",      iconName: "set-meal" as const },
 ];
 
 const ACTIVITY_LEVELS = [
@@ -145,6 +145,7 @@ export default function OnboardingScreen() {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [previewBF, setPreviewBF] = useState<number | null>(null);
   const fadeAnim = useRef(new Animated.Value(1)).current;
+  const slideAnim = useRef(new Animated.Value(0)).current;
 
   const upsertProfile = trpc.profile.upsert.useMutation();
   const generateWorkout = trpc.workoutPlan.generate.useMutation();
@@ -165,11 +166,21 @@ export default function OnboardingScreen() {
   }, [step]);
 
   function animateTransition(nextStep: number) {
+    const goingForward = nextStep > step;
+    slideAnim.setValue(0);
     Animated.sequence([
-      Animated.timing(fadeAnim, { toValue: 0, duration: 150, useNativeDriver: true }),
-      Animated.timing(fadeAnim, { toValue: 1, duration: 200, useNativeDriver: true }),
-    ]).start();
-    setStep(nextStep);
+      Animated.parallel([
+        Animated.timing(fadeAnim, { toValue: 0, duration: 150, useNativeDriver: true }),
+        Animated.timing(slideAnim, { toValue: goingForward ? -30 : 30, duration: 150, useNativeDriver: true }),
+      ]),
+    ]).start(() => {
+      setStep(nextStep);
+      slideAnim.setValue(goingForward ? 30 : -30);
+      Animated.parallel([
+        Animated.timing(fadeAnim, { toValue: 1, duration: 250, useNativeDriver: true }),
+        Animated.spring(slideAnim, { toValue: 0, useNativeDriver: true, damping: 20, stiffness: 200 }),
+      ]).start();
+    });
   }
 
   async function handleTakePhoto() {
@@ -376,7 +387,7 @@ export default function OnboardingScreen() {
             </View>
             <View style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: 32, paddingBottom: 56 }}>
               <View style={{ backgroundColor: "rgba(245,158,11,0.12)", borderRadius: 20, paddingHorizontal: 14, paddingVertical: 6, alignSelf: "flex-start", marginBottom: 14, borderWidth: 1, borderColor: SF.border2 }}>
-                <Text style={{ color: slide.accent, fontFamily: "Outfit_700Bold", fontSize: 11, letterSpacing: 2 }}>{slide.icon} {slide.label}</Text>
+                <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}><MaterialIcons name={slide.iconName as any} size={14} color={slide.accent} /><Text style={{ color: slide.accent, fontFamily: "Outfit_700Bold", fontSize: 11, letterSpacing: 2 }}>{slide.label}</Text></View>
               </View>
               <Text style={{ color: SF.fg, fontFamily: "Outfit_800ExtraBold", fontSize: 36, lineHeight: 42, marginBottom: 12 }}>{slide.title}</Text>
               <Text style={{ color: SF.gold3, fontFamily: "DMSans_400Regular", fontSize: 15, lineHeight: 22, marginBottom: 36 }}>{slide.subtitle}</Text>
@@ -591,13 +602,13 @@ export default function OnboardingScreen() {
             )}
             <View style={{ width: "100%", gap: 10, marginBottom: 36 }}>
               {[
-                { icon: "🏋️", text: workoutStyle + " workout plan — " + daysPerWeek + " days/week" },
-                { icon: "🥗", text: dietaryPref + " meal plan with prep guides" },
-                { icon: "📸", text: scanPhoto ? "Body scan photo saved — AI analysis ready" : "AI body scan available in Body Scan tab" },
-                { icon: "📊", text: "Progress tracking & calorie monitoring" },
+                { iconName: "fitness-center" as const, text: workoutStyle + " workout plan — " + daysPerWeek + " days/week" },
+                { iconName: "restaurant" as const, text: dietaryPref + " meal plan with prep guides" },
+                { iconName: "photo-camera" as const, text: scanPhoto ? "Body scan photo saved — AI analysis ready" : "AI body scan available in Body Scan tab" },
+                { iconName: "bar-chart" as const, text: "Progress tracking & calorie monitoring" },
               ].map((f, i) => (
                 <View key={i} style={{ flexDirection: "row", alignItems: "center", gap: 12, backgroundColor: "rgba(245,158,11,0.08)", borderRadius: 14, padding: 14, borderWidth: 1, borderColor: SF.border }}>
-                  <Text style={{ fontSize: 20 }}>{f.icon}</Text>
+                  <MaterialIcons name={f.iconName as any} size={20} color={SF.gold2} />
                   <Text style={{ color: SF.gold2, fontSize: 14, fontFamily: "DMSans_500Medium", flex: 1 }}>{f.text}</Text>
                 </View>
               ))}
@@ -644,7 +655,7 @@ export default function OnboardingScreen() {
         </View>
       </ImageBackground>
 
-      <Animated.View style={{ flex: 1, opacity: fadeAnim }}>
+      <Animated.View style={{ flex: 1, opacity: fadeAnim, transform: [{ translateX: slideAnim }] }}>
         <ScrollView contentContainerStyle={{ padding: 24, paddingBottom: 20 }}>
 
           {/* Step 4: Name + Goal + Body Metrics */}
@@ -668,7 +679,7 @@ export default function OnboardingScreen() {
                     style={{ flexDirection: "row", alignItems: "center", gap: 14, backgroundColor: goal === g.key ? "rgba(245,158,11,0.15)" : SF.surface, borderRadius: 16, padding: 16, borderWidth: goal === g.key ? 2 : 1, borderColor: goal === g.key ? SF.gold : SF.border }}
                     onPress={() => setGoal(g.key)}
                   >
-                    <Text style={{ fontSize: 28 }}>{g.icon}</Text>
+                    <MaterialIcons name={g.iconName as any} size={28} color={goal === g.key ? SF.gold : SF.gold2} />
                     <View style={{ flex: 1 }}>
                       <Text style={{ color: SF.fg, fontFamily: "Outfit_700Bold", fontSize: 16 }}>{g.label}</Text>
                       <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 12, marginTop: 2 }}>{g.desc}</Text>
@@ -758,7 +769,7 @@ export default function OnboardingScreen() {
                   style={{ flexDirection: "row", alignItems: "center", gap: 14, backgroundColor: workoutStyle === w.key ? "rgba(245,158,11,0.15)" : SF.surface, borderRadius: 16, padding: 16, borderWidth: workoutStyle === w.key ? 2 : 1, borderColor: workoutStyle === w.key ? SF.gold : SF.border }}
                   onPress={() => setWorkoutStyle(w.key)}
                 >
-                  <Text style={{ fontSize: 28 }}>{w.icon}</Text>
+                  <MaterialIcons name={w.iconName as any} size={28} color={workoutStyle === w.key ? SF.gold : SF.gold2} />
                   <View style={{ flex: 1 }}>
                     <Text style={{ color: SF.fg, fontFamily: "Outfit_700Bold", fontSize: 16 }}>{w.label}</Text>
                     <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 12, marginTop: 2 }}>{w.desc}</Text>
@@ -778,7 +789,7 @@ export default function OnboardingScreen() {
                   style={{ width: (SCREEN_W - 68) / 2, backgroundColor: dietaryPref === d.key ? "rgba(245,158,11,0.15)" : SF.surface, borderRadius: 16, padding: 18, alignItems: "center", gap: 8, borderWidth: dietaryPref === d.key ? 2 : 1, borderColor: dietaryPref === d.key ? SF.gold : SF.border }}
                   onPress={() => setDietaryPref(d.key)}
                 >
-                  <Text style={{ fontSize: 32 }}>{d.icon}</Text>
+                  <MaterialIcons name={d.iconName as any} size={32} color={dietaryPref === d.key ? SF.gold : SF.gold2} />
                   <Text style={{ color: SF.fg, fontFamily: "Outfit_700Bold", fontSize: 15 }}>{d.label}</Text>
                 </TouchableOpacity>
               ))}
