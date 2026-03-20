@@ -1175,21 +1175,28 @@ export default function MealsScreen() {
           </View>
         )}
 
-        {/* ── Meal Gallery + Favourites Links ── */}
-        <View style={{ flexDirection: "row", gap: 10, marginBottom: 16 }}>
+        {/* ── Meal Gallery + Pantry + Favourites Links ── */}
+        <View style={{ flexDirection: "row", gap: 8, marginBottom: 16 }}>
           <TouchableOpacity
-            style={{ flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6, backgroundColor: "#150A00", borderRadius: 12, paddingVertical: 12, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}
+            style={{ flex: 1, flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 4, backgroundColor: "#150A00", borderRadius: 12, paddingVertical: 10, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}
             onPress={() => router.push("/meal-photo-gallery" as any)}
           >
             <MaterialIcons name="photo-library" size={18} color="#F59E0B" />
-            <Text style={{ color: "#F59E0B", fontFamily: "Outfit_700Bold", fontSize: 12 }}>Meal Gallery</Text>
+            <Text style={{ color: "#F59E0B", fontFamily: "Outfit_700Bold", fontSize: 10 }}>Gallery</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={{ flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6, backgroundColor: "#150A00", borderRadius: 12, paddingVertical: 12, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}
+            style={{ flex: 1, flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 4, backgroundColor: "rgba(59,130,246,0.06)", borderRadius: 12, paddingVertical: 10, borderWidth: 1, borderColor: "rgba(59,130,246,0.15)" }}
+            onPress={() => router.push("/pantry" as any)}
+          >
+            <MaterialIcons name="kitchen" size={18} color="#3B82F6" />
+            <Text style={{ color: "#3B82F6", fontFamily: "Outfit_700Bold", fontSize: 10 }}>My Pantry</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={{ flex: 1, flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 4, backgroundColor: "#150A00", borderRadius: 12, paddingVertical: 10, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}
             onPress={() => setShowFavourites(!showFavourites)}
           >
             <MaterialIcons name="star" size={18} color="#F59E0B" />
-            <Text style={{ color: "#F59E0B", fontFamily: "Outfit_700Bold", fontSize: 12 }}>Saved Foods ({favourites.length})</Text>
+            <Text style={{ color: "#F59E0B", fontFamily: "Outfit_700Bold", fontSize: 10 }}>Saved ({favourites.length})</Text>
           </TouchableOpacity>
         </View>
 

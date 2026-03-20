@@ -10,6 +10,7 @@ import "@/lib/_core/nativewind-pressable";
 import { ThemeProvider } from "@/lib/theme-provider";
 import { GuestAuthProvider } from "@/lib/guest-auth";
 import { CalorieProvider } from "@/lib/calorie-context";
+import { PantryProvider } from "@/lib/pantry-context";
 import {
   SafeAreaFrameContext,
   SafeAreaInsetsContext,
@@ -204,6 +205,7 @@ export default function RootLayout() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <GuestAuthProvider>
       <CalorieProvider>
+      <PantryProvider>
       <trpc.Provider client={trpcClient} queryClient={queryClient}>
         <QueryClientProvider client={queryClient}>
           {/* Default to hiding native headers so raw route segments don't appear (e.g. "(tabs)", "products/[id]"). */}
@@ -217,6 +219,7 @@ export default function RootLayout() {
           <StatusBar style="light" />
         </QueryClientProvider>
       </trpc.Provider>
+      </PantryProvider>
       </CalorieProvider>
       </GuestAuthProvider>
     </GestureHandlerRootView>

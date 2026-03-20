@@ -669,3 +669,44 @@
 ### Tests
 - [x] Updated round31 test for new gallery (getMealPhotos(60), AI Scan empty state text)
 - [x] 0 TypeScript errors, 189 tests passing (1 pre-existing Gemini API key failure)
+
+## Round 45 — Pantry Inventory & AI Meal Suggestions
+
+### Pantry Storage (lib/pantry-context.tsx)
+- [x] PantryItem type: id, name, category, quantity, unit, expiryDate, addedAt
+- [x] PANTRY_CATEGORIES: Proteins, Dairy, Grains & Carbs, Vegetables, Fruits, Condiments & Spices, Oils & Fats, Beverages, Other
+- [x] AsyncStorage persistence with @pantry_items key
+- [x] CRUD operations: addItem, removeItem, updateItem, clearAll
+- [x] Helper functions: getItemsByCategory, getExpiringItems
+- [x] PantryProvider wired into root layout
+
+### Pantry Screen (app/pantry.tsx)
+- [x] Manual entry: text input with name, optional quantity/unit, category picker
+- [x] AI scan: photograph pantry/fridge, AI vision identifies items via server LLM
+- [x] Inventory list: grouped by category with category icons, tap to edit/delete
+- [x] Quick-add: common items as chips for fast entry
+- [x] Expiry tracking: optional expiry date, visual warning for items expiring within 3 days
+- [x] Edit modal: update item name, quantity, unit, category, expiry date
+
+### AI Meal Generation from Pantry
+- [x] Server endpoint pantry.suggestMeals: sends pantry items + dietary pref + macro targets to LLM
+- [x] AI generates 4-6 meal suggestions using available ingredients
+- [x] Each suggestion shows: meal name, description, ingredients (pantry vs buy), macros, prep time, instructions
+- [x] "Log Meal" button adds suggested meal to calorie tracker
+- [x] Expandable recipe cards with full ingredient list and step-by-step instructions
+
+### Smart Shopping Suggestions
+- [x] Server endpoint pantry.suggestShopping: analyzes pantry vs nutritional needs
+- [x] Suggests 5-8 items prioritised by nutritional impact, versatility, and cost
+- [x] Budget-conscious: estimated cost range per item, priority labels (essential/recommended/nice-to-have)
+- [x] Each suggestion shows meals it would enable with existing pantry items
+
+### Integration
+- [x] "My Pantry" link on Meals tab (blue accent, kitchen icon)
+- [x] "My Pantry" in Dashboard Quick Actions grid
+- [x] Pantry screen accessible via /pantry route
+- [x] AI suggestions integrated with calorie logging flow
+
+### Tests
+- [x] 23 new tests (round45-pantry.test.ts), 212 total passing
+- [x] 0 TypeScript errors

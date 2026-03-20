@@ -74,6 +74,7 @@ const QUICK_ACTIONS_ALL = [
   { icon: "smart-toy" as const, label: "AI Coach", route: "/ai-coach", gated: false },
   { icon: "check-circle" as const, label: "Daily Check-In", route: "/daily-checkin", gated: false },
   // Below the fold (hidden by default)
+  { icon: "kitchen" as const, label: "My Pantry", route: "/pantry", gated: false },
   { icon: "center-focus-strong" as const, label: "Form Check", route: "/form-checker", gated: false },
   { icon: "location-on" as const, label: "Find Gym", route: "/gym-finder", gated: false },
   { icon: "watch" as const, label: "Wearables", route: "/wearable-sync", gated: true, feature: "wearable_sync", tier: "basic" as const, desc: "Sync your fitness wearable with PeakPulse — Basic plan and above." },

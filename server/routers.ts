@@ -675,6 +675,90 @@ Return a JSON coaching report with this exact structure:
         return { reply: (response.choices[0].message.content as string) ?? "I'm here to help. What would you like to work on today?" };
       }),
   }),
+  pantry: router({
+    // AI meal suggestions based on pantry items
+    suggestMeals: guestOrUserProcedure
+      .input(z.object({
+        pantryItems: z.string(),
+        calorieGoal: z.number().default(2000),
+        proteinGoal: z.number().default(150),
+        carbsGoal: z.number().default(250),
+        fatGoal: z.number().default(65),
+        dietaryPreference: z.string().default("omnivore"),
+        fitnessGoal: z.string().default("build_muscle"),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        await checkAiLimit(ctx.user?.id, "pantry.suggestMeals");
+        const dietNote = input.dietaryPreference !== "omnivore"
+          ? `All meals MUST strictly comply with ${input.dietaryPreference} dietary requirements.`
+          : "";
+        const prompt = `You are an expert nutritionist and chef. The user has these items in their pantry/fridge:\n${input.pantryItems}\n\nTheir daily targets: ${input.calorieGoal} kcal, ${input.proteinGoal}g protein, ${input.carbsGoal}g carbs, ${input.fatGoal}g fat. Fitness goal: ${input.fitnessGoal.replace(/_/g, " ")}. ${dietNote}\n\nGenerate 4-6 practical, delicious meals they can make primarily from these ingredients. For each meal, clearly mark which ingredients come from their pantry and which they would need to buy. Prioritise meals that use the most pantry items. If their pantry is limited, suggest meals that need minimal extra ingredients.\n\nReturn this exact JSON:\n{"meals":[{"name":"Meal Name","description":"Brief appetising description","ingredients":[{"name":"Chicken Breast","fromPantry":true,"quantity":"150g"},{"name":"Lemon","fromPantry":false,"quantity":"1"}],"missingIngredients":["Lemon"],"estimatedCalories":450,"estimatedProtein":35,"estimatedCarbs":40,"estimatedFat":15,"prepTime":"20 min","instructions":["Step 1","Step 2","Step 3"]}]}`;
+        const response = await invokeLLM({
+          messages: [
+            { role: "system", content: "You are an expert chef and nutritionist. Always respond with valid JSON only, no markdown." },
+            { role: "user", content: prompt },
+          ],
+          response_format: { type: "json_object" },
+        });
+        let result: any;
+        try { result = JSON.parse((response.choices[0].message.content as string) ?? "{}"); }
+        catch { result = { meals: [] }; }
+        return { meals: result.meals ?? [] };
+      }),
+
+    // AI scan pantry/fridge photo to identify items
+    scanPhoto: guestOrUserProcedure
+      .input(z.object({ photoUrl: z.string() }))
+      .mutation(async ({ ctx, input }) => {
+        await checkAiLimit(ctx.user?.id, "pantry.scanPhoto");
+        const prompt = `Look at this photo of a pantry, fridge, or kitchen counter. Identify all visible food items and ingredients. For each item, determine the most appropriate category from: Proteins, Dairy, Grains & Carbs, Vegetables, Fruits, Condiments & Spices, Oils & Fats, Beverages, Other.\n\nReturn this exact JSON:\n{"items":[{"name":"Chicken Breast","category":"Proteins"},{"name":"Milk","category":"Dairy"}]}`;
+        const response = await invokeLLM({
+          messages: [
+            { role: "system", content: "You are a food identification expert. Identify all visible food items in the image. Always respond with valid JSON only." },
+            { role: "user", content: [
+              { type: "text", text: prompt },
+              { type: "image_url", image_url: { url: input.photoUrl } },
+            ] as any },
+          ],
+          response_format: { type: "json_object" },
+        });
+        let result: any;
+        try { result = JSON.parse((response.choices[0].message.content as string) ?? "{}"); }
+        catch { result = { items: [] }; }
+        return { items: result.items ?? [] };
+      }),
+
+    // Smart shopping suggestions based on nutritional gaps
+    suggestShopping: guestOrUserProcedure
+      .input(z.object({
+        pantryItems: z.string(),
+        calorieGoal: z.number().default(2000),
+        proteinGoal: z.number().default(150),
+        carbsGoal: z.number().default(250),
+        fatGoal: z.number().default(65),
+        dietaryPreference: z.string().default("omnivore"),
+        fitnessGoal: z.string().default("build_muscle"),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        await checkAiLimit(ctx.user?.id, "pantry.suggestShopping");
+        const dietNote = input.dietaryPreference !== "omnivore"
+          ? `All suggestions MUST comply with ${input.dietaryPreference} dietary requirements.`
+          : "";
+        const prompt = `You are a budget-conscious nutritionist. The user has these items in their pantry:\n${input.pantryItems}\n\nTheir daily targets: ${input.calorieGoal} kcal, ${input.proteinGoal}g protein, ${input.carbsGoal}g carbs, ${input.fatGoal}g fat. Fitness goal: ${input.fitnessGoal.replace(/_/g, " ")}. ${dietNote}\n\nAnalyse what's missing from their pantry to meet their nutritional needs. Suggest 5-8 items they should buy, prioritised by:\n1. Nutritional impact (fills the biggest gaps)\n2. Versatility (enables the most meals)\n3. Cost-effectiveness (cheapest items first)\n\nFor each item, estimate the cost and list 2-3 meals it would enable when combined with their existing pantry items.\n\nReturn this exact JSON:\n{"suggestions":[{"name":"Item Name","category":"Proteins","reason":"Why they need this item","estimatedCost":"$3-5","mealsItEnables":["Meal 1","Meal 2","Meal 3"],"priority":"essential"}]}\n\nPriority must be one of: essential, recommended, nice-to-have`;
+        const response = await invokeLLM({
+          messages: [
+            { role: "system", content: "You are a budget-conscious nutritionist. Always respond with valid JSON only, no markdown." },
+            { role: "user", content: prompt },
+          ],
+          response_format: { type: "json_object" },
+        });
+        let result: any;
+        try { result = JSON.parse((response.choices[0].message.content as string) ?? "{}"); }
+        catch { result = { suggestions: [] }; }
+        return { suggestions: result.suggestions ?? [] };
+      }),
+  }),
+
   upload: router({
     // Photo upload — works for guests (stored to S3 without user ID)
     photo: guestOrUserProcedure
