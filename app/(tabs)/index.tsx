@@ -240,7 +240,7 @@ export default function HomeScreen() {
   const { data: mealPlan } = trpc.mealPlan.getActive.useQuery(undefined, { enabled: isAuthenticated });
   const { data: progressPhotos } = trpc.progress.getAll.useQuery(undefined, { enabled: isAuthenticated });
 
-  const { totalCalories: todayCalories, calorieGoal, meals: todayMeals, setCalorieGoal } = useCalories();
+  const { totalCalories: todayCalories, calorieGoal, meals: todayMeals, setCalorieGoal, macroTargets } = useCalories();
   useEffect(() => {
     AsyncStorage.getItem("@user_tdee").then(raw => {
       if (raw) {
@@ -384,6 +384,7 @@ export default function HomeScreen() {
   // Macro values for calorie card
   const macroVals = [0, 0, 0];
   (todayMeals as MealEntry[]).forEach(m => { macroVals[0] += m.protein ?? 0; macroVals[1] += m.carbs ?? 0; macroVals[2] += m.fat ?? 0; });
+  const macroGoals = [macroTargets.protein, macroTargets.carbs, macroTargets.fat];
   const macroColors = [SF.macroProtein, SF.macroCarbs, SF.macroFat];
   const macroLabels = ["Protein", "Carbs", "Fat"];
 
@@ -491,12 +492,19 @@ export default function HomeScreen() {
                     </View>
                   )}
                 </View>
-                {/* 4C: Distinct macro colours */}
+                {/* 4C: Distinct macro colours with targets */}
                 <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 12 }}>
                   {macroLabels.map((macro, i) => (
-                    <View key={macro} style={{ alignItems: "center" }}>
-                      <Text style={[styles.macroValue, { color: macroColors[i] }]}>{Math.round(macroVals[i])}g</Text>
+                    <View key={macro} style={{ alignItems: "center", flex: 1 }}>
+                      <Text style={[styles.macroValue, { color: macroColors[i] }]}>
+                        {Math.round(macroVals[i])}g{macroGoals[i] > 0 ? <Text style={{ color: SF.muted, fontSize: 10 }}> / {macroGoals[i]}g</Text> : null}
+                      </Text>
                       <Text style={styles.macroLabel}>{macro}</Text>
+                      {macroGoals[i] > 0 && (
+                        <View style={{ width: "80%", height: 3, backgroundColor: SF.border, borderRadius: 2, marginTop: 4, overflow: "hidden" }}>
+                          <View style={{ height: 3, borderRadius: 2, backgroundColor: macroColors[i], width: `${Math.min(100, (macroVals[i] / macroGoals[i]) * 100)}%` }} />
+                        </View>
+                      )}
                     </View>
                   ))}
                 </View>

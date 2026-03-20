@@ -23,12 +23,12 @@ describe("Round 24 — Regenerate Plans, 7-Day Selector, Social Share", () => {
 
     it("shows confirmation alert before regenerating workout plan", () => {
       expect(src).toContain("Regenerate Workout Plan?");
-      expect(src).toContain("This will replace your current workout plan");
+      expect(src).toContain("This will replace your current plan");
     });
 
     it("shows confirmation alert before regenerating meal plan", () => {
       expect(src).toContain("Regenerate Meal Plan?");
-      expect(src).toContain("This will replace your current meal plan");
+      expect(src).toContain("This will replace your current plan");
     });
 
     it("disables regenerate button while pending", () => {
@@ -67,11 +67,11 @@ describe("Round 24 — Regenerate Plans, 7-Day Selector, Social Share", () => {
       expect(src).toContain('@cached_meal_plan');
     });
 
-    it("SuggestedMealCard accepts calories/protein/carbs/fat props", () => {
-      expect(src).toContain("calories={cals}");
-      expect(src).toContain("protein={prot}");
-      expect(src).toContain("carbs={carbs}");
-      expect(src).toContain("fat={fat}");
+    it("renders meal macros inline (calories, protein, carbs, fat)", () => {
+      expect(src).toContain("meal.calories");
+      expect(src).toContain("meal.protein");
+      expect(src).toContain("meal.carbs");
+      expect(src).toContain("meal.fat");
     });
   });
 

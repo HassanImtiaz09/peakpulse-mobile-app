@@ -101,6 +101,28 @@ function calculateTDEE(
   return Math.round(tdee);
 }
 
+/**
+ * Calculate macro targets (protein, carbs, fat in grams) from TDEE, weight, and goal.
+ * Uses evidence-based splits:
+ *   - build_muscle: 2.0g/kg protein, 25% fat, rest carbs
+ *   - lose_fat: 2.2g/kg protein, 25% fat, rest carbs
+ *   - athletic: 1.8g/kg protein, 25% fat, rest carbs
+ *   - maintain: 1.6g/kg protein, 30% fat, rest carbs
+ */
+function calculateMacros(tdee: number, weightKg: number, goal: string): { protein: number; carbs: number; fat: number } {
+  let proteinPerKg = 1.6;
+  let fatPct = 0.30;
+  if (goal === "build_muscle") { proteinPerKg = 2.0; fatPct = 0.25; }
+  else if (goal === "lose_fat") { proteinPerKg = 2.2; fatPct = 0.25; }
+  else if (goal === "athletic") { proteinPerKg = 1.8; fatPct = 0.25; }
+
+  const protein = Math.round(proteinPerKg * weightKg);
+  const fat = Math.round((tdee * fatPct) / 9);
+  const carbCals = tdee - (protein * 4) - (fat * 9);
+  const carbs = Math.max(0, Math.round(carbCals / 4));
+  return { protein, carbs, fat };
+}
+
 // Steps:
 // 0-3: intro slides
 // 4: name + goal
@@ -291,8 +313,14 @@ export default function OnboardingScreen() {
         ? calculateTDEE(wKg, hCm, ageN, gender, activityLevel, effectiveGoal)
         : null;
 
-      // Save TDEE to AsyncStorage for dashboard and meals tab
-      if (tdee) await AsyncStorage.setItem("@user_tdee", String(tdee));
+      // Save TDEE and macro targets to AsyncStorage for dashboard and meals tab
+      if (tdee) {
+        await AsyncStorage.setItem("@user_tdee", String(tdee));
+        if (wKg) {
+          const macros = calculateMacros(tdee, wKg, effectiveGoal);
+          await AsyncStorage.setItem("@user_macro_targets", JSON.stringify(macros));
+        }
+      }
 
       // Save target BF and initial scan photo for the visual reminder screen
       if (selectedTransformation) {

@@ -609,3 +609,35 @@
 - [x] Fixed: downgraded expo-blur to ~15.0.8 via `npx expo install expo-blur --check`
 - [x] Also fixed: @react-navigation/bottom-tabs and @react-navigation/native aligned to SDK 54 expected versions
 - [x] Verified: 0 TypeScript errors, 189 tests passing
+
+## Round 43 — Major Fixes & Feature Overhaul
+
+### Bug Fixes
+- [x] Fix macro calculation: onboarding now calculates protein/carbs/fat targets based on TDEE and goal, stored in AsyncStorage
+- [x] Fix tutorial overlay: subscription tier labels corrected (Meal Swap AI, Unlimited Regeneration now shown as Basic+Advanced)
+- [x] Fix Plans tab: added 120px bottom padding to prevent AI Form Check overlap by tab bar
+- [x] Fix demo video links: switched to youtube-nocookie.com embed with referrerpolicy to fix Error 153
+- [x] Fix light/dark mode: theme provider already functional; Settings screen now provides explicit theme toggle
+
+### New Features
+- [x] Settings screen: theme toggle (light/dark/system), font size selector, push notification on/off
+- [x] AI Coach dedicated bottom tab with distinctive teal icon and colour to draw attention
+- [x] Floating assistant: already redesigned in Round 41 with smaller FAB and MaterialIcons
+
+### Meals Tab Overhaul
+- [x] Meal Log as dropdown menu (manual, AI scan, barcode) — "+ Log" button opens action sheet
+- [x] Day's meals as tiles (breakfast, lunch, snack, dinner) for broad overview at a glance
+- [x] Charts shown by default on meals screen — inline mini bar chart + link to full charts
+- [x] Renamed gallery to "Meal Gallery" with link to meal-photo-gallery screen
+- [x] Meal favourites: star button on logged meals, saved foods section with expand/collapse
+- [x] Favourite meal quick-reference: autocomplete dropdown when typing 2+ chars matching favourited meals
+
+### Plans Tab Overhaul
+- [x] Brief summary header of current plan (compact goal/style/days badge row)
+- [x] Show today's plan as the highlighted/focused day with gold border accent
+- [x] Remaining days displayed lower in collapsible "Other Days" section
+- [x] Information focused — today's workout is the hero content
+
+### Tests
+- [x] Updated round24, round29, round30, round31, round40 tests to match new code patterns
+- [x] 0 TypeScript errors, 189 tests passing (1 pre-existing Gemini API key failure)

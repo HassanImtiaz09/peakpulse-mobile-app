@@ -90,9 +90,8 @@ describe("Round 29 — Favourites / Frequent Foods", () => {
 
   it("renders collapsible favourites section", () => {
     expect(meals).toContain("showFavourites");
-    expect(meals).toContain("Favourites");
-    expect(meals).toContain("keyboard-arrow-up");
-    expect(meals).toContain("keyboard-arrow-down");
+    expect(meals).toContain("Saved Foods");
+    expect(meals).toContain("setShowFavourites");
   });
 
   it("sorts favourites by most logged first", () => {
@@ -100,9 +99,9 @@ describe("Round 29 — Favourites / Frequent Foods", () => {
   });
 
   it("has star button on logged meals for adding to favourites", () => {
-    // Star icon for adding to favourites
-    expect(meals).toContain("\\u2b50");
-    expect(meals).toContain("\\u2606");
+    // Star / star-outline icons for adding to favourites
+    expect(meals).toContain('"star"');
+    expect(meals).toContain('"star-outline"');
   });
 
   it("imports MaterialIcons for the favourites UI", () => {

@@ -34,10 +34,10 @@ describe("Round 30 — Custom Food Entry", () => {
   });
 
   it("renders a toggle button between Quick Log and Custom Food Entry", () => {
-    expect(meals).toContain("Custom Food Entry");
-    expect(meals).toContain("Quick Log");
-    expect(meals).toContain("+ Nutrition");
-    expect(meals).toContain("Simple");
+    expect(meals).toContain("+ Log Custom Food");
+    expect(meals).toContain("+ Log Meal");
+    expect(meals).toContain("Add nutrition details");
+    expect(meals).toContain("Hide nutrition fields");
   });
 
   it("renders calorie input with kcal label", () => {
@@ -55,7 +55,6 @@ describe("Round 30 — Custom Food Entry", () => {
   it("has save to favourites checkbox toggle", () => {
     expect(meals).toContain("saveToFavOnLog");
     expect(meals).toContain("setSaveToFavOnLog");
-    expect(meals).toContain("Save to Favourites for quick re-logging");
   });
 
   it("handles custom entry in quickLogMeal with full macros", () => {

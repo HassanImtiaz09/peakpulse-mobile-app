@@ -29,105 +29,107 @@ const SF = {
 };
 
 interface TutorialSlide {
-  icon: string;
+  iconName: React.ComponentProps<typeof MaterialIcons>["name"];
   tab: string;
   title: string;
   body: string;
-  features: { label: string; tier: "free" | "basic" | "advanced" }[];
+  features: { label: string; tier: "free" | "basic" | "basic+" | "advanced" }[];
   tip?: string;
 }
 
 const SLIDES: TutorialSlide[] = [
   {
-    icon: "🏠",
+    iconName: "dashboard",
     tab: "Dashboard",
     title: "Your Command Centre",
     body: "The dashboard gives you a live snapshot of your day — calories consumed, workouts logged, streak, and your latest body fat estimate from your progress photos.",
     features: [
-      { label: "Daily calorie ring", tier: "free" },
+      { label: "Daily calorie & macro tracking", tier: "free" },
       { label: "Workout & streak stats", tier: "free" },
-      { label: "BF% estimate from photos", tier: "basic" },
-      { label: "AI Coach quick access", tier: "advanced" },
+      { label: "BF% estimate from photos", tier: "basic+" },
+      { label: "AI Coach quick access", tier: "basic+" },
     ],
     tip: "Check the dashboard every morning to set your intention for the day.",
   },
   {
-    icon: "💪",
+    iconName: "fitness-center",
     tab: "Plans",
     title: "Your AI Workout & Meal Plans",
     body: "The Plans tab holds your personalised AI workout schedule and 7-day meal plan. Tap any exercise to see instructions, or swap any meal for an AI-generated alternative.",
     features: [
       { label: "AI Workout Plan", tier: "free" },
       { label: "AI Meal Plan with macros", tier: "free" },
-      { label: "Meal Swap AI", tier: "basic" },
-      { label: "Unlimited plan regeneration", tier: "basic" },
+      { label: "Meal Swap AI", tier: "basic+" },
+      { label: "Unlimited plan regeneration", tier: "basic+" },
     ],
     tip: "Tap 'AI Form Check' in the workout section to analyse your exercise form with your camera.",
   },
   {
-    icon: "📸",
+    iconName: "photo-camera",
     tab: "Progress",
     title: "Track Your Transformation",
     body: "Upload progress photos regularly. The AI analyses each photo and estimates your body fat percentage. Use the drag-to-reveal slider to compare any two months side by side.",
     features: [
       { label: "Progress photo upload", tier: "free" },
-      { label: "AI BF% estimation", tier: "basic" },
-      { label: "Before/after comparison slider", tier: "basic" },
+      { label: "AI BF% estimation", tier: "basic+" },
+      { label: "Before/after comparison slider", tier: "basic+" },
       { label: "Unlimited photos + collage export", tier: "advanced" },
     ],
     tip: "Take photos in the same spot, same lighting, every 2 weeks for the most accurate comparison.",
   },
   {
-    icon: "🤖",
+    iconName: "smart-toy",
     tab: "AI Coach",
     title: "Your Personal AI Coach",
     body: "The AI Coach analyses your form history, progress trend, and workout data to give you weekly insights, personalised tips, and a focused training plan. Chat with it anytime.",
     features: [
-      { label: "Weekly progress insights", tier: "advanced" },
-      { label: "Form score trend analysis", tier: "advanced" },
-      { label: "Personalised tips & weekly focus", tier: "advanced" },
-      { label: "Conversational AI coaching chat", tier: "advanced" },
+      { label: "Weekly progress insights", tier: "basic+" },
+      { label: "Form score trend analysis", tier: "basic+" },
+      { label: "Personalised tips & weekly focus", tier: "basic+" },
+      { label: "Conversational AI coaching chat", tier: "basic+" },
     ],
-    tip: "Access AI Coach from the dashboard or the form checker screen.",
+    tip: "Access AI Coach from the dedicated tab at the bottom of the screen.",
   },
   {
-    icon: "🔍",
+    iconName: "videocam",
     tab: "Form Check",
     title: "Real-Time Form Analysis",
     body: "Upload a video or photo of any exercise and the AI scores your form, identifies corrections, and tells you exactly what to fix. Available in the Plans tab and Body Scan section.",
     features: [
-      { label: "Form score (0–100)", tier: "advanced" },
-      { label: "Exercise-specific corrections", tier: "advanced" },
+      { label: "Form score (0–100)", tier: "basic+" },
+      { label: "Exercise-specific corrections", tier: "basic+" },
       { label: "Form history timeline", tier: "advanced" },
       { label: "AI Coach form integration", tier: "advanced" },
     ],
     tip: "Start with your main compound lifts — squat, deadlift, bench press.",
   },
   {
-    icon: "⚡",
+    iconName: "bolt",
     tab: "Get the Most",
     title: "Maximise Your Results",
     body: "Consistency is everything. Log meals daily, take a progress photo every 2 weeks, complete your workouts, and check in with your AI Coach weekly for the fastest transformation.",
     features: [
       { label: "Daily calorie logging", tier: "free" },
       { label: "Bi-weekly progress photos", tier: "free" },
-      { label: "Weekly AI Coach check-in", tier: "advanced" },
-      { label: "Form check every session", tier: "advanced" },
+      { label: "Weekly AI Coach check-in", tier: "basic+" },
+      { label: "Form check every session", tier: "basic+" },
     ],
     tip: "Users who log consistently for 4+ weeks see 3× better results than those who don't.",
   },
 ];
 
 const TIER_COLORS: Record<string, string> = {
-  free:     SF.muted,
-  basic:    SF.teal,
-  advanced: SF.gold,
+  free:       SF.muted,
+  basic:      SF.teal,
+  "basic+":   SF.emerald,
+  advanced:   SF.gold,
 };
 
 const TIER_LABELS: Record<string, string> = {
-  free:     "FREE",
-  basic:    "BASIC",
-  advanced: "ADVANCED",
+  free:       "FREE",
+  basic:      "BASIC",
+  "basic+":   "BASIC & ADVANCED",
+  advanced:   "ADVANCED",
 };
 
 interface Props {
@@ -179,7 +181,9 @@ export function TutorialOverlay({ visible, onDismiss }: Props) {
             <Animated.View style={{ opacity: fadeAnim }}>
               {/* Icon + tab */}
               <View style={styles.iconRow}>
-                <Text style={styles.slideIcon}>{slide.icon}</Text>
+                <View style={{ width: 48, height: 48, borderRadius: 14, backgroundColor: "rgba(245,158,11,0.12)", alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: SF.border }}>
+                  <MaterialIcons name={slide.iconName} size={26} color={SF.gold} />
+                </View>
                 <View style={styles.tabBadge}>
                   <Text style={styles.tabBadgeText}>{slide.tab.toUpperCase()}</Text>
                 </View>
@@ -270,7 +274,7 @@ const styles = StyleSheet.create({
   dotActive: { width: 24, backgroundColor: SF.gold },
   content: { paddingHorizontal: 24, paddingBottom: 8 },
   iconRow: { flexDirection: "row", alignItems: "center", gap: 12, marginBottom: 12 },
-  slideIcon: { fontSize: 40 },
+  slideIcon: { fontSize: 40 }, // kept for compat
   tabBadge: { backgroundColor: "rgba(245,158,11,0.15)", borderRadius: 8, paddingHorizontal: 10, paddingVertical: 4, borderWidth: 1, borderColor: SF.border },
   tabBadgeText: { color: SF.gold, fontFamily: "Outfit_700Bold", fontSize: 11, letterSpacing: 1.5 },
   slideTitle: { color: SF.fg, fontFamily: "Outfit_800ExtraBold", fontSize: 24, lineHeight: 30, marginBottom: 10 },

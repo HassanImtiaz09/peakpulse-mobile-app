@@ -9,16 +9,27 @@ import { useAuth } from "@/hooks/use-auth";
 import { useGuestAuth } from "@/lib/guest-auth";
 
 // Aurora Titan tab icon definitions (3B: uniform MaterialIcons)
-const TAB_ICONS: Record<string, { icon: keyof typeof MaterialIcons.glyphMap; label: string }> = {
+const TAB_ICONS: Record<string, { icon: keyof typeof MaterialIcons.glyphMap; label: string; accent?: boolean }> = {
   index: { icon: "dashboard", label: "Dashboard" },
   scan: { icon: "camera-alt", label: "Body Scan" },
   plans: { icon: "fitness-center", label: "Plans" },
+  "ai-coach": { icon: "smart-toy", label: "AI Coach", accent: true },
   meals: { icon: "restaurant", label: "Meals" },
   profile: { icon: "person", label: "Profile" },
 };
 
 function AuroraTabIcon({ route, focused }: { route: string; focused: boolean }) {
   const def = TAB_ICONS[route] ?? { icon: "help-outline" as keyof typeof MaterialIcons.glyphMap, label: route };
+  const isAccent = def.accent === true;
+
+  if (isAccent) {
+    return (
+      <View style={[styles.aiCoachIcon, focused && styles.aiCoachIconActive]}>
+        <MaterialIcons name={def.icon} size={22} color={focused ? "#0A0500" : "#FDE68A"} />
+      </View>
+    );
+  }
+
   return (
     <View style={[styles.tabIconWrapper, focused && styles.tabIconWrapperActive]}>
       <MaterialIcons name={def.icon} size={22} color={focused ? "#F59E0B" : "#78350F"} />
@@ -99,6 +110,19 @@ export default function TabLayout() {
       <Tabs.Screen name="index" options={{ title: "Dashboard" }} />
       <Tabs.Screen name="scan" options={{ title: "Body Scan" }} />
       <Tabs.Screen name="plans" options={{ title: "Plans" }} />
+      <Tabs.Screen
+        name="ai-coach"
+        options={{
+          title: "AI Coach",
+          tabBarLabelStyle: {
+            fontFamily: "Outfit_700Bold",
+            fontSize: 10,
+            letterSpacing: 0.3,
+            marginTop: 0,
+            color: "#F59E0B",
+          },
+        }}
+      />
       <Tabs.Screen name="meals" options={{ title: "Meals" }} />
       <Tabs.Screen name="profile" options={{ title: "Profile" }} />
     </Tabs>
@@ -109,4 +133,11 @@ const styles = StyleSheet.create({
   tabIconWrapper: { width: 40, height: 32, alignItems: "center", justifyContent: "center", borderRadius: 10 },
   tabIconWrapperActive: { backgroundColor: "rgba(245,158,11,0.10)", borderWidth: 1, borderColor: "rgba(245,158,11,0.20)" },
   activeGlow: { position: "absolute", bottom: -2, width: 16, height: 2, borderRadius: 1, backgroundColor: "#F59E0B", opacity: 0.8 },
+  aiCoachIcon: {
+    width: 42, height: 34, alignItems: "center", justifyContent: "center", borderRadius: 12,
+    backgroundColor: "rgba(245,158,11,0.18)", borderWidth: 1.5, borderColor: "rgba(245,158,11,0.35)",
+  },
+  aiCoachIconActive: {
+    backgroundColor: "#F59E0B", borderColor: "#FBBF24",
+  },
 });

@@ -17,6 +17,12 @@ export interface MealEntry {
   loggedAt: string; // ISO string
 }
 
+interface MacroTargets {
+  protein: number;
+  carbs: number;
+  fat: number;
+}
+
 interface CalorieState {
   meals: MealEntry[];
   totalCalories: number;
@@ -25,6 +31,7 @@ interface CalorieState {
   totalFat: number;
   calorieGoal: number;
   caloriesRemaining: number;
+  macroTargets: MacroTargets;
   addMeal: (meal: Omit<MealEntry, "id" | "loggedAt">) => Promise<void>;
   removeMeal: (id: string) => Promise<void>;
   setCalorieGoal: (goal: number) => Promise<void>;
@@ -39,6 +46,7 @@ const CalorieContext = createContext<CalorieState>({
   totalFat: 0,
   calorieGoal: 2000,
   caloriesRemaining: 2000,
+  macroTargets: { protein: 0, carbs: 0, fat: 0 },
   addMeal: async () => {},
   removeMeal: async () => {},
   setCalorieGoal: async () => {},
@@ -47,6 +55,7 @@ const CalorieContext = createContext<CalorieState>({
 
 const MEALS_KEY = "@peakpulse_today_meals";
 const GOAL_KEY = "@peakpulse_calorie_goal";
+const MACRO_TARGETS_KEY = "@user_macro_targets";
 
 function getTodayKey() {
   return new Date().toISOString().split("T")[0]; // YYYY-MM-DD
@@ -55,6 +64,7 @@ function getTodayKey() {
 export function CalorieProvider({ children }: { children: React.ReactNode }) {
   const [meals, setMeals] = useState<MealEntry[]>([]);
   const [calorieGoal, setCalorieGoalState] = useState(2000);
+  const [macroTargets, setMacroTargets] = useState<MacroTargets>({ protein: 0, carbs: 0, fat: 0 });
 
   const refreshFromStorage = useCallback(async () => {
     try {
@@ -67,6 +77,10 @@ export function CalorieProvider({ children }: { children: React.ReactNode }) {
       }
       const goalRaw = await AsyncStorage.getItem(GOAL_KEY);
       if (goalRaw) setCalorieGoalState(parseInt(goalRaw, 10));
+      const macroRaw = await AsyncStorage.getItem(MACRO_TARGETS_KEY);
+      if (macroRaw) {
+        try { setMacroTargets(JSON.parse(macroRaw)); } catch {}
+      }
     } catch {}
   }, []);
 
@@ -115,6 +129,7 @@ export function CalorieProvider({ children }: { children: React.ReactNode }) {
       totalFat,
       calorieGoal,
       caloriesRemaining,
+      macroTargets,
       addMeal,
       removeMeal,
       setCalorieGoal,

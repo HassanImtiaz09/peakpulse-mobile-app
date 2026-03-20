@@ -338,9 +338,11 @@ export default function ProfileScreen() {
             <FeatureLink icon="notifications" label="Notification Preferences" onPress={() => gatedNav("/notification-preferences", "notification_preferences", "notifications", "basic", "Customise your workout and meal reminder times — available on Basic and Advanced plans.")} />
           </View>
 
-          {/* Appearance */}
-          <SectionHeader>Appearance</SectionHeader>
-          <ThemeToggle />
+          {/* App Settings */}
+          <SectionHeader>App Settings</SectionHeader>
+          <View style={{ gap: 8, marginBottom: 16 }}>
+            <FeatureLink icon="settings" label="Settings" onPress={() => router.push("/settings" as any)} />
+          </View>
 
           {/* Subscription */}
           <SectionHeader>Subscription</SectionHeader>

@@ -36,7 +36,7 @@ export function YouTubePlayer({
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  const embedUrl = `https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1&playsinline=1&autoplay=0&showinfo=0&controls=1`;
+  const embedUrl = `https://www.youtube-nocookie.com/embed/${videoId}?rel=0&modestbranding=1&playsinline=1&autoplay=0&showinfo=0&controls=1`;
 
   const htmlContent = `
     <!DOCTYPE html>
@@ -54,6 +54,7 @@ export function YouTubePlayer({
         src="${embedUrl}"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
         allowfullscreen
+        referrerpolicy="strict-origin"
       ></iframe>
     </body>
     </html>
@@ -78,6 +79,7 @@ export function YouTubePlayer({
             style={{ width: "100%", height: "100%", border: "none" }}
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowFullScreen
+            referrerPolicy="strict-origin"
           />
         ) : (
           <WebView
@@ -131,6 +133,7 @@ export function YouTubePlayer({
               style={{ width: "100%", height: "100%", border: "none" }}
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
+              referrerPolicy="strict-origin"
             />
           ) : (
             <WebView

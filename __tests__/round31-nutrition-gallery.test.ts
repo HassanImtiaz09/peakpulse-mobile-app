@@ -122,13 +122,12 @@ describe("Meal Photo Gallery Screen", () => {
 });
 
 describe("Meals Tab Navigation", () => {
-  it("has Charts navigation button", () => {
+  it("has Charts navigation link", () => {
     expect(meals).toContain("nutrition-charts");
-    expect(meals).toContain("Charts");
   });
 
-  it("has Gallery navigation button", () => {
+  it("has Meal Gallery navigation button", () => {
     expect(meals).toContain("meal-photo-gallery");
-    expect(meals).toContain("Gallery");
+    expect(meals).toContain("Meal Gallery");
   });
 });

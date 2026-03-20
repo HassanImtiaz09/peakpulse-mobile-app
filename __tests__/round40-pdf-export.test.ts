@@ -105,7 +105,7 @@ describe("Round 40 — Workout Plan PDF Export", () => {
   });
 
   it("has Export PDF button in the plans tab", () => {
-    expect(plansCode).toContain("Export PDF");
+    expect(plansCode).toContain("picture-as-pdf");
     expect(plansCode).toContain("exportWorkoutPlanPdf");
   });
 

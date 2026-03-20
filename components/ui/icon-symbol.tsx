@@ -82,6 +82,7 @@ const MAPPING = {
   "crown.fill": "workspace-premium",
   "person.2.fill": "group",
   "bubble.left.fill": "chat-bubble",
+  "brain": "smart-toy",
   "square.and.arrow.up": "upload",
   "square.and.arrow.down": "download",
   "doc.fill": "description",
