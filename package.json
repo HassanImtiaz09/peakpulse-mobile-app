@@ -39,7 +39,7 @@
     "drizzle-orm": "^0.44.7",
     "expo": "~54.0.29",
     "expo-audio": "~1.1.0",
-    "expo-blur": "^55.0.10",
+    "expo-blur": "^15.0.8",
     "expo-build-properties": "^1.0.10",
     "expo-camera": "^55.0.9",
     "expo-clipboard": "~8.0.8",

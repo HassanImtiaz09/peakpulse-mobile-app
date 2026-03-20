@@ -602,3 +602,10 @@
 - [x] 6F: Consistent back headers on secondary screens
 - [x] 5A-accent: Apply accent colour variation across screens
 - [x] 0 TypeScript errors, 189 tests passing
+
+## Round 42 — Bug Fix: "Can't find ViewManager" in Expo Go
+
+- [x] Diagnosed: expo-blur was installed at v55.0.10 (SDK 55) instead of v15.0.8 (SDK 54 compatible)
+- [x] Fixed: downgraded expo-blur to ~15.0.8 via `npx expo install expo-blur --check`
+- [x] Also fixed: @react-navigation/bottom-tabs and @react-navigation/native aligned to SDK 54 expected versions
+- [x] Verified: 0 TypeScript errors, 189 tests passing
