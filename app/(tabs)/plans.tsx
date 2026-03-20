@@ -12,6 +12,7 @@ import { getExerciseDemo } from "@/lib/exercise-demos";
 import { YouTubePlayer } from "@/components/youtube-player";
 import Svg, { Circle } from "react-native-svg";
 import * as Haptics from "expo-haptics";
+import { exportWorkoutPlanPdf } from "@/lib/workout-pdf";
 
 const WORKOUT_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/yauqLuTRvanJUzsJ.jpg";
 const MEAL_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/yauqLuTRvanJUzsJ.jpg";
@@ -66,7 +67,7 @@ const DAYS_OPTIONS = [3, 4, 5, 6];
 
 export default function PlansScreen() {
   const router = useRouter();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const { isGuest } = useGuestAuth();
   const canUse = isAuthenticated || isGuest;
   const [activeTab, setActiveTab] = useState(0);
@@ -306,6 +307,17 @@ export default function PlansScreen() {
                 <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
                   <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 16 }}>Current Plan</Text>
                   <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+                    <TouchableOpacity
+                      onPress={() => {
+                        if (Platform.OS !== "web") Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                        exportWorkoutPlanPdf(workoutPlan, user?.name || (isGuest ? "Guest" : undefined));
+                      }}
+                      activeOpacity={0.7}
+                      style={{ backgroundColor: "rgba(245,158,11,0.12)", borderRadius: 8, paddingHorizontal: 10, paddingVertical: 5, flexDirection: "row", alignItems: "center", gap: 4, borderWidth: 1, borderColor: "rgba(245,158,11,0.25)" }}
+                    >
+                      <Text style={{ fontSize: 12 }}>📄</Text>
+                      <Text style={{ color: "#FBBF24", fontSize: 11, fontFamily: "Outfit_700Bold" }}>Export PDF</Text>
+                    </TouchableOpacity>
                     <View style={{ backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 8, paddingHorizontal: 10, paddingVertical: 4 }}>
                       <Text style={{ color: "#FDE68A", fontSize: 11, fontFamily: "Outfit_700Bold" }}>ACTIVE</Text>
                     </View>

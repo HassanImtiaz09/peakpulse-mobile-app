@@ -563,3 +563,16 @@
 - [x] Server: aiCoach.chat upgraded to accept premiumContext with formHistory, bodyProgress, mealSummary, streakDays
 - [x] Installed expo-speech dependency for text-to-speech
 - [x] 6 quick action chips in empty state: meals, workouts, body scan, form check, workout history, AI coach
+
+## Round 40 — Workout Plan PDF Export
+
+- [x] Client-side PDF generation module (lib/workout-pdf.ts) using expo-print HTML-to-PDF
+- [x] PDF content: branded header with PeakPulse gold gradient, user name, and date
+- [x] PDF content: day-by-day workout breakdown with exercises, sets, reps, and rest times
+- [x] PDF content: exercise type badges (compound/isolation/cardio/stretching) with color coding
+- [x] PDF content: summary stats cards (workout days, rest days, total exercises, total sets)
+- [x] PDF content: AI insight callout box when available
+- [x] UI: "Export PDF" button on the Plans tab (Current Plan header area)
+- [x] Sharing: download/share PDF via system share sheet (expo-sharing)
+- [x] Works for both authenticated and guest users (no server dependency)
+- [x] 20 new tests passing (round40-pdf-export.test.ts), 190 total tests passing
