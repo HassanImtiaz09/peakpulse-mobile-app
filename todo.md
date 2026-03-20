@@ -710,3 +710,28 @@
 ### Tests
 - [x] 23 new tests (round45-pantry.test.ts), 212 total passing
 - [x] 0 TypeScript errors
+## Round 46 — Barcode Scanner, Expiry Notifications, Shopping List Export
+
+### Barcode Scanner for Pantry
+- [x] Added "Add to Pantry" button to existing barcode-scanner.tsx alongside "Add to Meal Log"
+- [x] Auto-detect pantry category from product name/brand via mapCategoryToPantry function
+- [x] Open Food Facts API (openfoodfacts.org) used for nutritional data lookup
+- [x] Nutrition info (calories, protein, carbs, fat) displayed from scanned product
+- [x] Replaced remaining emoji with MaterialIcons in barcode scanner
+
+### Expiry Push Notifications
+- [x] schedulePantryExpiryNotifications function added to notification-service.ts
+- [x] Schedules notifications for items expiring today, tomorrow, or within 3 days
+- [x] Auto-reschedules when pantry items change (useEffect in pantry.tsx)
+- [x] cancelPantryExpiryNotifications for cleanup on disable
+- [x] Stores notification IDs in AsyncStorage for reliable cancellation
+
+### Shopping List Export
+- [x] lib/shopping-pdf.ts: branded HTML-to-PDF with priority sections, cost estimates, meals enabled
+- [x] generateShoppingListText for plain text sharing via messaging apps
+- [x] Share via expo-sharing (PDF) and Share API (text)
+- [x] "Share as Text" and "Export PDF" buttons added to pantry shopping view
+
+### Tests
+- [x] 29 new tests (round46-pantry-enhancements.test.ts), 241 total passing
+- [x] 0 TypeScript errors

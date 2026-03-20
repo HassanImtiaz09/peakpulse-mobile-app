@@ -15,6 +15,8 @@ import { usePantry, PANTRY_CATEGORIES, COMMON_PANTRY_ITEMS, CATEGORY_ICONS, type
 import { useCalories } from "@/lib/calorie-context";
 import { trpc } from "@/lib/trpc";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { schedulePantryExpiryNotifications } from "@/lib/notification-service";
+import { shareShoppingListAsText, exportShoppingListPdf, type ShoppingExportItem } from "@/lib/shopping-pdf";
 
 const PANTRY_BG = "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&q=80";
 
@@ -56,6 +58,16 @@ export default function PantryScreen() {
   const grouped = useMemo(() => getItemsByCategory(), [items]);
   const expiringItems = useMemo(() => getExpiringItems(3), [items]);
   const nonEmptyCategories = useMemo(() => PANTRY_CATEGORIES.filter(c => grouped[c]?.length > 0), [grouped]);
+
+  // Schedule expiry notifications whenever pantry items change
+  React.useEffect(() => {
+    const expiryItems = items
+      .filter(i => i.expiresAt)
+      .map(i => ({ id: i.id, name: i.name, expiryDate: i.expiresAt! }));
+    if (expiryItems.length > 0) {
+      schedulePantryExpiryNotifications(expiryItems).catch(() => {});
+    }
+  }, [items]);
 
   // Load user dietary preference and goal from AsyncStorage
   const [userGoal, setUserGoal] = useState("build_muscle");
@@ -707,6 +719,44 @@ export default function PantryScreen() {
                   <Text style={{ color: "#92400E", fontFamily: "DMSans_400Regular", fontSize: 12, lineHeight: 18 }}>
                     These suggestions are prioritised to give you the most meals for the least cost, based on your {items.length} pantry items and {userGoal.replace(/_/g, " ")} goal.
                   </Text>
+                </View>
+
+                {/* Export Buttons */}
+                <View style={{ flexDirection: "row", gap: 10 }}>
+                  <TouchableOpacity
+                    onPress={() => {
+                      const exportItems: ShoppingExportItem[] = shoppingSuggestions.map(s => ({
+                        name: s.name,
+                        category: s.category,
+                        estimatedCost: s.estimatedCost,
+                        priority: s.priority,
+                        reason: s.reason,
+                        mealsEnabled: s.mealsItEnables ?? [],
+                      }));
+                      shareShoppingListAsText(exportItems, undefined);
+                    }}
+                    style={{ flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6, backgroundColor: "rgba(59,130,246,0.10)", borderRadius: 12, paddingVertical: 12, borderWidth: 1, borderColor: "rgba(59,130,246,0.20)" }}
+                  >
+                    <MaterialIcons name="share" size={16} color="#3B82F6" />
+                    <Text style={{ color: "#3B82F6", fontFamily: "DMSans_600SemiBold", fontSize: 13 }}>Share as Text</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => {
+                      const exportItems: ShoppingExportItem[] = shoppingSuggestions.map(s => ({
+                        name: s.name,
+                        category: s.category,
+                        estimatedCost: s.estimatedCost,
+                        priority: s.priority,
+                        reason: s.reason,
+                        mealsEnabled: s.mealsItEnables ?? [],
+                      }));
+                      exportShoppingListPdf(exportItems, undefined);
+                    }}
+                    style={{ flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6, backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 12, paddingVertical: 12, borderWidth: 1, borderColor: "rgba(245,158,11,0.20)" }}
+                  >
+                    <MaterialIcons name="picture-as-pdf" size={16} color="#F59E0B" />
+                    <Text style={{ color: "#F59E0B", fontFamily: "DMSans_600SemiBold", fontSize: 13 }}>Export PDF</Text>
+                  </TouchableOpacity>
                 </View>
 
                 {/* Priority groups */}

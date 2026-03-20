@@ -232,3 +232,125 @@ export async function getScheduledNotificationCount(): Promise<number> {
   const scheduled = await Notifications.getAllScheduledNotificationsAsync();
   return scheduled.length;
 }
+
+const PANTRY_EXPIRY_IDS_KEY = "@peakpulse_pantry_expiry_ids";
+
+export interface PantryExpiryItem {
+  id: string;
+  name: string;
+  expiryDate: string; // ISO date string
+}
+
+/**
+ * Schedule expiry notifications for pantry items.
+ * Sends a notification at 9 AM on the day before the item expires,
+ * and another on the expiry day itself.
+ * Skips items that expire in the past or more than 30 days away.
+ */
+export async function schedulePantryExpiryNotifications(
+  items: PantryExpiryItem[],
+): Promise<number> {
+  if (Platform.OS === "web") return 0;
+
+  const enabled = await isNotificationsEnabled();
+  if (!enabled) return 0;
+
+  // Cancel previous pantry expiry notifications
+  await cancelPantryExpiryNotifications();
+
+  const now = new Date();
+  const ids: string[] = [];
+  let scheduled = 0;
+
+  for (const item of items) {
+    const expiry = new Date(item.expiryDate);
+    const daysUntil = Math.floor((expiry.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+
+    // Skip past or too far away
+    if (daysUntil < 0 || daysUntil > 30) continue;
+
+    try {
+      if (daysUntil === 0) {
+        // Expires today — notify in 10 seconds (immediate-ish)
+        const id = await Notifications.scheduleNotificationAsync({
+          content: {
+            title: "\u26a0\ufe0f Pantry Item Expiring Today!",
+            body: `${item.name} expires today. Use it before it goes to waste!`,
+            data: { type: "pantry_expiry", itemId: item.id },
+            sound: "default",
+            ...(Platform.OS === "android" && { channelId: "peakpulse-meals" }),
+          },
+          trigger: {
+            type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
+            seconds: 10,
+          },
+        });
+        ids.push(id);
+        scheduled++;
+      } else if (daysUntil === 1) {
+        // Expires tomorrow — notify now
+        const id = await Notifications.scheduleNotificationAsync({
+          content: {
+            title: "\ud83d\udce6 Pantry Item Expiring Tomorrow",
+            body: `${item.name} expires tomorrow. Plan a meal around it!`,
+            data: { type: "pantry_expiry", itemId: item.id },
+            sound: "default",
+            ...(Platform.OS === "android" && { channelId: "peakpulse-meals" }),
+          },
+          trigger: {
+            type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
+            seconds: 30,
+          },
+        });
+        ids.push(id);
+        scheduled++;
+      } else if (daysUntil <= 3) {
+        // Expires within 3 days — schedule for 9 AM day before
+        const dayBefore = new Date(expiry);
+        dayBefore.setDate(dayBefore.getDate() - 1);
+        const secondsUntil = Math.max(
+          60,
+          Math.floor((dayBefore.getTime() - now.getTime()) / 1000),
+        );
+        const id = await Notifications.scheduleNotificationAsync({
+          content: {
+            title: "\ud83d\udce6 Pantry Item Expiring Soon",
+            body: `${item.name} expires in ${daysUntil} days. Consider using it soon!`,
+            data: { type: "pantry_expiry", itemId: item.id },
+            sound: "default",
+            ...(Platform.OS === "android" && { channelId: "peakpulse-meals" }),
+          },
+          trigger: {
+            type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
+            seconds: secondsUntil,
+          },
+        });
+        ids.push(id);
+        scheduled++;
+      }
+    } catch (err) {
+      console.warn(`[Notifications] Failed to schedule expiry for ${item.name}:`, err);
+    }
+  }
+
+  await AsyncStorage.setItem(PANTRY_EXPIRY_IDS_KEY, JSON.stringify(ids));
+  return scheduled;
+}
+
+/**
+ * Cancel all previously scheduled pantry expiry notifications.
+ */
+export async function cancelPantryExpiryNotifications(): Promise<void> {
+  try {
+    const raw = await AsyncStorage.getItem(PANTRY_EXPIRY_IDS_KEY);
+    if (raw) {
+      const ids: string[] = JSON.parse(raw);
+      for (const id of ids) {
+        await Notifications.cancelScheduledNotificationAsync(id);
+      }
+    }
+    await AsyncStorage.removeItem(PANTRY_EXPIRY_IDS_KEY);
+  } catch (err) {
+    console.warn("[Notifications] Failed to cancel pantry expiry notifications:", err);
+  }
+}

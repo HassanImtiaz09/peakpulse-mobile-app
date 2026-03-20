@@ -8,6 +8,20 @@ import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { FlatList } from "react-native";
+import { usePantry, type PantryCategory } from "@/lib/pantry-context";
+
+function mapCategoryToPantry(name: string, brand: string): PantryCategory {
+  const combined = `${name} ${brand}`.toLowerCase();
+  if (/chicken|beef|pork|fish|salmon|tuna|turkey|lamb|shrimp|protein|meat|sausage/.test(combined)) return "Proteins";
+  if (/milk|cheese|yogurt|butter|cream|dairy/.test(combined)) return "Dairy";
+  if (/bread|cereal|pasta|rice|flour|oat|wheat|corn|cracker|chip|cookie|cake/.test(combined)) return "Grains & Carbs";
+  if (/vegetable|salad|broccoli|carrot|spinach|tomato|onion|pepper|bean|pea|corn/.test(combined)) return "Vegetables";
+  if (/fruit|apple|banana|berry|orange|grape|mango|juice/.test(combined)) return "Fruits";
+  if (/sauce|spice|vinegar|mustard|ketchup|herb|seasoning|salt|pepper|garlic|honey/.test(combined)) return "Condiments & Spices";
+  if (/oil|margarine|lard/.test(combined)) return "Oils & Fats";
+  if (/water|soda|coffee|tea|drink|beverage|beer|wine/.test(combined)) return "Beverages";
+  return "Other";
+}
 
 const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get("window");
 const SCAN_AREA_SIZE = SCREEN_W * 0.7;
@@ -138,6 +152,7 @@ export default function BarcodeScannerScreen() {
   const [torchOn, setTorchOn] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
   const [history, setHistory] = useState<HistoryItem[]>([]);
+  const { addItem: addPantryItem } = usePantry();
 
   // Load history on mount
   useEffect(() => {
@@ -258,7 +273,7 @@ export default function BarcodeScannerScreen() {
       <View style={styles.container}>
         <StatusBar barStyle="light-content" />
         <View style={styles.permissionCard}>
-          <Text style={{ fontSize: 48, marginBottom: 16 }}>📷</Text>
+          <MaterialIcons name="photo-camera" size={48} color={SF.muted} style={{ marginBottom: 16 }} />
           <Text style={styles.permTitle}>Camera Access Required</Text>
           <Text style={styles.permSub}>
             PeakPulse needs camera access to scan product barcodes and look up nutrition information.
@@ -332,7 +347,7 @@ export default function BarcodeScannerScreen() {
           {/* Bottom instruction */}
           <View style={styles.bottomBar}>
             <View style={styles.instructionCard}>
-              <Text style={{ fontSize: 20 }}>📦</Text>
+              <MaterialIcons name="qr-code-scanner" size={20} color={SF.gold} />
               <View style={{ flex: 1 }}>
                 <Text style={styles.instructionTitle}>Point at a barcode</Text>
                 <Text style={styles.instructionSub}>
@@ -360,7 +375,7 @@ export default function BarcodeScannerScreen() {
 
           {history.length === 0 ? (
             <View style={{ flex: 1, justifyContent: "center", alignItems: "center", padding: 32 }}>
-              <Text style={{ fontSize: 48, marginBottom: 16 }}>📷</Text>
+              <MaterialIcons name="history" size={48} color={SF.muted} style={{ marginBottom: 16 }} />
               <Text style={{ color: SF.muted, fontSize: 15, textAlign: "center", lineHeight: 22 }}>
                 No scan history yet. Scan a product barcode and it will appear here for quick re-logging.
               </Text>
@@ -413,7 +428,7 @@ export default function BarcodeScannerScreen() {
           <View style={styles.resultCard}>
             {/* Header */}
             <View style={styles.resultHeader}>
-              <Text style={{ fontSize: 28 }}>{result.found ? "✅" : "❌"}</Text>
+              <MaterialIcons name={result.found ? "check-circle" : "error-outline"} size={28} color={result.found ? "#22C55E" : "#EF4444"} />
               <View style={{ flex: 1 }}>
                 <Text style={styles.resultName} numberOfLines={2}>{result.name}</Text>
                 {result.brand ? <Text style={styles.resultBrand}>{result.brand}</Text> : null}
@@ -457,7 +472,25 @@ export default function BarcodeScannerScreen() {
                   <Text style={styles.addBtnText}>Add to Meal Log</Text>
                 </TouchableOpacity>
 
-                {/* Save to Favourites Button */}
+                {/* Add to Pantry Button */}
+                <TouchableOpacity
+                  style={[styles.addBtn, { backgroundColor: "rgba(59,130,246,0.15)", marginTop: -8, shadowOpacity: 0 }]}
+                  onPress={async () => {
+                    if (!result) return;
+                    const name = result.brand ? `${result.name} (${result.brand})` : result.name;
+                    const category = mapCategoryToPantry(result.name, result.brand);
+                    await addPantryItem({ name, category, source: "manual" });
+                    if (Platform.OS !== "web") {
+                      try { const H = await import("expo-haptics"); await H.notificationAsync(H.NotificationFeedbackType.Success); } catch {}
+                    }
+                    Alert.alert("Added to Pantry", `${name} added to your pantry under ${category}.`);
+                  }}
+                >
+                  <MaterialIcons name="kitchen" size={18} color="#3B82F6" />
+                  <Text style={[styles.addBtnText, { color: "#3B82F6" }]}>Add to Pantry</Text>
+                </TouchableOpacity>
+
+              {/* Save to Favourites Button */}
                 <TouchableOpacity
                   style={[styles.addBtn, { backgroundColor: "rgba(245,158,11,0.15)", marginTop: -8, shadowOpacity: 0 }]}
                   onPress={async () => {
@@ -490,7 +523,7 @@ export default function BarcodeScannerScreen() {
                     Alert.alert("\u2b50 Saved to Favourites", `${name} added for quick one-tap logging.`);
                   }}
                 >
-                  <Text style={{ fontSize: 16 }}>{"\u2b50"}</Text>
+                  <MaterialIcons name="star" size={16} color={SF.gold} />
                   <Text style={[styles.addBtnText, { color: SF.gold }]}>Save to Favourites</Text>
                 </TouchableOpacity>
               </>
