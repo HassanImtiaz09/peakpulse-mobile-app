@@ -1,10 +1,12 @@
 /**
  * Settings Screen — App Settings
  * Theme toggle (light/dark/system), font size selector, push notification toggle.
+ * Push notifications wired to expo-notifications via notification-service.
  */
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
-  ScrollView, Text, View, TouchableOpacity, Switch, Platform, StyleSheet,
+  ScrollView, Text, View, TouchableOpacity, Switch, Platform, StyleSheet, Alert,
+  ActivityIndicator,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { ScreenContainer } from "@/components/screen-container";
@@ -12,6 +14,12 @@ import { useThemeContext, type ThemePreference } from "@/lib/theme-provider";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Haptics from "expo-haptics";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import {
+  setNotificationsEnabled,
+  isNotificationsEnabled,
+  getScheduledNotificationCount,
+  requestNotificationPermissions,
+} from "@/lib/notification-service";
 
 const SF = {
   bg: "#0A0500", surface: "#150A00", border: "rgba(245,158,11,0.15)",
@@ -19,7 +27,6 @@ const SF = {
 };
 
 const FONT_SIZE_KEY = "@peakpulse_font_size";
-const PUSH_NOTIF_KEY = "@peakpulse_push_notifications";
 
 const THEME_OPTIONS: Array<{ key: ThemePreference; label: string; icon: React.ComponentProps<typeof MaterialIcons>["name"]; desc: string }> = [
   { key: "system", label: "System", icon: "phone-iphone", desc: "Follow device setting" },
@@ -39,11 +46,23 @@ export default function SettingsScreen() {
   const { themePreference, setThemePreference } = useThemeContext();
   const [fontSize, setFontSizeState] = useState("medium");
   const [pushEnabled, setPushEnabled] = useState(true);
+  const [pushLoading, setPushLoading] = useState(false);
+  const [scheduledCount, setScheduledCount] = useState(0);
 
-  useEffect(() => {
-    AsyncStorage.getItem(FONT_SIZE_KEY).then(val => { if (val) setFontSizeState(val); });
-    AsyncStorage.getItem(PUSH_NOTIF_KEY).then(val => { if (val !== null) setPushEnabled(val === "true"); });
+  const loadSettings = useCallback(async () => {
+    const fontVal = await AsyncStorage.getItem(FONT_SIZE_KEY);
+    if (fontVal) setFontSizeState(fontVal);
+
+    const enabled = await isNotificationsEnabled();
+    setPushEnabled(enabled);
+
+    if (enabled) {
+      const count = await getScheduledNotificationCount();
+      setScheduledCount(count);
+    }
   }, []);
+
+  useEffect(() => { loadSettings(); }, [loadSettings]);
 
   async function setFontSize(key: string) {
     setFontSizeState(key);
@@ -52,9 +71,47 @@ export default function SettingsScreen() {
   }
 
   async function togglePush(val: boolean) {
-    setPushEnabled(val);
-    await AsyncStorage.setItem(PUSH_NOTIF_KEY, String(val));
-    if (Platform.OS !== "web") Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    if ((Platform.OS as string) === "web") {
+      Alert.alert("Not Available", "Push notifications are only available on mobile devices.");
+      return;
+    }
+
+    setPushLoading(true);
+    try {
+      if (val) {
+        // Request permissions first
+        const granted = await requestNotificationPermissions();
+        if (!granted) {
+          Alert.alert(
+            "Permission Required",
+            "Please enable notifications in your device settings to receive workout reminders and meal alerts.",
+          );
+          setPushLoading(false);
+          return;
+        }
+      }
+
+      const success = await setNotificationsEnabled(val);
+      if (success) {
+        setPushEnabled(val);
+        if (Platform.OS !== "web") {
+          Haptics.notificationAsync(
+            val ? Haptics.NotificationFeedbackType.Success : Haptics.NotificationFeedbackType.Warning,
+          );
+        }
+
+        if (val) {
+          const count = await getScheduledNotificationCount();
+          setScheduledCount(count);
+        } else {
+          setScheduledCount(0);
+        }
+      }
+    } catch (err) {
+      console.warn("[Settings] Push toggle error:", err);
+      Alert.alert("Error", "Failed to update notification settings. Please try again.");
+    }
+    setPushLoading(false);
   }
 
   return (
@@ -129,22 +186,62 @@ export default function SettingsScreen() {
         <View style={styles.card}>
           <View style={styles.switchRow}>
             <View style={{ flexDirection: "row", alignItems: "center", gap: 12, flex: 1 }}>
-              <View style={styles.optionIcon}>
+              <View style={[styles.optionIcon, pushEnabled && styles.optionIconActive]}>
                 <MaterialIcons name="notifications" size={20} color={pushEnabled ? SF.gold : SF.muted} />
               </View>
               <View style={{ flex: 1 }}>
                 <Text style={styles.optionLabel}>Push Notifications</Text>
-                <Text style={styles.optionDesc}>Workout reminders, meal alerts, and progress updates</Text>
+                <Text style={styles.optionDesc}>
+                  Workout reminders, meal alerts, and progress updates
+                </Text>
               </View>
             </View>
-            <Switch
-              value={pushEnabled}
-              onValueChange={togglePush}
-              trackColor={{ false: "#334155", true: "rgba(245,158,11,0.4)" }}
-              thumbColor={pushEnabled ? SF.gold : "#687076"}
-            />
+            {pushLoading ? (
+              <ActivityIndicator color={SF.gold} size="small" />
+            ) : (
+              <Switch
+                value={pushEnabled}
+                onValueChange={togglePush}
+                trackColor={{ false: "#334155", true: "rgba(245,158,11,0.4)" }}
+                thumbColor={pushEnabled ? SF.gold : "#687076"}
+              />
+            )}
           </View>
+
+          {pushEnabled && scheduledCount > 0 && (
+            <View style={styles.notifInfo}>
+              <MaterialIcons name="check-circle" size={14} color="#22C55E" />
+              <Text style={styles.notifInfoText}>
+                {scheduledCount} daily reminder{scheduledCount !== 1 ? "s" : ""} scheduled
+              </Text>
+            </View>
+          )}
+
+          {pushEnabled && (
+            <View style={styles.reminderList}>
+              {[
+                { icon: "fitness-center" as const, time: "8:00 AM", label: "Workout Reminder" },
+                { icon: "restaurant" as const, time: "12:30 PM", label: "Meal Log Reminder" },
+                { icon: "trending-up" as const, time: "8:00 PM", label: "Daily Check-In" },
+              ].map((r) => (
+                <View key={r.label} style={styles.reminderRow}>
+                  <MaterialIcons name={r.icon} size={16} color={SF.muted} />
+                  <Text style={styles.reminderLabel}>{r.label}</Text>
+                  <Text style={styles.reminderTime}>{r.time}</Text>
+                </View>
+              ))}
+            </View>
+          )}
         </View>
+
+        {(Platform.OS as string) === "web" && (
+          <View style={styles.webNote}>
+            <MaterialIcons name="info-outline" size={14} color={SF.muted} />
+            <Text style={styles.webNoteText}>
+              Push notifications require a mobile device. Use the Expo Go app to test notifications.
+            </Text>
+          </View>
+        )}
 
         {/* ── About ── */}
         <Text style={styles.sectionLabel}>ABOUT</Text>
@@ -231,6 +328,35 @@ const styles = StyleSheet.create({
   },
   switchRow: {
     flexDirection: "row", alignItems: "center", padding: 14, gap: 12,
+  },
+  notifInfo: {
+    flexDirection: "row", alignItems: "center", gap: 6, paddingHorizontal: 14,
+    paddingBottom: 8,
+  },
+  notifInfoText: {
+    color: "#22C55E", fontSize: 11, fontFamily: "DMSans_600SemiBold",
+  },
+  reminderList: {
+    marginHorizontal: 10, marginBottom: 10, padding: 10, borderRadius: 10,
+    backgroundColor: "rgba(245,158,11,0.04)", borderWidth: 1, borderColor: SF.border,
+    gap: 8,
+  },
+  reminderRow: {
+    flexDirection: "row", alignItems: "center", gap: 8,
+  },
+  reminderLabel: {
+    flex: 1, color: SF.fg, fontSize: 12, fontFamily: "DMSans_400Regular",
+  },
+  reminderTime: {
+    color: SF.gold, fontSize: 12, fontFamily: "Outfit_700Bold",
+  },
+  webNote: {
+    flexDirection: "row", alignItems: "center", gap: 8, marginTop: 12,
+    padding: 12, backgroundColor: "rgba(245,158,11,0.04)", borderRadius: 10,
+    borderWidth: 1, borderColor: SF.border,
+  },
+  webNoteText: {
+    color: SF.muted, fontSize: 11, fontFamily: "DMSans_400Regular", flex: 1, lineHeight: 16,
   },
   aboutRow: {
     flexDirection: "row", justifyContent: "space-between", alignItems: "center", padding: 14,

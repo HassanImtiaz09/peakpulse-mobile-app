@@ -18,6 +18,8 @@ import { useFocusEffect, useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import Svg, { Rect, Line, Text as SvgText, G } from "react-native-svg";
+import { exportMealLogPdf } from "@/lib/meal-pdf";
+
 
 const MEAL_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/OTOphPKaSpDPZRjp.jpg";
 const MEAL_TYPES = ["breakfast", "lunch", "dinner", "snack"];
@@ -619,13 +621,45 @@ export default function MealsScreen() {
           <ImageBackground source={{ uri: MEAL_BG }} style={{ width: "100%", height: "100%" }} resizeMode="cover" />
         </ReAnimated.View>
         <ReAnimated.View style={[{ flex: 1, backgroundColor: "rgba(8,8,16,0.68)", justifyContent: "flex-end", padding: 20, paddingTop: 52 }, mealHeroTxtStyle]}>
-          <TouchableOpacity
-            style={{ position: "absolute", top: 52, right: 20, flexDirection: "row", alignItems: "center", gap: 4, backgroundColor: "rgba(245,158,11,0.12)", borderRadius: 20, paddingHorizontal: 10, paddingVertical: 5, borderWidth: 1, borderColor: "rgba(245,158,11,0.20)" }}
-            onPress={() => router.push("/user-guide" as any)}
-          >
-            <MaterialIcons name="help-outline" size={14} color="#FBBF24" />
-            <Text style={{ color: "#FBBF24", fontFamily: "DMSans_500Medium", fontSize: 11 }}>Guide</Text>
-          </TouchableOpacity>
+          <View style={{ position: "absolute", top: 52, right: 20, flexDirection: "row", gap: 6 }}>
+            <TouchableOpacity
+              style={{ flexDirection: "row", alignItems: "center", gap: 4, backgroundColor: "rgba(245,158,11,0.12)", borderRadius: 20, paddingHorizontal: 10, paddingVertical: 5, borderWidth: 1, borderColor: "rgba(245,158,11,0.20)" }}
+              onPress={async () => {
+                try {
+                  const history = await getHistoricalMeals(7);
+                  const today = new Date();
+                  const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+                  const days = [];
+                  for (let i = 6; i >= 0; i--) {
+                    const d = new Date(today);
+                    d.setDate(d.getDate() - i);
+                    const key = d.toISOString().split("T")[0];
+                    const dayMeals = history[key] ?? [];
+                    days.push({
+                      date: key,
+                      dayLabel: i === 0 ? "Today" : DAYS[d.getDay()] + " " + d.getDate(),
+                      meals: dayMeals,
+                      totalCalories: dayMeals.reduce((s: number, m: MealEntry) => s + (m.calories || 0), 0),
+                      totalProtein: dayMeals.reduce((s: number, m: MealEntry) => s + (m.protein || 0), 0),
+                      totalCarbs: dayMeals.reduce((s: number, m: MealEntry) => s + (m.carbs || 0), 0),
+                      totalFat: dayMeals.reduce((s: number, m: MealEntry) => s + (m.fat || 0), 0),
+                    });
+                  }
+                  await exportMealLogPdf({ days, calorieGoal, macroTargets });
+                } catch (e) { Alert.alert("Export Failed", "Could not generate meal log PDF."); }
+              }}
+            >
+              <MaterialIcons name="picture-as-pdf" size={14} color="#FBBF24" />
+              <Text style={{ color: "#FBBF24", fontFamily: "DMSans_500Medium", fontSize: 11 }}>Export</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={{ flexDirection: "row", alignItems: "center", gap: 4, backgroundColor: "rgba(245,158,11,0.12)", borderRadius: 20, paddingHorizontal: 10, paddingVertical: 5, borderWidth: 1, borderColor: "rgba(245,158,11,0.20)" }}
+              onPress={() => router.push("/user-guide" as any)}
+            >
+              <MaterialIcons name="help-outline" size={14} color="#FBBF24" />
+              <Text style={{ color: "#FBBF24", fontFamily: "DMSans_500Medium", fontSize: 11 }}>Guide</Text>
+            </TouchableOpacity>
+          </View>
           <Text style={{ color: "#FDE68A", fontFamily: "Outfit_700Bold", fontSize: 12, letterSpacing: 1 }}>NUTRITION TRACKING</Text>
           <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_800ExtraBold", fontSize: 26, letterSpacing: -0.5 }}>Meals</Text>
         </ReAnimated.View>

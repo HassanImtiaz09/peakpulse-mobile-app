@@ -85,8 +85,8 @@ describe("Meal Photo Gallery Screen", () => {
     expect(mealPhotoGallery).toContain("getMealPhotos");
   });
 
-  it("loads photos for the last 30 days", () => {
-    expect(mealPhotoGallery).toContain("getMealPhotos(30)");
+  it("loads photos for the last 60 days (with archive support)", () => {
+    expect(mealPhotoGallery).toContain("getMealPhotos(60)");
   });
 
   it("groups photos by date", () => {
@@ -117,7 +117,7 @@ describe("Meal Photo Gallery Screen", () => {
 
   it("shows empty state when no photos exist", () => {
     expect(mealPhotoGallery).toContain("No Meal Photos Yet");
-    expect(mealPhotoGallery).toContain("Go to Meals");
+    expect(mealPhotoGallery).toContain("AI Scan");
   });
 });
 

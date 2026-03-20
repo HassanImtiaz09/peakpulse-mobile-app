@@ -641,3 +641,31 @@
 ### Tests
 - [x] Updated round24, round29, round30, round31, round40 tests to match new code patterns
 - [x] 0 TypeScript errors, 189 tests passing (1 pre-existing Gemini API key failure)
+
+## Round 44 — Meal Gallery Archive, Push Notifications, Meal Log PDF Export
+
+### Meal Gallery Auto-Archive
+- [x] Added 1-week auto-archive logic to calorie-context getMealPhotos (archiveOld parameter)
+- [x] Favourited meals protected from auto-archive — checked against @favourite_meal_photos key
+- [x] Rewrote meal-photo-gallery screen with Recent/Favourites/Archived filter tabs
+- [x] Long-press to favourite, save with custom name, archive badge on old photos
+- [x] Favourite name autocomplete when logging meals manually
+
+### Push Notification Registration
+- [x] Created lib/notification-service.ts with expo-notifications integration
+- [x] Settings screen notification toggle wired to requestNotificationPermissions + scheduleDefaultReminders
+- [x] 3 daily reminders scheduled: 8AM workout, 12:30PM meal log, 8PM progress check
+- [x] Android notification channels configured (peakpulse-default, peakpulse-workout, peakpulse-meals)
+- [x] Notification preference persisted in AsyncStorage, cancel all on disable
+- [x] Settings shows scheduled reminder count and reminder schedule list
+
+### Meal Log PDF Export
+- [x] Created lib/meal-pdf.ts module with branded HTML-to-PDF generation
+- [x] PDF content: gold gradient header, daily meal tables with type badges, progress bars
+- [x] PDF content: weekly summary stats (meals logged, avg daily cal, total protein, days tracked)
+- [x] Added "Export" button to Meals tab hero header
+- [x] Share/download via expo-sharing (same pattern as workout-pdf)
+
+### Tests
+- [x] Updated round31 test for new gallery (getMealPhotos(60), AI Scan empty state text)
+- [x] 0 TypeScript errors, 189 tests passing (1 pre-existing Gemini API key failure)
