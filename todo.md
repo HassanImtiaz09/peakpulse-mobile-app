@@ -924,3 +924,20 @@
 ### Tests
 - [x] 65 new tests (round52-features.test.ts), 334 total passing
 - [x] 0 TypeScript errors
+
+## Round 53 — Save for Later (Meal Prep Bookmarks)
+
+### Save for Later
+- [x] Bookmark icon on each recipe card header (filled when saved, outline when not)
+- [x] "Save for Later" inline button below macros for unsaved recipes
+- [x] "Saved" indicator for already-bookmarked recipes
+- [x] Persist saved recipes to AsyncStorage (peakpulse_saved_recipes key)
+- [x] "Saved" tab with count badge showing all bookmarked recipes
+- [x] Saved date shown per recipe, expandable with full details
+- [x] Remove bookmark with confirmation dialog (Alert on native, direct on web)
+- [x] Empty state in saved tab with prompt to generate recipes
+- [x] SavedRecipe interface with id and savedAt timestamp
+
+### Tests
+- [x] 17 new tests (round53-features.test.ts), 352 total passing
+- [x] 0 TypeScript errors
