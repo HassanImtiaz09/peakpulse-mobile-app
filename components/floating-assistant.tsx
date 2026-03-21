@@ -98,16 +98,41 @@ export function FloatingAssistant() {
 
   async function loadProfileData() {
     try {
-      const [guestRaw, workoutCountRaw, streakRaw, scanRaw, mealRaw] = await Promise.all([
+      const [guestRaw, workoutCountRaw, streakRaw, scanRaw, mealRaw, wearableRaw, calorieRaw, pantryRaw, workoutPlanRaw] = await Promise.all([
         AsyncStorage.getItem("@guest_profile"),
         AsyncStorage.getItem("@workout_count"),
         AsyncStorage.getItem("@streak_count"),
         AsyncStorage.getItem("@body_scan_history"),
         AsyncStorage.getItem("@meal_log"),
+        AsyncStorage.getItem("@wearable_stats"),
+        AsyncStorage.getItem("@calorie_data"),
+        AsyncStorage.getItem("@pantry_items"),
+        AsyncStorage.getItem("@workout_plan"),
       ]);
       const guestProfile = guestRaw ? JSON.parse(guestRaw) : {};
       const scanHistory = scanRaw ? JSON.parse(scanRaw) : [];
       const mealLog = mealRaw ? JSON.parse(mealRaw) : [];
+      const wearableStats = wearableRaw ? JSON.parse(wearableRaw) : null;
+      const calorieData = calorieRaw ? JSON.parse(calorieRaw) : null;
+      const pantryItems = pantryRaw ? JSON.parse(pantryRaw) : [];
+      const workoutPlan = workoutPlanRaw ? JSON.parse(workoutPlanRaw) : null;
+
+      // Count today's meals
+      const today = new Date().toISOString().split("T")[0];
+      const todayMeals = mealLog.filter((m: any) => m.date?.startsWith(today));
+      // Count expiring pantry items (within 3 days)
+      const now = Date.now();
+      const threeDays = 3 * 24 * 60 * 60 * 1000;
+      const expiringCount = pantryItems.filter((p: any) => {
+        if (!p.expiryDate) return false;
+        const exp = new Date(p.expiryDate).getTime();
+        return exp > now && exp - now < threeDays;
+      }).length;
+      // Check if there's a workout scheduled today
+      const dayNames = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
+      const todayDay = dayNames[new Date().getDay()];
+      const hasWorkoutToday = workoutPlan?.schedule?.some((s: any) => s.day?.toLowerCase().includes(todayDay)) ?? false;
+
       setProfile({
         name: guestProfile?.name ?? "there",
         goal: guestProfile?.goal ?? "general fitness",
@@ -117,6 +142,14 @@ export function FloatingAssistant() {
         totalScans: scanHistory.length,
         totalMeals: mealLog.length,
         lastScanBF: scanHistory.length > 0 ? scanHistory[scanHistory.length - 1]?.estimatedBodyFat : null,
+        todayCalories: calorieData?.todayCalories ?? todayMeals.reduce((s: number, m: any) => s + (m.calories ?? 0), 0),
+        calorieGoal: calorieData?.calorieGoal ?? null,
+        todayMealsLogged: todayMeals.length,
+        hasWorkoutToday,
+        wearableSteps: wearableStats?.steps ?? 0,
+        wearableCaloriesBurnt: wearableStats?.totalCaloriesBurnt ?? 0,
+        wearableSleepHours: wearableStats?.sleepHours ?? 0,
+        pantryExpiringCount: expiringCount,
       });
     } catch {}
   }
@@ -136,6 +169,14 @@ export function FloatingAssistant() {
         totalMeals: profile.totalMeals ?? 0,
         lastScanBF: profile.lastScanBF,
         goal: profile.goal ?? "general fitness",
+        todayCalories: profile.todayCalories,
+        calorieGoal: profile.calorieGoal,
+        todayMealsLogged: profile.todayMealsLogged,
+        hasWorkoutToday: profile.hasWorkoutToday,
+        wearableSteps: profile.wearableSteps,
+        wearableCaloriesBurnt: profile.wearableCaloriesBurnt,
+        wearableSleepHours: profile.wearableSleepHours,
+        pantryExpiringCount: profile.pantryExpiringCount,
       };
       const greetingText = getGreeting(data);
       setGreeting(greetingText);

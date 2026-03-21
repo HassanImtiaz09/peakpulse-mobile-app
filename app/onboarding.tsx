@@ -38,10 +38,36 @@ const BG = {
 };
 
 const INTRO_SLIDES = [
-  { bg: BG.ob1, iconName: "bolt" as const, label: "WELCOME",        title: "Welcome to\nPeakPulse AI",  subtitle: "Your AI-powered fitness companion. Transform your body with science-backed plans.", accent: SF.gold },
-  { bg: BG.ob2, iconName: "photo-camera" as const, label: "AI BODY SCAN",   title: "See Your\nTransformation",  subtitle: "Take a photo and get an AI analysis of your physique. See exactly how you will look at your goal.", accent: SF.orange },
-  { bg: BG.ob3, iconName: "fitness-center" as const, label: "WORKOUT PLANS",  title: "Forge Your\nBest Body",     subtitle: "AI generates gym, home, or calisthenics plans tailored to your goal and schedule.", accent: SF.red },
-  { bg: BG.ob4, iconName: "restaurant" as const, label: "SMART NUTRITION",title: "Fuel Like\na Champion",     subtitle: "Halal, vegan, keto and more — AI creates meal plans with prep guides and calorie tracking.", accent: SF.gold2 },
+  { bg: BG.ob1, iconName: "bolt" as const, label: "WELCOME",        title: "Welcome to\nPeakPulse AI",  subtitle: "Your all-in-one AI fitness companion. Workouts, nutrition, body scans, wearable sync, smart pantry, and a personal AI coach — all in one app.", accent: SF.gold,
+    features: [
+      { icon: "fitness-center" as const, text: "AI Workout Plans" },
+      { icon: "restaurant" as const, text: "Smart Meal Plans" },
+      { icon: "photo-camera" as const, text: "AI Body Scan" },
+      { icon: "watch" as const, text: "Wearable Sync" },
+    ],
+  },
+  { bg: BG.ob2, iconName: "photo-camera" as const, label: "AI BODY SCAN",   title: "See Your\nTransformation",  subtitle: "Take a photo and get an AI analysis of your physique. See exactly how you will look at your goal.", accent: SF.orange,
+    features: [
+      { icon: "auto-awesome" as const, text: "Body Fat Analysis" },
+      { icon: "compare" as const, text: "Before & After" },
+      { icon: "trending-up" as const, text: "Progress Tracking" },
+    ],
+  },
+  { bg: BG.ob3, iconName: "fitness-center" as const, label: "WORKOUT PLANS",  title: "Forge Your\nBest Body",     subtitle: "AI generates gym, home, or calisthenics plans tailored to your goal and schedule.", accent: SF.red,
+    features: [
+      { icon: "timer" as const, text: "Form Check AI" },
+      { icon: "emoji-events" as const, text: "7-Day Challenges" },
+      { icon: "watch" as const, text: "Wearable Stats" },
+    ],
+  },
+  { bg: BG.ob4, iconName: "restaurant" as const, label: "SMART NUTRITION",title: "Fuel Like\na Champion",     subtitle: "AI meal plans, smart pantry with Cook Again shortcuts, weekly waste reports, and grocery price comparison.", accent: SF.gold2,
+    features: [
+      { icon: "kitchen" as const, text: "Smart Pantry" },
+      { icon: "replay" as const, text: "Cook Again" },
+      { icon: "assessment" as const, text: "Weekly Reports" },
+      { icon: "store" as const, text: "Grocery Links" },
+    ],
+  },
 ];
 
 const GOALS = [
@@ -418,7 +444,18 @@ export default function OnboardingScreen() {
                 <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}><MaterialIcons name={slide.iconName as any} size={14} color={slide.accent} /><Text style={{ color: slide.accent, fontFamily: "Outfit_700Bold", fontSize: 11, letterSpacing: 2 }}>{slide.label}</Text></View>
               </View>
               <Text style={{ color: SF.fg, fontFamily: "Outfit_800ExtraBold", fontSize: 36, lineHeight: 42, marginBottom: 12 }}>{slide.title}</Text>
-              <Text style={{ color: SF.gold3, fontFamily: "DMSans_400Regular", fontSize: 15, lineHeight: 22, marginBottom: 36 }}>{slide.subtitle}</Text>
+              <Text style={{ color: SF.gold3, fontFamily: "DMSans_400Regular", fontSize: 15, lineHeight: 22, marginBottom: 16 }}>{slide.subtitle}</Text>
+              {/* Feature pills */}
+              {(slide as any).features && (
+                <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8, marginBottom: 24 }}>
+                  {((slide as any).features as { icon: string; text: string }[]).map((f, fi) => (
+                    <View key={fi} style={{ flexDirection: "row", alignItems: "center", gap: 5, backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 10, paddingHorizontal: 10, paddingVertical: 6, borderWidth: 1, borderColor: "rgba(245,158,11,0.20)" }}>
+                      <MaterialIcons name={f.icon as any} size={14} color={slide.accent} />
+                      <Text style={{ color: SF.gold3, fontFamily: "DMSans_600SemiBold", fontSize: 11 }}>{f.text}</Text>
+                    </View>
+                  ))}
+                </View>
+              )}
               <TouchableOpacity
                 style={{ backgroundColor: slide.accent, borderRadius: 18, paddingVertical: 18, alignItems: "center", shadowColor: slide.accent, shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.5, shadowRadius: 16 }}
                 onPress={() => animateTransition(step + 1)}

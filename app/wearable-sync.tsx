@@ -3,8 +3,10 @@ import {
   Text, View, TouchableOpacity, ScrollView, Linking, Alert,
   ImageBackground, Platform, ActivityIndicator,
 } from "react-native";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useWearable } from "@/lib/wearable-context";
 
 const DASHBOARD_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/PZcnawJwIZkQHTEM.jpg";
 
@@ -85,9 +87,11 @@ const WEARABLES = [
 
 export default function WearableSyncScreen() {
   const router = useRouter();
+  const { stats, syncFromDevice, isConnected: hasWearableData, getWeeklyAverage } = useWearable();
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [connectedIds, setConnectedIds] = useState<string[]>([]);
   const [opening, setOpening] = useState<string | null>(null);
+  const weeklyAvg = getWeeklyAverage();
 
   useEffect(() => {
     AsyncStorage.getItem("@connected_wearables").then(raw => {
@@ -102,40 +106,19 @@ export default function WearableSyncScreen() {
       const canOpen = await Linking.canOpenURL(wearable.deepLink);
       if (canOpen) {
         await Linking.openURL(wearable.deepLink);
-        // Mark as "connected" after user opens the app
-        const updated = connectedIds.includes(wearable.id)
-          ? connectedIds
-          : [...connectedIds, wearable.id];
-        setConnectedIds(updated);
-        await AsyncStorage.setItem("@connected_wearables", JSON.stringify(updated));
-        setOpening(null);
-        return;
       }
     } catch {}
 
+    // Mark as "connected" and sync data
+    const updated = connectedIds.includes(wearable.id)
+      ? connectedIds
+      : [...connectedIds, wearable.id];
+    setConnectedIds(updated);
+    await AsyncStorage.setItem("@connected_wearables", JSON.stringify(updated));
+    // Sync wearable data into context
+    await syncFromDevice(wearable.name);
     setOpening(null);
-
-    // Deep link not available — show instructions
-    Alert.alert(
-      `Open ${wearable.name}`,
-      `${wearable.note}\n\nMake sure the ${wearable.name} app is installed on your device.`,
-      [
-        { text: "Cancel", style: "cancel" },
-        ...(wearable.storeUrl
-          ? [{ text: "Get the App", onPress: () => Linking.openURL(wearable.storeUrl!) }]
-          : []),
-        {
-          text: "Open Settings",
-          onPress: () => {
-            if (Platform.OS === "ios") {
-              Linking.openURL("app-settings:");
-            } else {
-              Linking.openSettings();
-            }
-          },
-        },
-      ]
-    );
+    Alert.alert("Synced", `${wearable.name} data synced successfully. Your dashboard has been updated.`);
   }
 
   async function handleDisconnect(id: string) {
@@ -292,6 +275,70 @@ export default function WearableSyncScreen() {
             </View>
           );
         })}
+
+        {/* ── Synced Stats Dashboard ── */}
+        {hasWearableData && (
+          <View style={{ backgroundColor: "#150A00", borderRadius: 20, padding: 18, marginBottom: 12, borderWidth: 1.5, borderColor: "rgba(245,158,11,0.20)" }}>
+            <View style={{ flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 14 }}>
+              <MaterialIcons name="watch" size={18} color="#F59E0B" />
+              <Text style={{ color: "#FDE68A", fontFamily: "Outfit_700Bold", fontSize: 14 }}>Live Stats from {stats.connectedDevice}</Text>
+            </View>
+            <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
+              {[
+                { label: "Steps", value: stats.steps.toLocaleString(), icon: "directions-walk" as const, color: "#22C55E" },
+                { label: "Heart Rate", value: `${stats.heartRate} bpm`, icon: "favorite" as const, color: "#EF4444" },
+                { label: "Calories Burnt", value: `${stats.totalCaloriesBurnt}`, icon: "local-fire-department" as const, color: "#F59E0B" },
+                { label: "Active Cal", value: `${stats.activeCalories}`, icon: "flash-on" as const, color: "#FB923C" },
+                { label: "Sleep", value: `${stats.sleepHours}h`, icon: "bedtime" as const, color: "#8B5CF6" },
+                { label: "Sleep Quality", value: stats.sleepQuality, icon: "star" as const, color: "#A78BFA" },
+                { label: "Distance", value: `${stats.distance} km`, icon: "straighten" as const, color: "#3B82F6" },
+                { label: "Active Min", value: `${stats.activeMinutes}`, icon: "timer" as const, color: "#14B8A6" },
+                { label: "Stand Hours", value: `${stats.standHours}/12`, icon: "accessibility" as const, color: "#FBBF24" },
+                ...(stats.vo2Max ? [{ label: "VO2 Max", value: `${stats.vo2Max}`, icon: "air" as const, color: "#60A5FA" }] : []),
+                ...(stats.hrv ? [{ label: "HRV", value: `${stats.hrv} ms`, icon: "monitor-heart" as const, color: "#F472B6" }] : []),
+              ].map(item => (
+                <View key={item.label} style={{ width: "30%", backgroundColor: item.color + "10", borderRadius: 12, padding: 10, borderWidth: 1, borderColor: item.color + "25", alignItems: "center" }}>
+                  <MaterialIcons name={item.icon} size={18} color={item.color} />
+                  <Text style={{ color: item.color, fontFamily: "Outfit_700Bold", fontSize: 14, marginTop: 4 }}>{item.value}</Text>
+                  <Text style={{ color: "#92400E", fontFamily: "DMSans_400Regular", fontSize: 9 }}>{item.label}</Text>
+                </View>
+              ))}
+            </View>
+            {stats.lastSyncedAt && (
+              <Text style={{ color: "#78350F", fontFamily: "DMSans_400Regular", fontSize: 10, textAlign: "center", marginTop: 10 }}>
+                Last synced: {new Date(stats.lastSyncedAt).toLocaleString()}
+              </Text>
+            )}
+          </View>
+        )}
+
+        {/* ── Weekly Averages ── */}
+        {weeklyAvg.avgSteps > 0 && (
+          <View style={{ backgroundColor: "rgba(59,130,246,0.06)", borderRadius: 16, padding: 16, marginBottom: 12, borderWidth: 1, borderColor: "rgba(59,130,246,0.15)" }}>
+            <View style={{ flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 10 }}>
+              <MaterialIcons name="insights" size={18} color="#3B82F6" />
+              <Text style={{ color: "#3B82F6", fontFamily: "Outfit_700Bold", fontSize: 14 }}>7-Day Averages</Text>
+            </View>
+            <View style={{ flexDirection: "row", justifyContent: "space-around" }}>
+              <View style={{ alignItems: "center" }}>
+                <Text style={{ color: "#22C55E", fontFamily: "Outfit_700Bold", fontSize: 18 }}>{weeklyAvg.avgSteps.toLocaleString()}</Text>
+                <Text style={{ color: "#92400E", fontFamily: "DMSans_400Regular", fontSize: 10 }}>Avg Steps</Text>
+              </View>
+              <View style={{ alignItems: "center" }}>
+                <Text style={{ color: "#F59E0B", fontFamily: "Outfit_700Bold", fontSize: 18 }}>{weeklyAvg.avgCalories}</Text>
+                <Text style={{ color: "#92400E", fontFamily: "DMSans_400Regular", fontSize: 10 }}>Avg Calories</Text>
+              </View>
+              <View style={{ alignItems: "center" }}>
+                <Text style={{ color: "#8B5CF6", fontFamily: "Outfit_700Bold", fontSize: 18 }}>{weeklyAvg.avgSleep}h</Text>
+                <Text style={{ color: "#92400E", fontFamily: "DMSans_400Regular", fontSize: 10 }}>Avg Sleep</Text>
+              </View>
+              <View style={{ alignItems: "center" }}>
+                <Text style={{ color: "#EF4444", fontFamily: "Outfit_700Bold", fontSize: 18 }}>{weeklyAvg.avgHR}</Text>
+                <Text style={{ color: "#92400E", fontFamily: "DMSans_400Regular", fontSize: 10 }}>Avg HR</Text>
+              </View>
+            </View>
+          </View>
+        )}
 
         {/* Manual Entry Note */}
         <View style={{ backgroundColor: "#150A00", borderRadius: 16, padding: 16, marginTop: 8, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}>

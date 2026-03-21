@@ -24,6 +24,7 @@ import { useSubscription } from "@/hooks/use-subscription";
 import { PaywallModal } from "@/components/paywall-modal";
 import { TutorialOverlay, useTutorial } from "@/components/tutorial-overlay";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { useWearable } from "@/lib/wearable-context";
 
 const TIPS_AND_TRICKS = [
   { icon: "water-drop" as const, tip: "Drink 500ml of water first thing in the morning to kickstart your metabolism and hydration." },
@@ -220,6 +221,7 @@ export default function HomeScreen() {
   const [onboardingChecked, setOnboardingChecked] = useState(false);
   const [showAllActions, setShowAllActions] = useState(false); // 2A: Quick Actions collapse
   const canUse = isAuthenticated || isGuest;
+  const wearableData = useWearable();
   const [tipIndex, setTipIndex] = React.useState(0);
 
   // 1A: Parallax scroll value
@@ -640,6 +642,54 @@ export default function HomeScreen() {
               </View>
             </View>
           </Modal>
+
+          {/* ── Wearable Stats Widget ── */}
+          {wearableData.isConnected && (
+            <StaggeredCard index={3}>
+              <View style={styles.section}>
+                <SectionTitle title="Wearable Stats" />
+                <TouchableOpacity
+                  onPress={() => router.push("/wearable-sync" as any)}
+                  style={{ backgroundColor: SF.surfacePrimary, borderRadius: 20, padding: 16, borderWidth: 1.5, borderColor: SF.borderPrimary }}
+                >
+                  <View style={{ flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 12 }}>
+                    <MaterialIcons name="watch" size={16} color={SF.emerald} />
+                    <Text style={{ color: SF.emerald2, fontFamily: "DMSans_600SemiBold", fontSize: 12 }}>{wearableData.stats.connectedDevice}</Text>
+                    <View style={{ flex: 1 }} />
+                    <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 10 }}>Tap for details</Text>
+                    <MaterialIcons name="chevron-right" size={14} color={SF.muted} />
+                  </View>
+                  <View style={{ flexDirection: "row", justifyContent: "space-around" }}>
+                    <View style={{ alignItems: "center" }}>
+                      <MaterialIcons name="directions-walk" size={20} color="#22C55E" />
+                      <Text style={{ color: "#22C55E", fontFamily: "Outfit_700Bold", fontSize: 16, marginTop: 2 }}>{wearableData.stats.steps.toLocaleString()}</Text>
+                      <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 9 }}>Steps</Text>
+                    </View>
+                    <View style={{ alignItems: "center" }}>
+                      <MaterialIcons name="favorite" size={20} color="#EF4444" />
+                      <Text style={{ color: "#EF4444", fontFamily: "Outfit_700Bold", fontSize: 16, marginTop: 2 }}>{wearableData.stats.heartRate}</Text>
+                      <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 9 }}>BPM</Text>
+                    </View>
+                    <View style={{ alignItems: "center" }}>
+                      <MaterialIcons name="local-fire-department" size={20} color="#F59E0B" />
+                      <Text style={{ color: "#F59E0B", fontFamily: "Outfit_700Bold", fontSize: 16, marginTop: 2 }}>{wearableData.stats.totalCaloriesBurnt}</Text>
+                      <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 9 }}>Burnt</Text>
+                    </View>
+                    <View style={{ alignItems: "center" }}>
+                      <MaterialIcons name="bedtime" size={20} color="#8B5CF6" />
+                      <Text style={{ color: "#8B5CF6", fontFamily: "Outfit_700Bold", fontSize: 16, marginTop: 2 }}>{wearableData.stats.sleepHours}h</Text>
+                      <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 9 }}>Sleep</Text>
+                    </View>
+                    <View style={{ alignItems: "center" }}>
+                      <MaterialIcons name="straighten" size={20} color="#3B82F6" />
+                      <Text style={{ color: "#3B82F6", fontFamily: "Outfit_700Bold", fontSize: 16, marginTop: 2 }}>{wearableData.stats.distance}</Text>
+                      <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 9 }}>km</Text>
+                    </View>
+                  </View>
+                </TouchableOpacity>
+              </View>
+            </StaggeredCard>
+          )}
 
           {/* ── Quick Actions (2A: collapsible, 3A: MaterialIcons) ── */}
           <StaggeredCard index={3}>

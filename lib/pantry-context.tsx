@@ -58,8 +58,25 @@ export interface ShoppingSuggestion {
   priority: "essential" | "recommended" | "nice-to-have";
 }
 
+// ── Cooked Meal History ────────────────────────────────────────────
+export interface CookedMeal {
+  id: string;
+  meal: AISuggestedMeal;
+  cookedAt: string; // ISO date
+  timesCooked: number;
+}
+
+// ── Pantry Usage Log (for weekly report) ──────────────────────────
+export interface PantryUsageEntry {
+  itemName: string;
+  action: "used" | "expired" | "removed";
+  date: string; // ISO date
+}
+
 // ── Storage Keys ───────────────────────────────────────────────────
 const PANTRY_KEY = "@pantry_items";
+const COOKED_MEALS_KEY = "@cooked_meals";
+const PANTRY_USAGE_KEY = "@pantry_usage_log";
 
 // ── Context ────────────────────────────────────────────────────────
 interface PantryContextValue {
@@ -73,6 +90,14 @@ interface PantryContextValue {
   refreshFromStorage: () => Promise<void>;
   getItemsByCategory: () => Record<PantryCategory, PantryItem[]>;
   getExpiringItems: (withinDays?: number) => PantryItem[];
+  // Cook Again
+  cookedMeals: CookedMeal[];
+  logCookedMeal: (meal: AISuggestedMeal) => Promise<void>;
+  getCookAgainMeals: () => CookedMeal[];
+  // Usage log
+  usageLog: PantryUsageEntry[];
+  logUsage: (entry: Omit<PantryUsageEntry, "date">) => Promise<void>;
+  getWeeklyReport: () => { used: PantryUsageEntry[]; expired: PantryUsageEntry[]; removed: PantryUsageEntry[]; totalItems: number; expiringCount: number };
 }
 
 const PantryContext = createContext<PantryContextValue | null>(null);
@@ -80,10 +105,14 @@ const PantryContext = createContext<PantryContextValue | null>(null);
 export function PantryProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<PantryItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [cookedMeals, setCookedMeals] = useState<CookedMeal[]>([]);
+  const [usageLog, setUsageLog] = useState<PantryUsageEntry[]>([]);
 
   // Load from storage on mount
   useEffect(() => {
     loadFromStorage();
+    loadCookedMeals();
+    loadUsageLog();
   }, []);
 
   const loadFromStorage = async () => {
@@ -98,6 +127,20 @@ export function PantryProvider({ children }: { children: React.ReactNode }) {
     } finally {
       setLoading(false);
     }
+  };
+
+  const loadCookedMeals = async () => {
+    try {
+      const raw = await AsyncStorage.getItem(COOKED_MEALS_KEY);
+      if (raw) setCookedMeals(JSON.parse(raw));
+    } catch {}
+  };
+
+  const loadUsageLog = async () => {
+    try {
+      const raw = await AsyncStorage.getItem(PANTRY_USAGE_KEY);
+      if (raw) setUsageLog(JSON.parse(raw));
+    } catch {}
   };
 
   const saveToStorage = async (newItems: PantryItem[]) => {
@@ -185,6 +228,65 @@ export function PantryProvider({ children }: { children: React.ReactNode }) {
     }).sort((a, b) => new Date(a.expiresAt!).getTime() - new Date(b.expiresAt!).getTime());
   }, [items]);
 
+  // ── Cook Again ────────────────────────────────────────────────────
+  const logCookedMeal = useCallback(async (meal: AISuggestedMeal) => {
+    setCookedMeals(prev => {
+      const existing = prev.find(cm => cm.meal.name === meal.name);
+      let updated: CookedMeal[];
+      if (existing) {
+        updated = prev.map(cm =>
+          cm.meal.name === meal.name
+            ? { ...cm, timesCooked: cm.timesCooked + 1, cookedAt: new Date().toISOString() }
+            : cm
+        );
+      } else {
+        updated = [...prev, {
+          id: `cooked_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+          meal,
+          cookedAt: new Date().toISOString(),
+          timesCooked: 1,
+        }];
+      }
+      AsyncStorage.setItem(COOKED_MEALS_KEY, JSON.stringify(updated)).catch(() => {});
+      return updated;
+    });
+  }, []);
+
+  const getCookAgainMeals = useCallback((): CookedMeal[] => {
+    return [...cookedMeals].sort((a, b) => b.timesCooked - a.timesCooked || new Date(b.cookedAt).getTime() - new Date(a.cookedAt).getTime());
+  }, [cookedMeals]);
+
+  // ── Usage Log ─────────────────────────────────────────────────────
+  const logUsage = useCallback(async (entry: Omit<PantryUsageEntry, "date">) => {
+    setUsageLog(prev => {
+      const updated = [...prev, { ...entry, date: new Date().toISOString() }];
+      // Keep only last 60 days of logs
+      const cutoff = new Date();
+      cutoff.setDate(cutoff.getDate() - 60);
+      const trimmed = updated.filter(e => new Date(e.date) >= cutoff);
+      AsyncStorage.setItem(PANTRY_USAGE_KEY, JSON.stringify(trimmed)).catch(() => {});
+      return trimmed;
+    });
+  }, []);
+
+  const getWeeklyReport = useCallback(() => {
+    const weekAgo = new Date();
+    weekAgo.setDate(weekAgo.getDate() - 7);
+    const weekEntries = usageLog.filter(e => new Date(e.date) >= weekAgo);
+    return {
+      used: weekEntries.filter(e => e.action === "used"),
+      expired: weekEntries.filter(e => e.action === "expired"),
+      removed: weekEntries.filter(e => e.action === "removed"),
+      totalItems: items.length,
+      expiringCount: items.filter(i => {
+        if (!i.expiresAt) return false;
+        const d = new Date();
+        d.setDate(d.getDate() + 3);
+        return new Date(i.expiresAt) <= d;
+      }).length,
+    };
+  }, [usageLog, items]);
+
   return (
     <PantryContext.Provider value={{
       items,
@@ -197,6 +299,12 @@ export function PantryProvider({ children }: { children: React.ReactNode }) {
       refreshFromStorage,
       getItemsByCategory,
       getExpiringItems,
+      cookedMeals,
+      logCookedMeal,
+      getCookAgainMeals,
+      usageLog,
+      logUsage,
+      getWeeklyReport,
     }}>
       {children}
     </PantryContext.Provider>

@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useMemo } from "react";
 import {
   ScrollView, Text, View, TouchableOpacity, TextInput, Alert, ActivityIndicator,
-  FlatList, Modal, Platform, ImageBackground,
+  FlatList, Modal, Platform, ImageBackground, Linking,
 } from "react-native";
 import ReAnimated, { FadeInDown } from "react-native-reanimated";
 import * as ImagePicker from "expo-image-picker";
@@ -11,7 +11,7 @@ import { ScreenContainer } from "@/components/screen-container";
 import { useRouter } from "expo-router";
 import { useAuth } from "@/hooks/use-auth";
 import { useGuestAuth } from "@/lib/guest-auth";
-import { usePantry, PANTRY_CATEGORIES, COMMON_PANTRY_ITEMS, CATEGORY_ICONS, type PantryItem, type PantryCategory, type AISuggestedMeal, type ShoppingSuggestion } from "@/lib/pantry-context";
+import { usePantry, PANTRY_CATEGORIES, COMMON_PANTRY_ITEMS, CATEGORY_ICONS, type PantryItem, type PantryCategory, type AISuggestedMeal, type ShoppingSuggestion, type CookedMeal, type PantryUsageEntry } from "@/lib/pantry-context";
 import { useCalories } from "@/lib/calorie-context";
 import { trpc } from "@/lib/trpc";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -20,14 +20,14 @@ import { shareShoppingListAsText, exportShoppingListPdf, type ShoppingExportItem
 
 const PANTRY_BG = "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&q=80";
 
-type ViewMode = "inventory" | "add" | "suggestions" | "shopping";
+type ViewMode = "inventory" | "add" | "suggestions" | "shopping" | "cookagain" | "report";
 
 export default function PantryScreen() {
   const router = useRouter();
   const { isAuthenticated } = useAuth();
   const { isGuest } = useGuestAuth();
   const canUse = isAuthenticated || isGuest;
-  const { items, addItem, addItems, removeItem, clearAll, getItemsByCategory, getExpiringItems } = usePantry();
+  const { items, addItem, addItems, removeItem, clearAll, getItemsByCategory, getExpiringItems, cookedMeals, logCookedMeal, getCookAgainMeals, usageLog, logUsage, getWeeklyReport } = usePantry();
   const { calorieGoal, macroTargets } = useCalories();
 
   const [viewMode, setViewMode] = useState<ViewMode>("inventory");
@@ -318,8 +318,34 @@ export default function PantryScreen() {
       carbs: meal.estimatedCarbs,
       fat: meal.estimatedFat,
     });
-    Alert.alert("Logged", `${meal.name} added to your meal log.`);
-  }, [addMeal]);
+    // Also track in Cook Again history
+    logCookedMeal(meal);
+    // Log pantry usage for ingredients from pantry
+    meal.ingredients.filter(i => i.fromPantry).forEach(i => {
+      logUsage({ itemName: i.name, action: "used" });
+    });
+    Alert.alert("Logged", `${meal.name} added to your meal log and Cook Again history.`);
+  }, [addMeal, logCookedMeal, logUsage]);
+
+  // Cook Again handler
+  const handleCookAgain = useCallback((cookedMeal: CookedMeal) => {
+    handleLogMeal(cookedMeal.meal);
+  }, [handleLogMeal]);
+
+  // Weekly report data
+  const weeklyReport = useMemo(() => getWeeklyReport(), [getWeeklyReport]);
+
+  // Waste reduction tips
+  const WASTE_TIPS = [
+    "Store herbs in a glass of water in the fridge to keep them fresh 2x longer.",
+    "Freeze overripe bananas for smoothies instead of throwing them away.",
+    "Use vegetable scraps (onion skins, carrot tops) to make homemade stock.",
+    "Plan your meals for the week before shopping to buy only what you need.",
+    "Store bread in the freezer and toast slices as needed to prevent mould.",
+    "Use the FIFO method: First In, First Out. Move older items to the front.",
+    "Wilting greens? Blend them into smoothies, pesto, or soups.",
+    "Check your fridge temperature — 1-4°C is optimal for food preservation.",
+  ];
 
   // ── Render ──
   return (
@@ -338,11 +364,14 @@ export default function PantryScreen() {
 
       {/* Tab Selector */}
       <View style={{ flexDirection: "row", paddingHorizontal: 16, paddingVertical: 10, gap: 8 }}>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
         {([
           { key: "inventory" as ViewMode, label: "Inventory", icon: "inventory-2" as const },
           { key: "add" as ViewMode, label: "Add Items", icon: "add-circle-outline" as const },
           { key: "suggestions" as ViewMode, label: "AI Meals", icon: "auto-awesome" as const },
+          { key: "cookagain" as ViewMode, label: "Cook Again", icon: "replay" as const },
           { key: "shopping" as ViewMode, label: "Shopping", icon: "shopping-cart" as const },
+          { key: "report" as ViewMode, label: "Weekly Report", icon: "assessment" as const },
         ]).map(tab => (
           <TouchableOpacity
             key={tab.key}
@@ -352,8 +381,8 @@ export default function PantryScreen() {
               else setViewMode(tab.key);
             }}
             style={{
-              flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 4,
-              paddingVertical: 8, borderRadius: 12,
+              flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 4,
+              paddingVertical: 8, paddingHorizontal: 12, borderRadius: 12,
               backgroundColor: viewMode === tab.key ? "rgba(245,158,11,0.15)" : "rgba(245,158,11,0.04)",
               borderWidth: 1, borderColor: viewMode === tab.key ? "rgba(245,158,11,0.30)" : "rgba(245,158,11,0.08)",
             }}
@@ -362,6 +391,7 @@ export default function PantryScreen() {
             <Text style={{ color: viewMode === tab.key ? "#F59E0B" : "#92400E", fontFamily: "DMSans_600SemiBold", fontSize: 10 }}>{tab.label}</Text>
           </TouchableOpacity>
         ))}
+        </ScrollView>
       </View>
 
       <ScrollView contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 120 }} showsVerticalScrollIndicator={false}>
@@ -694,6 +724,60 @@ export default function PantryScreen() {
           </View>
         )}
 
+        {/* ═══ COOK AGAIN VIEW ═══ */}
+        {viewMode === "cookagain" && (
+          <View style={{ gap: 16 }}>
+            {getCookAgainMeals().length === 0 ? (
+              <View style={{ alignItems: "center", paddingVertical: 40 }}>
+                <MaterialIcons name="replay" size={48} color="#92400E" />
+                <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 16, marginTop: 12 }}>No Cooked Meals Yet</Text>
+                <Text style={{ color: "#92400E", fontFamily: "DMSans_400Regular", fontSize: 12, textAlign: "center", marginTop: 4 }}>Log a meal from AI Suggestions and it will appear here for quick re-cooking.</Text>
+              </View>
+            ) : (
+              <>
+                <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+                  <MaterialIcons name="replay" size={18} color="#F59E0B" />
+                  <Text style={{ color: "#FDE68A", fontFamily: "Outfit_700Bold", fontSize: 14 }}>Your Favourites ({getCookAgainMeals().length})</Text>
+                </View>
+                {getCookAgainMeals().map((cm, idx) => (
+                  <ReAnimated.View key={cm.id} entering={FadeInDown.delay(idx * 80).duration(250)}>
+                    <View style={{ backgroundColor: "#150A00", borderRadius: 16, padding: 16, borderWidth: 1, borderColor: "rgba(245,158,11,0.12)" }}>
+                      <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start" }}>
+                        <View style={{ flex: 1 }}>
+                          <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 16 }}>{cm.meal.name}</Text>
+                          <Text style={{ color: "#92400E", fontFamily: "DMSans_400Regular", fontSize: 12, marginTop: 2 }}>{cm.meal.description}</Text>
+                        </View>
+                        <View style={{ backgroundColor: "rgba(245,158,11,0.12)", borderRadius: 10, paddingHorizontal: 10, paddingVertical: 4, marginLeft: 8 }}>
+                          <Text style={{ color: "#FBBF24", fontFamily: "Outfit_700Bold", fontSize: 12 }}>{cm.timesCooked}x</Text>
+                        </View>
+                      </View>
+                      {/* Nutrition summary */}
+                      <View style={{ flexDirection: "row", gap: 12, marginTop: 10, flexWrap: "wrap" }}>
+                        <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
+                          <MaterialIcons name="local-fire-department" size={14} color="#F59E0B" />
+                          <Text style={{ color: "#FDE68A", fontFamily: "DMSans_600SemiBold", fontSize: 12 }}>{cm.meal.estimatedCalories} kcal</Text>
+                        </View>
+                        <Text style={{ color: "#60A5FA", fontFamily: "DMSans_500Medium", fontSize: 11 }}>P: {cm.meal.estimatedProtein}g</Text>
+                        <Text style={{ color: "#FBBF24", fontFamily: "DMSans_500Medium", fontSize: 11 }}>C: {cm.meal.estimatedCarbs}g</Text>
+                        <Text style={{ color: "#FB923C", fontFamily: "DMSans_500Medium", fontSize: 11 }}>F: {cm.meal.estimatedFat}g</Text>
+                      </View>
+                      <Text style={{ color: "#78350F", fontFamily: "DMSans_400Regular", fontSize: 10, marginTop: 6 }}>Last cooked: {new Date(cm.cookedAt).toLocaleDateString()}</Text>
+                      {/* Cook Again button */}
+                      <TouchableOpacity
+                        onPress={() => handleCookAgain(cm)}
+                        style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6, backgroundColor: "#F59E0B", borderRadius: 12, paddingVertical: 10, marginTop: 10 }}
+                      >
+                        <MaterialIcons name="replay" size={18} color="#0A0500" />
+                        <Text style={{ color: "#0A0500", fontFamily: "Outfit_700Bold", fontSize: 14 }}>Cook Again & Log</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </ReAnimated.View>
+                ))}
+              </>
+            )}
+          </View>
+        )}
+
         {/* ═══ SHOPPING SUGGESTIONS VIEW ═══ */}
         {viewMode === "shopping" && (
           <View style={{ gap: 16 }}>
@@ -808,7 +892,144 @@ export default function PantryScreen() {
                     </View>
                   );
                 })}
+                {/* ── Grocery Price Comparison & Delivery Links ── */}
+                <View style={{ backgroundColor: "rgba(59,130,246,0.06)", borderRadius: 16, padding: 16, borderWidth: 1, borderColor: "rgba(59,130,246,0.15)", marginTop: 8 }}>
+                  <View style={{ flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 10 }}>
+                    <MaterialIcons name="store" size={18} color="#3B82F6" />
+                    <Text style={{ color: "#3B82F6", fontFamily: "Outfit_700Bold", fontSize: 14 }}>Compare Prices & Order</Text>
+                  </View>
+                  <Text style={{ color: "#92400E", fontFamily: "DMSans_400Regular", fontSize: 12, lineHeight: 18, marginBottom: 12 }}>
+                    Tap a store below to search for your shopping list items. Prices vary by location.
+                  </Text>
+                  <View style={{ gap: 8 }}>
+                    {[
+                      { name: "Amazon Fresh", icon: "shopping-bag" as const, color: "#FF9900", url: "https://www.amazon.com/alm/storefront?almBrandId=QW1hem9uIEZyZXNo" },
+                      { name: "Walmart Grocery", icon: "local-grocery-store" as const, color: "#0071CE", url: "https://www.walmart.com/grocery" },
+                      { name: "Instacart", icon: "delivery-dining" as const, color: "#43B02A", url: "https://www.instacart.com/" },
+                      { name: "Kroger", icon: "storefront" as const, color: "#E31837", url: "https://www.kroger.com/" },
+                      { name: "Whole Foods", icon: "eco" as const, color: "#00674B", url: "https://www.wholefoodsmarket.com/" },
+                    ].map(store => (
+                      <TouchableOpacity
+                        key={store.name}
+                        onPress={() => {
+                          const query = shoppingSuggestions.filter(s => s.priority === "essential").map(s => s.name).slice(0, 5).join(", ");
+                          const searchUrl = store.url + (query ? `?q=${encodeURIComponent(query)}` : "");
+                          Linking.openURL(searchUrl).catch(() => Linking.openURL(store.url));
+                        }}
+                        style={{ flexDirection: "row", alignItems: "center", gap: 10, backgroundColor: store.color + "12", borderRadius: 12, padding: 12, borderWidth: 1, borderColor: store.color + "30" }}
+                      >
+                        <View style={{ width: 36, height: 36, borderRadius: 10, backgroundColor: store.color + "20", alignItems: "center", justifyContent: "center" }}>
+                          <MaterialIcons name={store.icon} size={20} color={store.color} />
+                        </View>
+                        <View style={{ flex: 1 }}>
+                          <Text style={{ color: "#FFF7ED", fontFamily: "DMSans_600SemiBold", fontSize: 14 }}>{store.name}</Text>
+                          <Text style={{ color: "#92400E", fontFamily: "DMSans_400Regular", fontSize: 11 }}>Tap to search your list items</Text>
+                        </View>
+                        <MaterialIcons name="open-in-new" size={16} color={store.color} />
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                </View>
               </>
+            )}
+          </View>
+        )}
+
+        {/* ═══ WEEKLY PANTRY REPORT VIEW ═══ */}
+        {viewMode === "report" && (
+          <View style={{ gap: 16 }}>
+            <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+              <MaterialIcons name="assessment" size={18} color="#F59E0B" />
+              <Text style={{ color: "#FDE68A", fontFamily: "Outfit_700Bold", fontSize: 14 }}>Weekly Pantry Report</Text>
+            </View>
+
+            {/* Summary Stats */}
+            <View style={{ flexDirection: "row", gap: 8 }}>
+              {[
+                { label: "Items Used", value: weeklyReport.used.length, icon: "check-circle" as const, color: "#22C55E" },
+                { label: "Expired", value: weeklyReport.expired.length, icon: "warning" as const, color: "#EF4444" },
+                { label: "Removed", value: weeklyReport.removed.length, icon: "delete" as const, color: "#F59E0B" },
+              ].map(stat => (
+                <View key={stat.label} style={{ flex: 1, backgroundColor: stat.color + "10", borderRadius: 14, padding: 14, borderWidth: 1, borderColor: stat.color + "25", alignItems: "center" }}>
+                  <MaterialIcons name={stat.icon} size={22} color={stat.color} />
+                  <Text style={{ color: stat.color, fontFamily: "Outfit_700Bold", fontSize: 22, marginTop: 4 }}>{stat.value}</Text>
+                  <Text style={{ color: "#92400E", fontFamily: "DMSans_500Medium", fontSize: 10 }}>{stat.label}</Text>
+                </View>
+              ))}
+            </View>
+
+            {/* Current Pantry Status */}
+            <View style={{ backgroundColor: "#150A00", borderRadius: 16, padding: 16, borderWidth: 1, borderColor: "rgba(245,158,11,0.12)" }}>
+              <Text style={{ color: "#FDE68A", fontFamily: "Outfit_700Bold", fontSize: 13, marginBottom: 8 }}>Current Status</Text>
+              <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                <View style={{ alignItems: "center" }}>
+                  <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 20 }}>{weeklyReport.totalItems}</Text>
+                  <Text style={{ color: "#92400E", fontFamily: "DMSans_400Regular", fontSize: 11 }}>Total Items</Text>
+                </View>
+                <View style={{ alignItems: "center" }}>
+                  <Text style={{ color: weeklyReport.expiringCount > 0 ? "#EF4444" : "#22C55E", fontFamily: "Outfit_700Bold", fontSize: 20 }}>{weeklyReport.expiringCount}</Text>
+                  <Text style={{ color: "#92400E", fontFamily: "DMSans_400Regular", fontSize: 11 }}>Expiring Soon</Text>
+                </View>
+                <View style={{ alignItems: "center" }}>
+                  <Text style={{ color: "#FBBF24", fontFamily: "Outfit_700Bold", fontSize: 20 }}>{cookedMeals.length}</Text>
+                  <Text style={{ color: "#92400E", fontFamily: "DMSans_400Regular", fontSize: 11 }}>Meals Cooked</Text>
+                </View>
+              </View>
+            </View>
+
+            {/* Items Used This Week */}
+            {weeklyReport.used.length > 0 && (
+              <View style={{ backgroundColor: "rgba(34,197,94,0.06)", borderRadius: 14, padding: 14, borderWidth: 1, borderColor: "rgba(34,197,94,0.15)" }}>
+                <Text style={{ color: "#22C55E", fontFamily: "Outfit_700Bold", fontSize: 13, marginBottom: 8 }}>Items Used This Week</Text>
+                {weeklyReport.used.map((entry, i) => (
+                  <View key={i} style={{ flexDirection: "row", alignItems: "center", gap: 8, paddingVertical: 4 }}>
+                    <MaterialIcons name="check" size={14} color="#22C55E" />
+                    <Text style={{ color: "#FFF7ED", fontFamily: "DMSans_500Medium", fontSize: 13, flex: 1 }}>{entry.itemName}</Text>
+                    <Text style={{ color: "#92400E", fontFamily: "DMSans_400Regular", fontSize: 10 }}>{new Date(entry.date).toLocaleDateString()}</Text>
+                  </View>
+                ))}
+              </View>
+            )}
+
+            {/* Items Expired/Wasted */}
+            {weeklyReport.expired.length > 0 && (
+              <View style={{ backgroundColor: "rgba(239,68,68,0.06)", borderRadius: 14, padding: 14, borderWidth: 1, borderColor: "rgba(239,68,68,0.15)" }}>
+                <Text style={{ color: "#EF4444", fontFamily: "Outfit_700Bold", fontSize: 13, marginBottom: 8 }}>Items Expired / Wasted</Text>
+                {weeklyReport.expired.map((entry, i) => (
+                  <View key={i} style={{ flexDirection: "row", alignItems: "center", gap: 8, paddingVertical: 4 }}>
+                    <MaterialIcons name="warning" size={14} color="#EF4444" />
+                    <Text style={{ color: "#FFF7ED", fontFamily: "DMSans_500Medium", fontSize: 13, flex: 1 }}>{entry.itemName}</Text>
+                    <Text style={{ color: "#92400E", fontFamily: "DMSans_400Regular", fontSize: 10 }}>{new Date(entry.date).toLocaleDateString()}</Text>
+                  </View>
+                ))}
+              </View>
+            )}
+
+            {/* Waste Reduction Tips */}
+            <View style={{ backgroundColor: "rgba(59,130,246,0.06)", borderRadius: 16, padding: 16, borderWidth: 1, borderColor: "rgba(59,130,246,0.15)" }}>
+              <View style={{ flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 10 }}>
+                <MaterialIcons name="lightbulb" size={18} color="#3B82F6" />
+                <Text style={{ color: "#3B82F6", fontFamily: "Outfit_700Bold", fontSize: 14 }}>Tips to Reduce Food Waste</Text>
+              </View>
+              {WASTE_TIPS.slice(0, 3).map((tip, i) => (
+                <View key={i} style={{ flexDirection: "row", gap: 8, marginBottom: 8 }}>
+                  <Text style={{ color: "#3B82F6", fontFamily: "DMSans_600SemiBold", fontSize: 12 }}>{i + 1}.</Text>
+                  <Text style={{ color: "#D1D5DB", fontFamily: "DMSans_400Regular", fontSize: 12, lineHeight: 18, flex: 1 }}>{tip}</Text>
+                </View>
+              ))}
+            </View>
+
+            {/* Efficiency Score */}
+            {(weeklyReport.used.length + weeklyReport.expired.length) > 0 && (
+              <View style={{ backgroundColor: "#150A00", borderRadius: 16, padding: 16, borderWidth: 1, borderColor: "rgba(245,158,11,0.12)", alignItems: "center" }}>
+                <Text style={{ color: "#92400E", fontFamily: "DMSans_600SemiBold", fontSize: 11, letterSpacing: 1, marginBottom: 8 }}>PANTRY EFFICIENCY SCORE</Text>
+                <Text style={{ color: weeklyReport.expired.length === 0 ? "#22C55E" : weeklyReport.expired.length <= 2 ? "#FBBF24" : "#EF4444", fontFamily: "Outfit_800ExtraBold", fontSize: 36 }}>
+                  {Math.round((weeklyReport.used.length / (weeklyReport.used.length + weeklyReport.expired.length)) * 100)}%
+                </Text>
+                <Text style={{ color: "#92400E", fontFamily: "DMSans_400Regular", fontSize: 12, textAlign: "center", marginTop: 4 }}>
+                  {weeklyReport.expired.length === 0 ? "Perfect! No food wasted this week." : `${weeklyReport.expired.length} item${weeklyReport.expired.length > 1 ? "s" : ""} expired. Try using expiring items first.`}
+                </Text>
+              </View>
             )}
           </View>
         )}

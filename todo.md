@@ -735,3 +735,48 @@
 ### Tests
 - [x] 29 new tests (round46-pantry-enhancements.test.ts), 241 total passing
 - [x] 0 TypeScript errors
+
+## Round 47 — Cook Again, Pantry Report, Grocery Links, Wearables, Onboarding Revamp, AI Greeting
+
+### Cook Again Shortcuts
+- [x] Track which AI-suggested meals the user has cooked (AsyncStorage persistence)
+- [x] "Cook Again" section on pantry screen showing previously cooked meals
+- [x] Quick re-cook: one-tap to log the meal again to calorie tracker
+- [x] Show cook count and last cooked date for each recipe
+
+### Weekly Pantry Report
+- [x] Auto-generate weekly summary: items used, wasted (expired), and expiring soon
+- [x] Tips to reduce food waste based on pantry patterns
+- [x] Accessible from pantry screen as a report card/section
+- [x] Track item usage over time for trend analysis
+
+### Grocery Store Price Comparison & Delivery Links
+- [x] Integrate location-based grocery store suggestions
+- [x] Show estimated price comparisons for shopping list items
+- [x] Link to delivery services (Instacart, Amazon Fresh, Walmart, etc.)
+- [x] Deep links to add items to cart where possible
+
+### Wearable Integration Optimisation
+- [x] WearableContext with simulated data sync from Apple Health / Google Fit / Fitbit / Samsung Health / Garmin
+- [x] Display wearable stats on Dashboard (steps, active calories, heart rate, sleep, distance)
+- [x] Calculate total calories burned (BMR + active) from wearable data
+- [x] Wearable sync screen shows live stats grid, 7-day averages, and weekly trends
+- [x] Sync data persisted to AsyncStorage for offline access
+
+### Revised Onboarding UI
+- [x] Highlight key app features during onboarding (Pantry AI, Wearables, AI Coach, etc.)
+- [x] Feature pills on each intro slide showing sub-features
+- [x] Updated slide subtitles to mention Cook Again, Weekly Reports, Grocery Links
+
+### AI Greeting & Daily Reminders
+- [x] AI greeting on app open based on time of day (morning/afternoon/evening/night)
+- [x] Contextual meal reminder (breakfast/lunch/dinner/snack based on current hour)
+- [x] Workout reminder with today's scheduled plan check
+- [x] Progress insight: momentum over last few days, streak info, calorie progress
+- [x] Wearable data in greetings (steps, sleep quality, calories burnt)
+- [x] Pantry expiry alerts in evening greetings
+- [x] Enhanced FloatingAssistant loads wearable, calorie, pantry, and workout data for context
+
+### Tests
+- [x] 7 new tests (round47-features.test.ts), 248 total passing
+- [x] 0 TypeScript errors

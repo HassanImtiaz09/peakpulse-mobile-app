@@ -11,6 +11,7 @@ import { ThemeProvider } from "@/lib/theme-provider";
 import { GuestAuthProvider } from "@/lib/guest-auth";
 import { CalorieProvider } from "@/lib/calorie-context";
 import { PantryProvider } from "@/lib/pantry-context";
+import { WearableProvider } from "@/lib/wearable-context";
 import {
   SafeAreaFrameContext,
   SafeAreaInsetsContext,
@@ -206,6 +207,7 @@ export default function RootLayout() {
       <GuestAuthProvider>
       <CalorieProvider>
       <PantryProvider>
+      <WearableProvider>
       <trpc.Provider client={trpcClient} queryClient={queryClient}>
         <QueryClientProvider client={queryClient}>
           {/* Default to hiding native headers so raw route segments don't appear (e.g. "(tabs)", "products/[id]"). */}
@@ -219,6 +221,7 @@ export default function RootLayout() {
           <StatusBar style="light" />
         </QueryClientProvider>
       </trpc.Provider>
+      </WearableProvider>
       </PantryProvider>
       </CalorieProvider>
       </GuestAuthProvider>
