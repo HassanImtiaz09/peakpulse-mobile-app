@@ -320,8 +320,8 @@ export const appRouter = router({
         await checkAiLimit(ctx.user?.id, "mealLog.analyzePhoto");
         const response = await invokeLLM({
           messages: [
-            { role: "system", content: `Analyze this food image. Return JSON: {"foods":[{"name":"string","portion":"string","calories":number,"protein":number,"carbs":number,"fat":number}],"totalCalories":number,"totalProtein":number,"totalCarbs":number,"totalFat":number,"confidence":"low"|"medium"|"high","notes":"description"}` },
-            { role: "user", content: [{ type: "text", text: "Estimate calories and macros for this food." }, { type: "image_url", image_url: { url: input.photoUrl } }] },
+            { role: "system", content: `You are an expert nutritionist AI with food recognition capabilities. Analyze this food photo carefully.\n\nIdentify every distinct food item visible. For each item, estimate realistic portion size, calories, protein (g), carbs (g), and fat (g).\n\nReturn JSON:\n{\n  "foods": [{ "name": "string", "portion": "string (e.g. 1 cup, 200g)", "calories": number, "protein": number, "carbs": number, "fat": number }],\n  "totalCalories": number,\n  "totalProtein": number,\n  "totalCarbs": number,\n  "totalFat": number,\n  "confidence": "low" | "medium" | "high",\n  "mealType": "breakfast" | "lunch" | "dinner" | "snack",\n  "healthScore": number (1-10, where 10 is very healthy),\n  "suggestion": "string (one short actionable tip to make this meal healthier)",\n  "notes": "string (brief description of what you see)"\n}\n\nBe accurate with portions. Use conservative estimates when uncertain. The healthScore should reflect nutritional balance, whole food content, and macro distribution.` },
+            { role: "user", content: [{ type: "text", text: "Analyze this food photo. Identify all items and estimate nutrition." }, { type: "image_url", image_url: { url: input.photoUrl } }] },
           ],
           response_format: { type: "json_object" },
         });

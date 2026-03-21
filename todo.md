@@ -836,3 +836,28 @@
 ### Tests
 - [x] 7 new tests (round49-features.test.ts), 269 total passing
 - [x] 0 TypeScript errors
+
+## Round 50 — Meal Photo Recognition (AI Auto-Log)
+
+### Server Endpoint
+- [x] Enhanced existing `mealLog.analyzePhoto` endpoint with richer prompt (health score, meal type detection, suggestion)
+- [x] Returns structured JSON: food items with portions, calories, macros, health score (1-10), meal type, suggestion
+- [x] Server-side macro recalculation (p×4 + c×4 + f×9) with 15% deviation correction
+- [x] Graceful fallback response on parse errors
+
+### Meal Photo Screen (Enhanced Existing AI Scanner)
+- [x] Existing AI Food Scanner in meals tab already has camera + gallery picker via expo-image-picker
+- [x] Uploads photo to S3 via `upload.photo`, then sends URL to `mealLog.analyzePhoto`
+- [x] Enhanced results display: health score badge (color-coded), detected meal type pill, macro stats
+- [x] AI suggestion tip shown in blue info box below detected foods
+- [x] Auto-sets meal type selector from AI detection
+- [x] One-tap "Log This Meal" saves to CalorieContext and DB (if authenticated)
+
+### Integration
+- [x] "Snap a Meal" quick action added to dashboard (photo-camera icon)
+- [x] Existing "Log Meal" quick action already links to meals tab
+- [x] Confirmed meal data wired into CalorieContext via addMeal()
+
+### Tests
+- [x] 7 new tests (round50-features.test.ts), 276 total passing
+- [x] 0 TypeScript errors

@@ -471,6 +471,10 @@ export default function MealsScreen() {
       const { url } = await uploadPhoto.mutateAsync({ base64, mimeType: "image/jpeg" });
       const result = await analyzePhoto.mutateAsync({ photoUrl: url });
       setAnalysisResult({ ...result, uploadedUrl: url });
+      // Auto-set meal type from AI detection
+      if ((result as any).mealType && MEAL_TYPES.includes((result as any).mealType)) {
+        setMealType((result as any).mealType);
+      }
       if (result.notes && !mealName) {
         const firstFood = (result as any).foods?.[0]?.name;
         setMealName(firstFood ? `${firstFood} & more` : String(result.notes).slice(0, 40));
@@ -938,8 +942,28 @@ export default function MealsScreen() {
                       </Text>
                     </View>
                   </View>
+                  {/* Health Score + Meal Type Detection */}
+                  {(analysisResult.healthScore || analysisResult.mealType) && (
+                    <View style={{ flexDirection: "row", gap: 6, marginBottom: 8 }}>
+                      {analysisResult.healthScore != null && (
+                        <View style={{ flexDirection: "row", alignItems: "center", gap: 4, backgroundColor: analysisResult.healthScore >= 7 ? "rgba(34,197,94,0.12)" : analysisResult.healthScore >= 4 ? "rgba(245,158,11,0.12)" : "rgba(239,68,68,0.12)", borderRadius: 8, paddingHorizontal: 8, paddingVertical: 3 }}>
+                          <MaterialIcons name={analysisResult.healthScore >= 7 ? "favorite" : analysisResult.healthScore >= 4 ? "restaurant" : "warning"} size={12} color={analysisResult.healthScore >= 7 ? "#22C55E" : analysisResult.healthScore >= 4 ? "#F59E0B" : "#EF4444"} />
+                          <Text style={{ color: analysisResult.healthScore >= 7 ? "#22C55E" : analysisResult.healthScore >= 4 ? "#FDE68A" : "#F87171", fontSize: 10, fontFamily: "Outfit_700Bold" }}>
+                            Health: {analysisResult.healthScore}/10
+                          </Text>
+                        </View>
+                      )}
+                      {analysisResult.mealType && (
+                        <View style={{ backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 8, paddingHorizontal: 8, paddingVertical: 3 }}>
+                          <Text style={{ color: "#FDE68A", fontSize: 10, fontFamily: "Outfit_700Bold", textTransform: "capitalize" }}>
+                            {analysisResult.mealType}
+                          </Text>
+                        </View>
+                      )}
+                    </View>
+                  )}
                   {analysisResult.notes && (
-                    <Text style={{ color: "#B45309", fontSize: 12, marginBottom: 10, lineHeight: 18 }}>{String(analysisResult.notes)}</Text>
+                    <Text style={{ color: "#B45309", fontSize: 12, marginBottom: 8, lineHeight: 18 }}>{String(analysisResult.notes)}</Text>
                   )}
                   <View style={{ flexDirection: "row", justifyContent: "space-around", marginBottom: 10 }}>
                     <MacroStat label="Calories" value={analysisResult.totalCalories ?? 0} unit="kcal" color="#FBBF24" />
@@ -956,6 +980,13 @@ export default function MealsScreen() {
                           <Text style={{ color: "#FBBF24", fontSize: 12, fontFamily: "DMSans_600SemiBold" }}>{food.calories} kcal</Text>
                         </View>
                       ))}
+                    </View>
+                  )}
+                  {/* AI Suggestion */}
+                  {analysisResult.suggestion && (
+                    <View style={{ flexDirection: "row", alignItems: "flex-start", gap: 6, marginTop: 8, backgroundColor: "rgba(59,130,246,0.08)", borderRadius: 10, padding: 10, borderWidth: 1, borderColor: "rgba(59,130,246,0.15)" }}>
+                      <MaterialIcons name="lightbulb" size={14} color="#60A5FA" style={{ marginTop: 1 }} />
+                      <Text style={{ color: "#93C5FD", fontSize: 11, lineHeight: 16, flex: 1 }}>{String(analysisResult.suggestion)}</Text>
                     </View>
                   )}
                 </View>

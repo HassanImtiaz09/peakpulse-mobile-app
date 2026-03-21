@@ -71,6 +71,7 @@ const QUICK_ACTIONS_ALL = [
   { icon: "camera-alt" as const, label: "AI Body Scan", route: "/(tabs)/scan", gated: false },
   { icon: "fitness-center" as const, label: "Start Workout", route: "/(tabs)/plans", gated: false },
   { icon: "restaurant" as const, label: "Log Meal", route: "/(tabs)/meals", gated: false },
+  { icon: "photo-camera" as const, label: "Snap a Meal", route: "/(tabs)/meals", gated: false },
   { icon: "trending-up" as const, label: "Progress", route: "/progress-photos", gated: true, feature: "progress_photos", tier: "basic" as const, desc: "Track your body transformation with progress photos — Basic plan and above." },
   { icon: "smart-toy" as const, label: "AI Coach", route: "/ai-coach", gated: false },
   { icon: "check-circle" as const, label: "Daily Check-In", route: "/daily-checkin", gated: false },
