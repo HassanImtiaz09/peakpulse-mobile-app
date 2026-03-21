@@ -759,6 +759,41 @@ Return a JSON coaching report with this exact structure:
       }),
   }),
 
+  receipt: router({
+    /** Scan a grocery receipt photo and extract items using built-in LLM */
+    scan: guestOrUserProcedure
+      .input(z.object({ photoUrl: z.string() }))
+      .mutation(async ({ ctx, input }) => {
+        await checkAiLimit(ctx.user?.id, "receipt.scan");
+        const response = await invokeLLM({
+          messages: [
+            {
+              role: "system",
+              content: `You are an expert at reading grocery store receipts. Analyze this receipt photo and extract every grocery item.\n\nFor each item, determine:\n- name: Clean product name (remove store codes, abbreviations)\n- quantity: Number of units purchased (default 1)\n- price: Price paid for this item (number, 0 if unreadable)\n- category: One of: produce, dairy, meat, seafood, grains, canned, frozen, beverages, snacks, condiments, bakery, other\n- estimatedExpiry: Estimated days until expiry based on product type (e.g. milk=7, bread=5, canned=365, produce=5, meat=3, frozen=90)\n\nAlso extract:\n- storeName: Name of the store (if visible)\n- total: Total amount on receipt\n- date: Receipt date (if visible, ISO format)\n\nReturn JSON:\n{\n  "items": [{ "name": "string", "quantity": number, "price": number, "category": "string", "estimatedExpiry": number }],\n  "storeName": "string or null",\n  "total": number,\n  "date": "string or null",\n  "itemCount": number\n}\n\nBe thorough — extract every line item. Clean up abbreviated names to be human-readable.`,
+            },
+            {
+              role: "user",
+              content: [
+                { type: "text", text: "Extract all grocery items from this receipt." },
+                { type: "image_url", image_url: { url: input.photoUrl } },
+              ],
+            },
+          ],
+          response_format: { type: "json_object" },
+        });
+        let result: any;
+        try {
+          result = JSON.parse((response.choices[0].message.content as string) ?? "{}");
+        } catch {
+          result = { items: [], storeName: null, total: 0, date: null, itemCount: 0 };
+        }
+        // Ensure items array exists
+        if (!Array.isArray(result.items)) result.items = [];
+        result.itemCount = result.items.length;
+        return result;
+      }),
+  }),
+
   upload: router({
     // Photo upload — works for guests (stored to S3 without user ID)
     photo: guestOrUserProcedure

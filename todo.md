@@ -861,3 +861,35 @@
 ### Tests
 - [x] 7 new tests (round50-features.test.ts), 276 total passing
 - [x] 0 TypeScript errors
+
+## Round 51 — Portion Sliders, Meal Timeline, Receipt Scanner
+
+### Portion Size Adjustment Sliders
+- [x] portionMultiplier state (0.25-3.0) with reset on new analysis
+- [x] Macro display values multiply in real-time (calories, protein, carbs, fat)
+- [x] logAnalyzedMeal applies multiplier before saving
+- [x] +/- fine-tune buttons (0.05 increments) with visual progress bar
+- [x] Preset buttons: Half (0.5x), Regular (1.0x), Large (1.5x), Double (2.0x)
+
+### Meal Photo Timeline
+- [x] app/meal-timeline.tsx with date-grouped FlatList and photo strips
+- [x] Photo thumbnails in horizontal strip per day, expandable full photo
+- [x] Meal name, calories, meal type pill, and time for each entry
+- [x] Expandable cards show full macro breakdown (protein, carbs, fat, kcal)
+- [x] "Timeline" link in meals tab header + "Meal Timeline" dashboard quick action
+- [x] "Load more days" pagination (14 days at a time)
+
+### Receipt Scanner
+- [x] tRPC receipt.scan endpoint using built-in LLM with detailed receipt parsing prompt
+- [x] app/scan-receipt.tsx with camera/gallery picker and receipt preview
+- [x] Extracts items, quantities, prices, categories, and estimated shelf life
+- [x] CATEGORY_MAP maps receipt categories to PantryCategory types
+- [x] Select/deselect individual items, Select All / None controls
+- [x] Batch "Add to Pantry" with auto-calculated expiry dates
+- [x] Store name, total, and receipt date displayed in summary card
+- [x] "Scan Receipt" button in pantry add view (blue, between barcode and manual)
+- [x] "Scan Receipt" + "Meal Timeline" quick actions on dashboard
+
+### Tests
+- [x] 31 new tests (round51-features.test.ts), 307 total passing
+- [x] 0 TypeScript errors

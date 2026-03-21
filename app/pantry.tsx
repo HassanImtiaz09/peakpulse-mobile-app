@@ -529,6 +529,18 @@ export default function PantryScreen() {
               </View>
             </TouchableOpacity>
 
+            {/* Scan Receipt Button */}
+            <TouchableOpacity
+              onPress={() => router.push("/scan-receipt" as any)}
+              style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 10, backgroundColor: "rgba(59,130,246,0.08)", borderRadius: 16, padding: 16, borderWidth: 1, borderColor: "rgba(59,130,246,0.20)" }}
+            >
+              <MaterialIcons name="receipt-long" size={24} color="#60A5FA" />
+              <View>
+                <Text style={{ color: "#60A5FA", fontFamily: "Outfit_700Bold", fontSize: 15 }}>Scan Receipt</Text>
+                <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 11 }}>Extract items from a grocery receipt photo</Text>
+              </View>
+            </TouchableOpacity>
+
             {/* Manual Entry */}
             <View style={{ backgroundColor: "#150A00", borderRadius: 16, padding: 16, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}>
               <Text style={{ color: "#FDE68A", fontFamily: "Outfit_700Bold", fontSize: 14, marginBottom: 12 }}>Add Manually</Text>

@@ -86,6 +86,8 @@ const QUICK_ACTIONS_ALL = [
   { icon: "workspace-premium" as const, label: "Upgrade", route: "/subscription", gated: false },
   { icon: "calendar-today" as const, label: "Workout History", route: "/workout-calendar", gated: false },
   { icon: "notifications-active" as const, label: "AI Reminders", route: "/notification-settings", gated: false },
+  { icon: "receipt-long" as const, label: "Scan Receipt", route: "/scan-receipt", gated: false },
+  { icon: "photo-library" as const, label: "Meal Timeline", route: "/meal-timeline", gated: false },
 ];
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);

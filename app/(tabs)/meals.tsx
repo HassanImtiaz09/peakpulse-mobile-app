@@ -98,6 +98,7 @@ export default function MealsScreen() {
   const [selectedBase64, setSelectedBase64] = useState<string | null>(null);
   const [analyzing, setAnalyzing] = useState(false);
   const [analysisResult, setAnalysisResult] = useState<any>(null);
+  const [portionMultiplier, setPortionMultiplier] = useState(1.0);
   const [savePhoto, setSavePhoto] = useState(true);
   const [swapMealType, setSwapMealType] = useState<string | null>(null);
   const [swappedMeals, setSwappedMeals] = useState<Record<string, { title: string; icon: string; photo: string; recipe: { time: string; steps: string[] }; calories: number; protein: number; carbs: number; fat: number }>>({});
@@ -471,6 +472,7 @@ export default function MealsScreen() {
       const { url } = await uploadPhoto.mutateAsync({ base64, mimeType: "image/jpeg" });
       const result = await analyzePhoto.mutateAsync({ photoUrl: url });
       setAnalysisResult({ ...result, uploadedUrl: url });
+      setPortionMultiplier(1.0);
       // Auto-set meal type from AI detection
       if ((result as any).mealType && MEAL_TYPES.includes((result as any).mealType)) {
         setMealType((result as any).mealType);
@@ -493,13 +495,14 @@ export default function MealsScreen() {
 
   async function logAnalyzedMeal() {
     if (!analysisResult) return;
+    const pm = portionMultiplier;
     const entry = {
       name: mealName || "Analyzed Meal",
       mealType,
-      calories: analysisResult.totalCalories ?? 0,
-      protein: analysisResult.totalProtein ?? 0,
-      carbs: analysisResult.totalCarbs ?? 0,
-      fat: analysisResult.totalFat ?? 0,
+      calories: Math.round((analysisResult.totalCalories ?? 0) * pm),
+      protein: Math.round((analysisResult.totalProtein ?? 0) * pm),
+      carbs: Math.round((analysisResult.totalCarbs ?? 0) * pm),
+      fat: Math.round((analysisResult.totalFat ?? 0) * pm),
       photoUri: savePhoto ? (selectedImage ?? undefined) : undefined,
     };
     await addMeal(entry);
@@ -966,10 +969,43 @@ export default function MealsScreen() {
                     <Text style={{ color: "#B45309", fontSize: 12, marginBottom: 8, lineHeight: 18 }}>{String(analysisResult.notes)}</Text>
                   )}
                   <View style={{ flexDirection: "row", justifyContent: "space-around", marginBottom: 10 }}>
-                    <MacroStat label="Calories" value={analysisResult.totalCalories ?? 0} unit="kcal" color="#FBBF24" />
-                    <MacroStat label="Protein" value={analysisResult.totalProtein ?? 0} unit="g" color="#3B82F6" />
-                    <MacroStat label="Carbs" value={analysisResult.totalCarbs ?? 0} unit="g" color="#FDE68A" />
-                    <MacroStat label="Fat" value={analysisResult.totalFat ?? 0} unit="g" color="#FBBF24" />
+                    <MacroStat label="Calories" value={Math.round((analysisResult.totalCalories ?? 0) * portionMultiplier)} unit="kcal" color="#FBBF24" />
+                    <MacroStat label="Protein" value={Math.round((analysisResult.totalProtein ?? 0) * portionMultiplier)} unit="g" color="#3B82F6" />
+                    <MacroStat label="Carbs" value={Math.round((analysisResult.totalCarbs ?? 0) * portionMultiplier)} unit="g" color="#FDE68A" />
+                    <MacroStat label="Fat" value={Math.round((analysisResult.totalFat ?? 0) * portionMultiplier)} unit="g" color="#FBBF24" />
+                  </View>
+                  {/* Portion Size Adjustment */}
+                  <View style={{ backgroundColor: "rgba(245,158,11,0.06)", borderRadius: 10, padding: 10, marginBottom: 10, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}>
+                    <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+                      <Text style={{ color: "#B45309", fontSize: 10, fontFamily: "Outfit_700Bold", textTransform: "uppercase" }}>Portion Size</Text>
+                      <Text style={{ color: "#FDE68A", fontSize: 12, fontFamily: "Outfit_700Bold" }}>{portionMultiplier.toFixed(2)}x</Text>
+                    </View>
+                    <View style={{ height: 32, justifyContent: "center", marginBottom: 8 }}>
+                      <View style={{ height: 4, backgroundColor: "rgba(245,158,11,0.15)", borderRadius: 2 }} />
+                      <View style={{ position: "absolute", left: 0, right: 0, height: 4 }}>
+                        <View style={{ width: `${((portionMultiplier - 0.25) / 2.75) * 100}%`, height: 4, backgroundColor: "#F59E0B", borderRadius: 2 }} />
+                      </View>
+                      {/* Slider track - using TouchableOpacity buttons for reliable interaction */}
+                      <View style={{ position: "absolute", left: 0, right: 0, flexDirection: "row", justifyContent: "space-between" }}>
+                        <TouchableOpacity onPress={() => setPortionMultiplier(Math.max(0.25, portionMultiplier - 0.05))} style={{ width: 44, height: 32, alignItems: "flex-start", justifyContent: "center" }}>
+                          <MaterialIcons name="remove-circle" size={18} color="#F59E0B" />
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => setPortionMultiplier(Math.min(3.0, portionMultiplier + 0.05))} style={{ width: 44, height: 32, alignItems: "flex-end", justifyContent: "center" }}>
+                          <MaterialIcons name="add-circle" size={18} color="#F59E0B" />
+                        </TouchableOpacity>
+                      </View>
+                    </View>
+                    <View style={{ flexDirection: "row", gap: 6 }}>
+                      {[{ label: "Half", val: 0.5 }, { label: "Regular", val: 1.0 }, { label: "Large", val: 1.5 }, { label: "Double", val: 2.0 }].map(p => (
+                        <TouchableOpacity
+                          key={p.label}
+                          style={{ flex: 1, paddingVertical: 5, borderRadius: 8, alignItems: "center", backgroundColor: Math.abs(portionMultiplier - p.val) < 0.01 ? "#F59E0B" : "rgba(245,158,11,0.08)", borderWidth: 1, borderColor: Math.abs(portionMultiplier - p.val) < 0.01 ? "#F59E0B" : "rgba(245,158,11,0.12)" }}
+                          onPress={() => setPortionMultiplier(p.val)}
+                        >
+                          <Text style={{ color: Math.abs(portionMultiplier - p.val) < 0.01 ? "#0A0500" : "#B45309", fontSize: 10, fontFamily: "Outfit_700Bold" }}>{p.label}</Text>
+                        </TouchableOpacity>
+                      ))}
+                    </View>
                   </View>
                   {analysisResult.foods?.length > 0 && (
                     <View>
@@ -1027,9 +1063,15 @@ export default function MealsScreen() {
         <View style={{ marginBottom: 16 }}>
           <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
             <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 16 }}>Today's Meals</Text>
-            {meals.length > 0 && (
-              <Text style={{ color: "#B45309", fontSize: 11 }}>{meals.length} logged</Text>
-            )}
+            <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+              {meals.length > 0 && (
+                <Text style={{ color: "#B45309", fontSize: 11 }}>{meals.length} logged</Text>
+              )}
+              <TouchableOpacity onPress={() => router.push("/meal-timeline")} style={{ flexDirection: "row", alignItems: "center", gap: 3 }}>
+                <MaterialIcons name="photo-library" size={14} color="#F59E0B" />
+                <Text style={{ color: "#F59E0B", fontSize: 11, fontFamily: "DMSans_600SemiBold" }}>Timeline</Text>
+              </TouchableOpacity>
+            </View>
           </View>
 
           {/* 7-Day selector if AI plan exists */}
