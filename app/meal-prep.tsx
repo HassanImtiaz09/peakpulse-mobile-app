@@ -4,10 +4,61 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import { ScreenContainer } from "@/components/screen-container";
-import { usePantry } from "@/lib/pantry-context";
+import { usePantry, type PantryItem } from "@/lib/pantry-context";
+import { useCalories } from "@/lib/calorie-context";
 import { trpc } from "@/lib/trpc";
 
+import * as Haptics from "expo-haptics";
+
 const SF = { bg: "#0A0500", card: "#150A00", orange: "#F59E0B", gold: "#FBBF24", cream: "#FDE68A", muted: "#B45309", text: "#FFF7ED", border: "rgba(245,158,11,0.10)", green: "#22C55E", red: "#EF4444", blue: "#60A5FA" };
+
+// ── Ingredient Matching ──────────────────────────────────────────
+interface IngredientMatch {
+  ingredientName: string;
+  ingredientAmount: string;
+  pantryItem: PantryItem | null;
+  status: "available" | "partial" | "missing";
+}
+
+function normalizeForMatch(s: string): string {
+  return s.toLowerCase().replace(/[^a-z0-9]/g, " ").replace(/\s+/g, " ").trim();
+}
+
+function matchIngredientToPantry(ingName: string, pantryItems: PantryItem[]): PantryItem | null {
+  const norm = normalizeForMatch(ingName);
+  const words = norm.split(" ").filter(w => w.length > 2);
+  // Exact match first
+  for (const item of pantryItems) {
+    const pNorm = normalizeForMatch(item.name);
+    if (pNorm === norm || pNorm.includes(norm) || norm.includes(pNorm)) return item;
+  }
+  // Fuzzy: at least 60% of words match
+  let bestMatch: PantryItem | null = null;
+  let bestScore = 0;
+  for (const item of pantryItems) {
+    const pNorm = normalizeForMatch(item.name);
+    const pWords = pNorm.split(" ").filter(w => w.length > 2);
+    const matchCount = words.filter(w => pWords.some(pw => pw.includes(w) || w.includes(pw))).length;
+    const score = words.length > 0 ? matchCount / words.length : 0;
+    if (score > bestScore && score >= 0.6) {
+      bestScore = score;
+      bestMatch = item;
+    }
+  }
+  return bestMatch;
+}
+
+function getIngredientMatches(ingredients: PrepRecipe["ingredients"], pantryItems: PantryItem[]): IngredientMatch[] {
+  return ingredients.map(ing => {
+    const pantryItem = matchIngredientToPantry(ing.name, pantryItems);
+    return {
+      ingredientName: ing.name,
+      ingredientAmount: ing.amount,
+      pantryItem,
+      status: pantryItem ? "available" : "missing" as const,
+    };
+  });
+}
 const SAVED_KEY = "peakpulse_saved_recipes";
 const RATINGS_KEY = "peakpulse_recipe_ratings";
 
@@ -63,7 +114,8 @@ function scaleAmount(amount: string, multiplier: number): string {
 
 export default function MealPrepScreen() {
   const router = useRouter();
-  const { items: pantryItems } = usePantry();
+  const { items: pantryItems, removeItem, logUsage } = usePantry();
+  const { addMeal } = useCalories();
   const generatePrep = trpc.mealPrep.fromExpiring.useMutation();
 
   const [recipes, setRecipes] = useState<PrepRecipe[]>([]);
@@ -82,6 +134,9 @@ export default function MealPrepScreen() {
   const [reviewDraft, setReviewDraft] = useState("");
   // Reorder mode
   const [reorderMode, setReorderMode] = useState(false);
+  // Cook Now
+  const [cookingRecipe, setCookingRecipe] = useState<string | null>(null);
+  const [cookSuccess, setCookSuccess] = useState<string | null>(null);
 
   useEffect(() => {
     loadSavedRecipes();
@@ -159,6 +214,78 @@ export default function MealPrepScreen() {
     updated[newIdx] = temp;
     await persistSaved(updated);
   }, [savedRecipes, persistSaved]);
+
+  // ── Cook Now Handler ──────────────────────────────────────────
+  const handleCookNow = useCallback(async (recipe: PrepRecipe, cardKey: string) => {
+    const multiplier = getScaleMultiplier(cardKey, recipe.servings);
+    const matches = getIngredientMatches(recipe.ingredients, pantryItems);
+    const available = matches.filter(m => m.status === "available");
+    const missing = matches.filter(m => m.status === "missing");
+
+    const doIt = async () => {
+      setCookingRecipe(cardKey);
+      try {
+        // Deduct matched pantry items
+        const deducted: string[] = [];
+        for (const match of available) {
+          if (match.pantryItem) {
+            await removeItem(match.pantryItem.id);
+            await logUsage({ itemName: match.pantryItem.name, action: "used" });
+            deducted.push(match.pantryItem.name);
+          }
+        }
+
+        // Log to calorie tracker
+        const scaledCal = Math.round(recipe.calories * multiplier);
+        const scaledP = Math.round(recipe.protein * multiplier);
+        const scaledC = Math.round(recipe.carbs * multiplier);
+        const scaledF = Math.round(recipe.fat * multiplier);
+        await addMeal({
+          name: recipe.name,
+          mealType: recipe.mealType || "lunch",
+          calories: scaledCal,
+          protein: scaledP,
+          carbs: scaledC,
+          fat: scaledF,
+        });
+
+        if (Platform.OS !== "web") {
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        }
+        setCookSuccess(cardKey);
+        setTimeout(() => setCookSuccess(null), 3000);
+      } catch { /* ignore */ }
+      setCookingRecipe(null);
+    };
+
+    if (missing.length > 0) {
+      if (Platform.OS === "web") {
+        doIt();
+      } else {
+        Alert.alert(
+          "Missing Ingredients",
+          `${missing.length} of ${matches.length} ingredients not in pantry:\n${missing.slice(0, 5).map(m => `\u2022 ${m.ingredientName}`).join("\n")}${missing.length > 5 ? `\n+${missing.length - 5} more` : ""}\n\nCook anyway? Available items will be deducted.`,
+          [
+            { text: "Cancel", style: "cancel" },
+            { text: "Cook Anyway", onPress: doIt },
+          ]
+        );
+      }
+    } else {
+      if (Platform.OS === "web") {
+        doIt();
+      } else {
+        Alert.alert(
+          "Cook Now",
+          `All ${available.length} ingredients found in pantry. They will be deducted and ${Math.round(recipe.calories * multiplier)} kcal logged.`,
+          [
+            { text: "Cancel", style: "cancel" },
+            { text: "Cook!", onPress: doIt },
+          ]
+        );
+      }
+    }
+  }, [pantryItems, removeItem, logUsage, addMeal, recipeScales]);
 
   const expiringItems = useMemo(() => {
     const now = Date.now();
@@ -397,6 +524,61 @@ export default function MealPrepScreen() {
                 <Text style={styles.storageText}>{recipe.storageInstructions}</Text>
               </View>
             )}
+
+            {/* Cook Now Button */}
+            {(() => {
+              const matches = getIngredientMatches(recipe.ingredients, pantryItems);
+              const avail = matches.filter(m => m.status === "available").length;
+              const total = matches.length;
+              const isCooking = cookingRecipe === cardKey;
+              const justCooked = cookSuccess === cardKey;
+              return (
+                <View style={styles.cookNowSection}>
+                  <View style={styles.cookNowAvailRow}>
+                    <MaterialIcons name="inventory-2" size={13} color={avail === total ? SF.green : avail > 0 ? SF.orange : SF.red} />
+                    <Text style={[styles.cookNowAvailText, { color: avail === total ? SF.green : avail > 0 ? SF.orange : SF.red }]}>
+                      {avail}/{total} ingredients in pantry
+                    </Text>
+                  </View>
+                  {/* Ingredient availability list */}
+                  {matches.map((m, mi) => (
+                    <View key={mi} style={styles.cookNowIngRow}>
+                      <MaterialIcons
+                        name={m.status === "available" ? "check-circle" : "cancel"}
+                        size={12}
+                        color={m.status === "available" ? SF.green : SF.red + "80"}
+                      />
+                      <Text style={[styles.cookNowIngText, m.status === "missing" && { color: SF.muted }]} numberOfLines={1}>
+                        {scaleAmount(m.ingredientAmount, multiplier)} {m.ingredientName}
+                      </Text>
+                      {m.pantryItem && <Text style={styles.cookNowPantryTag}>✓ pantry</Text>}
+                    </View>
+                  ))}
+                  {justCooked ? (
+                    <View style={styles.cookSuccessRow}>
+                      <MaterialIcons name="check-circle" size={16} color={SF.green} />
+                      <Text style={styles.cookSuccessText}>Cooked! Ingredients deducted & calories logged.</Text>
+                    </View>
+                  ) : (
+                    <TouchableOpacity
+                      style={[styles.cookNowBtn, isCooking && { opacity: 0.6 }]}
+                      onPress={() => handleCookNow(recipe, cardKey)}
+                      disabled={isCooking}
+                      activeOpacity={0.7}
+                    >
+                      {isCooking ? (
+                        <ActivityIndicator color="#0A0500" size="small" />
+                      ) : (
+                        <>
+                          <MaterialIcons name="local-fire-department" size={16} color="#0A0500" />
+                          <Text style={styles.cookNowBtnText}>Cook Now</Text>
+                        </>
+                      )}
+                    </TouchableOpacity>
+                  )}
+                </View>
+              );
+            })()}
 
             {isSavedTab && savedId && (
               <TouchableOpacity style={styles.removeBtn} onPress={() => confirmUnsave(savedId, recipe.name)}>
@@ -693,4 +875,15 @@ const styles = StyleSheet.create({
   reorderBtnDisabled: { backgroundColor: "rgba(245,158,11,0.02)" },
   reorderBtnText: { color: SF.orange, fontSize: 11, fontFamily: "Outfit_700Bold" },
   reorderPos: { color: SF.muted, fontSize: 12, fontFamily: "Outfit_700Bold", minWidth: 24, textAlign: "center" },
+  // Cook Now
+  cookNowSection: { marginTop: 14, paddingTop: 12, borderTopWidth: 1, borderTopColor: SF.border },
+  cookNowAvailRow: { flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 8 },
+  cookNowAvailText: { fontSize: 12, fontFamily: "Outfit_700Bold" },
+  cookNowIngRow: { flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 3, paddingLeft: 4 },
+  cookNowIngText: { color: SF.text, fontSize: 11, flex: 1 },
+  cookNowPantryTag: { color: SF.green, fontSize: 9, fontFamily: "Outfit_700Bold", backgroundColor: "rgba(34,197,94,0.10)", borderRadius: 4, paddingHorizontal: 4, paddingVertical: 1 },
+  cookNowBtn: { flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8, backgroundColor: SF.orange, borderRadius: 12, paddingVertical: 12, marginTop: 12 },
+  cookNowBtnText: { color: "#0A0500", fontFamily: "Outfit_700Bold", fontSize: 14 },
+  cookSuccessRow: { flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8, marginTop: 12, paddingVertical: 10, backgroundColor: "rgba(34,197,94,0.10)", borderRadius: 10 },
+  cookSuccessText: { color: SF.green, fontSize: 12, fontFamily: "Outfit_700Bold" },
 });

@@ -970,3 +970,20 @@
 ### Tests
 - [x] 29 new tests (round54-features.test.ts), 381 total passing
 - [x] 0 TypeScript errors
+
+## Round 55 — Cook Now Button
+
+### Cook Now (Saved Recipes → Pantry Deduction)
+- [x] "Cook Now" button on every expanded recipe card (both generated and saved)
+- [x] normalizeForMatch + matchIngredientToPantry with exact and fuzzy matching (60% threshold)
+- [x] Ingredient availability summary: X/Y in pantry, color-coded (green/orange/red)
+- [x] Per-ingredient list with check/cancel icons and "✓ pantry" tags
+- [x] Confirmation alert: shows missing items, offers "Cook Anyway" option
+- [x] Auto-deducts matched pantry items via removeItem + logUsage
+- [x] Logs cooked meal to CalorieContext with scaled calories/macros
+- [x] Haptic success feedback on native, 3-second success banner
+- [x] Respects serving scale multiplier for both deduction and calorie logging
+
+### Tests
+- [x] 25 new tests (round55-features.test.ts), 406 total passing
+- [x] 0 TypeScript errors
