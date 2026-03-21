@@ -73,14 +73,14 @@ export default function ReferralScreen() {
           </TouchableOpacity>
           <Text style={{ color: "#FDE68A", fontFamily: "Outfit_700Bold", fontSize: 12, letterSpacing: 1 }}>REFERRAL PROGRAMME</Text>
           <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_800ExtraBold", fontSize: 26 }}>Earn Free Months</Text>
-          <Text style={{ color: "#FDE68A", fontFamily: "DMSans_400Regular", fontSize: 13, marginTop: 6, opacity: 0.9 }}>Your friends get a FREE 14-day Advanced trial — double the standard 7 days!</Text>
+          <Text style={{ color: "#FDE68A", fontFamily: "DMSans_400Regular", fontSize: 13, marginTop: 6, opacity: 0.9 }}>Friends get a FREE 14-day Advanced trial!</Text>
         </View>
       </ImageBackground>
 
       <ScrollView contentContainerStyle={{ padding: 20, paddingBottom: 40 }} showsVerticalScrollIndicator={false}>
         {/* Referral Code Card */}
         <View style={{ backgroundColor: "#150A00", borderRadius: 24, padding: 24, borderWidth: 2, borderColor: "rgba(245,158,11,0.18)", marginBottom: 20, alignItems: "center" }}>
-          <Text style={{ color: "#92400E", fontSize: 13, marginBottom: 8 }}>Your Referral Code</Text>
+          <Text style={{ color: "#B45309", fontSize: 13, marginBottom: 8 }}>Your Referral Code</Text>
           <View style={{ backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 16, paddingHorizontal: 32, paddingVertical: 16, borderWidth: 2, borderColor: "rgba(245,158,11,0.28)", marginBottom: 16 }}>
             <Text style={{ color: "#FDE68A", fontFamily: "Outfit_800ExtraBold", fontSize: 32, letterSpacing: 4 }}>
               {referralData?.code ?? "..."}
@@ -108,11 +108,11 @@ export default function ReferralScreen() {
         <View style={{ flexDirection: "row", gap: 12, marginBottom: 20 }}>
           <View style={{ flex: 1, backgroundColor: "#150A00", borderRadius: 20, padding: 16, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)", alignItems: "center" }}>
             <Text style={{ color: "#F59E0B", fontFamily: "Outfit_800ExtraBold", fontSize: 28 }}>{referralCount}</Text>
-            <Text style={{ color: "#92400E", fontSize: 12, marginTop: 4 }}>Friends Referred</Text>
+            <Text style={{ color: "#B45309", fontSize: 12, marginTop: 4 }}>Friends Referred</Text>
           </View>
           <View style={{ flex: 1, backgroundColor: "#150A00", borderRadius: 20, padding: 16, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)", alignItems: "center" }}>
             <Text style={{ color: "#FDE68A", fontFamily: "Outfit_800ExtraBold", fontSize: 28 }}>{creditsEarned}</Text>
-            <Text style={{ color: "#92400E", fontSize: 12, marginTop: 4 }}>Months Earned</Text>
+            <Text style={{ color: "#B45309", fontSize: 12, marginTop: 4 }}>Months Earned</Text>
           </View>
         </View>
 
@@ -128,7 +128,7 @@ export default function ReferralScreen() {
             <Text style={{ fontSize: 28 }}>{r.icon}</Text>
             <View style={{ flex: 1 }}>
               <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 15 }}>{r.reward}</Text>
-              <Text style={{ color: "#92400E", fontSize: 12, marginTop: 2 }}>Refer {r.referrals} friend{r.referrals > 1 ? "s" : ""}</Text>
+              <Text style={{ color: "#B45309", fontSize: 12, marginTop: 2 }}>Refer {r.referrals} friend{r.referrals > 1 ? "s" : ""}</Text>
             </View>
             {r.achieved ? (
               <View style={{ backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 10, paddingHorizontal: 10, paddingVertical: 5 }}>
@@ -136,7 +136,7 @@ export default function ReferralScreen() {
               </View>
             ) : (
               <View style={{ backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 10, paddingHorizontal: 10, paddingVertical: 5 }}>
-                <Text style={{ color: "#78350F", fontFamily: "Outfit_700Bold", fontSize: 12 }}>
+                <Text style={{ color: "#B45309", fontFamily: "Outfit_700Bold", fontSize: 12 }}>
                   {r.referrals - referralCount} to go
                 </Text>
               </View>

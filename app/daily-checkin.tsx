@@ -332,7 +332,7 @@ export default function DailyCheckInScreen() {
                   <View style={styles.photoPlaceholder}>
                     <Text style={styles.photoPlaceholderEmoji}>📸</Text>
                     <Text style={styles.photoPlaceholderText}>Add today's progress photo</Text>
-                    <Text style={styles.photoPlaceholderSub}>AI will estimate your body fat % and give personalised feedback</Text>
+                    <Text style={styles.photoPlaceholderSub}>AI estimates body fat % and gives feedback</Text>
                   </View>
                 )}
                 <View style={styles.photoButtons}>

@@ -81,7 +81,7 @@ export function PaywallModal({
           </Text>
 
           {/* Description */}
-          <Text style={{ color: "#92400E", fontFamily: "DMSans_400Regular", fontSize: 14, textAlign: "center", lineHeight: 22, marginBottom: 20 }}>
+          <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 14, textAlign: "center", lineHeight: 22, marginBottom: 20 }}>
             {description ?? `${featureName} is available on the ${label} plan and above. Upgrade to access this and many more premium features.`}
           </Text>
 
@@ -92,7 +92,7 @@ export function PaywallModal({
               <Text style={{ color: "#F59E0B", fontFamily: "Outfit_800ExtraBold", fontSize: 16, marginBottom: 4 }}>
                 7-Day Free Trial
               </Text>
-              <Text style={{ color: "#92400E", fontFamily: "DMSans_400Regular", fontSize: 12, textAlign: "center", lineHeight: 18 }}>
+              <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 12, textAlign: "center", lineHeight: 18 }}>
                 Try all Advanced features free for 7 days.{"\n"}No credit card required.
               </Text>
             </View>
@@ -101,12 +101,12 @@ export function PaywallModal({
             <View style={{ backgroundColor: "#150A00", borderRadius: 16, padding: 16, marginBottom: 20, borderWidth: 1, borderColor: "rgba(245,158,11,0.12)" }}>
               <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
                 <View>
-                  <Text style={{ color: "#78350F", fontFamily: "DMSans_400Regular", fontSize: 12, marginBottom: 2 }}>Starting from</Text>
+                  <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 12, marginBottom: 2 }}>Starting from</Text>
                   <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_800ExtraBold", fontSize: 26 }}>
                     {price.annual}
-                    <Text style={{ fontSize: 14, color: "#92400E", fontFamily: "DMSans_400Regular" }}>/mo</Text>
+                    <Text style={{ fontSize: 14, color: "#B45309", fontFamily: "DMSans_400Regular" }}>/mo</Text>
                   </Text>
-                  <Text style={{ color: "#78350F", fontFamily: "DMSans_400Regular", fontSize: 11, marginTop: 2 }}>
+                  <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 11, marginTop: 2 }}>
                     billed annually · or {price.monthly}/mo
                   </Text>
                 </View>
@@ -157,7 +157,7 @@ export function PaywallModal({
           )}
 
           <TouchableOpacity style={{ alignItems: "center", paddingVertical: 10 }} onPress={onClose}>
-            <Text style={{ color: "#78350F", fontFamily: "DMSans_400Regular", fontSize: 14 }}>Maybe later</Text>
+            <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 14 }}>Maybe later</Text>
           </TouchableOpacity>
         </View>
       </View>

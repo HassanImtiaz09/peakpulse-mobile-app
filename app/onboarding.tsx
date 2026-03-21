@@ -20,7 +20,7 @@ const SF = {
   border:  "rgba(245,158,11,0.15)",
   border2: "rgba(245,158,11,0.25)",
   fg:      "#FFF7ED",
-  muted:   "#92400E",
+  muted: "#B45309",
   gold:    "#F59E0B",
   orange:  "#EA580C",
   red:     "#DC2626",
@@ -38,7 +38,7 @@ const BG = {
 };
 
 const INTRO_SLIDES = [
-  { bg: BG.ob1, iconName: "bolt" as const, label: "WELCOME",        title: "Welcome to\nPeakPulse AI",  subtitle: "Your all-in-one AI fitness companion. Workouts, nutrition, body scans, wearable sync, smart pantry, and a personal AI coach — all in one app.", accent: SF.gold,
+  { bg: BG.ob1, iconName: "bolt" as const, label: "WELCOME",        title: "Welcome to\nPeakPulse AI",  subtitle: "Workouts, nutrition, body scans, wearable sync, smart pantry, and AI coaching — all in one.", accent: SF.gold,
     features: [
       { icon: "fitness-center" as const, text: "AI Workout Plans" },
       { icon: "restaurant" as const, text: "Smart Meal Plans" },
@@ -46,21 +46,21 @@ const INTRO_SLIDES = [
       { icon: "watch" as const, text: "Wearable Sync" },
     ],
   },
-  { bg: BG.ob2, iconName: "photo-camera" as const, label: "AI BODY SCAN",   title: "See Your\nTransformation",  subtitle: "Take a photo and get an AI analysis of your physique. See exactly how you will look at your goal.", accent: SF.orange,
+  { bg: BG.ob2, iconName: "photo-camera" as const, label: "AI BODY SCAN",   title: "See Your\nTransformation",  subtitle: "Snap a photo for AI physique analysis. Visualise your goal body.", accent: SF.orange,
     features: [
       { icon: "auto-awesome" as const, text: "Body Fat Analysis" },
       { icon: "compare" as const, text: "Before & After" },
       { icon: "trending-up" as const, text: "Progress Tracking" },
     ],
   },
-  { bg: BG.ob3, iconName: "fitness-center" as const, label: "WORKOUT PLANS",  title: "Forge Your\nBest Body",     subtitle: "AI generates gym, home, or calisthenics plans tailored to your goal and schedule.", accent: SF.red,
+  { bg: BG.ob3, iconName: "fitness-center" as const, label: "WORKOUT PLANS",  title: "Forge Your\nBest Body",     subtitle: "AI plans tailored to your goal, style, and schedule.", accent: SF.red,
     features: [
       { icon: "timer" as const, text: "Form Check AI" },
       { icon: "emoji-events" as const, text: "7-Day Challenges" },
       { icon: "watch" as const, text: "Wearable Stats" },
     ],
   },
-  { bg: BG.ob4, iconName: "restaurant" as const, label: "SMART NUTRITION",title: "Fuel Like\na Champion",     subtitle: "AI meal plans, smart pantry with Cook Again shortcuts, weekly waste reports, and grocery price comparison.", accent: SF.gold2,
+  { bg: BG.ob4, iconName: "restaurant" as const, label: "SMART NUTRITION",title: "Fuel Like\na Champion",     subtitle: "AI meals, smart pantry, Cook Again shortcuts, and grocery links.", accent: SF.gold2,
     features: [
       { icon: "kitchen" as const, text: "Smart Pantry" },
       { icon: "replay" as const, text: "Cook Again" },

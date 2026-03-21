@@ -25,7 +25,7 @@ const SF = {
   border:  "rgba(245,158,11,0.18)",
   border2: "rgba(245,158,11,0.35)",
   fg:      "#FFF7ED",
-  muted:   "#92400E",
+  muted: "#B45309",
   gold:    "#F59E0B",
   gold2:   "#FBBF24",
   gold3:   "#FDE68A",

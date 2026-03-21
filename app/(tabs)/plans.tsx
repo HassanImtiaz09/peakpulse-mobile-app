@@ -200,7 +200,7 @@ export default function PlansScreen() {
           <View style={{ flex: 1, backgroundColor: "rgba(8,8,16,0.8)", alignItems: "center", justifyContent: "center", padding: 32 }}>
             <MaterialIcons name="fitness-center" size={48} color="#F59E0B" style={{ marginBottom: 16 }} />
             <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_800ExtraBold", fontSize: 22, textAlign: "center", marginBottom: 8 }}>Unlock Your Plans</Text>
-            <Text style={{ color: "#92400E", fontSize: 14, textAlign: "center", lineHeight: 20, marginBottom: 24 }}>Sign in or continue as guest to generate AI-powered workout and meal plans.</Text>
+            <Text style={{ color: "#B45309", fontSize: 14, textAlign: "center", lineHeight: 20, marginBottom: 24 }}>Sign in or continue as guest to get started.</Text>
             <TouchableOpacity
               style={{ backgroundColor: "#F59E0B", paddingHorizontal: 32, paddingVertical: 14, borderRadius: 16, shadowColor: "#F59E0B", shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.5, shadowRadius: 12 }}
               onPress={() => router.push("/login" as any)}
@@ -270,7 +270,7 @@ export default function PlansScreen() {
             style={{ flex: 1, paddingVertical: 10, borderRadius: 12, alignItems: "center", backgroundColor: activeTab === i ? "#F59E0B" : "#150A00", borderWidth: 1, borderColor: activeTab === i ? "#F59E0B" : "rgba(245,158,11,0.10)" }}
             onPress={() => setActiveTab(i)}
           >
-            <Text style={{ color: activeTab === i ? "#FFF7ED" : "#92400E", fontFamily: "Outfit_700Bold", fontSize: 13 }}>{tab}</Text>
+            <Text style={{ color: activeTab === i ? "#FFF7ED" : "#B45309", fontFamily: "Outfit_700Bold", fontSize: 13 }}>{tab}</Text>
           </TouchableOpacity>
         ))}
       </View>
@@ -304,7 +304,7 @@ export default function PlansScreen() {
 
                 <View style={{ backgroundColor: "#FBBF2410", borderRadius: 10, padding: 10, marginBottom: 16, borderWidth: 1, borderColor: "#FBBF2430", flexDirection: "row", gap: 8 }}>
                   <MaterialIcons name="warning-amber" size={14} color="#FCD34D" />
-                  <Text style={{ color: "#FCD34D", fontSize: 11, lineHeight: 16, flex: 1 }}>AI-generated plans are for guidance only. Consult a fitness professional before starting a new exercise programme.</Text>
+                  <Text style={{ color: "#FCD34D", fontSize: 11, lineHeight: 16, flex: 1 }}>AI plans are for guidance. Consult a professional before starting.</Text>
                 </View>
 
                 <SectionLabel>Days Per Week</SectionLabel>
@@ -315,7 +315,7 @@ export default function PlansScreen() {
                       style={{ flex: 1, paddingVertical: 10, borderRadius: 12, alignItems: "center", backgroundColor: daysPerWeek === d ? "#F59E0B" : "#150A00", borderWidth: 1, borderColor: daysPerWeek === d ? "#F59E0B" : "rgba(245,158,11,0.10)" }}
                       onPress={() => setDaysPerWeek(d)}
                     >
-                      <Text style={{ color: daysPerWeek === d ? "#FFF7ED" : "#92400E", fontFamily: "Outfit_700Bold" }}>{d}x</Text>
+                      <Text style={{ color: daysPerWeek === d ? "#FFF7ED" : "#B45309", fontFamily: "Outfit_700Bold" }}>{d}x</Text>
                     </TouchableOpacity>
                   ))}
                 </View>
@@ -347,7 +347,7 @@ export default function PlansScreen() {
                       <View style={{ backgroundColor: "rgba(34,197,94,0.15)", borderRadius: 6, paddingHorizontal: 8, paddingVertical: 2 }}>
                         <Text style={{ color: "#4ADE80", fontSize: 10, fontFamily: "Outfit_700Bold" }}>ACTIVE</Text>
                       </View>
-                      <Text style={{ color: "#92400E", fontSize: 11 }}>{goalLabel} · {styleLabel} · {daysPerWeek}x/wk</Text>
+                      <Text style={{ color: "#B45309", fontSize: 11 }}>{goalLabel} · {styleLabel} · {daysPerWeek}x/wk</Text>
                     </View>
                     <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
                       {workoutStats && (
@@ -417,8 +417,8 @@ export default function PlansScreen() {
                 {otherWorkoutDays.length > 0 && (
                   <>
                     <View style={{ flexDirection: "row", alignItems: "center", gap: 8, marginTop: 8, marginBottom: 10 }}>
-                      <MaterialIcons name="date-range" size={16} color="#92400E" />
-                      <Text style={{ color: "#92400E", fontFamily: "Outfit_700Bold", fontSize: 13 }}>Rest of the Week</Text>
+                      <MaterialIcons name="date-range" size={16} color="#B45309" />
+                      <Text style={{ color: "#B45309", fontFamily: "Outfit_700Bold", fontSize: 13 }}>Rest of the Week</Text>
                     </View>
                     {otherWorkoutDays.map((day: any, i: number) => (
                       <WorkoutDayCard
@@ -444,7 +444,7 @@ export default function PlansScreen() {
                   </View>
                   <View style={{ flex: 1 }}>
                     <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 15 }}>AI Form Check</Text>
-                    <Text style={{ color: "#92400E", fontFamily: "DMSans_400Regular", fontSize: 12, marginTop: 2 }}>Record a set — AI analyses your technique instantly</Text>
+                    <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 12, marginTop: 2 }}>Record a set for AI form analysis</Text>
                   </View>
                   <MaterialIcons name="chevron-right" size={20} color="#F59E0B" />
                 </TouchableOpacity>
@@ -454,8 +454,8 @@ export default function PlansScreen() {
                   style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6, marginTop: 16, paddingVertical: 10 }}
                   onPress={() => setShowCustomize(!showCustomize)}
                 >
-                  <MaterialIcons name={showCustomize ? "expand-less" : "tune"} size={16} color="#78350F" />
-                  <Text style={{ color: "#78350F", fontFamily: "Outfit_700Bold", fontSize: 12 }}>{showCustomize ? "Hide Options" : "Customize & Regenerate"}</Text>
+                  <MaterialIcons name={showCustomize ? "expand-less" : "tune"} size={16} color="#B45309" />
+                  <Text style={{ color: "#B45309", fontFamily: "Outfit_700Bold", fontSize: 12 }}>{showCustomize ? "Hide Options" : "Customize & Regenerate"}</Text>
                 </TouchableOpacity>
 
                 {showCustomize && (
@@ -480,7 +480,7 @@ export default function PlansScreen() {
                           style={{ flex: 1, paddingVertical: 10, borderRadius: 12, alignItems: "center", backgroundColor: daysPerWeek === d ? "#F59E0B" : "#150A00", borderWidth: 1, borderColor: daysPerWeek === d ? "#F59E0B" : "rgba(245,158,11,0.10)" }}
                           onPress={() => setDaysPerWeek(d)}
                         >
-                          <Text style={{ color: daysPerWeek === d ? "#FFF7ED" : "#92400E", fontFamily: "Outfit_700Bold" }}>{d}x</Text>
+                          <Text style={{ color: daysPerWeek === d ? "#FFF7ED" : "#B45309", fontFamily: "Outfit_700Bold" }}>{d}x</Text>
                         </TouchableOpacity>
                       ))}
                     </View>
@@ -541,7 +541,7 @@ export default function PlansScreen() {
                       <MaterialIcons name="nightlight-round" size={20} color="#FBBF24" />
                       <View>
                         <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 14 }}>Ramadan Mode</Text>
-                        <Text style={{ color: "#92400E", fontSize: 11, marginTop: 2 }}>Suhoor, Iftar & Isha meals</Text>
+                        <Text style={{ color: "#B45309", fontSize: 11, marginTop: 2 }}>Suhoor, Iftar & Isha meals</Text>
                       </View>
                     </View>
                     <View style={{ width: 44, height: 26, borderRadius: 13, backgroundColor: ramadanMode ? "#F59E0B" : "rgba(245,158,11,0.15)", justifyContent: "center", paddingHorizontal: 2 }}>
@@ -552,7 +552,7 @@ export default function PlansScreen() {
 
                 <View style={{ backgroundColor: "#FBBF2410", borderRadius: 10, padding: 10, marginBottom: 16, borderWidth: 1, borderColor: "#FBBF2430", flexDirection: "row", gap: 8 }}>
                   <MaterialIcons name="warning-amber" size={14} color="#FCD34D" />
-                  <Text style={{ color: "#FCD34D", fontSize: 11, lineHeight: 16, flex: 1 }}>AI-generated plans are for guidance only. Consult a qualified nutritionist before making significant dietary changes.</Text>
+                  <Text style={{ color: "#FCD34D", fontSize: 11, lineHeight: 16, flex: 1 }}>AI plans are for guidance. Consult a nutritionist for major changes.</Text>
                 </View>
 
                 <TouchableOpacity
@@ -582,7 +582,7 @@ export default function PlansScreen() {
                       <View style={{ backgroundColor: "rgba(34,197,94,0.15)", borderRadius: 6, paddingHorizontal: 8, paddingVertical: 2 }}>
                         <Text style={{ color: "#4ADE80", fontSize: 10, fontFamily: "Outfit_700Bold" }}>ACTIVE</Text>
                       </View>
-                      <Text style={{ color: "#92400E", fontSize: 11 }}>{mealGoalLabel} · {dietLabel}</Text>
+                      <Text style={{ color: "#B45309", fontSize: 11 }}>{mealGoalLabel} · {dietLabel}</Text>
                     </View>
                   </View>
                   {/* Macro summary row */}
@@ -618,8 +618,8 @@ export default function PlansScreen() {
                 {otherMealDays.length > 0 && (
                   <>
                     <View style={{ flexDirection: "row", alignItems: "center", gap: 8, marginTop: 8, marginBottom: 10 }}>
-                      <MaterialIcons name="date-range" size={16} color="#92400E" />
-                      <Text style={{ color: "#92400E", fontFamily: "Outfit_700Bold", fontSize: 13 }}>Rest of the Week</Text>
+                      <MaterialIcons name="date-range" size={16} color="#B45309" />
+                      <Text style={{ color: "#B45309", fontFamily: "Outfit_700Bold", fontSize: 13 }}>Rest of the Week</Text>
                     </View>
                     {otherMealDays.map((day: any, i: number) => (
                       <MealDayCard key={i} day={day} />
@@ -632,8 +632,8 @@ export default function PlansScreen() {
                   style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6, marginTop: 16, paddingVertical: 10 }}
                   onPress={() => setShowMealCustomize(!showMealCustomize)}
                 >
-                  <MaterialIcons name={showMealCustomize ? "expand-less" : "tune"} size={16} color="#78350F" />
-                  <Text style={{ color: "#78350F", fontFamily: "Outfit_700Bold", fontSize: 12 }}>{showMealCustomize ? "Hide Options" : "Customize & Regenerate"}</Text>
+                  <MaterialIcons name={showMealCustomize ? "expand-less" : "tune"} size={16} color="#B45309" />
+                  <Text style={{ color: "#B45309", fontFamily: "Outfit_700Bold", fontSize: 12 }}>{showMealCustomize ? "Hide Options" : "Customize & Regenerate"}</Text>
                 </TouchableOpacity>
 
                 {showMealCustomize && (
@@ -659,7 +659,7 @@ export default function PlansScreen() {
                           <MaterialIcons name="nightlight-round" size={20} color="#FBBF24" />
                           <View>
                             <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 14 }}>Ramadan Mode</Text>
-                            <Text style={{ color: "#92400E", fontSize: 11, marginTop: 2 }}>Suhoor, Iftar & Isha meals</Text>
+                            <Text style={{ color: "#B45309", fontSize: 11, marginTop: 2 }}>Suhoor, Iftar & Isha meals</Text>
                           </View>
                         </View>
                         <View style={{ width: 44, height: 26, borderRadius: 13, backgroundColor: ramadanMode ? "#F59E0B" : "rgba(245,158,11,0.15)", justifyContent: "center", paddingHorizontal: 2 }}>
@@ -701,7 +701,7 @@ export default function PlansScreen() {
 }
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
-  return <Text style={{ color: "#92400E", fontSize: 11, fontFamily: "Outfit_700Bold", letterSpacing: 1, marginBottom: 8, textTransform: "uppercase" }}>{children}</Text>;
+  return <Text style={{ color: "#B45309", fontSize: 11, fontFamily: "Outfit_700Bold", letterSpacing: 1, marginBottom: 8, textTransform: "uppercase" }}>{children}</Text>;
 }
 
 function OptionChip({ iconName, label, selected, onPress }: { iconName: string; label: string; selected: boolean; onPress: () => void }) {
@@ -710,8 +710,8 @@ function OptionChip({ iconName, label, selected, onPress }: { iconName: string; 
       style={{ flexDirection: "row", alignItems: "center", gap: 6, paddingHorizontal: 14, paddingVertical: 8, borderRadius: 12, backgroundColor: selected ? "#F59E0B" : "#150A00", borderWidth: 1, borderColor: selected ? "#F59E0B" : "rgba(245,158,11,0.10)" }}
       onPress={onPress}
     >
-      <MaterialIcons name={iconName as any} size={14} color={selected ? "#FFF7ED" : "#92400E"} />
-      <Text style={{ color: selected ? "#FFF7ED" : "#92400E", fontFamily: "DMSans_600SemiBold", fontSize: 13 }}>{label}</Text>
+      <MaterialIcons name={iconName as any} size={14} color={selected ? "#FFF7ED" : "#B45309"} />
+      <Text style={{ color: selected ? "#FFF7ED" : "#B45309", fontFamily: "DMSans_600SemiBold", fontSize: 13 }}>{label}</Text>
     </TouchableOpacity>
   );
 }
@@ -720,8 +720,8 @@ function MacroCard({ label, value, unit, color }: any) {
   return (
     <View style={{ flex: 1, backgroundColor: "#0A0500", borderRadius: 10, padding: 8, alignItems: "center", borderWidth: 1, borderColor: color + "30" }}>
       <Text style={{ color, fontFamily: "Outfit_800ExtraBold", fontSize: 14 }}>{value ?? "—"}</Text>
-      <Text style={{ color: "#78350F", fontSize: 9, marginTop: 1 }}>{unit}</Text>
-      <Text style={{ color: "#92400E", fontSize: 9, marginTop: 1 }}>{label}</Text>
+      <Text style={{ color: "#B45309", fontSize: 9, marginTop: 1 }}>{unit}</Text>
+      <Text style={{ color: "#B45309", fontSize: 9, marginTop: 1 }}>{label}</Text>
     </View>
   );
 }
@@ -759,8 +759,8 @@ function WorkoutDayCard({ day, onPress, isCompleted, onToggleComplete, isToday }
             </View>
           </View>
           <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-            {!day.isRest && <Text style={{ color: "#92400E", fontSize: 12 }}>{day.exercises?.length ?? 0} exercises</Text>}
-            <MaterialIcons name={expanded ? "expand-less" : "expand-more"} size={18} color="#92400E" />
+            {!day.isRest && <Text style={{ color: "#B45309", fontSize: 12 }}>{day.exercises?.length ?? 0} exercises</Text>}
+            <MaterialIcons name={expanded ? "expand-less" : "expand-more"} size={18} color="#B45309" />
           </View>
         </View>
       </TouchableOpacity>
@@ -803,11 +803,11 @@ function ExercisePreviewCard({ exercise }: { exercise: any }) {
             <View style={{ flexDirection: "row", gap: 12, marginTop: 4 }}>
               <Text style={{ color: "#FBBF24", fontSize: 12 }}>{exercise.sets} sets</Text>
               <Text style={{ color: "#FDE68A", fontSize: 12 }}>{exercise.reps} reps</Text>
-              {exercise.rest && <View style={{ flexDirection: "row", alignItems: "center", gap: 2 }}><MaterialIcons name="timer" size={11} color="#92400E" /><Text style={{ color: "#92400E", fontSize: 12 }}>{exercise.rest}</Text></View>}
+              {exercise.rest && <View style={{ flexDirection: "row", alignItems: "center", gap: 2 }}><MaterialIcons name="timer" size={11} color="#B45309" /><Text style={{ color: "#B45309", fontSize: 12 }}>{exercise.rest}</Text></View>}
             </View>
             {exercise.muscleGroup && (
               <View style={{ marginTop: 4, alignSelf: "flex-start", backgroundColor: "rgba(245,158,11,0.08)", borderRadius: 6, paddingHorizontal: 8, paddingVertical: 2 }}>
-                <Text style={{ color: "#92400E", fontSize: 10 }}>{exercise.muscleGroup}</Text>
+                <Text style={{ color: "#B45309", fontSize: 10 }}>{exercise.muscleGroup}</Text>
               </View>
             )}
           </View>
@@ -819,7 +819,7 @@ function ExercisePreviewCard({ exercise }: { exercise: any }) {
           </TouchableOpacity>
         </View>
         {exercise.notes && (
-          <View style={{ flexDirection: "row", gap: 4, alignItems: "flex-start", marginTop: 6 }}><MaterialIcons name="lightbulb" size={11} color="#78350F" style={{ marginTop: 2 }} /><Text style={{ color: "#78350F", fontSize: 11, lineHeight: 15, flex: 1 }}>{exercise.notes}</Text></View>
+          <View style={{ flexDirection: "row", gap: 4, alignItems: "flex-start", marginTop: 6 }}><MaterialIcons name="lightbulb" size={11} color="#B45309" style={{ marginTop: 2 }} /><Text style={{ color: "#B45309", fontSize: 11, lineHeight: 15, flex: 1 }}>{exercise.notes}</Text></View>
         )}
       </View>
       {showVideo && (
@@ -846,12 +846,12 @@ function MealDayCard({ day, defaultExpanded }: { day: any; defaultExpanded?: boo
           </View>
           <View>
             <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 15 }}>{day.day}</Text>
-            <Text style={{ color: "#92400E", fontSize: 12 }}>{day.meals?.length ?? 0} meals</Text>
+            <Text style={{ color: "#B45309", fontSize: 12 }}>{day.meals?.length ?? 0} meals</Text>
           </View>
         </View>
         <View style={{ alignItems: "flex-end" }}>
           <Text style={{ color: "#FBBF24", fontFamily: "Outfit_800ExtraBold", fontSize: 15 }}>{dayCalories} kcal</Text>
-          <MaterialIcons name={expanded ? "expand-less" : "expand-more"} size={18} color="#92400E" style={{ marginTop: 2 }} />
+          <MaterialIcons name={expanded ? "expand-less" : "expand-more"} size={18} color="#B45309" style={{ marginTop: 2 }} />
         </View>
       </TouchableOpacity>
 
@@ -877,7 +877,7 @@ function MealCard({ meal }: { meal: any }) {
     dinner: "#F59E0B",
     snack: "#FBBF24",
   };
-  const color = mealTypeColor[(meal.type ?? "").toLowerCase()] ?? "#92400E";
+  const color = mealTypeColor[(meal.type ?? "").toLowerCase()] ?? "#B45309";
 
   return (
     <View style={{ backgroundColor: "#150A00", borderRadius: 16, overflow: "hidden", borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}>
@@ -901,8 +901,8 @@ function MealCard({ meal }: { meal: any }) {
           <Text style={{ color: "#FBBF24", fontSize: 12 }}>F: {meal.fat}g</Text>
           {meal.prepTime && (
             <View style={{ flexDirection: "row", alignItems: "center", gap: 2 }}>
-              <MaterialIcons name="timer" size={11} color="#92400E" />
-              <Text style={{ color: "#92400E", fontSize: 12 }}>{meal.prepTime}</Text>
+              <MaterialIcons name="timer" size={11} color="#B45309" />
+              <Text style={{ color: "#B45309", fontSize: 12 }}>{meal.prepTime}</Text>
             </View>
           )}
         </View>
@@ -912,17 +912,17 @@ function MealCard({ meal }: { meal: any }) {
           onPress={() => setShowPrep(!showPrep)}
         >
           <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-            <MaterialIcons name="restaurant" size={16} color={showPrep ? "#FBBF24" : "#92400E"} />
-            <Text style={{ color: showPrep ? "#FBBF24" : "#92400E", fontFamily: "DMSans_600SemiBold", fontSize: 13 }}>How to Prep This Meal</Text>
+            <MaterialIcons name="restaurant" size={16} color={showPrep ? "#FBBF24" : "#B45309"} />
+            <Text style={{ color: showPrep ? "#FBBF24" : "#B45309", fontFamily: "DMSans_600SemiBold", fontSize: 13 }}>How to Prep This Meal</Text>
           </View>
-          <MaterialIcons name={showPrep ? "expand-less" : "expand-more"} size={16} color="#92400E" />
+          <MaterialIcons name={showPrep ? "expand-less" : "expand-more"} size={16} color="#B45309" />
         </TouchableOpacity>
 
         {showPrep && (
           <View style={{ marginTop: 10, gap: 8 }}>
             {meal.ingredients?.length > 0 && (
               <View style={{ backgroundColor: "#0A0500", borderRadius: 12, padding: 12 }}>
-                <Text style={{ color: "#92400E", fontSize: 11, fontFamily: "Outfit_700Bold", letterSpacing: 1, marginBottom: 8 }}>INGREDIENTS</Text>
+                <Text style={{ color: "#B45309", fontSize: 11, fontFamily: "Outfit_700Bold", letterSpacing: 1, marginBottom: 8 }}>INGREDIENTS</Text>
                 {meal.ingredients.map((ing: string, i: number) => (
                   <View key={i} style={{ flexDirection: "row", alignItems: "flex-start", gap: 8, marginBottom: 4 }}>
                     <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: "#FDE68A", marginTop: 5 }} />
@@ -933,7 +933,7 @@ function MealCard({ meal }: { meal: any }) {
             )}
             {meal.instructions?.length > 0 && (
               <View style={{ backgroundColor: "#0A0500", borderRadius: 12, padding: 12 }}>
-                <Text style={{ color: "#92400E", fontSize: 11, fontFamily: "Outfit_700Bold", letterSpacing: 1, marginBottom: 8 }}>PREP STEPS</Text>
+                <Text style={{ color: "#B45309", fontSize: 11, fontFamily: "Outfit_700Bold", letterSpacing: 1, marginBottom: 8 }}>PREP STEPS</Text>
                 {meal.instructions.map((step: string, i: number) => (
                   <View key={i} style={{ flexDirection: "row", alignItems: "flex-start", gap: 10, marginBottom: 8 }}>
                     <View style={{ width: 22, height: 22, borderRadius: 11, backgroundColor: "#F59E0B", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
@@ -946,7 +946,7 @@ function MealCard({ meal }: { meal: any }) {
             )}
             {(!meal.ingredients?.length && !meal.instructions?.length) && (
               <View style={{ backgroundColor: "#0A0500", borderRadius: 12, padding: 12 }}>
-                <Text style={{ color: "#92400E", fontSize: 13, textAlign: "center" }}>
+                <Text style={{ color: "#B45309", fontSize: 13, textAlign: "center" }}>
                   Regenerate your meal plan to get detailed prep instructions for each meal.
                 </Text>
               </View>

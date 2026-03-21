@@ -32,7 +32,7 @@ function AuroraTabIcon({ route, focused }: { route: string; focused: boolean }) 
 
   return (
     <View style={[styles.tabIconWrapper, focused && styles.tabIconWrapperActive]}>
-      <MaterialIcons name={def.icon} size={22} color={focused ? "#F59E0B" : "#78350F"} />
+      <MaterialIcons name={def.icon} size={22} color={focused ? "#F59E0B" : "#B45309"} />
       {focused && <View style={styles.activeGlow} />}
     </View>
   );
@@ -84,7 +84,7 @@ export default function TabLayout() {
     <Tabs
       screenOptions={({ route }) => ({
         tabBarActiveTintColor: "#F59E0B",
-        tabBarInactiveTintColor: "#78350F",
+        tabBarInactiveTintColor: "#B45309",
         headerShown: false,
         tabBarButton: HapticTab,
         tabBarIcon: ({ focused }) => <AuroraTabIcon route={route.name} focused={focused} />,

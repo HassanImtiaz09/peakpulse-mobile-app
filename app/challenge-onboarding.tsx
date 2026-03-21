@@ -136,7 +136,7 @@ export default function ChallengeOnboardingScreen() {
           </TouchableOpacity>
           <Text style={{ color: "#FDE68A", fontFamily: "Outfit_700Bold", fontSize: 12, letterSpacing: 1 }}>7-DAY CHALLENGE</Text>
           <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_800ExtraBold", fontSize: 26 }}>Your First Week</Text>
-          <Text style={{ color: "#92400E", fontSize: 13, marginTop: 4 }}>Complete all 7 days to unlock Advanced features free for 1 month</Text>
+          <Text style={{ color: "#B45309", fontSize: 13, marginTop: 4 }}>Complete 7 days to unlock Advanced free for 1 month</Text>
         </View>
       </ImageBackground>
 
@@ -145,11 +145,11 @@ export default function ChallengeOnboardingScreen() {
         <View style={{ margin: 20, backgroundColor: "#150A00", borderRadius: 20, padding: 16, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}>
           <View style={{ flexDirection: "row", justifyContent: "space-between", marginBottom: 12 }}>
             <View>
-              <Text style={{ color: "#92400E", fontSize: 12 }}>Progress</Text>
+              <Text style={{ color: "#B45309", fontSize: 12 }}>Progress</Text>
               <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_800ExtraBold", fontSize: 20 }}>{completedDays}/7 Days</Text>
             </View>
             <View style={{ alignItems: "flex-end" }}>
-              <Text style={{ color: "#92400E", fontSize: 12 }}>XP Earned</Text>
+              <Text style={{ color: "#B45309", fontSize: 12 }}>XP Earned</Text>
               <Text style={{ color: "#FDE68A", fontFamily: "Outfit_800ExtraBold", fontSize: 20 }}>⚡ {totalXP} XP</Text>
             </View>
           </View>
@@ -180,7 +180,7 @@ export default function ChallengeOnboardingScreen() {
             <Text style={{ fontSize: 28 }}>🔔</Text>
             <View style={{ flex: 1 }}>
               <Text style={{ color: "#FBBF24", fontFamily: "Outfit_700Bold", fontSize: 14 }}>Enable Daily Reminders</Text>
-              <Text style={{ color: "#92400E", fontSize: 12, marginTop: 2 }}>Get workout, meal log, and check-in reminders to stay on track</Text>
+              <Text style={{ color: "#B45309", fontSize: 12, marginTop: 2 }}>Daily reminders to keep you on track</Text>
             </View>
             <Text style={{ color: "#F59E0B", fontFamily: "Outfit_700Bold" }}>→</Text>
           </TouchableOpacity>
@@ -217,23 +217,23 @@ export default function ChallengeOnboardingScreen() {
                   </View>
                   <View style={{ flex: 1 }}>
                     <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-                      <Text style={{ color: "#92400E", fontSize: 11, fontFamily: "Outfit_700Bold" }}>DAY {day.day}</Text>
+                      <Text style={{ color: "#B45309", fontSize: 11, fontFamily: "Outfit_700Bold" }}>DAY {day.day}</Text>
                       <View style={{ backgroundColor: status === "complete" ? "rgba(245,158,11,0.10)" : "#F59E0B20", borderRadius: 6, paddingHorizontal: 6, paddingVertical: 2 }}>
                         <Text style={{ color: status === "complete" ? "#FDE68A" : "#FDE68A", fontSize: 10, fontFamily: "Outfit_700Bold" }}>+{day.xp} XP</Text>
                       </View>
                     </View>
                     <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 15 }}>{day.title}</Text>
-                    <Text style={{ color: "#78350F", fontSize: 12, marginTop: 2 }}>{completedTasks}/{day.tasks.length} tasks</Text>
+                    <Text style={{ color: "#B45309", fontSize: 12, marginTop: 2 }}>{completedTasks}/{day.tasks.length} tasks</Text>
                   </View>
                   {status !== "locked" && (
-                    <Text style={{ color: "#78350F", fontSize: 18 }}>{isExpanded ? "▲" : "▼"}</Text>
+                    <Text style={{ color: "#B45309", fontSize: 18 }}>{isExpanded ? "▲" : "▼"}</Text>
                   )}
                 </View>
 
                 {/* Task checklist */}
                 {isExpanded && status !== "locked" && (
                   <View style={{ marginTop: 16, gap: 8 }}>
-                    <Text style={{ color: "#92400E", fontSize: 12, marginBottom: 4 }}>{day.description}</Text>
+                    <Text style={{ color: "#B45309", fontSize: 12, marginBottom: 4 }}>{day.description}</Text>
                     {day.tasks.map((task, idx) => (
                       <TouchableOpacity
                         key={idx}
@@ -248,7 +248,7 @@ export default function ChallengeOnboardingScreen() {
                         }}>
                           {tasks[idx] && <Text style={{ color: "#FFF7ED", fontSize: 12, fontFamily: "Outfit_700Bold" }}>✓</Text>}
                         </View>
-                        <Text style={{ color: tasks[idx] ? "#78350F" : "#D1D5DB", fontSize: 14, flex: 1, textDecorationLine: tasks[idx] ? "line-through" : "none" }}>
+                        <Text style={{ color: tasks[idx] ? "#B45309" : "#D1D5DB", fontSize: 14, flex: 1, textDecorationLine: tasks[idx] ? "line-through" : "none" }}>
                           {task}
                         </Text>
                       </TouchableOpacity>
@@ -263,7 +263,7 @@ export default function ChallengeOnboardingScreen() {
         {/* Reward Banner */}
         <View style={{ marginHorizontal: 20, marginTop: 8, backgroundColor: "#F59E0B10", borderRadius: 16, padding: 16, borderWidth: 1, borderColor: "#F59E0B30" }}>
           <Text style={{ color: "#FDE68A", fontFamily: "Outfit_800ExtraBold", fontSize: 14, textAlign: "center" }}>🏆 Complete All 7 Days</Text>
-          <Text style={{ color: "#92400E", fontSize: 13, textAlign: "center", marginTop: 6, lineHeight: 18 }}>
+          <Text style={{ color: "#B45309", fontSize: 13, textAlign: "center", marginTop: 6, lineHeight: 18 }}>
             Finish the challenge to unlock <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold" }}>Advanced Plan free for 30 days</Text> + earn the "Week 1 Warrior" badge
           </Text>
         </View>

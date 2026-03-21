@@ -809,3 +809,30 @@
 ### Tests
 - [x] 14 new tests (round48-features.test.ts), 262 total passing
 - [x] 0 TypeScript errors
+
+## Round 49 — Custom Time Pickers, Weekly Nutrition Summary, UI Polish
+
+### Custom Time Pickers for Notification Settings
+- [x] TimePickerModal component with hour/minute scroll wheels
+- [x] Per-category time pickers: breakfast, lunch, dinner, snack, workout, morning motivation, evening recap
+- [x] Custom times persisted to AsyncStorage and used when scheduling notifications
+
+### Weekly Nutrition Summary Notification
+- [x] getWeeklyNutritionContext aggregates 7-day calorie/macro data from AsyncStorage
+- [x] Scheduled every Sunday at 7pm via WEEKLY trigger
+- [x] Includes meals logged, avg calories, avg macros (P/C/F), best day, and days tracked
+
+### UI Text Contrast Review
+- [x] Replaced 338 instances of #78350F and #92400E with #B45309 (~5.2:1 contrast ratio)
+- [x] All app/ and components/ .tsx files audited and fixed
+- [x] Improved readability across all dark-background sections
+
+### UI Text Verbosity Reduction
+- [x] Shortened 40+ verbose strings across meals, pantry, onboarding, daily-checkin screens
+- [x] Rewrote all 150+ assistant greeting templates to be under 80 chars
+- [x] Shortened all 33 notification message bodies to be concise and punchy
+- [x] Onboarding subtitles reduced by ~40%
+
+### Tests
+- [x] 7 new tests (round49-features.test.ts), 269 total passing
+- [x] 0 TypeScript errors

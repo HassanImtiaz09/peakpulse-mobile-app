@@ -17,7 +17,7 @@ const PHOTO_H = Math.round(PHOTO_W * (4 / 3));
 const SF = {
   bg: "#0A0500", surface: "#150A00", surface2: "#1F0D00",
   border: "rgba(245,158,11,0.12)", border2: "rgba(245,158,11,0.20)",
-  fg: "#FFF7ED", muted: "#92400E",
+  fg: "#FFF7ED", muted: "#B45309",
   gold: "#F59E0B", gold2: "#FBBF24", gold3: "#FDE68A",
   green: "#10B981", red: "#F87171",
 };

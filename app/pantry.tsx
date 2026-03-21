@@ -387,8 +387,8 @@ export default function PantryScreen() {
               borderWidth: 1, borderColor: viewMode === tab.key ? "rgba(245,158,11,0.30)" : "rgba(245,158,11,0.08)",
             }}
           >
-            <MaterialIcons name={tab.icon} size={16} color={viewMode === tab.key ? "#F59E0B" : "#92400E"} />
-            <Text style={{ color: viewMode === tab.key ? "#F59E0B" : "#92400E", fontFamily: "DMSans_600SemiBold", fontSize: 10 }}>{tab.label}</Text>
+            <MaterialIcons name={tab.icon} size={16} color={viewMode === tab.key ? "#F59E0B" : "#B45309"} />
+            <Text style={{ color: viewMode === tab.key ? "#F59E0B" : "#B45309", fontFamily: "DMSans_600SemiBold", fontSize: 10 }}>{tab.label}</Text>
           </TouchableOpacity>
         ))}
         </ScrollView>
@@ -401,15 +401,15 @@ export default function PantryScreen() {
             {/* Stats bar */}
             <View style={{ flexDirection: "row", gap: 8 }}>
               <View style={{ flex: 1, backgroundColor: "#150A00", borderRadius: 14, padding: 12, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}>
-                <Text style={{ color: "#92400E", fontSize: 10, fontFamily: "Outfit_700Bold" }}>TOTAL ITEMS</Text>
+                <Text style={{ color: "#B45309", fontSize: 10, fontFamily: "Outfit_700Bold" }}>TOTAL ITEMS</Text>
                 <Text style={{ color: "#FDE68A", fontSize: 22, fontFamily: "Outfit_800ExtraBold" }}>{items.length}</Text>
               </View>
               <View style={{ flex: 1, backgroundColor: "#150A00", borderRadius: 14, padding: 12, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}>
-                <Text style={{ color: "#92400E", fontSize: 10, fontFamily: "Outfit_700Bold" }}>CATEGORIES</Text>
+                <Text style={{ color: "#B45309", fontSize: 10, fontFamily: "Outfit_700Bold" }}>CATEGORIES</Text>
                 <Text style={{ color: "#FDE68A", fontSize: 22, fontFamily: "Outfit_800ExtraBold" }}>{nonEmptyCategories.length}</Text>
               </View>
               <View style={{ flex: 1, backgroundColor: expiringItems.length > 0 ? "rgba(239,68,68,0.08)" : "#150A00", borderRadius: 14, padding: 12, borderWidth: 1, borderColor: expiringItems.length > 0 ? "rgba(239,68,68,0.20)" : "rgba(245,158,11,0.10)" }}>
-                <Text style={{ color: expiringItems.length > 0 ? "#EF4444" : "#92400E", fontSize: 10, fontFamily: "Outfit_700Bold" }}>EXPIRING</Text>
+                <Text style={{ color: expiringItems.length > 0 ? "#EF4444" : "#B45309", fontSize: 10, fontFamily: "Outfit_700Bold" }}>EXPIRING</Text>
                 <Text style={{ color: expiringItems.length > 0 ? "#F87171" : "#FDE68A", fontSize: 22, fontFamily: "Outfit_800ExtraBold" }}>{expiringItems.length}</Text>
               </View>
             </View>
@@ -422,7 +422,7 @@ export default function PantryScreen() {
                   <Text style={{ color: "#F87171", fontFamily: "Outfit_700Bold", fontSize: 13 }}>Expiring Soon</Text>
                 </View>
                 {expiringItems.slice(0, 3).map(item => (
-                  <Text key={item.id} style={{ color: "#92400E", fontFamily: "DMSans_400Regular", fontSize: 12, marginLeft: 22 }}>
+                  <Text key={item.id} style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 12, marginLeft: 22 }}>
                     {item.name} — expires {new Date(item.expiresAt!).toLocaleDateString()}
                   </Text>
                 ))}
@@ -432,9 +432,9 @@ export default function PantryScreen() {
             {/* Empty state */}
             {items.length === 0 && (
               <View style={{ alignItems: "center", paddingVertical: 40 }}>
-                <MaterialIcons name="kitchen" size={48} color="#92400E" />
+                <MaterialIcons name="kitchen" size={48} color="#B45309" />
                 <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 18, marginTop: 12 }}>Your Pantry is Empty</Text>
-                <Text style={{ color: "#92400E", fontFamily: "DMSans_400Regular", fontSize: 13, textAlign: "center", marginTop: 6, maxWidth: 280 }}>
+                <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 13, textAlign: "center", marginTop: 6, maxWidth: 280 }}>
                   Add items manually or scan your pantry/fridge with AI to get started. Then get personalised meal suggestions!
                 </Text>
                 <TouchableOpacity
@@ -453,14 +453,14 @@ export default function PantryScreen() {
                 <View style={{ flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 4 }}>
                   <MaterialIcons name={CATEGORY_ICONS[cat] as any} size={18} color="#F59E0B" />
                   <Text style={{ color: "#FDE68A", fontFamily: "Outfit_700Bold", fontSize: 14 }}>{cat}</Text>
-                  <Text style={{ color: "#92400E", fontFamily: "DMSans_400Regular", fontSize: 11 }}>({grouped[cat].length})</Text>
+                  <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 11 }}>({grouped[cat].length})</Text>
                 </View>
                 {grouped[cat].map(item => (
                   <View key={item.id} style={{ flexDirection: "row", alignItems: "center", backgroundColor: "#150A00", borderRadius: 12, padding: 12, borderWidth: 1, borderColor: "rgba(245,158,11,0.08)" }}>
                     <View style={{ flex: 1 }}>
                       <Text style={{ color: "#FFF7ED", fontFamily: "DMSans_600SemiBold", fontSize: 14 }}>{item.name}</Text>
                       {(item.quantity || item.unit) && (
-                        <Text style={{ color: "#92400E", fontFamily: "DMSans_400Regular", fontSize: 11 }}>
+                        <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 11 }}>
                           {item.quantity ? `${item.quantity}` : ""}{item.unit ? ` ${item.unit}` : ""}
                         </Text>
                       )}
@@ -471,7 +471,7 @@ export default function PantryScreen() {
                       </View>
                     )}
                     <TouchableOpacity onPress={() => removeItem(item.id)} style={{ padding: 4 }}>
-                      <MaterialIcons name="close" size={18} color="#92400E" />
+                      <MaterialIcons name="close" size={18} color="#B45309" />
                     </TouchableOpacity>
                   </View>
                 ))}
@@ -487,7 +487,7 @@ export default function PantryScreen() {
                 ])}
                 style={{ alignSelf: "center", marginTop: 8, paddingVertical: 8, paddingHorizontal: 16 }}
               >
-                <Text style={{ color: "#92400E", fontFamily: "DMSans_500Medium", fontSize: 12 }}>Clear All Items</Text>
+                <Text style={{ color: "#B45309", fontFamily: "DMSans_500Medium", fontSize: 12 }}>Clear All Items</Text>
               </TouchableOpacity>
             )}
           </View>
@@ -511,7 +511,7 @@ export default function PantryScreen() {
                 <Text style={{ color: "#3B82F6", fontFamily: "Outfit_700Bold", fontSize: 15 }}>
                   {scanning ? "Scanning..." : "Scan Pantry / Fridge"}
                 </Text>
-                <Text style={{ color: "#92400E", fontFamily: "DMSans_400Regular", fontSize: 11 }}>
+                <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 11 }}>
                   Take a photo and AI will identify your items
                 </Text>
               </View>
@@ -525,7 +525,7 @@ export default function PantryScreen() {
               <MaterialIcons name="qr-code-scanner" size={24} color="#22C55E" />
               <View>
                 <Text style={{ color: "#22C55E", fontFamily: "Outfit_700Bold", fontSize: 15 }}>Scan Barcode</Text>
-                <Text style={{ color: "#92400E", fontFamily: "DMSans_400Regular", fontSize: 11 }}>Scan product barcode for auto-fill with expiry date</Text>
+                <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 11 }}>Scan product barcode for auto-fill with expiry date</Text>
               </View>
             </TouchableOpacity>
 
@@ -536,7 +536,7 @@ export default function PantryScreen() {
                 value={newItemName}
                 onChangeText={setNewItemName}
                 placeholder="Item name (e.g. Chicken Breast)"
-                placeholderTextColor="#92400E"
+                placeholderTextColor="#B45309"
                 returnKeyType="done"
                 onSubmitEditing={handleManualAdd}
                 style={{ backgroundColor: "rgba(245,158,11,0.06)", borderRadius: 12, padding: 14, color: "#FFF7ED", fontFamily: "DMSans_500Medium", fontSize: 15, borderWidth: 1, borderColor: "rgba(245,158,11,0.15)", marginBottom: 10 }}
@@ -546,7 +546,7 @@ export default function PantryScreen() {
                   value={newItemQuantity}
                   onChangeText={setNewItemQuantity}
                   placeholder="Qty"
-                  placeholderTextColor="#92400E"
+                  placeholderTextColor="#B45309"
                   keyboardType="numeric"
                   style={{ flex: 1, backgroundColor: "rgba(245,158,11,0.06)", borderRadius: 12, padding: 12, color: "#FFF7ED", fontFamily: "DMSans_500Medium", fontSize: 14, borderWidth: 1, borderColor: "rgba(245,158,11,0.15)" }}
                 />
@@ -554,7 +554,7 @@ export default function PantryScreen() {
                   value={newItemUnit}
                   onChangeText={setNewItemUnit}
                   placeholder="Unit (g, pcs, ml)"
-                  placeholderTextColor="#92400E"
+                  placeholderTextColor="#B45309"
                   style={{ flex: 2, backgroundColor: "rgba(245,158,11,0.06)", borderRadius: 12, padding: 12, color: "#FFF7ED", fontFamily: "DMSans_500Medium", fontSize: 14, borderWidth: 1, borderColor: "rgba(245,158,11,0.15)" }}
                 />
               </View>
@@ -568,7 +568,7 @@ export default function PantryScreen() {
                   <MaterialIcons name={CATEGORY_ICONS[newItemCategory] as any} size={18} color="#F59E0B" />
                   <Text style={{ color: "#FFF7ED", fontFamily: "DMSans_500Medium", fontSize: 14 }}>{newItemCategory}</Text>
                 </View>
-                <MaterialIcons name={showCategoryPicker ? "expand-less" : "expand-more"} size={20} color="#92400E" />
+                <MaterialIcons name={showCategoryPicker ? "expand-less" : "expand-more"} size={20} color="#B45309" />
               </TouchableOpacity>
               {showCategoryPicker && (
                 <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 6, marginBottom: 10 }}>
@@ -578,8 +578,8 @@ export default function PantryScreen() {
                       onPress={() => { setNewItemCategory(cat); setShowCategoryPicker(false); }}
                       style={{ flexDirection: "row", alignItems: "center", gap: 4, paddingHorizontal: 10, paddingVertical: 6, borderRadius: 10, backgroundColor: newItemCategory === cat ? "rgba(245,158,11,0.15)" : "rgba(245,158,11,0.04)", borderWidth: 1, borderColor: newItemCategory === cat ? "rgba(245,158,11,0.30)" : "rgba(245,158,11,0.08)" }}
                     >
-                      <MaterialIcons name={CATEGORY_ICONS[cat] as any} size={14} color={newItemCategory === cat ? "#F59E0B" : "#92400E"} />
-                      <Text style={{ color: newItemCategory === cat ? "#F59E0B" : "#92400E", fontFamily: "DMSans_500Medium", fontSize: 11 }}>{cat}</Text>
+                      <MaterialIcons name={CATEGORY_ICONS[cat] as any} size={14} color={newItemCategory === cat ? "#F59E0B" : "#B45309"} />
+                      <Text style={{ color: newItemCategory === cat ? "#F59E0B" : "#B45309", fontFamily: "DMSans_500Medium", fontSize: 11 }}>{cat}</Text>
                     </TouchableOpacity>
                   ))}
                 </View>
@@ -590,8 +590,8 @@ export default function PantryScreen() {
                 disabled={!newItemName.trim()}
                 style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6, backgroundColor: newItemName.trim() ? "#F59E0B" : "rgba(245,158,11,0.15)", borderRadius: 12, paddingVertical: 12 }}
               >
-                <MaterialIcons name="add" size={18} color={newItemName.trim() ? "#0A0500" : "#92400E"} />
-                <Text style={{ color: newItemName.trim() ? "#0A0500" : "#92400E", fontFamily: "Outfit_700Bold", fontSize: 14 }}>Add to Pantry</Text>
+                <MaterialIcons name="add" size={18} color={newItemName.trim() ? "#0A0500" : "#B45309"} />
+                <Text style={{ color: newItemName.trim() ? "#0A0500" : "#B45309", fontFamily: "Outfit_700Bold", fontSize: 14 }}>Add to Pantry</Text>
               </TouchableOpacity>
             </View>
 
@@ -600,7 +600,7 @@ export default function PantryScreen() {
               <TouchableOpacity onPress={() => setShowQuickAdd(!showQuickAdd)} style={{ flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 8 }}>
                 <MaterialIcons name="bolt" size={18} color="#F59E0B" />
                 <Text style={{ color: "#FDE68A", fontFamily: "Outfit_700Bold", fontSize: 14 }}>Quick Add Common Items</Text>
-                <MaterialIcons name={showQuickAdd ? "expand-less" : "expand-more"} size={18} color="#92400E" />
+                <MaterialIcons name={showQuickAdd ? "expand-less" : "expand-more"} size={18} color="#B45309" />
               </TouchableOpacity>
               {showQuickAdd && (
                 <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 6 }}>
@@ -627,13 +627,13 @@ export default function PantryScreen() {
               <View style={{ alignItems: "center", paddingVertical: 40 }}>
                 <ActivityIndicator color="#F59E0B" size="large" />
                 <Text style={{ color: "#FDE68A", fontFamily: "Outfit_700Bold", fontSize: 16, marginTop: 12 }}>Generating Meal Ideas...</Text>
-                <Text style={{ color: "#92400E", fontFamily: "DMSans_400Regular", fontSize: 12, marginTop: 4 }}>AI is analysing your {items.length} pantry items</Text>
+                <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 12, marginTop: 4 }}>AI is analysing your {items.length} pantry items</Text>
               </View>
             ) : suggestedMeals.length === 0 ? (
               <View style={{ alignItems: "center", paddingVertical: 40 }}>
-                <MaterialIcons name="restaurant" size={48} color="#92400E" />
+                <MaterialIcons name="restaurant" size={48} color="#B45309" />
                 <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 16, marginTop: 12 }}>No Suggestions Yet</Text>
-                <Text style={{ color: "#92400E", fontFamily: "DMSans_400Regular", fontSize: 12, textAlign: "center", marginTop: 4 }}>Add items to your pantry, then tap "AI Meals" to get personalised recipes.</Text>
+                <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 12, textAlign: "center", marginTop: 4 }}>Add items, then tap "AI Meals" for recipes.</Text>
               </View>
             ) : (
               <>
@@ -650,9 +650,9 @@ export default function PantryScreen() {
                       <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start" }}>
                         <View style={{ flex: 1 }}>
                           <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 16 }}>{meal.name}</Text>
-                          <Text style={{ color: "#92400E", fontFamily: "DMSans_400Regular", fontSize: 12, marginTop: 2 }}>{meal.description}</Text>
+                          <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 12, marginTop: 2 }}>{meal.description}</Text>
                         </View>
-                        <MaterialIcons name={expandedMealIdx === idx ? "expand-less" : "expand-more"} size={22} color="#92400E" />
+                        <MaterialIcons name={expandedMealIdx === idx ? "expand-less" : "expand-more"} size={22} color="#B45309" />
                       </View>
 
                       {/* Macro badges */}
@@ -671,8 +671,8 @@ export default function PantryScreen() {
                           <Text style={{ color: "#F59E0B", fontFamily: "DMSans_600SemiBold", fontSize: 11 }}>F: {meal.estimatedFat}g</Text>
                         </View>
                         <View style={{ flexDirection: "row", alignItems: "center", gap: 3, backgroundColor: "rgba(245,158,11,0.06)", borderRadius: 8, paddingHorizontal: 8, paddingVertical: 3 }}>
-                          <MaterialIcons name="schedule" size={12} color="#92400E" />
-                          <Text style={{ color: "#92400E", fontFamily: "DMSans_500Medium", fontSize: 11 }}>{meal.prepTime}</Text>
+                          <MaterialIcons name="schedule" size={12} color="#B45309" />
+                          <Text style={{ color: "#B45309", fontFamily: "DMSans_500Medium", fontSize: 11 }}>{meal.prepTime}</Text>
                         </View>
                       </View>
 
@@ -741,9 +741,9 @@ export default function PantryScreen() {
           <View style={{ gap: 16 }}>
             {getCookAgainMeals().length === 0 ? (
               <View style={{ alignItems: "center", paddingVertical: 40 }}>
-                <MaterialIcons name="replay" size={48} color="#92400E" />
+                <MaterialIcons name="replay" size={48} color="#B45309" />
                 <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 16, marginTop: 12 }}>No Cooked Meals Yet</Text>
-                <Text style={{ color: "#92400E", fontFamily: "DMSans_400Regular", fontSize: 12, textAlign: "center", marginTop: 4 }}>Log a meal from AI Suggestions and it will appear here for quick re-cooking.</Text>
+                <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 12, textAlign: "center", marginTop: 4 }}>Cook a suggested meal to see it here.</Text>
               </View>
             ) : (
               <>
@@ -757,7 +757,7 @@ export default function PantryScreen() {
                       <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start" }}>
                         <View style={{ flex: 1 }}>
                           <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 16 }}>{cm.meal.name}</Text>
-                          <Text style={{ color: "#92400E", fontFamily: "DMSans_400Regular", fontSize: 12, marginTop: 2 }}>{cm.meal.description}</Text>
+                          <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 12, marginTop: 2 }}>{cm.meal.description}</Text>
                         </View>
                         <View style={{ backgroundColor: "rgba(245,158,11,0.12)", borderRadius: 10, paddingHorizontal: 10, paddingVertical: 4, marginLeft: 8 }}>
                           <Text style={{ color: "#FBBF24", fontFamily: "Outfit_700Bold", fontSize: 12 }}>{cm.timesCooked}x</Text>
@@ -773,7 +773,7 @@ export default function PantryScreen() {
                         <Text style={{ color: "#FBBF24", fontFamily: "DMSans_500Medium", fontSize: 11 }}>C: {cm.meal.estimatedCarbs}g</Text>
                         <Text style={{ color: "#FB923C", fontFamily: "DMSans_500Medium", fontSize: 11 }}>F: {cm.meal.estimatedFat}g</Text>
                       </View>
-                      <Text style={{ color: "#78350F", fontFamily: "DMSans_400Regular", fontSize: 10, marginTop: 6 }}>Last cooked: {new Date(cm.cookedAt).toLocaleDateString()}</Text>
+                      <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 10, marginTop: 6 }}>Last cooked: {new Date(cm.cookedAt).toLocaleDateString()}</Text>
                       {/* Cook Again button */}
                       <TouchableOpacity
                         onPress={() => handleCookAgain(cm)}
@@ -797,13 +797,13 @@ export default function PantryScreen() {
               <View style={{ alignItems: "center", paddingVertical: 40 }}>
                 <ActivityIndicator color="#F59E0B" size="large" />
                 <Text style={{ color: "#FDE68A", fontFamily: "Outfit_700Bold", fontSize: 16, marginTop: 12 }}>Analysing Nutritional Gaps...</Text>
-                <Text style={{ color: "#92400E", fontFamily: "DMSans_400Regular", fontSize: 12, marginTop: 4 }}>Finding budget-friendly items to complete your kitchen</Text>
+                <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 12, marginTop: 4 }}>Finding budget-friendly items to complete your kitchen</Text>
               </View>
             ) : shoppingSuggestions.length === 0 ? (
               <View style={{ alignItems: "center", paddingVertical: 40 }}>
-                <MaterialIcons name="shopping-cart" size={48} color="#92400E" />
+                <MaterialIcons name="shopping-cart" size={48} color="#B45309" />
                 <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 16, marginTop: 12 }}>No Shopping Suggestions</Text>
-                <Text style={{ color: "#92400E", fontFamily: "DMSans_400Regular", fontSize: 12, textAlign: "center", marginTop: 4 }}>Add items to your pantry first, then AI will suggest what else you need.</Text>
+                <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 12, textAlign: "center", marginTop: 4 }}>Add pantry items first for AI suggestions.</Text>
               </View>
             ) : (
               <>
@@ -812,7 +812,7 @@ export default function PantryScreen() {
                     <MaterialIcons name="lightbulb" size={16} color="#3B82F6" />
                     <Text style={{ color: "#3B82F6", fontFamily: "Outfit_700Bold", fontSize: 13 }}>Smart Shopping Tip</Text>
                   </View>
-                  <Text style={{ color: "#92400E", fontFamily: "DMSans_400Regular", fontSize: 12, lineHeight: 18 }}>
+                  <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 12, lineHeight: 18 }}>
                     These suggestions are prioritised to give you the most meals for the least cost, based on your {items.length} pantry items and {userGoal.replace(/_/g, " ")} goal.
                   </Text>
                 </View>
@@ -865,10 +865,10 @@ export default function PantryScreen() {
                         <MaterialIcons
                           name={priority === "essential" ? "priority-high" : priority === "recommended" ? "thumb-up" : "star-outline"}
                           size={16}
-                          color={priority === "essential" ? "#EF4444" : priority === "recommended" ? "#F59E0B" : "#92400E"}
+                          color={priority === "essential" ? "#EF4444" : priority === "recommended" ? "#F59E0B" : "#B45309"}
                         />
                         <Text style={{
-                          color: priority === "essential" ? "#F87171" : priority === "recommended" ? "#FBBF24" : "#92400E",
+                          color: priority === "essential" ? "#F87171" : priority === "recommended" ? "#FBBF24" : "#B45309",
                           fontFamily: "Outfit_700Bold", fontSize: 13, textTransform: "capitalize",
                         }}>{priority}</Text>
                       </View>
@@ -878,7 +878,7 @@ export default function PantryScreen() {
                             <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start" }}>
                               <View style={{ flex: 1 }}>
                                 <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 15 }}>{item.name}</Text>
-                                <Text style={{ color: "#92400E", fontFamily: "DMSans_400Regular", fontSize: 12, marginTop: 2 }}>{item.reason}</Text>
+                                <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 12, marginTop: 2 }}>{item.reason}</Text>
                               </View>
                               <View style={{ backgroundColor: "rgba(34,197,94,0.10)", borderRadius: 8, paddingHorizontal: 8, paddingVertical: 3 }}>
                                 <Text style={{ color: "#22C55E", fontFamily: "DMSans_600SemiBold", fontSize: 11 }}>{item.estimatedCost}</Text>
@@ -910,7 +910,7 @@ export default function PantryScreen() {
                     <MaterialIcons name="store" size={18} color="#3B82F6" />
                     <Text style={{ color: "#3B82F6", fontFamily: "Outfit_700Bold", fontSize: 14 }}>Compare Prices & Order</Text>
                   </View>
-                  <Text style={{ color: "#92400E", fontFamily: "DMSans_400Regular", fontSize: 12, lineHeight: 18, marginBottom: 12 }}>
+                  <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 12, lineHeight: 18, marginBottom: 12 }}>
                     Tap a store below to search for your shopping list items. Prices vary by location.
                   </Text>
                   <View style={{ gap: 8 }}>
@@ -935,7 +935,7 @@ export default function PantryScreen() {
                         </View>
                         <View style={{ flex: 1 }}>
                           <Text style={{ color: "#FFF7ED", fontFamily: "DMSans_600SemiBold", fontSize: 14 }}>{store.name}</Text>
-                          <Text style={{ color: "#92400E", fontFamily: "DMSans_400Regular", fontSize: 11 }}>Tap to search your list items</Text>
+                          <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 11 }}>Tap to search your list items</Text>
                         </View>
                         <MaterialIcons name="open-in-new" size={16} color={store.color} />
                       </TouchableOpacity>
@@ -965,7 +965,7 @@ export default function PantryScreen() {
                 <View key={stat.label} style={{ flex: 1, backgroundColor: stat.color + "10", borderRadius: 14, padding: 14, borderWidth: 1, borderColor: stat.color + "25", alignItems: "center" }}>
                   <MaterialIcons name={stat.icon} size={22} color={stat.color} />
                   <Text style={{ color: stat.color, fontFamily: "Outfit_700Bold", fontSize: 22, marginTop: 4 }}>{stat.value}</Text>
-                  <Text style={{ color: "#92400E", fontFamily: "DMSans_500Medium", fontSize: 10 }}>{stat.label}</Text>
+                  <Text style={{ color: "#B45309", fontFamily: "DMSans_500Medium", fontSize: 10 }}>{stat.label}</Text>
                 </View>
               ))}
             </View>
@@ -976,15 +976,15 @@ export default function PantryScreen() {
               <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
                 <View style={{ alignItems: "center" }}>
                   <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 20 }}>{weeklyReport.totalItems}</Text>
-                  <Text style={{ color: "#92400E", fontFamily: "DMSans_400Regular", fontSize: 11 }}>Total Items</Text>
+                  <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 11 }}>Total Items</Text>
                 </View>
                 <View style={{ alignItems: "center" }}>
                   <Text style={{ color: weeklyReport.expiringCount > 0 ? "#EF4444" : "#22C55E", fontFamily: "Outfit_700Bold", fontSize: 20 }}>{weeklyReport.expiringCount}</Text>
-                  <Text style={{ color: "#92400E", fontFamily: "DMSans_400Regular", fontSize: 11 }}>Expiring Soon</Text>
+                  <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 11 }}>Expiring Soon</Text>
                 </View>
                 <View style={{ alignItems: "center" }}>
                   <Text style={{ color: "#FBBF24", fontFamily: "Outfit_700Bold", fontSize: 20 }}>{cookedMeals.length}</Text>
-                  <Text style={{ color: "#92400E", fontFamily: "DMSans_400Regular", fontSize: 11 }}>Meals Cooked</Text>
+                  <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 11 }}>Meals Cooked</Text>
                 </View>
               </View>
             </View>
@@ -997,7 +997,7 @@ export default function PantryScreen() {
                   <View key={i} style={{ flexDirection: "row", alignItems: "center", gap: 8, paddingVertical: 4 }}>
                     <MaterialIcons name="check" size={14} color="#22C55E" />
                     <Text style={{ color: "#FFF7ED", fontFamily: "DMSans_500Medium", fontSize: 13, flex: 1 }}>{entry.itemName}</Text>
-                    <Text style={{ color: "#92400E", fontFamily: "DMSans_400Regular", fontSize: 10 }}>{new Date(entry.date).toLocaleDateString()}</Text>
+                    <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 10 }}>{new Date(entry.date).toLocaleDateString()}</Text>
                   </View>
                 ))}
               </View>
@@ -1011,7 +1011,7 @@ export default function PantryScreen() {
                   <View key={i} style={{ flexDirection: "row", alignItems: "center", gap: 8, paddingVertical: 4 }}>
                     <MaterialIcons name="warning" size={14} color="#EF4444" />
                     <Text style={{ color: "#FFF7ED", fontFamily: "DMSans_500Medium", fontSize: 13, flex: 1 }}>{entry.itemName}</Text>
-                    <Text style={{ color: "#92400E", fontFamily: "DMSans_400Regular", fontSize: 10 }}>{new Date(entry.date).toLocaleDateString()}</Text>
+                    <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 10 }}>{new Date(entry.date).toLocaleDateString()}</Text>
                   </View>
                 ))}
               </View>
@@ -1034,11 +1034,11 @@ export default function PantryScreen() {
             {/* Efficiency Score */}
             {(weeklyReport.used.length + weeklyReport.expired.length) > 0 && (
               <View style={{ backgroundColor: "#150A00", borderRadius: 16, padding: 16, borderWidth: 1, borderColor: "rgba(245,158,11,0.12)", alignItems: "center" }}>
-                <Text style={{ color: "#92400E", fontFamily: "DMSans_600SemiBold", fontSize: 11, letterSpacing: 1, marginBottom: 8 }}>PANTRY EFFICIENCY SCORE</Text>
+                <Text style={{ color: "#B45309", fontFamily: "DMSans_600SemiBold", fontSize: 11, letterSpacing: 1, marginBottom: 8 }}>PANTRY EFFICIENCY SCORE</Text>
                 <Text style={{ color: weeklyReport.expired.length === 0 ? "#22C55E" : weeklyReport.expired.length <= 2 ? "#FBBF24" : "#EF4444", fontFamily: "Outfit_800ExtraBold", fontSize: 36 }}>
                   {Math.round((weeklyReport.used.length / (weeklyReport.used.length + weeklyReport.expired.length)) * 100)}%
                 </Text>
-                <Text style={{ color: "#92400E", fontFamily: "DMSans_400Regular", fontSize: 12, textAlign: "center", marginTop: 4 }}>
+                <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 12, textAlign: "center", marginTop: 4 }}>
                   {weeklyReport.expired.length === 0 ? "Perfect! No food wasted this week." : `${weeklyReport.expired.length} item${weeklyReport.expired.length > 1 ? "s" : ""} expired. Try using expiring items first.`}
                 </Text>
               </View>
@@ -1054,10 +1054,10 @@ export default function PantryScreen() {
             <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
               <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_800ExtraBold", fontSize: 20 }}>Scanned Items</Text>
               <TouchableOpacity onPress={() => setShowScanResults(false)}>
-                <MaterialIcons name="close" size={24} color="#92400E" />
+                <MaterialIcons name="close" size={24} color="#B45309" />
               </TouchableOpacity>
             </View>
-            <Text style={{ color: "#92400E", fontFamily: "DMSans_400Regular", fontSize: 12, marginBottom: 12 }}>
+            <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 12, marginBottom: 12 }}>
               AI identified {scannedItems.length} items. Review and add them to your pantry.
             </Text>
             <FlatList
@@ -1069,11 +1069,11 @@ export default function PantryScreen() {
                     <MaterialIcons name={CATEGORY_ICONS[item.category] as any} size={18} color="#F59E0B" />
                     <View>
                       <Text style={{ color: "#FFF7ED", fontFamily: "DMSans_600SemiBold", fontSize: 14 }}>{item.name}</Text>
-                      <Text style={{ color: "#92400E", fontFamily: "DMSans_400Regular", fontSize: 11 }}>{item.category}</Text>
+                      <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 11 }}>{item.category}</Text>
                     </View>
                   </View>
                   <TouchableOpacity onPress={() => setScannedItems(prev => prev.filter((_, i) => i !== index))}>
-                    <MaterialIcons name="close" size={18} color="#92400E" />
+                    <MaterialIcons name="close" size={18} color="#B45309" />
                   </TouchableOpacity>
                 </View>
               )}

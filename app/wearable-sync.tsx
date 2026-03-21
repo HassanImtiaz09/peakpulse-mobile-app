@@ -15,7 +15,7 @@ const WEARABLES = [
     id: "apple_health",
     name: "Apple Health",
     icon: "❤️",
-    color: "#92400E",
+    color: "#B45309",
     platform: "ios",
     description: "Sync steps, heart rate, calories, sleep, and workouts from your iPhone and Apple Watch.",
     deepLink: "x-apple-health://",
@@ -161,14 +161,14 @@ export default function WearableSyncScreen() {
         {/* Info Banner */}
         <View style={{ backgroundColor: "#7C3AED15", borderRadius: 16, padding: 16, marginBottom: 20, borderWidth: 1, borderColor: "rgba(245,158,11,0.12)" }}>
           <Text style={{ color: "#FBBF24", fontFamily: "Outfit_700Bold", fontSize: 13, marginBottom: 6 }}>ℹ️ How Wearable Sync Works</Text>
-          <Text style={{ color: "#92400E", fontSize: 13, lineHeight: 20 }}>
+          <Text style={{ color: "#B45309", fontSize: 13, lineHeight: 20 }}>
             Tap a device to open its app and authorize data sharing. Once connected, your health data (steps, heart rate, sleep, calories) will appear on your PeakPulse dashboard and personalize your AI plans.
           </Text>
         </View>
 
         {/* Platform note */}
         <View style={{ backgroundColor: "#150A00", borderRadius: 12, padding: 12, marginBottom: 20, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}>
-          <Text style={{ color: "#78350F", fontSize: 12, textAlign: "center" }}>
+          <Text style={{ color: "#B45309", fontSize: 12, textAlign: "center" }}>
             {Platform.OS === "ios"
               ? "📱 Showing iOS-compatible apps. Apple Health is the primary data hub on iPhone."
               : "🤖 Showing Android-compatible apps. Google Fit is the primary data hub on Android."}
@@ -210,9 +210,9 @@ export default function WearableSyncScreen() {
                       </View>
                     )}
                   </View>
-                  <Text style={{ color: "#92400E", fontSize: 12, lineHeight: 16 }}>{wearable.description}</Text>
+                  <Text style={{ color: "#B45309", fontSize: 12, lineHeight: 16 }}>{wearable.description}</Text>
                 </View>
-                <Text style={{ color: "#92400E", fontSize: 14 }}>{isExpanded ? "▲" : "▼"}</Text>
+                <Text style={{ color: "#B45309", fontSize: 14 }}>{isExpanded ? "▲" : "▼"}</Text>
               </TouchableOpacity>
 
               {/* Expanded Detail */}
@@ -220,7 +220,7 @@ export default function WearableSyncScreen() {
                 <View style={{ paddingHorizontal: 18, paddingBottom: 18, gap: 12 }}>
                   {/* Data types */}
                   <View>
-                    <Text style={{ color: "#92400E", fontSize: 11, fontFamily: "Outfit_700Bold", letterSpacing: 1, marginBottom: 8 }}>DATA SYNCED</Text>
+                    <Text style={{ color: "#B45309", fontSize: 11, fontFamily: "Outfit_700Bold", letterSpacing: 1, marginBottom: 8 }}>DATA SYNCED</Text>
                     <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 6 }}>
                       {wearable.dataTypes.map((dt) => (
                         <View key={dt} style={{ backgroundColor: wearable.color + "15", borderRadius: 8, paddingHorizontal: 10, paddingVertical: 4, borderWidth: 1, borderColor: wearable.color + "30" }}>
@@ -232,7 +232,7 @@ export default function WearableSyncScreen() {
 
                   {/* How to connect */}
                   <View style={{ backgroundColor: "#150A00", borderRadius: 12, padding: 12 }}>
-                    <Text style={{ color: "#92400E", fontSize: 11, fontFamily: "Outfit_700Bold", letterSpacing: 1, marginBottom: 6 }}>HOW TO CONNECT</Text>
+                    <Text style={{ color: "#B45309", fontSize: 11, fontFamily: "Outfit_700Bold", letterSpacing: 1, marginBottom: 6 }}>HOW TO CONNECT</Text>
                     <Text style={{ color: "#D1D5DB", fontSize: 13, lineHeight: 20 }}>{wearable.note}</Text>
                   </View>
 
@@ -251,7 +251,7 @@ export default function WearableSyncScreen() {
                         style={{ flex: 1, backgroundColor: "#EF444420", borderRadius: 14, paddingVertical: 14, alignItems: "center", borderWidth: 1, borderColor: "#EF444440" }}
                         onPress={() => handleDisconnect(wearable.id)}
                       >
-                        <Text style={{ color: "#92400E", fontFamily: "Outfit_700Bold", fontSize: 13 }}>Unlink</Text>
+                        <Text style={{ color: "#B45309", fontFamily: "Outfit_700Bold", fontSize: 13 }}>Unlink</Text>
                       </TouchableOpacity>
                     </View>
                   ) : (
@@ -300,12 +300,12 @@ export default function WearableSyncScreen() {
                 <View key={item.label} style={{ width: "30%", backgroundColor: item.color + "10", borderRadius: 12, padding: 10, borderWidth: 1, borderColor: item.color + "25", alignItems: "center" }}>
                   <MaterialIcons name={item.icon} size={18} color={item.color} />
                   <Text style={{ color: item.color, fontFamily: "Outfit_700Bold", fontSize: 14, marginTop: 4 }}>{item.value}</Text>
-                  <Text style={{ color: "#92400E", fontFamily: "DMSans_400Regular", fontSize: 9 }}>{item.label}</Text>
+                  <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 9 }}>{item.label}</Text>
                 </View>
               ))}
             </View>
             {stats.lastSyncedAt && (
-              <Text style={{ color: "#78350F", fontFamily: "DMSans_400Regular", fontSize: 10, textAlign: "center", marginTop: 10 }}>
+              <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 10, textAlign: "center", marginTop: 10 }}>
                 Last synced: {new Date(stats.lastSyncedAt).toLocaleString()}
               </Text>
             )}
@@ -322,19 +322,19 @@ export default function WearableSyncScreen() {
             <View style={{ flexDirection: "row", justifyContent: "space-around" }}>
               <View style={{ alignItems: "center" }}>
                 <Text style={{ color: "#22C55E", fontFamily: "Outfit_700Bold", fontSize: 18 }}>{weeklyAvg.avgSteps.toLocaleString()}</Text>
-                <Text style={{ color: "#92400E", fontFamily: "DMSans_400Regular", fontSize: 10 }}>Avg Steps</Text>
+                <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 10 }}>Avg Steps</Text>
               </View>
               <View style={{ alignItems: "center" }}>
                 <Text style={{ color: "#F59E0B", fontFamily: "Outfit_700Bold", fontSize: 18 }}>{weeklyAvg.avgCalories}</Text>
-                <Text style={{ color: "#92400E", fontFamily: "DMSans_400Regular", fontSize: 10 }}>Avg Calories</Text>
+                <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 10 }}>Avg Calories</Text>
               </View>
               <View style={{ alignItems: "center" }}>
                 <Text style={{ color: "#8B5CF6", fontFamily: "Outfit_700Bold", fontSize: 18 }}>{weeklyAvg.avgSleep}h</Text>
-                <Text style={{ color: "#92400E", fontFamily: "DMSans_400Regular", fontSize: 10 }}>Avg Sleep</Text>
+                <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 10 }}>Avg Sleep</Text>
               </View>
               <View style={{ alignItems: "center" }}>
                 <Text style={{ color: "#EF4444", fontFamily: "Outfit_700Bold", fontSize: 18 }}>{weeklyAvg.avgHR}</Text>
-                <Text style={{ color: "#92400E", fontFamily: "DMSans_400Regular", fontSize: 10 }}>Avg HR</Text>
+                <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 10 }}>Avg HR</Text>
               </View>
             </View>
           </View>
@@ -343,7 +343,7 @@ export default function WearableSyncScreen() {
         {/* Manual Entry Note */}
         <View style={{ backgroundColor: "#150A00", borderRadius: 16, padding: 16, marginTop: 8, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}>
           <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 14, marginBottom: 8 }}>📊 No Wearable?</Text>
-          <Text style={{ color: "#92400E", fontSize: 13, lineHeight: 20, marginBottom: 12 }}>
+          <Text style={{ color: "#B45309", fontSize: 13, lineHeight: 20, marginBottom: 12 }}>
             You can manually log your daily steps, weight, and workout data directly in the PeakPulse app. Your dashboard will update automatically.
           </Text>
           <TouchableOpacity

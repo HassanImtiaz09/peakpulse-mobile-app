@@ -400,7 +400,7 @@ export default function MealsScreen() {
   }, [refreshFromStorage, mealType, isAuthenticated]));
 
   const caloriePercent = Math.min(100, (totalCalories / calorieGoal) * 100);
-  const calorieColor = caloriePercent > 90 ? "#92400E" : caloriePercent > 70 ? "#FBBF24" : "#FDE68A";
+  const calorieColor = caloriePercent > 90 ? "#B45309" : caloriePercent > 70 ? "#FBBF24" : "#FDE68A";
 
   async function pickImage(useCamera: boolean) {
     try {
@@ -580,7 +580,7 @@ export default function MealsScreen() {
           <View style={{ flex: 1, backgroundColor: "rgba(8,8,16,0.78)", alignItems: "center", justifyContent: "center", padding: 32 }}>
             <MaterialIcons name="restaurant" size={48} color="#F59E0B" style={{ marginBottom: 16 }} />
             <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_800ExtraBold", fontSize: 22, textAlign: "center", marginBottom: 8 }}>Meal Log</Text>
-            <Text style={{ color: "#92400E", fontSize: 14, textAlign: "center", lineHeight: 20 }}>Sign in or continue as guest to track your nutrition and use the AI calorie estimator.</Text>
+            <Text style={{ color: "#B45309", fontSize: 14, textAlign: "center", lineHeight: 20 }}>Sign in or continue as guest to start tracking.</Text>
           </View>
         </ImageBackground>
       </View>
@@ -668,7 +668,7 @@ export default function MealsScreen() {
       {/* Daily Summary Card — compact */}
       <View style={{ marginHorizontal: 16, marginTop: -16, backgroundColor: "#150A00", borderRadius: 20, padding: 14, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)", shadowColor: "#000", shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.4, shadowRadius: 8, zIndex: 10 }}>
         <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-          <Text style={{ color: "#92400E", fontSize: 10, fontFamily: "Outfit_700Bold", textTransform: "uppercase" }}>Today's Nutrition</Text>
+          <Text style={{ color: "#B45309", fontSize: 10, fontFamily: "Outfit_700Bold", textTransform: "uppercase" }}>Today's Nutrition</Text>
           <Text style={{ color: calorieColor, fontFamily: "Outfit_700Bold", fontSize: 11 }}>{Math.round(caloriesRemaining)} kcal left</Text>
         </View>
         <View style={{ height: 6, backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 3, marginBottom: 8, overflow: "hidden" }}>
@@ -723,9 +723,9 @@ export default function MealsScreen() {
                   </View>
                   <View style={{ flex: 1 }}>
                     <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 14 }}>{opt.label}</Text>
-                    <Text style={{ color: "#78350F", fontSize: 11, marginTop: 1 }}>{opt.desc}</Text>
+                    <Text style={{ color: "#B45309", fontSize: 11, marginTop: 1 }}>{opt.desc}</Text>
                   </View>
-                  <MaterialIcons name="chevron-right" size={20} color="#78350F" />
+                  <MaterialIcons name="chevron-right" size={20} color="#B45309" />
                 </TouchableOpacity>
               ))}
             </View>
@@ -738,7 +738,7 @@ export default function MealsScreen() {
             <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
               <Text style={{ color: "#FFF7ED", fontSize: 15, fontFamily: "Outfit_700Bold" }}>Manual Log</Text>
               <TouchableOpacity onPress={() => setLogMethod(null)}>
-                <MaterialIcons name="close" size={20} color="#78350F" />
+                <MaterialIcons name="close" size={20} color="#B45309" />
               </TouchableOpacity>
             </View>
 
@@ -750,8 +750,8 @@ export default function MealsScreen() {
                   style={{ flex: 1, paddingVertical: 8, borderRadius: 10, alignItems: "center", backgroundColor: mealType === t ? "#F59E0B" : "rgba(245,158,11,0.06)", borderWidth: 1, borderColor: mealType === t ? "#F59E0B" : "rgba(245,158,11,0.10)" }}
                   onPress={() => setMealType(t)}
                 >
-                  <MaterialIcons name={MEAL_TYPE_ICONS[t]} size={18} color={mealType === t ? "#0A0500" : "#78350F"} />
-                  <Text style={{ color: mealType === t ? "#0A0500" : "#78350F", fontSize: 9, fontFamily: "Outfit_700Bold", marginTop: 2, textTransform: "capitalize" }}>{t}</Text>
+                  <MaterialIcons name={MEAL_TYPE_ICONS[t]} size={18} color={mealType === t ? "#0A0500" : "#B45309"} />
+                  <Text style={{ color: mealType === t ? "#0A0500" : "#B45309", fontSize: 9, fontFamily: "Outfit_700Bold", marginTop: 2, textTransform: "capitalize" }}>{t}</Text>
                 </TouchableOpacity>
               ))}
             </View>
@@ -791,7 +791,7 @@ export default function MealsScreen() {
                       <MaterialIcons name="star" size={16} color="#F59E0B" />
                       <View style={{ flex: 1 }}>
                         <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 13 }}>{fav.name}</Text>
-                        <Text style={{ color: "#78350F", fontSize: 10 }}>{fav.calories} kcal \u2022 P:{fav.protein}g C:{fav.carbs}g F:{fav.fat}g</Text>
+                        <Text style={{ color: "#B45309", fontSize: 10 }}>{fav.calories} kcal \u2022 P:{fav.protein}g C:{fav.carbs}g F:{fav.fat}g</Text>
                       </View>
                     </TouchableOpacity>
                   ))}
@@ -804,8 +804,8 @@ export default function MealsScreen() {
               style={{ flexDirection: "row", alignItems: "center", gap: 4, marginTop: 8, marginBottom: showCustomEntry ? 8 : 0, alignSelf: "flex-start" }}
               onPress={() => setShowCustomEntry(!showCustomEntry)}
             >
-              <MaterialIcons name={showCustomEntry ? "edit-off" : "edit-note"} size={14} color={showCustomEntry ? "#F59E0B" : "#78350F"} />
-              <Text style={{ color: showCustomEntry ? "#F59E0B" : "#78350F", fontSize: 11, fontFamily: "Outfit_700Bold" }}>
+              <MaterialIcons name={showCustomEntry ? "edit-off" : "edit-note"} size={14} color={showCustomEntry ? "#F59E0B" : "#B45309"} />
+              <Text style={{ color: showCustomEntry ? "#F59E0B" : "#B45309", fontSize: 11, fontFamily: "Outfit_700Bold" }}>
                 {showCustomEntry ? "Hide nutrition fields" : "+ Add nutrition details"}
               </Text>
             </TouchableOpacity>
@@ -823,7 +823,7 @@ export default function MealsScreen() {
                 <View style={{ flexDirection: "row", alignItems: "center", backgroundColor: "rgba(245,158,11,0.06)", borderRadius: 10, paddingHorizontal: 14, paddingVertical: 10, borderWidth: 1, borderColor: "rgba(245,158,11,0.12)" }}>
                   <Text style={{ color: "#F59E0B", fontSize: 12, fontFamily: "Outfit_700Bold", width: 70 }}>Calories</Text>
                   <TextInput value={customCalories} onChangeText={setCustomCalories} placeholder="0" placeholderTextColor="#451A03" keyboardType="numeric" style={{ flex: 1, color: "#FFF7ED", fontSize: 15, fontFamily: "Outfit_700Bold", paddingVertical: 0 }} returnKeyType="next" />
-                  <Text style={{ color: "#92400E", fontSize: 11 }}>kcal</Text>
+                  <Text style={{ color: "#B45309", fontSize: 11 }}>kcal</Text>
                 </View>
                 <View style={{ flexDirection: "row", gap: 6 }}>
                   {[
@@ -844,7 +844,7 @@ export default function MealsScreen() {
                   <View style={{ width: 20, height: 20, borderRadius: 4, borderWidth: 1.5, borderColor: saveToFavOnLog ? "#F59E0B" : "#451A03", backgroundColor: saveToFavOnLog ? "#F59E0B" : "transparent", alignItems: "center", justifyContent: "center" }}>
                     {saveToFavOnLog && <MaterialIcons name="check" size={14} color="#FFF7ED" />}
                   </View>
-                  <Text style={{ color: "#92400E", fontSize: 12, fontFamily: "Outfit_700Bold" }}>Save to Favourites</Text>
+                  <Text style={{ color: "#B45309", fontSize: 12, fontFamily: "Outfit_700Bold" }}>Save to Favourites</Text>
                 </TouchableOpacity>
               </View>
             )}
@@ -867,7 +867,7 @@ export default function MealsScreen() {
             <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
               <Text style={{ color: "#FFF7ED", fontSize: 15, fontFamily: "Outfit_700Bold" }}>AI Food Scanner</Text>
               <TouchableOpacity onPress={() => { setLogMethod(null); setSelectedImage(null); setSelectedBase64(null); setAnalysisResult(null); }}>
-                <MaterialIcons name="close" size={20} color="#78350F" />
+                <MaterialIcons name="close" size={20} color="#B45309" />
               </TouchableOpacity>
             </View>
 
@@ -939,7 +939,7 @@ export default function MealsScreen() {
                     </View>
                   </View>
                   {analysisResult.notes && (
-                    <Text style={{ color: "#92400E", fontSize: 12, marginBottom: 10, lineHeight: 18 }}>{String(analysisResult.notes)}</Text>
+                    <Text style={{ color: "#B45309", fontSize: 12, marginBottom: 10, lineHeight: 18 }}>{String(analysisResult.notes)}</Text>
                   )}
                   <View style={{ flexDirection: "row", justifyContent: "space-around", marginBottom: 10 }}>
                     <MacroStat label="Calories" value={analysisResult.totalCalories ?? 0} unit="kcal" color="#FBBF24" />
@@ -949,10 +949,10 @@ export default function MealsScreen() {
                   </View>
                   {analysisResult.foods?.length > 0 && (
                     <View>
-                      <Text style={{ color: "#92400E", fontSize: 10, fontFamily: "Outfit_700Bold", marginBottom: 6, textTransform: "uppercase" }}>Detected Foods</Text>
+                      <Text style={{ color: "#B45309", fontSize: 10, fontFamily: "Outfit_700Bold", marginBottom: 6, textTransform: "uppercase" }}>Detected Foods</Text>
                       {analysisResult.foods.map((food: any, i: number) => (
                         <View key={i} style={{ flexDirection: "row", justifyContent: "space-between", paddingVertical: 4, borderBottomWidth: i < analysisResult.foods.length - 1 ? 1 : 0, borderBottomColor: "rgba(245,158,11,0.10)" }}>
-                          <Text style={{ color: "#F59E0B", fontSize: 12 }}>{food.name} <Text style={{ color: "#78350F" }}>({food.portion})</Text></Text>
+                          <Text style={{ color: "#F59E0B", fontSize: 12 }}>{food.name} <Text style={{ color: "#B45309" }}>({food.portion})</Text></Text>
                           <Text style={{ color: "#FBBF24", fontSize: 12, fontFamily: "DMSans_600SemiBold" }}>{food.calories} kcal</Text>
                         </View>
                       ))}
@@ -968,8 +968,8 @@ export default function MealsScreen() {
                       style={{ flex: 1, paddingVertical: 6, borderRadius: 8, alignItems: "center", backgroundColor: mealType === t ? "#F59E0B" : "rgba(245,158,11,0.06)", borderWidth: 1, borderColor: mealType === t ? "#F59E0B" : "rgba(245,158,11,0.10)" }}
                       onPress={() => setMealType(t)}
                     >
-                      <MaterialIcons name={MEAL_TYPE_ICONS[t]} size={16} color={mealType === t ? "#0A0500" : "#78350F"} />
-                      <Text style={{ color: mealType === t ? "#0A0500" : "#78350F", fontSize: 8, fontFamily: "Outfit_700Bold", textTransform: "capitalize" }}>{t}</Text>
+                      <MaterialIcons name={MEAL_TYPE_ICONS[t]} size={16} color={mealType === t ? "#0A0500" : "#B45309"} />
+                      <Text style={{ color: mealType === t ? "#0A0500" : "#B45309", fontSize: 8, fontFamily: "Outfit_700Bold", textTransform: "capitalize" }}>{t}</Text>
                     </TouchableOpacity>
                   ))}
                 </View>
@@ -997,7 +997,7 @@ export default function MealsScreen() {
           <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
             <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 16 }}>Today's Meals</Text>
             {meals.length > 0 && (
-              <Text style={{ color: "#78350F", fontSize: 11 }}>{meals.length} logged</Text>
+              <Text style={{ color: "#B45309", fontSize: 11 }}>{meals.length} logged</Text>
             )}
           </View>
 
@@ -1022,7 +1022,7 @@ export default function MealsScreen() {
                     }}
                     onPress={() => { setSelectedDayIndex(i); setSwappedMeals({}); }}
                   >
-                    <Text style={{ color: selectedDayIndex === i ? "#0A0500" : "#78350F", fontFamily: "Outfit_700Bold", fontSize: 11 }}>{shortLabel}</Text>
+                    <Text style={{ color: selectedDayIndex === i ? "#0A0500" : "#B45309", fontFamily: "Outfit_700Bold", fontSize: 11 }}>{shortLabel}</Text>
                   </TouchableOpacity>
                 );
               })}
@@ -1059,7 +1059,7 @@ export default function MealsScreen() {
                   )}
                   <View style={{ padding: 10 }}>
                     <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 12 }} numberOfLines={1}>{recipe.title}</Text>
-                    <Text style={{ color: "#78350F", fontSize: 10, marginTop: 2 }}>{cals} kcal \u2022 {prot}g protein</Text>
+                    <Text style={{ color: "#B45309", fontSize: 10, marginTop: 2 }}>{cals} kcal \u2022 {prot}g protein</Text>
                     <View style={{ flexDirection: "row", gap: 4, marginTop: 8 }}>
                       <TouchableOpacity
                         style={{ flex: 1, backgroundColor: "#F59E0B", borderRadius: 8, paddingVertical: 6, alignItems: "center" }}
@@ -1107,10 +1107,10 @@ export default function MealsScreen() {
                 const overGoal = d.calories > calorieGoal;
                 return (
                   <G key={i}>
-                    <Rect x={x} y={95 - barH} width={24} height={barH} rx={4} fill={isToday ? "#F59E0B" : overGoal ? "#92400E" : "rgba(245,158,11,0.30)"} />
-                    <SvgText x={x + 12} y={98} fontSize={8} fill="#78350F" textAnchor="middle" fontWeight="bold">{d.label}</SvgText>
+                    <Rect x={x} y={95 - barH} width={24} height={barH} rx={4} fill={isToday ? "#F59E0B" : overGoal ? "#B45309" : "rgba(245,158,11,0.30)"} />
+                    <SvgText x={x + 12} y={98} fontSize={8} fill="#B45309" textAnchor="middle" fontWeight="bold">{d.label}</SvgText>
                     {d.calories > 0 && (
-                      <SvgText x={x + 12} y={90 - barH} fontSize={8} fill={isToday ? "#FDE68A" : "#78350F"} textAnchor="middle">{d.calories}</SvgText>
+                      <SvgText x={x + 12} y={90 - barH} fontSize={8} fill={isToday ? "#FDE68A" : "#B45309"} textAnchor="middle">{d.calories}</SvgText>
                     )}
                   </G>
                 );
@@ -1132,7 +1132,7 @@ export default function MealsScreen() {
           </View>
           <View style={{ flexDirection: "row", justifyContent: "space-between", marginBottom: 6 }}>
             <Text style={{ color: "#FBBF24", fontFamily: "Outfit_800ExtraBold", fontSize: 18 }}>{waterIntake} ml</Text>
-            <Text style={{ color: "#92400E", fontSize: 11, alignSelf: "flex-end" }}>{Math.min(100, Math.round((waterIntake / waterGoal) * 100))}%</Text>
+            <Text style={{ color: "#B45309", fontSize: 11, alignSelf: "flex-end" }}>{Math.min(100, Math.round((waterIntake / waterGoal) * 100))}%</Text>
           </View>
           <View style={{ height: 6, backgroundColor: "rgba(59,130,246,0.10)", borderRadius: 3, marginBottom: 8 }}>
             <View style={{ height: 6, backgroundColor: waterIntake >= waterGoal ? "#22C55E" : "#3B82F6", borderRadius: 3, width: `${Math.min(100, (waterIntake / waterGoal) * 100)}%` as any }} />
@@ -1159,7 +1159,7 @@ export default function MealsScreen() {
         {/* ── Quick Add from Saved Foods ── */}
         {favourites.length > 0 && (
           <View style={{ marginBottom: 12 }}>
-            <Text style={{ color: "#92400E", fontSize: 10, fontFamily: "Outfit_700Bold", letterSpacing: 1, marginBottom: 8 }}>QUICK ADD FROM SAVED FOODS</Text>
+            <Text style={{ color: "#B45309", fontSize: 10, fontFamily: "Outfit_700Bold", letterSpacing: 1, marginBottom: 8 }}>QUICK ADD FROM SAVED FOODS</Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
               {[...favourites].sort((a, b) => b.logCount - a.logCount).slice(0, 8).map(fav => (
                 <TouchableOpacity
@@ -1205,7 +1205,7 @@ export default function MealsScreen() {
           <View style={{ backgroundColor: "#150A00", borderRadius: 16, padding: 14, marginBottom: 16, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}>
             <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 14, marginBottom: 10 }}>Saved Foods</Text>
             {favourites.length === 0 ? (
-              <Text style={{ color: "#78350F", fontSize: 12, textAlign: "center", paddingVertical: 12 }}>No saved foods yet. Log a meal and tap the star to save it here.</Text>
+              <Text style={{ color: "#B45309", fontSize: 12, textAlign: "center", paddingVertical: 12 }}>No saved foods yet. Star a meal to save it.</Text>
             ) : (
               [...favourites].sort((a, b) => b.logCount - a.logCount).map(fav => (
                 <View key={fav.id} style={{ flexDirection: "row", alignItems: "center", backgroundColor: "rgba(245,158,11,0.05)", borderRadius: 10, padding: 10, marginBottom: 6, borderWidth: 1, borderColor: "rgba(245,158,11,0.08)", gap: 10 }}>
@@ -1283,9 +1283,9 @@ export default function MealsScreen() {
         </Text>
         {meals.length === 0 ? (
           <View style={{ backgroundColor: "#150A00", borderRadius: 16, padding: 24, alignItems: "center", borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}>
-            <MaterialIcons name="restaurant" size={32} color="#78350F" style={{ marginBottom: 8 }} />
-            <Text style={{ color: "#92400E", fontSize: 13, textAlign: "center", lineHeight: 20 }}>No meals logged yet today.</Text>
-            <Text style={{ color: "#78350F", fontSize: 11, textAlign: "center", marginTop: 4 }}>Tap "Log a Meal" above or use the quick-add tiles.</Text>
+            <MaterialIcons name="restaurant" size={32} color="#B45309" style={{ marginBottom: 8 }} />
+            <Text style={{ color: "#B45309", fontSize: 13, textAlign: "center", lineHeight: 20 }}>No meals logged today.</Text>
+            <Text style={{ color: "#B45309", fontSize: 11, textAlign: "center", marginTop: 4 }}>Tap above to log your first meal.</Text>
           </View>
         ) : (
           meals.map((meal) => (
@@ -1294,7 +1294,7 @@ export default function MealsScreen() {
                 <Image source={{ uri: meal.photoUri }} style={{ width: 50, height: 50, borderRadius: 10, backgroundColor: "#150A00" }} resizeMode="cover" />
               ) : (
                 <View style={{ width: 50, height: 50, borderRadius: 10, backgroundColor: "rgba(245,158,11,0.08)", alignItems: "center", justifyContent: "center" }}>
-                  <MaterialIcons name={MEAL_TYPE_ICONS[meal.mealType] ?? "restaurant"} size={22} color="#78350F" />
+                  <MaterialIcons name={MEAL_TYPE_ICONS[meal.mealType] ?? "restaurant"} size={22} color="#B45309" />
                 </View>
               )}
               <View style={{ flex: 1 }}>
@@ -1305,7 +1305,7 @@ export default function MealsScreen() {
                 </View>
                 <Text style={{ color: "#FFF7ED", fontFamily: "DMSans_600SemiBold", fontSize: 13 }}>{meal.name}</Text>
                 {(meal.protein > 0 || meal.carbs > 0 || meal.fat > 0) && (
-                  <Text style={{ color: "#78350F", fontSize: 10, marginTop: 1 }}>
+                  <Text style={{ color: "#B45309", fontSize: 10, marginTop: 1 }}>
                     P:{Math.round(meal.protein)}g \u00b7 C:{Math.round(meal.carbs)}g \u00b7 F:{Math.round(meal.fat)}g
                   </Text>
                 )}
@@ -1325,7 +1325,7 @@ export default function MealsScreen() {
                     style={{ backgroundColor: "#EF444420", borderRadius: 6, paddingHorizontal: 6, paddingVertical: 3 }}
                     onPress={() => removeMeal(meal.id)}
                   >
-                    <MaterialIcons name="close" size={14} color="#92400E" />
+                    <MaterialIcons name="close" size={14} color="#B45309" />
                   </TouchableOpacity>
                 </View>
               </View>
@@ -1368,7 +1368,7 @@ export default function MealsScreen() {
                     <Text style={{ color: "#F59E0B", fontFamily: "Outfit_700Bold", fontSize: 10 }}>{checkedCount}/{sortedIngredients.length}</Text>
                   </View>
                 </View>
-                <MaterialIcons name={showShoppingList ? "expand-less" : "expand-more"} size={20} color="#78350F" />
+                <MaterialIcons name={showShoppingList ? "expand-less" : "expand-more"} size={20} color="#B45309" />
               </TouchableOpacity>
 
               {showShoppingList && (
@@ -1395,7 +1395,7 @@ export default function MealsScreen() {
                         <Text style={{ color: "#F59E0B", fontFamily: "Outfit_700Bold", fontSize: 10 }}>Check All</Text>
                       </TouchableOpacity>
                       <TouchableOpacity onPress={() => updateCheckedIngredients({})}>
-                        <Text style={{ color: "#78350F", fontFamily: "Outfit_700Bold", fontSize: 10 }}>Clear</Text>
+                        <Text style={{ color: "#B45309", fontFamily: "Outfit_700Bold", fontSize: 10 }}>Clear</Text>
                       </TouchableOpacity>
                     </View>
                     {sortedIngredients.map((item, idx) => {
@@ -1409,7 +1409,7 @@ export default function MealsScreen() {
                           <View style={{ width: 20, height: 20, borderRadius: 5, borderWidth: 2, borderColor: isChecked ? "#F59E0B" : "rgba(245,158,11,0.25)", backgroundColor: isChecked ? "#F59E0B" : "transparent", alignItems: "center", justifyContent: "center" }}>
                             {isChecked && <MaterialIcons name="check" size={12} color="#FFF7ED" />}
                           </View>
-                          <Text style={{ color: isChecked ? "#78350F" : "#FFF7ED", fontFamily: "DMSans_500Medium", fontSize: 13, textDecorationLine: isChecked ? "line-through" : "none", flex: 1 }}>{item.display}</Text>
+                          <Text style={{ color: isChecked ? "#B45309" : "#FFF7ED", fontFamily: "DMSans_500Medium", fontSize: 13, textDecorationLine: isChecked ? "line-through" : "none", flex: 1 }}>{item.display}</Text>
                         </TouchableOpacity>
                       );
                     })}
@@ -1459,8 +1459,8 @@ function MacroStat({ label, value, unit, color, goal }: { label: string; value: 
   return (
     <View style={{ alignItems: "center" }}>
       <Text style={{ color, fontFamily: "Outfit_800ExtraBold", fontSize: 16 }}>{Math.round(value)}</Text>
-      <Text style={{ color: "#92400E", fontSize: 9, marginTop: 1 }}>{unit}</Text>
-      <Text style={{ color: "#78350F", fontSize: 9 }}>{label}</Text>
+      <Text style={{ color: "#B45309", fontSize: 9, marginTop: 1 }}>{unit}</Text>
+      <Text style={{ color: "#B45309", fontSize: 9 }}>{label}</Text>
       {goal !== undefined && goal > 0 && <Text style={{ color: "#451A03", fontSize: 8 }}>/ {goal}</Text>}
     </View>
   );
@@ -1504,7 +1504,7 @@ function MealSwapModal({ mealType, mealData, dietaryPreference, fitnessGoal, gen
               Swap {mealType.charAt(0).toUpperCase() + mealType.slice(1)}
             </Text>
             {mealData && (
-              <Text style={{ color: "#92400E", fontSize: 11, marginTop: 2 }}>Replacing: {mealData.name} \u00b7 {mealData.calories} kcal</Text>
+              <Text style={{ color: "#B45309", fontSize: 11, marginTop: 2 }}>Replacing: {mealData.name} \u00b7 {mealData.calories} kcal</Text>
             )}
           </View>
           <TouchableOpacity
@@ -1539,7 +1539,7 @@ function MealSwapModal({ mealType, mealData, dietaryPreference, fitnessGoal, gen
               <Text style={{ color: "#F59E0B", fontFamily: "DMSans_500Medium", fontSize: 13 }}>Back to alternatives</Text>
             </TouchableOpacity>
             <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_800ExtraBold", fontSize: 20, marginBottom: 4 }}>{selectedItem.name}</Text>
-            <Text style={{ color: "#92400E", fontSize: 13, lineHeight: 20, marginBottom: 12 }}>{selectedItem.description}</Text>
+            <Text style={{ color: "#B45309", fontSize: 13, lineHeight: 20, marginBottom: 12 }}>{selectedItem.description}</Text>
             <View style={{ flexDirection: "row", gap: 8, marginBottom: 16 }}>
               {[
                 { label: "Calories", value: `${selectedItem.calories} kcal`, color: "#FBBF24" },
@@ -1549,7 +1549,7 @@ function MealSwapModal({ mealType, mealData, dietaryPreference, fitnessGoal, gen
               ].map(m => (
                 <View key={m.label} style={{ flex: 1, backgroundColor: "#150A00", borderRadius: 10, padding: 8, alignItems: "center", borderWidth: 1, borderColor: "rgba(245,158,11,0.12)" }}>
                   <Text style={{ color: m.color, fontFamily: "Outfit_700Bold", fontSize: 13 }}>{m.value}</Text>
-                  <Text style={{ color: "#78350F", fontSize: 10, marginTop: 2 }}>{m.label}</Text>
+                  <Text style={{ color: "#B45309", fontSize: 10, marginTop: 2 }}>{m.label}</Text>
                 </View>
               ))}
             </View>
@@ -1600,7 +1600,7 @@ function MealSwapModal({ mealType, mealData, dietaryPreference, fitnessGoal, gen
                     <Text style={{ color: "#FDE68A", fontSize: 10 }}>C:{item.carbs}g</Text>
                   </View>
                 </View>
-                <MaterialIcons name="chevron-right" size={20} color="#78350F" />
+                <MaterialIcons name="chevron-right" size={20} color="#B45309" />
               </TouchableOpacity>
             )}
           />

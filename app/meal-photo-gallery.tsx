@@ -242,7 +242,7 @@ export default function MealPhotoGalleryScreen() {
               style={[styles.filterBtn, active && styles.filterBtnActive]}
               onPress={() => setFilter(f.key)}
             >
-              <MaterialIcons name={f.icon} size={14} color={active ? "#F59E0B" : "#92400E"} />
+              <MaterialIcons name={f.icon} size={14} color={active ? "#F59E0B" : "#B45309"} />
               <Text style={[styles.filterLabel, active && styles.filterLabelActive]}>{f.label}</Text>
             </TouchableOpacity>
           );
@@ -251,7 +251,7 @@ export default function MealPhotoGalleryScreen() {
 
       {/* Info Banner */}
       <View style={styles.infoBanner}>
-        <MaterialIcons name="info-outline" size={14} color="#92400E" />
+        <MaterialIcons name="info-outline" size={14} color="#B45309" />
         <Text style={styles.infoText}>
           Photos auto-archive after 7 days. Long-press to favourite and keep permanently.
         </Text>
@@ -264,7 +264,7 @@ export default function MealPhotoGalleryScreen() {
           <MaterialIcons
             name={filter === "favourites" ? "star-outline" : filter === "archived" ? "archive" : "photo-library"}
             size={64}
-            color="#92400E"
+            color="#B45309"
           />
           <Text style={styles.emptyTitle}>
             {filter === "favourites" ? "No Favourites Yet" :
@@ -334,7 +334,7 @@ export default function MealPhotoGalleryScreen() {
                       <MaterialIcons
                         name={selectedPhoto.isFavourited ? "star" : "star-outline"}
                         size={20}
-                        color={selectedPhoto.isFavourited ? "#F59E0B" : "#92400E"}
+                        color={selectedPhoto.isFavourited ? "#F59E0B" : "#B45309"}
                       />
                     </TouchableOpacity>
                   </View>
@@ -374,7 +374,7 @@ export default function MealPhotoGalleryScreen() {
               value={saveName}
               onChangeText={setSaveName}
               placeholder="e.g. Mom's Chicken Curry"
-              placeholderTextColor="#92400E"
+              placeholderTextColor="#B45309"
               autoFocus
               returnKeyType="done"
               onSubmitEditing={confirmSaveFavourite}
@@ -407,7 +407,7 @@ const styles = StyleSheet.create({
   header: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingHorizontal: 16, paddingVertical: 12 },
   backBtn: { width: 40, height: 40, borderRadius: 20, backgroundColor: "rgba(245,158,11,0.10)", alignItems: "center", justifyContent: "center" },
   headerTitle: { color: "#FFF7ED", fontSize: 18, fontFamily: "Outfit_800ExtraBold" },
-  headerSub: { color: "#92400E", fontSize: 11, fontFamily: "Outfit_700Bold" },
+  headerSub: { color: "#B45309", fontSize: 11, fontFamily: "Outfit_700Bold" },
 
   filterRow: { flexDirection: "row", paddingHorizontal: 16, gap: 8, marginBottom: 8 },
   filterBtn: {
@@ -416,7 +416,7 @@ const styles = StyleSheet.create({
     borderWidth: 1, borderColor: "rgba(245,158,11,0.10)",
   },
   filterBtnActive: { backgroundColor: "rgba(245,158,11,0.15)", borderColor: "rgba(245,158,11,0.30)" },
-  filterLabel: { color: "#92400E", fontSize: 11, fontFamily: "Outfit_700Bold" },
+  filterLabel: { color: "#B45309", fontSize: 11, fontFamily: "Outfit_700Bold" },
   filterLabelActive: { color: "#F59E0B" },
 
   infoBanner: {
@@ -425,11 +425,11 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(245,158,11,0.06)", borderRadius: 8,
     borderWidth: 1, borderColor: "rgba(245,158,11,0.10)",
   },
-  infoText: { color: "#92400E", fontSize: 10, fontFamily: "DMSans_400Regular", flex: 1, lineHeight: 14 },
+  infoText: { color: "#B45309", fontSize: 10, fontFamily: "DMSans_400Regular", flex: 1, lineHeight: 14 },
 
   dateHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 8, paddingHorizontal: 2 },
   dateLabel: { color: "#FFF7ED", fontSize: 15, fontFamily: "Outfit_700Bold" },
-  dateCount: { color: "#92400E", fontSize: 11, fontFamily: "Outfit_700Bold" },
+  dateCount: { color: "#B45309", fontSize: 11, fontFamily: "Outfit_700Bold" },
 
   photoThumb: { width: PHOTO_SIZE, height: PHOTO_SIZE, borderRadius: 12, overflow: "hidden", backgroundColor: "#150A00" },
   photoArchived: { opacity: 0.5 },
@@ -450,7 +450,7 @@ const styles = StyleSheet.create({
 
   emptyState: { flex: 1, alignItems: "center", justifyContent: "center", paddingHorizontal: 40 },
   emptyTitle: { color: "#FFF7ED", fontSize: 18, fontFamily: "Outfit_800ExtraBold", marginTop: 16 },
-  emptyText: { color: "#92400E", fontSize: 13, fontFamily: "Outfit_700Bold", textAlign: "center", marginTop: 8, lineHeight: 20 },
+  emptyText: { color: "#B45309", fontSize: 13, fontFamily: "Outfit_700Bold", textAlign: "center", marginTop: 8, lineHeight: 20 },
   emptyBtn: { marginTop: 20, backgroundColor: "#F59E0B", paddingHorizontal: 24, paddingVertical: 12, borderRadius: 12 },
   emptyBtnText: { color: "#FFF7ED", fontSize: 14, fontFamily: "Outfit_700Bold" },
 
@@ -460,7 +460,7 @@ const styles = StyleSheet.create({
   modalImage: { width: "100%", height: SCREEN_W, borderRadius: 16 },
   modalDetails: { marginTop: 16, backgroundColor: "#150A00", borderRadius: 16, padding: 16, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" },
   modalName: { color: "#FFF7ED", fontSize: 16, fontFamily: "Outfit_700Bold", maxWidth: SCREEN_W - 120 },
-  modalMeta: { color: "#92400E", fontSize: 11, fontFamily: "Outfit_700Bold", marginTop: 2 },
+  modalMeta: { color: "#B45309", fontSize: 11, fontFamily: "Outfit_700Bold", marginTop: 2 },
   favBtn: {
     width: 40, height: 40, borderRadius: 12,
     backgroundColor: "rgba(245,158,11,0.08)", alignItems: "center", justifyContent: "center",
@@ -471,7 +471,7 @@ const styles = StyleSheet.create({
   macroItem: { alignItems: "center" },
   macroValue: { fontSize: 16, fontFamily: "Outfit_700Bold" },
   macroUnit: { fontSize: 10, fontFamily: "Outfit_700Bold" },
-  macroLabel: { color: "#92400E", fontSize: 9, fontFamily: "Outfit_700Bold", marginTop: 2 },
+  macroLabel: { color: "#B45309", fontSize: 9, fontFamily: "Outfit_700Bold", marginTop: 2 },
 
   // Save favourite modal
   saveModalBg: { flex: 1, backgroundColor: "rgba(0,0,0,0.8)", justifyContent: "center", alignItems: "center" },
@@ -480,7 +480,7 @@ const styles = StyleSheet.create({
     borderWidth: 1, borderColor: "rgba(245,158,11,0.20)",
   },
   saveModalTitle: { color: "#FFF7ED", fontSize: 18, fontFamily: "Outfit_800ExtraBold", marginBottom: 8 },
-  saveModalDesc: { color: "#92400E", fontSize: 13, fontFamily: "DMSans_400Regular", lineHeight: 18, marginBottom: 16 },
+  saveModalDesc: { color: "#B45309", fontSize: 13, fontFamily: "DMSans_400Regular", lineHeight: 18, marginBottom: 16 },
   saveInput: {
     backgroundColor: "rgba(245,158,11,0.06)", borderRadius: 12, padding: 14,
     color: "#FFF7ED", fontFamily: "DMSans_600SemiBold", fontSize: 15,
@@ -488,7 +488,7 @@ const styles = StyleSheet.create({
   },
   saveModalBtns: { flexDirection: "row", gap: 12 },
   saveCancelBtn: { flex: 1, paddingVertical: 12, borderRadius: 12, alignItems: "center", backgroundColor: "rgba(245,158,11,0.08)", borderWidth: 1, borderColor: "rgba(245,158,11,0.15)" },
-  saveCancelText: { color: "#92400E", fontFamily: "Outfit_700Bold", fontSize: 14 },
+  saveCancelText: { color: "#B45309", fontFamily: "Outfit_700Bold", fontSize: 14 },
   saveConfirmBtn: { flex: 1, flexDirection: "row", gap: 6, paddingVertical: 12, borderRadius: 12, alignItems: "center", justifyContent: "center", backgroundColor: "#F59E0B" },
   saveConfirmText: { color: "#0A0500", fontFamily: "Outfit_700Bold", fontSize: 14 },
 });

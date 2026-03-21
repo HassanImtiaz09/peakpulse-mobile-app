@@ -143,7 +143,7 @@ export default function GymFinderScreen() {
         </TouchableOpacity>
         <View style={{ flex: 1 }}>
           <Text style={{ color: "#FFF7ED", fontSize: 22, fontFamily: "Outfit_800ExtraBold" }}>Nearby Gyms</Text>
-          <Text style={{ color: "#92400E", fontSize: 12 }}>
+          <Text style={{ color: "#B45309", fontSize: 12 }}>
             {gyms.length > 0 ? `${gyms.length} gyms found` : "Finding gyms near you..."}
           </Text>
         </View>
@@ -164,7 +164,7 @@ export default function GymFinderScreen() {
             style={{ flex: 1, paddingVertical: 6, borderRadius: 10, alignItems: "center", backgroundColor: radius === r ? "#F59E0B" : "#150A00", borderWidth: 1, borderColor: radius === r ? "#F59E0B" : "rgba(245,158,11,0.10)" }}
             onPress={() => { setRadius(r); if (location) fetchNearbyGyms(location, r); }}
           >
-            <Text style={{ color: radius === r ? "#FFF7ED" : "#92400E", fontFamily: "Outfit_700Bold", fontSize: 11 }}>
+            <Text style={{ color: radius === r ? "#FFF7ED" : "#B45309", fontFamily: "Outfit_700Bold", fontSize: 11 }}>
               {r >= 1000 ? `${r / 1000}km` : `${r}m`}
             </Text>
           </TouchableOpacity>
@@ -187,7 +187,7 @@ export default function GymFinderScreen() {
                 coordinate={{ latitude: gym.lat, longitude: gym.lon }}
                 title={gym.name}
                 description={gym.address}
-                pinColor={selectedGym?.id === gym.id ? "#F59E0B" : "#92400E"}
+                pinColor={selectedGym?.id === gym.id ? "#F59E0B" : "#B45309"}
                 onPress={() => setSelectedGym(gym)}
               />
             ))}
@@ -196,7 +196,7 @@ export default function GymFinderScreen() {
       ) : (
         <View style={{ height: 100, marginHorizontal: 20, borderRadius: 16, backgroundColor: "#150A00", alignItems: "center", justifyContent: "center", marginBottom: 12, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}>
           <Text style={{ fontSize: 28, marginBottom: 4 }}>🗺️</Text>
-          <Text style={{ color: "#92400E", fontSize: 12 }}>Interactive map available on iOS & Android</Text>
+          <Text style={{ color: "#B45309", fontSize: 12 }}>Interactive map available on iOS & Android</Text>
         </View>
       )}
 
@@ -206,12 +206,12 @@ export default function GymFinderScreen() {
           <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start" }}>
             <View style={{ flex: 1 }}>
               <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 15 }}>{selectedGym.name}</Text>
-              {selectedGym.address ? <Text style={{ color: "#92400E", fontSize: 12, marginTop: 2 }}>📍 {selectedGym.address}</Text> : null}
-              {selectedGym.opening_hours ? <Text style={{ color: "#92400E", fontSize: 12, marginTop: 2 }}>🕐 {selectedGym.opening_hours}</Text> : null}
+              {selectedGym.address ? <Text style={{ color: "#B45309", fontSize: 12, marginTop: 2 }}>📍 {selectedGym.address}</Text> : null}
+              {selectedGym.opening_hours ? <Text style={{ color: "#B45309", fontSize: 12, marginTop: 2 }}>🕐 {selectedGym.opening_hours}</Text> : null}
               {selectedGym.distance ? <Text style={{ color: "#FDE68A", fontSize: 12, marginTop: 2 }}>📏 {formatDistance(selectedGym.distance)} away</Text> : null}
             </View>
             <TouchableOpacity onPress={() => setSelectedGym(null)}>
-              <Text style={{ color: "#78350F", fontSize: 16 }}>✕</Text>
+              <Text style={{ color: "#B45309", fontSize: 16 }}>✕</Text>
             </TouchableOpacity>
           </View>
           <View style={{ flexDirection: "row", gap: 8, marginTop: 10 }}>
@@ -226,7 +226,7 @@ export default function GymFinderScreen() {
                 style={{ flex: 1, backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 10, paddingVertical: 8, alignItems: "center" }}
                 onPress={() => Linking.openURL(selectedGym.website!)}
               >
-                <Text style={{ color: "#92400E", fontFamily: "Outfit_700Bold", fontSize: 12 }}>🌐 Website</Text>
+                <Text style={{ color: "#B45309", fontFamily: "Outfit_700Bold", fontSize: 12 }}>🌐 Website</Text>
               </TouchableOpacity>
             ) : null}
             {selectedGym.phone ? (
@@ -234,7 +234,7 @@ export default function GymFinderScreen() {
                 style={{ flex: 1, backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 10, paddingVertical: 8, alignItems: "center" }}
                 onPress={() => Linking.openURL(`tel:${selectedGym.phone}`)}
               >
-                <Text style={{ color: "#92400E", fontFamily: "Outfit_700Bold", fontSize: 12 }}>📞 Call</Text>
+                <Text style={{ color: "#B45309", fontFamily: "Outfit_700Bold", fontSize: 12 }}>📞 Call</Text>
               </TouchableOpacity>
             ) : null}
           </View>
@@ -246,13 +246,13 @@ export default function GymFinderScreen() {
         {loading && gyms.length === 0 ? (
           <View style={{ alignItems: "center", paddingTop: 40 }}>
             <ActivityIndicator size="large" color="#F59E0B" />
-            <Text style={{ color: "#92400E", fontSize: 13, marginTop: 12 }}>Finding gyms near you...</Text>
+            <Text style={{ color: "#B45309", fontSize: 13, marginTop: 12 }}>Finding gyms near you...</Text>
           </View>
         ) : gyms.length === 0 ? (
           <View style={{ alignItems: "center", paddingTop: 40 }}>
             <Text style={{ fontSize: 40, marginBottom: 12 }}>🏋️</Text>
             <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 16, marginBottom: 6 }}>No Gyms Found</Text>
-            <Text style={{ color: "#92400E", fontSize: 13, textAlign: "center" }}>Try increasing the search radius or check your location settings.</Text>
+            <Text style={{ color: "#B45309", fontSize: 13, textAlign: "center" }}>Try a larger radius or check location settings.</Text>
           </View>
         ) : (
           gyms.map((gym) => (
@@ -273,7 +273,7 @@ export default function GymFinderScreen() {
                 <View style={{ flex: 1 }}>
                   <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 14 }} numberOfLines={1}>{gym.name}</Text>
                   {gym.address ? (
-                    <Text style={{ color: "#92400E", fontSize: 11, marginTop: 2 }} numberOfLines={1}>{gym.address}</Text>
+                    <Text style={{ color: "#B45309", fontSize: 11, marginTop: 2 }} numberOfLines={1}>{gym.address}</Text>
                   ) : null}
                 </View>
                 <View style={{ alignItems: "flex-end" }}>

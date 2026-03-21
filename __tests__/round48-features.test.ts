@@ -147,14 +147,15 @@ describe("Notification Settings Screen", () => {
   it("notification-settings.tsx has all required UI elements", async () => {
     const fs = await import("fs");
     const content = fs.readFileSync("/home/ubuntu/peakpulse-mobile/app/notification-settings.tsx", "utf-8");
-    expect(content).toContain("Meal Reminders");
-    expect(content).toContain("Workout Nudges");
-    expect(content).toContain("Morning Motivation");
-    expect(content).toContain("Evening Recap");
-    expect(content).toContain("Pantry Expiry Alerts");
-    expect(content).toContain("Snack Reminder");
-    expect(content).toContain("Save & Schedule Notifications");
-    expect(content).toContain("Disable All Reminders");
+    expect(content).toContain("Meals");
+    expect(content).toContain("mealReminders");
+    expect(content).toContain("workoutNudges");
+    expect(content).toContain("morningMotivation");
+    expect(content).toContain("eveningRecap");
+    expect(content).toContain("pantryAlerts");
+    expect(content).toContain("snackReminder");
+    expect(content).toContain("Save & Schedule");
+    expect(content).toContain("Disable All");
   });
 
   it("settings screen links to notification settings", async () => {

@@ -166,11 +166,11 @@ export default function LoginScreen() {
                       disabled={loading}
                     >
                       {loading ? (
-                        <ActivityIndicator size="small" color="#92400E" />
+                        <ActivityIndicator size="small" color="#B45309" />
                       ) : (
                         <>
                           <Text style={{ fontSize: 18 }}>👤</Text>
-                          <Text style={{ color: "#92400E", fontFamily: "DMSans_600SemiBold", fontSize: 15 }}>Skip — Use as Guest</Text>
+                          <Text style={{ color: "#B45309", fontFamily: "DMSans_600SemiBold", fontSize: 15 }}>Skip — Use as Guest</Text>
                         </>
                       )}
                     </TouchableOpacity>
@@ -193,12 +193,12 @@ export default function LoginScreen() {
                     </TouchableOpacity>
 
                     <Text style={{ color: "#FFF7ED", fontSize: 20, fontFamily: "Outfit_800ExtraBold" }}>Enter your details</Text>
-                    <Text style={{ color: "#92400E", fontSize: 13 }}>
+                    <Text style={{ color: "#B45309", fontSize: 13 }}>
                       Your data stays on your device. No password required.
                     </Text>
 
                     <View>
-                      <Text style={{ color: "#92400E", fontSize: 11, fontFamily: "Outfit_700Bold", marginBottom: 6, letterSpacing: 0.5 }}>YOUR NAME</Text>
+                      <Text style={{ color: "#B45309", fontSize: 11, fontFamily: "Outfit_700Bold", marginBottom: 6, letterSpacing: 0.5 }}>YOUR NAME</Text>
                       <TextInput
                         value={name}
                         onChangeText={setName}
@@ -216,7 +216,7 @@ export default function LoginScreen() {
                     </View>
 
                     <View>
-                      <Text style={{ color: "#92400E", fontSize: 11, fontFamily: "Outfit_700Bold", marginBottom: 6, letterSpacing: 0.5 }}>EMAIL ADDRESS</Text>
+                      <Text style={{ color: "#B45309", fontSize: 11, fontFamily: "Outfit_700Bold", marginBottom: 6, letterSpacing: 0.5 }}>EMAIL ADDRESS</Text>
                       <TextInput
                         value={email}
                         onChangeText={setEmail}
@@ -229,13 +229,13 @@ export default function LoginScreen() {
                           backgroundColor: "#150A00", borderRadius: 14,
                           paddingHorizontal: 16, paddingVertical: 14,
                           color: "#FFF7ED", fontSize: 16,
-                          borderWidth: 1, borderColor: emailError ? "#92400E" : "rgba(245,158,11,0.10)",
+                          borderWidth: 1, borderColor: emailError ? "#B45309" : "rgba(245,158,11,0.10)",
                         }}
                         returnKeyType="done"
                         onSubmitEditing={handleEmailContinue}
                       />
                       {emailError ? (
-                        <Text style={{ color: "#92400E", fontSize: 12, marginTop: 6 }}>{emailError}</Text>
+                        <Text style={{ color: "#B45309", fontSize: 12, marginTop: 6 }}>{emailError}</Text>
                       ) : null}
                     </View>
 

@@ -110,7 +110,7 @@ export default function ProfileScreen() {
           <View style={{ flex: 1, backgroundColor: "rgba(8,8,16,0.78)", alignItems: "center", justifyContent: "center", padding: 32 }}>
             <Image source={{ uri: APP_LOGO }} style={{ width: 80, height: 80, borderRadius: 20, marginBottom: 20 }} />
             <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_800ExtraBold", fontSize: 22, textAlign: "center", marginBottom: 8 }}>Your Profile</Text>
-            <Text style={{ color: "#92400E", fontSize: 14, textAlign: "center", lineHeight: 20, marginBottom: 24 }}>Sign in to save your profile and sync across devices, or continue as guest.</Text>
+            <Text style={{ color: "#B45309", fontSize: 14, textAlign: "center", lineHeight: 20, marginBottom: 24 }}>Sign in to save your profile, or continue as guest.</Text>
             <TouchableOpacity
               style={{ backgroundColor: "#F59E0B", borderRadius: 16, paddingVertical: 14, paddingHorizontal: 32, shadowColor: "#F59E0B", shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.5, shadowRadius: 12, marginBottom: 12 }}
               onPress={() => router.push("/login" as any)}
@@ -163,7 +163,7 @@ export default function ProfileScreen() {
                 </View>
                 <View>
                   <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_800ExtraBold", fontSize: 20 }}>{displayName}</Text>
-                  <Text style={{ color: "#92400E", fontSize: 12 }}>{displayEmail}</Text>
+                  <Text style={{ color: "#B45309", fontSize: 12 }}>{displayEmail}</Text>
                   {isGuest && (
                     <View style={{ backgroundColor: "#EAB30820", borderRadius: 6, paddingHorizontal: 8, paddingVertical: 2, marginTop: 4, alignSelf: "flex-start" }}>
                       <Text style={{ color: "#F59E0B", fontSize: 10, fontFamily: "Outfit_700Bold" }}>GUEST MODE</Text>
@@ -203,7 +203,7 @@ export default function ProfileScreen() {
           <SectionHeader>Basic Info</SectionHeader>
           <View style={{ flexDirection: "row", gap: 12, marginBottom: 12 }}>
             <View style={{ flex: 1 }}>
-              <Text style={{ color: "#92400E", fontSize: 11, marginBottom: 4 }}>Age</Text>
+              <Text style={{ color: "#B45309", fontSize: 11, marginBottom: 4 }}>Age</Text>
               <TextInput
                 value={age}
                 onChangeText={setAge}
@@ -211,12 +211,12 @@ export default function ProfileScreen() {
                 placeholderTextColor="#451A03"
                 keyboardType="numeric"
                 editable={editing}
-                style={{ backgroundColor: "#150A00", borderRadius: 10, paddingHorizontal: 12, paddingVertical: 10, color: editing ? "#FFF7ED" : "#92400E", fontSize: 14, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}
+                style={{ backgroundColor: "#150A00", borderRadius: 10, paddingHorizontal: 12, paddingVertical: 10, color: editing ? "#FFF7ED" : "#B45309", fontSize: 14, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}
                 returnKeyType="done"
               />
             </View>
             <View style={{ flex: 1 }}>
-              <Text style={{ color: "#92400E", fontSize: 11, marginBottom: 4 }}>Height (cm)</Text>
+              <Text style={{ color: "#B45309", fontSize: 11, marginBottom: 4 }}>Height (cm)</Text>
               <TextInput
                 value={height}
                 onChangeText={setHeight}
@@ -224,12 +224,12 @@ export default function ProfileScreen() {
                 placeholderTextColor="#451A03"
                 keyboardType="numeric"
                 editable={editing}
-                style={{ backgroundColor: "#150A00", borderRadius: 10, paddingHorizontal: 12, paddingVertical: 10, color: editing ? "#FFF7ED" : "#92400E", fontSize: 14, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}
+                style={{ backgroundColor: "#150A00", borderRadius: 10, paddingHorizontal: 12, paddingVertical: 10, color: editing ? "#FFF7ED" : "#B45309", fontSize: 14, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}
                 returnKeyType="done"
               />
             </View>
             <View style={{ flex: 1 }}>
-              <Text style={{ color: "#92400E", fontSize: 11, marginBottom: 4 }}>Weight (kg)</Text>
+              <Text style={{ color: "#B45309", fontSize: 11, marginBottom: 4 }}>Weight (kg)</Text>
               <TextInput
                 value={weight}
                 onChangeText={setWeight}
@@ -237,14 +237,14 @@ export default function ProfileScreen() {
                 placeholderTextColor="#451A03"
                 keyboardType="numeric"
                 editable={editing}
-                style={{ backgroundColor: "#150A00", borderRadius: 10, paddingHorizontal: 12, paddingVertical: 10, color: editing ? "#FFF7ED" : "#92400E", fontSize: 14, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}
+                style={{ backgroundColor: "#150A00", borderRadius: 10, paddingHorizontal: 12, paddingVertical: 10, color: editing ? "#FFF7ED" : "#B45309", fontSize: 14, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}
                 returnKeyType="done"
               />
             </View>
           </View>
 
           {/* Gender */}
-          <Text style={{ color: "#92400E", fontSize: 11, marginBottom: 6 }}>Gender</Text>
+          <Text style={{ color: "#B45309", fontSize: 11, marginBottom: 6 }}>Gender</Text>
           <View style={{ flexDirection: "row", gap: 8, marginBottom: 16 }}>
             {GENDERS.map(g => (
               <TouchableOpacity
@@ -252,7 +252,7 @@ export default function ProfileScreen() {
                 style={{ flex: 1, paddingVertical: 8, borderRadius: 10, alignItems: "center", backgroundColor: gender === g.key ? "#F59E0B" : "#150A00", borderWidth: 1, borderColor: gender === g.key ? "#F59E0B" : "rgba(245,158,11,0.10)", opacity: editing ? 1 : 0.7 }}
                 onPress={() => editing && setGender(g.key)}
               >
-                <Text style={{ color: gender === g.key ? "#FFF7ED" : "#92400E", fontFamily: "DMSans_600SemiBold", fontSize: 12 }}>{g.label}</Text>
+                <Text style={{ color: gender === g.key ? "#FFF7ED" : "#B45309", fontFamily: "DMSans_600SemiBold", fontSize: 12 }}>{g.label}</Text>
               </TouchableOpacity>
             ))}
           </View>
@@ -267,7 +267,7 @@ export default function ProfileScreen() {
                 onPress={() => editing && setGoal(g.key)}
               >
                 <MaterialIcons name={g.iconName as any} size={14} color={goal === g.key ? "#FFF7ED" : "#F59E0B"} />
-                <Text style={{ color: goal === g.key ? "#FFF7ED" : "#92400E", fontFamily: "DMSans_600SemiBold", fontSize: 13 }}>{g.label}</Text>
+                <Text style={{ color: goal === g.key ? "#FFF7ED" : "#B45309", fontFamily: "DMSans_600SemiBold", fontSize: 13 }}>{g.label}</Text>
               </TouchableOpacity>
             ))}
           </View>
@@ -282,7 +282,7 @@ export default function ProfileScreen() {
                 onPress={() => editing && setWorkoutStyle(w.key)}
               >
                 <MaterialIcons name={w.iconName as any} size={14} color={workoutStyle === w.key ? "#FFF7ED" : "#F59E0B"} />
-                <Text style={{ color: workoutStyle === w.key ? "#FFF7ED" : "#92400E", fontFamily: "DMSans_600SemiBold", fontSize: 13 }}>{w.label}</Text>
+                <Text style={{ color: workoutStyle === w.key ? "#FFF7ED" : "#B45309", fontFamily: "DMSans_600SemiBold", fontSize: 13 }}>{w.label}</Text>
               </TouchableOpacity>
             ))}
           </View>
@@ -297,7 +297,7 @@ export default function ProfileScreen() {
                 onPress={() => editing && setDietaryPref(d.key)}
               >
                 <MaterialIcons name={d.iconName as any} size={14} color={dietaryPref === d.key ? "#FFF7ED" : "#F59E0B"} />
-                <Text style={{ color: dietaryPref === d.key ? "#FFF7ED" : "#92400E", fontFamily: "DMSans_600SemiBold", fontSize: 13 }}>{d.label}</Text>
+                <Text style={{ color: dietaryPref === d.key ? "#FFF7ED" : "#B45309", fontFamily: "DMSans_600SemiBold", fontSize: 13 }}>{d.label}</Text>
               </TouchableOpacity>
             ))}
           </View>
@@ -311,7 +311,7 @@ export default function ProfileScreen() {
                 style={{ flex: 1, paddingVertical: 10, borderRadius: 12, alignItems: "center", backgroundColor: daysPerWeek === d.toString() ? "#F59E0B" : "#150A00", borderWidth: 1, borderColor: daysPerWeek === d.toString() ? "#F59E0B" : "rgba(245,158,11,0.10)", opacity: editing ? 1 : 0.7 }}
                 onPress={() => editing && setDaysPerWeek(d.toString())}
               >
-                <Text style={{ color: daysPerWeek === d.toString() ? "#FFF7ED" : "#92400E", fontFamily: "Outfit_700Bold" }}>{d}x</Text>
+                <Text style={{ color: daysPerWeek === d.toString() ? "#FFF7ED" : "#B45309", fontFamily: "Outfit_700Bold" }}>{d}x</Text>
               </TouchableOpacity>
             ))}
           </View>
@@ -382,7 +382,7 @@ export default function ProfileScreen() {
               }
             }}
           >
-            <Text style={{ color: "#92400E", fontFamily: "Outfit_700Bold", fontSize: 14 }}>{isGuest ? "Exit Guest Mode" : "Sign Out"}</Text>
+            <Text style={{ color: "#B45309", fontFamily: "Outfit_700Bold", fontSize: 14 }}>{isGuest ? "Exit Guest Mode" : "Sign Out"}</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -392,14 +392,14 @@ export default function ProfileScreen() {
 }
 
 function SectionHeader({ children }: { children: React.ReactNode }) {
-  return <Text style={{ color: "#92400E", fontSize: 11, fontFamily: "Outfit_700Bold", letterSpacing: 1, marginBottom: 8, textTransform: "uppercase" }}>{children}</Text>;
+  return <Text style={{ color: "#B45309", fontSize: 11, fontFamily: "Outfit_700Bold", letterSpacing: 1, marginBottom: 8, textTransform: "uppercase" }}>{children}</Text>;
 }
 
 function StatBox({ label, value }: { label: string; value: string }) {
   return (
     <View style={{ flex: 1, backgroundColor: "#150A00", borderRadius: 12, padding: 10, alignItems: "center", borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}>
       <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 14 }}>{value}</Text>
-      <Text style={{ color: "#78350F", fontSize: 10, marginTop: 2 }}>{label}</Text>
+      <Text style={{ color: "#B45309", fontSize: 10, marginTop: 2 }}>{label}</Text>
     </View>
   );
 }
@@ -414,7 +414,7 @@ function FeatureLink({ icon, label, onPress }: { icon: string; label: string; on
         <MaterialIcons name={icon as any} size={20} color="#F59E0B" />
       </View>
       <Text style={{ color: "#F59E0B", fontFamily: "DMSans_600SemiBold", fontSize: 14, flex: 1 }}>{label}</Text>
-      <MaterialIcons name="chevron-right" size={20} color="#92400E" />
+      <MaterialIcons name="chevron-right" size={20} color="#B45309" />
     </TouchableOpacity>
   );
 }
@@ -433,12 +433,12 @@ function CollapsibleSection({ title, count, children }: { title: string; count: 
         }}
       >
         <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-          <Text style={{ color: "#92400E", fontSize: 11, fontFamily: "Outfit_700Bold", letterSpacing: 1, textTransform: "uppercase" }}>{title}</Text>
+          <Text style={{ color: "#B45309", fontSize: 11, fontFamily: "Outfit_700Bold", letterSpacing: 1, textTransform: "uppercase" }}>{title}</Text>
           <View style={{ backgroundColor: "rgba(245,158,11,0.12)", borderRadius: 8, paddingHorizontal: 6, paddingVertical: 2 }}>
             <Text style={{ color: "#F59E0B", fontSize: 10, fontFamily: "DMSans_600SemiBold" }}>{count}</Text>
           </View>
         </View>
-        <MaterialIcons name={expanded ? "expand-less" : "expand-more"} size={20} color="#92400E" />
+        <MaterialIcons name={expanded ? "expand-less" : "expand-more"} size={20} color="#B45309" />
       </TouchableOpacity>
       {expanded && <View style={{ gap: 8 }}>{children}</View>}
     </View>
@@ -473,10 +473,10 @@ function ThemeToggle() {
               if (Platform.OS !== "web") Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
             }}
           >
-            <MaterialIcons name={opt.icon} size={20} color={active ? "#F59E0B" : "#92400E"} />
+            <MaterialIcons name={opt.icon} size={20} color={active ? "#F59E0B" : "#B45309"} />
             <View style={{ flex: 1 }}>
               <Text style={{ color: active ? "#F59E0B" : "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 14 }}>{opt.label}</Text>
-              <Text style={{ color: "#92400E", fontSize: 11, marginTop: 1 }}>{opt.desc}</Text>
+              <Text style={{ color: "#B45309", fontSize: 11, marginTop: 1 }}>{opt.desc}</Text>
             </View>
             {active && (
               <View style={{ width: 22, height: 22, borderRadius: 11, backgroundColor: "#F59E0B", alignItems: "center", justifyContent: "center" }}>

@@ -26,6 +26,7 @@ const EVENING_RECAP_KEY = `${PREFIX}evening_recap`;
 const WORKOUT_NUDGE_KEY = `${PREFIX}workout_nudge`;
 const PANTRY_EXPIRY_KEY = `${PREFIX}pantry_expiry`;
 const SNACK_KEY = `${PREFIX}snack`;
+const WEEKLY_SUMMARY_KEY = `${PREFIX}weekly_summary`;
 const PREFS_KEY = `${PREFIX}preferences`;
 
 export interface NotificationPreferences {
@@ -35,6 +36,7 @@ export interface NotificationPreferences {
   eveningRecap: boolean;
   pantryAlerts: boolean;
   snackReminder: boolean;
+  weeklySummary: boolean;
   // Custom times (24h format)
   breakfastHour: number;
   breakfastMinute: number;
@@ -57,6 +59,7 @@ const DEFAULT_PREFS: NotificationPreferences = {
   eveningRecap: true,
   pantryAlerts: true,
   snackReminder: true,
+  weeklySummary: true,
   breakfastHour: 8,
   breakfastMinute: 0,
   lunchHour: 12,
@@ -192,30 +195,30 @@ async function getUserContext(): Promise<UserContext> {
 function getBreakfastMessages(name: string, goal: string): { title: string; body: string }[] {
   const firstName = name.split(" ")[0];
   return [
-    { title: "🍳 Breakfast Time!", body: `Good morning, ${firstName}! Start your day right — fuel up with a healthy breakfast and log it.` },
-    { title: "🌅 Rise & Fuel", body: `Morning, ${firstName}! Breakfast is the foundation of a great day. Check your AI meal plan.` },
-    { title: "☀️ Good Morning!", body: `Time for breakfast! Eating within an hour of waking boosts metabolism. Don't skip it, ${firstName}.` },
-    { title: "🥑 Breakfast Reminder", body: `Hey ${firstName}! Your body needs fuel after fasting overnight. Log your breakfast to stay on track.` },
+    { title: "🍳 Breakfast Time!", body: `Morning, ${firstName}! Fuel up and log it.` },
+    { title: "🌅 Rise & Fuel", body: `${firstName}, check your AI meal plan for breakfast.` },
+    { title: "☀️ Good Morning!", body: `Don't skip breakfast, ${firstName}! Log it to stay on track.` },
+    { title: "🥑 Breakfast Reminder", body: `Time to fuel up, ${firstName}. Log your breakfast.` },
   ];
 }
 
 function getLunchMessages(name: string, goal: string): { title: string; body: string }[] {
   const firstName = name.split(" ")[0];
   return [
-    { title: "🥗 Lunch Time!", body: `Midday fuel-up, ${firstName}! Check your AI-suggested lunch and log your meal.` },
-    { title: "🍽️ Lunch Reminder", body: `Hey ${firstName}! Consistent lunch timing helps maintain energy levels. What are you having?` },
-    { title: "🥙 Time to Eat", body: `Lunch break, ${firstName}! A balanced meal now keeps afternoon cravings at bay. Log it in PeakPulse.` },
-    { title: "🍱 Midday Fuel", body: `Don't forget lunch! Your ${goal.replace(/_/g, " ")} goal needs consistent nutrition, ${firstName}.` },
+    { title: "🥗 Lunch Time!", body: `Midday fuel-up, ${firstName}! Log your lunch.` },
+    { title: "🍽️ Lunch Reminder", body: `Hey ${firstName}! Time for lunch. What are you having?` },
+    { title: "🥙 Time to Eat", body: `Lunch break, ${firstName}! Log it to stay on track.` },
+    { title: "🍱 Midday Fuel", body: `Don't skip lunch, ${firstName}! Fuel your ${goal.replace(/_/g, " ")} goal.` },
   ];
 }
 
 function getDinnerMessages(name: string, goal: string): { title: string; body: string }[] {
   const firstName = name.split(" ")[0];
   return [
-    { title: "🍽️ Dinner Time!", body: `Evening, ${firstName}! Time for dinner. Check your pantry for tonight's AI-suggested meal.` },
-    { title: "🌙 Dinner Reminder", body: `Last meal of the day, ${firstName}! Log your dinner to complete today's nutrition tracking.` },
-    { title: "🥘 Time for Dinner", body: `Hey ${firstName}! A nutritious dinner supports overnight recovery. What's on the menu?` },
-    { title: "🍲 Evening Meal", body: `Dinner time! Check your Cook Again favourites for a quick, healthy meal, ${firstName}.` },
+    { title: "🍽️ Dinner Time!", body: `Evening, ${firstName}! Check your pantry for tonight's meal.` },
+    { title: "🌙 Dinner Reminder", body: `Log your dinner, ${firstName}! Complete today's tracking.` },
+    { title: "🥘 Time for Dinner", body: `What's for dinner, ${firstName}? Log it to stay on track.` },
+    { title: "🍲 Evening Meal", body: `Try a Cook Again favourite for a quick dinner, ${firstName}.` },
   ];
 }
 
@@ -224,15 +227,15 @@ function getDinnerMessages(name: string, goal: string): { title: string; body: s
 function getWorkoutMessages(name: string, streak: number, workoutsThisWeek: number): { title: string; body: string }[] {
   const firstName = name.split(" ")[0];
   const msgs: { title: string; body: string }[] = [
-    { title: "💪 Workout Time!", body: `Let's go, ${firstName}! Your personalised workout is ready. ${streak > 0 ? `Day ${streak + 1} of your streak!` : "Start a new streak today!"}` },
-    { title: "🔥 Time to Train", body: `Hey ${firstName}! Consistency beats intensity. ${workoutsThisWeek} workout${workoutsThisWeek !== 1 ? "s" : ""} this week — let's add another.` },
-    { title: "⚡ Workout Nudge", body: `Your body is ready, ${firstName}! A quick session now will boost your energy for the rest of the day.` },
+    { title: "💪 Workout Time!", body: `Let's go, ${firstName}! ${streak > 0 ? `Day ${streak + 1} of your streak!` : "Start a new streak!"}` },
+    { title: "🔥 Time to Train", body: `${workoutsThisWeek} workout${workoutsThisWeek !== 1 ? "s" : ""} this week. Add another!` },
+    { title: "⚡ Workout Nudge", body: `Quick session = energy boost, ${firstName}!` },
   ];
   if (streak >= 3) {
-    msgs.push({ title: "🔥 Don't Break the Streak!", body: `${streak} days strong, ${firstName}! Keep the momentum going with today's workout.` });
+    msgs.push({ title: "🔥 Don't Break the Streak!", body: `${streak} days strong! Keep going, ${firstName}.` });
   }
   if (workoutsThisWeek === 0) {
-    msgs.push({ title: "🏋️ Fresh Start", body: `New week, new you, ${firstName}! Kick off with a workout and set the tone for the week.` });
+    msgs.push({ title: "🏋️ Fresh Start", body: `New week, ${firstName}! Start with a workout.` });
   }
   return msgs;
 }
@@ -242,12 +245,12 @@ function getWorkoutMessages(name: string, streak: number, workoutsThisWeek: numb
 function getMorningMotivation(name: string, streak: number, goal: string): { title: string; body: string }[] {
   const firstName = name.split(" ")[0];
   const msgs = [
-    { title: "🌅 Good Morning!", body: `Rise and shine, ${firstName}! Today is another chance to get closer to your ${goal.replace(/_/g, " ")} goal.` },
-    { title: "☀️ New Day, New Gains", body: `Good morning! ${streak > 0 ? `You're on a ${streak}-day streak. Let's keep it going!` : "Today's a great day to start fresh."}` },
-    { title: "💫 Morning Motivation", body: `Every day you show up is a win, ${firstName}. Your future self will thank you.` },
+    { title: "🌅 Good Morning!", body: `Rise and shine, ${firstName}! One step closer to your ${goal.replace(/_/g, " ")} goal.` },
+    { title: "☀️ New Day, New Gains", body: `${streak > 0 ? `${streak}-day streak. Keep it going!` : "Fresh start today!"}` },
+    { title: "💫 Morning Motivation", body: `Every day you show up is a win, ${firstName}.` },
   ];
   if (new Date().getDay() === 1) {
-    msgs.push({ title: "🚀 Monday Motivation", body: `Happy Monday, ${firstName}! Set your intentions for the week. What will you accomplish?` });
+    msgs.push({ title: "🚀 Monday Motivation", body: `Happy Monday, ${firstName}! Set your intentions.` });
   }
   return msgs;
 }
@@ -257,9 +260,9 @@ function getMorningMotivation(name: string, streak: number, goal: string): { tit
 function getEveningRecap(name: string, streak: number, workoutsThisWeek: number): { title: string; body: string }[] {
   const firstName = name.split(" ")[0];
   return [
-    { title: "📊 Daily Recap", body: `Great day, ${firstName}! ${workoutsThisWeek} workout${workoutsThisWeek !== 1 ? "s" : ""} this week. ${streak > 0 ? `${streak}-day streak!` : "Start your streak tomorrow!"} Check your progress.` },
-    { title: "🌙 End of Day Summary", body: `Winding down, ${firstName}? Review your meals and activity for today. Rest well — recovery is when gains happen.` },
-    { title: "✨ Day Complete", body: `Another day in the books! ${streak > 0 ? `${streak} days of consistency.` : "Tomorrow is a fresh start."} Plan tomorrow's meals from your pantry.` },
+    { title: "📊 Daily Recap", body: `${workoutsThisWeek} workout${workoutsThisWeek !== 1 ? "s" : ""} this week. ${streak > 0 ? `${streak}-day streak!` : "Start tomorrow!"}` },
+    { title: "🌙 End of Day", body: `Rest well, ${firstName}. Recovery is when gains happen.` },
+    { title: "✨ Day Complete", body: `${streak > 0 ? `${streak} days consistent.` : "Fresh start tomorrow."} Plan your meals.` },
   ];
 }
 
@@ -268,8 +271,94 @@ function getEveningRecap(name: string, streak: number, workoutsThisWeek: number)
 function getPantryExpiryMessages(name: string, count: number): { title: string; body: string }[] {
   const firstName = name.split(" ")[0];
   return [
-    { title: "⚠️ Pantry Alert", body: `${firstName}, ${count} item${count > 1 ? "s" : ""} in your pantry ${count > 1 ? "are" : "is"} expiring soon! Check your pantry to use them before they go to waste.` },
-    { title: "🥫 Use It or Lose It", body: `${count} pantry item${count > 1 ? "s" : ""} expiring soon. Open your Cook Again recipes for quick meal ideas, ${firstName}.` },
+    { title: "⚠️ Pantry Alert", body: `${count} item${count > 1 ? "s" : ""} expiring soon, ${firstName}! Use them up.` },
+    { title: "🥫 Use It or Lose It", body: `${count} item${count > 1 ? "s" : ""} expiring. Try a Cook Again recipe!` },
+  ];
+}
+
+// ── Weekly Nutrition Summary ──
+
+interface WeeklyNutritionContext {
+  totalCalories: number;
+  avgCalories: number;
+  avgProtein: number;
+  avgCarbs: number;
+  avgFat: number;
+  mealsLogged: number;
+  bestDay: string;
+  worstDay: string;
+  daysTracked: number;
+}
+
+async function getWeeklyNutritionContext(): Promise<WeeklyNutritionContext> {
+  try {
+    const raw = await AsyncStorage.getItem("@calorie_entries");
+    const entries: any[] = raw ? JSON.parse(raw) : [];
+    const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+    const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+    // Filter to this week
+    const weekEntries = entries.filter((e: any) => new Date(e.date || e.createdAt) >= weekAgo);
+
+    // Group by day
+    const byDay: Record<string, { cal: number; protein: number; carbs: number; fat: number; count: number }> = {};
+    for (const e of weekEntries) {
+      const d = new Date(e.date || e.createdAt);
+      const key = d.toISOString().split("T")[0];
+      if (!byDay[key]) byDay[key] = { cal: 0, protein: 0, carbs: 0, fat: 0, count: 0 };
+      byDay[key].cal += e.calories || 0;
+      byDay[key].protein += e.protein || 0;
+      byDay[key].carbs += e.carbs || 0;
+      byDay[key].fat += e.fat || 0;
+      byDay[key].count++;
+    }
+
+    const days = Object.keys(byDay);
+    const daysTracked = days.length;
+    const totalCalories = days.reduce((sum, d) => sum + byDay[d].cal, 0);
+    const avgCalories = daysTracked > 0 ? Math.round(totalCalories / daysTracked) : 0;
+    const avgProtein = daysTracked > 0 ? Math.round(days.reduce((s, d) => s + byDay[d].protein, 0) / daysTracked) : 0;
+    const avgCarbs = daysTracked > 0 ? Math.round(days.reduce((s, d) => s + byDay[d].carbs, 0) / daysTracked) : 0;
+    const avgFat = daysTracked > 0 ? Math.round(days.reduce((s, d) => s + byDay[d].fat, 0) / daysTracked) : 0;
+    const mealsLogged = weekEntries.length;
+
+    // Best/worst day by calorie count
+    let bestDay = "N/A";
+    let worstDay = "N/A";
+    if (daysTracked > 0) {
+      const sorted = days.sort((a, b) => byDay[a].cal - byDay[b].cal);
+      const bestDate = new Date(sorted[sorted.length - 1]);
+      const worstDate = new Date(sorted[0]);
+      bestDay = dayNames[bestDate.getDay()];
+      worstDay = dayNames[worstDate.getDay()];
+    }
+
+    return { totalCalories, avgCalories, avgProtein, avgCarbs, avgFat, mealsLogged, bestDay, worstDay, daysTracked };
+  } catch {
+    return { totalCalories: 0, avgCalories: 0, avgProtein: 0, avgCarbs: 0, avgFat: 0, mealsLogged: 0, bestDay: "N/A", worstDay: "N/A", daysTracked: 0 };
+  }
+}
+
+function getWeeklySummaryMessages(name: string, ctx: WeeklyNutritionContext): { title: string; body: string }[] {
+  const firstName = name.split(" ")[0];
+  if (ctx.daysTracked === 0) {
+    return [
+      { title: "\ud83d\udcca Weekly Nutrition", body: `${firstName}, no meals logged this week. Start tracking tomorrow to get insights!` },
+    ];
+  }
+  return [
+    {
+      title: "\ud83d\udcca Weekly Nutrition Recap",
+      body: `${firstName}, this week: ${ctx.mealsLogged} meals, avg ${ctx.avgCalories} kcal/day. Protein ${ctx.avgProtein}g, Carbs ${ctx.avgCarbs}g, Fat ${ctx.avgFat}g. ${ctx.bestDay} was your highest day.`,
+    },
+    {
+      title: "\ud83c\udf1f Week in Review",
+      body: `${ctx.daysTracked} days tracked, ${ctx.totalCalories.toLocaleString()} total kcal. Avg macros: ${ctx.avgProtein}g P / ${ctx.avgCarbs}g C / ${ctx.avgFat}g F. Great job, ${firstName}!`,
+    },
+    {
+      title: "\ud83d\udcc8 Your Week's Nutrition",
+      body: `${firstName}, you logged ${ctx.mealsLogged} meals across ${ctx.daysTracked} days. Daily avg: ${ctx.avgCalories} kcal. Keep it consistent next week!`,
+    },
   ];
 }
 
@@ -345,7 +434,7 @@ export async function scheduleAllAINotifications(): Promise<void> {
   if (prefs.snackReminder) {
     await scheduleAndStore(SNACK_KEY, {
       title: "🍎 Snack Time",
-      body: `Afternoon snack, ${ctx.name.split(" ")[0]}! A healthy snack keeps energy up and prevents overeating at dinner.`,
+      body: `Snack time, ${ctx.name.split(" ")[0]}! Keep your energy up.`,
       data: { type: "meal_snack", url: "/(tabs)/meals" },
     }, {
       type: Notifications.SchedulableTriggerInputTypes.DAILY,
@@ -404,6 +493,24 @@ export async function scheduleAllAINotifications(): Promise<void> {
     await cancelStored(EVENING_RECAP_KEY);
   }
 
+  // ── Weekly Nutrition Summary (Sunday 7pm) ──
+  if ((prefs as any).weeklySummary !== false) {
+    const weeklyCtx = await getWeeklyNutritionContext();
+    const wkMsg = pickRandom(getWeeklySummaryMessages(ctx.name, weeklyCtx));
+    await scheduleAndStore(WEEKLY_SUMMARY_KEY, {
+      title: wkMsg.title,
+      body: wkMsg.body,
+      data: { type: "weekly_summary", url: "/(tabs)/meals" },
+    }, {
+      type: Notifications.SchedulableTriggerInputTypes.WEEKLY,
+      weekday: 1, // Sunday
+      hour: 19,
+      minute: 0,
+    });
+  } else {
+    await cancelStored(WEEKLY_SUMMARY_KEY);
+  }
+
   // ── Pantry Expiry Alert (6pm daily) ──
   if (prefs.pantryAlerts && ctx.pantryExpiringCount > 0) {
     const pMsg = pickRandom(getPantryExpiryMessages(ctx.name, ctx.pantryExpiringCount));
@@ -429,7 +536,7 @@ export async function cancelAllAINotifications(): Promise<void> {
   const keys = [
     BREAKFAST_KEY, LUNCH_KEY, DINNER_KEY, SNACK_KEY,
     WORKOUT_NUDGE_KEY, MORNING_MOTIVATION_KEY, EVENING_RECAP_KEY,
-    PANTRY_EXPIRY_KEY,
+    PANTRY_EXPIRY_KEY, WEEKLY_SUMMARY_KEY,
   ];
   await Promise.all(keys.map(cancelStored));
 }
@@ -452,14 +559,15 @@ export async function sendContextualNotification(
     case "workout_complete":
       content = {
         title: "🎉 Workout Complete!",
-        body: `Great job, ${firstName}! ${ctx.streakDays > 0 ? `${ctx.streakDays + 1}-day streak!` : "You just started a new streak!"} Rest, recover, and fuel up.`,
+        body: `Great job, ${firstName}! ${ctx.streakDays > 0 ? `${ctx.streakDays + 1}-day streak!` : "New streak started!"} Rest and fuel up.`,
         data: { type: "workout_complete", url: "/workout-calendar" },
       };
       break;
     case "meal_logged":
       content = {
         title: "✅ Meal Logged",
-        body: `Nice, ${firstName}! Staying on top of your nutrition. ${data?.remaining ? `${data.remaining} kcal remaining today.` : ""}`,
+        body: `Logged! ${data?.remaining ? `${data.remaining} kcal remaining.` : "Nice work, ${firstName}!"}`,
+
         data: { type: "meal_logged", url: "/(tabs)/meals" },
       };
       break;
@@ -467,7 +575,7 @@ export async function sendContextualNotification(
       const days = data?.days || ctx.streakDays;
       content = {
         title: `🔥 ${days}-Day Streak!`,
-        body: `Incredible consistency, ${firstName}! ${days} days of showing up. You're building something amazing.`,
+        body: `${days} days of consistency, ${firstName}! Amazing.`,
         data: { type: "streak_milestone", url: "/(tabs)" },
       };
       break;
@@ -475,7 +583,7 @@ export async function sendContextualNotification(
     case "pantry_expiry":
       content = {
         title: "⚠️ Pantry Items Expiring",
-        body: `${data?.count || ctx.pantryExpiringCount} item${(data?.count || ctx.pantryExpiringCount) > 1 ? "s" : ""} expiring soon. Use them in a Cook Again recipe!`,
+        body: `${data?.count || ctx.pantryExpiringCount} item${(data?.count || ctx.pantryExpiringCount) > 1 ? "s" : ""} expiring. Try a Cook Again recipe!`,
         data: { type: "pantry_expiry", url: "/pantry" },
       };
       break;
@@ -498,6 +606,6 @@ export async function getScheduledAINotificationCount(): Promise<number> {
   return all.filter(n => {
     const type = (n.content.data as any)?.type || "";
     return type.startsWith("meal_") || type.startsWith("workout_") ||
-      type === "morning_motivation" || type === "evening_recap" || type === "pantry_expiry";
+      type === "morning_motivation" || type === "evening_recap" || type === "pantry_expiry" || type === "weekly_summary";
   }).length;
 }

@@ -56,7 +56,7 @@ const SF = {
   surfacePrimary: "#1C0E02", // primary card surface (slightly lighter)
   border: "rgba(245,158,11,0.12)", border2: "rgba(245,158,11,0.20)",
   borderPrimary: "rgba(245,158,11,0.25)", // primary card border (higher opacity)
-  fg: "#FFF7ED", muted: "#92400E", gold: "#F59E0B", orange: "#EA580C",
+  fg: "#FFF7ED", muted: "#B45309", gold: "#F59E0B", orange: "#EA580C",
   gold2: "#FBBF24", gold3: "#FDE68A", red: "#DC2626",
   emerald: "#F59E0B", emerald2: "#FBBF24", emerald3: "#FDE68A",
   teal: "#EA580C", teal2: "#F97316",

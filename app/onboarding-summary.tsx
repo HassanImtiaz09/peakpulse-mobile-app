@@ -22,7 +22,7 @@ const SF = {
   surface: "#150A00",
   border:  "rgba(245,158,11,0.18)",
   fg:      "#FFF7ED",
-  muted:   "#92400E",
+  muted: "#B45309",
   gold:    "#F59E0B",
   gold2:   "#FBBF24",
   gold3:   "#FDE68A",
