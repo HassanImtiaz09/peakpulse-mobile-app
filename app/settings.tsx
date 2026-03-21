@@ -234,6 +234,23 @@ export default function SettingsScreen() {
           )}
         </View>
 
+        {/* AI Reminders Settings Link */}
+        {pushEnabled && (
+          <TouchableOpacity
+            onPress={() => router.push("/notification-settings" as any)}
+            style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", backgroundColor: "rgba(245,158,11,0.06)", borderRadius: 14, padding: 14, marginTop: 8, borderWidth: 1, borderColor: "rgba(245,158,11,0.12)" }}
+          >
+            <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+              <MaterialIcons name="smart-toy" size={20} color={SF.gold} />
+              <View>
+                <Text style={{ color: SF.fg, fontFamily: "Outfit_700Bold", fontSize: 14 }}>AI Reminder Settings</Text>
+                <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 11 }}>Customise meal, workout, and motivation notifications</Text>
+              </View>
+            </View>
+            <MaterialIcons name="chevron-right" size={20} color={SF.muted} />
+          </TouchableOpacity>
+        )}
+
         {(Platform.OS as string) === "web" && (
           <View style={styles.webNote}>
             <MaterialIcons name="info-outline" size={14} color={SF.muted} />

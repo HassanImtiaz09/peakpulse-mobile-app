@@ -517,6 +517,18 @@ export default function PantryScreen() {
               </View>
             </TouchableOpacity>
 
+            {/* Barcode Scanner Button */}
+            <TouchableOpacity
+              onPress={() => router.push("/barcode-scanner" as any)}
+              style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 10, backgroundColor: "rgba(34,197,94,0.08)", borderRadius: 16, padding: 16, borderWidth: 1, borderColor: "rgba(34,197,94,0.20)" }}
+            >
+              <MaterialIcons name="qr-code-scanner" size={24} color="#22C55E" />
+              <View>
+                <Text style={{ color: "#22C55E", fontFamily: "Outfit_700Bold", fontSize: 15 }}>Scan Barcode</Text>
+                <Text style={{ color: "#92400E", fontFamily: "DMSans_400Regular", fontSize: 11 }}>Scan product barcode for auto-fill with expiry date</Text>
+              </View>
+            </TouchableOpacity>
+
             {/* Manual Entry */}
             <View style={{ backgroundColor: "#150A00", borderRadius: 16, padding: 16, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}>
               <Text style={{ color: "#FDE68A", fontFamily: "Outfit_700Bold", fontSize: 14, marginBottom: 12 }}>Add Manually</Text>

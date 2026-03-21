@@ -84,6 +84,7 @@ const QUICK_ACTIONS_ALL = [
   { icon: "card-giftcard" as const, label: "Refer a Friend", route: "/referral", gated: false },
   { icon: "workspace-premium" as const, label: "Upgrade", route: "/subscription", gated: false },
   { icon: "calendar-today" as const, label: "Workout History", route: "/workout-calendar", gated: false },
+  { icon: "notifications-active" as const, label: "AI Reminders", route: "/notification-settings", gated: false },
 ];
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);

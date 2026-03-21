@@ -780,3 +780,32 @@
 ### Tests
 - [x] 7 new tests (round47-features.test.ts), 248 total passing
 - [x] 0 TypeScript errors
+
+## Round 48 — Barcode Scanning & Push Notification Reminders
+
+### Barcode Scanning for Pantry
+- [x] expo-camera already installed with barcode scanning support
+- [x] Barcode scanner screen with CameraView, torch toggle, scan history
+- [x] Open Food Facts API lookup for product name, brand, category, nutrition
+- [x] Auto-populate pantry item name and category from barcode data (mapCategoryToPantry)
+- [x] Expiry date prompt on iOS (Alert.prompt), direct add on Android with note to set expiry in pantry
+- [x] "Scan Barcode" button added to pantry add view (green, prominent)
+- [x] Camera permissions handled gracefully with permission request screen
+
+### Push Notification Reminders (AI-Powered)
+- [x] AI notification scheduler (lib/ai-notification-scheduler.ts) with personalised message templates
+- [x] Meal reminders: breakfast (8am), lunch (12:30pm), dinner (6:30pm), snack (3pm)
+- [x] Workout nudge notification (7:30am) with streak and weekly workout count context
+- [x] Pantry expiry alerts (6pm daily) when items expiring within 2 days
+- [x] Morning motivation (7am) with streak, goal, and Monday-specific messages
+- [x] Evening recap (9pm) with calorie/workout/streak summary
+- [x] Notification settings screen (app/notification-settings.tsx) with per-category toggles
+- [x] Deep link from every notification to relevant screen (meals, workouts, pantry, dashboard)
+- [x] Auto-schedule on app launch (_layout.tsx, 3s delay)
+- [x] "AI Reminders" quick action on dashboard
+- [x] "AI Reminder Settings" link in settings screen
+- [x] Contextual instant notifications (workout_complete, meal_logged, streak_milestone, pantry_expiry)
+
+### Tests
+- [x] 14 new tests (round48-features.test.ts), 262 total passing
+- [x] 0 TypeScript errors

@@ -29,6 +29,7 @@ import { useFonts } from "expo-font";
 import { useRouter } from "expo-router";
 import { extractReferralCodeFromUrl, storePendingReferralCode } from "@/lib/referral";
 import { FloatingAssistant } from "@/components/floating-assistant";
+import { scheduleAllAINotifications } from "@/lib/ai-notification-scheduler";
 import {
   DMSans_300Light,
   DMSans_400Regular,
@@ -186,6 +187,16 @@ export default function RootLayout() {
   // Deep-link hooks run on every render (rules of hooks) but skip work until fonts are loaded
   useNotificationDeepLink(fontsLoaded);
   useReferralDeepLink(fontsLoaded);
+
+  // Schedule AI-powered notifications on app launch (runs silently, no permission prompt)
+  useEffect(() => {
+    if (!fontsLoaded || Platform.OS === "web") return;
+    // Delay slightly to avoid blocking initial render
+    const timer = setTimeout(() => {
+      scheduleAllAINotifications().catch(() => {});
+    }, 3000);
+    return () => clearTimeout(timer);
+  }, [fontsLoaded]);
 
   if (!fontsLoaded) return null;
 

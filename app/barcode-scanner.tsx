@@ -472,22 +472,58 @@ export default function BarcodeScannerScreen() {
                   <Text style={styles.addBtnText}>Add to Meal Log</Text>
                 </TouchableOpacity>
 
-                {/* Add to Pantry Button */}
+                {/* Add to Pantry Button — prompts for expiry date */}
                 <TouchableOpacity
                   style={[styles.addBtn, { backgroundColor: "rgba(59,130,246,0.15)", marginTop: -8, shadowOpacity: 0 }]}
-                  onPress={async () => {
+                  onPress={() => {
                     if (!result) return;
                     const name = result.brand ? `${result.name} (${result.brand})` : result.name;
                     const category = mapCategoryToPantry(result.name, result.brand);
-                    await addPantryItem({ name, category, source: "manual" });
-                    if (Platform.OS !== "web") {
-                      try { const H = await import("expo-haptics"); await H.notificationAsync(H.NotificationFeedbackType.Success); } catch {}
-                    }
-                    Alert.alert("Added to Pantry", `${name} added to your pantry under ${category}.`);
+                    // Prompt for expiry date before adding
+                    Alert.prompt
+                      ? Alert.prompt(
+                          "Set Expiry Date",
+                          `Add ${name} to pantry.\nEnter expiry date (DD/MM/YYYY) or leave blank:`,
+                          [
+                            { text: "Cancel", style: "cancel" },
+                            {
+                              text: "Add to Pantry",
+                              onPress: async (dateStr?: string) => {
+                                let expiresAt: string | undefined;
+                                if (dateStr && dateStr.trim()) {
+                                  const parts = dateStr.trim().split(/[\/\-]/);
+                                  if (parts.length === 3) {
+                                    if (parts[0].length === 4) {
+                                      expiresAt = new Date(`${parts[0]}-${parts[1].padStart(2, "0")}-${parts[2].padStart(2, "0")}`).toISOString();
+                                    } else {
+                                      expiresAt = new Date(`${parts[2]}-${parts[1].padStart(2, "0")}-${parts[0].padStart(2, "0")}`).toISOString();
+                                    }
+                                  }
+                                }
+                                await addPantryItem({ name, category, source: "manual", expiresAt });
+                                if (Platform.OS !== "web") {
+                                  try { const H = await import("expo-haptics"); await H.notificationAsync(H.NotificationFeedbackType.Success); } catch {}
+                                }
+                                Alert.alert("\u2705 Added to Pantry", `${name} added to ${category}.${expiresAt ? " Expiry tracked." : ""}`);
+                              },
+                            },
+                          ],
+                          "plain-text",
+                          "",
+                          "numbers-and-punctuation",
+                        )
+                      : (async () => {
+                          // Android fallback — no Alert.prompt, add directly
+                          await addPantryItem({ name, category, source: "manual" });
+                          if (Platform.OS !== "web") {
+                            try { const H = await import("expo-haptics"); await H.notificationAsync(H.NotificationFeedbackType.Success); } catch {}
+                          }
+                          Alert.alert("\u2705 Added to Pantry", `${name} added to ${category}. Set expiry date in Pantry screen.`);
+                        })();
                   }}
                 >
                   <MaterialIcons name="kitchen" size={18} color="#3B82F6" />
-                  <Text style={[styles.addBtnText, { color: "#3B82F6" }]}>Add to Pantry</Text>
+                  <Text style={[styles.addBtnText, { color: "#3B82F6" }]}>Add to Pantry (with Expiry)</Text>
                 </TouchableOpacity>
 
               {/* Save to Favourites Button */}
