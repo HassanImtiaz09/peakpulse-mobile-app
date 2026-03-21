@@ -893,3 +893,34 @@
 ### Tests
 - [x] 31 new tests (round51-features.test.ts), 307 total passing
 - [x] 0 TypeScript errors
+
+## Round 52 — Editable Receipt Items, Meal Prep Planner, Trend Charts
+
+### Editable Receipt Items
+- [x] Inline name editing: tap name to open TextInput, blur/submit to commit
+- [x] Category picker modal with 12 categories, icons, and pantry mapping
+- [x] Expiry date picker modal with 12 preset durations (1 day to 1 year)
+- [x] Quantity +/- controls per item
+- [x] Edits preserved when toggling selection on/off
+- [x] Edit hint text guides users
+
+### Meal Prep Planner
+- [x] app/meal-prep.tsx with expiring items summary, servings control, and recipe generation
+- [x] Filters pantry items expiring within 5 days with urgency color coding
+- [x] tRPC mealPrep.fromExpiring endpoint with zero-waste chef LLM prompt
+- [x] Expandable recipe cards: ingredients (pantry-tagged), instructions, storage tips, macros
+- [x] "Uses Expiring" pills show which expiring items each recipe saves
+- [x] Linked from pantry add view and dashboard quick actions
+- [x] Regenerate button and waste reduction tips
+
+### Calorie/Macro Trend Chart
+- [x] SVG bar chart at top of meal timeline (ListHeaderComponent)
+- [x] Weekly averages computed from daily totals, grouped into 7-day buckets
+- [x] Metric selector tabs: Calories, Protein, Carbs, Fat (each with distinct color)
+- [x] Summary stats: this week, last week, overall average, week-over-week % change
+- [x] Collapsible chart section
+- [x] Grid lines with value labels
+
+### Tests
+- [x] 65 new tests (round52-features.test.ts), 334 total passing
+- [x] 0 TypeScript errors

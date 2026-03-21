@@ -541,6 +541,18 @@ export default function PantryScreen() {
               </View>
             </TouchableOpacity>
 
+            {/* Meal Prep Planner */}
+            <TouchableOpacity
+              onPress={() => router.push("/meal-prep" as any)}
+              style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 10, backgroundColor: "rgba(34,197,94,0.08)", borderRadius: 16, padding: 16, borderWidth: 1, borderColor: "rgba(34,197,94,0.20)" }}
+            >
+              <MaterialIcons name="auto-awesome" size={24} color="#22C55E" />
+              <View style={{ flex: 1 }}>
+                <Text style={{ color: "#22C55E", fontFamily: "Outfit_700Bold", fontSize: 15 }}>Meal Prep Planner</Text>
+                <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 11 }}>Batch-cook recipes from expiring items</Text>
+              </View>
+            </TouchableOpacity>
+
             {/* Manual Entry */}
             <View style={{ backgroundColor: "#150A00", borderRadius: 16, padding: 16, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}>
               <Text style={{ color: "#FDE68A", fontFamily: "Outfit_700Bold", fontSize: 14, marginBottom: 12 }}>Add Manually</Text>

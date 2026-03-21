@@ -88,6 +88,7 @@ const QUICK_ACTIONS_ALL = [
   { icon: "notifications-active" as const, label: "AI Reminders", route: "/notification-settings", gated: false },
   { icon: "receipt-long" as const, label: "Scan Receipt", route: "/scan-receipt", gated: false },
   { icon: "photo-library" as const, label: "Meal Timeline", route: "/meal-timeline", gated: false },
+  { icon: "auto-awesome" as const, label: "Meal Prep", route: "/meal-prep", gated: false },
 ];
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);

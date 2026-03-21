@@ -310,6 +310,17 @@ export const appRouter = router({
         catch { prepData = { prepTime: "2-3 hours", recipes: [], shoppingList: [], tips: [] }; }
         return prepData;
       }),
+    // Generate meal prep from expiring pantry items
+    fromExpiring: guestOrUserProcedure
+      .input(z.object({ expiringItems: z.string(), allPantryItems: z.string(), servings: z.number().default(4) }))
+      .mutation(async ({ input }) => {
+        const prompt = `You are a zero-waste chef. These pantry items are EXPIRING SOON and must be used first:\n${input.expiringItems}\n\nFull pantry:\n${input.allPantryItems}\n\nCreate 3-5 batch-cooking recipes that PRIORITIZE using the expiring items. Each recipe should make ${input.servings} servings and store well.\n\nReturn JSON:\n{"recipes":[{"name":"Recipe Name","usesExpiring":["item1","item2"],"servings":${input.servings},"calories":450,"protein":30,"carbs":45,"fat":15,"prepTime":"30 min","cookTime":"45 min","ingredients":[{"name":"Chicken","amount":"500g","fromPantry":true}],"instructions":["Step 1","Step 2"],"storageInstructions":"Fridge 4 days, freezer 2 weeks","mealType":"lunch"}],"tips":["Tip to reduce waste"]}`;
+        const response = await invokeLLM({ messages: [{ role: "system", content: "You are a zero-waste meal prep expert. Always respond with valid JSON." }, { role: "user", content: prompt }], response_format: { type: "json_object" } });
+        let data: any;
+        try { data = JSON.parse((response.choices[0].message.content as string) ?? "{}"); }
+        catch { data = { recipes: [], tips: ["Check your pantry for items expiring soon."] }; }
+        return data;
+      }),
   }),
 
   mealLog: router({
