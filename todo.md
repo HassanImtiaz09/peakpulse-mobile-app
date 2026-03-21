@@ -941,3 +941,32 @@
 ### Tests
 - [x] 17 new tests (round53-features.test.ts), 352 total passing
 - [x] 0 TypeScript errors
+
+## Round 54 — Recipe Scaling, Drag-and-Drop Reorder, Rating & Review
+
+### Recipe Serving Size Scaling
+- [x] Per-recipe serving adjuster (+/- buttons) on every recipe card
+- [x] scaleAmount() utility scales fractional ingredient amounts proportionally
+- [x] Calories, protein, carbs, fat recalculated by multiplier in real-time
+- [x] Scaled serving count shown in meta row and expanded ingredients heading
+- [x] Reset button appears when scale differs from original
+- [x] Clamped 1-24 servings range
+
+### Drag-and-Drop Reorder (Saved Recipes)
+- [x] Reorder toggle button in saved tab header (swap-vert icon)
+- [x] Up/Down arrow buttons per card with position number (#1, #2, etc.)
+- [x] moveRecipe() swaps adjacent items and persists to AsyncStorage
+- [x] Disabled state for first (Up) and last (Down) items
+- [x] Exits reorder mode when switching to Generate tab
+
+### Rating & Review System
+- [x] 5-star rating on every recipe card (tap to rate, tap again to clear)
+- [x] Numeric rating display (e.g. 4/5) next to stars
+- [x] Text review/notes field (300 char limit) with Save/Cancel
+- [x] Ratings and reviews persisted to AsyncStorage (peakpulse_recipe_ratings)
+- [x] Edit existing review by tapping the displayed note
+- [x] "Add notes" prompt when no review exists
+
+### Tests
+- [x] 29 new tests (round54-features.test.ts), 381 total passing
+- [x] 0 TypeScript errors

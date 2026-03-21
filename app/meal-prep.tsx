@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator, ScrollView, Alert, Platform } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator, ScrollView, Alert, Platform, TextInput } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
@@ -9,6 +9,7 @@ import { trpc } from "@/lib/trpc";
 
 const SF = { bg: "#0A0500", card: "#150A00", orange: "#F59E0B", gold: "#FBBF24", cream: "#FDE68A", muted: "#B45309", text: "#FFF7ED", border: "rgba(245,158,11,0.10)", green: "#22C55E", red: "#EF4444", blue: "#60A5FA" };
 const SAVED_KEY = "peakpulse_saved_recipes";
+const RATINGS_KEY = "peakpulse_recipe_ratings";
 
 interface PrepRecipe {
   name: string;
@@ -31,7 +32,34 @@ interface SavedRecipe extends PrepRecipe {
   id: string;
 }
 
+interface RecipeRating {
+  recipeId: string;
+  recipeName: string;
+  rating: number;
+  review: string;
+  updatedAt: string;
+}
+
 type TabMode = "generate" | "saved";
+
+// Scale an ingredient amount string by a multiplier
+function scaleAmount(amount: string, multiplier: number): string {
+  if (multiplier === 1) return amount;
+  const match = amount.match(/^([\d./]+)\s*(.*)/);
+  if (!match) return amount;
+  let num: number;
+  if (match[1].includes("/")) {
+    const parts = match[1].split("/");
+    num = parseFloat(parts[0]) / parseFloat(parts[1]);
+  } else {
+    num = parseFloat(match[1]);
+  }
+  if (isNaN(num)) return amount;
+  const scaled = num * multiplier;
+  const rounded = Math.round(scaled * 100) / 100;
+  const display = rounded % 1 === 0 ? rounded.toString() : rounded.toFixed(rounded < 10 ? 1 : 0);
+  return match[2] ? `${display} ${match[2]}` : display;
+}
 
 export default function MealPrepScreen() {
   const router = useRouter();
@@ -46,10 +74,18 @@ export default function MealPrepScreen() {
   const [generated, setGenerated] = useState(false);
   const [savedRecipes, setSavedRecipes] = useState<SavedRecipe[]>([]);
   const [tab, setTab] = useState<TabMode>("generate");
+  // Per-recipe serving scale: cardKey -> customServings
+  const [recipeScales, setRecipeScales] = useState<Record<string, number>>({});
+  // Ratings & reviews
+  const [ratings, setRatings] = useState<Record<string, RecipeRating>>({});
+  const [editingReview, setEditingReview] = useState<string | null>(null);
+  const [reviewDraft, setReviewDraft] = useState("");
+  // Reorder mode
+  const [reorderMode, setReorderMode] = useState(false);
 
-  // Load saved recipes on mount
   useEffect(() => {
     loadSavedRecipes();
+    loadRatings();
   }, []);
 
   const loadSavedRecipes = useCallback(async () => {
@@ -63,6 +99,32 @@ export default function MealPrepScreen() {
     setSavedRecipes(updated);
     try { await AsyncStorage.setItem(SAVED_KEY, JSON.stringify(updated)); } catch { /* ignore */ }
   }, []);
+
+  const loadRatings = useCallback(async () => {
+    try {
+      const raw = await AsyncStorage.getItem(RATINGS_KEY);
+      if (raw) setRatings(JSON.parse(raw));
+    } catch { /* ignore */ }
+  }, []);
+
+  const persistRatings = useCallback(async (updated: Record<string, RecipeRating>) => {
+    setRatings(updated);
+    try { await AsyncStorage.setItem(RATINGS_KEY, JSON.stringify(updated)); } catch { /* ignore */ }
+  }, []);
+
+  const setRecipeRating = useCallback(async (recipeId: string, recipeName: string, star: number) => {
+    const existing = ratings[recipeId];
+    const updated = { ...ratings, [recipeId]: { recipeId, recipeName, rating: star, review: existing?.review ?? "", updatedAt: new Date().toISOString() } };
+    await persistRatings(updated);
+  }, [ratings, persistRatings]);
+
+  const submitReview = useCallback(async (recipeId: string, recipeName: string) => {
+    const existing = ratings[recipeId];
+    const updated = { ...ratings, [recipeId]: { recipeId, recipeName, rating: existing?.rating ?? 0, review: reviewDraft.trim(), updatedAt: new Date().toISOString() } };
+    await persistRatings(updated);
+    setEditingReview(null);
+    setReviewDraft("");
+  }, [ratings, persistRatings, reviewDraft]);
 
   const isRecipeSaved = useCallback((name: string) => {
     return savedRecipes.some(s => s.name === name);
@@ -80,15 +142,23 @@ export default function MealPrepScreen() {
   }, [savedRecipes, persistSaved]);
 
   const confirmUnsave = useCallback((id: string, name: string) => {
-    if (Platform.OS === "web") {
-      unsaveRecipe(id);
-      return;
-    }
-    Alert.alert("Remove Bookmark", `Remove "${name}" from saved recipes?`, [
+    if (Platform.OS === "web") { unsaveRecipe(id); return; }
+    Alert.alert("Remove Bookmark", `Remove "${name}"?`, [
       { text: "Cancel", style: "cancel" },
       { text: "Remove", style: "destructive", onPress: () => unsaveRecipe(id) },
     ]);
   }, [unsaveRecipe]);
+
+  // Reorder functions
+  const moveRecipe = useCallback(async (index: number, direction: "up" | "down") => {
+    const newIdx = direction === "up" ? index - 1 : index + 1;
+    if (newIdx < 0 || newIdx >= savedRecipes.length) return;
+    const updated = [...savedRecipes];
+    const temp = updated[index];
+    updated[index] = updated[newIdx];
+    updated[newIdx] = temp;
+    await persistSaved(updated);
+  }, [savedRecipes, persistSaved]);
 
   const expiringItems = useMemo(() => {
     const now = Date.now();
@@ -121,21 +191,96 @@ export default function MealPrepScreen() {
 
   const getDaysUntilExpiry = (date: string) => Math.ceil((new Date(date).getTime() - Date.now()) / (24 * 60 * 60 * 1000));
   const getUrgencyColor = (days: number) => days <= 1 ? SF.red : days <= 3 ? SF.orange : SF.green;
+  const formatSavedDate = (iso: string) => new Date(iso).toLocaleDateString("en-US", { month: "short", day: "numeric" });
 
-  const formatSavedDate = (iso: string) => {
-    const d = new Date(iso);
-    return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+  const getScaleMultiplier = (cardKey: string, originalServings: number) => {
+    const customServings = recipeScales[cardKey];
+    if (customServings === undefined) return 1;
+    return customServings / originalServings;
+  };
+
+  const getCustomServings = (cardKey: string, originalServings: number) => {
+    return recipeScales[cardKey] ?? originalServings;
+  };
+
+  const setCustomServings = (cardKey: string, val: number) => {
+    setRecipeScales(prev => ({ ...prev, [cardKey]: Math.max(1, Math.min(24, val)) }));
+  };
+
+  const renderStars = (recipeId: string, recipeName: string) => {
+    const current = ratings[recipeId]?.rating ?? 0;
+    return (
+      <View style={styles.starsRow}>
+        {[1, 2, 3, 4, 5].map(star => (
+          <TouchableOpacity key={star} onPress={() => setRecipeRating(recipeId, recipeName, star === current ? 0 : star)} activeOpacity={0.6}>
+            <MaterialIcons name={star <= current ? "star" : "star-border"} size={22} color={star <= current ? SF.gold : SF.muted} />
+          </TouchableOpacity>
+        ))}
+        {current > 0 && <Text style={styles.ratingText}>{current}/5</Text>}
+      </View>
+    );
+  };
+
+  const renderReviewSection = (recipeId: string, recipeName: string) => {
+    const existing = ratings[recipeId];
+    const isEditing = editingReview === recipeId;
+
+    return (
+      <View style={styles.reviewSection}>
+        {isEditing ? (
+          <View style={styles.reviewEditBox}>
+            <TextInput
+              style={styles.reviewInput}
+              placeholder="Add your notes..."
+              placeholderTextColor={SF.muted}
+              value={reviewDraft}
+              onChangeText={setReviewDraft}
+              multiline
+              maxLength={300}
+              returnKeyType="done"
+            />
+            <View style={styles.reviewActions}>
+              <TouchableOpacity onPress={() => { setEditingReview(null); setReviewDraft(""); }} style={styles.reviewCancelBtn}>
+                <Text style={styles.reviewCancelText}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => submitReview(recipeId, recipeName)} style={styles.reviewSaveBtn}>
+                <Text style={styles.reviewSaveText}>Save</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        ) : existing?.review ? (
+          <TouchableOpacity onPress={() => { setEditingReview(recipeId); setReviewDraft(existing.review); }} activeOpacity={0.7}>
+            <View style={styles.reviewDisplay}>
+              <MaterialIcons name="rate-review" size={12} color={SF.cream} />
+              <Text style={styles.reviewText} numberOfLines={3}>{existing.review}</Text>
+              <MaterialIcons name="edit" size={12} color={SF.muted} />
+            </View>
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity onPress={() => { setEditingReview(recipeId); setReviewDraft(""); }} style={styles.addReviewBtn} activeOpacity={0.7}>
+            <MaterialIcons name="rate-review" size={12} color={SF.muted} />
+            <Text style={styles.addReviewText}>Add notes</Text>
+          </TouchableOpacity>
+        )}
+      </View>
+    );
   };
 
   const renderRecipeCard = (recipe: PrepRecipe, idx: number, isSavedTab: boolean, savedId?: string) => {
     const cardKey = isSavedTab ? savedId! : `gen_${idx}`;
     const isExpanded = expandedRecipe === cardKey;
     const saved = isRecipeSaved(recipe.name);
+    const ratingId = savedId ?? `gen_${recipe.name}`;
+    const multiplier = getScaleMultiplier(cardKey, recipe.servings);
+    const customSrv = getCustomServings(cardKey, recipe.servings);
+    const scaledCal = Math.round(recipe.calories * multiplier);
+    const scaledP = Math.round(recipe.protein * multiplier);
+    const scaledC = Math.round(recipe.carbs * multiplier);
+    const scaledF = Math.round(recipe.fat * multiplier);
 
     return (
       <View key={cardKey} style={styles.recipeCard}>
         <TouchableOpacity onPress={() => setExpandedRecipe(isExpanded ? null : cardKey)} activeOpacity={0.7}>
-          {/* Header */}
           <View style={styles.recipeHeader}>
             <View style={{ flex: 1 }}>
               <Text style={styles.recipeName}>{recipe.name}</Text>
@@ -146,18 +291,17 @@ export default function MealPrepScreen() {
                 </View>
                 <View style={styles.recipeMeta}>
                   <MaterialIcons name="local-fire-department" size={11} color={SF.orange} />
-                  <Text style={styles.recipeMetaText}>{recipe.calories} kcal</Text>
+                  <Text style={styles.recipeMetaText}>{scaledCal} kcal</Text>
                 </View>
                 <View style={styles.recipeMeta}>
                   <MaterialIcons name="people" size={11} color={SF.muted} />
-                  <Text style={styles.recipeMetaText}>{recipe.servings} srv</Text>
+                  <Text style={styles.recipeMetaText}>{customSrv} srv</Text>
                 </View>
               </View>
             </View>
             <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
-              {/* Save / Unsave Button */}
               <TouchableOpacity
-                onPress={() => isSavedTab && savedId ? confirmUnsave(savedId, recipe.name) : saved ? {} : saveRecipe(recipe)}
+                onPress={() => isSavedTab && savedId ? confirmUnsave(savedId, recipe.name) : saved ? undefined : saveRecipe(recipe)}
                 style={[styles.saveBtn, saved && styles.saveBtnActive]}
                 activeOpacity={0.7}
               >
@@ -180,14 +324,37 @@ export default function MealPrepScreen() {
           </View>
         )}
 
-        {/* Macros Row */}
-        <View style={styles.macroRow}>
-          <View style={styles.macroItem}><Text style={[styles.macroVal, { color: SF.blue }]}>{recipe.protein}g</Text><Text style={styles.macroLabel}>Protein</Text></View>
-          <View style={styles.macroItem}><Text style={[styles.macroVal, { color: SF.gold }]}>{recipe.carbs}g</Text><Text style={styles.macroLabel}>Carbs</Text></View>
-          <View style={styles.macroItem}><Text style={[styles.macroVal, { color: SF.orange }]}>{recipe.fat}g</Text><Text style={styles.macroLabel}>Fat</Text></View>
+        {/* Serving Size Scaler */}
+        <View style={styles.scaleRow}>
+          <Text style={styles.scaleLabel}>Servings</Text>
+          <View style={styles.scaleControl}>
+            <TouchableOpacity onPress={() => setCustomServings(cardKey, customSrv - 1)} style={styles.scaleBtn}>
+              <MaterialIcons name="remove" size={14} color={SF.orange} />
+            </TouchableOpacity>
+            <Text style={styles.scaleValue}>{customSrv}</Text>
+            <TouchableOpacity onPress={() => setCustomServings(cardKey, customSrv + 1)} style={styles.scaleBtn}>
+              <MaterialIcons name="add" size={14} color={SF.orange} />
+            </TouchableOpacity>
+          </View>
+          {multiplier !== 1 && (
+            <TouchableOpacity onPress={() => setRecipeScales(prev => { const n = { ...prev }; delete n[cardKey]; return n; })}>
+              <Text style={styles.resetScale}>Reset</Text>
+            </TouchableOpacity>
+          )}
         </View>
 
-        {/* Save for Later inline button (non-saved tab only) */}
+        {/* Macros Row (scaled) */}
+        <View style={styles.macroRow}>
+          <View style={styles.macroItem}><Text style={[styles.macroVal, { color: SF.blue }]}>{scaledP}g</Text><Text style={styles.macroLabel}>Protein</Text></View>
+          <View style={styles.macroItem}><Text style={[styles.macroVal, { color: SF.gold }]}>{scaledC}g</Text><Text style={styles.macroLabel}>Carbs</Text></View>
+          <View style={styles.macroItem}><Text style={[styles.macroVal, { color: SF.orange }]}>{scaledF}g</Text><Text style={styles.macroLabel}>Fat</Text></View>
+          <View style={styles.macroItem}><Text style={[styles.macroVal, { color: SF.red }]}>{scaledCal}</Text><Text style={styles.macroLabel}>kcal</Text></View>
+        </View>
+
+        {/* Rating Stars */}
+        {renderStars(ratingId, recipe.name)}
+
+        {/* Save for Later (non-saved tab) */}
         {!isSavedTab && !saved && (
           <TouchableOpacity style={styles.saveForLaterBtn} onPress={() => saveRecipe(recipe)} activeOpacity={0.7}>
             <MaterialIcons name="bookmark-add" size={14} color={SF.gold} />
@@ -204,11 +371,14 @@ export default function MealPrepScreen() {
         {/* Expanded Content */}
         {isExpanded && (
           <View style={styles.expandedContent}>
-            <Text style={styles.subHeading}>Ingredients</Text>
+            {/* Review Section */}
+            {renderReviewSection(ratingId, recipe.name)}
+
+            <Text style={[styles.subHeading, { marginTop: 10 }]}>Ingredients {multiplier !== 1 && <Text style={{ color: SF.orange }}>({customSrv} servings)</Text>}</Text>
             {recipe.ingredients.map((ing, i) => (
               <View key={i} style={styles.ingredientRow}>
                 <MaterialIcons name={ing.fromPantry ? "check-circle" : "shopping-cart"} size={14} color={ing.fromPantry ? SF.green : SF.muted} />
-                <Text style={styles.ingredientText}>{ing.amount} {ing.name}</Text>
+                <Text style={styles.ingredientText}>{scaleAmount(ing.amount, multiplier)} {ing.name}</Text>
                 {ing.fromPantry && <Text style={styles.pantryBadge}>pantry</Text>}
               </View>
             ))}
@@ -228,13 +398,35 @@ export default function MealPrepScreen() {
               </View>
             )}
 
-            {/* Remove from saved (saved tab only) */}
             {isSavedTab && savedId && (
               <TouchableOpacity style={styles.removeBtn} onPress={() => confirmUnsave(savedId, recipe.name)}>
                 <MaterialIcons name="delete-outline" size={14} color={SF.red} />
                 <Text style={styles.removeText}>Remove Bookmark</Text>
               </TouchableOpacity>
             )}
+          </View>
+        )}
+
+        {/* Reorder buttons (saved tab, reorder mode) */}
+        {isSavedTab && reorderMode && (
+          <View style={styles.reorderRow}>
+            <TouchableOpacity
+              onPress={() => moveRecipe(idx, "up")}
+              style={[styles.reorderBtn, idx === 0 && styles.reorderBtnDisabled]}
+              disabled={idx === 0}
+            >
+              <MaterialIcons name="arrow-upward" size={16} color={idx === 0 ? SF.border : SF.orange} />
+              <Text style={[styles.reorderBtnText, idx === 0 && { color: SF.border }]}>Up</Text>
+            </TouchableOpacity>
+            <Text style={styles.reorderPos}>#{idx + 1}</Text>
+            <TouchableOpacity
+              onPress={() => moveRecipe(idx, "down")}
+              style={[styles.reorderBtn, idx === savedRecipes.length - 1 && styles.reorderBtnDisabled]}
+              disabled={idx === savedRecipes.length - 1}
+            >
+              <MaterialIcons name="arrow-downward" size={16} color={idx === savedRecipes.length - 1 ? SF.border : SF.orange} />
+              <Text style={[styles.reorderBtnText, idx === savedRecipes.length - 1 && { color: SF.border }]}>Down</Text>
+            </TouchableOpacity>
           </View>
         )}
       </View>
@@ -253,7 +445,7 @@ export default function MealPrepScreen() {
 
       {/* Tab Selector */}
       <View style={styles.tabRow}>
-        <TouchableOpacity style={[styles.tabBtn, tab === "generate" && styles.tabBtnActive]} onPress={() => setTab("generate")}>
+        <TouchableOpacity style={[styles.tabBtn, tab === "generate" && styles.tabBtnActive]} onPress={() => { setTab("generate"); setReorderMode(false); }}>
           <MaterialIcons name="auto-awesome" size={16} color={tab === "generate" ? SF.orange : SF.muted} />
           <Text style={[styles.tabText, tab === "generate" && styles.tabTextActive]}>Generate</Text>
         </TouchableOpacity>
@@ -344,7 +536,6 @@ export default function MealPrepScreen() {
                   </View>
                 )}
 
-                {/* Tips */}
                 {tips.length > 0 && (
                   <View style={styles.tipsSection}>
                     <MaterialIcons name="lightbulb" size={16} color={SF.gold} />
@@ -356,8 +547,7 @@ export default function MealPrepScreen() {
                   </View>
                 )}
 
-                {/* Regenerate */}
-                <TouchableOpacity style={styles.regenBtn} onPress={() => { setGenerated(false); setRecipes([]); setTips([]); setExpandedRecipe(null); }}>
+                <TouchableOpacity style={styles.regenBtn} onPress={() => { setGenerated(false); setRecipes([]); setTips([]); setExpandedRecipe(null); setRecipeScales({}); }}>
                   <MaterialIcons name="refresh" size={16} color={SF.orange} />
                   <Text style={styles.regenText}>Generate New Recipes</Text>
                 </TouchableOpacity>
@@ -371,14 +561,20 @@ export default function MealPrepScreen() {
               <View style={styles.emptySection}>
                 <MaterialIcons name="bookmark-border" size={48} color={SF.muted} />
                 <Text style={styles.emptyTitle}>No saved recipes</Text>
-                <Text style={styles.emptyText}>Generate recipes and tap the bookmark icon to save them here.</Text>
+                <Text style={styles.emptyText}>Bookmark recipes to save them here.</Text>
                 <TouchableOpacity style={styles.goGenerateBtn} onPress={() => setTab("generate")}>
                   <Text style={styles.goGenerateText}>Generate Recipes</Text>
                 </TouchableOpacity>
               </View>
             ) : (
               <>
-                <Text style={styles.sectionTitle}>{savedRecipes.length} Saved Recipe{savedRecipes.length !== 1 ? "s" : ""}</Text>
+                <View style={styles.savedHeader}>
+                  <Text style={styles.sectionTitle}>{savedRecipes.length} Saved</Text>
+                  <TouchableOpacity onPress={() => setReorderMode(!reorderMode)} style={[styles.reorderToggle, reorderMode && styles.reorderToggleActive]}>
+                    <MaterialIcons name="swap-vert" size={16} color={reorderMode ? SF.orange : SF.muted} />
+                    <Text style={[styles.reorderToggleText, reorderMode && { color: SF.orange }]}>{reorderMode ? "Done" : "Reorder"}</Text>
+                  </TouchableOpacity>
+                </View>
                 {savedRecipes.map((recipe, idx) => (
                   <View key={recipe.id}>
                     <Text style={styles.savedDate}>Saved {formatSavedDate(recipe.savedAt)}</Text>
@@ -398,15 +594,11 @@ const styles = StyleSheet.create({
   header: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingHorizontal: 16, paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: SF.border },
   backBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: SF.card, alignItems: "center", justifyContent: "center" },
   headerTitle: { color: SF.text, fontFamily: "Outfit_700Bold", fontSize: 18 },
-
-  // Tabs
   tabRow: { flexDirection: "row", paddingHorizontal: 16, paddingTop: 12, gap: 8 },
   tabBtn: { flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6, paddingVertical: 10, borderRadius: 10, borderWidth: 1, borderColor: SF.border, backgroundColor: SF.card },
   tabBtnActive: { borderColor: SF.orange + "40", backgroundColor: "rgba(245,158,11,0.08)" },
   tabText: { color: SF.muted, fontFamily: "Outfit_700Bold", fontSize: 13 },
   tabTextActive: { color: SF.text },
-
-  // Sections
   section: { paddingHorizontal: 16, marginTop: 16 },
   sectionHeader: { flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 10 },
   sectionTitle: { color: SF.text, fontFamily: "Outfit_700Bold", fontSize: 15 },
@@ -428,8 +620,6 @@ const styles = StyleSheet.create({
   emptySection: { alignItems: "center", marginTop: 40, gap: 8 },
   emptyTitle: { color: SF.text, fontFamily: "Outfit_700Bold", fontSize: 16 },
   emptyText: { color: SF.muted, fontSize: 12, textAlign: "center", paddingHorizontal: 20 },
-
-  // Recipe Cards
   recipeCard: { backgroundColor: SF.card, borderRadius: 14, padding: 14, marginTop: 10, borderWidth: 1, borderColor: SF.border },
   recipeHeader: { flexDirection: "row", alignItems: "flex-start" },
   recipeName: { color: SF.text, fontFamily: "Outfit_700Bold", fontSize: 15 },
@@ -439,20 +629,39 @@ const styles = StyleSheet.create({
   expiringPills: { flexDirection: "row", alignItems: "center", gap: 4, marginTop: 8, flexWrap: "wrap" },
   expiringPill: { backgroundColor: "rgba(34,197,94,0.10)", borderRadius: 6, paddingHorizontal: 6, paddingVertical: 2 },
   expiringPillText: { color: SF.green, fontSize: 9, fontFamily: "Outfit_700Bold" },
-  macroRow: { flexDirection: "row", gap: 16, marginTop: 10 },
+  // Scale control
+  scaleRow: { flexDirection: "row", alignItems: "center", gap: 8, marginTop: 8, paddingTop: 8, borderTopWidth: 1, borderTopColor: SF.border },
+  scaleLabel: { color: SF.muted, fontSize: 11 },
+  scaleControl: { flexDirection: "row", alignItems: "center", gap: 8, backgroundColor: "rgba(245,158,11,0.06)", borderRadius: 8, paddingHorizontal: 4, paddingVertical: 2 },
+  scaleBtn: { width: 24, height: 24, borderRadius: 12, backgroundColor: "rgba(245,158,11,0.15)", alignItems: "center", justifyContent: "center" },
+  scaleValue: { color: SF.text, fontFamily: "Outfit_700Bold", fontSize: 14, minWidth: 20, textAlign: "center" },
+  resetScale: { color: SF.orange, fontSize: 10, fontFamily: "Outfit_700Bold", marginLeft: 4 },
+  macroRow: { flexDirection: "row", gap: 16, marginTop: 8 },
   macroItem: { alignItems: "center" },
   macroVal: { fontFamily: "Outfit_700Bold", fontSize: 13 },
   macroLabel: { color: SF.muted, fontSize: 9, marginTop: 1 },
-
-  // Save button
+  // Stars
+  starsRow: { flexDirection: "row", alignItems: "center", gap: 2, marginTop: 8 },
+  ratingText: { color: SF.gold, fontSize: 11, fontFamily: "Outfit_700Bold", marginLeft: 6 },
+  // Review
+  reviewSection: { marginTop: 6 },
+  reviewEditBox: { backgroundColor: "rgba(245,158,11,0.04)", borderRadius: 8, padding: 8, borderWidth: 1, borderColor: SF.border },
+  reviewInput: { color: SF.text, fontSize: 12, minHeight: 50, textAlignVertical: "top", padding: 0 },
+  reviewActions: { flexDirection: "row", justifyContent: "flex-end", gap: 8, marginTop: 6 },
+  reviewCancelBtn: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 6 },
+  reviewCancelText: { color: SF.muted, fontSize: 11, fontFamily: "Outfit_700Bold" },
+  reviewSaveBtn: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 6, backgroundColor: "rgba(245,158,11,0.15)" },
+  reviewSaveText: { color: SF.orange, fontSize: 11, fontFamily: "Outfit_700Bold" },
+  reviewDisplay: { flexDirection: "row", alignItems: "flex-start", gap: 6, backgroundColor: "rgba(251,191,36,0.04)", borderRadius: 6, padding: 8 },
+  reviewText: { color: SF.cream, fontSize: 11, flex: 1, lineHeight: 16 },
+  addReviewBtn: { flexDirection: "row", alignItems: "center", gap: 4, paddingVertical: 4 },
+  addReviewText: { color: SF.muted, fontSize: 11 },
   saveBtn: { width: 32, height: 32, borderRadius: 16, alignItems: "center", justifyContent: "center", backgroundColor: "rgba(245,158,11,0.06)" },
   saveBtnActive: { backgroundColor: "rgba(251,191,36,0.15)" },
   saveForLaterBtn: { flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6, marginTop: 10, paddingVertical: 8, borderRadius: 8, borderWidth: 1, borderColor: SF.gold + "30", backgroundColor: "rgba(251,191,36,0.06)" },
   saveForLaterText: { color: SF.gold, fontSize: 12, fontFamily: "Outfit_700Bold" },
   savedIndicator: { flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 4, marginTop: 10, paddingVertical: 6 },
   savedIndicatorText: { color: SF.gold, fontSize: 11, fontFamily: "Outfit_700Bold" },
-
-  // Expanded
   expandedContent: { marginTop: 12, borderTopWidth: 1, borderTopColor: SF.border, paddingTop: 12 },
   subHeading: { color: SF.cream, fontFamily: "Outfit_700Bold", fontSize: 12, marginBottom: 6 },
   ingredientRow: { flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 4 },
@@ -466,15 +675,22 @@ const styles = StyleSheet.create({
   storageText: { color: SF.blue, fontSize: 11, flex: 1 },
   removeBtn: { flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6, marginTop: 12, paddingVertical: 8, borderRadius: 8, borderWidth: 1, borderColor: SF.red + "30", backgroundColor: "rgba(239,68,68,0.06)" },
   removeText: { color: SF.red, fontSize: 12, fontFamily: "Outfit_700Bold" },
-
-  // Tips & Regen
   tipsSection: { flexDirection: "row", gap: 8, marginHorizontal: 16, marginTop: 16, backgroundColor: "rgba(251,191,36,0.06)", borderRadius: 10, padding: 12 },
   tipText: { color: SF.cream, fontSize: 11, lineHeight: 16 },
   regenBtn: { flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6, marginHorizontal: 16, marginTop: 16, paddingVertical: 12, borderRadius: 12, borderWidth: 1, borderColor: SF.border },
   regenText: { color: SF.orange, fontFamily: "Outfit_700Bold", fontSize: 13 },
-
-  // Saved tab
   savedDate: { color: SF.muted, fontSize: 10, marginTop: 10, marginLeft: 4 },
   goGenerateBtn: { backgroundColor: SF.orange, borderRadius: 10, paddingHorizontal: 16, paddingVertical: 8, marginTop: 12 },
   goGenerateText: { color: "#0A0500", fontFamily: "Outfit_700Bold", fontSize: 13 },
+  // Saved header with reorder toggle
+  savedHeader: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
+  reorderToggle: { flexDirection: "row", alignItems: "center", gap: 4, paddingHorizontal: 10, paddingVertical: 6, borderRadius: 8, borderWidth: 1, borderColor: SF.border },
+  reorderToggleActive: { borderColor: SF.orange + "40", backgroundColor: "rgba(245,158,11,0.08)" },
+  reorderToggleText: { color: SF.muted, fontSize: 11, fontFamily: "Outfit_700Bold" },
+  // Reorder buttons
+  reorderRow: { flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 16, marginTop: 8, paddingTop: 8, borderTopWidth: 1, borderTopColor: SF.border },
+  reorderBtn: { flexDirection: "row", alignItems: "center", gap: 4, paddingHorizontal: 12, paddingVertical: 6, borderRadius: 8, backgroundColor: "rgba(245,158,11,0.08)" },
+  reorderBtnDisabled: { backgroundColor: "rgba(245,158,11,0.02)" },
+  reorderBtnText: { color: SF.orange, fontSize: 11, fontFamily: "Outfit_700Bold" },
+  reorderPos: { color: SF.muted, fontSize: 12, fontFamily: "Outfit_700Bold", minWidth: 24, textAlign: "center" },
 });
