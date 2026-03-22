@@ -691,6 +691,19 @@ export default function HomeScreen() {
                       <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 9 }}>km</Text>
                     </View>
                   </View>
+                  {/* View Trends Button */}
+                  <TouchableOpacity
+                    onPress={() => router.push("/health-trends" as any)}
+                    style={{
+                      marginTop: 12, flexDirection: "row", alignItems: "center", justifyContent: "center",
+                      gap: 6, backgroundColor: "rgba(59,130,246,0.10)", borderRadius: 12,
+                      paddingVertical: 10, borderWidth: 1, borderColor: "rgba(59,130,246,0.20)",
+                    }}
+                  >
+                    <MaterialIcons name="show-chart" size={16} color="#3B82F6" />
+                    <Text style={{ color: "#3B82F6", fontFamily: "Outfit_700Bold", fontSize: 12 }}>View Health Trends</Text>
+                    <MaterialIcons name="chevron-right" size={14} color="#3B82F6" />
+                  </TouchableOpacity>
                 </TouchableOpacity>
               </View>
             </StaggeredCard>

@@ -8,10 +8,13 @@ import {
   getAvailableHealthSource,
   getHealthSourceDisplayName,
   isHealthPlatformAvailable,
+  writeWorkout,
   type HealthData,
   type HealthDataSource,
   type PermissionStatus,
   type HealthPermissionState,
+  type WorkoutData,
+  type WorkoutWriteResult,
 } from "@/lib/health-service";
 
 // ── Types ──────────────────────────────────────────────────────────
@@ -82,6 +85,8 @@ interface WearableContextValue {
   updateStats: (partial: Partial<WearableStats>) => Promise<void>;
   /** Get 7-day averages */
   getWeeklyAverage: () => { avgSteps: number; avgCalories: number; avgSleep: number; avgHR: number };
+  /** Write a workout to the health platform */
+  logWorkoutToHealthPlatform: (workout: WorkoutData) => Promise<WorkoutWriteResult>;
   /** Whether any wearable data is available */
   isConnected: boolean;
   /** Current health data source */
@@ -323,6 +328,21 @@ export function WearableProvider({ children }: { children: React.ReactNode }) {
     };
   }, [history]);
 
+  /**
+   * Write a workout to the native health platform.
+   */
+  const logWorkoutToHealthPlatform = useCallback(async (workout: WorkoutData): Promise<WorkoutWriteResult> => {
+    if (!isHealthPlatformAvailable() || permissionStatus !== "granted") {
+      return { success: false, platform: "none", error: "Health platform not available or permission not granted" };
+    }
+    const result = await writeWorkout(workout);
+    // After writing, refresh data to reflect the new workout
+    if (result.success) {
+      await syncFromHealthPlatformInternal();
+    }
+    return result;
+  }, [permissionStatus]);
+
   const isConnected = stats.connectedDevice !== null && stats.lastSyncedAt !== null;
   const healthSourceName = getHealthSourceDisplayName();
 
@@ -336,6 +356,7 @@ export function WearableProvider({ children }: { children: React.ReactNode }) {
         requestPermissions: requestPermissionsHandler,
         syncFromDevice,
         syncFromHealthPlatform,
+        logWorkoutToHealthPlatform,
         updateStats,
         getWeeklyAverage,
         isConnected,

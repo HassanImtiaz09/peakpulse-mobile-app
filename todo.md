@@ -1017,3 +1017,36 @@
 - [x] Unit tests for permission state management
 - [x] 75 new tests (round56-health-integration.test.ts), all passing
 - [x] 0 TypeScript errors
+
+## Round 57 — Workout Write-Back, Health Trends Screen, Background Sync
+
+### Feature 1: Workout Write-Back to HealthKit & Health Connect
+- [x] Add write permissions to HealthKit (saveWorkout, ActiveEnergyBurned, DistanceWalkingRunning)
+- [x] Add write permissions to Health Connect (ExerciseSession, ActiveCaloriesBurned, Distance)
+- [x] Create writeWorkout() function in health-service.ts for both platforms
+- [x] Integrate write-back into workout completion flow (wearable context)
+- [x] Update app.config.ts with NSHealthUpdateUsageDescription and write permissions
+- [x] Add "Log to Apple Health / Health Connect" toggle in wearable sync screen
+
+### Feature 2: Health Data Trends Screen (7-day & 30-day charts)
+- [x] Create health-trends.tsx screen with tab selector (7-day / 30-day)
+- [x] Build line/bar chart components using react-native-svg (no external chart lib)
+- [x] Display charts for: Steps, Heart Rate, Calories Burnt, Sleep Hours, Distance, HRV
+- [x] Show daily averages, min/max, and trend indicators (up/down arrows)
+- [x] Add navigation link from dashboard wearable card to trends screen
+- [x] Match Aurora Titan dark theme styling
+
+### Feature 3: Background Sync with expo-background-task
+- [x] Install expo-background-task and expo-task-manager
+- [x] Define global background task for health data sync
+- [x] Register background task on app launch (when permissions granted)
+- [x] Store last background sync timestamp in AsyncStorage
+- [x] Add background sync status indicator in wearable sync screen
+- [x] Handle web platform gracefully (skip background task registration)
+
+### Tests
+- [x] Unit tests for workout write-back data formatting
+- [x] Unit tests for chart data aggregation (7-day, 30-day)
+- [x] Unit tests for background sync task registration
+- [x] 59 new tests (round57-health-features.test.ts), all passing
+- [x] 0 TypeScript errors

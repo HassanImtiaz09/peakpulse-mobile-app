@@ -79,6 +79,9 @@ const config: ExpoConfig = {
       "android.permission.health.READ_OXYGEN_SATURATION",
       "android.permission.health.READ_RESTING_HEART_RATE",
       "android.permission.health.READ_HEART_RATE_VARIABILITY",
+      "android.permission.health.WRITE_EXERCISE",
+      "android.permission.health.WRITE_ACTIVE_CALORIES_BURNED",
+      "android.permission.health.WRITE_DISTANCE",
     ],
     intentFilters: [
       {
@@ -101,6 +104,7 @@ const config: ExpoConfig = {
   },
   plugins: [
     "expo-router",
+    "expo-background-task",
     "react-native-health",
     "expo-health-connect",
     [

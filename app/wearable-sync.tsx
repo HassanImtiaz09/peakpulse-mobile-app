@@ -402,6 +402,28 @@ export default function WearableSyncScreen() {
           </View>
         )}
 
+        {/* View Health Trends Button */}
+        <TouchableOpacity
+          onPress={() => router.push("/health-trends" as any)}
+          style={{
+            backgroundColor: "#150A00", borderRadius: 16, padding: 16, marginBottom: 16,
+            borderWidth: 1.5, borderColor: "rgba(59,130,246,0.25)",
+            flexDirection: "row", alignItems: "center", gap: 12,
+          }}
+        >
+          <View style={{
+            width: 44, height: 44, borderRadius: 14, backgroundColor: "rgba(59,130,246,0.12)",
+            alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: "rgba(59,130,246,0.25)",
+          }}>
+            <MaterialIcons name="show-chart" size={24} color="#3B82F6" />
+          </View>
+          <View style={{ flex: 1 }}>
+            <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 15 }}>Health Trends</Text>
+            <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 11 }}>View 7-day and 30-day charts for all metrics</Text>
+          </View>
+          <MaterialIcons name="chevron-right" size={20} color="#3B82F6" />
+        </TouchableOpacity>
+
         {/* ═══════════════════════════════════════════════════════════════
             SECONDARY: Third-Party Wearable Apps
            ═══════════════════════════════════════════════════════════════ */}

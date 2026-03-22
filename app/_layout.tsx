@@ -30,6 +30,10 @@ import { useRouter } from "expo-router";
 import { extractReferralCodeFromUrl, storePendingReferralCode } from "@/lib/referral";
 import { FloatingAssistant } from "@/components/floating-assistant";
 import { scheduleAllAINotifications } from "@/lib/ai-notification-scheduler";
+import { defineBackgroundHealthSyncTask, registerBackgroundHealthSync } from "@/lib/background-health-sync";
+
+// Define background task in global scope (required by expo-task-manager)
+defineBackgroundHealthSyncTask();
 import {
   DMSans_300Light,
   DMSans_400Regular,
@@ -195,6 +199,15 @@ export default function RootLayout() {
     const timer = setTimeout(() => {
       scheduleAllAINotifications().catch(() => {});
     }, 3000);
+    return () => clearTimeout(timer);
+  }, [fontsLoaded]);
+
+  // Register background health sync on native platforms
+  useEffect(() => {
+    if (!fontsLoaded || Platform.OS === "web") return;
+    const timer = setTimeout(() => {
+      registerBackgroundHealthSync().catch(() => {});
+    }, 5000);
     return () => clearTimeout(timer);
   }, [fontsLoaded]);
 
