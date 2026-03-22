@@ -1050,3 +1050,45 @@
 - [x] Unit tests for background sync task registration
 - [x] 59 new tests (round57-health-features.test.ts), all passing
 - [x] 0 TypeScript errors
+
+## Round 58 — Log Workout, Weekly Health Digest, PDF Health Report
+
+### Feature 1: Log Workout Screen
+- [x] Create app/log-workout.tsx with workout type selector (running, walking, cycling, swimming, strength, HIIT, yoga, etc.)
+- [x] Add duration input (hours/minutes picker or numeric input)
+- [x] Add calories burned input (with auto-estimate based on workout type and duration)
+- [x] Add optional distance input (for running, walking, cycling)
+- [x] Add optional heart rate average input
+- [x] Add date/time picker for workout start time
+- [x] Add workout title/notes field
+- [x] Integrate with logWorkoutToHealthPlatform() to write to HealthKit/Health Connect
+- [x] Save workout to local AsyncStorage history
+- [x] Show success confirmation with health platform sync status
+- [x] Add navigation from dashboard and wearable-sync screen
+
+### Feature 2: Weekly Health Digest Push Notification
+- [x] Create lib/weekly-health-digest.ts service
+- [x] Calculate 7-day averages for steps, calories, sleep from wearable history
+- [x] Generate digest message with trend comparisons (up/down vs previous week)
+- [x] Schedule weekly notification using expo-notifications (e.g., Sunday 9 AM)
+- [x] Register digest scheduler in app _layout.tsx on launch
+- [x] Handle web platform gracefully (skip scheduling)
+
+### Feature 3: PDF Health Report Export
+- [x] Create lib/health-report-generator.ts for building HTML report content
+- [x] Generate report with user name, date range, and PeakPulse branding
+- [x] Include summary stats: avg steps, calories, sleep, heart rate, distance, HRV
+- [x] Include daily breakdown table for all metrics
+- [x] Include trend indicators and health insights
+- [x] Use expo-print to convert HTML to PDF
+- [x] Use expo-sharing to share the generated PDF
+- [x] Add export buttons to health-trends.tsx screen (7-day and 30-day options)
+- [x] Match Aurora Titan dark theme for the export UI buttons
+
+### Tests
+- [x] Unit tests for log workout form validation and data formatting
+- [x] Unit tests for weekly digest message generation
+- [x] Unit tests for PDF report HTML generation
+- [x] Unit tests for navigation wiring
+- [x] 77 new tests (round58-features.test.ts), all passing
+- [x] 0 TypeScript errors

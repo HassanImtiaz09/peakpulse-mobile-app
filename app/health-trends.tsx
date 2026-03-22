@@ -11,6 +11,7 @@ import {
   fetchHealthHistory,
   type DailyHealthSummary,
 } from "@/lib/health-service";
+import { generateAndShareHealthReport, printHealthReport } from "@/lib/health-report-generator";
 
 const DASHBOARD_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/PZcnawJwIZkQHTEM.jpg";
 
@@ -305,6 +306,7 @@ export default function HealthTrendsScreen() {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<DailyHealthSummary[]>([]);
   const [selectedMetric, setSelectedMetric] = useState<MetricKey>("steps");
+  const [exporting, setExporting] = useState(false);
 
   const loadData = useCallback(async (days: number) => {
     setLoading(true);
@@ -552,6 +554,69 @@ export default function HealthTrendsScreen() {
               Manage Wearable Connections
             </Text>
           </TouchableOpacity>
+        </View>
+
+        {/* ═══ Export Health Report ═══ */}
+        <View style={{
+          backgroundColor: "#150A00", borderRadius: 16, padding: 16, marginTop: 16,
+          borderWidth: 1, borderColor: "rgba(245,158,11,0.20)",
+        }}>
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 12 }}>
+            <MaterialIcons name="picture-as-pdf" size={18} color="#F59E0B" />
+            <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 14 }}>Export Health Report</Text>
+          </View>
+          <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 12, marginBottom: 14, lineHeight: 18 }}>
+            Generate a professional PDF report of your {period}-day health trends to share with your trainer, physio, or doctor.
+          </Text>
+          <View style={{ flexDirection: "row", gap: 10 }}>
+            <TouchableOpacity
+              style={{
+                flex: 1, backgroundColor: "#F59E0B", borderRadius: 12,
+                paddingVertical: 12, alignItems: "center", flexDirection: "row",
+                justifyContent: "center", gap: 6, opacity: exporting ? 0.6 : 1,
+              }}
+              disabled={exporting}
+              onPress={async () => {
+                setExporting(true);
+                try {
+                  await generateAndShareHealthReport({ period });
+                } catch (e) {
+                  console.warn("[HealthTrends] Export failed:", e);
+                } finally {
+                  setExporting(false);
+                }
+              }}
+            >
+              {exporting ? (
+                <ActivityIndicator color="#0A0500" size="small" />
+              ) : (
+                <MaterialIcons name="share" size={16} color="#0A0500" />
+              )}
+              <Text style={{ color: "#0A0500", fontFamily: "Outfit_700Bold", fontSize: 13 }}>
+                {exporting ? "Generating..." : `Share ${period}-Day Report`}
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={{
+                backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 12,
+                paddingVertical: 12, paddingHorizontal: 16, alignItems: "center",
+                justifyContent: "center", borderWidth: 1, borderColor: "rgba(245,158,11,0.20)",
+              }}
+              disabled={exporting}
+              onPress={async () => {
+                setExporting(true);
+                try {
+                  await printHealthReport({ period });
+                } catch (e) {
+                  console.warn("[HealthTrends] Print failed:", e);
+                } finally {
+                  setExporting(false);
+                }
+              }}
+            >
+              <MaterialIcons name="print" size={18} color="#F59E0B" />
+            </TouchableOpacity>
+          </View>
         </View>
       </ScrollView>
     </View>

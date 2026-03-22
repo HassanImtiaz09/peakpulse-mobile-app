@@ -31,6 +31,7 @@ import { extractReferralCodeFromUrl, storePendingReferralCode } from "@/lib/refe
 import { FloatingAssistant } from "@/components/floating-assistant";
 import { scheduleAllAINotifications } from "@/lib/ai-notification-scheduler";
 import { defineBackgroundHealthSyncTask, registerBackgroundHealthSync } from "@/lib/background-health-sync";
+import { initWeeklyDigest } from "@/lib/weekly-health-digest";
 
 // Define background task in global scope (required by expo-task-manager)
 defineBackgroundHealthSyncTask();
@@ -208,6 +209,15 @@ export default function RootLayout() {
     const timer = setTimeout(() => {
       registerBackgroundHealthSync().catch(() => {});
     }, 5000);
+    return () => clearTimeout(timer);
+  }, [fontsLoaded]);
+
+  // Initialize weekly health digest notifications
+  useEffect(() => {
+    if (!fontsLoaded || Platform.OS === "web") return;
+    const timer = setTimeout(() => {
+      initWeeklyDigest().catch(() => {});
+    }, 6000);
     return () => clearTimeout(timer);
   }, [fontsLoaded]);
 

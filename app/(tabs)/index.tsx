@@ -75,7 +75,9 @@ const QUICK_ACTIONS_ALL = [
   { icon: "trending-up" as const, label: "Progress", route: "/progress-photos", gated: true, feature: "progress_photos", tier: "basic" as const, desc: "Track your body transformation with progress photos — Basic plan and above." },
   { icon: "smart-toy" as const, label: "AI Coach", route: "/ai-coach", gated: false },
   { icon: "check-circle" as const, label: "Daily Check-In", route: "/daily-checkin", gated: false },
+  { icon: "edit-note" as const, label: "Log Workout", route: "/log-workout", gated: false },
   // Below the fold (hidden by default)
+  { icon: "show-chart" as const, label: "Health Trends", route: "/health-trends", gated: false },
   { icon: "kitchen" as const, label: "My Pantry", route: "/pantry", gated: false },
   { icon: "center-focus-strong" as const, label: "Form Check", route: "/form-checker", gated: false },
   { icon: "location-on" as const, label: "Find Gym", route: "/gym-finder", gated: false },
