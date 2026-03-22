@@ -1,5 +1,18 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
+import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from "react";
+import { AppState, Platform } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import {
+  fetchHealthData,
+  requestHealthPermissions,
+  generateSimulatedHealthData,
+  getAvailableHealthSource,
+  getHealthSourceDisplayName,
+  isHealthPlatformAvailable,
+  type HealthData,
+  type HealthDataSource,
+  type PermissionStatus,
+  type HealthPermissionState,
+} from "@/lib/health-service";
 
 // ── Types ──────────────────────────────────────────────────────────
 export interface WearableStats {
@@ -17,6 +30,10 @@ export interface WearableStats {
   standHours: number;
   lastSyncedAt: string | null;
   connectedDevice: string | null;
+  // New fields from health platform integration
+  bloodOxygen: number | null;
+  restingHeartRate: number | null;
+  dataSource: HealthDataSource;
 }
 
 export interface DailyWearableEntry {
@@ -26,6 +43,8 @@ export interface DailyWearableEntry {
 
 const WEARABLE_STATS_KEY = "@wearable_stats";
 const WEARABLE_HISTORY_KEY = "@wearable_history";
+const HEALTH_PERMISSION_KEY = "@health_permission_status";
+const HEALTH_SOURCE_PREF_KEY = "@health_source_preference";
 
 const DEFAULT_STATS: WearableStats = {
   steps: 0,
@@ -42,6 +61,9 @@ const DEFAULT_STATS: WearableStats = {
   standHours: 0,
   lastSyncedAt: null,
   connectedDevice: null,
+  bloodOxygen: null,
+  restingHeartRate: null,
+  dataSource: "none",
 };
 
 // ── Context ────────────────────────────────────────────────────────
@@ -49,47 +71,53 @@ interface WearableContextValue {
   stats: WearableStats;
   history: DailyWearableEntry[];
   loading: boolean;
+  syncing: boolean;
+  /** Request health platform permissions (HealthKit / Health Connect) */
+  requestPermissions: () => Promise<HealthPermissionState>;
+  /** Sync data from the health platform or simulate for web */
   syncFromDevice: (deviceName: string) => Promise<void>;
+  /** Sync from the native health platform (HealthKit / Health Connect) */
+  syncFromHealthPlatform: () => Promise<boolean>;
+  /** Update stats manually */
   updateStats: (partial: Partial<WearableStats>) => Promise<void>;
+  /** Get 7-day averages */
   getWeeklyAverage: () => { avgSteps: number; avgCalories: number; avgSleep: number; avgHR: number };
+  /** Whether any wearable data is available */
   isConnected: boolean;
+  /** Current health data source */
+  healthSource: HealthDataSource;
+  /** Permission status for the health platform */
+  permissionStatus: PermissionStatus;
+  /** Display name of the health data source */
+  healthSourceName: string;
+  /** Whether native health platform is available (not web) */
+  isHealthPlatformAvailable: boolean;
 }
 
 const WearableContext = createContext<WearableContextValue | null>(null);
 
 /**
- * Simulates wearable data sync. In a real app, this would use HealthKit/Google Fit APIs.
- * For demo purposes, it generates realistic data based on user activity patterns.
+ * Convert HealthData from the health service into WearableStats format.
  */
-function generateRealisticStats(deviceName: string): WearableStats {
-  const hour = new Date().getHours();
-  // Steps scale with time of day
-  const baseSteps = Math.floor(Math.random() * 3000) + 2000;
-  const timeMultiplier = hour < 8 ? 0.3 : hour < 12 ? 0.6 : hour < 18 ? 0.85 : 1.0;
-  const steps = Math.round(baseSteps * timeMultiplier + Math.random() * 2000);
-
-  const heartRate = Math.floor(Math.random() * 20) + 65; // 65-85 resting
-  const activeCalories = Math.round(steps * 0.04 + Math.random() * 100);
-  const restingCalories = Math.round(1400 + Math.random() * 400);
-  const sleepHours = parseFloat((6 + Math.random() * 2.5).toFixed(1));
-  const sleepQuality: WearableStats["sleepQuality"] =
-    sleepHours >= 8 ? "excellent" : sleepHours >= 7 ? "good" : sleepHours >= 6 ? "fair" : "poor";
-
+function healthDataToWearableStats(data: HealthData, deviceName: string): WearableStats {
   return {
-    steps,
-    heartRate,
-    activeCalories,
-    restingCalories,
-    totalCaloriesBurnt: activeCalories + restingCalories,
-    sleepHours,
-    sleepQuality,
-    vo2Max: Math.round(35 + Math.random() * 15),
-    hrv: Math.round(30 + Math.random() * 40),
-    distance: parseFloat((steps * 0.0008).toFixed(1)),
-    activeMinutes: Math.round(steps / 100 + Math.random() * 20),
-    standHours: Math.min(12, Math.floor(hour * 0.7)),
-    lastSyncedAt: new Date().toISOString(),
+    steps: data.steps,
+    heartRate: data.heartRate,
+    activeCalories: data.activeCalories,
+    restingCalories: data.restingCalories,
+    totalCaloriesBurnt: data.totalCaloriesBurnt,
+    sleepHours: data.sleepHours,
+    sleepQuality: data.sleepQuality,
+    vo2Max: data.vo2Max,
+    hrv: data.hrv,
+    distance: data.distance,
+    activeMinutes: data.activeMinutes,
+    standHours: data.standHours,
+    lastSyncedAt: data.lastSyncedAt,
     connectedDevice: deviceName,
+    bloodOxygen: data.bloodOxygen ?? null,
+    restingHeartRate: data.restingHeartRate ?? null,
+    dataSource: data.dataSource,
   };
 }
 
@@ -97,19 +125,62 @@ export function WearableProvider({ children }: { children: React.ReactNode }) {
   const [stats, setStats] = useState<WearableStats>(DEFAULT_STATS);
   const [history, setHistory] = useState<DailyWearableEntry[]>([]);
   const [loading, setLoading] = useState(true);
+  const [syncing, setSyncing] = useState(false);
+  const [permissionStatus, setPermissionStatus] = useState<PermissionStatus>("not_determined");
+  const [healthSource, setHealthSource] = useState<HealthDataSource>(getAvailableHealthSource());
+  const appStateRef = useRef(AppState.currentState);
 
   useEffect(() => {
     loadData();
   }, []);
 
+  // Auto-sync when app comes to foreground (native only)
+  useEffect(() => {
+    if (Platform.OS === "web") return;
+
+    const subscription = AppState.addEventListener("change", (nextAppState) => {
+      if (
+        appStateRef.current.match(/inactive|background/) &&
+        nextAppState === "active" &&
+        permissionStatus === "granted"
+      ) {
+        // App came to foreground — refresh health data
+        syncFromHealthPlatform().catch(() => {});
+      }
+      appStateRef.current = nextAppState;
+    });
+
+    return () => subscription.remove();
+  }, [permissionStatus]);
+
   const loadData = async () => {
     try {
-      const [statsRaw, historyRaw] = await Promise.all([
+      const [statsRaw, historyRaw, permRaw] = await Promise.all([
         AsyncStorage.getItem(WEARABLE_STATS_KEY),
         AsyncStorage.getItem(WEARABLE_HISTORY_KEY),
+        AsyncStorage.getItem(HEALTH_PERMISSION_KEY),
       ]);
-      if (statsRaw) setStats(JSON.parse(statsRaw));
+      if (statsRaw) {
+        const parsed = JSON.parse(statsRaw);
+        // Ensure backward compatibility — add new fields if missing
+        setStats({
+          ...DEFAULT_STATS,
+          ...parsed,
+          bloodOxygen: parsed.bloodOxygen ?? null,
+          restingHeartRate: parsed.restingHeartRate ?? null,
+          dataSource: parsed.dataSource ?? "simulated",
+        });
+      }
       if (historyRaw) setHistory(JSON.parse(historyRaw));
+      if (permRaw) setPermissionStatus(permRaw as PermissionStatus);
+
+      // If permission was previously granted, auto-sync on load
+      if (permRaw === "granted" && isHealthPlatformAvailable()) {
+        // Delay to avoid blocking initial render
+        setTimeout(() => {
+          syncFromHealthPlatformInternal().catch(() => {});
+        }, 2000);
+      }
     } catch {} finally {
       setLoading(false);
     }
@@ -123,12 +194,7 @@ export function WearableProvider({ children }: { children: React.ReactNode }) {
     await AsyncStorage.setItem(WEARABLE_HISTORY_KEY, JSON.stringify(newHistory)).catch(() => {});
   };
 
-  const syncFromDevice = useCallback(async (deviceName: string) => {
-    const newStats = generateRealisticStats(deviceName);
-    setStats(newStats);
-    await saveStats(newStats);
-
-    // Add to history
+  const addToHistory = (newStats: WearableStats) => {
     const today = new Date().toISOString().split("T")[0];
     setHistory(prev => {
       const filtered = prev.filter(e => e.date !== today);
@@ -140,7 +206,100 @@ export function WearableProvider({ children }: { children: React.ReactNode }) {
       saveHistory(trimmed);
       return trimmed;
     });
+  };
+
+  /**
+   * Request permissions from the native health platform.
+   */
+  const requestPermissionsHandler = useCallback(async (): Promise<HealthPermissionState> => {
+    const result = await requestHealthPermissions();
+    setPermissionStatus(result.status);
+    setHealthSource(result.source);
+    await AsyncStorage.setItem(HEALTH_PERMISSION_KEY, result.status).catch(() => {});
+
+    // If granted, immediately sync
+    if (result.status === "granted") {
+      await syncFromHealthPlatformInternal();
+    }
+
+    return result;
   }, []);
+
+  /**
+   * Internal sync from health platform (no syncing state management).
+   */
+  const syncFromHealthPlatformInternal = async (): Promise<boolean> => {
+    try {
+      const data = await fetchHealthData();
+      if (data) {
+        const sourceName = getHealthSourceDisplayName();
+        const newStats = healthDataToWearableStats(data, sourceName);
+        setStats(newStats);
+        await saveStats(newStats);
+        addToHistory(newStats);
+        return true;
+      }
+      return false;
+    } catch (e) {
+      console.warn("[WearableContext] Health platform sync error:", e);
+      return false;
+    }
+  };
+
+  /**
+   * Sync from the native health platform with loading state.
+   */
+  const syncFromHealthPlatform = useCallback(async (): Promise<boolean> => {
+    setSyncing(true);
+    try {
+      return await syncFromHealthPlatformInternal();
+    } finally {
+      setSyncing(false);
+    }
+  }, []);
+
+  /**
+   * Legacy sync method — used by the wearable sync screen for third-party devices.
+   * On native platforms with permission, tries real health data first.
+   * Falls back to simulated data on web or when health data is unavailable.
+   */
+  const syncFromDevice = useCallback(async (deviceName: string) => {
+    setSyncing(true);
+    try {
+      // Try real health data first if available
+      if (isHealthPlatformAvailable() && permissionStatus === "granted") {
+        const success = await syncFromHealthPlatformInternal();
+        if (success) return;
+      }
+
+      // Fall back to simulated data (web or no permission)
+      const simulated = generateSimulatedHealthData(deviceName);
+      const newStats: WearableStats = {
+        steps: simulated.steps,
+        heartRate: simulated.heartRate,
+        activeCalories: simulated.activeCalories,
+        restingCalories: simulated.restingCalories,
+        totalCaloriesBurnt: simulated.totalCaloriesBurnt,
+        sleepHours: simulated.sleepHours,
+        sleepQuality: simulated.sleepQuality,
+        vo2Max: simulated.vo2Max,
+        hrv: simulated.hrv,
+        distance: simulated.distance,
+        activeMinutes: simulated.activeMinutes,
+        standHours: simulated.standHours,
+        lastSyncedAt: simulated.lastSyncedAt,
+        connectedDevice: deviceName,
+        bloodOxygen: simulated.bloodOxygen ?? null,
+        restingHeartRate: simulated.restingHeartRate ?? null,
+        dataSource: simulated.dataSource,
+      };
+      setStats(newStats);
+      await saveStats(newStats);
+      addToHistory(newStats);
+    } finally {
+      setSyncing(false);
+    }
+  }, [permissionStatus]);
 
   const updateStats = useCallback(async (partial: Partial<WearableStats>) => {
     setStats(prev => {
@@ -165,9 +324,27 @@ export function WearableProvider({ children }: { children: React.ReactNode }) {
   }, [history]);
 
   const isConnected = stats.connectedDevice !== null && stats.lastSyncedAt !== null;
+  const healthSourceName = getHealthSourceDisplayName();
 
   return (
-    <WearableContext.Provider value={{ stats, history, loading, syncFromDevice, updateStats, getWeeklyAverage, isConnected }}>
+    <WearableContext.Provider
+      value={{
+        stats,
+        history,
+        loading,
+        syncing,
+        requestPermissions: requestPermissionsHandler,
+        syncFromDevice,
+        syncFromHealthPlatform,
+        updateStats,
+        getWeeklyAverage,
+        isConnected,
+        healthSource,
+        permissionStatus,
+        healthSourceName,
+        isHealthPlatformAvailable: isHealthPlatformAvailable(),
+      }}
+    >
       {children}
     </WearableContext.Provider>
   );

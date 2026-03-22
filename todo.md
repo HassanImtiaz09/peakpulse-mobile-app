@@ -987,3 +987,33 @@
 ### Tests
 - [x] 25 new tests (round55-features.test.ts), 406 total passing
 - [x] 0 TypeScript errors
+
+## Round 56 — Apple HealthKit & Google Health Connect Integration
+
+### Health Platform Service Layer
+- [x] Create unified health data service (lib/health-service.ts) with platform abstraction
+- [x] Define HealthKit data types: steps, heart rate, active calories, resting energy, sleep, HRV, VO2 Max, distance, workouts
+- [x] Define Health Connect data types: steps, heart rate, active calories, basal metabolic rate, sleep, distance, SpO2, resting HR, HRV
+- [x] Platform detection and graceful fallback for web/unsupported platforms
+- [x] Permission request flow for both HealthKit and Health Connect
+
+### Wearable Context Refactor
+- [x] Replace generateRealisticStats with real health platform data queries
+- [x] Add requestHealthPermissions() method to wearable context
+- [x] Add auto-sync on app foreground (AppState listener)
+- [x] Maintain backward compatibility with existing WearableStats interface
+- [x] Persist health data source preference (healthkit/healthconnect/simulated)
+
+### Wearable Sync Screen Update
+- [x] Add "Connect Apple Health" / "Connect Health Connect" as primary options
+- [x] Show real permission status (granted/denied/not determined)
+- [x] Add manual refresh button for health data
+- [x] Show data source indicator on stats dashboard
+- [x] Keep existing third-party wearable cards (Fitbit, Garmin, etc.) as secondary options
+
+### Tests
+- [x] Unit tests for health service platform detection
+- [x] Unit tests for data normalization and fallback logic
+- [x] Unit tests for permission state management
+- [x] 75 new tests (round56-health-integration.test.ts), all passing
+- [x] 0 TypeScript errors

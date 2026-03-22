@@ -49,9 +49,13 @@ const config: ExpoConfig = {
   ios: {
     supportsTablet: true,
     bundleIdentifier: env.iosBundleId,
-    "infoPlist": {
-        "ITSAppUsesNonExemptEncryption": false
-      }
+    infoPlist: {
+      ITSAppUsesNonExemptEncryption: false,
+      NSHealthShareUsageDescription:
+        "PeakPulse reads your health data (steps, heart rate, calories, sleep, HRV, SpO2) to personalize your fitness plans and track progress.",
+      NSHealthUpdateUsageDescription:
+        "PeakPulse writes workout data to Apple Health so your activity is tracked across all your health apps.",
+    },
   },
   android: {
     adaptiveIcon: {
@@ -63,7 +67,19 @@ const config: ExpoConfig = {
     edgeToEdgeEnabled: true,
     predictiveBackGestureEnabled: false,
     package: env.androidPackage,
-    permissions: ["POST_NOTIFICATIONS"],
+    permissions: [
+      "POST_NOTIFICATIONS",
+      "android.permission.health.READ_STEPS",
+      "android.permission.health.READ_HEART_RATE",
+      "android.permission.health.READ_SLEEP",
+      "android.permission.health.READ_ACTIVE_CALORIES_BURNED",
+      "android.permission.health.READ_BASAL_METABOLIC_RATE",
+      "android.permission.health.READ_DISTANCE",
+      "android.permission.health.READ_EXERCISE",
+      "android.permission.health.READ_OXYGEN_SATURATION",
+      "android.permission.health.READ_RESTING_HEART_RATE",
+      "android.permission.health.READ_HEART_RATE_VARIABILITY",
+    ],
     intentFilters: [
       {
         action: "VIEW",
@@ -85,6 +101,8 @@ const config: ExpoConfig = {
   },
   plugins: [
     "expo-router",
+    "react-native-health",
+    "expo-health-connect",
     [
       "expo-camera",
       {
@@ -129,7 +147,9 @@ const config: ExpoConfig = {
       {
         android: {
           buildArchs: ["armeabi-v7a", "arm64-v8a"],
-          minSdkVersion: 24,
+          minSdkVersion: 26,
+          compileSdkVersion: 34,
+          targetSdkVersion: 34,
         },
       },
     ],
