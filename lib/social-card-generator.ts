@@ -338,6 +338,152 @@ export function generateWeeklySummaryCardHTML(data: WeeklySummaryCardData): stri
 </html>`;
 }
 
+// ── Milestone Achievement Card ───────────────────────────────────
+
+export interface MilestoneCardData {
+  milestoneName: string;
+  milestoneEmoji: string;
+  milestoneBadge: string;
+  milestoneColor: string;
+  milestoneDescription: string;
+  currentStreak: number;
+  longestStreak: number;
+  totalWeeksCompleted: number;
+  userName?: string;
+}
+
+export function generateMilestoneCardHTML(data: MilestoneCardData): string {
+  const c = data.milestoneColor || "#F59E0B";
+  return `<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', -apple-system, sans-serif; background: #0A0500; color: #FFF7ED; }
+  .card {
+    width: 400px; min-height: 560px; margin: 0 auto;
+    background: linear-gradient(160deg, #1C0E02 0%, #0A0500 40%, #1A0A00 100%);
+    border: 2px solid ${c}40;
+    border-radius: 24px; overflow: hidden; position: relative;
+  }
+  .card::before {
+    content: ''; position: absolute; top: -30%; left: -30%;
+    width: 160%; height: 160%;
+    background: radial-gradient(circle at 50% 30%, ${c}12 0%, transparent 60%);
+  }
+  .confetti {
+    position: absolute; top: 0; left: 0; right: 0; text-align: center;
+    font-size: 20px; padding: 12px; letter-spacing: 8px; opacity: 0.6;
+  }
+  .header {
+    padding: 48px 24px 20px; text-align: center; position: relative;
+  }
+  .trophy-circle {
+    width: 96px; height: 96px; border-radius: 50%; margin: 0 auto 16px;
+    background: ${c}15; border: 3px solid ${c}50;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 48px; position: relative;
+  }
+  .trophy-circle::after {
+    content: ''; position: absolute; inset: -6px; border-radius: 50%;
+    border: 1px solid ${c}20;
+  }
+  .badge-label {
+    display: inline-block; background: ${c}20; color: ${c};
+    font-size: 10px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase;
+    padding: 4px 12px; border-radius: 6px; margin-bottom: 10px;
+  }
+  .milestone-name {
+    font-size: 28px; font-weight: 900; color: #FFF7ED; line-height: 1.2;
+  }
+  .milestone-desc {
+    font-size: 13px; color: #B45309; margin-top: 8px; line-height: 1.5;
+    max-width: 300px; margin-left: auto; margin-right: auto;
+  }
+  .divider {
+    height: 1px; background: ${c}15; margin: 0 24px;
+  }
+  .stats {
+    display: flex; gap: 0; padding: 20px 24px; position: relative;
+  }
+  .stat-col {
+    flex: 1; text-align: center;
+    border-right: 1px solid ${c}10;
+  }
+  .stat-col:last-child { border-right: none; }
+  .stat-value {
+    font-size: 28px; font-weight: 900; color: ${c};
+  }
+  .stat-label {
+    font-size: 9px; font-weight: 700; color: #78350F; letter-spacing: 1px;
+    text-transform: uppercase; margin-top: 4px;
+  }
+  .streak-fire {
+    text-align: center; padding: 8px 0 4px; position: relative;
+  }
+  .streak-fire span {
+    font-size: 16px; letter-spacing: 4px;
+  }
+  .branding {
+    padding: 16px 24px 24px; text-align: center;
+    border-top: 1px solid ${c}10; position: relative;
+  }
+  .brand-name {
+    font-size: 14px; font-weight: 800; color: #F59E0B; letter-spacing: 3px;
+  }
+  .brand-sub {
+    font-size: 10px; color: #78350F; margin-top: 4px;
+  }
+  .user-name {
+    font-size: 12px; color: #B45309; margin-top: 8px; font-weight: 600;
+  }
+  .accent-line {
+    width: 40px; height: 3px; background: ${c}; border-radius: 2px;
+    margin: 12px auto 0;
+  }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="confetti">\u2728 \u2B50 \u2728 \u2B50 \u2728 \u2B50 \u2728</div>
+  <div class="header">
+    <div class="trophy-circle">${data.milestoneEmoji}</div>
+    <div class="badge-label">${escapeHtml(data.milestoneBadge)} MILESTONE UNLOCKED</div>
+    <div class="milestone-name">${escapeHtml(data.milestoneName)}</div>
+    <div class="milestone-desc">${escapeHtml(data.milestoneDescription)}</div>
+  </div>
+  <div class="divider"></div>
+  <div class="stats">
+    <div class="stat-col">
+      <div class="stat-value">${data.currentStreak}</div>
+      <div class="stat-label">Current Streak</div>
+    </div>
+    <div class="stat-col">
+      <div class="stat-value">${data.longestStreak}</div>
+      <div class="stat-label">Best Streak</div>
+    </div>
+    <div class="stat-col">
+      <div class="stat-value">${data.totalWeeksCompleted}</div>
+      <div class="stat-label">Weeks Completed</div>
+    </div>
+  </div>
+  <div class="streak-fire">
+    <span>\uD83D\uDD25\uD83D\uDD25\uD83D\uDD25</span>
+  </div>
+  <div class="branding">
+    <div class="brand-name">PEAKPULSE AI</div>
+    <div class="brand-sub">Precision Performance</div>
+    ${data.userName ? `<div class="user-name">${escapeHtml(data.userName)}</div>` : ""}
+    <div class="accent-line"></div>
+  </div>
+</div>
+</body>
+</html>`;
+}
+
 // ── Share Functions ────────────────────────────────────────────────
 
 export async function shareWorkoutCard(data: WorkoutCardData): Promise<boolean> {
@@ -393,6 +539,34 @@ export async function shareWeeklySummaryCard(data: WeeklySummaryCardData): Promi
     }
   } catch (e) {
     console.warn("[SocialCard] Share failed:", e);
+  }
+  return false;
+}
+
+export async function shareMilestoneCard(data: MilestoneCardData): Promise<boolean> {
+  if (Platform.OS === "web") {
+    const html = generateMilestoneCardHTML(data);
+    const blob = new Blob([html], { type: "text/html" });
+    const url = URL.createObjectURL(blob);
+    window.open(url, "_blank");
+    return true;
+  }
+
+  try {
+    const Print = await import("expo-print");
+    const Sharing = await import("expo-sharing");
+    const html = generateMilestoneCardHTML(data);
+    const { uri } = await Print.printToFileAsync({ html, width: 400, height: 560 });
+    const available = await Sharing.isAvailableAsync();
+    if (available) {
+      await Sharing.shareAsync(uri, {
+        mimeType: "application/pdf",
+        dialogTitle: "Share Milestone Achievement",
+      });
+      return true;
+    }
+  } catch (e) {
+    console.warn("[SocialCard] Milestone share failed:", e);
   }
   return false;
 }

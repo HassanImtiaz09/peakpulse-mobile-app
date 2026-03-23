@@ -17,6 +17,7 @@ export interface WeekResult {
   workoutsHit: boolean;
   allGoalsMet: boolean;       // true only if all three are met
   evaluatedAt: string;        // ISO timestamp when evaluated
+  frozen?: boolean;           // true if streak freeze was used this week
 }
 
 export interface MilestoneTier {
@@ -36,6 +37,19 @@ export interface UnlockedMilestone {
   celebrated: boolean;        // whether user has seen the celebration
 }
 
+export interface StreakFreezeData {
+  freezesUsedThisMonth: number;  // max 1 per calendar month
+  lastFreezeDate: string;        // ISO date of last freeze activation
+  lastFreezeMonth: string;       // "YYYY-MM" of last freeze
+  freezeHistory: FreezeRecord[];
+}
+
+export interface FreezeRecord {
+  weekStart: string;    // ISO date of the frozen week
+  activatedAt: string;  // ISO timestamp when freeze was activated
+  reason?: string;      // optional user-provided reason
+}
+
 export interface StreakData {
   currentStreak: number;      // consecutive weeks with all goals met
   longestStreak: number;
@@ -43,6 +57,7 @@ export interface StreakData {
   weekHistory: WeekResult[];  // most recent first, max 52 weeks
   milestones: UnlockedMilestone[];
   totalWeeksCompleted: number;
+  freezeData: StreakFreezeData;
 }
 
 // ── Milestone Tiers ────────────────────────────────────────────────
@@ -117,8 +132,16 @@ export const MILESTONE_TIERS: MilestoneTier[] = [
 
 const STREAK_DATA_KEY = "@goal_streak_data";
 const PENDING_CELEBRATION_KEY = "@streak_pending_celebration";
+const STREAK_FREEZE_KEY = "@streak_freeze_data";
 
 // ── Default Data ──────────────────────────────────────────────────
+
+const DEFAULT_FREEZE_DATA: StreakFreezeData = {
+  freezesUsedThisMonth: 0,
+  lastFreezeDate: "",
+  lastFreezeMonth: "",
+  freezeHistory: [],
+};
 
 const DEFAULT_STREAK_DATA: StreakData = {
   currentStreak: 0,
@@ -127,6 +150,7 @@ const DEFAULT_STREAK_DATA: StreakData = {
   weekHistory: [],
   milestones: [],
   totalWeeksCompleted: 0,
+  freezeData: { ...DEFAULT_FREEZE_DATA },
 };
 
 // ── Persistence ───────────────────────────────────────────────────
@@ -137,12 +161,16 @@ export async function getStreakData(): Promise<StreakData> {
     if (raw) {
       const parsed = JSON.parse(raw) as StreakData;
       // Ensure all fields exist (migration safety)
-      return { ...DEFAULT_STREAK_DATA, ...parsed };
+      return {
+        ...DEFAULT_STREAK_DATA,
+        ...parsed,
+        freezeData: { ...DEFAULT_FREEZE_DATA, ...(parsed.freezeData ?? {}) },
+      };
     }
   } catch (e) {
     console.warn("[StreakTracking] Failed to load streak data:", e);
   }
-  return { ...DEFAULT_STREAK_DATA };
+  return { ...DEFAULT_STREAK_DATA, freezeData: { ...DEFAULT_FREEZE_DATA } };
 }
 
 export async function saveStreakData(data: StreakData): Promise<void> {
@@ -196,12 +224,13 @@ export async function evaluateWeek(
   streakData: StreakData;
   newMilestones: MilestoneTier[];
   streakBroken: boolean;
+  freezeUsed: boolean;
 }> {
   const data = await getStreakData();
 
   // Don't re-evaluate the same week
   if (data.weekHistory.some((w) => w.weekStart === weekStart)) {
-    return { streakData: data, newMilestones: [], streakBroken: false };
+    return { streakData: data, newMilestones: [], streakBroken: false, freezeUsed: false };
   }
 
   const stepsHit = evaluation.stepsPercentage >= 100;
@@ -227,6 +256,7 @@ export async function evaluateWeek(
   data.lastEvaluatedWeek = weekStart;
 
   let streakBroken = false;
+  let freezeUsed = false;
 
   if (allGoalsMet) {
     data.currentStreak += 1;
@@ -235,10 +265,20 @@ export async function evaluateWeek(
       data.longestStreak = data.currentStreak;
     }
   } else {
-    if (data.currentStreak > 0) {
-      streakBroken = true;
+    // Check if a freeze is active for this week
+    const hasFreezeForWeek = data.freezeData.freezeHistory.some(
+      (f) => f.weekStart === weekStart
+    );
+    if (hasFreezeForWeek && data.currentStreak > 0) {
+      // Freeze preserves the streak — don't increment, don't break
+      weekResult.frozen = true;
+      freezeUsed = true;
+    } else {
+      if (data.currentStreak > 0) {
+        streakBroken = true;
+      }
+      data.currentStreak = 0;
     }
-    data.currentStreak = 0;
   }
 
   // Check for new milestones
@@ -264,7 +304,7 @@ export async function evaluateWeek(
     await setPendingCelebrations(newMilestones.map((m) => m.id));
   }
 
-  return { streakData: data, newMilestones, streakBroken };
+  return { streakData: data, newMilestones, streakBroken, freezeUsed };
 }
 
 // ── Milestone Helpers ─────────────────────────────────────────────
@@ -370,6 +410,99 @@ export function getStreakLabel(streak: number): string {
   if (streak === 0) return "No Active Streak";
   if (streak === 1) return "1 Week Streak";
   return `${streak} Week Streak`;
+}
+
+// ── Streak Freeze Functions ───────────────────────────────────────
+
+/**
+ * Get the current month string in YYYY-MM format.
+ */
+export function getCurrentMonth(): string {
+  const now = new Date();
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+}
+
+/**
+ * Check if the user can use a streak freeze this month.
+ * Returns true if no freeze has been used in the current calendar month.
+ */
+export function canUseFreeze(freezeData: StreakFreezeData): boolean {
+  const currentMonth = getCurrentMonth();
+  if (freezeData.lastFreezeMonth === currentMonth && freezeData.freezesUsedThisMonth >= 1) {
+    return false;
+  }
+  return true;
+}
+
+/**
+ * Get the number of freezes remaining this month (0 or 1).
+ */
+export function getFreezesRemaining(freezeData: StreakFreezeData): number {
+  const currentMonth = getCurrentMonth();
+  if (freezeData.lastFreezeMonth === currentMonth) {
+    return Math.max(0, 1 - freezeData.freezesUsedThisMonth);
+  }
+  return 1; // New month, freeze is available
+}
+
+/**
+ * Activate a streak freeze for the current week.
+ * Returns the updated StreakData, or null if freeze is not available.
+ */
+export async function activateStreakFreeze(
+  reason?: string,
+): Promise<{ success: boolean; streakData: StreakData; error?: string }> {
+  const data = await getStreakData();
+  const currentMonth = getCurrentMonth();
+  const weekStart = getWeekStartDate();
+
+  // Check if freeze already used this month
+  if (!canUseFreeze(data.freezeData)) {
+    return { success: false, streakData: data, error: "You've already used your streak freeze this month. Freezes reset on the 1st of each month." };
+  }
+
+  // Check if there's an active streak to freeze
+  if (data.currentStreak === 0) {
+    return { success: false, streakData: data, error: "No active streak to freeze. Start hitting your goals to build a streak first." };
+  }
+
+  // Check if this week is already frozen
+  if (data.freezeData.freezeHistory.some((f) => f.weekStart === weekStart)) {
+    return { success: false, streakData: data, error: "This week is already frozen." };
+  }
+
+  // Activate freeze
+  const freezeRecord: FreezeRecord = {
+    weekStart,
+    activatedAt: new Date().toISOString(),
+    reason,
+  };
+
+  data.freezeData.freezeHistory.unshift(freezeRecord);
+  // Keep last 12 freeze records
+  if (data.freezeData.freezeHistory.length > 12) {
+    data.freezeData.freezeHistory = data.freezeData.freezeHistory.slice(0, 12);
+  }
+
+  // Update monthly counter
+  if (data.freezeData.lastFreezeMonth === currentMonth) {
+    data.freezeData.freezesUsedThisMonth += 1;
+  } else {
+    data.freezeData.freezesUsedThisMonth = 1;
+    data.freezeData.lastFreezeMonth = currentMonth;
+  }
+  data.freezeData.lastFreezeDate = new Date().toISOString();
+
+  await saveStreakData(data);
+  return { success: true, streakData: data };
+}
+
+/**
+ * Check if the current week has an active freeze.
+ */
+export function isCurrentWeekFrozen(freezeData: StreakFreezeData): boolean {
+  const weekStart = getWeekStartDate();
+  return freezeData.freezeHistory.some((f) => f.weekStart === weekStart);
 }
 
 export function getStreakMotivation(streak: number, streakBroken: boolean): string {

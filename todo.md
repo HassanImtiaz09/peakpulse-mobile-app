@@ -1197,3 +1197,40 @@
 - [x] Unit tests for streak details screen
 - [x] 83 new tests (round61-streak-rewards.test.ts), all passing
 - [x] 0 TypeScript errors
+
+## Round 62 — Streak Freeze, Milestone Sharing Card, Workout Heatmap
+
+### Feature 1: Streak Freeze / Recovery
+- [x] Add StreakFreezeData interface to streak-tracking.ts (freezesUsedThisMonth, lastFreezeDate, freezeHistory)
+- [x] Add getStreakFreezeData() and saveStreakFreezeData() persistence functions
+- [x] Add activateStreakFreeze() function to activate a freeze for the current week
+- [x] Add canUseFreeze() check (max 1 per calendar month)
+- [x] Integrate freeze logic into evaluateWeek() — if freeze active, preserve streak instead of breaking
+- [x] Add WeekResult.frozen boolean field to mark frozen weeks
+- [x] Add freeze UI to streak-details.tsx screen (Freeze Streak button, freeze status, freeze history)
+- [x] Show freeze availability status (available / used this month)
+- [x] Add freeze confirmation alert before activating
+
+### Feature 2: Milestone Sharing Card
+- [x] Add generateMilestoneCardHTML() to social-card-generator.ts
+- [x] Include milestone emoji, name, description, streak count, PeakPulse branding
+- [x] Add shareMilestoneCard() function using expo-print and expo-sharing
+- [x] Add "Share Achievement" button to celebration modal in dashboard
+- [x] Add "Share" button to milestone cards in streak-details.tsx
+
+### Feature 3: Workout Calendar Heatmap
+- [x] Add "heatmap" tab to streak-details.tsx screen
+- [x] Load workout history from AsyncStorage (@workout_log_history)
+- [x] Build 3-month calendar grid (13 weeks) showing workout frequency per day
+- [x] Color intensity based on workout count (0=empty, 1=light, 2+=dark)
+- [x] Show month labels and day-of-week labels
+- [x] Show legend explaining color intensity
+- [x] Show total workout count for the 3-month period
+
+### Tests
+- [x] Unit tests for streak freeze logic and monthly limit
+- [x] Unit tests for milestone card HTML generation
+- [x] Unit tests for workout heatmap data aggregation
+- [x] Unit tests for UI integration
+- [x] 79 new tests (round62-features.test.ts), all passing
+- [x] 0 TypeScript errors

@@ -26,7 +26,7 @@ import { TutorialOverlay, useTutorial } from "@/components/tutorial-overlay";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useWearable } from "@/lib/wearable-context";
 import { getWeeklyGoals, calculateWeeklyProgress, getWorkoutsThisWeek, isGoalTrackingEnabled, type WeeklyGoals, type WeeklyProgress } from "@/lib/goal-tracking";
-import { shareWeeklySummaryCard, type WeeklySummaryCardData } from "@/lib/social-card-generator";
+import { shareWeeklySummaryCard, shareMilestoneCard, type WeeklySummaryCardData, type MilestoneCardData } from "@/lib/social-card-generator";
 import {
   getStreakData, evaluateWeek, getWeekNeedingEvaluation, getCurrentMilestone,
   getNextMilestone, getWeeksToNextMilestone, getStreakEmoji, getStreakLabel,
@@ -950,6 +950,34 @@ export default function HomeScreen() {
                   </View>
                   <TouchableOpacity
                     onPress={async () => {
+                      if (Platform.OS !== "web") Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+                      try {
+                        const cardData: MilestoneCardData = {
+                          milestoneName: celebrationMilestone.name,
+                          milestoneEmoji: celebrationMilestone.emoji,
+                          milestoneBadge: celebrationMilestone.badge,
+                          milestoneColor: celebrationMilestone.color,
+                          milestoneDescription: celebrationMilestone.description,
+                          currentStreak: streakData?.currentStreak ?? 0,
+                          longestStreak: streakData?.longestStreak ?? 0,
+                          totalWeeksCompleted: streakData?.totalWeeksCompleted ?? 0,
+                        };
+                        await shareMilestoneCard(cardData);
+                      } catch (e) {
+                        console.warn("[Dashboard] Milestone share failed:", e);
+                      }
+                    }}
+                    style={{
+                      marginTop: 24, backgroundColor: "rgba(255,255,255,0.1)", paddingHorizontal: 24,
+                      paddingVertical: 14, borderRadius: 16, flexDirection: "row", alignItems: "center", gap: 6,
+                      borderWidth: 1, borderColor: celebrationMilestone.color + "40",
+                    }}
+                  >
+                    <MaterialIcons name="share" size={16} color={celebrationMilestone.color} />
+                    <Text style={{ color: celebrationMilestone.color, fontFamily: "Outfit_700Bold", fontSize: 14 }}>Share Achievement</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={async () => {
                       setShowCelebration(false);
                       await markMilestoneCelebrated(celebrationMilestone.id);
                       await clearPendingCelebrations();
@@ -957,7 +985,7 @@ export default function HomeScreen() {
                       if (Platform.OS !== "web") Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
                     }}
                     style={{
-                      marginTop: 24, backgroundColor: celebrationMilestone.color, paddingHorizontal: 32,
+                      marginTop: 10, backgroundColor: celebrationMilestone.color, paddingHorizontal: 32,
                       paddingVertical: 14, borderRadius: 16,
                     }}
                   >
