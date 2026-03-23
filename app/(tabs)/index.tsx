@@ -25,6 +25,8 @@ import { PaywallModal } from "@/components/paywall-modal";
 import { TutorialOverlay, useTutorial } from "@/components/tutorial-overlay";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useWearable } from "@/lib/wearable-context";
+import { BodyHeatmap } from "@/components/body-heatmap";
+import { analyzeMuscleBalance, generateSuggestions, generatePlanChanges, applyPlanChanges, type MuscleBalanceReport, type ExerciseSuggestion, type PlanChange } from "@/lib/muscle-balance";
 import { getWeeklyGoals, calculateWeeklyProgress, getWorkoutsThisWeek, isGoalTrackingEnabled, type WeeklyGoals, type WeeklyProgress } from "@/lib/goal-tracking";
 import { shareWeeklySummaryCard, shareMilestoneCard, type WeeklySummaryCardData, type MilestoneCardData } from "@/lib/social-card-generator";
 import {
@@ -252,6 +254,13 @@ export default function HomeScreen() {
   const [celebrationMilestone, setCelebrationMilestone] = React.useState<MilestoneTier | null>(null);
   const [showCelebration, setShowCelebration] = React.useState(false);
 
+  // Muscle balance state
+  const [muscleReport, setMuscleReport] = React.useState<MuscleBalanceReport | null>(null);
+  const [suggestions, setSuggestions] = React.useState<ExerciseSuggestion[]>([]);
+  const [planChanges, setPlanChanges] = React.useState<PlanChange[]>([]);
+  const [balanceWindow, setBalanceWindow] = React.useState<7 | 14 | 30>(7);
+  const [applyingChanges, setApplyingChanges] = React.useState(false);
+
   // 1A: Parallax scroll value
   const scrollY = useSharedValue(0);
 
@@ -388,6 +397,26 @@ export default function HomeScreen() {
   const caloriesRemaining = Math.max(0, calorieGoal - todayCalories);
   const calorieProgress = calorieGoal > 0 ? Math.min(todayCalories / calorieGoal, 1) : 0;
   const activeProfile = isAuthenticated ? profile : guestProfile;
+  const userGender = ((activeProfile as any)?.gender ?? "male") as "male" | "female";
+
+  // Load muscle balance analysis
+  React.useEffect(() => {
+    if (!canUse) return;
+    (async () => {
+      try {
+        const report = await analyzeMuscleBalance(balanceWindow);
+        setMuscleReport(report);
+        const sugg = generateSuggestions(report);
+        setSuggestions(sugg);
+        if (workoutPlan?.schedule) {
+          const changes = generatePlanChanges(report, workoutPlan.schedule);
+          setPlanChanges(changes);
+        }
+      } catch (e) {
+        console.warn("[Dashboard] Muscle balance analysis failed:", e);
+      }
+    })();
+  }, [canUse, balanceWindow, workoutPlan]);
 
   useEffect(() => {
     AsyncStorage.getItem("@body_scan_history").then(raw => {
@@ -1063,6 +1092,96 @@ export default function HomeScreen() {
             </StaggeredCard>
           )}
 
+          {/* ── Muscle Balance Heatmap ── */}
+          {muscleReport && muscleReport.totalWorkouts > 0 && (
+            <StaggeredCard index={5}>
+              <View style={styles.section}>
+                <SectionTitle
+                  title="Muscle Balance"
+                  rightElement={
+                    <View style={{ flexDirection: "row", gap: 4 }}>
+                      {([7, 14, 30] as const).map((w) => (
+                        <TouchableOpacity
+                          key={w}
+                          onPress={() => setBalanceWindow(w)}
+                          style={{
+                            paddingHorizontal: 8, paddingVertical: 3, borderRadius: 8,
+                            backgroundColor: balanceWindow === w ? "rgba(245,158,11,0.2)" : "transparent",
+                          }}
+                        >
+                          <Text style={{
+                            color: balanceWindow === w ? "#F59E0B" : "#78350F",
+                            fontFamily: "DMSans_600SemiBold", fontSize: 10,
+                          }}>{w}d</Text>
+                        </TouchableOpacity>
+                      ))}
+                    </View>
+                  }
+                />
+                <View style={{
+                  backgroundColor: SF.surfacePrimary, borderRadius: 20, padding: 16,
+                  borderWidth: 1.5, borderColor: SF.borderPrimary,
+                }}>
+                  {/* Heatmap Body Diagram */}
+                  <BodyHeatmap
+                    gender={userGender}
+                    mode="balance"
+                    balanceEntries={muscleReport.entries}
+                    width={160}
+                    height={180}
+                    showLabels={false}
+                    showLegend={true}
+                  />
+
+                  {/* Summary Stats */}
+                  <View style={{ flexDirection: "row", justifyContent: "space-around", marginTop: 14, paddingTop: 12, borderTopWidth: 1, borderTopColor: "rgba(245,158,11,0.08)" }}>
+                    <View style={{ alignItems: "center" }}>
+                      <Text style={{ color: "#EF4444", fontFamily: "Outfit_700Bold", fontSize: 18 }}>{muscleReport.overExercised.length}</Text>
+                      <Text style={{ color: "#78350F", fontFamily: "DMSans_400Regular", fontSize: 10 }}>Over</Text>
+                    </View>
+                    <View style={{ alignItems: "center" }}>
+                      <Text style={{ color: "#22C55E", fontFamily: "Outfit_700Bold", fontSize: 18 }}>{muscleReport.optimal.length}</Text>
+                      <Text style={{ color: "#78350F", fontFamily: "DMSans_400Regular", fontSize: 10 }}>Optimal</Text>
+                    </View>
+                    <View style={{ alignItems: "center" }}>
+                      <Text style={{ color: "#3B82F6", fontFamily: "Outfit_700Bold", fontSize: 18 }}>{muscleReport.underExercised.length}</Text>
+                      <Text style={{ color: "#78350F", fontFamily: "DMSans_400Regular", fontSize: 10 }}>Under</Text>
+                    </View>
+                    <View style={{ alignItems: "center" }}>
+                      <Text style={{ color: "#F59E0B", fontFamily: "Outfit_700Bold", fontSize: 18 }}>{muscleReport.totalWorkouts}</Text>
+                      <Text style={{ color: "#78350F", fontFamily: "DMSans_400Regular", fontSize: 10 }}>Workouts</Text>
+                    </View>
+                  </View>
+
+                  {/* Muscle Detail Bars */}
+                  <View style={{ marginTop: 12, gap: 6 }}>
+                    {muscleReport.entries
+                      .filter(e => e.status !== "none")
+                      .sort((a, b) => b.percentage - a.percentage)
+                      .slice(0, 8)
+                      .map((entry) => {
+                        const barColor = entry.status === "over" ? "#EF4444" : entry.status === "optimal" ? "#22C55E" : "#3B82F6";
+                        const barWidth = Math.min(entry.percentage, 200);
+                        return (
+                          <View key={entry.muscle} style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+                            <Text style={{ color: "#B45309", fontFamily: "DMSans_500Medium", fontSize: 9, width: 65, textAlign: "right" }}>
+                              {entry.muscle.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase())}
+                            </Text>
+                            <View style={{ flex: 1, height: 6, backgroundColor: "rgba(245,158,11,0.06)", borderRadius: 3 }}>
+                              <View style={{ height: 6, borderRadius: 3, backgroundColor: barColor, width: `${Math.min(barWidth / 2, 100)}%` as any }} />
+                            </View>
+                            <Text style={{ color: barColor, fontFamily: "DMSans_600SemiBold", fontSize: 9, width: 32, textAlign: "right" }}>
+                              {entry.percentage}%
+                            </Text>
+                          </View>
+                        );
+                      })}
+                  </View>
+                </View>
+              </View>
+            </StaggeredCard>
+          )}
+
           {/* ── Today's Nutrition ── */}
           {(mealPlan as any)?.days?.[0] && (
             <StaggeredCard index={5}>
@@ -1090,6 +1209,147 @@ export default function HomeScreen() {
                     </TouchableOpacity>
                   </View>
                 </ImageBackground>
+              </View>
+            </StaggeredCard>
+          )}
+
+          {/* ── Suggested Exercises ── */}
+          {muscleReport && (suggestions.length > 0 || planChanges.length > 0) && (
+            <StaggeredCard index={6}>
+              <View style={styles.section}>
+                <SectionTitle title="Suggested Changes" />
+                <View style={{
+                  backgroundColor: SF.surfacePrimary, borderRadius: 20, padding: 16,
+                  borderWidth: 1.5, borderColor: SF.borderPrimary,
+                }}>
+                  {/* Explanation */}
+                  <View style={{ flexDirection: "row", gap: 8, alignItems: "flex-start", marginBottom: 12 }}>
+                    <MaterialIcons name="auto-awesome" size={14} color="#FBBF24" style={{ marginTop: 2 }} />
+                    <Text style={{ color: "#FBBF24", fontFamily: "DMSans_400Regular", fontSize: 11, lineHeight: 16, flex: 1 }}>
+                      Based on your {balanceWindow}-day workout history, here are suggestions to balance your training.
+                    </Text>
+                  </View>
+
+                  {/* Suggestions */}
+                  {suggestions.slice(0, 4).map((s, i) => (
+                    <View key={i} style={{
+                      backgroundColor: s.priority === "high" ? "rgba(59,130,246,0.08)" : "rgba(239,68,68,0.06)",
+                      borderRadius: 12, padding: 12, marginBottom: 8,
+                      borderWidth: 1, borderColor: s.priority === "high" ? "rgba(59,130,246,0.15)" : "rgba(239,68,68,0.12)",
+                    }}>
+                      <View style={{ flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 4 }}>
+                        <MaterialIcons
+                          name={s.priority === "high" ? "fitness-center" : "bedtime"}
+                          size={14}
+                          color={s.priority === "high" ? "#3B82F6" : "#EF4444"}
+                        />
+                        <Text style={{
+                          color: s.priority === "high" ? "#3B82F6" : "#EF4444",
+                          fontFamily: "Outfit_700Bold", fontSize: 12,
+                        }}>{s.exerciseName}</Text>
+                        <View style={{
+                          backgroundColor: s.priority === "high" ? "rgba(59,130,246,0.2)" : "rgba(239,68,68,0.15)",
+                          paddingHorizontal: 6, paddingVertical: 1, borderRadius: 4, marginLeft: "auto",
+                        }}>
+                          <Text style={{
+                            color: s.priority === "high" ? "#3B82F6" : "#EF4444",
+                            fontFamily: "DMSans_600SemiBold", fontSize: 8,
+                          }}>{s.priority.toUpperCase()}</Text>
+                        </View>
+                      </View>
+                      <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 10, lineHeight: 14 }}>
+                        {s.reason}
+                      </Text>
+                    </View>
+                  ))}
+
+                  {/* Plan Changes */}
+                  {planChanges.length > 0 && (
+                    <>
+                      <View style={{ flexDirection: "row", alignItems: "center", gap: 6, marginTop: 4, marginBottom: 8 }}>
+                        <MaterialIcons name="swap-horiz" size={14} color="#F59E0B" />
+                        <Text style={{ color: "#F59E0B", fontFamily: "Outfit_700Bold", fontSize: 12 }}>
+                          Suggested Plan Changes
+                        </Text>
+                      </View>
+                      {planChanges.slice(0, 3).map((change, i) => (
+                        <View key={i} style={{
+                          backgroundColor: "rgba(245,158,11,0.06)", borderRadius: 10, padding: 10, marginBottom: 6,
+                          borderWidth: 1, borderColor: "rgba(245,158,11,0.12)",
+                        }}>
+                          <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
+                            <MaterialIcons
+                              name={change.type === "replace" ? "swap-horiz" : change.type === "add" ? "add-circle" : "remove-circle"}
+                              size={12}
+                              color="#FBBF24"
+                            />
+                            <Text style={{ color: "#FDE68A", fontFamily: "DMSans_600SemiBold", fontSize: 10 }}>
+                              {change.dayName}
+                            </Text>
+                          </View>
+                          <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 10, lineHeight: 14, marginTop: 2 }}>
+                            {change.reason}
+                          </Text>
+                        </View>
+                      ))}
+
+                      {/* Apply Changes Button */}
+                      <TouchableOpacity
+                        style={{
+                          backgroundColor: "#F59E0B", borderRadius: 12, paddingVertical: 12, alignItems: "center",
+                          marginTop: 8, opacity: applyingChanges ? 0.6 : 1,
+                        }}
+                        disabled={applyingChanges}
+                        onPress={() => {
+                          Alert.alert(
+                            "Apply Suggested Changes?",
+                            "This will update your current workout plan with the suggested exercise swaps and additions. You can always regenerate your plan if needed.",
+                            [
+                              { text: "Cancel", style: "cancel" },
+                              {
+                                text: "Apply Changes",
+                                onPress: async () => {
+                                  if (!workoutPlan?.schedule) return;
+                                  setApplyingChanges(true);
+                                  try {
+                                    const newSchedule = applyPlanChanges(workoutPlan.schedule, planChanges);
+                                    const updatedPlan = { ...workoutPlan, schedule: newSchedule };
+                                    // Save locally for guests
+                                    await AsyncStorage.setItem("@guest_workout_plan", JSON.stringify(updatedPlan));
+                                    if (Platform.OS !== "web") {
+                                      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+                                    }
+                                    Alert.alert(
+                                      "Plan Updated!",
+                                      "Your workout plan has been updated with the suggested changes. Check the Plans tab to see the updates.",
+                                      [{ text: "OK" }]
+                                    );
+                                    setPlanChanges([]);
+                                  } catch (e) {
+                                    Alert.alert("Error", "Failed to apply changes. Please try again.");
+                                  } finally {
+                                    setApplyingChanges(false);
+                                  }
+                                },
+                              },
+                            ]
+                          );
+                        }}
+                      >
+                        <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+                          {applyingChanges ? (
+                            <ActivityIndicator size="small" color="#0A0500" />
+                          ) : (
+                            <MaterialIcons name="check-circle" size={16} color="#0A0500" />
+                          )}
+                          <Text style={{ color: "#0A0500", fontFamily: "Outfit_700Bold", fontSize: 13 }}>
+                            {applyingChanges ? "Applying..." : "Apply to My Plan"}
+                          </Text>
+                        </View>
+                      </TouchableOpacity>
+                    </>
+                  )}
+                </View>
               </View>
             </StaggeredCard>
           )}

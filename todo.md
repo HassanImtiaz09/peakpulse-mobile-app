@@ -1417,3 +1417,44 @@
 - [x] 21 unit tests passing (round67-exercise-library.test.ts)
 - [x] Tests cover exercise data, search, categories, muscle groups, multi-angle views, file existence
 - [x] 0 TypeScript errors (tsc --noEmit exit code 0)
+
+## Round 68 — Body Diagram Heatmaps, Muscle Balance Analysis, Suggested Exercises
+
+### Workout Page Body Diagram (Today's Targets)
+- [x] Gender-aware body diagram (male/female silhouette) on workout/plans page
+- [x] Show front + back views of the body (BodyHeatmap component with front/back toggle)
+- [x] Highlight today's targeted muscle groups based on current workout plan
+- [x] Gold (primary) and amber (secondary) theme for targeted muscles
+- [x] Pull gender from activeProfile.gender (defaults to male)
+
+### Dashboard Progress Heatmap
+- [x] Color-coded muscle balance body diagram on dashboard (BodyHeatmap mode="balance")
+- [x] Over-exercised muscles shown in red (#EF4444)
+- [x] Optimally exercised muscles shown in green (#22C55E)
+- [x] Under-exercised muscles shown in blue (#3B82F6)
+- [x] Configurable time window (7d, 14d, 30d) with selector buttons
+- [x] Track workout completion data per muscle group from AsyncStorage history
+- [x] Show both front and back body views with toggle
+- [x] Summary stats (Over/Optimal/Under/Workouts counts)
+- [x] Muscle detail bars with percentage breakdown
+
+### Muscle Balance Analysis Engine (lib/muscle-balance.ts)
+- [x] Track workout history per muscle group from completed workouts
+- [x] Calculate frequency/volume per muscle group over configurable time window
+- [x] Classify each muscle group as over-exercised, optimal, or under-exercised
+- [x] Consider recommended weekly frequency per muscle group (MUSCLE_WEEKLY_TARGETS)
+- [x] Persist analysis data with AsyncStorage (@workout_sessions)
+- [x] getTodayTargetMuscles extracts muscles from today's workout schedule
+
+### Suggested Exercises Section
+- [x] generateSuggestions recommends exercises based on muscle balance analysis
+- [x] Prioritize under-exercised muscle groups (high priority)
+- [x] Suggest rest for over-exercised muscle groups (medium priority)
+- [x] generatePlanChanges shows suggested changes to current workout plan
+- [x] One-tap "Apply to My Plan" with confirmation dialog
+- [x] applyPlanChanges updates plan in AsyncStorage (@guest_workout_plan)
+
+### Testing
+- [x] 31 unit tests passing (round68-muscle-balance.test.ts)
+- [x] Tests cover: analysis engine, suggestions, plan changes, body heatmap, dashboard/plans integration
+- [x] 0 TypeScript errors (tsc --noEmit exit code 0)

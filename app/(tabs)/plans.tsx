@@ -17,6 +17,8 @@ import Svg, { Circle } from "react-native-svg";
 import * as Haptics from "expo-haptics";
 import { exportWorkoutPlanPdf } from "@/lib/workout-pdf";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { BodyHeatmap } from "@/components/body-heatmap";
+import { getTodayTargetMuscles } from "@/lib/muscle-balance";
 
 const WORKOUT_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/yauqLuTRvanJUzsJ.jpg";
 const MEAL_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/yauqLuTRvanJUzsJ.jpg";
@@ -171,6 +173,13 @@ export default function PlansScreen() {
       d.day?.toLowerCase().includes(todayName.toLowerCase())
     ) ?? null;
   }, [workoutPlan, todayName]);
+
+  // Today's target muscles for body diagram
+  const todayMuscles = useMemo(() => {
+    return getTodayTargetMuscles(workoutPlan?.schedule);
+  }, [workoutPlan]);
+
+  const userGender = (activeProfile?.gender ?? "male") as "male" | "female";
 
   const otherWorkoutDays = useMemo(() => {
     if (!workoutPlan?.schedule) return [];
@@ -408,6 +417,23 @@ export default function PlansScreen() {
                       <MaterialIcons name="today" size={16} color="#FBBF24" />
                       <Text style={{ color: "#FBBF24", fontFamily: "Outfit_700Bold", fontSize: 15 }}>Today — {todayName}</Text>
                     </View>
+
+                    {/* Body Diagram — Today's Target Muscles */}
+                    {todayMuscles.primary.length > 0 && !todayWorkout.isRest && (
+                      <View style={{ backgroundColor: "rgba(245,158,11,0.06)", borderRadius: 16, padding: 14, marginBottom: 12, borderWidth: 1, borderColor: "rgba(245,158,11,0.12)", alignItems: "center" }}>
+                        <Text style={{ color: "#FDE68A", fontFamily: "Outfit_700Bold", fontSize: 12, marginBottom: 8, letterSpacing: 0.5 }}>TODAY'S TARGET MUSCLES</Text>
+                        <BodyHeatmap
+                          gender={userGender}
+                          mode="target"
+                          targetPrimary={todayMuscles.primary}
+                          targetSecondary={todayMuscles.secondary}
+                          width={160}
+                          height={180}
+                          showLabels={true}
+                          showLegend={false}
+                        />
+                      </View>
+                    )}
                     <WorkoutDayCard
                       day={todayWorkout}
                       isCompleted={!!completedDays[todayWorkout.day]}
