@@ -1234,3 +1234,47 @@
 - [x] Unit tests for UI integration
 - [x] 79 new tests (round62-features.test.ts), all passing
 - [x] 0 TypeScript errors
+
+## Round 63 — Social Circle, Friend Invites, Leaderboard & Referral Discounts
+
+### Feature 1: Social Circle Service (lib/social-circle.ts)
+- [x] Define FriendProfile interface (id, name, avatar, streakCount, weeklySteps, weeklyCalories, weeklyWorkouts, weeklyDistance, avgHeartRate, sleepHoursAvg, lastActive, joinedVia)
+- [x] Define SocialCircleData interface (friends list, pendingInvites, circleCode, totalInvitesSent, totalFriendsJoined, createdAt)
+- [x] Generate unique circle invite code per user
+- [x] Build invite link with smart store redirect (App Store / Play Store based on device)
+- [x] CRUD operations for friends (add, remove, update stats)
+- [x] Persist social circle data in AsyncStorage
+- [x] Generate simulated friend data for demo/preview mode (6 realistic friends)
+- [x] Track friend activity status (active today, last seen with timeAgo)
+
+### Feature 2: Invite & Share Screen (app/social-circle.tsx)
+- [x] Create social circle main screen with tabs: Circle, Leaderboard, Invite
+- [x] Circle tab: show friend cards with avatar, name, streak, weekly stats, circle stats summary
+- [x] Leaderboard tab: ranked list by 5 metrics (streak, steps, calories, workouts, distance) with podium
+- [x] Leaderboard metric selector pills with current user highlighting
+- [x] Invite tab: share invite link via native share sheet with circle code display
+- [x] Smart link that redirects to App Store (iOS) or Play Store (Android) based on device
+- [x] Show pending invites with status (pending, accepted, expired)
+- [x] Friend detail modal showing 8 stats (streak, steps, calories, workouts, distance, HR, sleep, joined)
+
+### Feature 3: Referral Discount Integration
+- [x] Built discount tier system in social-circle.ts (10% for 1 friend, 25% for 3, free month for 5, 3 months for 10)
+- [x] Track discount data with earned/used status and friend attribution
+- [x] Show earned discounts on social circle screen (Your Rewards section)
+- [x] Track invite history with sent/accepted/expired status
+- [x] Display active discount in hero section and invite stats
+
+### Feature 4: Dashboard Integration
+- [x] Add Social Circle quick action to dashboard
+- [x] Show friend count and active count in hero section
+- [x] Full leaderboard with podium and rankings in Leaderboard tab
+- [x] Navigation from dashboard quick actions to social circle
+
+### Tests
+- [x] Unit tests for social circle data model and CRUD
+- [x] Unit tests for invite link generation and parsing
+- [x] Unit tests for leaderboard ranking logic
+- [x] Unit tests for referral discount calculation
+- [x] Unit tests for UI integration
+- [x] 88 new tests (round63-social-circle.test.ts), all passing
+- [x] 0 TypeScript errors
