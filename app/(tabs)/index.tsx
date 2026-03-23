@@ -27,6 +27,13 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useWearable } from "@/lib/wearable-context";
 import { getWeeklyGoals, calculateWeeklyProgress, getWorkoutsThisWeek, isGoalTrackingEnabled, type WeeklyGoals, type WeeklyProgress } from "@/lib/goal-tracking";
 import { shareWeeklySummaryCard, type WeeklySummaryCardData } from "@/lib/social-card-generator";
+import {
+  getStreakData, evaluateWeek, getWeekNeedingEvaluation, getCurrentMilestone,
+  getNextMilestone, getWeeksToNextMilestone, getStreakEmoji, getStreakLabel,
+  getStreakMotivation, getPendingCelebrations, clearPendingCelebrations,
+  markMilestoneCelebrated, MILESTONE_TIERS,
+  type StreakData, type MilestoneTier,
+} from "@/lib/streak-tracking";
 
 const TIPS_AND_TRICKS = [
   { icon: "water-drop" as const, tip: "Drink 500ml of water first thing in the morning to kickstart your metabolism and hydration." },
@@ -238,6 +245,9 @@ export default function HomeScreen() {
   const [goalProgress, setGoalProgress] = React.useState<WeeklyProgress | null>(null);
   const [goalsEnabled, setGoalsEnabled] = React.useState(false);
   const [sharingCard, setSharingCard] = React.useState(false);
+  const [streakData, setStreakData] = React.useState<StreakData | null>(null);
+  const [celebrationMilestone, setCelebrationMilestone] = React.useState<MilestoneTier | null>(null);
+  const [showCelebration, setShowCelebration] = React.useState(false);
 
   // 1A: Parallax scroll value
   const scrollY = useSharedValue(0);
@@ -250,7 +260,7 @@ export default function HomeScreen() {
     return () => clearInterval(interval);
   }, []);
 
-  // Load goal tracking data
+  // Load goal tracking data + streak
   React.useEffect(() => {
     if (!canUse) return;
     (async () => {
@@ -265,6 +275,31 @@ export default function HomeScreen() {
         workoutsThisWeek,
       });
       setGoalProgress(progress);
+
+      // Load streak data
+      const streak = await getStreakData();
+      setStreakData(streak);
+
+      // Check for weeks needing evaluation
+      const weekToEval = getWeekNeedingEvaluation(streak.lastEvaluatedWeek);
+      if (weekToEval) {
+        const result = await evaluateWeek(weekToEval, {
+          stepsPercentage: progress.steps.percentage,
+          caloriesPercentage: progress.calories.percentage,
+          workoutsPercentage: progress.workouts.percentage,
+        });
+        setStreakData(result.streakData);
+      }
+
+      // Check for pending celebrations
+      const pending = await getPendingCelebrations();
+      if (pending.length > 0) {
+        const tier = MILESTONE_TIERS.find((t) => t.id === pending[0]);
+        if (tier) {
+          setCelebrationMilestone(tier);
+          setShowCelebration(true);
+        }
+      }
     })();
   }, [canUse, wearableData.stats.steps, wearableData.stats.totalCaloriesBurnt]);
 
@@ -811,8 +846,126 @@ export default function HomeScreen() {
                     </Text>
                   </View>
                 </View>
+
+                {/* ── Streak Badge ── */}
+                {streakData && (
+                  <TouchableOpacity
+                    onPress={() => router.push("/streak-details" as any)}
+                    style={{
+                      marginTop: 12, backgroundColor: streakData.currentStreak > 0 ? "rgba(245,158,11,0.08)" : "rgba(255,255,255,0.03)",
+                      borderRadius: 16, padding: 14, borderWidth: 1,
+                      borderColor: streakData.currentStreak > 0 ? "rgba(245,158,11,0.2)" : "rgba(255,255,255,0.06)",
+                    }}
+                  >
+                    <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+                      <View style={{ flexDirection: "row", alignItems: "center", gap: 10, flex: 1 }}>
+                        <View style={{
+                          width: 44, height: 44, borderRadius: 22,
+                          backgroundColor: streakData.currentStreak > 0
+                            ? (getCurrentMilestone(streakData.currentStreak)?.color ?? "#F59E0B") + "20"
+                            : "rgba(255,255,255,0.05)",
+                          alignItems: "center", justifyContent: "center",
+                        }}>
+                          <Text style={{ fontSize: 22 }}>{getStreakEmoji(streakData.currentStreak)}</Text>
+                        </View>
+                        <View style={{ flex: 1 }}>
+                          <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+                            <Text style={{
+                              color: streakData.currentStreak > 0 ? "#F59E0B" : "#78350F",
+                              fontFamily: "Outfit_700Bold", fontSize: 15,
+                            }}>
+                              {getStreakLabel(streakData.currentStreak)}
+                            </Text>
+                            {getCurrentMilestone(streakData.currentStreak) && (
+                              <View style={{
+                                backgroundColor: (getCurrentMilestone(streakData.currentStreak)?.color ?? "#F59E0B") + "30",
+                                paddingHorizontal: 6, paddingVertical: 2, borderRadius: 6,
+                              }}>
+                                <Text style={{
+                                  color: getCurrentMilestone(streakData.currentStreak)?.color ?? "#F59E0B",
+                                  fontFamily: "Outfit_700Bold", fontSize: 9,
+                                }}>
+                                  {getCurrentMilestone(streakData.currentStreak)?.name}
+                                </Text>
+                              </View>
+                            )}
+                          </View>
+                          <Text style={{ color: "#78350F", fontFamily: "DMSans_400Regular", fontSize: 10, marginTop: 2 }}>
+                            {getStreakMotivation(streakData.currentStreak, false)}
+                          </Text>
+                          {getNextMilestone(streakData.currentStreak) && (
+                            <View style={{ flexDirection: "row", alignItems: "center", gap: 4, marginTop: 4 }}>
+                              <View style={{ flex: 1, height: 3, backgroundColor: "rgba(245,158,11,0.1)", borderRadius: 2 }}>
+                                <View style={{
+                                  height: 3, borderRadius: 2,
+                                  backgroundColor: getNextMilestone(streakData.currentStreak)?.color ?? "#F59E0B",
+                                  width: `${Math.min(100, Math.round(((streakData.currentStreak - (getCurrentMilestone(streakData.currentStreak)?.weeksRequired ?? 0)) / ((getNextMilestone(streakData.currentStreak)?.weeksRequired ?? 1) - (getCurrentMilestone(streakData.currentStreak)?.weeksRequired ?? 0))) * 100))}%`,
+                                }} />
+                              </View>
+                              <Text style={{ color: "#78350F", fontFamily: "DMSans_400Regular", fontSize: 9 }}>
+                                {getWeeksToNextMilestone(streakData.currentStreak)}w to {getNextMilestone(streakData.currentStreak)?.name}
+                              </Text>
+                            </View>
+                          )}
+                        </View>
+                      </View>
+                      <MaterialIcons name="chevron-right" size={18} color="#78350F" />
+                    </View>
+                    {streakData.longestStreak > 0 && streakData.longestStreak > streakData.currentStreak && (
+                      <View style={{ flexDirection: "row", alignItems: "center", gap: 4, marginTop: 8, paddingTop: 8, borderTopWidth: 1, borderTopColor: "rgba(245,158,11,0.08)" }}>
+                        <MaterialIcons name="emoji-events" size={12} color="#78350F" />
+                        <Text style={{ color: "#78350F", fontFamily: "DMSans_400Regular", fontSize: 10 }}>
+                          Best streak: {streakData.longestStreak} week{streakData.longestStreak !== 1 ? "s" : ""}
+                        </Text>
+                      </View>
+                    )}
+                  </TouchableOpacity>
+                )}
               </View>
             </StaggeredCard>
+          )}
+
+          {/* ── Milestone Celebration Modal ── */}
+          {showCelebration && celebrationMilestone && (
+            <Modal transparent animationType="fade" visible={showCelebration}>
+              <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.85)", alignItems: "center", justifyContent: "center", padding: 32 }}>
+                <View style={{
+                  backgroundColor: "#1C0E02", borderRadius: 28, padding: 32, alignItems: "center",
+                  borderWidth: 2, borderColor: celebrationMilestone.color + "40", width: "100%", maxWidth: 340,
+                }}>
+                  <Text style={{ fontSize: 56, marginBottom: 12 }}>{celebrationMilestone.emoji}</Text>
+                  <Text style={{ color: celebrationMilestone.color, fontFamily: "Outfit_800ExtraBold", fontSize: 28, textAlign: "center" }}>
+                    {celebrationMilestone.name}
+                  </Text>
+                  <Text style={{ color: "#F59E0B", fontFamily: "Outfit_700Bold", fontSize: 14, marginTop: 4 }}>
+                    {celebrationMilestone.badge} STREAK MILESTONE
+                  </Text>
+                  <Text style={{ color: "#FFF7ED", fontFamily: "DMSans_400Regular", fontSize: 14, textAlign: "center", marginTop: 12, lineHeight: 20 }}>
+                    {celebrationMilestone.description}
+                  </Text>
+                  <View style={{ flexDirection: "row", gap: 8, marginTop: 24 }}>
+                    {["🎉", "⭐", "🏆", "⭐", "🎉"].map((e, i) => (
+                      <Text key={i} style={{ fontSize: 20 }}>{e}</Text>
+                    ))}
+                  </View>
+                  <TouchableOpacity
+                    onPress={async () => {
+                      setShowCelebration(false);
+                      await markMilestoneCelebrated(celebrationMilestone.id);
+                      await clearPendingCelebrations();
+                      setCelebrationMilestone(null);
+                      if (Platform.OS !== "web") Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+                    }}
+                    style={{
+                      marginTop: 24, backgroundColor: celebrationMilestone.color, paddingHorizontal: 32,
+                      paddingVertical: 14, borderRadius: 16,
+                    }}
+                  >
+                    <Text style={{ color: "#0A0500", fontFamily: "Outfit_700Bold", fontSize: 16 }}>Celebrate!</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </Modal>
           )}
 
           {/* ── Quick Actions (2A: collapsible, 3A: MaterialIcons) ── */}

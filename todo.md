@@ -1171,3 +1171,29 @@
 - [x] Unit tests for navigation wiring
 - [x] 79 new tests (round60-features.test.ts), all passing
 - [x] 0 TypeScript errors
+
+## Round 61 — Goal Streak Rewards System
+
+### Feature: Streak Tracking & Badges
+- [x] Create lib/streak-tracking.ts service with AsyncStorage persistence
+- [x] Define StreakData interface (currentStreak, longestStreak, weeklyHistory, milestones)
+- [x] Define milestone tiers: 1-week (Ignition), 2-week (Momentum), 4-week (Iron Will), 8-week (Unstoppable), 12-week (Legendary), 26-week (Titan), 52-week (Immortal)
+- [x] Track which goals were hit each week (steps, calories, workouts) individually
+- [x] Calculate streak: consecutive weeks where ALL three goals were met
+- [x] Evaluate streak on week transition (Sunday night / Monday morning)
+- [x] Persist streak data and milestone unlock history
+- [x] Create streak badge component with emoji-based fire/flame icon
+- [x] Integrate streak badge into home screen goal progress section
+- [x] Show current streak count, longest streak, and next milestone
+- [x] Build app/streak-details.tsx screen with full streak history and milestone gallery
+- [x] Add milestone celebration modal with confetti emojis on new milestone unlock
+- [x] Add streak-related celebration state with pending celebrations queue
+- [x] Navigation from dashboard goals section to streak details
+
+### Tests
+- [x] Unit tests for streak calculation logic
+- [x] Unit tests for milestone tier definitions
+- [x] Unit tests for streak badge component integration
+- [x] Unit tests for streak details screen
+- [x] 83 new tests (round61-streak-rewards.test.ts), all passing
+- [x] 0 TypeScript errors
