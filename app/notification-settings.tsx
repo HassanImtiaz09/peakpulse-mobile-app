@@ -422,6 +422,26 @@ export default function NotificationSettingsScreen() {
           />
         </View>
 
+        {/* Weekly Health Digest */}
+        <Text style={styles.sectionTitle}>Health Digest</Text>
+        <View style={styles.section}>
+          <TouchableOpacity
+            style={[styles.row, { justifyContent: "space-between" }]}
+            onPress={() => router.push("/digest-settings" as any)}
+          >
+            <View style={{ flexDirection: "row", alignItems: "center", gap: 12, flex: 1 }}>
+              <View style={[styles.iconCircle, { backgroundColor: "rgba(59,130,246,0.12)" }]}>
+                <MaterialIcons name="analytics" size={18} color="#3B82F6" />
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.rowLabel}>Weekly Health Digest</Text>
+                <Text style={styles.rowDesc}>Customise day, time, and toggle</Text>
+              </View>
+            </View>
+            <MaterialIcons name="chevron-right" size={20} color={SF.mutedBright} />
+          </TouchableOpacity>
+        </View>
+
         {/* Actions */}
         <TouchableOpacity
           style={[styles.saveBtn, saving && { opacity: 0.7 }]}

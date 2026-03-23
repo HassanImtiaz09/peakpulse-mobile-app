@@ -1092,3 +1092,44 @@
 - [x] Unit tests for navigation wiring
 - [x] 77 new tests (round58-features.test.ts), all passing
 - [x] 0 TypeScript errors
+
+## Round 59 — Workout History, Digest Settings, Customisable PDF Report
+
+### Feature 1: Workout History Screen
+- [x] Create app/workout-history.tsx with FlatList of all logged workouts
+- [x] Load workout history from AsyncStorage (@workout_log_history)
+- [x] Display workout cards with type icon, title, duration, calories, distance, date
+- [x] Add workout type filter (dropdown/pills) to filter by running, cycling, etc.
+- [x] Add date range filter (start date / end date inputs)
+- [x] Show empty state when no workouts match filters
+- [x] Show total stats summary (total workouts, total calories, total distance, total time)
+- [x] Add navigation link from dashboard and log-workout screen
+- [x] Match Aurora Titan dark theme styling
+
+### Feature 2: Weekly Digest Settings Screen
+- [x] Create app/digest-settings.tsx settings screen
+- [x] Load current preferences from getDigestPreferences()
+- [x] Add toggle switch to enable/disable weekly digest
+- [x] Add day-of-week selector (Sunday through Saturday)
+- [x] Add hour selector for delivery time
+- [x] Save preferences via saveDigestPreferences()
+- [x] Re-schedule or cancel digest notification on preference change
+- [x] Show last digest date if available
+- [x] Add "Send Test Digest" button using sendImmediateDigest()
+- [x] Add navigation from notification-settings or wearable-sync screen
+
+### Feature 3: Customisable PDF Report
+- [x] Add metric selection UI to health-trends.tsx export section (checkboxes for each metric)
+- [x] Add personal notes text input for trainer/doctor messages
+- [x] Update ReportConfig to accept selectedMetrics and personalNotes
+- [x] Update generateReportHTML to conditionally include/exclude metrics
+- [x] Include personal notes section in PDF when provided
+- [x] Persist last-used metric selections and notes in AsyncStorage
+
+### Tests
+- [x] Unit tests for workout history data loading and filtering logic
+- [x] Unit tests for digest settings preference management
+- [x] Unit tests for customisable PDF report metric selection
+- [x] Unit tests for navigation wiring
+- [x] 65 new tests (round59-features.test.ts), all passing
+- [x] 0 TypeScript errors

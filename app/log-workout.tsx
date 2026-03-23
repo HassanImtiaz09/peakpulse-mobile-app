@@ -211,6 +211,20 @@ export default function LogWorkoutScreen() {
         </View>
       </ImageBackground>
 
+      {/* View History Link */}
+      <TouchableOpacity
+        onPress={() => router.push("/workout-history" as any)}
+        style={{
+          flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6,
+          paddingVertical: 10, backgroundColor: "rgba(245,158,11,0.06)",
+          borderBottomWidth: 1, borderBottomColor: "rgba(245,158,11,0.08)",
+        }}
+      >
+        <MaterialIcons name="history" size={14} color="#F59E0B" />
+        <Text style={{ color: "#F59E0B", fontFamily: "DMSans_600SemiBold", fontSize: 12 }}>View Workout History</Text>
+        <MaterialIcons name="chevron-right" size={14} color="#F59E0B" />
+      </TouchableOpacity>
+
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : undefined}>
         <ScrollView contentContainerStyle={{ padding: 20, paddingBottom: 40 }} showsVerticalScrollIndicator={false}>
 

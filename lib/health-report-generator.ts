@@ -5,7 +5,10 @@
  * Supports 7-day and 30-day reports with daily breakdown tables,
  * summary stats, trend indicators, and health insights.
  *
- * Uses expo-sharing to let users share the PDF with trainers, physios, or doctors.
+ * Users can select which metrics to include and add personal notes
+ * for their trainer, physio, or doctor.
+ *
+ * Uses expo-sharing to let users share the PDF.
  */
 
 import * as Print from "expo-print";
@@ -15,17 +18,69 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { fetchHealthHistory, type DailyHealthSummary } from "./health-service";
 
 // ── Types ──
+
+export type ReportMetricKey = "steps" | "heartRate" | "calories" | "sleep" | "distance" | "hrv";
+
+export const ALL_REPORT_METRICS: { key: ReportMetricKey; label: string; icon: string }[] = [
+  { key: "steps", label: "Steps", icon: "directions-walk" },
+  { key: "heartRate", label: "Heart Rate", icon: "favorite" },
+  { key: "calories", label: "Calories", icon: "local-fire-department" },
+  { key: "sleep", label: "Sleep", icon: "bedtime" },
+  { key: "distance", label: "Distance", icon: "straighten" },
+  { key: "hrv", label: "HRV", icon: "monitor-heart" },
+];
+
+export const DEFAULT_SELECTED_METRICS: ReportMetricKey[] = [
+  "steps", "heartRate", "calories", "sleep", "distance", "hrv",
+];
+
 export interface ReportConfig {
   period: 7 | 30;
   userName?: string;
   userAge?: number;
   userGoal?: string;
+  /** Which metrics to include in the report. Defaults to all. */
+  selectedMetrics?: ReportMetricKey[];
+  /** Personal notes for the trainer/physio/doctor. */
+  personalNotes?: string;
 }
 
 export interface ReportResult {
   success: boolean;
   uri?: string;
   error?: string;
+}
+
+// ── Persistence Keys ──
+const REPORT_METRICS_KEY = "@report_selected_metrics";
+const REPORT_NOTES_KEY = "@report_personal_notes";
+
+export async function getReportPreferences(): Promise<{
+  selectedMetrics: ReportMetricKey[];
+  personalNotes: string;
+}> {
+  try {
+    const [metricsRaw, notesRaw] = await Promise.all([
+      AsyncStorage.getItem(REPORT_METRICS_KEY),
+      AsyncStorage.getItem(REPORT_NOTES_KEY),
+    ]);
+    return {
+      selectedMetrics: metricsRaw ? JSON.parse(metricsRaw) : [...DEFAULT_SELECTED_METRICS],
+      personalNotes: notesRaw ?? "",
+    };
+  } catch {
+    return { selectedMetrics: [...DEFAULT_SELECTED_METRICS], personalNotes: "" };
+  }
+}
+
+export async function saveReportPreferences(
+  selectedMetrics: ReportMetricKey[],
+  personalNotes: string,
+): Promise<void> {
+  await Promise.all([
+    AsyncStorage.setItem(REPORT_METRICS_KEY, JSON.stringify(selectedMetrics)),
+    AsyncStorage.setItem(REPORT_NOTES_KEY, personalNotes),
+  ]);
 }
 
 // ── User Info Helper ──
@@ -73,7 +128,7 @@ function calcMetricStats(values: number[]): MetricStats {
   };
 }
 
-// ── HTML Report Builder ──
+// ── HTML Helpers ──
 function trendArrow(dir: "up" | "down" | "flat"): string {
   if (dir === "up") return "&#8593;";
   if (dir === "down") return "&#8595;";
@@ -96,6 +151,11 @@ function formatShortDate(dateStr: string): string {
   return d.toLocaleDateString("en-GB", { day: "2-digit", month: "short" });
 }
 
+function has(metrics: ReportMetricKey[], key: ReportMetricKey): boolean {
+  return metrics.includes(key);
+}
+
+// ── HTML Report Builder ──
 export function generateReportHTML(
   data: DailyHealthSummary[],
   config: ReportConfig,
@@ -104,28 +164,141 @@ export function generateReportHTML(
   const now = new Date();
   const reportDate = now.toLocaleDateString("en-GB", { day: "2-digit", month: "long", year: "numeric" });
   const periodLabel = config.period === 7 ? "7-Day" : "30-Day";
+  const metrics = config.selectedMetrics ?? DEFAULT_SELECTED_METRICS;
 
-  // Calculate stats
-  const stepsStats = calcMetricStats(data.map((d) => d.steps));
-  const hrStats = calcMetricStats(data.filter((d) => d.heartRate > 0).map((d) => d.heartRate));
-  const calStats = calcMetricStats(data.map((d) => d.activeCalories));
-  const sleepStats = calcMetricStats(data.map((d) => Math.round(d.sleepHours * 10) / 10));
-  const distStats = calcMetricStats(data.map((d) => Math.round(d.distance * 10) / 10));
-  const hrvStats = calcMetricStats(data.filter((d) => d.hrv !== null).map((d) => d.hrv ?? 0));
+  // Calculate stats (only for selected metrics)
+  const stepsStats = has(metrics, "steps") ? calcMetricStats(data.map((d) => d.steps)) : null;
+  const hrStats = has(metrics, "heartRate") ? calcMetricStats(data.filter((d) => d.heartRate > 0).map((d) => d.heartRate)) : null;
+  const calStats = has(metrics, "calories") ? calcMetricStats(data.map((d) => d.activeCalories)) : null;
+  const sleepStats = has(metrics, "sleep") ? calcMetricStats(data.map((d) => Math.round(d.sleepHours * 10) / 10)) : null;
+  const distStats = has(metrics, "distance") ? calcMetricStats(data.map((d) => Math.round(d.distance * 10) / 10)) : null;
+  const hrvStats = has(metrics, "hrv") ? calcMetricStats(data.filter((d) => d.hrv !== null).map((d) => d.hrv ?? 0)) : null;
 
-  // Generate insights
+  // Generate insights (only for selected metrics)
   const insights: string[] = [];
-  if (stepsStats.avg >= 10000) insights.push("Excellent step count — exceeding the recommended 10,000 steps/day target.");
-  else if (stepsStats.avg >= 7000) insights.push("Good activity level. Aim for 10,000+ steps/day for optimal cardiovascular health.");
-  else insights.push("Step count is below recommended levels. Consider adding short walks throughout the day.");
+  if (stepsStats) {
+    if (stepsStats.avg >= 10000) insights.push("Excellent step count — exceeding the recommended 10,000 steps/day target.");
+    else if (stepsStats.avg >= 7000) insights.push("Good activity level. Aim for 10,000+ steps/day for optimal cardiovascular health.");
+    else insights.push("Step count is below recommended levels. Consider adding short walks throughout the day.");
+  }
+  if (sleepStats) {
+    if (sleepStats.avg >= 7) insights.push("Sleep duration is within the healthy range of 7-9 hours.");
+    else insights.push("Sleep duration is below the recommended 7-9 hours. Prioritise sleep hygiene for better recovery.");
+  }
+  if (hrStats) {
+    if (hrStats.avg > 0 && hrStats.avg < 60) insights.push("Resting heart rate indicates excellent cardiovascular fitness.");
+    else if (hrStats.avg >= 60 && hrStats.avg <= 80) insights.push("Heart rate is within normal range. Regular cardio can help lower it further.");
+  }
+  if (hrvStats && hrvStats.avg > 50) {
+    insights.push("HRV indicates good autonomic nervous system balance and recovery capacity.");
+  }
+  if (calStats && calStats.avg > 300) {
+    insights.push(`Averaging ${calStats.avg} kcal burned per day — maintaining an active lifestyle.`);
+  }
+  if (distStats && distStats.total > 20) {
+    insights.push(`Total distance of ${distStats.total.toFixed(1)} km over the period shows consistent movement.`);
+  }
 
-  if (sleepStats.avg >= 7) insights.push("Sleep duration is within the healthy range of 7-9 hours.");
-  else insights.push("Sleep duration is below the recommended 7-9 hours. Prioritise sleep hygiene for better recovery.");
+  // Build stat cards HTML
+  const statCards: string[] = [];
+  if (stepsStats) {
+    statCards.push(`<div class="stat-card">
+      <div class="stat-label">Avg Daily Steps</div>
+      <div class="stat-value">${stepsStats.avg.toLocaleString()}</div>
+      <div class="stat-sub">Best: ${stepsStats.best.toLocaleString()}</div>
+      <div class="stat-trend" style="color: ${trendColor(stepsStats.trendDir, true)}">
+        ${trendArrow(stepsStats.trendDir)} ${stepsStats.trendPct}% trend
+      </div>
+    </div>`);
+  }
+  if (hrStats) {
+    statCards.push(`<div class="stat-card">
+      <div class="stat-label">Avg Heart Rate</div>
+      <div class="stat-value">${hrStats.avg > 0 ? hrStats.avg : "—"} <span style="font-size:12px">bpm</span></div>
+      <div class="stat-sub">Range: ${hrStats.lowest}–${hrStats.best} bpm</div>
+      <div class="stat-trend" style="color: ${trendColor(hrStats.trendDir, false)}">
+        ${trendArrow(hrStats.trendDir)} ${hrStats.trendPct}% trend
+      </div>
+    </div>`);
+  }
+  if (calStats) {
+    statCards.push(`<div class="stat-card">
+      <div class="stat-label">Avg Calories Burned</div>
+      <div class="stat-value">${calStats.avg} <span style="font-size:12px">kcal</span></div>
+      <div class="stat-sub">Total: ${calStats.total.toLocaleString()} kcal</div>
+      <div class="stat-trend" style="color: ${trendColor(calStats.trendDir, true)}">
+        ${trendArrow(calStats.trendDir)} ${calStats.trendPct}% trend
+      </div>
+    </div>`);
+  }
+  if (sleepStats) {
+    statCards.push(`<div class="stat-card">
+      <div class="stat-label">Avg Sleep</div>
+      <div class="stat-value">${sleepStats.avg > 0 ? sleepStats.avg.toFixed(1) : "—"} <span style="font-size:12px">hrs</span></div>
+      <div class="stat-sub">Best: ${sleepStats.best.toFixed(1)} hrs</div>
+      <div class="stat-trend" style="color: ${trendColor(sleepStats.trendDir, true)}">
+        ${trendArrow(sleepStats.trendDir)} ${sleepStats.trendPct}% trend
+      </div>
+    </div>`);
+  }
+  if (distStats) {
+    statCards.push(`<div class="stat-card">
+      <div class="stat-label">Total Distance</div>
+      <div class="stat-value">${distStats.total.toFixed(1)} <span style="font-size:12px">km</span></div>
+      <div class="stat-sub">Avg: ${distStats.avg.toFixed(1)} km/day</div>
+      <div class="stat-trend" style="color: ${trendColor(distStats.trendDir, true)}">
+        ${trendArrow(distStats.trendDir)} ${distStats.trendPct}% trend
+      </div>
+    </div>`);
+  }
+  if (hrvStats) {
+    statCards.push(`<div class="stat-card">
+      <div class="stat-label">Avg HRV</div>
+      <div class="stat-value">${hrvStats.avg > 0 ? hrvStats.avg : "—"} <span style="font-size:12px">ms</span></div>
+      <div class="stat-sub">${hrvStats.avg > 0 ? `Range: ${hrvStats.lowest}–${hrvStats.best} ms` : "No data"}</div>
+      <div class="stat-trend" style="color: ${trendColor(hrvStats.trendDir, true)}">
+        ${hrvStats.trendPct > 0 ? `${trendArrow(hrvStats.trendDir)} ${hrvStats.trendPct}% trend` : "—"}
+      </div>
+    </div>`);
+  }
 
-  if (hrStats.avg > 0 && hrStats.avg < 60) insights.push("Resting heart rate indicates excellent cardiovascular fitness.");
-  else if (hrStats.avg >= 60 && hrStats.avg <= 80) insights.push("Heart rate is within normal range. Regular cardio can help lower it further.");
+  // Grid columns based on card count
+  const gridCols = statCards.length <= 2 ? 2 : statCards.length <= 4 ? 2 : 3;
 
-  if (hrvStats.avg > 50) insights.push("HRV indicates good autonomic nervous system balance and recovery capacity.");
+  // Build table headers and rows
+  const tableHeaders: string[] = ["<th>Date</th>"];
+  if (has(metrics, "steps")) tableHeaders.push("<th>Steps</th>");
+  if (has(metrics, "heartRate")) tableHeaders.push("<th>Heart Rate</th>");
+  if (has(metrics, "calories")) tableHeaders.push("<th>Calories</th>");
+  if (has(metrics, "sleep")) tableHeaders.push("<th>Sleep</th>");
+  if (has(metrics, "distance")) tableHeaders.push("<th>Distance</th>");
+  if (has(metrics, "hrv")) tableHeaders.push("<th>HRV</th>");
+
+  const tableRows = data.map((d) => {
+    const cells: string[] = [`<td>${formatShortDate(d.date)}</td>`];
+    if (has(metrics, "steps")) cells.push(`<td>${d.steps.toLocaleString()}</td>`);
+    if (has(metrics, "heartRate")) cells.push(`<td>${d.heartRate > 0 ? d.heartRate + " bpm" : "—"}</td>`);
+    if (has(metrics, "calories")) cells.push(`<td>${d.activeCalories} kcal</td>`);
+    if (has(metrics, "sleep")) cells.push(`<td>${d.sleepHours.toFixed(1)} hrs</td>`);
+    if (has(metrics, "distance")) cells.push(`<td>${d.distance.toFixed(1)} km</td>`);
+    if (has(metrics, "hrv")) cells.push(`<td>${d.hrv !== null ? d.hrv + " ms" : "—"}</td>`);
+    return `<tr>${cells.join("")}</tr>`;
+  }).join("");
+
+  // Personal notes section
+  const personalNotesHTML = config.personalNotes && config.personalNotes.trim()
+    ? `<div class="section-title">Notes for Healthcare Provider</div>
+    <div class="personal-notes">
+      <div class="notes-icon">&#9998;</div>
+      <div class="notes-content">${config.personalNotes.replace(/\n/g, "<br>")}</div>
+    </div>`
+    : "";
+
+  // Metrics included label
+  const metricsIncluded = metrics.map((m) => {
+    const found = ALL_REPORT_METRICS.find((am) => am.key === m);
+    return found?.label ?? m;
+  }).join(", ");
 
   return `<!DOCTYPE html>
 <html>
@@ -155,7 +328,7 @@ export function generateReportHTML(
       padding-bottom: 6px; border-bottom: 2px solid #F59E0B;
     }
 
-    .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
+    .stats-grid { display: grid; grid-template-columns: repeat(${gridCols}, 1fr); gap: 10px; margin-bottom: 16px; }
     .stat-card {
       background: #FFFBEB; border: 1px solid #FDE68A; border-radius: 10px; padding: 14px; text-align: center;
     }
@@ -180,6 +353,18 @@ export function generateReportHTML(
     .insight-item { padding: 6px 0; border-bottom: 1px solid #FEF3C7; color: #78350F; font-size: 11px; }
     .insight-item:last-child { border-bottom: none; }
     .insight-bullet { color: #F59E0B; font-weight: 700; margin-right: 6px; }
+
+    .personal-notes {
+      background: #F0F9FF; border: 1px solid #BAE6FD; border-radius: 10px; padding: 16px; margin-bottom: 16px;
+      display: flex; gap: 12px; align-items: flex-start;
+    }
+    .notes-icon { font-size: 18px; color: #0284C7; flex-shrink: 0; margin-top: 2px; }
+    .notes-content { color: #0C4A6E; font-size: 11px; line-height: 1.7; flex: 1; white-space: pre-wrap; }
+
+    .metrics-tag {
+      display: inline-block; background: #FEF3C7; color: #92400E; font-size: 9px;
+      padding: 2px 8px; border-radius: 4px; margin-right: 4px; margin-bottom: 4px;
+    }
 
     .footer {
       margin-top: 24px; padding-top: 12px; border-top: 1px solid #E5E7EB;
@@ -219,93 +404,35 @@ export function generateReportHTML(
     </div>
   </div>
 
-  <!-- Summary Stats -->
-  <div class="section-title">Summary Overview</div>
-  <div class="stats-grid">
-    <div class="stat-card">
-      <div class="stat-label">Avg Daily Steps</div>
-      <div class="stat-value">${stepsStats.avg.toLocaleString()}</div>
-      <div class="stat-sub">Best: ${stepsStats.best.toLocaleString()}</div>
-      <div class="stat-trend" style="color: ${trendColor(stepsStats.trendDir, true)}">
-        ${trendArrow(stepsStats.trendDir)} ${stepsStats.trendPct}% trend
-      </div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">Avg Heart Rate</div>
-      <div class="stat-value">${hrStats.avg > 0 ? hrStats.avg : "—"} <span style="font-size:12px">bpm</span></div>
-      <div class="stat-sub">Range: ${hrStats.lowest}–${hrStats.best} bpm</div>
-      <div class="stat-trend" style="color: ${trendColor(hrStats.trendDir, false)}">
-        ${trendArrow(hrStats.trendDir)} ${hrStats.trendPct}% trend
-      </div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">Avg Calories Burned</div>
-      <div class="stat-value">${calStats.avg} <span style="font-size:12px">kcal</span></div>
-      <div class="stat-sub">Total: ${calStats.total.toLocaleString()} kcal</div>
-      <div class="stat-trend" style="color: ${trendColor(calStats.trendDir, true)}">
-        ${trendArrow(calStats.trendDir)} ${calStats.trendPct}% trend
-      </div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">Avg Sleep</div>
-      <div class="stat-value">${sleepStats.avg > 0 ? (sleepStats.avg).toFixed(1) : "—"} <span style="font-size:12px">hrs</span></div>
-      <div class="stat-sub">Best: ${sleepStats.best.toFixed(1)} hrs</div>
-      <div class="stat-trend" style="color: ${trendColor(sleepStats.trendDir, true)}">
-        ${trendArrow(sleepStats.trendDir)} ${sleepStats.trendPct}% trend
-      </div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">Total Distance</div>
-      <div class="stat-value">${distStats.total.toFixed(1)} <span style="font-size:12px">km</span></div>
-      <div class="stat-sub">Avg: ${distStats.avg.toFixed(1)} km/day</div>
-      <div class="stat-trend" style="color: ${trendColor(distStats.trendDir, true)}">
-        ${trendArrow(distStats.trendDir)} ${distStats.trendPct}% trend
-      </div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">Avg HRV</div>
-      <div class="stat-value">${hrvStats.avg > 0 ? hrvStats.avg : "—"} <span style="font-size:12px">ms</span></div>
-      <div class="stat-sub">${hrvStats.avg > 0 ? `Range: ${hrvStats.lowest}–${hrvStats.best} ms` : "No data"}</div>
-      <div class="stat-trend" style="color: ${trendColor(hrvStats.trendDir, true)}">
-        ${hrvStats.trendPct > 0 ? `${trendArrow(hrvStats.trendDir)} ${hrvStats.trendPct}% trend` : "—"}
-      </div>
-    </div>
+  <!-- Metrics Included -->
+  <div style="margin-bottom: 8px; font-size: 10px; color: #6B7280;">
+    <strong>Metrics included:</strong> ${metricsIncluded}
   </div>
 
+  ${personalNotesHTML}
+
+  <!-- Summary Stats -->
+  ${statCards.length > 0 ? `
+  <div class="section-title">Summary Overview</div>
+  <div class="stats-grid">
+    ${statCards.join("\n    ")}
+  </div>` : ""}
+
   <!-- Health Insights -->
+  ${insights.length > 0 ? `
   <div class="section-title">Health Insights</div>
   <div class="insights">
     ${insights.map((i) => `<div class="insight-item"><span class="insight-bullet">●</span>${i}</div>`).join("")}
-  </div>
+  </div>` : ""}
 
   <!-- Daily Breakdown -->
   <div class="section-title">Daily Breakdown</div>
   <table>
     <thead>
-      <tr>
-        <th>Date</th>
-        <th>Steps</th>
-        <th>Heart Rate</th>
-        <th>Calories</th>
-        <th>Sleep</th>
-        <th>Distance</th>
-        <th>HRV</th>
-      </tr>
+      <tr>${tableHeaders.join("")}</tr>
     </thead>
     <tbody>
-      ${data
-        .map(
-          (d) => `<tr>
-        <td>${formatShortDate(d.date)}</td>
-        <td>${d.steps.toLocaleString()}</td>
-        <td>${d.heartRate > 0 ? d.heartRate + " bpm" : "—"}</td>
-        <td>${d.activeCalories} kcal</td>
-        <td>${d.sleepHours.toFixed(1)} hrs</td>
-        <td>${d.distance.toFixed(1)} km</td>
-        <td>${d.hrv !== null ? d.hrv + " ms" : "—"}</td>
-      </tr>`,
-        )
-        .join("")}
+      ${tableRows}
     </tbody>
   </table>
 

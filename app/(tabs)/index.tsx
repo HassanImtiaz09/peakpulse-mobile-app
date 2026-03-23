@@ -78,6 +78,7 @@ const QUICK_ACTIONS_ALL = [
   { icon: "edit-note" as const, label: "Log Workout", route: "/log-workout", gated: false },
   // Below the fold (hidden by default)
   { icon: "show-chart" as const, label: "Health Trends", route: "/health-trends", gated: false },
+  { icon: "history" as const, label: "Workout Log", route: "/workout-history", gated: false },
   { icon: "kitchen" as const, label: "My Pantry", route: "/pantry", gated: false },
   { icon: "center-focus-strong" as const, label: "Form Check", route: "/form-checker", gated: false },
   { icon: "location-on" as const, label: "Find Gym", route: "/gym-finder", gated: false },
