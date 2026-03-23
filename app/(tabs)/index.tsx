@@ -25,6 +25,8 @@ import { PaywallModal } from "@/components/paywall-modal";
 import { TutorialOverlay, useTutorial } from "@/components/tutorial-overlay";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useWearable } from "@/lib/wearable-context";
+import { getWeeklyGoals, calculateWeeklyProgress, getWorkoutsThisWeek, isGoalTrackingEnabled, type WeeklyGoals, type WeeklyProgress } from "@/lib/goal-tracking";
+import { shareWeeklySummaryCard, type WeeklySummaryCardData } from "@/lib/social-card-generator";
 
 const TIPS_AND_TRICKS = [
   { icon: "water-drop" as const, tip: "Drink 500ml of water first thing in the morning to kickstart your metabolism and hydration." },
@@ -92,6 +94,8 @@ const QUICK_ACTIONS_ALL = [
   { icon: "receipt-long" as const, label: "Scan Receipt", route: "/scan-receipt", gated: false },
   { icon: "photo-library" as const, label: "Meal Timeline", route: "/meal-timeline", gated: false },
   { icon: "auto-awesome" as const, label: "Meal Prep", route: "/meal-prep", gated: false },
+  { icon: "flag" as const, label: "Weekly Goals", route: "/weekly-goals", gated: false },
+  { icon: "bookmark" as const, label: "Templates", route: "/workout-templates", gated: false },
 ];
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
@@ -231,6 +235,9 @@ export default function HomeScreen() {
   const canUse = isAuthenticated || isGuest;
   const wearableData = useWearable();
   const [tipIndex, setTipIndex] = React.useState(0);
+  const [goalProgress, setGoalProgress] = React.useState<WeeklyProgress | null>(null);
+  const [goalsEnabled, setGoalsEnabled] = React.useState(false);
+  const [sharingCard, setSharingCard] = React.useState(false);
 
   // 1A: Parallax scroll value
   const scrollY = useSharedValue(0);
@@ -242,6 +249,24 @@ export default function HomeScreen() {
     }, 5 * 60 * 1000);
     return () => clearInterval(interval);
   }, []);
+
+  // Load goal tracking data
+  React.useEffect(() => {
+    if (!canUse) return;
+    (async () => {
+      const enabled = await isGoalTrackingEnabled();
+      setGoalsEnabled(enabled);
+      if (!enabled) return;
+      const goals = await getWeeklyGoals();
+      const workoutsThisWeek = await getWorkoutsThisWeek();
+      const progress = calculateWeeklyProgress(goals, {
+        avgDailySteps: wearableData.stats.steps,
+        avgDailyCalories: wearableData.stats.totalCaloriesBurnt,
+        workoutsThisWeek,
+      });
+      setGoalProgress(progress);
+    })();
+  }, [canUse, wearableData.stats.steps, wearableData.stats.totalCaloriesBurnt]);
 
   const displayName = user?.name?.split(" ")[0] ?? guestProfile?.name?.split(" ")[0] ?? "Athlete";
 
@@ -708,6 +733,84 @@ export default function HomeScreen() {
                     <MaterialIcons name="chevron-right" size={14} color="#3B82F6" />
                   </TouchableOpacity>
                 </TouchableOpacity>
+              </View>
+            </StaggeredCard>
+          )}
+
+          {/* ── Weekly Goal Progress Rings ── */}
+          {goalsEnabled && goalProgress && (
+            <StaggeredCard index={3}>
+              <View style={styles.section}>
+                <SectionTitle
+                  title="Weekly Goals"
+                  rightElement={
+                    <TouchableOpacity onPress={() => router.push("/weekly-goals" as any)} style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
+                      <Text style={{ color: SF.orange, fontFamily: "DMSans_600SemiBold", fontSize: 12 }}>Edit Goals</Text>
+                      <MaterialIcons name="chevron-right" size={14} color={SF.orange} />
+                    </TouchableOpacity>
+                  }
+                />
+                <View style={{
+                  backgroundColor: SF.surfacePrimary, borderRadius: 20, padding: 16,
+                  borderWidth: 1.5, borderColor: SF.borderPrimary,
+                }}>
+                  <View style={{ flexDirection: "row", justifyContent: "space-around" }}>
+                    {/* Steps Ring */}
+                    <View style={{ alignItems: "center", flex: 1 }}>
+                      <View style={{ width: 68, height: 68, alignItems: "center", justifyContent: "center" }}>
+                        <Svg width={68} height={68}>
+                          <Circle cx={34} cy={34} r={28} stroke="rgba(34,197,94,0.15)" strokeWidth={5} fill="none" />
+                          <Circle cx={34} cy={34} r={28} stroke="#22C55E" strokeWidth={5} fill="none"
+                            strokeDasharray={`${(goalProgress.steps.percentage / 100) * 2 * Math.PI * 28} ${2 * Math.PI * 28}`}
+                            strokeLinecap="round" transform="rotate(-90 34 34)" />
+                        </Svg>
+                        <View style={{ position: "absolute" }}>
+                          <Text style={{ color: "#22C55E", fontFamily: "Outfit_700Bold", fontSize: 13, textAlign: "center" }}>{goalProgress.steps.percentage}%</Text>
+                        </View>
+                      </View>
+                      <Text style={{ color: SF.fg, fontFamily: "DMSans_600SemiBold", fontSize: 11, marginTop: 4 }}>Steps</Text>
+                      <Text style={{ color: "#78350F", fontFamily: "DMSans_400Regular", fontSize: 9 }}>{goalProgress.steps.current.toLocaleString()}/{goalProgress.steps.target.toLocaleString()}</Text>
+                    </View>
+                    {/* Calories Ring */}
+                    <View style={{ alignItems: "center", flex: 1 }}>
+                      <View style={{ width: 68, height: 68, alignItems: "center", justifyContent: "center" }}>
+                        <Svg width={68} height={68}>
+                          <Circle cx={34} cy={34} r={28} stroke="rgba(245,158,11,0.15)" strokeWidth={5} fill="none" />
+                          <Circle cx={34} cy={34} r={28} stroke="#F59E0B" strokeWidth={5} fill="none"
+                            strokeDasharray={`${(goalProgress.calories.percentage / 100) * 2 * Math.PI * 28} ${2 * Math.PI * 28}`}
+                            strokeLinecap="round" transform="rotate(-90 34 34)" />
+                        </Svg>
+                        <View style={{ position: "absolute" }}>
+                          <Text style={{ color: "#F59E0B", fontFamily: "Outfit_700Bold", fontSize: 13, textAlign: "center" }}>{goalProgress.calories.percentage}%</Text>
+                        </View>
+                      </View>
+                      <Text style={{ color: SF.fg, fontFamily: "DMSans_600SemiBold", fontSize: 11, marginTop: 4 }}>Calories</Text>
+                      <Text style={{ color: "#78350F", fontFamily: "DMSans_400Regular", fontSize: 9 }}>{goalProgress.calories.current}/{goalProgress.calories.target} kcal</Text>
+                    </View>
+                    {/* Workouts Ring */}
+                    <View style={{ alignItems: "center", flex: 1 }}>
+                      <View style={{ width: 68, height: 68, alignItems: "center", justifyContent: "center" }}>
+                        <Svg width={68} height={68}>
+                          <Circle cx={34} cy={34} r={28} stroke="rgba(239,68,68,0.15)" strokeWidth={5} fill="none" />
+                          <Circle cx={34} cy={34} r={28} stroke="#EF4444" strokeWidth={5} fill="none"
+                            strokeDasharray={`${(goalProgress.workouts.percentage / 100) * 2 * Math.PI * 28} ${2 * Math.PI * 28}`}
+                            strokeLinecap="round" transform="rotate(-90 34 34)" />
+                        </Svg>
+                        <View style={{ position: "absolute" }}>
+                          <Text style={{ color: "#EF4444", fontFamily: "Outfit_700Bold", fontSize: 13, textAlign: "center" }}>{goalProgress.workouts.percentage}%</Text>
+                        </View>
+                      </View>
+                      <Text style={{ color: SF.fg, fontFamily: "DMSans_600SemiBold", fontSize: 11, marginTop: 4 }}>Workouts</Text>
+                      <Text style={{ color: "#78350F", fontFamily: "DMSans_400Regular", fontSize: 9 }}>{goalProgress.workouts.current}/{goalProgress.workouts.target}</Text>
+                    </View>
+                  </View>
+                  <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", marginTop: 12, gap: 4 }}>
+                    <MaterialIcons name="schedule" size={12} color="#78350F" />
+                    <Text style={{ color: "#78350F", fontFamily: "DMSans_400Regular", fontSize: 10 }}>
+                      {goalProgress.daysRemaining} day{goalProgress.daysRemaining !== 1 ? "s" : ""} remaining this week
+                    </Text>
+                  </View>
+                </View>
               </View>
             </StaggeredCard>
           )}

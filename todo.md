@@ -1133,3 +1133,41 @@
 - [x] Unit tests for navigation wiring
 - [x] 65 new tests (round59-features.test.ts), all passing
 - [x] 0 TypeScript errors
+
+## Round 60 — Goal Tracking, Workout Templates, Social Sharing Cards
+
+### Feature 1: Goal Tracking Dashboard
+- [x] Create lib/goal-tracking.ts service with AsyncStorage persistence
+- [x] Define WeeklyGoals interface (steps, calories, workouts targets)
+- [x] Track weekly progress from wearable data and workout history
+- [x] Build app/weekly-goals.tsx settings screen for setting targets
+- [x] Add progress rings widget to home screen dashboard (steps, calories, workouts)
+- [x] Show percentage completion and trend indicators
+- [x] Add "Set Goals" quick action to dashboard
+
+### Feature 2: Workout Templates
+- [x] Create lib/workout-templates.ts service for template CRUD
+- [x] Define WorkoutTemplate interface (name, type, duration, calories, distance, HR)
+- [x] Build app/workout-templates.tsx screen to view/manage saved templates
+- [x] Add "Save as Template" button to log-workout screen after successful save
+- [x] Add one-tap "Use Template" flow that pre-fills log-workout form
+- [x] Persist templates in AsyncStorage
+- [x] Add navigation from log-workout and dashboard
+
+### Feature 3: Social Sharing Cards
+- [x] Create lib/social-card-generator.ts for generating branded HTML cards
+- [x] Build workout completion card (type, duration, calories, distance, PeakPulse branding)
+- [x] Build weekly summary card (steps avg, calories, workouts, sleep, branding)
+- [x] Use expo-print to render HTML to image/PDF
+- [x] Use expo-sharing to share generated card
+- [x] Add "Share" button to workout completion success screen
+- [x] Add "Share Weekly Summary" button to health-trends screen
+- [x] Match Aurora Titan dark theme with gold branding
+
+### Tests
+- [x] Unit tests for goal tracking data model and progress calculation
+- [x] Unit tests for workout template CRUD operations
+- [x] Unit tests for social card HTML generation
+- [x] Unit tests for navigation wiring
+- [x] 79 new tests (round60-features.test.ts), all passing
+- [x] 0 TypeScript errors

@@ -1,14 +1,16 @@
-import React, { useState, useCallback, useMemo } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import {
   Text, View, TouchableOpacity, ScrollView, TextInput, Alert,
   ImageBackground, Platform, ActivityIndicator, KeyboardAvoidingView,
 } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { useRouter } from "expo-router";
+import { useRouter, useLocalSearchParams } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Haptics from "expo-haptics";
 import { useWearable } from "@/lib/wearable-context";
 import type { WorkoutType, WorkoutData } from "@/lib/health-service";
+import { saveTemplate, type CreateTemplateInput } from "@/lib/workout-templates";
+import { shareWorkoutCard, type WorkoutCardData } from "@/lib/social-card-generator";
 
 const DASHBOARD_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/PZcnawJwIZkQHTEM.jpg";
 
@@ -71,6 +73,10 @@ async function saveWorkoutToHistory(entry: WorkoutLogEntry): Promise<void> {
 // ── Main Screen ──────────────────────────────────────────────────
 export default function LogWorkoutScreen() {
   const router = useRouter();
+  const params = useLocalSearchParams<{
+    templateType?: string; templateDuration?: string; templateCalories?: string;
+    templateDistance?: string; templateHR?: string; templateTitle?: string;
+  }>();
   const { logWorkoutToHealthPlatform, healthSourceName, permissionStatus, isHealthPlatformAvailable } = useWearable();
 
   // Form state
@@ -84,6 +90,24 @@ export default function LogWorkoutScreen() {
   const [saving, setSaving] = useState(false);
   const [autoCalories, setAutoCalories] = useState(true);
   const [syncToHealth, setSyncToHealth] = useState(true);
+  const [savingTemplate, setSavingTemplate] = useState(false);
+  const [sharingCard, setSharingCard] = useState(false);
+
+  // Pre-fill from template params
+  useEffect(() => {
+    if (params.templateType) {
+      setSelectedType(params.templateType as WorkoutType);
+      if (params.templateTitle) setTitle(params.templateTitle);
+      if (params.templateDuration) {
+        const dur = parseInt(params.templateDuration);
+        if (dur >= 60) { setHours(String(Math.floor(dur / 60))); setMinutes(String(dur % 60)); }
+        else setMinutes(String(dur));
+      }
+      if (params.templateCalories) { setCalories(params.templateCalories); setAutoCalories(false); }
+      if (params.templateDistance) setDistance(params.templateDistance);
+      if (params.templateHR) setHeartRate(params.templateHR);
+    }
+  }, [params.templateType]);
 
   // Date state (default: now)
   const [dateStr, setDateStr] = useState(() => {
@@ -183,7 +207,51 @@ export default function LogWorkoutScreen() {
       Alert.alert(
         "Workout Logged",
         `${selectedConfig?.label ?? "Workout"} — ${totalDurationMin} min, ${effectiveCalories} kcal${healthMsg}`,
-        [{ text: "Done", onPress: () => router.back() }],
+        [
+          {
+            text: "Save as Template",
+            onPress: async () => {
+              if (!selectedType || !selectedConfig) return;
+              setSavingTemplate(true);
+              try {
+                await saveTemplate({
+                  name: title || `${selectedConfig.label} ${totalDurationMin}min`,
+                  type: selectedType,
+                  durationMinutes: totalDurationMin,
+                  estimatedCalories: effectiveCalories,
+                  distanceKm: distance ? parseFloat(distance) : undefined,
+                  heartRateAvg: heartRate ? parseInt(heartRate) : undefined,
+                  color: selectedConfig.color,
+                  icon: selectedConfig.icon,
+                });
+                Alert.alert("Template Saved", "You can use this template for quick logging next time.", [{ text: "Done", onPress: () => router.back() }]);
+              } catch { Alert.alert("Error", "Failed to save template."); }
+              finally { setSavingTemplate(false); }
+            },
+          },
+          {
+            text: "Share Card",
+            onPress: async () => {
+              if (!selectedType || !selectedConfig) return;
+              setSharingCard(true);
+              try {
+                const cardData: WorkoutCardData = {
+                  type: selectedType,
+                  typeName: selectedConfig.label,
+                  title: title || `${selectedConfig.label} Session`,
+                  durationMinutes: totalDurationMin,
+                  caloriesBurned: effectiveCalories,
+                  distanceKm: distance ? parseFloat(distance) : undefined,
+                  heartRateAvg: heartRate ? parseInt(heartRate) : undefined,
+                  date: new Date().toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric" }),
+                };
+                await shareWorkoutCard(cardData);
+              } catch {}
+              finally { setSharingCard(false); }
+            },
+          },
+          { text: "Done", onPress: () => router.back() },
+        ],
       );
     } catch (e: any) {
       Alert.alert("Error", `Failed to save workout: ${e?.message ?? "Unknown error"}`);
@@ -211,19 +279,30 @@ export default function LogWorkoutScreen() {
         </View>
       </ImageBackground>
 
-      {/* View History Link */}
-      <TouchableOpacity
-        onPress={() => router.push("/workout-history" as any)}
-        style={{
-          flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6,
-          paddingVertical: 10, backgroundColor: "rgba(245,158,11,0.06)",
-          borderBottomWidth: 1, borderBottomColor: "rgba(245,158,11,0.08)",
-        }}
-      >
-        <MaterialIcons name="history" size={14} color="#F59E0B" />
-        <Text style={{ color: "#F59E0B", fontFamily: "DMSans_600SemiBold", fontSize: 12 }}>View Workout History</Text>
-        <MaterialIcons name="chevron-right" size={14} color="#F59E0B" />
-      </TouchableOpacity>
+      {/* Quick Links */}
+      <View style={{ flexDirection: "row", borderBottomWidth: 1, borderBottomColor: "rgba(245,158,11,0.08)" }}>
+        <TouchableOpacity
+          onPress={() => router.push("/workout-history" as any)}
+          style={{
+            flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 4,
+            paddingVertical: 10, backgroundColor: "rgba(245,158,11,0.06)",
+          }}
+        >
+          <MaterialIcons name="history" size={14} color="#F59E0B" />
+          <Text style={{ color: "#F59E0B", fontFamily: "DMSans_600SemiBold", fontSize: 11 }}>History</Text>
+        </TouchableOpacity>
+        <View style={{ width: 1, backgroundColor: "rgba(245,158,11,0.08)" }} />
+        <TouchableOpacity
+          onPress={() => router.push("/workout-templates" as any)}
+          style={{
+            flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 4,
+            paddingVertical: 10, backgroundColor: "rgba(245,158,11,0.06)",
+          }}
+        >
+          <MaterialIcons name="bookmark" size={14} color="#F59E0B" />
+          <Text style={{ color: "#F59E0B", fontFamily: "DMSans_600SemiBold", fontSize: 11 }}>Templates</Text>
+        </TouchableOpacity>
+      </View>
 
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : undefined}>
         <ScrollView contentContainerStyle={{ padding: 20, paddingBottom: 40 }} showsVerticalScrollIndicator={false}>
