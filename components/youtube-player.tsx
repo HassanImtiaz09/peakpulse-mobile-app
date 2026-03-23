@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef } from "react";
+import React, { useState, useCallback } from "react";
 import {
   View,
   Text,
@@ -7,10 +7,10 @@ import {
   ActivityIndicator,
   Platform,
   StyleSheet,
-  Dimensions,
+  Image,
 } from "react-native";
-import { WebView } from "react-native-webview";
 import { MaterialIcons } from "@expo/vector-icons";
+import * as WebBrowser from "expo-web-browser";
 import { useColors } from "@/hooks/use-colors";
 
 interface YouTubePlayerProps {
@@ -23,9 +23,12 @@ interface YouTubePlayerProps {
 }
 
 /**
- * In-app YouTube video player with fullscreen support.
- * Uses WebView to embed YouTube's iframe player API.
- * Supports inline playback and a fullscreen modal.
+ * YouTube video player component.
+ *
+ * - On **web**: renders an embedded YouTube iframe (works natively in browsers).
+ * - On **native (iOS/Android)**: shows a YouTube thumbnail with a play button overlay.
+ *   Tapping opens the video in the system browser via expo-web-browser,
+ *   which guarantees reliable YouTube playback without WebView Error 153.
  */
 export function YouTubePlayer({
   videoId,
@@ -33,47 +36,45 @@ export function YouTubePlayer({
   height = 200,
 }: YouTubePlayerProps) {
   const colors = useColors();
-  const [isFullscreen, setIsFullscreen] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [thumbnailLoading, setThumbnailLoading] = useState(true);
+  const [thumbnailError, setThumbnailError] = useState(false);
 
+  const youtubeUrl = `https://www.youtube.com/watch?v=${videoId}`;
   const embedUrl = `https://www.youtube-nocookie.com/embed/${videoId}?rel=0&modestbranding=1&playsinline=1&autoplay=0&showinfo=0&controls=1`;
 
-  const htmlContent = `
-    <!DOCTYPE html>
-    <html>
-    <head>
-      <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-      <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: #000; overflow: hidden; }
-        iframe { width: 100%; height: 100vh; border: none; }
-      </style>
-    </head>
-    <body>
-      <iframe
-        src="${embedUrl}"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-        allowfullscreen
-        referrerpolicy="strict-origin"
-      ></iframe>
-    </body>
-    </html>
-  `;
+  // YouTube provides thumbnail images at various qualities
+  // maxresdefault (1280x720), sddefault (640x480), hqdefault (480x360), mqdefault (320x180)
+  const thumbnailUrl = thumbnailError
+    ? `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`
+    : `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`;
 
-  const handleLoadEnd = useCallback(() => {
-    setIsLoading(false);
-  }, []);
+  const openInBrowser = useCallback(async () => {
+    try {
+      await WebBrowser.openBrowserAsync(youtubeUrl, {
+        presentationStyle: WebBrowser.WebBrowserPresentationStyle.FULL_SCREEN,
+        controlsColor: "#F59E0B",
+        toolbarColor: "#0A0500",
+      });
+    } catch {
+      // Fallback: try opening in system browser
+      try {
+        await WebBrowser.openBrowserAsync(youtubeUrl);
+      } catch {
+        // Silent fail — user can still see the thumbnail
+      }
+    }
+  }, [youtubeUrl]);
 
-  return (
-    <View>
-      {/* Inline Player */}
-      <View
-        style={[
-          styles.playerContainer,
-          { height, backgroundColor: "#000", borderRadius: 12, overflow: "hidden" },
-        ]}
-      >
-        {Platform.OS === "web" ? (
+  // ── Web: use iframe embed (works perfectly in browsers) ──────────────────
+  if (Platform.OS === "web") {
+    return (
+      <View>
+        <View
+          style={[
+            styles.playerContainer,
+            { height, backgroundColor: "#000", borderRadius: 12, overflow: "hidden" },
+          ]}
+        >
           <iframe
             src={embedUrl}
             style={{ width: "100%", height: "100%", border: "none" }}
@@ -81,35 +82,66 @@ export function YouTubePlayer({
             allowFullScreen
             referrerPolicy="strict-origin"
           />
-        ) : (
-          <WebView
-            source={{ html: htmlContent }}
-            style={{ flex: 1, backgroundColor: "#000" }}
-            allowsInlineMediaPlayback
-            mediaPlaybackRequiresUserAction={false}
-            javaScriptEnabled
-            onLoadEnd={handleLoadEnd}
-            scrollEnabled={false}
-          />
-        )}
+        </View>
+        {cue ? (
+          <View style={[styles.cueContainer, { backgroundColor: colors.surface }]}>
+            <MaterialIcons name="info-outline" size={14} color={colors.muted} />
+            <Text style={[styles.cueText, { color: colors.muted }]}>{cue}</Text>
+          </View>
+        ) : null}
+      </View>
+    );
+  }
 
-        {isLoading && Platform.OS !== "web" && (
+  // ── Native: thumbnail preview + open in system browser ───────────────────
+  return (
+    <View>
+      <Pressable
+        onPress={openInBrowser}
+        style={({ pressed }) => [
+          styles.playerContainer,
+          {
+            height,
+            backgroundColor: "#000",
+            borderRadius: 12,
+            overflow: "hidden",
+          },
+          pressed && { opacity: 0.85, transform: [{ scale: 0.98 }] },
+        ]}
+      >
+        {/* Thumbnail Image */}
+        <Image
+          source={{ uri: thumbnailUrl }}
+          style={StyleSheet.absoluteFill}
+          resizeMode="cover"
+          onLoadStart={() => setThumbnailLoading(true)}
+          onLoadEnd={() => setThumbnailLoading(false)}
+          onError={() => {
+            setThumbnailError(true);
+            setThumbnailLoading(false);
+          }}
+        />
+
+        {/* Loading indicator */}
+        {thumbnailLoading && (
           <View style={styles.loadingOverlay}>
             <ActivityIndicator size="large" color="#D4AF37" />
           </View>
         )}
 
-        {/* Fullscreen button overlay */}
-        <Pressable
-          onPress={() => setIsFullscreen(true)}
-          style={({ pressed }) => [
-            styles.fullscreenButton,
-            pressed && { opacity: 0.7 },
-          ]}
-        >
-          <MaterialIcons name="fullscreen" size={24} color="#fff" />
-        </Pressable>
-      </View>
+        {/* Play button overlay */}
+        <View style={styles.playOverlay}>
+          <View style={styles.playButton}>
+            <MaterialIcons name="play-arrow" size={40} color="#fff" />
+          </View>
+        </View>
+
+        {/* "Watch on YouTube" label */}
+        <View style={styles.youtubeLabel}>
+          <MaterialIcons name="ondemand-video" size={14} color="#fff" />
+          <Text style={styles.youtubeLabelText}>Watch Demo</Text>
+        </View>
+      </Pressable>
 
       {/* Form cue */}
       {cue ? (
@@ -118,55 +150,12 @@ export function YouTubePlayer({
           <Text style={[styles.cueText, { color: colors.muted }]}>{cue}</Text>
         </View>
       ) : null}
-
-      {/* Fullscreen Modal */}
-      <Modal
-        visible={isFullscreen}
-        animationType="fade"
-        supportedOrientations={["portrait", "landscape"]}
-        onRequestClose={() => setIsFullscreen(false)}
-      >
-        <View style={styles.fullscreenContainer}>
-          {Platform.OS === "web" ? (
-            <iframe
-              src={embedUrl.replace("autoplay=0", "autoplay=1")}
-              style={{ width: "100%", height: "100%", border: "none" }}
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-              referrerPolicy="strict-origin"
-            />
-          ) : (
-            <WebView
-              source={{
-                html: htmlContent.replace("autoplay=0", "autoplay=1"),
-              }}
-              style={{ flex: 1, backgroundColor: "#000" }}
-              allowsInlineMediaPlayback
-              allowsFullscreenVideo
-              mediaPlaybackRequiresUserAction={false}
-              javaScriptEnabled
-              scrollEnabled={false}
-            />
-          )}
-
-          {/* Close button */}
-          <Pressable
-            onPress={() => setIsFullscreen(false)}
-            style={({ pressed }) => [
-              styles.closeButton,
-              pressed && { opacity: 0.7 },
-            ]}
-          >
-            <MaterialIcons name="close" size={28} color="#fff" />
-          </Pressable>
-        </View>
-      </Modal>
     </View>
   );
 }
 
 /**
- * Compact thumbnail button that opens the video player in a modal.
+ * Compact thumbnail button that opens the video in the system browser.
  * Used in list items where inline playback is too large.
  */
 export function YouTubePlayerButton({
@@ -175,54 +164,41 @@ export function YouTubePlayerButton({
   label = "Watch Demo",
 }: YouTubePlayerProps & { label?: string }) {
   const colors = useColors();
-  const [showPlayer, setShowPlayer] = useState(false);
+
+  const openInBrowser = useCallback(async () => {
+    const youtubeUrl = `https://www.youtube.com/watch?v=${videoId}`;
+    try {
+      if (Platform.OS === "web") {
+        window.open(youtubeUrl, "_blank");
+      } else {
+        await WebBrowser.openBrowserAsync(youtubeUrl, {
+          presentationStyle: WebBrowser.WebBrowserPresentationStyle.FULL_SCREEN,
+          controlsColor: "#F59E0B",
+          toolbarColor: "#0A0500",
+        });
+      }
+    } catch {
+      // Silent fail
+    }
+  }, [videoId]);
 
   return (
-    <>
-      <Pressable
-        onPress={() => setShowPlayer(true)}
-        style={({ pressed }) => [
-          styles.demoButton,
-          {
-            backgroundColor: colors.surface,
-            borderColor: colors.border,
-          },
-          pressed && { opacity: 0.7, transform: [{ scale: 0.97 }] },
-        ]}
-      >
-        <MaterialIcons name="play-circle-outline" size={20} color="#D4AF37" />
-        <Text style={[styles.demoButtonText, { color: colors.foreground }]}>
-          {label}
-        </Text>
-      </Pressable>
-
-      <Modal
-        visible={showPlayer}
-        animationType="slide"
-        presentationStyle="pageSheet"
-        onRequestClose={() => setShowPlayer(false)}
-      >
-        <View style={[styles.modalContainer, { backgroundColor: colors.background }]}>
-          {/* Header */}
-          <View style={[styles.modalHeader, { borderBottomColor: colors.border }]}>
-            <Text style={[styles.modalTitle, { color: colors.foreground }]}>
-              Exercise Demo
-            </Text>
-            <Pressable
-              onPress={() => setShowPlayer(false)}
-              style={({ pressed }) => [pressed && { opacity: 0.6 }]}
-            >
-              <MaterialIcons name="close" size={24} color={colors.muted} />
-            </Pressable>
-          </View>
-
-          {/* Player */}
-          <View style={styles.modalPlayer}>
-            <YouTubePlayer videoId={videoId} cue={cue} height={240} />
-          </View>
-        </View>
-      </Modal>
-    </>
+    <Pressable
+      onPress={openInBrowser}
+      style={({ pressed }) => [
+        styles.demoButton,
+        {
+          backgroundColor: colors.surface,
+          borderColor: colors.border,
+        },
+        pressed && { opacity: 0.7, transform: [{ scale: 0.97 }] },
+      ]}
+    >
+      <MaterialIcons name="play-circle-outline" size={20} color="#D4AF37" />
+      <Text style={[styles.demoButtonText, { color: colors.foreground }]}>
+        {label}
+      </Text>
+    </Pressable>
   );
 }
 
@@ -236,16 +212,40 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "rgba(0,0,0,0.6)",
   },
-  fullscreenButton: {
+  playOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  playButton: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: "rgba(245, 158, 11, 0.9)",
+    justifyContent: "center",
+    alignItems: "center",
+    shadowColor: "#F59E0B",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.4,
+    shadowRadius: 12,
+    elevation: 8,
+  },
+  youtubeLabel: {
     position: "absolute",
     bottom: 8,
     right: 8,
-    backgroundColor: "rgba(0,0,0,0.6)",
-    borderRadius: 20,
-    width: 36,
-    height: 36,
-    justifyContent: "center",
+    flexDirection: "row",
     alignItems: "center",
+    gap: 4,
+    backgroundColor: "rgba(0,0,0,0.7)",
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 12,
+  },
+  youtubeLabelText: {
+    color: "#fff",
+    fontSize: 11,
+    fontWeight: "600",
   },
   cueContainer: {
     flexDirection: "row",
@@ -261,22 +261,6 @@ const styles = StyleSheet.create({
     lineHeight: 18,
     flex: 1,
   },
-  fullscreenContainer: {
-    flex: 1,
-    backgroundColor: "#000",
-  },
-  closeButton: {
-    position: "absolute",
-    top: 50,
-    right: 16,
-    backgroundColor: "rgba(0,0,0,0.6)",
-    borderRadius: 20,
-    width: 40,
-    height: 40,
-    justifyContent: "center",
-    alignItems: "center",
-    zIndex: 10,
-  },
   demoButton: {
     flexDirection: "row",
     alignItems: "center",
@@ -289,24 +273,5 @@ const styles = StyleSheet.create({
   demoButtonText: {
     fontSize: 13,
     fontWeight: "600",
-  },
-  modalContainer: {
-    flex: 1,
-  },
-  modalHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingHorizontal: 16,
-    paddingTop: 56,
-    paddingBottom: 12,
-    borderBottomWidth: 0.5,
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: "700",
-  },
-  modalPlayer: {
-    padding: 16,
   },
 });

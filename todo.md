@@ -1336,3 +1336,17 @@
 - [x] Unit tests for UI integration
 - [x] 74 new tests (round64-features.test.ts), all passing
 - [x] 0 TypeScript errors
+
+## Round 65 — Fix Workout Demo Video Player (Error 153)
+
+### Bug Fix
+- [x] Root cause: WebView YouTube iframe embeds fail on native with Error 153 (YouTube player configuration error)
+- [x] Solution: Replace WebView YouTube player with YouTube thumbnail preview + expo-web-browser for native, keep iframe for web
+- [x] Rewrite youtube-player.tsx to show YouTube thumbnail image with play button overlay
+- [x] On native: tap opens YouTube video in system browser via expo-web-browser (guaranteed playback)
+- [x] On web: keep existing iframe embed (already works)
+- [x] Keep all 70+ exercise YouTube video IDs (they're curated and correct)
+- [x] Update active-workout.tsx to use the new player component
+- [x] Add loading states and error handling
+- [x] 0 TypeScript errors
+- [x] 20 unit tests passing (round65-video-fix.test.ts)
