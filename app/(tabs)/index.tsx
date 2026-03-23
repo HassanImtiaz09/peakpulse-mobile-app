@@ -104,6 +104,8 @@ const QUICK_ACTIONS_ALL = [
   { icon: "flag" as const, label: "Weekly Goals", route: "/weekly-goals", gated: false },
   { icon: "bookmark" as const, label: "Templates", route: "/workout-templates", gated: false },
   { icon: "people" as const, label: "Social Circle", route: "/social-circle", gated: false },
+  { icon: "sports-martial-arts" as const, label: "Challenges", route: "/challenge", gated: false },
+  { icon: "groups" as const, label: "Group Goals", route: "/group-goals", gated: false },
 ];
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);

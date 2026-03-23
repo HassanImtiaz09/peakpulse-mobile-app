@@ -1278,3 +1278,61 @@
 - [x] Unit tests for UI integration
 - [x] 88 new tests (round63-social-circle.test.ts), all passing
 - [x] 0 TypeScript errors
+
+## Round 64 — Friend Challenges, Activity Feed & Group Goals
+
+### Feature 1: Friend Challenge Duels (lib/challenge-service.ts)
+- [x] Define Challenge interface (id, type, challenger, opponent, startDate, endDate, status, scores)
+- [x] Support challenge types: steps and calories (7-day duels)
+- [x] Challenge lifecycle: pending → accepted → active → completed (+ declined, expired)
+- [x] Track daily progress for both participants (dailyProgress array, 7 entries)
+- [x] Determine winner and generate result summary (winnerId, ChallengeStats)
+- [x] Persist challenges in AsyncStorage (@peakpulse_challenges)
+- [x] Generate simulated challenge data for demo mode (loadOrCreateDemoChallenges)
+
+### Feature 2: Challenge UI (app/challenge.tsx)
+- [x] Create challenge screen with Active, Completed, and New Challenge tabs
+- [x] Challenge a friend from friend detail modal (Challenge to a Duel button)
+- [x] Show real-time progress comparison (progress bars for both participants)
+- [x] Winner announcement with celebration UI
+- [x] Challenge history with win/loss/draw record and win streak
+
+### Feature 3: Activity Feed (lib/activity-feed.ts)
+- [x] Define ActivityFeedItem interface (type, userId, userName, userEmoji, timestamp, data)
+- [x] Support event types: workout_completed, milestone_unlocked, challenge_won, streak_achieved, goal_hit, joined_circle
+- [x] Generate simulated feed items from friend data (generateSimulatedFeed)
+- [x] Persist feed in AsyncStorage with max 50 items (@peakpulse_activity_feed)
+
+### Feature 4: Activity Feed UI (integrated into social-circle.tsx Circle tab)
+- [x] Add Activity tab to social-circle.tsx with full feed display
+- [x] Show feed items with emoji, friend name, action, and timestamp
+- [x] Different styling per event type (getFeedItemColor, getFeedItemIcon)
+- [x] Activity types legend with color-coded indicators
+
+### Feature 5: Group Goals (lib/group-goals.ts)
+- [x] Define GroupGoal interface (id, metric, target, currentTotal, contributions, startDate, endDate, status, isAchieved)
+- [x] Support metrics: combined steps, calories, workouts, and distance
+- [x] Track collective progress from all circle members
+- [x] Calculate contribution percentage per member (GroupGoalContribution)
+- [x] Persist group goals in AsyncStorage (@peakpulse_group_goals)
+
+### Feature 6: Group Goals UI (app/group-goals.tsx)
+- [x] Create group goals screen with active goal and goal creation
+- [x] Show collective progress bar with percentage
+- [x] Show individual contributions breakdown per member
+- [x] Create new group goal form (metric, target, duration)
+- [x] Goal history with completed/failed status
+
+### Feature 7: Navigation & Integration
+- [x] Add Challenge button to friend detail modal in social-circle.tsx
+- [x] Add Activity tab to social-circle.tsx (4 tabs: circle, activity, leaderboard, invite)
+- [x] Add Challenges and Group Goals quick actions to dashboard
+- [x] Add Challenges and Group Goals quick links to social circle screen
+
+### Tests
+- [x] Unit tests for challenge service lifecycle and scoring
+- [x] Unit tests for activity feed generation and types
+- [x] Unit tests for group goals progress calculation
+- [x] Unit tests for UI integration
+- [x] 74 new tests (round64-features.test.ts), all passing
+- [x] 0 TypeScript errors

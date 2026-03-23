@@ -29,10 +29,13 @@ import {
   type StreakData,
 } from "@/lib/streak-tracking";
 import { calculateWeeklyProgress, getWeeklyGoals, type WeeklyProgress, type WeeklyGoals } from "@/lib/goal-tracking";
+import { loadOrCreateFeed, getFeedItemIcon, getFeedItemMessage, getFeedItemColor, type ActivityFeedItem } from "@/lib/activity-feed";
+import { getActiveChallenges, type Challenge } from "@/lib/challenge-service";
+import { getActiveGroupGoals, type GroupGoal } from "@/lib/group-goals";
 
 const HERO_BG = "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&q=80";
 
-type TabId = "circle" | "leaderboard" | "invite";
+type TabId = "circle" | "activity" | "leaderboard" | "invite";
 
 const METRIC_OPTIONS: { id: LeaderboardMetric; label: string; emoji: string }[] = [
   { id: "streak", label: "Streak", emoji: "🔥" },
@@ -51,6 +54,9 @@ export default function SocialCircleScreen() {
   const [streakData, setStreakData] = useState<StreakData | null>(null);
   const [weeklyProgress, setWeeklyProgress] = useState<WeeklyProgress | null>(null);
   const [discountData, setDiscountData] = useState<DiscountData | null>(null);
+  const [activityFeed, setActivityFeed] = useState<ActivityFeedItem[]>([]);
+  const [activeChallenges, setActiveChallenges] = useState<Challenge[]>([]);
+  const [activeGroupGoal, setActiveGroupGoal] = useState<GroupGoal | null>(null);
   const [loading, setLoading] = useState(true);
   const [leaderboardMetric, setLeaderboardMetric] = useState<LeaderboardMetric>("streak");
   const [selectedFriend, setSelectedFriend] = useState<FriendProfile | null>(null);
@@ -61,12 +67,16 @@ export default function SocialCircleScreen() {
     setLoading(true);
     try {
       const name = guestProfile?.name ?? "User";
-      const [circle, streak, goals, discounts] = await Promise.all([
+      const [circle, streak, goals, discounts, challenges] = await Promise.all([
         loadOrCreateSocialCircle(name),
         getStreakData(),
         getWeeklyGoals(),
         getDiscountData(),
+        getActiveChallenges(),
       ]);
+      const feed = await loadOrCreateFeed(circle.friends);
+      const activeGoals = await getActiveGroupGoals();
+      const groupGoal = activeGoals.length > 0 ? activeGoals[0] : null;
       const progress = goals ? calculateWeeklyProgress(goals, {
         avgDailySteps: wearableData.steps,
         avgDailyCalories: wearableData.totalCaloriesBurnt,
@@ -76,6 +86,9 @@ export default function SocialCircleScreen() {
       setStreakData(streak);
       setWeeklyProgress(progress);
       setDiscountData(discounts);
+      setActivityFeed(feed);
+      setActiveChallenges(challenges);
+      setActiveGroupGoal(groupGoal);
     } catch (e) {
       console.warn("[SocialCircle] Load error:", e);
     } finally {
@@ -136,6 +149,8 @@ export default function SocialCircleScreen() {
 
   const metricDisplay = getMetricDisplay(leaderboardMetric);
 
+  // Activity Feed helpers use the service functions directly
+
   // ── Render Helpers ────────────────────────────────────────────
 
   const renderFriendCard = ({ item: friend }: { item: FriendProfile }) => (
@@ -159,9 +174,38 @@ export default function SocialCircleScreen() {
         </View>
         <Text style={styles.friendLastActive}>{friend.isActive ? "Active now" : timeAgo(friend.lastActive)}</Text>
       </View>
-      <Text style={{ color: "#92400E", fontSize: 18 }}>›</Text>
+      <View style={{ flexDirection: "row", gap: 6 }}>
+        <TouchableOpacity
+          style={styles.challengeBtn}
+          onPress={() => router.push({ pathname: "/challenge" as any, params: { friendId: friend.id, friendName: friend.name } })}
+        >
+          <Text style={{ fontSize: 14 }}>⚔️</Text>
+        </TouchableOpacity>
+        <Text style={{ color: "#92400E", fontSize: 18 }}>›</Text>
+      </View>
     </TouchableOpacity>
   );
+
+  const renderActivityItem = ({ item }: { item: ActivityFeedItem }) => {
+    const accentColor = getFeedItemColor(item.type);
+    const message = getFeedItemMessage(item);
+    const icon = getFeedItemIcon(item.type);
+    return (
+      <View style={styles.activityItem}>
+        <View style={[styles.activityIcon, { backgroundColor: `${accentColor}15` }]}>
+          <Text style={{ fontSize: 20 }}>{icon}</Text>
+        </View>
+        <View style={{ flex: 1 }}>
+          <Text style={styles.activityUser}>{item.userName}</Text>
+          <Text style={styles.activityText}>{message}</Text>
+          <Text style={styles.activityTime}>{timeAgo(item.timestamp)}</Text>
+        </View>
+        <View style={[styles.activityBadge, { backgroundColor: `${accentColor}15` }]}>
+          <Text style={[styles.activityBadgeText, { color: accentColor }]}>{item.userEmoji}</Text>
+        </View>
+      </View>
+    );
+  };
 
   const renderLeaderboardEntry = ({ item, index }: { item: LeaderboardEntry; index: number }) => {
     const isTop3 = item.rank <= 3;
@@ -227,19 +271,27 @@ export default function SocialCircleScreen() {
       </ImageBackground>
 
       {/* Tab Bar */}
-      <View style={styles.tabBar}>
-        {(["circle", "leaderboard", "invite"] as TabId[]).map((tab) => (
-          <TouchableOpacity
-            key={tab}
-            style={[styles.tab, activeTab === tab && styles.tabActive]}
-            onPress={() => setActiveTab(tab)}
-          >
-            <Text style={[styles.tabText, activeTab === tab && styles.tabTextActive]}>
-              {tab === "circle" ? "👥 Circle" : tab === "leaderboard" ? "🏆 Leaderboard" : "📨 Invite"}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </View>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.tabBar} contentContainerStyle={{ paddingHorizontal: 4 }}>
+        {(["circle", "activity", "leaderboard", "invite"] as TabId[]).map((tab) => {
+          const tabLabels: Record<TabId, string> = {
+            circle: "👥 Circle",
+            activity: "📣 Activity",
+            leaderboard: "🏆 Board",
+            invite: "📨 Invite",
+          };
+          return (
+            <TouchableOpacity
+              key={tab}
+              style={[styles.tab, activeTab === tab && styles.tabActive]}
+              onPress={() => setActiveTab(tab)}
+            >
+              <Text style={[styles.tabText, activeTab === tab && styles.tabTextActive]}>
+                {tabLabels[tab]}
+              </Text>
+            </TouchableOpacity>
+          );
+        })}
+      </ScrollView>
 
       {loading ? (
         <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
@@ -250,6 +302,31 @@ export default function SocialCircleScreen() {
           {/* ── Circle Tab ──────────────────────────────────────── */}
           {activeTab === "circle" && (
             <>
+              {/* Quick Links: Challenges & Group Goals */}
+              <View style={styles.quickLinksRow}>
+                <TouchableOpacity
+                  style={styles.quickLinkCard}
+                  onPress={() => router.push("/challenge" as any)}
+                >
+                  <Text style={{ fontSize: 28 }}>⚔️</Text>
+                  <Text style={styles.quickLinkTitle}>Challenges</Text>
+                  <Text style={styles.quickLinkSub}>
+                    {activeChallenges.length > 0 ? `${activeChallenges.length} active` : "Start a duel"}
+
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.quickLinkCard}
+                  onPress={() => router.push("/group-goals" as any)}
+                >
+                  <Text style={{ fontSize: 28 }}>🎯</Text>
+                  <Text style={styles.quickLinkTitle}>Group Goals</Text>
+                  <Text style={styles.quickLinkSub}>
+                    {activeGroupGoal ? `${Math.round((activeGroupGoal.currentTotal / activeGroupGoal.target) * 100)}% done` : "Set a goal"}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+
               {/* Circle Stats */}
               {circleStats && circleData && circleData.friends.length > 0 && (
                 <View style={styles.statsRow}>
@@ -312,6 +389,53 @@ export default function SocialCircleScreen() {
                   ))}
                 </View>
               )}
+            </>
+          )}
+
+          {/* ── Activity Feed Tab ──────────────────────────────── */}
+          {activeTab === "activity" && (
+            <>
+              <Text style={styles.sectionTitle}>Recent Activity</Text>
+              <Text style={styles.sectionSubtitle}>
+                See what your circle has been up to
+              </Text>
+
+              {activityFeed.length > 0 ? (
+                <FlatList
+                  data={activityFeed}
+                  keyExtractor={(item) => item.id}
+                  renderItem={renderActivityItem}
+                  scrollEnabled={false}
+                  ItemSeparatorComponent={() => <View style={styles.activitySeparator} />}
+                />
+              ) : (
+                <View style={styles.emptyState}>
+                  <Text style={{ fontSize: 48, marginBottom: 12 }}>📣</Text>
+                  <Text style={styles.emptyTitle}>No activity yet</Text>
+                  <Text style={styles.emptySubtitle}>
+                    When your friends complete workouts, unlock milestones, or win challenges, their activity will appear here.
+                  </Text>
+                </View>
+              )}
+
+              {/* Activity Legend */}
+              <View style={styles.legendCard}>
+                <Text style={[styles.sectionTitle, { fontSize: 14, marginBottom: 10 }]}>Activity Types</Text>
+                {[
+                  { emoji: "💪", label: "Workout completed", color: "#10B981" },
+                  { emoji: "🏆", label: "Milestone unlocked", color: "#F59E0B" },
+                  { emoji: "🔥", label: "Streak update", color: "#EF4444" },
+                  { emoji: "🥇", label: "Challenge won", color: "#8B5CF6" },
+                  { emoji: "🎯", label: "Group goal contribution", color: "#3B82F6" },
+                  { emoji: "👋", label: "Friend joined circle", color: "#06B6D4" },
+                ].map((item, i) => (
+                  <View key={i} style={{ flexDirection: "row", alignItems: "center", gap: 10, marginBottom: 6 }}>
+                    <View style={[styles.legendDot, { backgroundColor: item.color }]} />
+                    <Text style={{ fontSize: 16, marginRight: 4 }}>{item.emoji}</Text>
+                    <Text style={styles.legendText}>{item.label}</Text>
+                  </View>
+                ))}
+              </View>
             </>
           )}
 
@@ -546,6 +670,15 @@ export default function SocialCircleScreen() {
                 {/* Actions */}
                 <View style={{ gap: 10, marginTop: 16 }}>
                   <TouchableOpacity
+                    style={styles.primaryBtn}
+                    onPress={() => {
+                      setShowFriendModal(false);
+                      router.push({ pathname: "/challenge" as any, params: { friendId: selectedFriend.id, friendName: selectedFriend.name } });
+                    }}
+                  >
+                    <Text style={styles.primaryBtnText}>⚔️ Challenge to a Duel</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
                     style={[styles.primaryBtn, { backgroundColor: "#DC2626" }]}
                     onPress={() => handleRemoveFriend(selectedFriend.id, selectedFriend.name)}
                   >
@@ -583,16 +716,24 @@ const styles = StyleSheet.create({
   heroStat: { color: "#FDE68A", fontSize: 12, fontFamily: "DMSans_400Regular" },
 
   tabBar: {
-    flexDirection: "row", backgroundColor: "#150A00", borderBottomWidth: 1,
-    borderBottomColor: "rgba(245,158,11,0.10)",
+    backgroundColor: "#150A00", borderBottomWidth: 1,
+    borderBottomColor: "rgba(245,158,11,0.10)", flexGrow: 0,
   },
-  tab: { flex: 1, paddingVertical: 12, alignItems: "center" },
+  tab: { paddingVertical: 12, paddingHorizontal: 16, alignItems: "center" },
   tabActive: { borderBottomWidth: 2, borderBottomColor: "#F59E0B" },
   tabText: { color: "#92400E", fontSize: 13, fontFamily: "Outfit_700Bold" },
   tabTextActive: { color: "#FDE68A" },
 
   sectionTitle: { color: "#FFF7ED", fontFamily: "Outfit_800ExtraBold", fontSize: 18, marginBottom: 8 },
   sectionSubtitle: { color: "#92400E", fontSize: 13, marginBottom: 12, lineHeight: 18 },
+
+  quickLinksRow: { flexDirection: "row", gap: 10, marginBottom: 16 },
+  quickLinkCard: {
+    flex: 1, backgroundColor: "#150A00", borderRadius: 20, padding: 16,
+    borderWidth: 1, borderColor: "rgba(245,158,11,0.12)", alignItems: "center", gap: 6,
+  },
+  quickLinkTitle: { color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 14 },
+  quickLinkSub: { color: "#92400E", fontSize: 11 },
 
   statsRow: { flexDirection: "row", gap: 8, marginBottom: 16 },
   statCard: {
@@ -615,6 +756,10 @@ const styles = StyleSheet.create({
   friendStat: { color: "#FDE68A", fontSize: 12, fontFamily: "DMSans_400Regular" },
   friendLastActive: { color: "#92400E", fontSize: 11, marginTop: 4 },
   activeDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: "#10B981" },
+  challengeBtn: {
+    width: 32, height: 32, borderRadius: 16, backgroundColor: "rgba(245,158,11,0.10)",
+    alignItems: "center", justifyContent: "center",
+  },
 
   emptyState: {
     alignItems: "center", padding: 32, backgroundColor: "#150A00",
@@ -627,6 +772,30 @@ const styles = StyleSheet.create({
     backgroundColor: "#F59E0B", borderRadius: 14, paddingVertical: 14, alignItems: "center",
   },
   primaryBtnText: { color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 15 },
+
+  // Activity Feed
+  activityItem: {
+    flexDirection: "row", alignItems: "flex-start", gap: 12, paddingVertical: 12,
+  },
+  activityIcon: {
+    width: 44, height: 44, borderRadius: 22, alignItems: "center", justifyContent: "center",
+  },
+  activityUser: { color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 14 },
+  activityText: { color: "#D1D5DB", fontSize: 13, lineHeight: 18, marginTop: 2 },
+  activityTime: { color: "#92400E", fontSize: 11, marginTop: 4 },
+  activityBadge: {
+    borderRadius: 10, paddingHorizontal: 10, paddingVertical: 5, alignSelf: "center",
+  },
+  activityBadgeText: { fontFamily: "Outfit_700Bold", fontSize: 12 },
+  activitySeparator: {
+    height: 1, backgroundColor: "rgba(245,158,11,0.06)",
+  },
+  legendCard: {
+    marginTop: 20, backgroundColor: "#150A00", borderRadius: 20, padding: 16,
+    borderWidth: 1, borderColor: "rgba(245,158,11,0.10)",
+  },
+  legendDot: { width: 8, height: 8, borderRadius: 4 },
+  legendText: { color: "#D1D5DB", fontSize: 13 },
 
   // Leaderboard
   leaderboardContainer: {
