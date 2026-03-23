@@ -1,0 +1,417 @@
+/**
+ * Exercise Detail Screen
+ *
+ * Shows full exercise info with multi-angle GIF player, body diagram,
+ * form cues, and favorite toggle.
+ */
+import React, { useMemo } from "react";
+import { View, Text, ScrollView, Pressable, StyleSheet, Platform } from "react-native";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import * as Haptics from "expo-haptics";
+import { ScreenContainer } from "@/components/screen-container";
+import { EnhancedGifPlayer } from "@/components/enhanced-gif-player";
+import { BodyDiagram } from "@/components/body-diagram";
+import { useFavorites } from "@/lib/favorites-context";
+import { getExerciseInfo } from "@/lib/exercise-data";
+
+const C = {
+  bg: "#0A0500",
+  surface: "#150A00",
+  surface2: "#1A0F00",
+  border: "rgba(245,158,11,0.15)",
+  border2: "rgba(245,158,11,0.25)",
+  fg: "#FFF7ED",
+  muted: "#B45309",
+  gold: "#F59E0B",
+  gold2: "#FBBF24",
+  gold3: "#FDE68A",
+  dim: "rgba(245,158,11,0.08)",
+};
+
+export default function ExerciseDetailScreen() {
+  const { name } = useLocalSearchParams<{ name: string }>();
+  const router = useRouter();
+  const insets = useSafeAreaInsets();
+  const { isFavorite, toggleFavorite } = useFavorites();
+
+  const exercise = useMemo(() => getExerciseInfo(name || ""), [name]);
+  const favorited = isFavorite(name || "");
+
+  if (!exercise) {
+    return (
+      <ScreenContainer className="flex-1 items-center justify-center bg-background">
+        <Text style={styles.errorText}>Exercise not found</Text>
+        <Pressable
+          onPress={() => router.back()}
+          style={({ pressed }) => [styles.backButton, pressed && { opacity: 0.7 }]}
+        >
+          <Text style={styles.backButtonText}>Go Back</Text>
+        </Pressable>
+      </ScreenContainer>
+    );
+  }
+
+  const handleFavorite = () => {
+    toggleFavorite(exercise.name);
+  };
+
+  return (
+    <View style={[styles.container, { paddingTop: insets.top }]}>
+      {/* Header */}
+      <View style={styles.header}>
+        <Pressable
+          onPress={() => router.back()}
+          style={({ pressed }) => [styles.headerButton, pressed && { opacity: 0.7 }]}
+        >
+          <MaterialIcons name="arrow-back" size={22} color={C.gold} />
+        </Pressable>
+        <Text style={styles.headerTitle} numberOfLines={1}>{exercise.name}</Text>
+        <Pressable
+          onPress={handleFavorite}
+          style={({ pressed }) => [styles.headerButton, pressed && { opacity: 0.7 }]}
+        >
+          <MaterialIcons
+            name={favorited ? "favorite" : "favorite-border"}
+            size={22}
+            color={favorited ? "#EF4444" : C.gold}
+          />
+        </Pressable>
+      </View>
+
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={{ paddingBottom: insets.bottom + 24 }}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Multi-Angle GIF Player */}
+        <View style={styles.section}>
+          <EnhancedGifPlayer
+            angleViews={exercise.angleViews}
+            exerciseName={exercise.name}
+            height={240}
+          />
+        </View>
+
+        {/* Body Diagram + Info Row */}
+        <View style={styles.infoRow}>
+          {/* Body Diagram */}
+          <View style={styles.diagramCard}>
+            <Text style={styles.sectionLabel}>MUSCLES TARGETED</Text>
+            <BodyDiagram
+              primary={exercise.primaryMuscles}
+              secondary={exercise.secondaryMuscles}
+              width={100}
+              height={160}
+              showLabels={true}
+              showBothViews={true}
+            />
+          </View>
+
+          {/* Quick Info */}
+          <View style={styles.quickInfoCard}>
+            <View style={styles.infoItem}>
+              <Text style={styles.infoLabel}>CATEGORY</Text>
+              <Text style={styles.infoValue}>{formatCategory(exercise.category)}</Text>
+            </View>
+            <View style={styles.infoItem}>
+              <Text style={styles.infoLabel}>DIFFICULTY</Text>
+              <View style={styles.difficultyRow}>
+                {[1, 2, 3].map((level) => (
+                  <View
+                    key={level}
+                    style={[
+                      styles.difficultyDot,
+                      level <= getDifficultyLevel(exercise.difficulty) && styles.difficultyDotActive,
+                    ]}
+                  />
+                ))}
+                <Text style={styles.difficultyText}>{exercise.difficulty}</Text>
+              </View>
+            </View>
+            <View style={styles.infoItem}>
+              <Text style={styles.infoLabel}>EQUIPMENT</Text>
+              <Text style={styles.infoValue}>{exercise.equipment}</Text>
+            </View>
+            <View style={styles.infoItem}>
+              <Text style={styles.infoLabel}>PRIMARY</Text>
+              <View style={styles.muscleChips}>
+                {exercise.primaryMuscles.map((m) => (
+                  <View key={m} style={styles.muscleChip}>
+                    <Text style={styles.muscleChipText}>{formatMuscle(m)}</Text>
+                  </View>
+                ))}
+              </View>
+            </View>
+            {exercise.secondaryMuscles.length > 0 && (
+              <View style={styles.infoItem}>
+                <Text style={styles.infoLabel}>SECONDARY</Text>
+                <View style={styles.muscleChips}>
+                  {exercise.secondaryMuscles.map((m) => (
+                    <View key={m} style={[styles.muscleChip, styles.muscleChipSecondary]}>
+                      <Text style={[styles.muscleChipText, styles.muscleChipTextSecondary]}>{formatMuscle(m)}</Text>
+                    </View>
+                  ))}
+                </View>
+              </View>
+            )}
+          </View>
+        </View>
+
+        {/* Form Cue */}
+        <View style={styles.cueCard}>
+          <View style={styles.cueHeader}>
+            <MaterialIcons name="lightbulb" size={16} color={C.gold} />
+            <Text style={styles.cueTitle}>FORM CUE</Text>
+          </View>
+          <Text style={styles.cueText}>{exercise.cue}</Text>
+        </View>
+
+        {/* Angle Views Detail */}
+        <View style={styles.anglesSection}>
+          <Text style={styles.sectionTitle}>ANGLE FOCUS POINTS</Text>
+          {exercise.angleViews.map((view, i) => (
+            <View key={i} style={styles.angleCard}>
+              <View style={styles.angleCardHeader}>
+                <MaterialIcons name="visibility" size={14} color={C.gold} />
+                <Text style={styles.angleCardTitle}>{view.label}</Text>
+              </View>
+              <Text style={styles.angleCardFocus}>{view.focus}</Text>
+            </View>
+          ))}
+        </View>
+      </ScrollView>
+    </View>
+  );
+}
+
+function formatCategory(cat: string): string {
+  return cat.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
+function formatMuscle(m: string): string {
+  return m.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
+function getDifficultyLevel(d: string): number {
+  if (d === "beginner") return 1;
+  if (d === "intermediate") return 2;
+  return 3;
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: C.bg,
+  },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: C.border,
+  },
+  headerButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 10,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: C.dim,
+    borderWidth: 1,
+    borderColor: C.border,
+  },
+  headerTitle: {
+    flex: 1,
+    color: C.fg,
+    fontFamily: "Outfit_700Bold",
+    fontSize: 18,
+    textAlign: "center",
+    marginHorizontal: 12,
+  },
+  scrollView: {
+    flex: 1,
+  },
+  section: {
+    paddingHorizontal: 16,
+    paddingTop: 16,
+  },
+  sectionLabel: {
+    color: C.muted,
+    fontFamily: "Outfit_700Bold",
+    fontSize: 9,
+    letterSpacing: 1.5,
+    marginBottom: 8,
+    textAlign: "center",
+  },
+  sectionTitle: {
+    color: C.muted,
+    fontFamily: "Outfit_700Bold",
+    fontSize: 10,
+    letterSpacing: 1.5,
+    marginBottom: 12,
+  },
+  infoRow: {
+    flexDirection: "row",
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    gap: 12,
+  },
+  diagramCard: {
+    flex: 1,
+    backgroundColor: C.surface,
+    borderRadius: 16,
+    padding: 12,
+    borderWidth: 1,
+    borderColor: C.border,
+    alignItems: "center",
+  },
+  quickInfoCard: {
+    flex: 1.2,
+    backgroundColor: C.surface,
+    borderRadius: 16,
+    padding: 12,
+    borderWidth: 1,
+    borderColor: C.border,
+    gap: 10,
+  },
+  infoItem: {
+    gap: 3,
+  },
+  infoLabel: {
+    color: C.muted,
+    fontFamily: "Outfit_700Bold",
+    fontSize: 8,
+    letterSpacing: 1.2,
+  },
+  infoValue: {
+    color: C.fg,
+    fontFamily: "DMSans_500Medium",
+    fontSize: 12,
+  },
+  difficultyRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+  },
+  difficultyDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: "rgba(245,158,11,0.15)",
+    borderWidth: 1,
+    borderColor: C.border,
+  },
+  difficultyDotActive: {
+    backgroundColor: C.gold,
+    borderColor: C.gold2,
+  },
+  difficultyText: {
+    color: C.gold3,
+    fontFamily: "DMSans_400Regular",
+    fontSize: 10,
+    marginLeft: 4,
+    textTransform: "capitalize",
+  },
+  muscleChips: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 4,
+  },
+  muscleChip: {
+    backgroundColor: "rgba(245,158,11,0.12)",
+    borderRadius: 6,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderWidth: 1,
+    borderColor: "rgba(245,158,11,0.25)",
+  },
+  muscleChipSecondary: {
+    backgroundColor: "rgba(245,158,11,0.06)",
+    borderColor: "rgba(245,158,11,0.12)",
+  },
+  muscleChipText: {
+    color: C.gold,
+    fontFamily: "DMSans_500Medium",
+    fontSize: 9,
+  },
+  muscleChipTextSecondary: {
+    color: C.muted,
+  },
+  cueCard: {
+    marginHorizontal: 16,
+    marginTop: 16,
+    backgroundColor: C.surface,
+    borderRadius: 16,
+    padding: 14,
+    borderWidth: 1,
+    borderColor: C.border,
+  },
+  cueHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    marginBottom: 6,
+  },
+  cueTitle: {
+    color: C.muted,
+    fontFamily: "Outfit_700Bold",
+    fontSize: 9,
+    letterSpacing: 1.2,
+  },
+  cueText: {
+    color: C.gold3,
+    fontFamily: "DMSans_400Regular",
+    fontSize: 13,
+    lineHeight: 20,
+  },
+  anglesSection: {
+    paddingHorizontal: 16,
+    paddingTop: 16,
+  },
+  angleCard: {
+    backgroundColor: C.surface,
+    borderRadius: 12,
+    padding: 12,
+    marginBottom: 8,
+    borderWidth: 1,
+    borderColor: C.border,
+  },
+  angleCardHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    marginBottom: 4,
+  },
+  angleCardTitle: {
+    color: C.gold,
+    fontFamily: "DMSans_600SemiBold",
+    fontSize: 12,
+  },
+  angleCardFocus: {
+    color: C.gold3,
+    fontFamily: "DMSans_400Regular",
+    fontSize: 11,
+    lineHeight: 17,
+  },
+  errorText: {
+    color: C.muted,
+    fontFamily: "DMSans_500Medium",
+    fontSize: 16,
+    marginBottom: 16,
+  },
+  backButton: {
+    backgroundColor: C.gold,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 10,
+  },
+  backButtonText: {
+    color: C.bg,
+    fontFamily: "DMSans_600SemiBold",
+    fontSize: 14,
+  },
+});

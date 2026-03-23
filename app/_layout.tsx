@@ -33,6 +33,7 @@ import { scheduleAllAINotifications } from "@/lib/ai-notification-scheduler";
 import { defineBackgroundHealthSyncTask, registerBackgroundHealthSync } from "@/lib/background-health-sync";
 import { initWeeklyDigest } from "@/lib/weekly-health-digest";
 import { preCacheThumbnails, clearExpiredThumbnails } from "@/lib/thumbnail-cache";
+import { FavoritesProvider } from "@/lib/favorites-context";
 
 // Define background task in global scope (required by expo-task-manager)
 defineBackgroundHealthSyncTask();
@@ -259,6 +260,7 @@ export default function RootLayout() {
   const content = (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <GuestAuthProvider>
+      <FavoritesProvider>
       <CalorieProvider>
       <PantryProvider>
       <WearableProvider>
@@ -278,6 +280,7 @@ export default function RootLayout() {
       </WearableProvider>
       </PantryProvider>
       </CalorieProvider>
+      </FavoritesProvider>
       </GuestAuthProvider>
     </GestureHandlerRootView>
   );

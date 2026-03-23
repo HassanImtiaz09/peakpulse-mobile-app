@@ -1,0 +1,391 @@
+/**
+ * Enhanced GIF Player
+ *
+ * Features:
+ * - Multi-angle views (2-3 per exercise) with angle selector
+ * - Slow-motion playback simulation via opacity pulse
+ * - Loop toggle control
+ * - Focus annotations showing what to watch for each angle
+ * - Offline-ready with expo-image disk caching
+ */
+import React, { useState, useCallback, useRef, useEffect } from "react";
+import { View, Text, Pressable, StyleSheet, Animated, Platform } from "react-native";
+import { Image } from "expo-image";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import * as Haptics from "expo-haptics";
+import type { ExerciseAngleView } from "@/lib/exercise-data";
+
+interface EnhancedGifPlayerProps {
+  /** Multi-angle views for this exercise */
+  angleViews: ExerciseAngleView[];
+  /** Exercise name for display */
+  exerciseName: string;
+  /** Height of the player */
+  height?: number;
+  /** Whether to start in compact mode */
+  compact?: boolean;
+}
+
+const C = {
+  bg: "#0A0500",
+  surface: "#150A00",
+  surface2: "#1A0F00",
+  border: "rgba(245,158,11,0.15)",
+  border2: "rgba(245,158,11,0.25)",
+  fg: "#FFF7ED",
+  muted: "#B45309",
+  gold: "#F59E0B",
+  gold2: "#FBBF24",
+  gold3: "#FDE68A",
+  dim: "rgba(245,158,11,0.08)",
+};
+
+export function EnhancedGifPlayer({
+  angleViews,
+  exerciseName,
+  height = 220,
+  compact = false,
+}: EnhancedGifPlayerProps) {
+  const [activeAngle, setActiveAngle] = useState(0);
+  const [isSlowMotion, setIsSlowMotion] = useState(false);
+  const [isLooping, setIsLooping] = useState(true);
+  const [showFocus, setShowFocus] = useState(false);
+  const [imageKey, setImageKey] = useState(0);
+  const pulseAnim = useRef(new Animated.Value(1)).current;
+
+  const currentView = angleViews[activeAngle] || angleViews[0];
+  if (!currentView) return null;
+
+  // Slow-motion pulse animation
+  useEffect(() => {
+    if (isSlowMotion) {
+      const animation = Animated.loop(
+        Animated.sequence([
+          Animated.timing(pulseAnim, { toValue: 0.6, duration: 1500, useNativeDriver: true }),
+          Animated.timing(pulseAnim, { toValue: 1, duration: 1500, useNativeDriver: true }),
+        ])
+      );
+      animation.start();
+      return () => animation.stop();
+    } else {
+      pulseAnim.setValue(1);
+    }
+  }, [isSlowMotion, pulseAnim]);
+
+  const handleAngleChange = useCallback((index: number) => {
+    setActiveAngle(index);
+    setImageKey((k) => k + 1);
+    if (Platform.OS !== "web") {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+    }
+  }, []);
+
+  const toggleSlowMotion = useCallback(() => {
+    setIsSlowMotion((v) => !v);
+    if (Platform.OS !== "web") {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
+    }
+  }, []);
+
+  const toggleLoop = useCallback(() => {
+    setIsLooping((v) => {
+      if (!v) {
+        // Restart the GIF by remounting
+        setImageKey((k) => k + 1);
+      }
+      return !v;
+    });
+    if (Platform.OS !== "web") {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+    }
+  }, []);
+
+  const toggleFocus = useCallback(() => {
+    setShowFocus((v) => !v);
+  }, []);
+
+  return (
+    <View style={styles.container}>
+      {/* GIF Display */}
+      <View style={[styles.gifContainer, { height }]}>
+        <Animated.View style={[styles.gifWrapper, { opacity: isSlowMotion ? pulseAnim : 1 }]}>
+          <Image
+            key={`${activeAngle}-${imageKey}`}
+            source={{ uri: currentView.gifUrl }}
+            style={styles.gif}
+            contentFit="contain"
+            cachePolicy="disk"
+            recyclingKey={`${exerciseName}-${activeAngle}`}
+            transition={200}
+          />
+        </Animated.View>
+
+        {/* Slow-motion overlay indicator */}
+        {isSlowMotion && (
+          <View style={styles.slowMotionBadge}>
+            <MaterialIcons name="slow-motion-video" size={12} color={C.gold} />
+            <Text style={styles.slowMotionText}>SLOW-MO</Text>
+          </View>
+        )}
+
+        {/* Angle label overlay */}
+        <View style={styles.angleLabelOverlay}>
+          <Text style={styles.angleLabelText}>{currentView.label}</Text>
+        </View>
+      </View>
+
+      {/* Focus Annotation */}
+      {showFocus && (
+        <View style={styles.focusBox}>
+          <MaterialIcons name="visibility" size={14} color={C.gold} />
+          <Text style={styles.focusText}>{currentView.focus}</Text>
+        </View>
+      )}
+
+      {/* Controls Row */}
+      <View style={styles.controlsRow}>
+        {/* Angle Selector */}
+        <View style={styles.angleSelector}>
+          {angleViews.map((view, i) => (
+            <Pressable
+              key={i}
+              onPress={() => handleAngleChange(i)}
+              style={({ pressed }) => [
+                styles.angleButton,
+                activeAngle === i && styles.angleButtonActive,
+                pressed && { opacity: 0.7 },
+              ]}
+            >
+              <Text style={[
+                styles.angleButtonText,
+                activeAngle === i && styles.angleButtonTextActive,
+              ]}>
+                {getAngleShortLabel(view.label, i)}
+              </Text>
+            </Pressable>
+          ))}
+        </View>
+
+        {/* Playback Controls */}
+        <View style={styles.playbackControls}>
+          {/* Focus toggle */}
+          <Pressable
+            onPress={toggleFocus}
+            style={({ pressed }) => [
+              styles.controlButton,
+              showFocus && styles.controlButtonActive,
+              pressed && { opacity: 0.7 },
+            ]}
+          >
+            <MaterialIcons
+              name="visibility"
+              size={16}
+              color={showFocus ? C.bg : C.gold}
+            />
+          </Pressable>
+
+          {/* Slow-motion toggle */}
+          <Pressable
+            onPress={toggleSlowMotion}
+            style={({ pressed }) => [
+              styles.controlButton,
+              isSlowMotion && styles.controlButtonActive,
+              pressed && { opacity: 0.7 },
+            ]}
+          >
+            <MaterialIcons
+              name="slow-motion-video"
+              size={16}
+              color={isSlowMotion ? C.bg : C.gold}
+            />
+          </Pressable>
+
+          {/* Loop toggle */}
+          <Pressable
+            onPress={toggleLoop}
+            style={({ pressed }) => [
+              styles.controlButton,
+              isLooping && styles.controlButtonActive,
+              pressed && { opacity: 0.7 },
+            ]}
+          >
+            <MaterialIcons
+              name="loop"
+              size={16}
+              color={isLooping ? C.bg : C.gold}
+            />
+          </Pressable>
+        </View>
+      </View>
+
+      {/* Angle dots indicator */}
+      {angleViews.length > 1 && (
+        <View style={styles.dotsRow}>
+          {angleViews.map((_, i) => (
+            <View
+              key={i}
+              style={[
+                styles.dot,
+                activeAngle === i && styles.dotActive,
+              ]}
+            />
+          ))}
+        </View>
+      )}
+    </View>
+  );
+}
+
+function getAngleShortLabel(label: string, index: number): string {
+  // Shorten labels for compact display
+  if (label.includes("Side")) return "Side";
+  if (label.includes("Front")) return "Front";
+  if (label.includes("Back")) return "Back";
+  if (label.includes("Top")) return "Top";
+  if (label.includes("Close")) return "Detail";
+  return `View ${index + 1}`;
+}
+
+const styles = StyleSheet.create({
+  container: {
+    borderRadius: 16,
+    backgroundColor: C.surface,
+    borderWidth: 1,
+    borderColor: C.border,
+    overflow: "hidden",
+  },
+  gifContainer: {
+    width: "100%",
+    backgroundColor: C.bg,
+    position: "relative",
+  },
+  gifWrapper: {
+    flex: 1,
+  },
+  gif: {
+    flex: 1,
+    width: "100%",
+  },
+  slowMotionBadge: {
+    position: "absolute",
+    top: 8,
+    left: 8,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    backgroundColor: "rgba(10,5,0,0.85)",
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: C.border2,
+  },
+  slowMotionText: {
+    color: C.gold,
+    fontFamily: "Outfit_700Bold",
+    fontSize: 9,
+    letterSpacing: 1,
+  },
+  angleLabelOverlay: {
+    position: "absolute",
+    top: 8,
+    right: 8,
+    backgroundColor: "rgba(10,5,0,0.85)",
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: C.border,
+  },
+  angleLabelText: {
+    color: C.gold3,
+    fontFamily: "DMSans_500Medium",
+    fontSize: 10,
+    letterSpacing: 0.3,
+  },
+  focusBox: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    gap: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    backgroundColor: C.dim,
+    borderTopWidth: 1,
+    borderTopColor: C.border,
+  },
+  focusText: {
+    color: C.gold3,
+    fontFamily: "DMSans_400Regular",
+    fontSize: 11,
+    lineHeight: 16,
+    flex: 1,
+  },
+  controlsRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    borderTopWidth: 1,
+    borderTopColor: C.border,
+  },
+  angleSelector: {
+    flexDirection: "row",
+    gap: 4,
+  },
+  angleButton: {
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 8,
+    backgroundColor: C.dim,
+    borderWidth: 1,
+    borderColor: "transparent",
+  },
+  angleButtonActive: {
+    backgroundColor: "rgba(245,158,11,0.15)",
+    borderColor: C.border2,
+  },
+  angleButtonText: {
+    color: C.muted,
+    fontFamily: "DMSans_500Medium",
+    fontSize: 10,
+    letterSpacing: 0.3,
+  },
+  angleButtonTextActive: {
+    color: C.gold,
+  },
+  playbackControls: {
+    flexDirection: "row",
+    gap: 6,
+  },
+  controlButton: {
+    width: 30,
+    height: 30,
+    borderRadius: 8,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: C.dim,
+    borderWidth: 1,
+    borderColor: "transparent",
+  },
+  controlButtonActive: {
+    backgroundColor: C.gold,
+    borderColor: C.gold2,
+  },
+  dotsRow: {
+    flexDirection: "row",
+    justifyContent: "center",
+    gap: 4,
+    paddingBottom: 8,
+  },
+  dot: {
+    width: 5,
+    height: 5,
+    borderRadius: 2.5,
+    backgroundColor: "rgba(245,158,11,0.2)",
+  },
+  dotActive: {
+    backgroundColor: C.gold,
+    width: 12,
+  },
+});

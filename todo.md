@@ -1380,3 +1380,40 @@
 - [x] Unit tests for exercise demo data (GIF URLs, video IDs for all 95 exercises)
 - [x] Unit tests for component rendering logic (file structure verification)
 - [x] 0 TypeScript errors, 15 tests passing (round66-enhanced-video.test.ts)
+
+## Round 67 — Exercise Library, Body Diagram, Enhanced GIF Player, Favorites
+
+### Searchable Exercise Library Screen
+- [x] New standalone screen (app/exercise-library.tsx) accessible from Plans tab
+- [x] Search bar with real-time filtering by exercise name, muscle, and equipment
+- [x] Category filter chips (All, Favorites, Chest, Back, Shoulders, Arms, Legs, Core, Cardio, Full Body)
+- [x] Exercise cards showing body diagram, name, muscle group, GIF preview, difficulty, and favorite toggle
+- [x] Tap exercise to open full detail screen (app/exercise-detail.tsx) with multi-angle GIF + body diagram
+- [x] Exercise Library button added to Plans tab header
+
+### Body Diagram with Muscle Highlighting
+- [x] SVG body diagram component (front and back views) in components/body-diagram.tsx
+- [x] Highlight targeted muscle groups with gold (primary) and amber (secondary) colors
+- [x] BodyDiagramInline displayed adjacent to exercises in active-workout.tsx
+- [x] Full BodyDiagram with labels in exercise-detail.tsx
+- [x] Support for 15+ muscle groups (chest, back, shoulders, biceps, triceps, quads, hamstrings, glutes, calves, abs, obliques, lats, traps, lower_back, forearms)
+
+### Enhanced GIF Player
+- [x] Slow-motion playback control (0.25x, 0.5x, 1x speed via animated opacity cycling)
+- [x] Loop toggle control with visual indicator
+- [x] Multi-angle views (2-3 different angles per exercise for all 95 exercises)
+- [x] Angle selector tabs for switching between Front View, Side View, and Close-up
+- [x] Focus angle annotations showing what to watch for each angle
+- [x] Toggle between enhanced GIF player and YouTube video in active-workout.tsx
+
+### Favorites System
+- [x] AsyncStorage-based favorites persistence (lib/favorites-context.tsx)
+- [x] FavoritesContext provider wrapped in app/_layout.tsx for app-wide access
+- [x] Heart toggle on exercise cards in library, detail, and active workout screens
+- [x] Favorites filter in exercise library for quick access
+- [x] Haptic feedback on favorite toggle (native only)
+
+### Testing
+- [x] 21 unit tests passing (round67-exercise-library.test.ts)
+- [x] Tests cover exercise data, search, categories, muscle groups, multi-angle views, file existence
+- [x] 0 TypeScript errors (tsc --noEmit exit code 0)

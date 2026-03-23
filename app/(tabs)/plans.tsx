@@ -262,7 +262,7 @@ export default function PlansScreen() {
         </Animated.View>
       </View>
 
-      {/* Tab Bar */}
+      {/* Tab Bar + Exercise Library Button */}
       <View style={{ flexDirection: "row", paddingHorizontal: 20, marginTop: 10, marginBottom: 12, gap: 8 }}>
         {TABS.map((tab, i) => (
           <TouchableOpacity
@@ -273,6 +273,13 @@ export default function PlansScreen() {
             <Text style={{ color: activeTab === i ? "#FFF7ED" : "#B45309", fontFamily: "Outfit_700Bold", fontSize: 13 }}>{tab}</Text>
           </TouchableOpacity>
         ))}
+        <TouchableOpacity
+          style={{ paddingVertical: 10, paddingHorizontal: 12, borderRadius: 12, alignItems: "center", backgroundColor: "#150A00", borderWidth: 1, borderColor: "rgba(245,158,11,0.25)", flexDirection: "row", gap: 4 }}
+          onPress={() => router.push("/exercise-library" as any)}
+        >
+          <MaterialIcons name="menu-book" size={16} color="#F59E0B" />
+          <Text style={{ color: "#F59E0B", fontFamily: "Outfit_700Bold", fontSize: 11 }}>Library</Text>
+        </TouchableOpacity>
       </View>
 
       <Animated.ScrollView

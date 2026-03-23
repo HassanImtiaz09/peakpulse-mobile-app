@@ -11,6 +11,11 @@ import { useKeepAwake } from "expo-keep-awake";
 import { getExerciseDemo } from "@/lib/exercise-demos";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { YouTubePlayer, YouTubePlayerButton } from "@/components/youtube-player";
+import { BodyDiagramInline } from "@/components/body-diagram";
+import { EnhancedGifPlayer } from "@/components/enhanced-gif-player";
+import { getExerciseInfo } from "@/lib/exercise-data";
+import { useFavorites } from "@/lib/favorites-context";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import {
   type RestTimerSettings,
   DEFAULT_REST_TIMERS,
@@ -50,13 +55,65 @@ interface SetLog {
 // ── Demo Video Component (In-App YouTube Player) ───────────────────────────────
 function ExerciseDemoVideo({ exerciseName, compact = false }: { exerciseName: string; compact?: boolean }) {
   const demo = getExerciseDemo(exerciseName);
+  const exerciseInfo = getExerciseInfo(exerciseName);
+  const { isFavorite, toggleFavorite } = useFavorites();
+  const favorited = isFavorite(exerciseName);
+  const [showEnhanced, setShowEnhanced] = React.useState(false);
 
   return (
     <View style={{ marginBottom: 12 }}>
-      <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 6 }}>
-        <Text style={{ color: SF.gold, fontFamily: "Outfit_700Bold", fontSize: 11, letterSpacing: 1 }}>FORM GUIDE</Text>
+      {/* Header with body diagram */}
+      <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+          {exerciseInfo && (
+            <BodyDiagramInline
+              primary={exerciseInfo.primaryMuscles}
+              secondary={exerciseInfo.secondaryMuscles}
+            />
+          )}
+          <View>
+            <Text style={{ color: SF.gold, fontFamily: "Outfit_700Bold", fontSize: 11, letterSpacing: 1 }}>FORM GUIDE</Text>
+            {exerciseInfo && (
+              <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 4, marginTop: 3 }}>
+                {exerciseInfo.primaryMuscles.map((m) => (
+                  <View key={m} style={{ backgroundColor: "rgba(245,158,11,0.12)", borderRadius: 4, paddingHorizontal: 5, paddingVertical: 1 }}>
+                    <Text style={{ color: SF.gold, fontFamily: "DMSans_500Medium", fontSize: 9 }}>{m.replace(/_/g, " ")}</Text>
+                  </View>
+                ))}
+              </View>
+            )}
+          </View>
+        </View>
+        <View style={{ flexDirection: "row", gap: 6 }}>
+          {/* Favorite button */}
+          <TouchableOpacity
+            onPress={() => toggleFavorite(exerciseName)}
+            style={{ width: 28, height: 28, borderRadius: 8, alignItems: "center", justifyContent: "center", backgroundColor: "rgba(245,158,11,0.08)" }}
+          >
+            <MaterialIcons name={favorited ? "favorite" : "favorite-border"} size={16} color={favorited ? "#EF4444" : SF.muted} />
+          </TouchableOpacity>
+          {/* Toggle enhanced/video */}
+          {exerciseInfo && exerciseInfo.angleViews.length > 0 && (
+            <TouchableOpacity
+              onPress={() => setShowEnhanced((v) => !v)}
+              style={{ width: 28, height: 28, borderRadius: 8, alignItems: "center", justifyContent: "center", backgroundColor: showEnhanced ? SF.gold : "rgba(245,158,11,0.08)" }}
+            >
+              <MaterialIcons name="360" size={16} color={showEnhanced ? SF.bg : SF.muted} />
+            </TouchableOpacity>
+          )}
+        </View>
       </View>
-      <YouTubePlayer videoId={demo.videoId} cue={demo.cue} gifUrl={demo.gifUrl} height={compact ? 140 : 200} />
+
+      {/* Enhanced GIF Player or YouTube Player */}
+      {showEnhanced && exerciseInfo ? (
+        <EnhancedGifPlayer
+          angleViews={exerciseInfo.angleViews}
+          exerciseName={exerciseName}
+          height={compact ? 160 : 220}
+        />
+      ) : (
+        <YouTubePlayer videoId={demo.videoId} cue={demo.cue} gifUrl={demo.gifUrl} height={compact ? 140 : 200} />
+      )}
     </View>
   );
 }
