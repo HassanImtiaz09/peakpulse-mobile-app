@@ -56,7 +56,7 @@ function ExerciseDemoVideo({ exerciseName, compact = false }: { exerciseName: st
       <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 6 }}>
         <Text style={{ color: SF.gold, fontFamily: "Outfit_700Bold", fontSize: 11, letterSpacing: 1 }}>FORM GUIDE</Text>
       </View>
-      <YouTubePlayer videoId={demo.videoId} cue={demo.cue} height={compact ? 140 : 200} />
+      <YouTubePlayer videoId={demo.videoId} cue={demo.cue} gifUrl={demo.gifUrl} height={compact ? 140 : 200} />
     </View>
   );
 }
@@ -170,7 +170,7 @@ function FullscreenTimerModal({
           {/* Demo Video */}
           <View style={{ backgroundColor: SF.surface, borderRadius: 16, padding: 14, borderWidth: 1, borderColor: SF.border }}>
             <Text style={{ color: SF.gold, fontFamily: "Outfit_700Bold", fontSize: 13, marginBottom: 10 }}>EXERCISE DEMO</Text>
-            <YouTubePlayer videoId={demo.videoId} cue={demo.cue} height={180} />
+            <YouTubePlayer videoId={demo.videoId} cue={demo.cue} gifUrl={demo.gifUrl} height={180} />
             {exercise.notes && (
               <View style={{ marginTop: 10, backgroundColor: "rgba(245,158,11,0.06)", borderRadius: 10, padding: 10 }}>
                 <Text style={{ color: SF.muted, fontSize: 12 }}>📋 {exercise.notes}</Text>

@@ -1,8 +1,8 @@
 /**
  * Exercise Demo Video Library
  *
- * Maps common exercise names to specific YouTube video IDs for in-app playback.
- * Each exercise has a curated tutorial video from a top fitness creator.
+ * Maps common exercise names to YouTube video IDs and animated GIF URLs.
+ * Each exercise has a curated tutorial video and an animated GIF for offline guidance.
  */
 
 export interface ExerciseDemo {
@@ -10,6 +10,8 @@ export interface ExerciseDemo {
   videoId: string;
   /** Short cue text shown below the video */
   cue: string;
+  /** Animated GIF URL from ExerciseDB for offline exercise guidance */
+  gifUrl: string;
 }
 
 /** Normalise an exercise name for lookup */
@@ -18,396 +20,491 @@ export function normaliseExerciseName(name: string): string {
 }
 
 /**
- * Primary lookup map: normalised exercise name → demo
- * Curated YouTube video IDs for 70+ exercises, grouped by muscle group.
+ * Primary lookup map: normalised exercise name \u2192 demo
+ * Curated YouTube video IDs and ExerciseDB GIF URLs for 70+ exercises.
  */
 const DEMO_MAP: Record<string, ExerciseDemo> = {
-  // ── Chest ─────────────────────────────────────────────────────────────────
+  // \u2500\u2500 Chest \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
   "bench press": {
     videoId: "hWbUlkb5Ms4",
     cue: "Keep shoulder blades retracted. Bar touches mid-chest.",
+    gifUrl: "https://static.exercisedb.dev/media/WcHl7ru.gif",
   },
   "push up": {
     videoId: "_YrJc-kTYA0",
     cue: "Straight body line. Lower until chest nearly touches floor.",
+    gifUrl: "https://static.exercisedb.dev/media/8K7m2SS.gif",
   },
   "push-up": {
     videoId: "_YrJc-kTYA0",
     cue: "Straight body line. Lower until chest nearly touches floor.",
+    gifUrl: "https://static.exercisedb.dev/media/8K7m2SS.gif",
   },
   "pushup": {
     videoId: "_YrJc-kTYA0",
     cue: "Straight body line. Lower until chest nearly touches floor.",
+    gifUrl: "https://static.exercisedb.dev/media/8K7m2SS.gif",
   },
   "dumbbell fly": {
     videoId: "QENKPHhQVi4",
     cue: "Slight elbow bend throughout. Squeeze chest at top.",
+    gifUrl: "https://static.exercisedb.dev/media/yz9nUhF.gif",
   },
   "dumbbell flye": {
     videoId: "QENKPHhQVi4",
     cue: "Slight elbow bend throughout. Squeeze chest at top.",
+    gifUrl: "https://static.exercisedb.dev/media/yz9nUhF.gif",
   },
   "incline bench press": {
     videoId: "98HWfiRonkE",
-    cue: "30-45° incline. Drive bar in a slight arc to upper chest.",
+    cue: "30-45\u00b0 incline. Drive bar in a slight arc to upper chest.",
+    gifUrl: "https://static.exercisedb.dev/media/8eqjhOl.gif",
   },
   "incline dumbbell press": {
     videoId: "8fXfwG4ftaQ",
-    cue: "30-45° incline. Press dumbbells up and slightly inward.",
+    cue: "30-45\u00b0 incline. Press dumbbells up and slightly inward.",
+    gifUrl: "https://static.exercisedb.dev/media/jDnrkar.gif",
   },
   "decline bench press": {
     videoId: "6fotcWsMb0c",
     cue: "Slight decline. Bar to lower chest. Controlled movement.",
+    gifUrl: "https://static.exercisedb.dev/media/DotAgEF.gif",
   },
   "cable fly": {
     videoId: "M97ra0UR-40",
     cue: "Hinge forward slightly. Bring hands together in an arc.",
+    gifUrl: "https://static.exercisedb.dev/media/27NNGFr.gif",
   },
   "cable crossover": {
     videoId: "JUDTGZh4rhg",
     cue: "Step forward. Squeeze chest as hands cross at bottom.",
+    gifUrl: "https://static.exercisedb.dev/media/UFGF6gk.gif",
   },
   "dip": {
     videoId: "yN6Q1UI_xkE",
-    cue: "Lean forward for chest. Lower until elbows reach 90°.",
+    cue: "Lean forward for chest. Lower until elbows reach 90\u00b0.",
+    gifUrl: "https://static.exercisedb.dev/media/J60bN17.gif",
   },
   "chest dip": {
     videoId: "yN6Q1UI_xkE",
-    cue: "Lean forward for chest. Lower until elbows reach 90°.",
+    cue: "Lean forward for chest. Lower until elbows reach 90\u00b0.",
+    gifUrl: "https://static.exercisedb.dev/media/9WTm7dq.gif",
   },
-  // ── Back ──────────────────────────────────────────────────────────────────
+  // \u2500\u2500 Back \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
   "pull up": {
     videoId: "bxguzp1DCFw",
     cue: "Full hang at bottom. Drive elbows down to pull up.",
+    gifUrl: "https://static.exercisedb.dev/media/72BC5Za.gif",
   },
   "pull-up": {
     videoId: "bxguzp1DCFw",
     cue: "Full hang at bottom. Drive elbows down to pull up.",
+    gifUrl: "https://static.exercisedb.dev/media/72BC5Za.gif",
   },
   "pullup": {
     videoId: "bxguzp1DCFw",
     cue: "Full hang at bottom. Drive elbows down to pull up.",
+    gifUrl: "https://static.exercisedb.dev/media/72BC5Za.gif",
   },
   "chin up": {
     videoId: "e1YSApl-QcM",
     cue: "Supinated grip. Chin clears bar at top.",
+    gifUrl: "https://static.exercisedb.dev/media/8K7m2SS.gif",
   },
   "chin-up": {
     videoId: "e1YSApl-QcM",
     cue: "Supinated grip. Chin clears bar at top.",
+    gifUrl: "https://static.exercisedb.dev/media/8K7m2SS.gif",
   },
   "lat pulldown": {
     videoId: "SALxEARiMkw",
     cue: "Lean back slightly. Pull bar to upper chest.",
+    gifUrl: "https://static.exercisedb.dev/media/ecpY0rH.gif",
   },
   "bent over row": {
     videoId: "qXrTDQG1oUQ",
     cue: "Hinge at hips, back flat. Pull bar to lower rib cage.",
+    gifUrl: "https://static.exercisedb.dev/media/ZX9UZmj.gif",
   },
   "barbell row": {
     videoId: "qXrTDQG1oUQ",
     cue: "Hinge at hips, back flat. Pull bar to lower rib cage.",
+    gifUrl: "https://static.exercisedb.dev/media/8d8qJQI.gif",
   },
   "dumbbell row": {
     videoId: "gfUg6qWohTk",
     cue: "One arm on bench. Pull to hip, squeeze lat at top.",
+    gifUrl: "https://static.exercisedb.dev/media/C0MA9bC.gif",
   },
   "seated cable row": {
     videoId: "vwHG9Jfu4sw",
     cue: "Tall posture. Pull handle to navel, squeeze shoulder blades.",
+    gifUrl: "https://static.exercisedb.dev/media/UFGF6gk.gif",
   },
   "cable row": {
     videoId: "vwHG9Jfu4sw",
     cue: "Tall posture. Pull handle to navel, squeeze shoulder blades.",
+    gifUrl: "https://static.exercisedb.dev/media/UFGF6gk.gif",
   },
   "deadlift": {
     videoId: "ZaTM37cfiDs",
     cue: "Bar over mid-foot. Hinge hips back, keep back neutral.",
+    gifUrl: "https://static.exercisedb.dev/media/KUaoUV8.gif",
   },
   "t-bar row": {
     videoId: "TyLoy3n_a10",
     cue: "Chest on pad. Pull to chest, squeeze shoulder blades.",
+    gifUrl: "https://static.exercisedb.dev/media/aaXr7ld.gif",
   },
   "pendlay row": {
     videoId: "h4nkoayPFWw",
     cue: "Bar returns to floor each rep. Explosive pull.",
+    gifUrl: "https://static.exercisedb.dev/media/r0z6xzQ.gif",
   },
-  // ── Shoulders ─────────────────────────────────────────────────────────────
+  // \u2500\u2500 Shoulders \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
   "overhead press": {
     videoId: "zoN5EH50Dro",
     cue: "Brace core. Press bar in a straight line overhead.",
+    gifUrl: "https://static.exercisedb.dev/media/bBi35y3.gif",
   },
   "shoulder press": {
     videoId: "zoN5EH50Dro",
-    cue: "Elbows at 90° at bottom. Full extension at top.",
+    cue: "Elbows at 90\u00b0 at bottom. Full extension at top.",
+    gifUrl: "https://static.exercisedb.dev/media/84RyJf8.gif",
   },
   "military press": {
     videoId: "zoN5EH50Dro",
     cue: "Strict press. No leg drive. Bar overhead.",
+    gifUrl: "https://static.exercisedb.dev/media/wdRZISl.gif",
   },
   "dumbbell shoulder press": {
     videoId: "E9ShwbwZ1zw",
     cue: "Press dumbbells up and slightly inward. Full lockout.",
+    gifUrl: "https://static.exercisedb.dev/media/84RyJf8.gif",
   },
   "lateral raise": {
     videoId: "JMt_uxE8bBc",
     cue: "Slight forward lean. Raise to shoulder height, pinky up.",
+    gifUrl: "https://static.exercisedb.dev/media/AQ0mC4Y.gif",
   },
   "side lateral raise": {
     videoId: "JMt_uxE8bBc",
     cue: "Slight forward lean. Raise to shoulder height, pinky up.",
+    gifUrl: "https://static.exercisedb.dev/media/AQ0mC4Y.gif",
   },
   "front raise": {
     videoId: "4HXCYnztyh8",
     cue: "Controlled raise to eye level. Lower slowly.",
+    gifUrl: "https://static.exercisedb.dev/media/33AzZeV.gif",
   },
   "face pull": {
     videoId: "8686PLZB_1Q",
     cue: "Pull rope to face. Elbows high and wide at end.",
+    gifUrl: "https://static.exercisedb.dev/media/DgZQ11d.gif",
   },
   "rear delt fly": {
     videoId: "LsT-bR_zxLo",
     cue: "Bent over. Raise arms to sides, squeeze rear delts.",
+    gifUrl: "https://static.exercisedb.dev/media/XUUD0Fs.gif",
   },
   "arnold press": {
     videoId: "6K_N9AGhItQ",
     cue: "Rotate palms from facing you to facing forward as you press.",
+    gifUrl: "https://static.exercisedb.dev/media/Xy4jlWA.gif",
   },
   "upright row": {
     videoId: "jaAV-rD45I0",
     cue: "Pull bar to chin. Elbows lead the movement.",
+    gifUrl: "https://static.exercisedb.dev/media/cALKspW.gif",
   },
   "shrug": {
     videoId: "0Jmi-byV8ns",
     cue: "Straight up, hold at top. No rolling.",
+    gifUrl: "https://static.exercisedb.dev/media/trmte8s.gif",
   },
-  // ── Arms ──────────────────────────────────────────────────────────────────
+  // \u2500\u2500 Arms \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
   "bicep curl": {
     videoId: "VCw_uIxW8WE",
     cue: "Elbows fixed at sides. Full range of motion.",
+    gifUrl: "https://static.exercisedb.dev/media/ANbbry2.gif",
   },
   "biceps curl": {
     videoId: "VCw_uIxW8WE",
     cue: "Elbows fixed at sides. Full range of motion.",
+    gifUrl: "https://static.exercisedb.dev/media/ANbbry2.gif",
   },
   "barbell curl": {
     videoId: "N6paU6TGFWU",
     cue: "Elbows fixed at sides. Squeeze at top.",
+    gifUrl: "https://static.exercisedb.dev/media/82LxxkW.gif",
   },
   "dumbbell curl": {
     videoId: "XE_pHwbst04",
     cue: "Alternate or together. Full supination at top.",
+    gifUrl: "https://static.exercisedb.dev/media/YtaCTYl.gif",
   },
   "hammer curl": {
     videoId: "BRVDS6HVR9Q",
     cue: "Neutral grip throughout. Controlled eccentric.",
+    gifUrl: "https://static.exercisedb.dev/media/jDnrkar.gif",
   },
   "preacher curl": {
     videoId: "Htw-s61mOw0",
     cue: "Arms on pad. Full stretch at bottom, squeeze at top.",
+    gifUrl: "https://static.exercisedb.dev/media/ANbbry2.gif",
   },
   "concentration curl": {
     videoId: "cHxRJdSVIkA",
     cue: "Elbow on inner thigh. Isolate the bicep.",
+    gifUrl: "https://static.exercisedb.dev/media/Db7eEgw.gif",
   },
   "tricep pushdown": {
     videoId: "-zLyUAo1gMw",
     cue: "Elbows pinned to sides. Full extension at bottom.",
+    gifUrl: "https://static.exercisedb.dev/media/qRZ5S1N.gif",
   },
   "tricep extension": {
     videoId: "b5le--KkyH0",
     cue: "Elbows point to ceiling. Full stretch and extension.",
+    gifUrl: "https://static.exercisedb.dev/media/U3ffHlY.gif",
   },
   "overhead tricep extension": {
     videoId: "b5le--KkyH0",
     cue: "Elbows close to head. Full stretch behind head.",
+    gifUrl: "https://static.exercisedb.dev/media/NN8nSNT.gif",
   },
   "tricep dip": {
     videoId: "yN6Q1UI_xkE",
-    cue: "Upright torso for triceps. Lower until elbows reach 90°.",
+    cue: "Upright torso for triceps. Lower until elbows reach 90\u00b0.",
+    gifUrl: "https://static.exercisedb.dev/media/bZq4bwK.gif",
   },
   "skull crusher": {
     videoId: "D1y1-sXZDA0",
     cue: "Elbows point to ceiling. Lower bar to forehead slowly.",
+    gifUrl: "https://static.exercisedb.dev/media/h8LFzo9.gif",
   },
   "close grip bench press": {
     videoId: "vEUyEOVn3yM",
     cue: "Hands shoulder-width. Elbows close to body.",
+    gifUrl: "https://static.exercisedb.dev/media/yB9SvIF.gif",
   },
-  // ── Legs ──────────────────────────────────────────────────────────────────
+  // \u2500\u2500 Legs \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
   "squat": {
     videoId: "MLoZuAkIyZI",
     cue: "Feet shoulder-width. Knees track toes. Depth to parallel.",
+    gifUrl: "https://static.exercisedb.dev/media/BReCuOn.gif",
   },
   "back squat": {
     videoId: "MLoZuAkIyZI",
     cue: "Bar on traps. Brace core. Drive through heels.",
+    gifUrl: "https://static.exercisedb.dev/media/WrYPP2g.gif",
   },
   "barbell squat": {
     videoId: "MLoZuAkIyZI",
     cue: "Bar on traps. Brace core. Drive through heels.",
+    gifUrl: "https://static.exercisedb.dev/media/RYcV1kH.gif",
   },
   "front squat": {
     videoId: "nmUof3vszxM",
     cue: "Elbows high. Bar on front delts. Upright torso.",
+    gifUrl: "https://static.exercisedb.dev/media/Y7YcmIJ.gif",
   },
   "goblet squat": {
     videoId: "lRYBbchqxtI",
     cue: "Hold dumbbell at chest. Elbows inside knees at bottom.",
+    gifUrl: "https://static.exercisedb.dev/media/yn8yg1r.gif",
   },
   "bulgarian split squat": {
     videoId: "uODWo4YqbT8",
     cue: "Rear foot on bench. Front knee over ankle.",
+    gifUrl: "https://static.exercisedb.dev/media/QpXqiq8.gif",
   },
   "lunge": {
     videoId: "1cS-6KsJW9g",
     cue: "Step forward. Back knee hovers above floor.",
+    gifUrl: "https://static.exercisedb.dev/media/XalXcvM.gif",
   },
   "walking lunge": {
     videoId: "1cS-6KsJW9g",
     cue: "Continuous forward motion. Upright torso.",
+    gifUrl: "https://static.exercisedb.dev/media/IZVHb27.gif",
   },
   "reverse lunge": {
     videoId: "mzPFverp8tM",
     cue: "Step backward. Front knee stays over ankle.",
+    gifUrl: "https://static.exercisedb.dev/media/8d8qJQI.gif",
   },
   "leg press": {
     videoId: "nDh_BlnLCGc",
-    cue: "Feet hip-width. Don't lock knees at top.",
+    cue: "Feet hip-width. Don\u2019t lock knees at top.",
+    gifUrl: "https://static.exercisedb.dev/media/V07qpXy.gif",
   },
   "leg curl": {
     videoId: "_lgE0gPvbik",
     cue: "Curl heels to glutes. Slow eccentric.",
+    gifUrl: "https://static.exercisedb.dev/media/17lJ1kr.gif",
   },
   "hamstring curl": {
     videoId: "_lgE0gPvbik",
     cue: "Curl heels to glutes. Slow eccentric.",
+    gifUrl: "https://static.exercisedb.dev/media/GOJKFfO.gif",
   },
   "leg extension": {
     videoId: "uM86QE59Tgc",
     cue: "Full extension at top. Pause 1 second.",
+    gifUrl: "https://static.exercisedb.dev/media/Y1MsI1l.gif",
   },
   "romanian deadlift": {
     videoId: "5zmlnbWb-g4",
     cue: "Hinge at hips. Bar stays close to legs. Feel hamstring stretch.",
+    gifUrl: "https://static.exercisedb.dev/media/wQ2c4XD.gif",
   },
   "stiff leg deadlift": {
     videoId: "CN_7cz3P-1U",
     cue: "Minimal knee bend. Hinge at hips. Stretch hamstrings.",
+    gifUrl: "https://static.exercisedb.dev/media/kuMiR2T.gif",
   },
   "sumo deadlift": {
     videoId: "e7oLkRlT2CQ",
     cue: "Wide stance. Toes out. Drive hips forward.",
+    gifUrl: "https://static.exercisedb.dev/media/KgI0tqW.gif",
   },
   "hip thrust": {
     videoId: "pF17m_CXfL0",
     cue: "Shoulders on bench. Drive hips up. Squeeze glutes at top.",
+    gifUrl: "https://static.exercisedb.dev/media/Pjbc0Kt.gif",
   },
   "glute bridge": {
     videoId: "OUgsJ8-Vi0E",
     cue: "Feet flat on floor. Drive hips up. Squeeze glutes.",
+    gifUrl: "https://static.exercisedb.dev/media/aWedzZX.gif",
   },
   "calf raise": {
     videoId: "baEXLy09Ncc",
     cue: "Full stretch at bottom. Full contraction at top.",
+    gifUrl: "https://static.exercisedb.dev/media/lCKm4Rs.gif",
   },
   "standing calf raise": {
     videoId: "baEXLy09Ncc",
     cue: "Full stretch at bottom. Full contraction at top.",
+    gifUrl: "https://static.exercisedb.dev/media/xTjr103.gif",
   },
   "seated calf raise": {
     videoId: "ORY-ke6vcgk",
-    cue: "Knees at 90°. Full range of motion.",
+    cue: "Knees at 90\u00b0. Full range of motion.",
+    gifUrl: "https://static.exercisedb.dev/media/hxyTtWj.gif",
   },
   "hack squat": {
     videoId: "g9i05umL5vc",
     cue: "Shoulders against pad. Feet forward. Full depth.",
+    gifUrl: "https://static.exercisedb.dev/media/Qa55kX1.gif",
   },
   "step up": {
     videoId: "8q9LVgN2RD4",
     cue: "Drive through front heel. Full extension at top.",
+    gifUrl: "https://static.exercisedb.dev/media/8K7m2SS.gif",
   },
-  // ── Core ──────────────────────────────────────────────────────────────────
+  // \u2500\u2500 Core \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
   "plank": {
     videoId: "v25dawSzRTM",
-    cue: "Straight line from head to heels. Don't let hips sag.",
+    cue: "Straight line from head to heels. Don\u2019t let hips sag.",
+    gifUrl: "https://static.exercisedb.dev/media/X6ytgYZ.gif",
   },
   "side plank": {
     videoId: "BFOyHDlY2UE",
     cue: "Stack feet. Hips up. Straight line from head to feet.",
+    gifUrl: "https://static.exercisedb.dev/media/X6ytgYZ.gif",
   },
   "crunch": {
     videoId: "MKmrqcoCZ-M",
     cue: "Curl shoulders off floor. Lower slowly.",
+    gifUrl: "https://static.exercisedb.dev/media/8K7m2SS.gif",
   },
   "sit up": {
-    videoId: "MKmrqcoCZ-M",
+    videoId: "1fbU_MkV7NE",
     cue: "Feet anchored. Full range of motion.",
+    gifUrl: "https://static.exercisedb.dev/media/8K7m2SS.gif",
   },
   "russian twist": {
     videoId: "9V9csctSKj0",
-    cue: "Lean back 45°. Rotate shoulders, not just arms.",
+    cue: "Lean back 45\u00b0. Rotate shoulders, not just arms.",
+    gifUrl: "https://static.exercisedb.dev/media/JOZhu2h.gif",
   },
   "mountain climber": {
     videoId: "7W4JEfEKuC4",
     cue: "Hips level. Drive knees to chest alternately.",
+    gifUrl: "https://static.exercisedb.dev/media/VPPtusI.gif",
   },
   "leg raise": {
     videoId: "2n4UqRIJyk4",
     cue: "Lower back pressed to floor. Slow eccentric.",
+    gifUrl: "https://static.exercisedb.dev/media/lCKm4Rs.gif",
   },
   "hanging leg raise": {
     videoId: "2n4UqRIJyk4",
-    cue: "Hang from bar. Raise legs to 90°. Control the descent.",
+    cue: "Hang from bar. Raise legs to 90\u00b0. Control the descent.",
+    gifUrl: "https://static.exercisedb.dev/media/lCKm4Rs.gif",
   },
   "ab wheel rollout": {
     videoId: "9ZCoAbI7uX0",
-    cue: "Core tight. Roll out slowly. Don't let hips sag.",
+    cue: "Core tight. Roll out slowly. Don\u2019t let hips sag.",
+    gifUrl: "https://static.exercisedb.dev/media/X6ytgYZ.gif",
   },
   "bicycle crunch": {
     videoId: "PAEo-zRSanM",
     cue: "Elbow to opposite knee. Controlled rotation.",
+    gifUrl: "https://static.exercisedb.dev/media/JOZhu2h.gif",
   },
   "dead bug": {
     videoId: "Aoipu_fl3HA",
     cue: "Lower back flat. Opposite arm and leg extend.",
+    gifUrl: "https://static.exercisedb.dev/media/X6ytgYZ.gif",
   },
   "cable woodchop": {
     videoId: "ZDt4MCvjMAA",
     cue: "Rotate from hips. Arms stay extended.",
+    gifUrl: "https://static.exercisedb.dev/media/UFGF6gk.gif",
   },
-  // ── Cardio / HIIT ─────────────────────────────────────────────────────────
+  // \u2500\u2500 Cardio / HIIT \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
   "burpee": {
     videoId: "G2hv_NYhM-A",
     cue: "Explosive jump at top. Chest to floor at bottom.",
+    gifUrl: "https://static.exercisedb.dev/media/VPPtusI.gif",
   },
   "jumping jack": {
     videoId: "uLVt6u15L98",
     cue: "Arms and legs in sync. Land softly.",
+    gifUrl: "https://static.exercisedb.dev/media/VPPtusI.gif",
   },
   "box jump": {
     videoId: "HJZh-12p6vg",
     cue: "Swing arms for momentum. Land softly with bent knees.",
+    gifUrl: "https://static.exercisedb.dev/media/RYcV1kH.gif",
   },
   "kettlebell swing": {
     videoId: "aSYap2yhW8s",
     cue: "Hip hinge, not squat. Snap hips forward explosively.",
+    gifUrl: "https://static.exercisedb.dev/media/UHJlbu3.gif",
   },
   "battle rope": {
     videoId: "pQb2xIGioyQ",
     cue: "Alternate arms. Keep core tight.",
+    gifUrl: "https://static.exercisedb.dev/media/UFGF6gk.gif",
   },
   "jump rope": {
     videoId: "vEJ7XbbAMAg",
     cue: "Wrists drive the rope. Light on feet.",
+    gifUrl: "https://static.exercisedb.dev/media/UFGF6gk.gif",
   },
   "high knees": {
     videoId: "WrKc4YsgAEA",
     cue: "Drive knees to hip height. Pump arms.",
+    gifUrl: "https://static.exercisedb.dev/media/VPPtusI.gif",
   },
   "sprint": {
     videoId: "6m_fjNhRhkY",
     cue: "Drive knees high. Pump arms. Stay on balls of feet.",
+    gifUrl: "https://static.exercisedb.dev/media/HsjbB1z.gif",
   },
 };
 
@@ -435,11 +532,12 @@ const KEYWORD_FALLBACKS: Array<{ keywords: string[]; demo: ExerciseDemo }> = [
 const GENERIC_DEMO: ExerciseDemo = {
   videoId: "MLoZuAkIyZI",
   cue: "Maintain proper form throughout. Control the movement.",
+  gifUrl: "https://static.exercisedb.dev/media/BReCuOn.gif",
 };
 
 /**
  * Look up a demo for an exercise by name.
- * Returns a YouTube video ID and form cue for the exercise.
+ * Returns a YouTube video ID, form cue, and animated GIF URL.
  */
 export function getExerciseDemo(exerciseName: string): ExerciseDemo {
   const norm = normaliseExerciseName(exerciseName);

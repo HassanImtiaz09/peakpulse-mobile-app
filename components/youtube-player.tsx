@@ -1,17 +1,28 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect, useRef } from "react";
 import {
   View,
   Text,
   Pressable,
-  Modal,
   ActivityIndicator,
   Platform,
   StyleSheet,
-  Image,
 } from "react-native";
+import { Image } from "expo-image";
 import { MaterialIcons } from "@expo/vector-icons";
-import * as WebBrowser from "expo-web-browser";
 import { useColors } from "@/hooks/use-colors";
+import { getCachedThumbnail, getThumbnailUrl } from "@/lib/thumbnail-cache";
+
+// Lazy import YoutubeIframe only on native to avoid web issues
+let YoutubeIframe: typeof import("react-native-youtube-iframe").default | null = null;
+if (Platform.OS !== "web") {
+  try {
+    YoutubeIframe = require("react-native-youtube-iframe").default;
+  } catch {
+    // Fallback if package not available
+  }
+}
+
+type DemoMode = "video" | "gif";
 
 interface YouTubePlayerProps {
   /** YouTube video ID */
@@ -20,55 +31,160 @@ interface YouTubePlayerProps {
   cue?: string;
   /** Height of the inline player (default 200) */
   height?: number;
+  /** Animated GIF URL for offline exercise guidance */
+  gifUrl?: string;
 }
 
 /**
- * YouTube video player component.
+ * Enhanced YouTube video player component with GIF toggle.
  *
- * - On **web**: renders an embedded YouTube iframe (works natively in browsers).
- * - On **native (iOS/Android)**: shows a YouTube thumbnail with a play button overlay.
- *   Tapping opens the video in the system browser via expo-web-browser,
- *   which guarantees reliable YouTube playback without WebView Error 153.
+ * - On **web**: renders an embedded YouTube iframe.
+ * - On **native (iOS/Android)**: uses react-native-youtube-iframe for in-app playback.
+ * - **GIF mode**: shows animated exercise GIF from ExerciseDB (offline-capable via expo-image caching).
+ * - Thumbnails are cached locally for instant loading.
  */
 export function YouTubePlayer({
   videoId,
   cue,
   height = 200,
+  gifUrl,
 }: YouTubePlayerProps) {
   const colors = useColors();
-  const [thumbnailLoading, setThumbnailLoading] = useState(true);
-  const [thumbnailError, setThumbnailError] = useState(false);
+  const [mode, setMode] = useState<DemoMode>("gif");
+  const [playing, setPlaying] = useState(false);
+  const [ready, setReady] = useState(false);
+  const [cachedThumbUri, setCachedThumbUri] = useState<string | null>(null);
+  const [showPlayer, setShowPlayer] = useState(false);
 
-  const youtubeUrl = `https://www.youtube.com/watch?v=${videoId}`;
-  const embedUrl = `https://www.youtube-nocookie.com/embed/${videoId}?rel=0&modestbranding=1&playsinline=1&autoplay=0&showinfo=0&controls=1`;
+  // Load cached thumbnail
+  useEffect(() => {
+    let cancelled = false;
+    getCachedThumbnail(videoId).then((uri) => {
+      if (!cancelled) setCachedThumbUri(uri);
+    });
+    return () => { cancelled = true; };
+  }, [videoId]);
 
-  // YouTube provides thumbnail images at various qualities
-  // maxresdefault (1280x720), sddefault (640x480), hqdefault (480x360), mqdefault (320x180)
-  const thumbnailUrl = thumbnailError
-    ? `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`
-    : `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`;
+  const thumbnailUri = cachedThumbUri || getThumbnailUrl(videoId, "mq");
 
-  const openInBrowser = useCallback(async () => {
-    try {
-      await WebBrowser.openBrowserAsync(youtubeUrl, {
-        presentationStyle: WebBrowser.WebBrowserPresentationStyle.FULL_SCREEN,
-        controlsColor: "#F59E0B",
-        toolbarColor: "#0A0500",
-      });
-    } catch {
-      // Fallback: try opening in system browser
-      try {
-        await WebBrowser.openBrowserAsync(youtubeUrl);
-      } catch {
-        // Silent fail — user can still see the thumbnail
-      }
+  const toggleMode = useCallback(() => {
+    setMode((prev) => (prev === "video" ? "gif" : "video"));
+    setPlaying(false);
+    setShowPlayer(false);
+    setReady(false);
+  }, []);
+
+  const onStateChange = useCallback((state: string) => {
+    if (state === "ended") {
+      setPlaying(false);
     }
-  }, [youtubeUrl]);
+  }, []);
 
-  // ── Web: use iframe embed (works perfectly in browsers) ──────────────────
-  if (Platform.OS === "web") {
+  const onReady = useCallback(() => {
+    setReady(true);
+  }, []);
+
+  // ── Mode toggle button ──────────────────────────────────────────────────
+  const ModeToggle = gifUrl ? (
+    <View style={styles.modeToggleRow}>
+      <Pressable
+        onPress={toggleMode}
+        style={({ pressed }) => [
+          styles.modeToggleBtn,
+          {
+            backgroundColor: mode === "gif" ? "#D4AF37" : colors.surface,
+            borderColor: mode === "gif" ? "#D4AF37" : colors.border,
+          },
+          pressed && { opacity: 0.7 },
+        ]}
+      >
+        <MaterialIcons
+          name="gif"
+          size={18}
+          color={mode === "gif" ? "#000" : colors.foreground}
+        />
+        <Text
+          style={[
+            styles.modeToggleText,
+            { color: mode === "gif" ? "#000" : colors.foreground },
+          ]}
+        >
+          GIF Guide
+        </Text>
+      </Pressable>
+      <Pressable
+        onPress={toggleMode}
+        style={({ pressed }) => [
+          styles.modeToggleBtn,
+          {
+            backgroundColor: mode === "video" ? "#D4AF37" : colors.surface,
+            borderColor: mode === "video" ? "#D4AF37" : colors.border,
+          },
+          pressed && { opacity: 0.7 },
+        ]}
+      >
+        <MaterialIcons
+          name="play-circle-outline"
+          size={18}
+          color={mode === "video" ? "#000" : colors.foreground}
+        />
+        <Text
+          style={[
+            styles.modeToggleText,
+            { color: mode === "video" ? "#000" : colors.foreground },
+          ]}
+        >
+          Video
+        </Text>
+      </Pressable>
+    </View>
+  ) : null;
+
+  // ── GIF Mode ────────────────────────────────────────────────────────────
+  if (mode === "gif" && gifUrl) {
     return (
       <View>
+        {ModeToggle}
+        <View
+          style={[
+            styles.playerContainer,
+            {
+              height,
+              backgroundColor: "#000",
+              borderRadius: 12,
+              overflow: "hidden",
+            },
+          ]}
+        >
+          <Image
+            source={gifUrl}
+            style={StyleSheet.absoluteFill}
+            contentFit="contain"
+            cachePolicy="disk"
+            transition={200}
+          />
+          {/* GIF badge */}
+          <View style={styles.gifBadge}>
+            <MaterialIcons name="gif" size={16} color="#fff" />
+            <Text style={styles.gifBadgeText}>Offline Guide</Text>
+          </View>
+        </View>
+        {cue ? (
+          <View style={[styles.cueContainer, { backgroundColor: colors.surface }]}>
+            <MaterialIcons name="info-outline" size={14} color={colors.muted} />
+            <Text style={[styles.cueText, { color: colors.muted }]}>{cue}</Text>
+          </View>
+        ) : null}
+      </View>
+    );
+  }
+
+  // ── Video Mode: Web (iframe) ────────────────────────────────────────────
+  if (Platform.OS === "web") {
+    const embedUrl = `https://www.youtube-nocookie.com/embed/${videoId}?rel=0&modestbranding=1&playsinline=1&autoplay=0&showinfo=0&controls=1`;
+    return (
+      <View>
+        {ModeToggle}
         <View
           style={[
             styles.playerContainer,
@@ -93,12 +209,12 @@ export function YouTubePlayer({
     );
   }
 
-  // ── Native: thumbnail preview + open in system browser ───────────────────
+  // ── Video Mode: Native (react-native-youtube-iframe) ────────────────────
   return (
     <View>
-      <Pressable
-        onPress={openInBrowser}
-        style={({ pressed }) => [
+      {ModeToggle}
+      <View
+        style={[
           styles.playerContainer,
           {
             height,
@@ -106,44 +222,61 @@ export function YouTubePlayer({
             borderRadius: 12,
             overflow: "hidden",
           },
-          pressed && { opacity: 0.85, transform: [{ scale: 0.98 }] },
         ]}
       >
-        {/* Thumbnail Image */}
-        <Image
-          source={{ uri: thumbnailUrl }}
-          style={StyleSheet.absoluteFill}
-          resizeMode="cover"
-          onLoadStart={() => setThumbnailLoading(true)}
-          onLoadEnd={() => setThumbnailLoading(false)}
-          onError={() => {
-            setThumbnailError(true);
-            setThumbnailLoading(false);
-          }}
-        />
-
-        {/* Loading indicator */}
-        {thumbnailLoading && (
-          <View style={styles.loadingOverlay}>
-            <ActivityIndicator size="large" color="#D4AF37" />
-          </View>
+        {showPlayer && YoutubeIframe ? (
+          <>
+            <YoutubeIframe
+              height={height}
+              videoId={videoId}
+              play={playing}
+              onChangeState={onStateChange}
+              onReady={onReady}
+              webViewProps={{
+                allowsInlineMediaPlayback: true,
+                mediaPlaybackRequiresUserAction: false,
+              }}
+            />
+            {!ready && (
+              <View style={styles.loadingOverlay}>
+                <ActivityIndicator size="large" color="#D4AF37" />
+                <Text style={styles.loadingText}>Loading video...</Text>
+              </View>
+            )}
+          </>
+        ) : (
+          <Pressable
+            onPress={() => {
+              setShowPlayer(true);
+              setPlaying(true);
+            }}
+            style={({ pressed }) => [
+              StyleSheet.absoluteFill,
+              pressed && { opacity: 0.85, transform: [{ scale: 0.98 }] },
+            ]}
+          >
+            {/* Cached thumbnail */}
+            <Image
+              source={thumbnailUri}
+              style={StyleSheet.absoluteFill}
+              contentFit="cover"
+              cachePolicy="disk"
+              transition={200}
+            />
+            {/* Play button overlay */}
+            <View style={styles.playOverlay}>
+              <View style={styles.playButton}>
+                <MaterialIcons name="play-arrow" size={40} color="#fff" />
+              </View>
+            </View>
+            {/* Label */}
+            <View style={styles.youtubeLabel}>
+              <MaterialIcons name="ondemand-video" size={14} color="#fff" />
+              <Text style={styles.youtubeLabelText}>Tap to Play</Text>
+            </View>
+          </Pressable>
         )}
-
-        {/* Play button overlay */}
-        <View style={styles.playOverlay}>
-          <View style={styles.playButton}>
-            <MaterialIcons name="play-arrow" size={40} color="#fff" />
-          </View>
-        </View>
-
-        {/* "Watch on YouTube" label */}
-        <View style={styles.youtubeLabel}>
-          <MaterialIcons name="ondemand-video" size={14} color="#fff" />
-          <Text style={styles.youtubeLabelText}>Watch Demo</Text>
-        </View>
-      </Pressable>
-
-      {/* Form cue */}
+      </View>
       {cue ? (
         <View style={[styles.cueContainer, { backgroundColor: colors.surface }]}>
           <MaterialIcons name="info-outline" size={14} color={colors.muted} />
@@ -155,36 +288,42 @@ export function YouTubePlayer({
 }
 
 /**
- * Compact thumbnail button that opens the video in the system browser.
- * Used in list items where inline playback is too large.
+ * Compact thumbnail button for list items.
+ * Opens the video in a modal-like inline player.
  */
 export function YouTubePlayerButton({
   videoId,
   cue,
   label = "Watch Demo",
+  gifUrl,
 }: YouTubePlayerProps & { label?: string }) {
   const colors = useColors();
+  const [expanded, setExpanded] = useState(false);
 
-  const openInBrowser = useCallback(async () => {
-    const youtubeUrl = `https://www.youtube.com/watch?v=${videoId}`;
-    try {
-      if (Platform.OS === "web") {
-        window.open(youtubeUrl, "_blank");
-      } else {
-        await WebBrowser.openBrowserAsync(youtubeUrl, {
-          presentationStyle: WebBrowser.WebBrowserPresentationStyle.FULL_SCREEN,
-          controlsColor: "#F59E0B",
-          toolbarColor: "#0A0500",
-        });
-      }
-    } catch {
-      // Silent fail
-    }
-  }, [videoId]);
+  if (expanded) {
+    return (
+      <View>
+        <YouTubePlayer videoId={videoId} cue={cue} height={180} gifUrl={gifUrl} />
+        <Pressable
+          onPress={() => setExpanded(false)}
+          style={({ pressed }) => [
+            styles.collapseButton,
+            { backgroundColor: colors.surface, borderColor: colors.border },
+            pressed && { opacity: 0.7 },
+          ]}
+        >
+          <MaterialIcons name="expand-less" size={18} color={colors.muted} />
+          <Text style={[styles.demoButtonText, { color: colors.muted }]}>
+            Collapse
+          </Text>
+        </Pressable>
+      </View>
+    );
+  }
 
   return (
     <Pressable
-      onPress={openInBrowser}
+      onPress={() => setExpanded(true)}
       style={({ pressed }) => [
         styles.demoButton,
         {
@@ -206,11 +345,35 @@ const styles = StyleSheet.create({
   playerContainer: {
     position: "relative",
   },
+  modeToggleRow: {
+    flexDirection: "row",
+    gap: 8,
+    marginBottom: 8,
+  },
+  modeToggleBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
+    borderWidth: 1,
+  },
+  modeToggleText: {
+    fontSize: 12,
+    fontWeight: "600",
+  },
   loadingOverlay: {
     ...StyleSheet.absoluteFillObject,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(0,0,0,0.6)",
+    backgroundColor: "rgba(0,0,0,0.7)",
+  },
+  loadingText: {
+    color: "#fff",
+    fontSize: 12,
+    marginTop: 8,
+    fontWeight: "500",
   },
   playOverlay: {
     ...StyleSheet.absoluteFillObject,
@@ -247,6 +410,23 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: "600",
   },
+  gifBadge: {
+    position: "absolute",
+    top: 8,
+    right: 8,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    backgroundColor: "rgba(0,0,0,0.6)",
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 10,
+  },
+  gifBadgeText: {
+    color: "#fff",
+    fontSize: 10,
+    fontWeight: "600",
+  },
   cueContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -267,6 +447,16 @@ const styles = StyleSheet.create({
     gap: 6,
     paddingHorizontal: 12,
     paddingVertical: 8,
+    borderRadius: 8,
+    borderWidth: 1,
+  },
+  collapseButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 4,
+    paddingVertical: 6,
+    marginTop: 6,
     borderRadius: 8,
     borderWidth: 1,
   },

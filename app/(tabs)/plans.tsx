@@ -824,7 +824,7 @@ function ExercisePreviewCard({ exercise }: { exercise: any }) {
       </View>
       {showVideo && (
         <View style={{ paddingHorizontal: 12, paddingBottom: 12 }}>
-          <YouTubePlayer videoId={demo.videoId} cue={demo.cue} height={160} />
+          <YouTubePlayer videoId={demo.videoId} cue={demo.cue} gifUrl={demo.gifUrl} height={160} />
         </View>
       )}
     </View>

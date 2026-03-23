@@ -32,6 +32,7 @@ import { FloatingAssistant } from "@/components/floating-assistant";
 import { scheduleAllAINotifications } from "@/lib/ai-notification-scheduler";
 import { defineBackgroundHealthSyncTask, registerBackgroundHealthSync } from "@/lib/background-health-sync";
 import { initWeeklyDigest } from "@/lib/weekly-health-digest";
+import { preCacheThumbnails, clearExpiredThumbnails } from "@/lib/thumbnail-cache";
 
 // Define background task in global scope (required by expo-task-manager)
 defineBackgroundHealthSyncTask();
@@ -218,6 +219,25 @@ export default function RootLayout() {
     const timer = setTimeout(() => {
       initWeeklyDigest().catch(() => {});
     }, 6000);
+    return () => clearTimeout(timer);
+  }, [fontsLoaded]);
+
+  // Pre-cache exercise demo thumbnails and clean expired cache entries
+  useEffect(() => {
+    if (!fontsLoaded) return;
+    const timer = setTimeout(() => {
+      // Clean expired thumbnails first, then pre-cache common ones
+      clearExpiredThumbnails().catch(() => {});
+      // Pre-cache the most common exercise thumbnails (top 20)
+      const commonVideoIds = [
+        "hWbUlkb5Ms4", "_YrJc-kTYA0", "QENKPHhQVi4", "bxguzp1DCFw",
+        "SALxEARiMkw", "qXrTDQG1oUQ", "ZaTM37cfiDs", "zoN5EH50Dro",
+        "JMt_uxE8bBc", "VCw_uIxW8WE", "-zLyUAo1gMw", "MLoZuAkIyZI",
+        "1cS-6KsJW9g", "nDh_BlnLCGc", "pF17m_CXfL0", "v25dawSzRTM",
+        "MKmrqcoCZ-M", "G2hv_NYhM-A", "aSYap2yhW8s", "uLVt6u15L98",
+      ];
+      preCacheThumbnails(commonVideoIds).catch(() => {});
+    }, 7000);
     return () => clearTimeout(timer);
   }, [fontsLoaded]);
 

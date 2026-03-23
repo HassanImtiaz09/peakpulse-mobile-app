@@ -1350,3 +1350,33 @@
 - [x] Add loading states and error handling
 - [x] 0 TypeScript errors
 - [x] 20 unit tests passing (round65-video-fix.test.ts)
+
+## Round 66 — Enhanced Exercise Demo Videos
+
+### react-native-youtube-iframe Integration
+- [x] Install react-native-youtube-iframe, react-native-webview, and react-native-web-webview dependencies
+- [x] Rewrite YouTubePlayer component to use YoutubeIframe for in-app playback on native
+- [x] Keep iframe embed for web platform
+- [x] Handle player states (loading, playing, paused, error) with proper UI feedback
+- [x] Lazy-load YoutubeIframe on native only to avoid web crashes
+
+### Thumbnail Caching
+- [x] Build thumbnail cache service using expo-file-system (lib/thumbnail-cache.ts)
+- [x] Pre-cache top 20 exercise thumbnails on app launch (7s delay)
+- [x] Show cached thumbnail instantly, fall back to network if not cached
+- [x] Cache invalidation strategy (TTL-based, 7 days) with clearExpiredThumbnails
+- [x] Web fallback: use browser-native image caching (returns remote URL on web)
+
+### Animated GIF Exercise Guides (Offline)
+- [x] Sourced animated GIF URLs from ExerciseDB API for all 95 exercises
+- [x] Added gifUrl field to ExerciseDemo interface and all exercise entries
+- [x] GIF playback via expo-image with disk caching for offline use
+- [x] Added toggle between GIF Guide and Video mode in exercise demo section
+- [x] GIFs available offline after first load (expo-image cachePolicy="disk")
+- [x] All workout types (Gym, Home, Mixed, Cardio/HIIT) have GIF demos
+
+### Testing
+- [x] Unit tests for thumbnail cache service (URL patterns, file structure)
+- [x] Unit tests for exercise demo data (GIF URLs, video IDs for all 95 exercises)
+- [x] Unit tests for component rendering logic (file structure verification)
+- [x] 0 TypeScript errors, 15 tests passing (round66-enhanced-video.test.ts)
