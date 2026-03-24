@@ -15,6 +15,7 @@ import { BodyDiagramInline } from "@/components/body-diagram";
 import { EnhancedGifPlayer } from "@/components/enhanced-gif-player";
 import { getExerciseInfo } from "@/lib/exercise-data";
 import { useFavorites } from "@/lib/favorites-context";
+import { logWorkoutPRs } from "@/lib/personal-records";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import {
   type RestTimerSettings,
@@ -402,20 +403,43 @@ export default function ActiveWorkoutScreen() {
               durationMinutes: Math.floor(elapsedSeconds / 60),
               completedAt: new Date().toISOString(),
             };
-            if (isAuthenticated) {
-              logSession.mutate({
-                dayName: sessionData.dayName,
-                focus: sessionData.focus,
-                completedExercises: completedExercises.map(e => e.name),
-                durationMinutes: sessionData.durationMinutes,
-              });
-            } else {
-              // Guest: save locally
-              await saveSessionLocally(sessionData);
-              Alert.alert("Workout Complete! \u{1F389}", "Great job! Your session has been logged locally.", [
-                { text: "Done", onPress: () => router.back() },
-                { text: "Share \uD83D\uDCF1", onPress: () => router.replace({ pathname: "/share-workout" as any, params: { type: "session", sessionName: dayData?.focus ?? "Workout", sessionDuration: String(Math.round(elapsedSeconds / 60)), sessionExercises: String(exercises.length) } }) },
-              ]);
+            // Auto-log personal records
+            try {
+              const prResults = await logWorkoutPRs(completedExercises);
+              const newPRs = prResults.filter(r => r.isNewPR);
+              const prMessage = newPRs.length > 0
+                ? `\n\n\u{1F3C6} ${newPRs.length} new PR${newPRs.length > 1 ? "s" : ""}! ${newPRs.map(p => p.exercise).join(", ")}`
+                : "";
+              if (isAuthenticated) {
+                logSession.mutate({
+                  dayName: sessionData.dayName,
+                  focus: sessionData.focus,
+                  completedExercises: completedExercises.map(e => e.name),
+                  durationMinutes: sessionData.durationMinutes,
+                });
+              } else {
+                // Guest: save locally
+                await saveSessionLocally(sessionData);
+                Alert.alert("Workout Complete! \u{1F389}", `Great job! Your session has been logged locally.${prMessage}`, [
+                  { text: "Done", onPress: () => router.back() },
+                  { text: "Share \uD83D\uDCF1", onPress: () => router.replace({ pathname: "/share-workout" as any, params: { type: "session", sessionName: dayData?.focus ?? "Workout", sessionDuration: String(Math.round(elapsedSeconds / 60)), sessionExercises: String(exercises.length) } }) },
+                ]);
+              }
+            } catch {
+              // PR logging failed silently, still save session
+              if (isAuthenticated) {
+                logSession.mutate({
+                  dayName: sessionData.dayName,
+                  focus: sessionData.focus,
+                  completedExercises: completedExercises.map(e => e.name),
+                  durationMinutes: sessionData.durationMinutes,
+                });
+              } else {
+                await saveSessionLocally(sessionData);
+                Alert.alert("Workout Complete! \u{1F389}", "Great job! Your session has been logged locally.", [
+                  { text: "Done", onPress: () => router.back() },
+                ]);
+              }
             }
           },
         },

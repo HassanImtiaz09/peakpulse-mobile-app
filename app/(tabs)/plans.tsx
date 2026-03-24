@@ -289,6 +289,13 @@ export default function PlansScreen() {
           <MaterialIcons name="menu-book" size={16} color="#F59E0B" />
           <Text style={{ color: "#F59E0B", fontFamily: "Outfit_700Bold", fontSize: 11 }}>Library</Text>
         </TouchableOpacity>
+        <TouchableOpacity
+          style={{ paddingVertical: 10, paddingHorizontal: 12, borderRadius: 12, alignItems: "center", backgroundColor: "rgba(245,158,11,0.12)", borderWidth: 1, borderColor: "rgba(245,158,11,0.25)", flexDirection: "row", gap: 4 }}
+          onPress={() => router.push("/create-workout" as any)}
+        >
+          <MaterialIcons name="add-circle-outline" size={16} color="#F59E0B" />
+          <Text style={{ color: "#F59E0B", fontFamily: "Outfit_700Bold", fontSize: 11 }}>Create</Text>
+        </TouchableOpacity>
       </View>
 
       <Animated.ScrollView

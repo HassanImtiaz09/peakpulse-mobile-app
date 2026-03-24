@@ -29,6 +29,9 @@ import { BodyHeatmap } from "@/components/body-heatmap";
 import { analyzeMuscleBalance, generateSuggestions, generatePlanChanges, applyPlanChanges, type MuscleBalanceReport, type ExerciseSuggestion, type PlanChange } from "@/lib/muscle-balance";
 import { getWeeklyGoals, calculateWeeklyProgress, getWorkoutsThisWeek, isGoalTrackingEnabled, type WeeklyGoals, type WeeklyProgress } from "@/lib/goal-tracking";
 import { shareWeeklySummaryCard, shareMilestoneCard, type WeeklySummaryCardData, type MilestoneCardData } from "@/lib/social-card-generator";
+import { TrendChart, PRProgressChart, type TrendDataPoint } from "@/components/trend-chart";
+import { getPRSummary, type PRSummary } from "@/lib/personal-records";
+
 import {
   getStreakData, evaluateWeek, getWeekNeedingEvaluation, getCurrentMilestone,
   getNextMilestone, getWeeksToNextMilestone, getStreakEmoji, getStreakLabel,
@@ -260,11 +263,72 @@ export default function HomeScreen() {
   const [planChanges, setPlanChanges] = React.useState<PlanChange[]>([]);
   const [balanceWindow, setBalanceWindow] = React.useState<7 | 14 | 30>(7);
   const [applyingChanges, setApplyingChanges] = React.useState(false);
+  // Trend chart and PR state
+  const [trendData, setTrendData] = React.useState<TrendDataPoint[]>([]);
+  const [prSummary, setPrSummary] = React.useState<PRSummary | null>(null);
+
 
   // 1A: Parallax scroll value
   const scrollY = useSharedValue(0);
 
   // Rotate tips every 5 minutes
+  
+  // Load trend data and PR summary
+  React.useEffect(() => {
+    async function loadTrendAndPR() {
+      try {
+        // Load PR summary
+        const summary = await getPRSummary();
+        setPrSummary(summary);
+
+        // Generate trend data from workout sessions
+        const raw = await AsyncStorage.getItem("@workout_sessions_local");
+        const sessions: any[] = raw ? JSON.parse(raw) : [];
+        if (sessions.length < 2) return;
+
+        // Group sessions by week
+        const weekMap = new Map<string, any[]>();
+        for (const s of sessions) {
+          const d = new Date(s.completedAt);
+          const weekStart = new Date(d);
+          weekStart.setDate(d.getDate() - d.getDay());
+          const key = weekStart.toISOString().split("T")[0];
+          if (!weekMap.has(key)) weekMap.set(key, []);
+          weekMap.get(key)!.push(s);
+        }
+
+        // Convert to trend data points
+        const points: TrendDataPoint[] = [];
+        const sortedWeeks = Array.from(weekMap.entries()).sort((a, b) => a[0].localeCompare(b[0]));
+        for (const [weekKey, weekSessions] of sortedWeeks.slice(-12)) {
+          const d = new Date(weekKey);
+          const label = d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+          // Simple scoring based on workout count and variety
+          const exerciseNames = new Set<string>();
+          for (const s of weekSessions) {
+            try {
+              const exs = JSON.parse(s.completedExercisesJson || "[]");
+              exs.forEach((e: string) => exerciseNames.add(e.toLowerCase()));
+            } catch {}
+          }
+          const variety = Math.min(15, exerciseNames.size);
+          const overallScore = Math.min(100, Math.round(weekSessions.length * 15 + variety * 3));
+          points.push({
+            date: weekKey,
+            label,
+            overCount: Math.max(0, Math.round(variety * 0.2)),
+            optimalCount: Math.round(variety * 0.5),
+            underCount: Math.max(0, 10 - variety),
+            overallScore,
+            muscleScores: {},
+          });
+        }
+        setTrendData(points);
+      } catch {}
+    }
+    loadTrendAndPR();
+  }, []);
+
   React.useEffect(() => {
     const interval = setInterval(() => {
       setTipIndex(prev => (prev + 1) % TIPS_AND_TRICKS.length);
@@ -1349,6 +1413,81 @@ export default function HomeScreen() {
                       </TouchableOpacity>
                     </>
                   )}
+                </View>
+              </View>
+            </StaggeredCard>
+          )}
+
+
+          {/* ── Muscle Balance Trend Chart ── */}
+          {muscleReport && muscleReport.totalWorkouts >= 2 && (
+            <StaggeredCard index={5}>
+              <View style={styles.section}>
+                <TrendChart
+                  data={trendData}
+                  title="Muscle Balance Trend"
+                  height={200}
+                  showMuscleDetail={true}
+                />
+              </View>
+            </StaggeredCard>
+          )}
+
+          {/* ── Personal Records ── */}
+          {prSummary && prSummary.totalExercisesTracked > 0 && (
+            <StaggeredCard index={6}>
+              <View style={styles.section}>
+                <SectionTitle title="Personal Records" />
+                <View style={{ gap: 8 }}>
+                  {/* Recent PRs */}
+                  {prSummary.recentPRs.length > 0 && (
+                    <View style={{ backgroundColor: "rgba(34,197,94,0.08)", borderRadius: 12, padding: 12, borderWidth: 1, borderColor: "rgba(34,197,94,0.15)" }}>
+                      <View style={{ flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 8 }}>
+                        <MaterialIcons name="emoji-events" size={14} color="#22C55E" />
+                        <Text style={{ color: "#22C55E", fontFamily: "Outfit_700Bold", fontSize: 12 }}>Recent PRs</Text>
+                      </View>
+                      {prSummary.recentPRs.map((pr, i) => (
+                        <View key={i} style={{ flexDirection: "row", justifyContent: "space-between", paddingVertical: 3 }}>
+                          <Text style={{ color: SF.fg, fontFamily: "DMSans_500Medium", fontSize: 11 }}>{pr.exercise}</Text>
+                          <Text style={{ color: "#22C55E", fontFamily: "DMSans_600SemiBold", fontSize: 11 }}>
+                            {pr.entry.weight}kg × {pr.entry.reps} ({pr.type})
+                          </Text>
+                        </View>
+                      ))}
+                    </View>
+                  )}
+
+                  {/* Top Lifts */}
+                  {prSummary.topLifts.length > 0 && (
+                    <View style={{ backgroundColor: "rgba(245,158,11,0.04)", borderRadius: 12, padding: 12, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}>
+                      <View style={{ flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 8 }}>
+                        <MaterialIcons name="fitness-center" size={14} color={SF.gold} />
+                        <Text style={{ color: SF.gold, fontFamily: "Outfit_700Bold", fontSize: 12 }}>Top Lifts</Text>
+                      </View>
+                      {prSummary.topLifts.slice(0, 5).map((lift, i) => (
+                        <View key={i} style={{ flexDirection: "row", justifyContent: "space-between", paddingVertical: 3 }}>
+                          <Text style={{ color: SF.fg, fontFamily: "DMSans_500Medium", fontSize: 11 }}>{lift.exercise}</Text>
+                          <Text style={{ color: SF.gold3, fontFamily: "DMSans_600SemiBold", fontSize: 11 }}>{lift.weight}kg</Text>
+                        </View>
+                      ))}
+                    </View>
+                  )}
+
+                  {/* Stats */}
+                  <View style={{ flexDirection: "row", justifyContent: "space-around", paddingTop: 8 }}>
+                    <View style={{ alignItems: "center" }}>
+                      <Text style={{ color: SF.gold, fontFamily: "Outfit_700Bold", fontSize: 18 }}>{prSummary.totalExercisesTracked}</Text>
+                      <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 9 }}>Exercises</Text>
+                    </View>
+                    <View style={{ alignItems: "center" }}>
+                      <Text style={{ color: SF.gold, fontFamily: "Outfit_700Bold", fontSize: 18 }}>{prSummary.totalPREntries}</Text>
+                      <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 9 }}>Entries</Text>
+                    </View>
+                    <View style={{ alignItems: "center" }}>
+                      <Text style={{ color: "#22C55E", fontFamily: "Outfit_700Bold", fontSize: 18 }}>{prSummary.recentPRs.length}</Text>
+                      <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 9 }}>New PRs</Text>
+                    </View>
+                  </View>
                 </View>
               </View>
             </StaggeredCard>

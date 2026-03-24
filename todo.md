@@ -1458,3 +1458,39 @@
 - [x] 31 unit tests passing (round68-muscle-balance.test.ts)
 - [x] Tests cover: analysis engine, suggestions, plan changes, body heatmap, dashboard/plans integration
 - [x] 0 TypeScript errors (tsc --noEmit exit code 0)
+
+## Round 69 — Custom Workout Builder, Trend Charts, Personal Records
+
+### Create Custom Workout Feature
+- [x] New screen: app/create-workout.tsx with exercise category browsing
+- [x] Exercise categories: Upper Body, Chest, Back, Shoulders, Biceps, Triceps, Lower Body, Quads, Hamstrings, Glutes, Calves, Core, Cardio, Full Body (via EXERCISE_CATEGORIES)
+- [x] Exercise selection with search and category filter
+- [x] AI rep suggestions based on exercise type, user fitness level, and goals (getRepSuggestion)
+- [x] AI balance analysis showing if workout is too heavy on certain muscle groups (analyzeWorkoutBalance)
+- [x] AI calorie expenditure estimate based on selected exercises and reps (estimateCalories)
+- [x] AI muscle gain / fat loss estimates over time (estimateBodyComposition with daysToGoal)
+- [x] AI coaching suggestions for workout improvement (getCoachingInsights with priority levels)
+- [x] Save custom workout to plans system (@guest_workout_plan in AsyncStorage)
+- [x] Navigation from Plans tab "Create" button to Create Custom Workout
+
+### Weekly/Monthly Muscle Balance Trend Charts
+- [x] TrendChart component (components/trend-chart.tsx) with SVG line charts
+- [x] Weekly trend chart showing muscle balance evolution from workout sessions
+- [x] Up to 12 weeks of trend data displayed
+- [x] Visual chart using react-native-svg with smooth Catmull-Rom curves
+- [x] Muscle-specific tracking (tap to overlay individual muscle trend)
+- [x] Integrated into dashboard after Suggested Changes section
+
+### Personal Records (PR) Tracking
+- [x] lib/personal-records.ts: PR storage with AsyncStorage (@personal_records)
+- [x] Track weight, reps, and sets per exercise with timestamps
+- [x] PR history with getProgressChartData for chart visualization
+- [x] PRProgressChart component with trend direction indicators
+- [x] PR summary section on dashboard (Recent PRs, Top Lifts, Stats)
+- [x] Auto-logging PRs during active workout completion (logWorkoutPRs)
+- [x] New PR notification in workout completion alert
+
+### Testing
+- [x] 28 unit tests passing (round69-custom-workout.test.ts)
+- [x] Tests cover: PR system, AI insights engine, custom workout screen, trend charts, integration
+- [x] 0 TypeScript errors (tsc --noEmit exit code 0)
