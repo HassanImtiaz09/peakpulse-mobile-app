@@ -1574,3 +1574,27 @@
 - [x] Unit tests for favorites persistence logic
 - [x] 0 TypeScript errors
 - [x] All tests pass (1253 passing, 40 test files)
+
+## Round 73 — MuscleWiki API Integration (Accurate Exercise Videos)
+
+### API Setup
+- [x] Store MuscleWiki API key securely
+- [x] Verify API key works with test request
+
+### Exercise Mapping
+- [x] Query MuscleWiki API to find all exercises matching our ~70 app exercises (80/82 mapped)
+- [x] Map each app exercise to its correct MuscleWiki exercise ID
+- [x] Extract video URLs (front/side views, male model) for each exercise
+
+### Update Exercise Demos
+- [x] Replace all inaccurate GIF URLs in exercise-demos.ts with MuscleWiki video URLs
+- [x] Update angleViews in exercise-data.ts to use MuscleWiki front/side video angles (146/150 URLs updated)
+- [x] Verify each exercise name maps to the correct MuscleWiki video
+
+### Player Updates
+- [x] Update ExerciseDemoPlayer and EnhancedGifPlayer to handle MP4 video via expo-video VideoView
+- [x] Ensure fullscreen, favorites, and alternatives still work with new video format
+
+### Testing
+- [x] 0 TypeScript errors
+- [x] All tests pass (1255 passing, 40 test files)

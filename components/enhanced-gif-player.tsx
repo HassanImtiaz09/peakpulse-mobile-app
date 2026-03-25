@@ -1,22 +1,29 @@
 /**
- * Enhanced GIF Player
+ * Enhanced GIF/Video Player
  *
  * Features:
  * - Multi-angle views (2-3 per exercise) with angle selector
+ * - Supports both MP4 video (MuscleWiki) and GIF fallback
  * - Slow-motion playback simulation via opacity pulse
  * - Loop toggle control
  * - Focus annotations showing what to watch for each angle
- * - Offline-ready with expo-image disk caching
+ * - Fullscreen modal with favorites
  */
-import React, { useState, useCallback, useRef, useEffect } from "react";
-import { View, Text, Pressable, StyleSheet, Animated, Platform, Modal, Dimensions } from "react-native";
+import React, { useState, useCallback, useRef, useEffect, useMemo } from "react";
+import { View, Text, Pressable, StyleSheet, Animated, Platform, Modal, Dimensions, ActivityIndicator } from "react-native";
 import { Image } from "expo-image";
+import { VideoView, useVideoPlayer } from "expo-video";
+import { useEvent } from "expo";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import * as Haptics from "expo-haptics";
 import type { ExerciseAngleView } from "@/lib/exercise-data";
 import { useFavorites } from "@/lib/favorites-context";
 
 const { width: SCREEN_W } = Dimensions.get("window");
+
+function isVideoUrl(url: string): boolean {
+  return url.endsWith(".mp4") || url.endsWith(".webm") || url.endsWith(".mov");
+}
 
 interface EnhancedGifPlayerProps {
   /** Multi-angle views for this exercise */
@@ -43,6 +50,58 @@ const C = {
   dim: "rgba(245,158,11,0.08)",
 };
 
+/** Inline video player using expo-video */
+function InlineVideoPlayer({ url, style }: { url: string; style?: object }) {
+  const player = useVideoPlayer(url, (p) => {
+    p.loop = true;
+    p.muted = true;
+    p.play();
+  });
+  const { status } = useEvent(player, "statusChange", { status: player.status });
+
+  return (
+    <View style={[{ flex: 1, backgroundColor: C.bg }, style]}>
+      {status === "loading" && (
+        <View style={[StyleSheet.absoluteFill, { justifyContent: "center", alignItems: "center" }]}>
+          <ActivityIndicator size="small" color={C.gold} />
+        </View>
+      )}
+      <VideoView
+        player={player}
+        style={StyleSheet.absoluteFill}
+        contentFit="contain"
+        nativeControls={false}
+      />
+    </View>
+  );
+}
+
+/** Fullscreen video player using expo-video */
+function FullscreenVideoPlayer({ url }: { url: string }) {
+  const player = useVideoPlayer(url, (p) => {
+    p.loop = true;
+    p.muted = true;
+    p.play();
+  });
+  const { status } = useEvent(player, "statusChange", { status: player.status });
+
+  return (
+    <View style={{ width: SCREEN_W, height: SCREEN_W }}>
+      {status === "loading" && (
+        <View style={[StyleSheet.absoluteFill, { justifyContent: "center", alignItems: "center" }]}>
+          <ActivityIndicator size="large" color={C.gold} />
+        </View>
+      )}
+      <VideoView
+        player={player}
+        style={StyleSheet.absoluteFill}
+        contentFit="contain"
+        nativeControls={false}
+      />
+    </View>
+  );
+}
+
 export function EnhancedGifPlayer({
   angleViews,
   exerciseName,
@@ -62,9 +121,11 @@ export function EnhancedGifPlayer({
   const currentView = angleViews[activeAngle] || angleViews[0];
   if (!currentView) return null;
 
-  // Slow-motion pulse animation
+  const isVideo = isVideoUrl(currentView.gifUrl);
+
+  // Slow-motion pulse animation (only for GIFs)
   useEffect(() => {
-    if (isSlowMotion) {
+    if (isSlowMotion && !isVideo) {
       const animation = Animated.loop(
         Animated.sequence([
           Animated.timing(pulseAnim, { toValue: 0.6, duration: 1500, useNativeDriver: true }),
@@ -76,7 +137,7 @@ export function EnhancedGifPlayer({
     } else {
       pulseAnim.setValue(1);
     }
-  }, [isSlowMotion, pulseAnim]);
+  }, [isSlowMotion, isVideo, pulseAnim]);
 
   const handleAngleChange = useCallback((index: number) => {
     setActiveAngle(index);
@@ -96,7 +157,6 @@ export function EnhancedGifPlayer({
   const toggleLoop = useCallback(() => {
     setIsLooping((v) => {
       if (!v) {
-        // Restart the GIF by remounting
         setImageKey((k) => k + 1);
       }
       return !v;
@@ -110,24 +170,35 @@ export function EnhancedGifPlayer({
     setShowFocus((v) => !v);
   }, []);
 
+  const handleToggleFavorite = useCallback(() => {
+    toggleFavorite(exerciseName);
+    if (Platform.OS !== "web") {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+    }
+  }, [exerciseName, toggleFavorite]);
+
   return (
     <View style={styles.container}>
-      {/* GIF Display */}
+      {/* Media Display */}
       <View style={[styles.gifContainer, { height }]}>
-        <Animated.View style={[styles.gifWrapper, { opacity: isSlowMotion ? pulseAnim : 1 }]}>
-          <Image
-            key={`${activeAngle}-${imageKey}`}
-            source={{ uri: currentView.gifUrl }}
-            style={styles.gif}
-            contentFit="contain"
-            cachePolicy="disk"
-            recyclingKey={`${exerciseName}-${activeAngle}`}
-            transition={200}
-          />
-        </Animated.View>
+        {isVideo ? (
+          <InlineVideoPlayer key={`v-${activeAngle}-${imageKey}`} url={currentView.gifUrl} />
+        ) : (
+          <Animated.View style={[styles.gifWrapper, { opacity: isSlowMotion ? pulseAnim : 1 }]}>
+            <Image
+              key={`${activeAngle}-${imageKey}`}
+              source={{ uri: currentView.gifUrl }}
+              style={styles.gif}
+              contentFit="contain"
+              cachePolicy="disk"
+              recyclingKey={`${exerciseName}-${activeAngle}`}
+              transition={200}
+            />
+          </Animated.View>
+        )}
 
-        {/* Slow-motion overlay indicator */}
-        {isSlowMotion && (
+        {/* Slow-motion overlay indicator (GIF only) */}
+        {isSlowMotion && !isVideo && (
           <View style={styles.slowMotionBadge}>
             <MaterialIcons name="slow-motion-video" size={12} color={C.gold} />
             <Text style={styles.slowMotionText}>SLOW-MO</Text>
@@ -198,37 +269,41 @@ export function EnhancedGifPlayer({
             />
           </Pressable>
 
-          {/* Slow-motion toggle */}
-          <Pressable
-            onPress={toggleSlowMotion}
-            style={({ pressed }) => [
-              styles.controlButton,
-              isSlowMotion && styles.controlButtonActive,
-              pressed && { opacity: 0.7 },
-            ]}
-          >
-            <MaterialIcons
-              name="slow-motion-video"
-              size={16}
-              color={isSlowMotion ? C.bg : C.gold}
-            />
-          </Pressable>
+          {/* Slow-motion toggle (GIF only) */}
+          {!isVideo && (
+            <Pressable
+              onPress={toggleSlowMotion}
+              style={({ pressed }) => [
+                styles.controlButton,
+                isSlowMotion && styles.controlButtonActive,
+                pressed && { opacity: 0.7 },
+              ]}
+            >
+              <MaterialIcons
+                name="slow-motion-video"
+                size={16}
+                color={isSlowMotion ? C.bg : C.gold}
+              />
+            </Pressable>
+          )}
 
-          {/* Loop toggle */}
-          <Pressable
-            onPress={toggleLoop}
-            style={({ pressed }) => [
-              styles.controlButton,
-              isLooping && styles.controlButtonActive,
-              pressed && { opacity: 0.7 },
-            ]}
-          >
-            <MaterialIcons
-              name="loop"
-              size={16}
-              color={isLooping ? C.bg : C.gold}
-            />
-          </Pressable>
+          {/* Loop toggle (GIF only) */}
+          {!isVideo && (
+            <Pressable
+              onPress={toggleLoop}
+              style={({ pressed }) => [
+                styles.controlButton,
+                isLooping && styles.controlButtonActive,
+                pressed && { opacity: 0.7 },
+              ]}
+            >
+              <MaterialIcons
+                name="loop"
+                size={16}
+                color={isLooping ? C.bg : C.gold}
+              />
+            </Pressable>
+          )}
         </View>
       </View>
 
@@ -260,7 +335,7 @@ export function EnhancedGifPlayer({
             <Text style={styles.fullscreenTitle} numberOfLines={1}>{exerciseName}</Text>
             <View style={{ flexDirection: "row", gap: 8 }}>
               <Pressable
-                onPress={() => toggleFavorite(exerciseName)}
+                onPress={handleToggleFavorite}
                 style={({ pressed }) => [styles.fullscreenClose, pressed && { opacity: 0.7 }]}
               >
                 <MaterialIcons
@@ -278,14 +353,18 @@ export function EnhancedGifPlayer({
             </View>
           </View>
           <View style={styles.fullscreenImageWrap}>
-            <Image
-              key={`fs-${activeAngle}-${imageKey}`}
-              source={{ uri: currentView.gifUrl }}
-              style={{ width: SCREEN_W, height: SCREEN_W }}
-              contentFit="contain"
-              cachePolicy="disk"
-              transition={200}
-            />
+            {isVideo ? (
+              <FullscreenVideoPlayer key={`fsv-${activeAngle}`} url={currentView.gifUrl} />
+            ) : (
+              <Image
+                key={`fs-${activeAngle}-${imageKey}`}
+                source={{ uri: currentView.gifUrl }}
+                style={{ width: SCREEN_W, height: SCREEN_W }}
+                contentFit="contain"
+                cachePolicy="disk"
+                transition={200}
+              />
+            )}
           </View>
           <View style={styles.fullscreenAngleRow}>
             {angleViews.map((view, i) => (
@@ -307,7 +386,7 @@ export function EnhancedGifPlayer({
             </View>
           ) : null}
           <Pressable onPress={() => setFullscreen(false)} style={styles.fullscreenHint}>
-            <Text style={{ color: "rgba(255,255,255,0.4)", fontSize: 12 }}>Tap anywhere to close</Text>
+            <Text style={{ color: "rgba(255,255,255,0.4)", fontSize: 12 }}>Tap to close</Text>
           </Pressable>
         </View>
       </Modal>
@@ -316,7 +395,6 @@ export function EnhancedGifPlayer({
 }
 
 function getAngleShortLabel(label: string, index: number): string {
-  // Shorten labels for compact display
   if (label.includes("Side")) return "Side";
   if (label.includes("Front")) return "Front";
   if (label.includes("Back")) return "Back";

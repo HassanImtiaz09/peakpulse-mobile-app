@@ -1,0 +1,1425 @@
+{
+  "exercises": {
+    "bench press": {
+      "mw_id": 4,
+      "mw_name": "Barbell Bench Press",
+      "primary_muscles": [
+        "Chest"
+      ],
+      "category": "Barbell",
+      "difficulty": "Intermediate",
+      "steps": [
+        "Lay flat on the bench with your feet on the ground. With straight arms unrack the bar.",
+        "Lower the bar to your mid chest",
+        "Raise the bar until you've locked your elbows."
+      ],
+      "front_video": "https://api.musclewiki.com/stream/videos/branded/male-barbell-bench-press-front.mp4",
+      "side_video": "https://api.musclewiki.com/stream/videos/branded/male-barbell-bench-press-side_KciuhbB.mp4",
+      "front_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-barbell-bench-press-front.jpg",
+      "side_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-barbell-bench-press-side_KciuhbB.jpg"
+    },
+    "push up": {
+      "mw_id": 182,
+      "mw_name": "Push Up",
+      "primary_muscles": [
+        "Chest"
+      ],
+      "category": "Bodyweight",
+      "difficulty": "Beginner",
+      "steps": [
+        "Place your hands firmly on the ground, directly under shoulders.",
+        "Flatten your back so your entire body is straight and slowly lower your body",
+        "Draw shoulder blades back and down, keeping elbows tucked close to your body",
+        "Exhale as you push back to the starting position."
+      ],
+      "front_video": "https://api.musclewiki.com/stream/videos/branded/male-Bodyweight-push-up-front.mp4",
+      "side_video": "https://api.musclewiki.com/stream/videos/branded/male-Bodyweight-push-up-side.mp4",
+      "front_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Bodyweight-push-up-front.jpg",
+      "side_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Bodyweight-push-up-side.jpg"
+    },
+    "dumbbell fly": {
+      "mw_id": 379,
+      "mw_name": "Dumbbell Chest Fly",
+      "primary_muscles": [
+        "Chest"
+      ],
+      "category": "Dumbbells",
+      "difficulty": "Novice",
+      "steps": [
+        "Lay on a bench with two dumbbells extended in front of you.",
+        "You should have a slight bend in your elbows and maintain that bend. Your shoulder joint should do all the movement.",
+        "Bring the dumbbells out to your side. Stop the dumbbells before going behind your body.",
+        "Bring the dumbbells back together at the top."
+      ],
+      "front_video": "https://api.musclewiki.com/stream/videos/branded/male-dumbbell-chest-fly-front.mp4",
+      "side_video": "https://api.musclewiki.com/stream/videos/branded/male-dumbbell-chest-fly-side.mp4",
+      "front_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-dumbbell-chest-fly-front.jpg",
+      "side_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-dumbbell-chest-fly-side.jpg"
+    },
+    "incline bench press": {
+      "mw_id": 55,
+      "mw_name": "Barbell Incline Bench Press",
+      "primary_muscles": [
+        "Chest"
+      ],
+      "category": "Barbell",
+      "difficulty": "Intermediate",
+      "steps": [
+        "Position the bench between 30 and 45 degrees.",
+        "Lay flat on the bench with your feet on the ground. With straight arms unrack the bar.",
+        "Lower the bar to your mid chest",
+        "Raise the bar (slowly and controlled) until you've locked your elbows."
+      ],
+      "front_video": "https://api.musclewiki.com/stream/videos/branded/male-Barbell-barbell-incline-bench-press-front.mp4",
+      "side_video": "https://api.musclewiki.com/stream/videos/branded/male-Barbell-barbell-incline-bench-press-side.mp4",
+      "front_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Barbell-barbell-incline-bench-press-front.jpg",
+      "side_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Barbell-barbell-incline-bench-press-side.jpg"
+    },
+    "incline dumbbell press": {
+      "mw_id": 398,
+      "mw_name": "Dumbbell Incline Bench Press",
+      "primary_muscles": [
+        "Chest"
+      ],
+      "category": "Dumbbells",
+      "difficulty": "Beginner",
+      "steps": [
+        "Lay flat on the incline bench with your feet on the ground. Raise the dumbbells until you have straight arms.",
+        "Lower the dumbbells to your mid chest",
+        "Raise the dumbbells until you've locked your elbows."
+      ],
+      "front_video": "https://api.musclewiki.com/stream/videos/branded/male-dumbbell-incline-bench-press-front_q2q0T12.mp4",
+      "side_video": "https://api.musclewiki.com/stream/videos/branded/male-dumbbell-incline-bench-press-side_2HBfFN3.mp4",
+      "front_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-dumbbell-incline-bench-press-front_q2q0T12.jpg",
+      "side_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-dumbbell-incline-bench-press-side_2HBfFN3.jpg"
+    },
+    "decline bench press": {
+      "mw_id": 381,
+      "mw_name": "Dumbbell Decline Bench Press",
+      "primary_muscles": [
+        "Chest"
+      ],
+      "category": "Dumbbells",
+      "difficulty": "Novice",
+      "steps": [
+        "Lay on a decline bench with both arms extended in front of you.",
+        "Break at the elbows and bring your upper arms to your side.",
+        "Once your upper arms have reached your side, press the dumbbells back to the ceiling."
+      ],
+      "front_video": "https://api.musclewiki.com/stream/videos/branded/male-dumbbell-decline-bench-press-front.mp4",
+      "side_video": "https://api.musclewiki.com/stream/videos/branded/male-dumbbell-decline-bench-press-side.mp4",
+      "front_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-dumbbell-decline-bench-press-front.jpg",
+      "side_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-dumbbell-decline-bench-press-side.jpg"
+    },
+    "cable fly": {
+      "mw_id": 216,
+      "mw_name": "Cable Pec Fly",
+      "primary_muscles": [
+        "Chest"
+      ],
+      "category": "Cables",
+      "difficulty": "Beginner",
+      "steps": [
+        "Set the cable pin at shoulder height or just above.",
+        "Bring both of the handles to your chest and make sure you are in the center of the cable crossover.",
+        "Walk a few steps forward. Then press the weight forward. From there, your shoulders should horizontally abduct and adduct while your elbows stay in a fixed position."
+      ],
+      "front_video": "https://api.musclewiki.com/stream/videos/branded/male-cable-pec-fly-front.mp4",
+      "side_video": "https://api.musclewiki.com/stream/videos/branded/male-cable-pec-fly-side.mp4",
+      "front_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-cable-pec-fly-front.jpg",
+      "side_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-cable-pec-fly-side.jpg"
+    },
+    "cable crossover": {
+      "mw_id": 217,
+      "mw_name": "Cable Chest Press",
+      "primary_muscles": [
+        "Chest"
+      ],
+      "category": "Cables",
+      "difficulty": "Novice",
+      "steps": [
+        "Use a handle attachment. The cables should be set to shoulder height.",
+        "Bring both of the handles to your chest and make sure you are in the center of the cable crossover.",
+        "Walk a few steps forward. Then press the weight forward.",
+        "From there, you should flex and extend at both the shoulders and elbows simultaneously."
+      ],
+      "front_video": "https://api.musclewiki.com/stream/videos/branded/male-cable-chestpress-front.mp4",
+      "side_video": "https://api.musclewiki.com/stream/videos/branded/male-cable-chestpress-side.mp4",
+      "front_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-cable-chestpress-front.jpg",
+      "side_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-cable-chestpress-side.jpg"
+    },
+    "dip": {
+      "mw_id": 1608,
+      "mw_name": "Dumbbell Weighted Dip",
+      "primary_muscles": [
+        "Chest",
+        "Front Shoulders"
+      ],
+      "category": "Dumbbells",
+      "difficulty": "Intermediate",
+      "steps": [
+        "Use a dip belt to attach a dumbbell to yourself. Grip bars with arms straight, shoulders above hands. Keep legs straight or bent.",
+        "Lower slowly until elbows are at 90 degrees.",
+        "Push back up to start position, extending arms fully."
+      ],
+      "front_video": "https://api.musclewiki.com/stream/videos/branded/male-Dumbbells-dumbbell-weighted-dip-front.mp4",
+      "side_video": "https://api.musclewiki.com/stream/videos/branded/male-Dumbbells-dumbbell-weighted-dip-side.mp4",
+      "front_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Dumbbells-dumbbell-weighted-dip-front.jpg",
+      "side_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Dumbbells-dumbbell-weighted-dip-side.jpg"
+    },
+    "pull up": {
+      "mw_id": 1790,
+      "mw_name": "Ring Pull Up",
+      "primary_muscles": [
+        "Lats"
+      ],
+      "category": "Bodyweight",
+      "difficulty": "Advanced",
+      "steps": [
+        "Grasp the rings with an overhand grip, arms and shoulders fully extended.",
+        "Pull your body up until your chin is above the rings.",
+        "Lower your body back to starting position."
+      ],
+      "front_video": "https://api.musclewiki.com/stream/videos/branded/male-Bodyweight-ring-pull-up-front.mp4",
+      "side_video": "https://api.musclewiki.com/stream/videos/branded/male-Bodyweight-ring-pull-up-side.mp4",
+      "front_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Bodyweight-ring-pull-up-front.jpg",
+      "side_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Bodyweight-ring-pull-up-side.jpg"
+    },
+    "chin up": {
+      "mw_id": 184,
+      "mw_name": "Chin Ups",
+      "primary_muscles": [
+        "Lats"
+      ],
+      "category": "Bodyweight",
+      "difficulty": "Intermediate",
+      "steps": [
+        "Grab the bar shoulder width apart with a supinated grip (palms facing you)",
+        "With your body hanging and arms fully extended, pull yourself up until your chin is past the bar.",
+        "Slowly return to starting position. Repeat."
+      ],
+      "front_video": "https://api.musclewiki.com/stream/videos/branded/male-bodyweight-chinup-front.mp4",
+      "side_video": "https://api.musclewiki.com/stream/videos/branded/male-bodyweight-chinup-side.mp4",
+      "front_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-bodyweight-chinup-front.jpg",
+      "side_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-bodyweight-chinup-side.jpg"
+    },
+    "bent over row": {
+      "mw_id": 48,
+      "mw_name": "Barbell Bent Over Row",
+      "primary_muscles": [
+        "Lats"
+      ],
+      "category": "Barbell",
+      "difficulty": "Intermediate",
+      "steps": [
+        "Grab a barbell with a shoulder width pronated or supinated grip.",
+        "Bend forward at your hips while maintaining a flat back.",
+        "Pull the weight toward your upper abdomen.",
+        "Lower the weight in a controlled manner and repeat."
+      ],
+      "front_video": "https://api.musclewiki.com/stream/videos/branded/male-barbell-bent-over-row-front.mp4",
+      "side_video": "https://api.musclewiki.com/stream/videos/branded/male-barbell-bent-over-row-side.mp4",
+      "front_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-barbell-bent-over-row-front.jpg",
+      "side_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-barbell-bent-over-row-side.jpg"
+    },
+    "dumbbell row": {
+      "mw_id": 26,
+      "mw_name": "Dumbbell Row Bilateral",
+      "primary_muscles": [
+        "Traps (mid-back)",
+        "Lats"
+      ],
+      "category": "Dumbbells",
+      "difficulty": "Beginner",
+      "steps": [
+        "Grab both dumbbells and hinge forward at the hips. Make sure you keep a flat back.",
+        "The closer your torso is to parallel with the ground the longer the range of motion will be at your shoulder. The better the results you'll get from the exercise.",
+        "Let your arms hang freely, and then pull your elbow joint straight back toward the ceiling."
+      ],
+      "front_video": "https://api.musclewiki.com/stream/videos/branded/male-Dumbbells-dumbbell-row-bilateral-front.mp4",
+      "side_video": "https://api.musclewiki.com/stream/videos/branded/male-Dumbbells-dumbbell-row-bilateral-side.mp4",
+      "front_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Dumbbells-dumbbell-row-bilateral-front.jpg",
+      "side_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Dumbbells-dumbbell-row-bilateral-side.jpg"
+    },
+    "seated cable row": {
+      "mw_id": 24,
+      "mw_name": "Machine Seated Cable Row",
+      "primary_muscles": [
+        "Lats"
+      ],
+      "category": "Machine",
+      "difficulty": "Novice",
+      "steps": [
+        "Sit with your back straight on the machine and grip the handles.",
+        "Pull the handles back using your arms. Your legs and torso should be at a 90\u00b0 angle. Push out your chest.",
+        "Pull the handles towards your body until your hands are beside your abdomen."
+      ],
+      "front_video": "https://api.musclewiki.com/stream/videos/branded/male-machine-seated-cable-row-front.mp4",
+      "side_video": "https://api.musclewiki.com/stream/videos/branded/male-machine-seated-cable-row-side.mp4",
+      "front_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-machine-seated-cable-row-front.jpg",
+      "side_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-machine-seated-cable-row-side.jpg"
+    },
+    "deadlift": {
+      "mw_id": 39,
+      "mw_name": "Barbell Deadlift",
+      "primary_muscles": [
+        "Traps (mid-back)",
+        "Lower back"
+      ],
+      "category": "Barbell",
+      "difficulty": "Intermediate",
+      "steps": [
+        "Stand with your mid-foot under the bar and grip the bar with your hands, about a shoulder width apart.",
+        "Bend your knees, then lift the bar by straightening your back. It is important to keep your back straight.",
+        "Stand to your full height and hold.",
+        "Lower the bar to the floor by bending your knees and keeping your back straight."
+      ],
+      "front_video": "https://api.musclewiki.com/stream/videos/branded/male-Barbell-barbell-deadlift-front.mp4",
+      "side_video": "https://api.musclewiki.com/stream/videos/branded/male-Barbell-barbell-deadlift-side.mp4",
+      "front_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Barbell-barbell-deadlift-front.jpg",
+      "side_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Barbell-barbell-deadlift-side.jpg"
+    },
+    "pendlay row": {
+      "mw_id": 445,
+      "mw_name": "Dumbbell Pendlay Row",
+      "primary_muscles": [
+        "Lats"
+      ],
+      "category": "Dumbbells",
+      "difficulty": "Intermediate",
+      "steps": [
+        "The dumbbells should be placed on the floor.",
+        "Hinge forward with a flat back and grab the dumbbells.",
+        "Pull both dumbbells back and your elbows toward the ceiling.",
+        "Return the dumbbells back to the floor softly on each rep."
+      ],
+      "front_video": "https://api.musclewiki.com/stream/videos/branded/male-dumbbell-pendlay-row-front.mp4",
+      "side_video": "https://api.musclewiki.com/stream/videos/branded/male-dumbbell-pendlay-row-side.mp4",
+      "front_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-dumbbell-pendlay-row-front.jpg",
+      "side_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-dumbbell-pendlay-row-side.jpg"
+    },
+    "overhead press": {
+      "mw_id": 226,
+      "mw_name": "Cable Overhead Press",
+      "primary_muscles": [
+        "Shoulders",
+        "Anterior Deltoid",
+        "Front Shoulders"
+      ],
+      "category": "Cables",
+      "difficulty": "Novice",
+      "steps": [
+        "Use a handle attachment with the cable set to the bottom of the machine. Stand upright making sure to maintain a flat back. Your starting position will have your palms facing forward.",
+        "Use both your elbows and shoulders to press the weight directly overhead."
+      ],
+      "front_video": "https://api.musclewiki.com/stream/videos/branded/male-cable-overhead-press-front.mp4",
+      "side_video": "https://api.musclewiki.com/stream/videos/branded/male-cable-overhead-press-side.mp4",
+      "front_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-cable-overhead-press-front.jpg",
+      "side_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-cable-overhead-press-side.jpg"
+    },
+    "shoulder press": {
+      "mw_id": 226,
+      "mw_name": "Cable Overhead Press",
+      "primary_muscles": [
+        "Shoulders",
+        "Anterior Deltoid",
+        "Front Shoulders"
+      ],
+      "category": "Cables",
+      "difficulty": "Novice",
+      "steps": [
+        "Use a handle attachment with the cable set to the bottom of the machine. Stand upright making sure to maintain a flat back. Your starting position will have your palms facing forward.",
+        "Use both your elbows and shoulders to press the weight directly overhead."
+      ],
+      "front_video": "https://api.musclewiki.com/stream/videos/branded/male-cable-overhead-press-front.mp4",
+      "side_video": "https://api.musclewiki.com/stream/videos/branded/male-cable-overhead-press-side.mp4",
+      "front_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-cable-overhead-press-front.jpg",
+      "side_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-cable-overhead-press-side.jpg"
+    },
+    "military press": {
+      "mw_id": 1657,
+      "mw_name": "Machine Plate Loaded Front Military Press",
+      "primary_muscles": [
+        "Front Shoulders"
+      ],
+      "category": "Machine",
+      "difficulty": "Novice",
+      "steps": [],
+      "front_video": "https://api.musclewiki.com/stream/videos/branded/male-Machine-machine-front-military-press-front.mp4",
+      "side_video": "https://api.musclewiki.com/stream/videos/branded/male-Machine-machine-front-military-press-side.mp4",
+      "front_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Machine-machine-front-military-press-front.jpg",
+      "side_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Machine-machine-front-military-press-side.jpg"
+    },
+    "dumbbell shoulder press": {
+      "mw_id": 1629,
+      "mw_name": "Dumbbell Cuban Press",
+      "primary_muscles": [
+        "Front Shoulders"
+      ],
+      "category": "Dumbbells",
+      "difficulty": "Intermediate",
+      "steps": [
+        "Perform an upright row until elbows are bent at 90 degrees and arms parallel to the ground.",
+        "Rotate your shoulders, raising the dumbbells overhead. Then press overhead."
+      ],
+      "front_video": "https://api.musclewiki.com/stream/videos/branded/male-Dumbbells-dumbbell-cuban-press-front.mp4",
+      "side_video": "https://api.musclewiki.com/stream/videos/branded/male-Dumbbells-dumbbell-cuban-press-side.mp4",
+      "front_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Dumbbells-dumbbell-cuban-press-front.jpg",
+      "side_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Dumbbells-dumbbell-cuban-press-side.jpg"
+    },
+    "lateral raise": {
+      "mw_id": 20,
+      "mw_name": "Dumbbell Lateral Raise",
+      "primary_muscles": [
+        "Shoulders",
+        "Lateral Deltoid",
+        "Front Shoulders"
+      ],
+      "category": "Dumbbells",
+      "difficulty": "Novice",
+      "steps": [
+        "Stand up straight with dumbbells at either side, palms facing your hips.",
+        "Raise your arms on either side with a slight bend in your elbow until they are parallel with the floor. Pause at the top of the motion.",
+        "Slowly return your arms down to starting position."
+      ],
+      "front_video": "https://api.musclewiki.com/stream/videos/branded/male-Dumbbells-dumbbell-lateral-raise-front.mp4",
+      "side_video": "https://api.musclewiki.com/stream/videos/branded/male-Dumbbells-dumbbell-lateral-raise-side.mp4",
+      "front_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Dumbbells-dumbbell-lateral-raise-front.jpg",
+      "side_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Dumbbells-dumbbell-lateral-raise-side.jpg"
+    },
+    "front raise": {
+      "mw_id": 46,
+      "mw_name": "Dumbbell Front Raise",
+      "primary_muscles": [
+        "Shoulders",
+        "Anterior Deltoid",
+        "Front Shoulders"
+      ],
+      "category": "Dumbbells",
+      "difficulty": "Novice",
+      "steps": [
+        "Grab two dumbbells while standing upright with the dumbbells at your side.",
+        "Raise the two dumbbells with your elbows being fully extended until the dumbbells are eye level.",
+        "Lower the weights in a controlled manner to the starting position and repeat."
+      ],
+      "front_video": "https://api.musclewiki.com/stream/videos/branded/male-Dumbbells-dumbbell-front-raise-front.mp4",
+      "side_video": "https://api.musclewiki.com/stream/videos/branded/male-Dumbbells-dumbbell-front-raise-side.mp4",
+      "front_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Dumbbells-dumbbell-front-raise-front.jpg",
+      "side_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Dumbbells-dumbbell-front-raise-side.jpg"
+    },
+    "face pull": {
+      "mw_id": 255,
+      "mw_name": "Band Face Pull",
+      "primary_muscles": [
+        "Shoulders",
+        "Posterior Deltoid",
+        "Rear Shoulders"
+      ],
+      "category": "Band",
+      "difficulty": "Novice",
+      "steps": [
+        "Anchor the band at eye level. Take a few steps away until the band is taut.",
+        "Use an overhand grip with both hands. Pull the band to the bridge of your nose flaring your elbows out."
+      ],
+      "front_video": "https://api.musclewiki.com/stream/videos/branded/male-Band-band-face-pull-front.mp4",
+      "side_video": "https://api.musclewiki.com/stream/videos/branded/male-Band-band-face-pull-side.mp4",
+      "front_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Band-band-face-pull-front.jpg",
+      "side_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Band-band-face-pull-side.jpg"
+    },
+    "rear delt fly": {
+      "mw_id": 21,
+      "mw_name": "Dumbbell Rear Delt Fly",
+      "primary_muscles": [
+        "Shoulders",
+        "Posterior Deltoid",
+        "Rear Shoulders"
+      ],
+      "category": "Dumbbells",
+      "difficulty": "Beginner",
+      "steps": [
+        "With dumbbells in either hand, bend your knees with your feet slightly bowed out. Arch your back above your knees, and start with the weights touching in front of your chest.",
+        "With bent elbows, raise your arms up to shoulder level, pausing at the at the end of the motion.",
+        "Slowly lower your arms back to starting position."
+      ],
+      "front_video": "https://api.musclewiki.com/stream/videos/branded/male-Dumbbells-dumbbell-rear-delt-fly-front.mp4",
+      "side_video": "https://api.musclewiki.com/stream/videos/branded/male-Dumbbells-dumbbell-rear-delt-fly-side.mp4",
+      "front_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Dumbbells-dumbbell-rear-delt-fly-front.jpg",
+      "side_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Dumbbells-dumbbell-rear-delt-fly-side.jpg"
+    },
+    "arnold press": {
+      "mw_id": 423,
+      "mw_name": "Dumbbell Arnold Press",
+      "primary_muscles": [
+        "Shoulders",
+        "Anterior Deltoid",
+        "Front Shoulders"
+      ],
+      "category": "Dumbbells",
+      "difficulty": "Intermediate",
+      "steps": [
+        "Stand with both palms facing you.",
+        "Begin to press the dumbbells to the ceiling while rotating your palms.",
+        "When you reach elbow extension, your palms should be facing forward."
+      ],
+      "front_video": "https://api.musclewiki.com/stream/videos/branded/male-Dumbbells-dumbbell-arnold-press-front.mp4",
+      "side_video": "https://api.musclewiki.com/stream/videos/branded/male-Dumbbells-dumbbell-arnold-press-side.mp4",
+      "front_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Dumbbells-dumbbell-arnold-press-front.jpg",
+      "side_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Dumbbells-dumbbell-arnold-press-side.jpg"
+    },
+    "upright row": {
+      "mw_id": 96,
+      "mw_name": "Kettlebell Upright Row",
+      "primary_muscles": [
+        "Shoulders",
+        "Lateral Deltoid",
+        "Traps",
+        "Front Shoulders"
+      ],
+      "category": "Kettlebells",
+      "difficulty": "Novice",
+      "steps": [
+        "Stand with your feet shoulder width apart holding the kettlebell with both hands in front of your thighs.",
+        "Bend forward at the hips bringing the kettlebell to the floor while you slightly bend your knees, keeping your back straight.",
+        "Lift the kettlebell upwards towards your chest and lower - repeat."
+      ],
+      "front_video": "https://api.musclewiki.com/stream/videos/branded/male-Kettlebells-kettlebell-upright-row-front.mp4",
+      "side_video": "https://api.musclewiki.com/stream/videos/branded/male-Kettlebells-kettlebell-upright-row-side.mp4",
+      "front_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Kettlebells-kettlebell-upright-row-front.jpg",
+      "side_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Kettlebells-kettlebell-upright-row-side.jpg"
+    },
+    "shrug": {
+      "mw_id": 278,
+      "mw_name": "Band Shrug",
+      "primary_muscles": [
+        "Traps"
+      ],
+      "category": "Band",
+      "difficulty": "Novice",
+      "steps": [
+        "Place the band under your feet. Stand upright.",
+        "Elevate your shoulder blades and then depress back to the starting position."
+      ],
+      "front_video": "https://api.musclewiki.com/stream/videos/branded/male-Band-band-shrug-front.mp4",
+      "side_video": "https://api.musclewiki.com/stream/videos/branded/male-Band-band-shrug-side.mp4",
+      "front_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Band-band-shrug-front.jpg",
+      "side_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Band-band-shrug-side.jpg"
+    },
+    "bicep curl": {
+      "mw_id": 477,
+      "mw_name": "Plate Bicep Curl",
+      "primary_muscles": [
+        "Biceps"
+      ],
+      "category": "Plate",
+      "difficulty": "Novice",
+      "steps": [],
+      "front_video": "https://api.musclewiki.com/stream/videos/branded/male-plate-bicep-curl-front.mp4",
+      "side_video": "https://api.musclewiki.com/stream/videos/branded/male-plate-bicep-curl-side.mp4",
+      "front_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-plate-bicep-curl-front.jpg",
+      "side_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-plate-bicep-curl-side.jpg"
+    },
+    "barbell curl": {
+      "mw_id": 1,
+      "mw_name": "Barbell Curl",
+      "primary_muscles": [
+        "Biceps"
+      ],
+      "category": "Barbell",
+      "difficulty": "Intermediate",
+      "steps": [
+        "While holding the upper arms stationary, curl the weights forward while contracting the biceps as you breathe out.",
+        "Continue the movement until your biceps are fully contracted and the bar is at shoulder level.",
+        "Hold the contracted position for a second and squeeze the biceps hard.",
+        "Slowly bring the weight back down to the starting position."
+      ],
+      "front_video": "https://api.musclewiki.com/stream/videos/branded/male-Barbell-barbell-curl-front.mp4",
+      "side_video": "https://api.musclewiki.com/stream/videos/branded/male-Barbell-barbell-curl-side.mp4",
+      "front_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Barbell-barbell-curl-front.jpg",
+      "side_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Barbell-barbell-curl-side.jpg"
+    },
+    "dumbbell curl": {
+      "mw_id": 2,
+      "mw_name": "Dumbbell Curl",
+      "primary_muscles": [
+        "Biceps"
+      ],
+      "category": "Dumbbells",
+      "difficulty": "Novice",
+      "steps": [
+        "Stand up straight with a dumbbell in each hand at arm's length.",
+        "Raise one dumbbell and twist your forearm until it is vertical and your palm faces the shoulder.",
+        "Lower to original position and repeat with opposite arm"
+      ],
+      "front_video": "https://api.musclewiki.com/stream/videos/branded/male-Dumbbells-dumbbell-curl-front.mp4",
+      "side_video": "https://api.musclewiki.com/stream/videos/branded/male-Dumbbells-dumbbell-curl-side.mp4",
+      "front_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Dumbbells-dumbbell-curl-front.jpg",
+      "side_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Dumbbells-dumbbell-curl-side.jpg"
+    },
+    "hammer curl": {
+      "mw_id": 3,
+      "mw_name": "Dumbbell Hammer Curl",
+      "primary_muscles": [
+        "Biceps"
+      ],
+      "category": "Dumbbells",
+      "difficulty": "Novice",
+      "steps": [
+        "Hold the dumbbells with a neutral grip (thumbs facing the ceiling).",
+        "Slowly lift the dumbbell up to chest height",
+        "Return to starting position and repeat."
+      ],
+      "front_video": "https://api.musclewiki.com/stream/videos/branded/male-Dumbbells-dumbbell-hammer-curl-front.mp4",
+      "side_video": "https://api.musclewiki.com/stream/videos/branded/male-Dumbbells-dumbbell-hammer-curl-side.mp4",
+      "front_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Dumbbells-dumbbell-hammer-curl-front.jpg",
+      "side_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Dumbbells-dumbbell-hammer-curl-side.jpg"
+    },
+    "preacher curl": {
+      "mw_id": 63,
+      "mw_name": "Kettlebell Preacher Curl",
+      "primary_muscles": [
+        "Biceps",
+        "Short Head Bicep"
+      ],
+      "category": "Kettlebells",
+      "difficulty": "Intermediate",
+      "steps": [
+        "Stand behind a bench, with your chest leaning over the edge of the bench.",
+        "With one arm resting on the bench, hold the kettlebell, bending the arm at the elbow.",
+        "Lower your arm using the bench as a guide, keeping your forearm straight.",
+        "Return to the starting position and repeat."
+      ],
+      "front_video": "https://api.musclewiki.com/stream/videos/branded/male-Kettlebells-kettlebell-preacher-curl-front.mp4",
+      "side_video": "https://api.musclewiki.com/stream/videos/branded/male-Kettlebells-kettlebell-preacher-curl-side.mp4",
+      "front_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Kettlebells-kettlebell-preacher-curl-front.jpg",
+      "side_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Kettlebells-kettlebell-preacher-curl-side.jpg"
+    },
+    "concentration curl": {
+      "mw_id": 62,
+      "mw_name": "Kettlebell Concentration Curl",
+      "primary_muscles": [
+        "Biceps"
+      ],
+      "category": "Kettlebells",
+      "difficulty": "Intermediate",
+      "steps": [
+        "Sitting on a chair with your legs apart, rest your arm against your thigh and hold the kettlebell with your arm extended towards the floor.",
+        "Bending your arm at the elbow, lift the kettlebell until your palm faces your shoulder.",
+        "Lower to the starting position and repeat."
+      ],
+      "front_video": "https://api.musclewiki.com/stream/videos/branded/male-Kettlebells-kettlebell-concentration-curl-front.mp4",
+      "side_video": "https://api.musclewiki.com/stream/videos/branded/male-Kettlebells-kettlebell-concentration-curl-side.mp4",
+      "front_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Kettlebells-kettlebell-concentration-curl-front.jpg",
+      "side_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Kettlebells-kettlebell-concentration-curl-side.jpg"
+    },
+    "tricep pushdown": {
+      "mw_id": 1681,
+      "mw_name": "Machine Tricep Pushdown",
+      "primary_muscles": [
+        "Triceps"
+      ],
+      "category": "Machine",
+      "difficulty": "Novice",
+      "steps": [
+        "Sit on the machine and place the back of your upper arm on the bench.",
+        "Extend your elbows until you feel a contraction in your triceps.",
+        "Bring the weight back to the starting position."
+      ],
+      "front_video": "https://api.musclewiki.com/stream/videos/branded/male-Machine-machine-tricep-pushdown-front.mp4",
+      "side_video": "https://api.musclewiki.com/stream/videos/branded/male-Machine-machine-tricep-pushdown-side.mp4",
+      "front_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Machine-machine-tricep-pushdown-front.jpg",
+      "side_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Machine-machine-tricep-pushdown-side.jpg"
+    },
+    "tricep extension": {
+      "mw_id": 1149,
+      "mw_name": "Bodyweight Tricep Extension",
+      "primary_muscles": [
+        "Triceps"
+      ],
+      "category": "Bodyweight",
+      "difficulty": "Intermediate",
+      "steps": [
+        "Begin in a plank position. Hands shoulder width apart. Break at the elbows while letting your elbows fall to the floor.",
+        "Extend your elbows until you are back in the starting position."
+      ],
+      "front_video": "https://api.musclewiki.com/stream/videos/branded/male-Bodyweight-bodyweight-tricep-extension-front.mp4",
+      "side_video": "https://api.musclewiki.com/stream/videos/branded/male-Bodyweight-bodyweight-tricep-extension-side.mp4",
+      "front_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Bodyweight-bodyweight-tricep-extension-front.jpg",
+      "side_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Bodyweight-bodyweight-tricep-extension-side.jpg"
+    },
+    "overhead tricep extension": {
+      "mw_id": 267,
+      "mw_name": "Band Overhead Tricep Extension",
+      "primary_muscles": [
+        "Triceps"
+      ],
+      "category": "Band",
+      "difficulty": "Advanced",
+      "steps": [
+        "Stand with one or both feet on band. Go up and over your head with the band to the starting position.",
+        "Flex and extend your elbows."
+      ],
+      "front_video": "https://api.musclewiki.com/stream/videos/branded/male-Band-band-overhead-tricep-extension-front.mp4",
+      "side_video": "https://api.musclewiki.com/stream/videos/branded/male-Band-band-overhead-tricep-extension-side.mp4",
+      "front_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Band-band-overhead-tricep-extension-front.jpg",
+      "side_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Band-band-overhead-tricep-extension-side.jpg"
+    },
+    "tricep dip": {
+      "mw_id": 18,
+      "mw_name": "Bench Dips",
+      "primary_muscles": [
+        "Triceps"
+      ],
+      "category": "Bodyweight",
+      "difficulty": "Novice",
+      "steps": [
+        "Grip the edge of the bench with your hands, Keep your feet together and legs straight.",
+        "Lower your body straight down.",
+        "Slowly press back up to the starting point.",
+        "TIP: Make this harder by raising your feet off the floor and adding weight."
+      ],
+      "front_video": "https://api.musclewiki.com/stream/videos/branded/male-Bodyweight-bench-dips-front.mp4",
+      "side_video": "https://api.musclewiki.com/stream/videos/branded/male-Bodyweight-bench-dips-side.mp4",
+      "front_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Bodyweight-bench-dips-front.jpg",
+      "side_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Bodyweight-bench-dips-side.jpg"
+    },
+    "skull crusher": {
+      "mw_id": 56,
+      "mw_name": "Kettlebell Skull Crusher",
+      "primary_muscles": [
+        "Triceps"
+      ],
+      "category": "Kettlebells",
+      "difficulty": "Intermediate",
+      "steps": [
+        "Lie on your back with knees in the air and soles of your feet flat on the floor.",
+        "Hold the kettlebell in both hands directly above your chest.",
+        "Keeping your upper arms in place, bend your elbows to slowly bring the kettlebell in front of your forehead.",
+        "Return to the starting position and repeat."
+      ],
+      "front_video": "https://api.musclewiki.com/stream/videos/branded/male-Kettlebells-kettlebell-skull-crusher-front.mp4",
+      "side_video": "https://api.musclewiki.com/stream/videos/branded/male-Kettlebells-kettlebell-skull-crusher-side.mp4",
+      "front_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Kettlebells-kettlebell-skull-crusher-front.jpg",
+      "side_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Kettlebells-kettlebell-skull-crusher-side.jpg"
+    },
+    "close grip bench press": {
+      "mw_id": 211,
+      "mw_name": "Barbell Close Grip Bench Press",
+      "primary_muscles": [
+        "Triceps"
+      ],
+      "category": "Barbell",
+      "difficulty": "Intermediate",
+      "steps": [
+        "Lay flat on the bench with your feet on the ground. With a narrow grip on the bar, straighten your arms",
+        "Lower the bar to your lower-mid chest",
+        "Slowly raise the bar until you've locked your elbows."
+      ],
+      "front_video": "https://api.musclewiki.com/stream/videos/branded/male-Barbell-barbell-close-grip-bench-press-front.mp4",
+      "side_video": "https://api.musclewiki.com/stream/videos/branded/male-Barbell-barbell-close-grip-bench-press-side.mp4",
+      "front_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Barbell-barbell-close-grip-bench-press-front.jpg",
+      "side_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Barbell-barbell-close-grip-bench-press-side.jpg"
+    },
+    "squat": {
+      "mw_id": 8,
+      "mw_name": "Barbell Squat",
+      "primary_muscles": [
+        "Quads"
+      ],
+      "category": "Barbell",
+      "difficulty": "Intermediate",
+      "steps": [
+        "Stand with your feet shoulder-width apart. Maintain the natural arch in your back, squeezing your shoulder blades and raising your chest.",
+        "Grip the bar across your shoulders and support it on your upper back. Unwrack the bar by straightening your legs, and take a step back.",
+        "Bend your knees as you lower the weight without altering the form of your back until your hips are below your knees.",
+        "Raise the bar back to starting position, lift with your legs and exhale at the top."
+      ],
+      "front_video": "https://api.musclewiki.com/stream/videos/branded/male-Barbell-barbell-squat-front.mp4",
+      "side_video": "https://api.musclewiki.com/stream/videos/branded/male-Barbell-barbell-squat-side.mp4",
+      "front_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Barbell-barbell-squat-front.jpg",
+      "side_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Barbell-barbell-squat-side.jpg"
+    },
+    "back squat": {
+      "mw_id": 1835,
+      "mw_name": "Barbell Banded Back Squat",
+      "primary_muscles": [
+        "Quads"
+      ],
+      "category": "Barbell",
+      "difficulty": "Intermediate",
+      "steps": [
+        "Loop resistance bands under your feet and around the barbell. Stand shoulder-width apart.",
+        "Brace your core, push hips back, and lower until thighs are parallel to the floor.",
+        "Drive through your heels, extend hips and knees, and return to standing tall."
+      ],
+      "front_video": "https://api.musclewiki.com/stream/videos/branded/male-Barbell-barbell-banded-back-squat-front.mp4",
+      "side_video": "https://api.musclewiki.com/stream/videos/branded/male-Barbell-barbell-banded-back-squat-side.mp4",
+      "front_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Barbell-barbell-banded-back-squat-front.jpg",
+      "side_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Barbell-barbell-banded-back-squat-side.jpg"
+    },
+    "front squat": {
+      "mw_id": 839,
+      "mw_name": "Vitruvian Front Squat",
+      "primary_muscles": [
+        "Quads"
+      ],
+      "category": "Vitruvian",
+      "difficulty": "Intermediate",
+      "steps": [
+        "Use the bar attachment.",
+        "Place the bar over your front delts and cross your arms.",
+        "Push your hips back and aim to hit parallel depth."
+      ],
+      "front_video": "https://api.musclewiki.com/stream/videos/branded/male-Vitruvian-front-squat-front.mp4",
+      "side_video": "https://api.musclewiki.com/stream/videos/branded/male-Vitruvian-front-squat-side.mp4",
+      "front_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Vitruvian-front-squat-front.jpg",
+      "side_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Vitruvian-front-squat-side.jpg"
+    },
+    "goblet squat": {
+      "mw_id": 11,
+      "mw_name": "Dumbbell Goblet Squat",
+      "primary_muscles": [
+        "Glutes",
+        "Quads"
+      ],
+      "category": "Dumbbells",
+      "difficulty": "Novice",
+      "steps": [
+        "Hold the weight tucked into your upper chest area, keeping your elbows in. Your feet should be slightly wider than shoulder width.",
+        "Sink down into the squat, keeping your elbows inside the track of your knees.",
+        "Push through your heels while keeping your chest up and return to starting position."
+      ],
+      "front_video": "https://api.musclewiki.com/stream/videos/branded/male-dumbbell-goblet-squat-front.mp4",
+      "side_video": "https://api.musclewiki.com/stream/videos/branded/male-dumbbell-goblet-squat-side.mp4",
+      "front_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-dumbbell-goblet-squat-front.jpg",
+      "side_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-dumbbell-goblet-squat-side.jpg"
+    },
+    "bulgarian split squat": {
+      "mw_id": 42,
+      "mw_name": "Bulgarian Split Squat",
+      "primary_muscles": [
+        "Glutes",
+        "Quads"
+      ],
+      "category": "Bodyweight",
+      "difficulty": "Beginner",
+      "steps": [
+        "Stand with your back to a bench (or raised surface) and place one of your feet on the bench.",
+        "Squat down until your front leg is about parallel to the floor.",
+        "Go back to the starting position. After completing the desired amount of reps, switch legs and repeat."
+      ],
+      "front_video": "https://api.musclewiki.com/stream/videos/branded/male-Bodyweight-bulgarian-split-squat-front.mp4",
+      "side_video": "https://api.musclewiki.com/stream/videos/branded/male-Bodyweight-bulgarian-split-squat-side.mp4",
+      "front_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Bodyweight-bulgarian-split-squat-front.jpg",
+      "side_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Bodyweight-bulgarian-split-squat-side.jpg"
+    },
+    "lunge": {
+      "mw_id": 369,
+      "mw_name": "Curtsy Lunge",
+      "primary_muscles": [
+        "Glutes",
+        "Quads"
+      ],
+      "category": "Bodyweight",
+      "difficulty": "Intermediate",
+      "steps": [
+        "Step your left foot diagonally behind your right leg, crossing it behind your body. Bend your knees and lower your hips until your left thigh is parallel to the floor and your right knee is hovering just above the ground.",
+        "Push through your right foot to straighten your legs and return to the starting position.",
+        "Repeat the movement with your other leg."
+      ],
+      "front_video": "https://api.musclewiki.com/stream/videos/branded/male-Bodyweight-curtsy-lunge-front.mp4",
+      "side_video": "https://api.musclewiki.com/stream/videos/branded/male-Bodyweight-curtsy-lunge-side.mp4",
+      "front_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Bodyweight-curtsy-lunge-front.jpg",
+      "side_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Bodyweight-curtsy-lunge-side.jpg"
+    },
+    "walking lunge": {
+      "mw_id": 1384,
+      "mw_name": "Walking Lunge",
+      "primary_muscles": [
+        "Glutes",
+        "Quads"
+      ],
+      "category": "Bodyweight",
+      "difficulty": "Intermediate",
+      "steps": [
+        "Take a step forward shifting your weight onto the front leg.",
+        "Bend the knee of the front leg so the knee of the back leg comes close to the ground.",
+        "Stand up and go into lunging with the opposite leg."
+      ],
+      "front_video": "https://api.musclewiki.com/stream/videos/branded/male-Recovery-lunge-walking-front.mp4",
+      "side_video": "https://api.musclewiki.com/stream/videos/branded/male-Recovery-lunge-walking-side.mp4",
+      "front_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Recovery-lunge-walking-front.jpg",
+      "side_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Recovery-lunge-walking-side.jpg"
+    },
+    "reverse lunge": {
+      "mw_id": 348,
+      "mw_name": "Barbell Reverse Lunge",
+      "primary_muscles": [
+        "Quads"
+      ],
+      "category": "Barbell",
+      "difficulty": "Intermediate",
+      "steps": [
+        "Start by standing with your feet about hip-width apart, with a barbell on your shoulders. Your feet should be slightly pointed outward, and your shoulders should be down and relaxed.",
+        "Step backward with one foot, lowering your body until your front thigh is parallel to the ground and your back knee is hovering just above the ground.",
+        "Push off your back foot, returning to the starting position."
+      ],
+      "front_video": "https://api.musclewiki.com/stream/videos/branded/male-barbell-reverse-lunge-front.mp4",
+      "side_video": "https://api.musclewiki.com/stream/videos/branded/male-barbell-reverse-lunge-side.mp4",
+      "front_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-barbell-reverse-lunge-front.jpg",
+      "side_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-barbell-reverse-lunge-side.jpg"
+    },
+    "leg press": {
+      "mw_id": 9,
+      "mw_name": "Machine Leg Press",
+      "primary_muscles": [
+        "Glutes",
+        "Quads"
+      ],
+      "category": "Machine",
+      "difficulty": "Novice",
+      "steps": [
+        "Place your legs on the platform with your feet at shoulder width.",
+        "Release the weight and extend your legs fully, without locking your knees.",
+        "Lower the weight until your legs are at a 90\u00b0 angle (but DO NOT allow your butt and lower back to rise off of the pad. This will put your lower back in a rounded position, which is very dangerous.)",
+        "Raise the weight back to starting position."
+      ],
+      "front_video": "https://api.musclewiki.com/stream/videos/branded/male-Machine-machine-leg-press-front.mp4",
+      "side_video": "https://api.musclewiki.com/stream/videos/branded/male-Machine-machine-leg-press-side.mp4",
+      "front_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Machine-machine-leg-press-front.jpg",
+      "side_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Machine-machine-leg-press-side.jpg"
+    },
+    "leg curl": {
+      "mw_id": 436,
+      "mw_name": "Dumbbell Leg Curl",
+      "primary_muscles": [
+        "Hamstrings",
+        "Medial Hamstrings"
+      ],
+      "category": "Dumbbells",
+      "difficulty": "Beginner",
+      "steps": [
+        "Lay flat on a bench with a dumbbell between your feet.",
+        "Flex your knees and raise the dumbbell until the soles of your shoes are pointed at the ceiling."
+      ],
+      "front_video": "https://api.musclewiki.com/stream/videos/branded/male-dumbbell-leg-curl-front.mp4",
+      "side_video": "https://api.musclewiki.com/stream/videos/branded/male-dumbbell-leg-curl-side.mp4",
+      "front_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-dumbbell-leg-curl-front.jpg",
+      "side_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-dumbbell-leg-curl-side.jpg"
+    },
+    "leg extension": {
+      "mw_id": 10,
+      "mw_name": "Machine Leg Extension",
+      "primary_muscles": [
+        "Quads"
+      ],
+      "category": "Machine",
+      "difficulty": "Novice",
+      "steps": [
+        "Sit on the machine with your back against the cushion and adjust the machine you are using so that your knees are at a 90 degree angle at the starting position.",
+        "Raise the weight by extending your knees outward, then lower your leg to the starting position. Both movements should be done in a slow, controlled motion."
+      ],
+      "front_video": "https://api.musclewiki.com/stream/videos/branded/male-machine-leg-extension-front.mp4",
+      "side_video": "https://api.musclewiki.com/stream/videos/branded/male-machine-leg-extension-side.mp4",
+      "front_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-machine-leg-extension-front.jpg",
+      "side_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-machine-leg-extension-side.jpg"
+    },
+    "romanian deadlift": {
+      "mw_id": 274,
+      "mw_name": "Band Romanian Deadlift",
+      "primary_muscles": [
+        "Glutes",
+        "Hamstrings"
+      ],
+      "category": "Band",
+      "difficulty": "Novice",
+      "steps": [
+        "Stand on your band with both feet.",
+        "Hinge forward at the hips while keeping a flat back.",
+        "Hinge until you feel a stretch in your hamstrings.",
+        "Push your hips back forward until you are in a standing position."
+      ],
+      "front_video": "https://api.musclewiki.com/stream/videos/branded/male-Band-band-romanian-deadlift-front.mp4",
+      "side_video": "https://api.musclewiki.com/stream/videos/branded/male-Band-band-romanian-deadlift-side.mp4",
+      "front_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Band-band-romanian-deadlift-front.jpg",
+      "side_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Band-band-romanian-deadlift-side.jpg"
+    },
+    "stiff leg deadlift": {
+      "mw_id": 462,
+      "mw_name": "Dumbbell Single Leg Stiff Leg Deadlift",
+      "primary_muscles": [
+        "Glutes",
+        "Gluteus Maximus",
+        "Hamstrings",
+        "Lateral Hamstrings"
+      ],
+      "category": "Dumbbells",
+      "difficulty": "Intermediate",
+      "steps": [
+        "Start by standing on one leg with your feet shoulder-width apart and holding two dumbbells.",
+        "From this starting position, hinge at the hips to lower the dumbbell towards the ground, keeping your back straight and your core engaged.",
+        "Once you feel a stretch in your hamstring, slowly return to the starting position.",
+        "Make sure to keep your standing leg slightly bent and avoid rounding your back as you lower the dumbbell."
+      ],
+      "front_video": "https://api.musclewiki.com/stream/videos/branded/male-Dumbbells-dumbbell-single-leg-stiff-leg-deadlift-front.mp4",
+      "side_video": "https://api.musclewiki.com/stream/videos/branded/male-Dumbbells-dumbbell-single-leg-stiff-leg-deadlift-side.mp4",
+      "front_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Dumbbells-dumbbell-single-leg-stiff-leg-deadlift-front.jpg",
+      "side_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Dumbbells-dumbbell-single-leg-stiff-leg-deadlift-side.jpg"
+    },
+    "sumo deadlift": {
+      "mw_id": 305,
+      "mw_name": "Barbell Sumo Deadlift",
+      "primary_muscles": [
+        "Glutes"
+      ],
+      "category": "Barbell",
+      "difficulty": "Intermediate",
+      "steps": [
+        "Stance width can vary with a sumo DL. Some prefer toes near the plates. Others prefer a more narrow stance to get more drive off the floor.",
+        "Make sure your arms are inside your legs. The bar should be just over your mid-foot. Flatten your back and push your heels into the floor.",
+        "Try to extend your knees and hips simultaneously."
+      ],
+      "front_video": "https://api.musclewiki.com/stream/videos/branded/male-Barbell-barbell-sumo-deadlift-front_hI2eO77.mp4",
+      "side_video": "https://api.musclewiki.com/stream/videos/branded/male-Barbell-barbell-sumo-deadlift-side_5lcmI1F.mp4",
+      "front_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Barbell-barbell-sumo-deadlift-front_S7bK3RJ.jpg",
+      "side_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Barbell-barbell-sumo-deadlift-side_DdiUMo4.jpg"
+    },
+    "hip thrust": {
+      "mw_id": 30,
+      "mw_name": "Barbell Hip Thrust",
+      "primary_muscles": [
+        "Glutes"
+      ],
+      "category": "Barbell",
+      "difficulty": "Beginner",
+      "steps": [
+        "Sit on the ground with a bench behind you. Have the barbell over your legs just above your hips.",
+        "Lean back against the bench so that your shoulders are resting upon it, stretch your arms out to either side using the bench as support.",
+        "Raise the weight by driving through your feet and extending your hips upwards. Support the weight with your shoulders and feet.",
+        "Slowly extend as far as you can, and then slowly return to the starting position."
+      ],
+      "front_video": "https://api.musclewiki.com/stream/videos/branded/male-Barbell-barbell-hip-thrust-front.mp4",
+      "side_video": "https://api.musclewiki.com/stream/videos/branded/male-Barbell-barbell-hip-thrust-side.mp4",
+      "front_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Barbell-barbell-hip-thrust-front.jpg",
+      "side_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Barbell-barbell-hip-thrust-side.jpg"
+    },
+    "glute bridge": {
+      "mw_id": 29,
+      "mw_name": "Glute Bridge",
+      "primary_muscles": [
+        "Glutes"
+      ],
+      "category": "Bodyweight",
+      "difficulty": "Novice",
+      "steps": [
+        "Lie down with your knees bent and your feet flat on the floor.",
+        "Push your hips up so that your butt is elevated and your back straight.",
+        "Tense your glutes and raise your hips towards the ceiling.",
+        "Once you are at the highest point you can manage, hold the position for a few seconds, and then slowly return to the starting position"
+      ],
+      "front_video": "https://api.musclewiki.com/stream/videos/branded/male-Bodyweight-glute-bridge-front.mp4",
+      "side_video": "https://api.musclewiki.com/stream/videos/branded/male-Bodyweight-glute-bridge-side.mp4",
+      "front_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Bodyweight-glute-bridge-front.jpg",
+      "side_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Bodyweight-glute-bridge-side.jpg"
+    },
+    "calf raise": {
+      "mw_id": 1223,
+      "mw_name": "Calf Raise Isometric Unilateral",
+      "primary_muscles": [
+        "Calves"
+      ],
+      "category": "Recovery",
+      "difficulty": "Beginner",
+      "steps": [
+        "From the standing position, shift your weight onto the balls of one foot.",
+        "Raise your heel off the ground, and hold the position for the duration specified",
+        "You should feel your calf working."
+      ],
+      "front_video": "https://api.musclewiki.com/stream/videos/branded/male-Recovery-calf-raise-isometric-unilateral-front.mp4",
+      "side_video": "https://api.musclewiki.com/stream/videos/branded/male-Recovery-calf-raise-isometric-unilateral-side.mp4",
+      "front_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Recovery-calf-raise-isometric-unilateral-front.jpg",
+      "side_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Recovery-calf-raise-isometric-unilateral-side.jpg"
+    },
+    "standing calf raise": {
+      "mw_id": 856,
+      "mw_name": "Vitruvian Standing Calf Raise",
+      "primary_muscles": [
+        "Calves"
+      ],
+      "category": "Vitruvian",
+      "difficulty": "Beginner",
+      "steps": [
+        "Hold the two handles and stand tall.",
+        "Raise your heels as high as possible."
+      ],
+      "front_video": "https://api.musclewiki.com/stream/videos/branded/male-Vitruvian-standing-calf-raise-front.mp4",
+      "side_video": "https://api.musclewiki.com/stream/videos/branded/male-Vitruvian-standing-calf-raise-side.mp4",
+      "front_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Vitruvian-standing-calf-raise-front.jpg",
+      "side_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Vitruvian-standing-calf-raise-side.jpg"
+    },
+    "seated calf raise": {
+      "mw_id": 66,
+      "mw_name": "Kettlebell Seated Calf Raise",
+      "primary_muscles": [
+        "Calves"
+      ],
+      "category": "Kettlebells",
+      "difficulty": "Novice",
+      "steps": [
+        "Sitting comfortably on a chair with your core stomach muscles engaged, place your feet on the floor.",
+        "Place the kettlebell on your legs, just above the knees and raise your heels upwards off the floor.",
+        "Pause when your heels are fully extended and then slowly return to the starting position and repeat."
+      ],
+      "front_video": "https://api.musclewiki.com/stream/videos/branded/male-Kettlebells-kettlebell-seated-calf-raise-front.mp4",
+      "side_video": "https://api.musclewiki.com/stream/videos/branded/male-Kettlebells-kettlebell-seated-calf-raise-side.mp4",
+      "front_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Kettlebells-kettlebell-seated-calf-raise-front.jpg",
+      "side_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Kettlebells-kettlebell-seated-calf-raise-side.jpg"
+    },
+    "hack squat": {
+      "mw_id": 753,
+      "mw_name": "Landmine Hack Squat",
+      "primary_muscles": [
+        "Glutes",
+        "Quads"
+      ],
+      "category": "Barbell",
+      "difficulty": "Advanced",
+      "steps": [
+        "Start facing away from the landmine attachment with the end of the barbell resting on one shoulder against the base of your neck while leaning slightly back into the weight of the barbell.",
+        "Squat down with control while keeping the weight of the barbell as close to centered over your midpoint as possible, then drive through your heels to stand all the way back up and return to starting position.",
+        "Repeat for desired number of reps, then switch the side of your body the barbell is on every subsequent set."
+      ],
+      "front_video": "https://api.musclewiki.com/stream/videos/branded/male-Barbell-landmine-hack-squat-front.mp4",
+      "side_video": "https://api.musclewiki.com/stream/videos/branded/male-Barbell-landmine-hack-squat-side.mp4",
+      "front_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Barbell-landmine-hack-squat-front.jpg",
+      "side_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Barbell-landmine-hack-squat-side.jpg"
+    },
+    "step up": {
+      "mw_id": 99,
+      "mw_name": "Kettlebell Step Up",
+      "primary_muscles": [
+        "Glutes",
+        "Quads"
+      ],
+      "category": "Kettlebells",
+      "difficulty": "Beginner",
+      "steps": [
+        "Standing up straight, using a bench as a step, raise one foot onto the bench and hold the kettlebell in the same arm as the straight leg.",
+        "Stand and bring both feet onto the bench. Slowly lower your leg back down to the starting position.",
+        "Repeat."
+      ],
+      "front_video": "https://api.musclewiki.com/stream/videos/branded/male-Kettlebells-kettlebell-step-up-front.mp4",
+      "side_video": "https://api.musclewiki.com/stream/videos/branded/male-Kettlebells-kettlebell-step-up-side.mp4",
+      "front_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Kettlebells-kettlebell-step-up-front.jpg",
+      "side_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Kettlebells-kettlebell-step-up-side.jpg"
+    },
+    "plank": {
+      "mw_id": 573,
+      "mw_name": "Plank IYTW",
+      "primary_muscles": [
+        "Abdominals"
+      ],
+      "category": "Dumbbells",
+      "difficulty": "Intermediate",
+      "steps": [
+        "Start in a plank position. Hold one dumbbell.",
+        "Raise the dumbbell straight out in front of you (I), at a 45 degree angle (Y), out to the side (T), and then bend at the elbow while raising (W).",
+        "Going through IYTW counts as one rep.",
+        "Make sure to keep your hips stable. If you're unable to, try performing this exercise from the knees."
+      ],
+      "front_video": "https://api.musclewiki.com/stream/videos/branded/male-dumbbell-plank-iytw-front.mp4",
+      "side_video": "https://api.musclewiki.com/stream/videos/branded/male-dumbbell-plank-iytw-side.mp4",
+      "front_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-dumbbell-plank-iytw-front.jpg",
+      "side_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-dumbbell-plank-iytw-side.jpg"
+    },
+    "side plank": {
+      "mw_id": 325,
+      "mw_name": "Elbow Side Plank",
+      "primary_muscles": [
+        "Obliques"
+      ],
+      "category": "Bodyweight",
+      "difficulty": "Novice",
+      "steps": [
+        "Press your elbow into the floor.",
+        "Pick your hips up off the ground and maintain this position for the allotted amount of time.",
+        "Make sure you don't let your chest fall forward or backward."
+      ],
+      "front_video": "https://api.musclewiki.com/stream/videos/branded/male-bodyweight-elbow-side-plank-front.mp4",
+      "side_video": "https://api.musclewiki.com/stream/videos/branded/male-bodyweight-elbow-side-plank-side.mp4",
+      "front_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-bodyweight-elbow-side-plank-front.jpg",
+      "side_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-bodyweight-elbow-side-plank-side.jpg"
+    },
+    "crunch": {
+      "mw_id": 257,
+      "mw_name": "Band Crunch",
+      "primary_muscles": [
+        "Abdominals",
+        "Upper Abdominals"
+      ],
+      "category": "Band",
+      "difficulty": "Intermediate",
+      "steps": [
+        "Place the band at the highest anchor point you have available. Grab both ends of the band and fall into a kneeling position.",
+        "Push your hips back flexing at the spine.",
+        "Squeeze your abs and then extend at the hips and spine back to the starting position."
+      ],
+      "front_video": "https://api.musclewiki.com/stream/videos/branded/male-Band-band-crunch-front.mp4",
+      "side_video": "https://api.musclewiki.com/stream/videos/branded/male-Band-band-crunch-side.mp4",
+      "front_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Band-band-crunch-front.jpg",
+      "side_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Band-band-crunch-side.jpg"
+    },
+    "sit up": {
+      "mw_id": 779,
+      "mw_name": "Landmine Sit Up",
+      "primary_muscles": [
+        "Abdominals",
+        "Upper Abdominals"
+      ],
+      "category": "Barbell",
+      "difficulty": "Intermediate",
+      "steps": [
+        "Lay flat on the ground and hold the end of the bar with your arms extended.",
+        "Raise your back off the ground until you are sitting at a 90 degree angle.",
+        "Then lower slowly back to the floor."
+      ],
+      "front_video": "https://api.musclewiki.com/stream/videos/branded/male-Barbell-landmine-sit-up-front.mp4",
+      "side_video": "https://api.musclewiki.com/stream/videos/branded/male-Barbell-landmine-sit-up-side.mp4",
+      "front_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Barbell-landmine-sit-up-front.jpg",
+      "side_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Barbell-landmine-sit-up-side.jpg"
+    },
+    "russian twist": {
+      "mw_id": 58,
+      "mw_name": "Kettlebell Russian Twist",
+      "primary_muscles": [
+        "Obliques"
+      ],
+      "category": "Kettlebells",
+      "difficulty": "Novice",
+      "steps": [
+        "Sit on the floor with your legs bent, knees together and feet raised slightly off the floor.",
+        "Starting on one side and sitting up straight with your core muscles engaged, lift the kettlebell off the floor with both hands and bring it across your body to the other side, rotating your chest towards the floor as you do so.",
+        "Tap the kettlebell lightly on the floor and bring the kettlebell back across your body to the starting position, rotating your chest towards the floor.",
+        "Repeat, keeping the legs bent and feet raised throughout the exercise."
+      ],
+      "front_video": "https://api.musclewiki.com/stream/videos/branded/male-Kettlebells-kettlebell-russian-twist-front.mp4",
+      "side_video": "https://api.musclewiki.com/stream/videos/branded/male-Kettlebells-kettlebell-russian-twist-side.mp4",
+      "front_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Kettlebells-kettlebell-russian-twist-front.jpg",
+      "side_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Kettlebells-kettlebell-russian-twist-side.jpg"
+    },
+    "mountain climber": {
+      "mw_id": 474,
+      "mw_name": "Mountain Climber",
+      "primary_muscles": [
+        "Abdominals"
+      ],
+      "category": "Bodyweight",
+      "difficulty": "Novice",
+      "steps": [
+        "To perform a bodyweight mountain climber, start in a plank position with your hands placed directly under your shoulders.",
+        "Bring your right knee towards your chest, keeping your foot close to your hand. Quickly switch legs, bringing your left knee towards your chest.",
+        "Continue this movement, alternating legs, at a quick pace for a set amount of time or repetitions."
+      ],
+      "front_video": "https://api.musclewiki.com/stream/videos/branded/male-bodyweight-mountain-climber-front.mp4",
+      "side_video": "https://api.musclewiki.com/stream/videos/branded/male-bodyweight-mountain-climber-side.mp4",
+      "front_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-bodyweight-mountain-climber-front.jpg",
+      "side_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-bodyweight-mountain-climber-side.jpg"
+    },
+    "leg raise": {
+      "mw_id": 1410,
+      "mw_name": "Floor Incline Leg Raise",
+      "primary_muscles": [
+        "Rectus Femoris"
+      ],
+      "category": "Recovery",
+      "difficulty": "Novice",
+      "steps": [
+        "Sit on the floor and lean back into your palms or on your elbows.",
+        "Raise a straight leg a few centimeters off the ground and hold the position for the specified duration."
+      ],
+      "front_video": "https://api.musclewiki.com/stream/videos/branded/male-Recovery-leg-raise-straight-incline-seated-front.mp4",
+      "side_video": "https://api.musclewiki.com/stream/videos/branded/male-Recovery-leg-raise-straight-incline-seated-side.mp4",
+      "front_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Recovery-leg-raise-straight-incline-seated-front.jpg",
+      "side_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Recovery-leg-raise-straight-incline-seated-side.jpg"
+    },
+    "bicycle crunch": {
+      "mw_id": 866,
+      "mw_name": "Bicycle Crunch",
+      "primary_muscles": [
+        "Abdominals",
+        "Lower Abdominals",
+        "Upper Abdominals"
+      ],
+      "category": "Bodyweight",
+      "difficulty": "Beginner",
+      "steps": [
+        "Lie on your back.",
+        "Bend knees, hands behind head.",
+        "Twist torso, touch elbow to opposite knee. Repeat."
+      ],
+      "front_video": "https://api.musclewiki.com/stream/videos/branded/male-Bodyweight-bicycle-crunch-front.mp4",
+      "side_video": "https://api.musclewiki.com/stream/videos/branded/male-Bodyweight-bicycle-crunch-side.mp4",
+      "front_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Bodyweight-bicycle-crunch-front.jpg",
+      "side_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Bodyweight-bicycle-crunch-side.jpg"
+    },
+    "dead bug": {
+      "mw_id": 869,
+      "mw_name": "Dead Bug",
+      "primary_muscles": [
+        "Abdominals"
+      ],
+      "category": "Bodyweight",
+      "difficulty": "Novice",
+      "steps": [
+        "Lie on your back, arms extended upward, legs raised with knees bent.",
+        "Lower opposite arm and leg to floor, keeping back pressed against ground.",
+        "Alternate sides, maintain core engagement, and repeat for desired reps or time."
+      ],
+      "front_video": "https://api.musclewiki.com/stream/videos/branded/male-Bodyweight-dead-bug-front.mp4",
+      "side_video": "https://api.musclewiki.com/stream/videos/branded/male-Bodyweight-dead-bug-side.mp4",
+      "front_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Bodyweight-dead-bug-front.jpg",
+      "side_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Bodyweight-dead-bug-side.jpg"
+    },
+    "burpee": {
+      "mw_id": 475,
+      "mw_name": "Burpee",
+      "primary_muscles": [
+        "Abdominals",
+        "Chest"
+      ],
+      "category": "Bodyweight",
+      "difficulty": "Intermediate",
+      "steps": [
+        "Start standing with your feet hip-width apart. Lower your body into a squat position, placing your hands on the ground in front of you.",
+        "Quickly jump your feet back into a plank position, keeping your body in a straight line from your head to your toes.",
+        "Perform a push-up, keeping your core tight and your elbows close to your body.",
+        "Jump your feet back towards your hands, and then jump up into the air, reaching your arms overhead.",
+        "Land softly and immediately lower your body back into the squat position to repeat the movement."
+      ],
+      "front_video": "https://api.musclewiki.com/stream/videos/branded/male-bodyweight-burpee-front.mp4",
+      "side_video": "https://api.musclewiki.com/stream/videos/branded/male-bodyweight-burpee-side.mp4",
+      "front_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-bodyweight-burpee-front.jpg",
+      "side_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-bodyweight-burpee-side.jpg"
+    },
+    "jumping jack": {
+      "mw_id": 1102,
+      "mw_name": "Cardio Jumping Jacks",
+      "primary_muscles": [
+        "Gluteus Medius",
+        "Shoulders",
+        "Lateral Deltoid",
+        "Anterior Deltoid",
+        "Front Shoulders"
+      ],
+      "category": "Cardio",
+      "difficulty": "Beginner",
+      "steps": [
+        "Stand with feet together, arms at your sides, ready to jump.",
+        "Jump while spreading legs and raising arms overhead.",
+        "Return to starting position with legs together and arms at your sides. Repeat."
+      ],
+      "front_video": "https://api.musclewiki.com/stream/videos/branded/male-Cardio-cardio-jumping-jacks-front.mp4",
+      "side_video": "https://api.musclewiki.com/stream/videos/branded/male-Cardio-cardio-jumping-jacks-side.mp4",
+      "front_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Cardio-cardio-jumping-jacks-front.jpg",
+      "side_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Cardio-cardio-jumping-jacks-side.jpg"
+    },
+    "box jump": {
+      "mw_id": 700,
+      "mw_name": "Box Jump",
+      "primary_muscles": [
+        "Glutes",
+        "Quads"
+      ],
+      "category": "Bodyweight",
+      "difficulty": "Beginner",
+      "steps": [
+        "Stand in front of a box.",
+        "*Start with a low box if this is your first time*",
+        "Sink into a quarter of half squat and then pop your hips forward.",
+        "Try to land in the middle of the box as softly as possible to minimise impact on your joints."
+      ],
+      "front_video": "https://api.musclewiki.com/stream/videos/branded/male-Bodyweight-box-jump-front.mp4",
+      "side_video": "https://api.musclewiki.com/stream/videos/branded/male-Bodyweight-box-jump-side.mp4",
+      "front_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Bodyweight-box-jump-front.jpg",
+      "side_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Bodyweight-box-jump-side.jpg"
+    },
+    "kettlebell swing": {
+      "mw_id": 79,
+      "mw_name": "Kettlebell Swing",
+      "primary_muscles": [
+        "Glutes",
+        "Hamstrings"
+      ],
+      "category": "Kettlebells",
+      "difficulty": "Intermediate",
+      "steps": [
+        "Stand with your feet slightly wider than shoulder width apart holding the kettlebell between your legs, with your knees slightly bent.",
+        "Keeping your back straight, swing the kettlebell upwards until the kettlebell is level with your chest and carefully lower.",
+        "Repeat"
+      ],
+      "front_video": "https://api.musclewiki.com/stream/videos/branded/male-Kettlebells-kettlebell-swing-front.mp4",
+      "side_video": "https://api.musclewiki.com/stream/videos/branded/male-Kettlebells-kettlebell-swing-side.mp4",
+      "front_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Kettlebells-kettlebell-swing-front.jpg",
+      "side_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Kettlebells-kettlebell-swing-side.jpg"
+    },
+    "jump rope": {
+      "mw_id": 1597,
+      "mw_name": "Jump Rope",
+      "primary_muscles": [
+        "Calves"
+      ],
+      "category": "Cardio",
+      "difficulty": "Beginner",
+      "steps": [
+        "Hold handles, elbows close, and jump with both feet together.",
+        "Rotate wrists to swing the rope over your head.",
+        "Jump as it reaches your feet, keeping a steady rhythm."
+      ],
+      "front_video": "https://api.musclewiki.com/stream/videos/branded/male-Cardio-jump-rope-front.mp4",
+      "side_video": "https://api.musclewiki.com/stream/videos/branded/male-Cardio-jump-rope-side.mp4",
+      "front_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Cardio-jump-rope-front.jpg",
+      "side_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Cardio-jump-rope-side.jpg"
+    },
+    "high knees": {
+      "mw_id": 206,
+      "mw_name": "Hanging Knee Raises",
+      "primary_muscles": [
+        "Abdominals"
+      ],
+      "category": "Bodyweight",
+      "difficulty": "Beginner",
+      "steps": [
+        "Grab the bar and hang, your body still and your legs straight.",
+        "Slowly draw your knees up to your chest",
+        "Once you have raised your knees as high as possible, lower your legs and repeat. Duration of these movements should be slow so that you do not utilize momentum, enabling you to get the most out of the exercise.",
+        "Duration of these movements should be slow so that you do not utilize momentum, enabling you to get the most out of the exercise."
+      ],
+      "front_video": "https://api.musclewiki.com/stream/videos/branded/male-bodyweight-hanging-knee-raises-front.mp4",
+      "side_video": "https://api.musclewiki.com/stream/videos/branded/male-bodyweight-hanging-knee-raises-side.mp4",
+      "front_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-bodyweight-hanging-knee-raises-front.jpg",
+      "side_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-bodyweight-hanging-knee-raises-side.jpg"
+    },
+    "sprint": {
+      "mw_id": 1200,
+      "mw_name": "Treadmill Sprint",
+      "primary_muscles": [],
+      "category": "Cardio",
+      "difficulty": "Beginner",
+      "steps": [
+        "Get the treadmill up to a speed where you are doing a sprint."
+      ],
+      "front_video": "https://api.musclewiki.com/stream/videos/branded/male-Cardio-treadmill-sprint-front.mp4",
+      "side_video": "https://api.musclewiki.com/stream/videos/branded/male-Cardio-treadmill-sprint-side.mp4",
+      "front_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Cardio-treadmill-sprint-front.jpg",
+      "side_og_image": "https://api.musclewiki.com/stream/images/og_images/og-male-Cardio-treadmill-sprint-side.jpg"
+    }
+  },
+  "not_found": [
+    "lat pulldown",
+    "t-bar row",
+    "hanging leg raise",
+    "ab wheel rollout",
+    "cable woodchop",
+    "battle rope"
+  ],
+  "total_mapped": 76
+}

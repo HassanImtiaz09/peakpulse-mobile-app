@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import {
   View,
   Text,
@@ -7,14 +7,21 @@ import {
   StyleSheet,
   Dimensions,
   Platform,
+  ActivityIndicator,
 } from "react-native";
 import { Image } from "expo-image";
+import { VideoView, useVideoPlayer } from "expo-video";
+import { useEvent } from "expo";
 import { MaterialIcons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { useColors } from "@/hooks/use-colors";
 import { useFavorites } from "@/lib/favorites-context";
 
-const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get("window");
+const { width: SCREEN_W } = Dimensions.get("window");
+
+function isVideoUrl(url: string): boolean {
+  return url.endsWith(".mp4") || url.endsWith(".webm") || url.endsWith(".mov");
+}
 
 interface ExerciseDemoPlayerProps {
   gifUrl: string;
@@ -24,8 +31,66 @@ interface ExerciseDemoPlayerProps {
 }
 
 /**
- * Exercise demo GIF player with fullscreen enlarge support.
- * Tap the expand icon or the GIF itself to open fullscreen modal.
+ * Inline video player for MP4 URLs using expo-video.
+ * Loops automatically, muted, with loading indicator.
+ */
+function InlineVideoPlayer({ url, height }: { url: string; height: number }) {
+  const player = useVideoPlayer(url, (p) => {
+    p.loop = true;
+    p.muted = true;
+    p.play();
+  });
+  const { status } = useEvent(player, "statusChange", { status: player.status });
+
+  return (
+    <View style={{ height, backgroundColor: "#000", borderRadius: 12, overflow: "hidden" }}>
+      {status === "loading" && (
+        <View style={[StyleSheet.absoluteFill, { justifyContent: "center", alignItems: "center" }]}>
+          <ActivityIndicator size="large" color="#D4AF37" />
+        </View>
+      )}
+      <VideoView
+        player={player}
+        style={StyleSheet.absoluteFill}
+        contentFit="contain"
+        nativeControls={false}
+      />
+    </View>
+  );
+}
+
+/**
+ * Fullscreen video player for MP4 URLs using expo-video.
+ */
+function FullscreenVideoPlayer({ url }: { url: string }) {
+  const player = useVideoPlayer(url, (p) => {
+    p.loop = true;
+    p.muted = true;
+    p.play();
+  });
+  const { status } = useEvent(player, "statusChange", { status: player.status });
+
+  return (
+    <View style={{ width: SCREEN_W, height: SCREEN_W }}>
+      {status === "loading" && (
+        <View style={[StyleSheet.absoluteFill, { justifyContent: "center", alignItems: "center" }]}>
+          <ActivityIndicator size="large" color="#D4AF37" />
+        </View>
+      )}
+      <VideoView
+        player={player}
+        style={StyleSheet.absoluteFill}
+        contentFit="contain"
+        nativeControls={false}
+      />
+    </View>
+  );
+}
+
+/**
+ * Exercise demo player with fullscreen enlarge support.
+ * Supports both MP4 video (MuscleWiki) and GIF fallback.
+ * Tap the expand icon or the media itself to open fullscreen modal.
  */
 export function ExerciseDemoPlayer({
   gifUrl,
@@ -37,10 +102,14 @@ export function ExerciseDemoPlayer({
   const [fullscreen, setFullscreen] = useState(false);
   const { isFavorite, toggleFavorite } = useFavorites();
   const favorited = exerciseName ? isFavorite(exerciseName) : false;
+  const isVideo = useMemo(() => isVideoUrl(gifUrl), [gifUrl]);
 
   const handleToggleFavorite = useCallback(() => {
     if (exerciseName) {
       toggleFavorite(exerciseName);
+      if (Platform.OS !== "web") {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+      }
     }
   }, [exerciseName, toggleFavorite]);
 
@@ -53,22 +122,27 @@ export function ExerciseDemoPlayer({
         onPress={openFullscreen}
         style={({ pressed }) => [pressed && { opacity: 0.9, transform: [{ scale: 0.99 }] }]}
       >
-        <View
-          style={[
-            styles.playerContainer,
-            { height, backgroundColor: "#000", borderRadius: 12, overflow: "hidden" },
-          ]}
-        >
-          <Image
-            source={gifUrl}
-            style={StyleSheet.absoluteFill}
-            contentFit="contain"
-            cachePolicy="disk"
-            transition={200}
-          />
-          {/* GIF badge */}
+        <View style={styles.playerContainer}>
+          {isVideo ? (
+            <InlineVideoPlayer url={gifUrl} height={height} />
+          ) : (
+            <View
+              style={[
+                { height, backgroundColor: "#000", borderRadius: 12, overflow: "hidden" },
+              ]}
+            >
+              <Image
+                source={gifUrl}
+                style={StyleSheet.absoluteFill}
+                contentFit="contain"
+                cachePolicy="disk"
+                transition={200}
+              />
+            </View>
+          )}
+          {/* Badge */}
           <View style={styles.gifBadge}>
-            <MaterialIcons name="gif" size={16} color="#fff" />
+            <MaterialIcons name={isVideo ? "videocam" : "gif"} size={16} color="#fff" />
             <Text style={styles.gifBadgeText}>Exercise Guide</Text>
           </View>
           {/* Expand button */}
@@ -137,15 +211,19 @@ export function ExerciseDemoPlayer({
             </View>
           </View>
 
-          {/* Full-size GIF */}
+          {/* Full-size media */}
           <View style={styles.fullscreenImageContainer}>
-            <Image
-              source={gifUrl}
-              style={{ width: SCREEN_W, height: SCREEN_W }}
-              contentFit="contain"
-              cachePolicy="disk"
-              transition={200}
-            />
+            {isVideo ? (
+              <FullscreenVideoPlayer url={gifUrl} />
+            ) : (
+              <Image
+                source={gifUrl}
+                style={{ width: SCREEN_W, height: SCREEN_W }}
+                contentFit="contain"
+                cachePolicy="disk"
+                transition={200}
+              />
+            )}
           </View>
 
           {/* Cue text in fullscreen */}
@@ -167,7 +245,7 @@ export function ExerciseDemoPlayer({
 }
 
 /**
- * Compact button that expands to show the GIF player inline.
+ * Compact button that expands to show the player inline.
  */
 export function ExerciseDemoButton({
   gifUrl,

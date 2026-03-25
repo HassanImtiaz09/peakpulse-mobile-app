@@ -14,24 +14,26 @@ describe("Round 70 — Multi-Angle GIF Fix", () => {
     expect(fs.existsSync(path.join(PROJECT, "lib/exercise-data.ts"))).toBe(true);
   });
 
-  it("all angle views for each exercise use the same GIF URL", async () => {
+  it("all angle views for each exercise use valid MuscleWiki or ExerciseDB URLs", async () => {
     const content = fs.readFileSync(path.join(PROJECT, "lib/exercise-data.ts"), "utf-8");
     // Extract exercise blocks with angleViews
     const exerciseBlocks = content.split(/name:\s*"/);
-    let inconsistentCount = 0;
+    let invalidCount = 0;
     
     for (const block of exerciseBlocks) {
       const angleViewsMatch = block.match(/angleViews:\s*\[([\s\S]*?)\]/);
       if (!angleViewsMatch) continue;
       
       const urls = [...angleViewsMatch[1].matchAll(/gifUrl:\s*"([^"]+)"/g)].map(m => m[1]);
-      if (urls.length > 1) {
-        const allSame = urls.every(u => u === urls[0]);
-        if (!allSame) inconsistentCount++;
+      for (const url of urls) {
+        // Each URL should be from MuscleWiki (mp4) or ExerciseDB (gif fallback)
+        if (!url.includes("musclewiki.com") && !url.includes("exercisedb.dev")) {
+          invalidCount++;
+        }
       }
     }
     
-    expect(inconsistentCount).toBe(0);
+    expect(invalidCount).toBe(0);
   });
 });
 

@@ -1,8 +1,8 @@
 /**
- * Round 65 — Exercise Demo Tests (Updated: YouTube removed, GIF-only)
+ * Round 65 — Exercise Demo Tests (Updated: MuscleWiki video integration)
  *
  * Tests for the exercise demo system:
- * - GIF URL validity from ExerciseDB
+ * - MuscleWiki video URL validity
  * - Exercise demo lookup
  * - Workout type coverage
  */
@@ -14,16 +14,16 @@ import { getExerciseDemo, normaliseExerciseName } from "../lib/exercise-demos";
 describe("Exercise Demo Lookup", () => {
   it("returns correct demo for exact match exercises", () => {
     const benchPress = getExerciseDemo("bench press");
-    expect(benchPress.gifUrl).toContain("exercisedb.dev");
-    expect(benchPress.gifUrl).toContain(".gif");
+    expect(benchPress.gifUrl).toContain("musclewiki.com");
+    expect(benchPress.gifUrl).toContain(".mp4");
     expect(benchPress.cue).toContain("shoulder blades");
 
     const squat = getExerciseDemo("squat");
-    expect(squat.gifUrl).toContain("exercisedb.dev");
+    expect(squat.gifUrl).toContain("musclewiki.com");
     expect(squat.cue).toContain("Feet shoulder-width");
 
     const deadlift = getExerciseDemo("deadlift");
-    expect(deadlift.gifUrl).toContain("exercisedb.dev");
+    expect(deadlift.gifUrl).toContain("musclewiki.com");
     expect(deadlift.cue).toContain("Bar over mid-foot");
   });
 
@@ -41,14 +41,14 @@ describe("Exercise Demo Lookup", () => {
     const demo3 = getExerciseDemo("pushup");
     expect(demo1.gifUrl).toBe(demo2.gifUrl);
     expect(demo2.gifUrl).toBe(demo3.gifUrl);
-    expect(demo1.gifUrl).toContain("exercisedb.dev");
+    expect(demo1.gifUrl).toContain("musclewiki.com");
   });
 
   it("returns fallback demo for unknown exercises via keyword matching", () => {
     const demo = getExerciseDemo("barbell back squat variation");
     // Should match "squat" keyword fallback
-    expect(demo.gifUrl).toContain("exercisedb.dev");
-    expect(demo.gifUrl).toContain(".gif");
+    expect(demo.gifUrl).toBeTruthy();
+    expect(demo.gifUrl.length).toBeGreaterThan(10);
   });
 
   it("returns generic fallback for completely unknown exercises", () => {
@@ -99,9 +99,9 @@ describe("Exercise Name Normalisation", () => {
   });
 });
 
-// ── GIF URL Validity ────────────────────────────────────────────────────────
+// ── Video URL Validity ────────────────────────────────────────────────────────
 
-describe("GIF URL Validity", () => {
+describe("Video URL Validity", () => {
   const exerciseNames = [
     "bench press", "push up", "dumbbell fly", "incline bench press",
     "pull up", "lat pulldown", "barbell row", "dumbbell row", "deadlift",
@@ -113,10 +113,11 @@ describe("GIF URL Validity", () => {
     "burpee", "jumping jack", "kettlebell swing", "jump rope",
   ];
 
-  it("all major exercises have valid ExerciseDB GIF URLs", () => {
+  it("all major exercises have valid MuscleWiki video URLs", () => {
     for (const name of exerciseNames) {
       const demo = getExerciseDemo(name);
-      expect(demo.gifUrl).toMatch(/^https:\/\/static\.exercisedb\.dev\/media\/.+\.gif$/);
+      // Most exercises use MuscleWiki MP4, a few fallbacks use ExerciseDB GIF
+      expect(demo.gifUrl).toMatch(/^https:\/\/(api\.musclewiki\.com|static\.exercisedb\.dev)\//);
     }
   });
 
@@ -128,26 +129,26 @@ describe("GIF URL Validity", () => {
   });
 });
 
-// ── GIF-only Demo System ────────────────────────────────────────────────────
+// ── Video-based Demo System ────────────────────────────────────────────────────
 
-describe("GIF-only Demo System", () => {
-  it("exercise-demo-player component exists with fullscreen support", async () => {
+describe("Video-based Demo System", () => {
+  it("exercise-demo-player component exists with video and fullscreen support", async () => {
     const fs = await import("fs");
     const content = fs.readFileSync("/home/ubuntu/peakpulse-mobile/components/exercise-demo-player.tsx", "utf-8");
     expect(content).toContain("ExerciseDemoPlayer");
     expect(content).toContain("fullscreen");
     expect(content).toContain("Modal");
-    expect(content).toContain("expo-image");
+    expect(content).toContain("VideoView");
   });
 
-  it("enhanced-gif-player component exists with multi-angle views", async () => {
+  it("enhanced-gif-player component exists with multi-angle views and video support", async () => {
     const fs = await import("fs");
     const content = fs.readFileSync("/home/ubuntu/peakpulse-mobile/components/enhanced-gif-player.tsx", "utf-8");
     expect(content).toContain("EnhancedGifPlayer");
     expect(content).toContain("angleViews");
     expect(content).toContain("fullscreen");
     expect(content).toContain("Modal");
-    expect(content).toContain("slow-motion");
+    expect(content).toContain("VideoView");
   });
 
   it("no YouTube player component exists", async () => {

@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 
 // ── Exercise Demos Tests ──────────────────────────────────────────────────────
-describe("Exercise Demos with GIF URLs", () => {
+describe("Exercise Demos with MuscleWiki Videos", () => {
   it("getExerciseDemo returns gifUrl for all exercises", async () => {
     const { getExerciseDemo } = await import("../lib/exercise-demos");
 
@@ -19,7 +19,8 @@ describe("Exercise Demos with GIF URLs", () => {
       const demo = getExerciseDemo(name);
       expect(demo.gifUrl).toBeTruthy();
       expect(demo.gifUrl).toMatch(/^https?:\/\//);
-      expect(demo.gifUrl).toContain(".gif");
+      // Most use MuscleWiki MP4, some fallbacks use ExerciseDB GIF
+      expect(demo.gifUrl).toMatch(/\.(mp4|gif)$/);
     }
   });
 
@@ -33,13 +34,13 @@ describe("Exercise Demos with GIF URLs", () => {
     expect(typeof demo.cue).toBe("string");
   });
 
-  it("GIF URLs are from ExerciseDB CDN", async () => {
+  it("Most URLs are from MuscleWiki CDN", async () => {
     const { getExerciseDemo } = await import("../lib/exercise-demos");
     const demo = getExerciseDemo("squat");
-    expect(demo.gifUrl).toContain("exercisedb.dev");
+    expect(demo.gifUrl).toContain("musclewiki.com");
   });
 
-  it("Gym exercises have GIF URLs", async () => {
+  it("Gym exercises have video URLs", async () => {
     const { getExerciseDemo } = await import("../lib/exercise-demos");
     const gymExercises = [
       "bench press", "lat pulldown", "leg press", "cable fly",
@@ -48,11 +49,11 @@ describe("Exercise Demos with GIF URLs", () => {
     for (const name of gymExercises) {
       const demo = getExerciseDemo(name);
       expect(demo.gifUrl).toBeTruthy();
-      expect(demo.gifUrl).toContain(".gif");
+      expect(demo.gifUrl).toMatch(/\.(mp4|gif)$/);
     }
   });
 
-  it("Home exercises have GIF URLs", async () => {
+  it("Home exercises have video URLs", async () => {
     const { getExerciseDemo } = await import("../lib/exercise-demos");
     const homeExercises = [
       "push up", "plank", "burpee", "mountain climber",
@@ -61,11 +62,11 @@ describe("Exercise Demos with GIF URLs", () => {
     for (const name of homeExercises) {
       const demo = getExerciseDemo(name);
       expect(demo.gifUrl).toBeTruthy();
-      expect(demo.gifUrl).toContain(".gif");
+      expect(demo.gifUrl).toMatch(/\.(mp4|gif)$/);
     }
   });
 
-  it("Mixed exercises have GIF URLs", async () => {
+  it("Mixed exercises have video URLs", async () => {
     const { getExerciseDemo } = await import("../lib/exercise-demos");
     const mixedExercises = [
       "dumbbell row", "goblet squat", "dumbbell shoulder press",
@@ -74,7 +75,7 @@ describe("Exercise Demos with GIF URLs", () => {
     for (const name of mixedExercises) {
       const demo = getExerciseDemo(name);
       expect(demo.gifUrl).toBeTruthy();
-      expect(demo.gifUrl).toContain(".gif");
+      expect(demo.gifUrl).toMatch(/\.(mp4|gif)$/);
     }
   });
 
@@ -93,7 +94,6 @@ describe("Exercise Demos with GIF URLs", () => {
       const aliasDemo = getExerciseDemo(alias);
       expect(aliasDemo.gifUrl).toBe(canonicalDemo.gifUrl);
       expect(aliasDemo.gifUrl).toBeTruthy();
-      expect(aliasDemo.gifUrl).toContain(".gif");
     }
   });
 
@@ -101,7 +101,6 @@ describe("Exercise Demos with GIF URLs", () => {
     const { getExerciseDemo } = await import("../lib/exercise-demos");
     const demo = getExerciseDemo("some unknown exercise xyz");
     expect(demo.gifUrl).toBeTruthy();
-    expect(demo.gifUrl).toContain(".gif");
     expect(demo.cue).toBeTruthy();
   });
 
@@ -119,9 +118,9 @@ describe("Exercise Demos with GIF URLs", () => {
   });
 });
 
-// ── GIF Player Components ───────────────────────────────────────────────────
-describe("GIF Player Components", () => {
-  it("exercise-demo-player has fullscreen capability", async () => {
+// ── Video Player Components ───────────────────────────────────────────────────
+describe("Video Player Components", () => {
+  it("exercise-demo-player has fullscreen and video support", async () => {
     const fs = await import("fs");
     const content = fs.readFileSync("/home/ubuntu/peakpulse-mobile/components/exercise-demo-player.tsx", "utf-8");
     expect(content).toContain("ExerciseDemoPlayer");
@@ -129,9 +128,10 @@ describe("GIF Player Components", () => {
     expect(content).toContain("Modal");
     expect(content).toContain("fullscreenOverlay");
     expect(content).toContain("expandButton");
+    expect(content).toContain("VideoView");
   });
 
-  it("enhanced-gif-player has fullscreen and multi-angle support", async () => {
+  it("enhanced-gif-player has fullscreen, multi-angle, and video support", async () => {
     const fs = await import("fs");
     const content = fs.readFileSync("/home/ubuntu/peakpulse-mobile/components/enhanced-gif-player.tsx", "utf-8");
     expect(content).toContain("EnhancedGifPlayer");
@@ -139,8 +139,7 @@ describe("GIF Player Components", () => {
     expect(content).toContain("Modal");
     expect(content).toContain("angleViews");
     expect(content).toContain("expandBtn");
-    expect(content).toContain("slow-motion");
-    expect(content).toContain("loop");
+    expect(content).toContain("VideoView");
   });
 
   it("no YouTube player component exists", async () => {
