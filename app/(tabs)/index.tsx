@@ -34,6 +34,7 @@ import { getPRSummary, type PRSummary } from "@/lib/personal-records";
 import { useUserProfile } from "@/lib/user-profile-context";
 import { PremiumFeatureBanner, PremiumFeatureTeaser } from "@/components/premium-feature-banner";
 import { useExerciseCompletion } from "@/lib/exercise-completion-context";
+import { WearableMetricsPanel } from "@/components/wearable-metrics-panel";
 
 import {
   getStreakData, evaluateWeek, getWeekNeedingEvaluation, getCurrentMilestone,
@@ -1049,66 +1050,13 @@ export default function HomeScreen() {
             </View>
           </Modal>
 
-          {/* ── Wearable Stats Widget ── */}
-          {wearableData.isConnected && (
-            <StaggeredCard index={3}>
-              <View style={styles.section}>
-                <SectionTitle title="Wearable Stats" />
-                <TouchableOpacity
-                  onPress={() => router.push("/wearable-sync" as any)}
-                  style={{ backgroundColor: SF.surfacePrimary, borderRadius: 20, padding: 16, borderWidth: 1.5, borderColor: SF.borderPrimary }}
-                >
-                  <View style={{ flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 12 }}>
-                    <MaterialIcons name="watch" size={16} color={SF.emerald} />
-                    <Text style={{ color: SF.emerald2, fontFamily: "DMSans_600SemiBold", fontSize: 12 }}>{wearableData.stats.connectedDevice}</Text>
-                    <View style={{ flex: 1 }} />
-                    <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 10 }}>Tap for details</Text>
-                    <MaterialIcons name="chevron-right" size={14} color={SF.muted} />
-                  </View>
-                  <View style={{ flexDirection: "row", justifyContent: "space-around" }}>
-                    <View style={{ alignItems: "center" }}>
-                      <MaterialIcons name="directions-walk" size={20} color="#22C55E" />
-                      <Text style={{ color: "#22C55E", fontFamily: "DMSans_700Bold", fontSize: 16, marginTop: 2 }}>{wearableData.stats.steps.toLocaleString()}</Text>
-                      <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 9 }}>Steps</Text>
-                    </View>
-                    <View style={{ alignItems: "center" }}>
-                      <MaterialIcons name="favorite" size={20} color="#EF4444" />
-                      <Text style={{ color: "#EF4444", fontFamily: "DMSans_700Bold", fontSize: 16, marginTop: 2 }}>{wearableData.stats.heartRate}</Text>
-                      <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 9 }}>BPM</Text>
-                    </View>
-                    <View style={{ alignItems: "center" }}>
-                      <MaterialIcons name="local-fire-department" size={20} color="#F59E0B" />
-                      <Text style={{ color: "#F59E0B", fontFamily: "DMSans_700Bold", fontSize: 16, marginTop: 2 }}>{wearableData.stats.totalCaloriesBurnt}</Text>
-                      <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 9 }}>Burnt</Text>
-                    </View>
-                    <View style={{ alignItems: "center" }}>
-                      <MaterialIcons name="bedtime" size={20} color="#8B5CF6" />
-                      <Text style={{ color: "#8B5CF6", fontFamily: "DMSans_700Bold", fontSize: 16, marginTop: 2 }}>{wearableData.stats.sleepHours}h</Text>
-                      <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 9 }}>Sleep</Text>
-                    </View>
-                    <View style={{ alignItems: "center" }}>
-                      <MaterialIcons name="straighten" size={20} color="#3B82F6" />
-                      <Text style={{ color: "#3B82F6", fontFamily: "DMSans_700Bold", fontSize: 16, marginTop: 2 }}>{wearableData.stats.distance}</Text>
-                      <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 9 }}>km</Text>
-                    </View>
-                  </View>
-                  {/* View Trends Button */}
-                  <TouchableOpacity
-                    onPress={() => router.push("/health-trends" as any)}
-                    style={{
-                      marginTop: 12, flexDirection: "row", alignItems: "center", justifyContent: "center",
-                      gap: 6, backgroundColor: "rgba(59,130,246,0.10)", borderRadius: 12,
-                      paddingVertical: 10, borderWidth: 1, borderColor: "rgba(59,130,246,0.20)",
-                    }}
-                  >
-                    <MaterialIcons name="show-chart" size={16} color="#3B82F6" />
-                    <Text style={{ color: "#3B82F6", fontFamily: "DMSans_700Bold", fontSize: 12 }}>View Health Trends</Text>
-                    <MaterialIcons name="chevron-right" size={14} color="#3B82F6" />
-                  </TouchableOpacity>
-                </TouchableOpacity>
-              </View>
-            </StaggeredCard>
-          )}
+          {/* ── Wearable Metrics Panel (always visible — shows connect CTA or full metrics) ── */}
+          <StaggeredCard index={3}>
+            <View style={styles.section}>
+              <SectionTitle title="Wearable Metrics" />
+              <WearableMetricsPanel />
+            </View>
+          </StaggeredCard>
 
           {/* ── Weekly Goal Progress Rings ── */}
           {goalsEnabled && goalProgress && (

@@ -31,10 +31,23 @@ import {
   loadOrCreateSocialCircle,
   type FriendProfile,
 } from "@/lib/social-circle";
+import {
+  CHALLENGE_TEMPLATES,
+  getPopularTemplates,
+  getTemplateDifficultyLabel,
+  getTemplateDifficultyColor,
+  getCategoryLabel,
+  getCategoryIcon,
+  launchChallengeFromTemplate,
+  type ChallengeTemplate,
+  type TemplateCategory,
+} from "@/lib/challenge-templates";
+import { notifyChallengeInvitation } from "@/lib/social-notifications";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 const HERO_BG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/golden-challenge-bg-2DXBpSZwN3LCroCHSRyD4K.webp";
 
-type TabId = "active" | "completed" | "new";
+type TabId = "active" | "completed" | "new" | "templates";
 
 export default function ChallengeScreen() {
   const router = useRouter();
@@ -52,6 +65,13 @@ export default function ChallengeScreen() {
   const [selectedFriend, setSelectedFriend] = useState<FriendProfile | null>(null);
   const [selectedType, setSelectedType] = useState<ChallengeType>("steps");
   const [showFriendPicker, setShowFriendPicker] = useState(false);
+
+  // Template state
+  const [selectedTemplate, setSelectedTemplate] = useState<ChallengeTemplate | null>(null);
+  const [templateFilter, setTemplateFilter] = useState<TemplateCategory | "all">("all");
+  const [showTemplateFriendPicker, setShowTemplateFriendPicker] = useState(false);
+  const [selectedTemplateFriends, setSelectedTemplateFriends] = useState<FriendProfile[]>([]);
+  const [launchingTemplate, setLaunchingTemplate] = useState(false);
 
   const userName = guestProfile?.name ?? "You";
 
@@ -218,7 +238,7 @@ export default function ChallengeScreen() {
 
       {/* Tab Bar */}
       <View style={styles.tabBar}>
-        {(["active", "completed", "new"] as TabId[]).map((tab) => (
+        {(["active", "templates", "completed", "new"] as TabId[]).map((tab) => (
           <TouchableOpacity
             key={tab}
             style={[styles.tab, activeTab === tab && styles.tabActive]}
@@ -227,6 +247,7 @@ export default function ChallengeScreen() {
             <Text style={[styles.tabText, activeTab === tab && styles.tabTextActive]}>
               {tab === "active" ? `⚔️ Active (${activeChallenges.length})`
                 : tab === "completed" ? `🏆 History (${completedChallenges.length})`
+                : tab === "templates" ? "📋 Templates"
                 : "➕ New"}
             </Text>
           </TouchableOpacity>
@@ -293,6 +314,100 @@ export default function ChallengeScreen() {
                   <Text style={styles.emptySubtitle}>Your challenge history will appear here.</Text>
                 </View>
               )}
+            </>
+          )}
+
+          {/* ── Templates Tab ──────────────────────────────────── */}
+          {activeTab === "templates" && (
+            <>
+              <Text style={styles.sectionTitle}>Challenge Templates</Text>
+              <Text style={styles.sectionSubtitle}>
+                Pre-built challenges to launch with your circle. Pick one and invite friends!
+              </Text>
+
+              {/* Category Filter */}
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 16 }}>
+                <View style={{ flexDirection: "row", gap: 8 }}>
+                  {(["all", "steps", "calories", "workout", "streak", "distance"] as const).map((cat) => (
+                    <TouchableOpacity
+                      key={cat}
+                      style={[styles.typeCard, { paddingVertical: 8, paddingHorizontal: 14, width: undefined },
+                        templateFilter === cat && styles.typeCardActive]}
+                      onPress={() => setTemplateFilter(cat)}
+                    >
+                      <Text style={[styles.typeLabel, { fontSize: 12, marginTop: 0 },
+                        templateFilter === cat && styles.typeLabelActive]}>
+                        {cat === "all" ? "All" : getCategoryLabel(cat as TemplateCategory)}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              </ScrollView>
+
+              {/* Template Cards */}
+              {(templateFilter === "all" ? CHALLENGE_TEMPLATES : CHALLENGE_TEMPLATES.filter(t => t.category === templateFilter)).map((template) => (
+                <TouchableOpacity
+                  key={template.id}
+                  style={[styles.challengeCard, selectedTemplate?.id === template.id && { borderColor: template.color }]}
+                  onPress={() => setSelectedTemplate(selectedTemplate?.id === template.id ? null : template)}
+                  activeOpacity={0.8}
+                >
+                  <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 10 }}>
+                    <View style={{ flexDirection: "row", alignItems: "center", gap: 10, flex: 1 }}>
+                      <Text style={{ fontSize: 28 }}>{template.emoji}</Text>
+                      <View style={{ flex: 1 }}>
+                        <Text style={styles.challengeType}>{template.name}</Text>
+                        <View style={{ flexDirection: "row", alignItems: "center", gap: 6, marginTop: 3 }}>
+                          <View style={{ backgroundColor: getTemplateDifficultyColor(template.difficulty) + "20", borderRadius: 6, paddingHorizontal: 6, paddingVertical: 2 }}>
+                            <Text style={{ color: getTemplateDifficultyColor(template.difficulty), fontSize: 10, fontWeight: "700" }}>
+                              {getTemplateDifficultyLabel(template.difficulty)}
+                            </Text>
+                          </View>
+                          <Text style={{ color: "#B45309", fontSize: 11 }}>{template.durationDays} days</Text>
+                        </View>
+                      </View>
+                    </View>
+                    {template.isPopular && (
+                      <View style={{ backgroundColor: "rgba(245,158,11,0.15)", borderRadius: 8, paddingHorizontal: 8, paddingVertical: 3 }}>
+                        <Text style={{ color: "#FDE68A", fontSize: 10, fontWeight: "700" }}>POPULAR</Text>
+                      </View>
+                    )}
+                  </View>
+                  <Text style={{ color: "#94A3B8", fontSize: 12, lineHeight: 17, marginBottom: 10 }}>{template.description}</Text>
+                  <View style={{ flexDirection: "row", gap: 12 }}>
+                    <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
+                      <Text style={{ color: "#F59E0B", fontSize: 11 }}>🎯</Text>
+                      <Text style={{ color: "#B45309", fontSize: 11 }}>{template.dailyTarget} {template.unit}/day</Text>
+                    </View>
+                    <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
+                      <Text style={{ color: "#F59E0B", fontSize: 11 }}>{template.rewardEmoji}</Text>
+                      <Text style={{ color: "#B45309", fontSize: 11 }}>{template.reward}</Text>
+                    </View>
+                  </View>
+
+                  {/* Expanded details when selected */}
+                  {selectedTemplate?.id === template.id && (
+                    <View style={{ marginTop: 14, paddingTop: 14, borderTopWidth: 1, borderTopColor: "rgba(245,158,11,0.10)" }}>
+                      <Text style={{ color: "#FDE68A", fontSize: 12, fontWeight: "700", marginBottom: 8 }}>Tips</Text>
+                      {template.tips.map((tip, i) => (
+                        <View key={i} style={{ flexDirection: "row", gap: 6, marginBottom: 4 }}>
+                          <Text style={{ color: "#F59E0B", fontSize: 11 }}>•</Text>
+                          <Text style={{ color: "#94A3B8", fontSize: 12, flex: 1 }}>{tip}</Text>
+                        </View>
+                      ))}
+                      <TouchableOpacity
+                        style={[styles.primaryBtn, { marginTop: 14, flexDirection: "row", justifyContent: "center", gap: 8 }]}
+                        onPress={() => {
+                          setSelectedTemplateFriends([]);
+                          setShowTemplateFriendPicker(true);
+                        }}
+                      >
+                        <Text style={styles.primaryBtnText}>Launch with Friends</Text>
+                      </TouchableOpacity>
+                    </View>
+                  )}
+                </TouchableOpacity>
+              ))}
             </>
           )}
 
@@ -377,6 +492,97 @@ export default function ChallengeScreen() {
           )}
         </ScrollView>
       )}
+
+      {/* ── Template Friend Picker Modal ──────────────────────── */}
+      <Modal visible={showTemplateFriendPicker} animationType="slide" transparent>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Invite Friends</Text>
+            <Text style={{ color: "#B45309", fontSize: 12, marginBottom: 14 }}>
+              Select friends to join "{selectedTemplate?.name}". Tap to toggle.
+            </Text>
+            {friends.length > 0 ? (
+              <FlatList
+                data={friends}
+                keyExtractor={(item) => item.id}
+                renderItem={({ item }) => {
+                  const isSelected = selectedTemplateFriends.some(f => f.id === item.id);
+                  return (
+                    <TouchableOpacity
+                      style={[styles.friendPickerRow, isSelected && styles.friendPickerRowActive]}
+                      onPress={() => {
+                        if (isSelected) {
+                          setSelectedTemplateFriends(selectedTemplateFriends.filter(f => f.id !== item.id));
+                        } else {
+                          setSelectedTemplateFriends([...selectedTemplateFriends, item]);
+                        }
+                      }}
+                    >
+                      <Text style={{ fontSize: 24 }}>{item.avatarEmoji}</Text>
+                      <View style={{ flex: 1 }}>
+                        <Text style={styles.friendPickerName}>{item.name}</Text>
+                        <Text style={styles.friendPickerStat}>
+                          {item.streakCount}w streak • {(item.weeklySteps / 1000).toFixed(0)}K steps
+                        </Text>
+                      </View>
+                      {isSelected && <Text style={{ color: "#F59E0B", fontSize: 16 }}>✓</Text>}
+                    </TouchableOpacity>
+                  );
+                }}
+                ItemSeparatorComponent={() => <View style={{ height: 4 }} />}
+              />
+            ) : (
+              <View style={{ alignItems: "center", padding: 24 }}>
+                <Text style={styles.emptyTitle}>No friends in your circle</Text>
+                <Text style={styles.emptySubtitle}>Invite friends first!</Text>
+              </View>
+            )}
+            <View style={{ flexDirection: "row", gap: 10, marginTop: 16 }}>
+              <TouchableOpacity
+                style={[styles.primaryBtn, { flex: 1, backgroundColor: "#1A2030" }]}
+                onPress={() => setShowTemplateFriendPicker(false)}
+              >
+                <Text style={[styles.primaryBtnText, { color: "#F1F5F9" }]}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.primaryBtn, { flex: 2 }, (selectedTemplateFriends.length === 0 || launchingTemplate) && { opacity: 0.5 }]}
+                disabled={selectedTemplateFriends.length === 0 || launchingTemplate}
+                onPress={async () => {
+                  if (!selectedTemplate || selectedTemplateFriends.length === 0) return;
+                  setLaunchingTemplate(true);
+                  try {
+                    await launchChallengeFromTemplate(
+                      selectedTemplate,
+                      "current_user",
+                      userName,
+                      "💪",
+                      selectedTemplateFriends.map(f => ({ id: f.id, name: f.name, emoji: f.avatarEmoji })),
+                    );
+                    // Notify each friend
+                    for (const f of selectedTemplateFriends) {
+                      await notifyChallengeInvitation(f.name, f.avatarEmoji, selectedTemplate.name);
+                    }
+                    setShowTemplateFriendPicker(false);
+                    Alert.alert(
+                      "Challenge Launched!",
+                      `"${selectedTemplate.name}" started with ${selectedTemplateFriends.length} friend${selectedTemplateFriends.length > 1 ? "s" : ""}!`,
+                      [{ text: "Let's Go!", onPress: () => { setActiveTab("active"); loadData(); } }],
+                    );
+                  } catch {
+                    Alert.alert("Error", "Failed to launch challenge.");
+                  } finally {
+                    setLaunchingTemplate(false);
+                  }
+                }}
+              >
+                <Text style={styles.primaryBtnText}>
+                  {launchingTemplate ? "Launching..." : `Launch (${selectedTemplateFriends.length} selected)`}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
 
       {/* ── Friend Picker Modal ──────────────────────────────── */}
       <Modal visible={showFriendPicker} animationType="slide" transparent>

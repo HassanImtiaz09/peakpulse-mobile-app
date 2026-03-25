@@ -1985,3 +1985,38 @@
 - [x] New tests for social card generator (7 tests)
 - [x] New tests for dashboard navigation (2 tests)
 - [x] New tests for social circle screen (9 tests)
+
+## Round 84 — Social Notifications, Challenge Templates, Dashboard Wearable Tab
+
+### Push Notifications for Social Circle Events
+- [x] Notify user when a friend joins their circle
+- [x] Notify user when a friend completes a challenge
+- [x] Notification service for social circle events (social-notifications.ts)
+- [x] Notification preferences for social alerts (enable/disable) in notification-settings.tsx
+- [x] Social notification types: friend joined, challenge completed, challenge invitation, circle milestone, friend streak, leaderboard change
+
+### Pre-Built Challenge Templates
+- [x] Create challenge template data (7-Day Step, Protein Goal Week, etc.) — 12 templates across 6 categories
+- [x] Challenge template picker UI in challenge.tsx Templates tab
+- [x] Launch challenge from template within a circle
+- [x] Challenge progress tracking per participant
+- [x] Challenge completion detection and notification
+
+### Dashboard Wearable Metrics Tab
+- [x] Add WearableMetricsPanel component with 4 tabs (Overview, Heart, Activity, Sleep)
+- [x] Display steps, calories, heart rate, sleep, distance, VO2 Max, HRV, Blood O2
+- [x] Apple Health / Google Fit connect buttons when not connected
+- [x] Connect to wearable-sync flow from dashboard tab
+- [x] Real-time metric cards with progress indicators, activity rings, weekly sparklines
+- [x] 7-day averages row and weekly bar charts
+
+### Testing
+- [x] 0 TypeScript errors
+- [x] All 51 tests pass (round84-features.test.ts)
+- [x] 8 tests for social notifications
+- [x] 9 tests for challenge templates
+- [x] 4 tests for challenge screen templates tab
+- [x] 3 tests for notification settings social section
+- [x] 1 test for AI notification scheduler preferences
+- [x] 22 tests for wearable metrics panel
+- [x] 4 tests for dashboard integration

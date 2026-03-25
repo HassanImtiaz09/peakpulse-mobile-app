@@ -422,6 +422,46 @@ export default function NotificationSettingsScreen() {
           />
         </View>
 
+        {/* Social Circle */}
+        <Text style={styles.sectionTitle}>Social Circle</Text>
+        <View style={styles.section}>
+          <ToggleRow
+            icon="person-add"
+            iconColor="#22C55E"
+            label="Friend Joined"
+            desc="When someone joins your circle"
+            value={(prefs as any).socialFriendJoined ?? true}
+            onToggle={(v) => handleToggle("socialFriendJoined" as any, v)}
+          />
+          <View style={styles.divider} />
+          <ToggleRow
+            icon="emoji-events"
+            iconColor="#F59E0B"
+            label="Challenge Completed"
+            desc="When a challenge finishes"
+            value={(prefs as any).socialChallengeCompleted ?? true}
+            onToggle={(v) => handleToggle("socialChallengeCompleted" as any, v)}
+          />
+          <View style={styles.divider} />
+          <ToggleRow
+            icon="sports-mma"
+            iconColor="#EF4444"
+            label="Challenge Invitation"
+            desc="When a friend challenges you"
+            value={(prefs as any).socialChallengeInvitation ?? true}
+            onToggle={(v) => handleToggle("socialChallengeInvitation" as any, v)}
+          />
+          <View style={styles.divider} />
+          <ToggleRow
+            icon="celebration"
+            iconColor="#8B5CF6"
+            label="Circle Milestones"
+            desc="When your circle hits a milestone"
+            value={(prefs as any).socialCircleMilestone ?? true}
+            onToggle={(v) => handleToggle("socialCircleMilestone" as any, v)}
+          />
+        </View>
+
         {/* Weekly Health Digest */}
         <Text style={styles.sectionTitle}>Health Digest</Text>
         <View style={styles.section}>

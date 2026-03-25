@@ -37,6 +37,11 @@ export interface NotificationPreferences {
   pantryAlerts: boolean;
   snackReminder: boolean;
   weeklySummary: boolean;
+  // Social circle notifications
+  socialFriendJoined: boolean;
+  socialChallengeCompleted: boolean;
+  socialChallengeInvitation: boolean;
+  socialCircleMilestone: boolean;
   // Custom times (24h format)
   breakfastHour: number;
   breakfastMinute: number;
@@ -60,6 +65,10 @@ const DEFAULT_PREFS: NotificationPreferences = {
   pantryAlerts: true,
   snackReminder: true,
   weeklySummary: true,
+  socialFriendJoined: true,
+  socialChallengeCompleted: true,
+  socialChallengeInvitation: true,
+  socialCircleMilestone: true,
   breakfastHour: 8,
   breakfastMinute: 0,
   lunchHour: 12,
