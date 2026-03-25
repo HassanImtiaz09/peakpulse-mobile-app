@@ -14,6 +14,7 @@ import { Image } from "expo-image";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import * as Haptics from "expo-haptics";
 import type { ExerciseAngleView } from "@/lib/exercise-data";
+import { useFavorites } from "@/lib/favorites-context";
 
 const { width: SCREEN_W } = Dimensions.get("window");
 
@@ -55,6 +56,8 @@ export function EnhancedGifPlayer({
   const [imageKey, setImageKey] = useState(0);
   const [fullscreen, setFullscreen] = useState(false);
   const pulseAnim = useRef(new Animated.Value(1)).current;
+  const { isFavorite, toggleFavorite } = useFavorites();
+  const favorited = isFavorite(exerciseName);
 
   const currentView = angleViews[activeAngle] || angleViews[0];
   if (!currentView) return null;
@@ -255,12 +258,24 @@ export function EnhancedGifPlayer({
         <View style={styles.fullscreenOverlay}>
           <View style={styles.fullscreenHeader}>
             <Text style={styles.fullscreenTitle} numberOfLines={1}>{exerciseName}</Text>
-            <Pressable
-              onPress={() => setFullscreen(false)}
-              style={({ pressed }) => [styles.fullscreenClose, pressed && { opacity: 0.7 }]}
-            >
-              <MaterialIcons name="close" size={24} color="#fff" />
-            </Pressable>
+            <View style={{ flexDirection: "row", gap: 8 }}>
+              <Pressable
+                onPress={() => toggleFavorite(exerciseName)}
+                style={({ pressed }) => [styles.fullscreenClose, pressed && { opacity: 0.7 }]}
+              >
+                <MaterialIcons
+                  name={favorited ? "favorite" : "favorite-border"}
+                  size={22}
+                  color={favorited ? "#EF4444" : "#fff"}
+                />
+              </Pressable>
+              <Pressable
+                onPress={() => setFullscreen(false)}
+                style={({ pressed }) => [styles.fullscreenClose, pressed && { opacity: 0.7 }]}
+              >
+                <MaterialIcons name="close" size={24} color="#fff" />
+              </Pressable>
+            </View>
           </View>
           <View style={styles.fullscreenImageWrap}>
             <Image

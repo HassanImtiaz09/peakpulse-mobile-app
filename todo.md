@@ -1553,3 +1553,24 @@
 ### Testing
 - [x] 0 TypeScript errors
 - [x] All tests pass (39 test files, 1219 tests passing)
+
+## Round 72 — Exercise Alternatives & Favorites
+
+### Exercise Alternative Suggestions
+- [x] Create muscle group mapping for all exercises (chest, back, shoulders, arms, legs, core, cardio)
+- [x] Build getAlternativeExercises() function that returns 3-5 alternatives for the same muscle group
+- [x] Add "Try Instead" / alternatives section to exercise detail and active workout screens
+- [x] Each alternative shows name, GIF thumbnail, and cue text
+- [x] Tapping an alternative navigates to exercise detail screen
+
+### Favorites System
+- [x] Favorites context already existed with AsyncStorage persistence (reused)
+- [x] Add heart/favorite toggle button to fullscreen GIF player (both ExerciseDemoPlayer and EnhancedGifPlayer)
+- [x] Favorite state persists across app restarts
+- [x] Visual feedback (filled vs outline heart icon, haptic on toggle)
+
+### Testing
+- [x] Unit tests for muscle group mapping and alternative suggestions (35 tests)
+- [x] Unit tests for favorites persistence logic
+- [x] 0 TypeScript errors
+- [x] All tests pass (1253 passing, 40 test files)

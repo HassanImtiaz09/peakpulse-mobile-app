@@ -13,7 +13,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ExerciseDemoPlayer } from "@/components/exercise-demo-player";
 import { BodyDiagramInline } from "@/components/body-diagram";
 import { EnhancedGifPlayer } from "@/components/enhanced-gif-player";
-import { getExerciseInfo } from "@/lib/exercise-data";
+import { getExerciseInfo, getAlternativeExercises } from "@/lib/exercise-data";
+import { Image } from "expo-image";
 import { useFavorites } from "@/lib/favorites-context";
 import { logWorkoutPRs } from "@/lib/personal-records";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
@@ -627,6 +628,44 @@ export default function ActiveWorkoutScreen() {
             <View style={{ backgroundColor: SF.surface, borderRadius: 16, padding: 14, marginBottom: 12, borderWidth: 1, borderColor: SF.border }}>
               <ExerciseDemoVideo exerciseName={exercise.name} compact />
             </View>
+
+            {/* Alternative Exercises */}
+            {(() => {
+              const alts = getAlternativeExercises(exercise.name, 3);
+              if (alts.length === 0) return null;
+              return (
+                <View style={{ backgroundColor: SF.surface, borderRadius: 16, padding: 14, marginBottom: 12, borderWidth: 1, borderColor: SF.border }}>
+                  <View style={{ flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 8 }}>
+                    <MaterialIcons name="swap-horiz" size={14} color={SF.gold} />
+                    <Text style={{ color: SF.muted, fontFamily: "Outfit_700Bold", fontSize: 10, letterSpacing: 1.2 }}>TRY INSTEAD</Text>
+                  </View>
+                  {alts.map((alt) => (
+                    <TouchableOpacity
+                      key={alt.key}
+                      onPress={() => {
+                        if (Platform.OS !== "web") Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                        router.push({ pathname: "/exercise-detail" as any, params: { name: alt.name } });
+                      }}
+                      style={{ flexDirection: "row", alignItems: "center", gap: 10, paddingVertical: 8, borderTopWidth: 1, borderTopColor: "rgba(245,158,11,0.08)" }}
+                    >
+                      <View style={{ width: 44, height: 44, borderRadius: 10, backgroundColor: SF.bg, overflow: "hidden", borderWidth: 1, borderColor: SF.border }}>
+                        <Image
+                          source={{ uri: alt.angleViews[0]?.gifUrl }}
+                          style={{ width: 44, height: 44 }}
+                          contentFit="contain"
+                          cachePolicy="disk"
+                        />
+                      </View>
+                      <View style={{ flex: 1 }}>
+                        <Text style={{ color: SF.fg, fontFamily: "DMSans_600SemiBold", fontSize: 12 }} numberOfLines={1}>{alt.name}</Text>
+                        <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 10, marginTop: 1 }} numberOfLines={1}>{alt.cue}</Text>
+                      </View>
+                      <MaterialIcons name="chevron-right" size={16} color={SF.muted} />
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              );
+            })()}
 
             {/* Set Tracker */}
             <View style={{ backgroundColor: SF.surface, borderRadius: 20, padding: 16, marginBottom: 16, borderWidth: 1, borderColor: SF.border }}>

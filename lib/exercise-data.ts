@@ -1213,3 +1213,42 @@ export function getExercisesByMuscle(muscle: MuscleGroup): ExerciseInfo[] {
     (ex) => ex.primaryMuscles.includes(muscle) || ex.secondaryMuscles.includes(muscle)
   );
 }
+
+/**
+ * Get alternative exercises that target the same primary muscle groups.
+ * Returns up to `limit` exercises from the same category, excluding the original.
+ * Results are sorted by muscle overlap (most shared muscles first).
+ */
+export function getAlternativeExercises(
+  exerciseName: string,
+  limit: number = 5,
+): ExerciseInfo[] {
+  const info = getExerciseInfo(exerciseName);
+  if (!info) return [];
+
+  const candidates = EXERCISE_DB.filter((ex) => ex.key !== info.key);
+
+  // Score each candidate by muscle overlap with the original exercise
+  const scored = candidates.map((ex) => {
+    let score = 0;
+    // Primary-to-primary overlap is worth 3 points
+    for (const m of ex.primaryMuscles) {
+      if (info.primaryMuscles.includes(m)) score += 3;
+      if (info.secondaryMuscles.includes(m)) score += 1;
+    }
+    // Secondary overlap is worth 1 point
+    for (const m of ex.secondaryMuscles) {
+      if (info.primaryMuscles.includes(m)) score += 1;
+    }
+    // Same category bonus
+    if (ex.category === info.category) score += 2;
+    return { exercise: ex, score };
+  });
+
+  // Filter out exercises with 0 overlap, sort by score descending
+  return scored
+    .filter((s) => s.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, limit)
+    .map((s) => s.exercise);
+}

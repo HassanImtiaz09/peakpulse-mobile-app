@@ -14,7 +14,9 @@ import { ScreenContainer } from "@/components/screen-container";
 import { EnhancedGifPlayer } from "@/components/enhanced-gif-player";
 import { BodyDiagram } from "@/components/body-diagram";
 import { useFavorites } from "@/lib/favorites-context";
-import { getExerciseInfo } from "@/lib/exercise-data";
+import { getExerciseInfo, getAlternativeExercises } from "@/lib/exercise-data";
+import { Image } from "expo-image";
+import { getExerciseDemo } from "@/lib/exercise-demos";
 
 const C = {
   bg: "#0A0500",
@@ -38,6 +40,7 @@ export default function ExerciseDetailScreen() {
 
   const exercise = useMemo(() => getExerciseInfo(name || ""), [name]);
   const favorited = isFavorite(name || "");
+  const alternatives = useMemo(() => getAlternativeExercises(name || "", 5), [name]);
 
   if (!exercise) {
     return (
@@ -181,6 +184,59 @@ export default function ExerciseDetailScreen() {
             </View>
           ))}
         </View>
+
+        {/* Alternative Exercises */}
+        {alternatives.length > 0 && (
+          <View style={styles.alternativesSection}>
+            <View style={styles.alternativesHeader}>
+              <MaterialIcons name="swap-horiz" size={16} color={C.gold} />
+              <Text style={styles.sectionTitle}>TRY INSTEAD</Text>
+            </View>
+            <Text style={styles.alternativesSubtitle}>
+              Similar exercises targeting the same muscle groups
+            </Text>
+            {alternatives.map((alt) => {
+              const altDemo = getExerciseDemo(alt.name);
+              return (
+                <Pressable
+                  key={alt.key}
+                  onPress={() => {
+                    if (Platform.OS !== "web") {
+                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                    }
+                    router.push({ pathname: "/exercise-detail" as any, params: { name: alt.name } });
+                  }}
+                  style={({ pressed }) => [
+                    styles.altCard,
+                    pressed && { opacity: 0.8, transform: [{ scale: 0.98 }] },
+                  ]}
+                >
+                  <View style={styles.altGifWrap}>
+                    <Image
+                      source={{ uri: alt.angleViews[0]?.gifUrl || altDemo.gifUrl }}
+                      style={styles.altGif}
+                      contentFit="contain"
+                      cachePolicy="disk"
+                    />
+                  </View>
+                  <View style={styles.altInfo}>
+                    <Text style={styles.altName} numberOfLines={1}>{alt.name}</Text>
+                    <Text style={styles.altCue} numberOfLines={2}>{alt.cue}</Text>
+                    <View style={styles.altMeta}>
+                      <View style={styles.altChip}>
+                        <Text style={styles.altChipText}>{formatCategory(alt.category)}</Text>
+                      </View>
+                      <View style={[styles.altChip, styles.altChipDifficulty]}>
+                        <Text style={styles.altChipText}>{alt.difficulty}</Text>
+                      </View>
+                    </View>
+                  </View>
+                  <MaterialIcons name="chevron-right" size={18} color={C.muted} />
+                </Pressable>
+              );
+            })}
+          </View>
+        )}
       </ScrollView>
     </View>
   );
@@ -413,5 +469,80 @@ const styles = StyleSheet.create({
     color: C.bg,
     fontFamily: "DMSans_600SemiBold",
     fontSize: 14,
+  },
+  alternativesSection: {
+    paddingHorizontal: 16,
+    paddingTop: 20,
+  },
+  alternativesHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+  },
+  alternativesSubtitle: {
+    color: C.muted,
+    fontFamily: "DMSans_400Regular",
+    fontSize: 11,
+    marginBottom: 12,
+    marginTop: 2,
+  },
+  altCard: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: C.surface,
+    borderRadius: 14,
+    padding: 10,
+    marginBottom: 8,
+    borderWidth: 1,
+    borderColor: C.border,
+    gap: 10,
+  },
+  altGifWrap: {
+    width: 56,
+    height: 56,
+    borderRadius: 10,
+    backgroundColor: C.bg,
+    overflow: "hidden",
+    borderWidth: 1,
+    borderColor: C.border,
+  },
+  altGif: {
+    width: 56,
+    height: 56,
+  },
+  altInfo: {
+    flex: 1,
+    gap: 2,
+  },
+  altName: {
+    color: C.fg,
+    fontFamily: "DMSans_600SemiBold",
+    fontSize: 13,
+  },
+  altCue: {
+    color: C.muted,
+    fontFamily: "DMSans_400Regular",
+    fontSize: 11,
+    lineHeight: 15,
+  },
+  altMeta: {
+    flexDirection: "row",
+    gap: 4,
+    marginTop: 3,
+  },
+  altChip: {
+    backgroundColor: "rgba(245,158,11,0.1)",
+    borderRadius: 5,
+    paddingHorizontal: 6,
+    paddingVertical: 1,
+  },
+  altChipDifficulty: {
+    backgroundColor: "rgba(245,158,11,0.06)",
+  },
+  altChipText: {
+    color: C.gold,
+    fontFamily: "DMSans_500Medium",
+    fontSize: 9,
+    textTransform: "capitalize",
   },
 });

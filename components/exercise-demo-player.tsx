@@ -6,10 +6,13 @@ import {
   Modal,
   StyleSheet,
   Dimensions,
+  Platform,
 } from "react-native";
 import { Image } from "expo-image";
 import { MaterialIcons } from "@expo/vector-icons";
+import * as Haptics from "expo-haptics";
 import { useColors } from "@/hooks/use-colors";
+import { useFavorites } from "@/lib/favorites-context";
 
 const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get("window");
 
@@ -32,6 +35,14 @@ export function ExerciseDemoPlayer({
 }: ExerciseDemoPlayerProps) {
   const colors = useColors();
   const [fullscreen, setFullscreen] = useState(false);
+  const { isFavorite, toggleFavorite } = useFavorites();
+  const favorited = exerciseName ? isFavorite(exerciseName) : false;
+
+  const handleToggleFavorite = useCallback(() => {
+    if (exerciseName) {
+      toggleFavorite(exerciseName);
+    }
+  }, [exerciseName, toggleFavorite]);
 
   const openFullscreen = useCallback(() => setFullscreen(true), []);
   const closeFullscreen = useCallback(() => setFullscreen(false), []);
@@ -98,15 +109,32 @@ export function ExerciseDemoPlayer({
             ) : (
               <View />
             )}
-            <Pressable
-              onPress={closeFullscreen}
-              style={({ pressed }) => [
-                styles.closeButton,
-                pressed && { opacity: 0.7 },
-              ]}
-            >
-              <MaterialIcons name="close" size={24} color="#fff" />
-            </Pressable>
+            <View style={{ flexDirection: "row", gap: 8 }}>
+              {exerciseName ? (
+                <Pressable
+                  onPress={handleToggleFavorite}
+                  style={({ pressed }) => [
+                    styles.closeButton,
+                    pressed && { opacity: 0.7 },
+                  ]}
+                >
+                  <MaterialIcons
+                    name={favorited ? "favorite" : "favorite-border"}
+                    size={22}
+                    color={favorited ? "#EF4444" : "#fff"}
+                  />
+                </Pressable>
+              ) : null}
+              <Pressable
+                onPress={closeFullscreen}
+                style={({ pressed }) => [
+                  styles.closeButton,
+                  pressed && { opacity: 0.7 },
+                ]}
+              >
+                <MaterialIcons name="close" size={24} color="#fff" />
+              </Pressable>
+            </View>
           </View>
 
           {/* Full-size GIF */}
