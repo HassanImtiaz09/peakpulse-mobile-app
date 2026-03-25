@@ -2100,3 +2100,38 @@
 - [x] 13 tests for chat screen typing indicator UI
 - [x] 3 tests for seed data read receipts
 - [x] 2 tests for exports
+
+## Round 87 — Chat Search, Media Sharing, Notification Badges
+
+### Message Search
+- [x] Add search bar in chat header with toggle icon (search icon in header)
+- [x] Filter messages by keyword in real-time (useMemo searchMatches)
+- [x] Highlight matching text with gold background, active match brighter
+- [x] Scroll to matched messages with prev/next arrow navigation
+- [x] Show match count indicator (e.g., "2/5") and "No results" state
+- [x] Graceful onScrollToIndexFailed handling
+
+### Media Sharing in Chat
+- [x] Camera button in input bar with handleSendImage
+- [x] Alert picker: Progress Photo, Workout Screenshot, Meal Photo
+- [x] Image thumbnails rendered in chat bubbles with fullscreen icon overlay
+- [x] Full-screen image viewer modal on tap
+- [x] Image messages stored with type "image" and imageUrl field
+- [x] Photo icon in message metadata for image messages
+
+### Chat Notification Badges
+- [x] getTotalUnreadCount sums unreadCount from all rooms
+- [x] Red badge on Social Circle Chat tab with count (capped at 99+)
+- [x] Red badge on Challenge Active tab with count (capped at 99+)
+- [x] 5-second polling interval for real-time badge updates
+- [x] Clear badge when Chat tab is selected in Social Circle
+
+### Testing
+- [x] 0 TypeScript errors
+- [x] All 47 tests pass (round87-features.test.ts)
+- [x] 6 tests for chat service image support
+- [x] 12 tests for message search UI
+- [x] 9 tests for media sharing UI
+- [x] 7 tests for Social Circle unread badge
+- [x] 6 tests for Challenge unread badge
+- [x] 7 tests for existing features preserved

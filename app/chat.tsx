@@ -2,12 +2,14 @@
  * Chat Screen — Real-time group chat for Social Circles and Challenges
  *
  * Features: message list, text input, reactions, reply, system messages,
- * typing indicators, and golden-themed UI.
+ * typing indicators, read receipts, message search with highlighting,
+ * media sharing (photos), and golden-themed UI.
  */
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import {
   View, Text, TextInput, TouchableOpacity, FlatList, KeyboardAvoidingView,
-  Platform, StyleSheet, Alert, ImageBackground, ActivityIndicator,
+  Platform, StyleSheet, Alert, ImageBackground, ActivityIndicator, Modal,
+  Image, Dimensions,
 } from "react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { ScreenContainer } from "@/components/screen-container";
@@ -28,8 +30,11 @@ const SF = {
   border: "rgba(245,158,11,0.12)", fg: "#F1F5F9", muted: "#B45309",
   gold: "#F59E0B", gold2: "#FBBF24", gold3: "#FDE68A",
   myBubble: "rgba(245,158,11,0.18)", otherBubble: "rgba(20,26,34,0.90)",
-  systemBg: "rgba(245,158,11,0.08)",
+  systemBg: "rgba(245,158,11,0.08)", searchHighlight: "rgba(245,158,11,0.40)",
+  searchActive: "rgba(245,158,11,0.70)",
 };
+
+const SCREEN_WIDTH = Dimensions.get("window").width;
 
 export default function ChatScreen() {
   const router = useRouter();
@@ -52,7 +57,51 @@ export default function ChatScreen() {
   const flatListRef = useRef<FlatList>(null);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  // Initialize room and load messages
+  // ── Search state ──────────────────────────────────────────────────────────
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchMatchIndex, setSearchMatchIndex] = useState(0);
+
+  const searchMatches = useMemo(() => {
+    if (!searchQuery.trim()) return [];
+    const q = searchQuery.toLowerCase();
+    return messages
+      .map((m, idx) => ({ message: m, index: idx }))
+      .filter((item) => item.message.text.toLowerCase().includes(q) && item.message.type !== "system" && !item.message.deleted);
+  }, [messages, searchQuery]);
+
+  const activeMatchId = searchMatches.length > 0 ? searchMatches[searchMatchIndex]?.message.id : null;
+
+  const handleSearchNext = useCallback(() => {
+    if (searchMatches.length === 0) return;
+    const next = (searchMatchIndex + 1) % searchMatches.length;
+    setSearchMatchIndex(next);
+    flatListRef.current?.scrollToIndex({ index: searchMatches[next].index, animated: true, viewPosition: 0.5 });
+  }, [searchMatchIndex, searchMatches]);
+
+  const handleSearchPrev = useCallback(() => {
+    if (searchMatches.length === 0) return;
+    const prev = (searchMatchIndex - 1 + searchMatches.length) % searchMatches.length;
+    setSearchMatchIndex(prev);
+    flatListRef.current?.scrollToIndex({ index: searchMatches[prev].index, animated: true, viewPosition: 0.5 });
+  }, [searchMatchIndex, searchMatches]);
+
+  const handleSearchOpen = useCallback(() => {
+    setSearchOpen(true);
+    setSearchQuery("");
+    setSearchMatchIndex(0);
+  }, []);
+
+  const handleSearchClose = useCallback(() => {
+    setSearchOpen(false);
+    setSearchQuery("");
+    setSearchMatchIndex(0);
+  }, []);
+
+  // ── Media viewer state ────────────────────────────────────────────────────
+  const [mediaViewerUrl, setMediaViewerUrl] = useState<string | null>(null);
+
+  // ── Initialize ────────────────────────────────────────────────────────────
   useEffect(() => {
     (async () => {
       setLoading(true);
@@ -66,45 +115,44 @@ export default function ChatScreen() {
     })();
   }, [roomId]);
 
-  // Poll for new messages, typing indicators, and read receipts every 3 seconds
+  // ── Polling ───────────────────────────────────────────────────────────────
   useEffect(() => {
     pollRef.current = setInterval(async () => {
-      // Fetch messages (includes updated readBy)
       const msgs = await getMessages(roomId, 100);
       setMessages((prev) => {
-        // Check if messages changed (new messages or updated readBy)
         const prevJson = JSON.stringify(prev.map((m) => ({ id: m.id, rb: m.readBy?.length ?? 0 })));
         const newJson = JSON.stringify(msgs.map((m) => ({ id: m.id, rb: m.readBy?.length ?? 0 })));
         if (prevJson !== newJson) return msgs;
         return prev;
       });
-
-      // Update typing indicators
       simulateTyping(roomId);
       const typers = getTypingUsers(roomId, currentUserId);
       setTypingText(formatTypingText(typers));
-
-      // Simulate other members reading our messages
       await simulateReadReceipts(roomId);
-
-      // Mark incoming messages as read
       await markMessagesAsRead(roomId);
     }, 3000);
     return () => { if (pollRef.current) clearInterval(pollRef.current); };
   }, [roomId, currentUserId]);
 
-  // Auto-scroll to bottom when new messages arrive
+  // Auto-scroll on new messages
   useEffect(() => {
-    if (messages.length > 0) {
+    if (messages.length > 0 && !searchOpen) {
       setTimeout(() => flatListRef.current?.scrollToEnd({ animated: true }), 100);
     }
-  }, [messages.length]);
+  }, [messages.length, searchOpen]);
 
-  // Broadcast typing state when user types
+  // Scroll to first match when search query changes
+  useEffect(() => {
+    if (searchMatches.length > 0) {
+      setSearchMatchIndex(0);
+      flatListRef.current?.scrollToIndex({ index: searchMatches[0].index, animated: true, viewPosition: 0.5 });
+    }
+  }, [searchQuery]);
+
+  // ── Typing broadcast ──────────────────────────────────────────────────────
   const handleTextChange = useCallback((text: string) => {
     setInputText(text);
     setTyping(roomId, currentUserId, "You", text.length > 0);
-    // Auto-clear typing after 4 seconds of no input
     if (typingTimerRef.current) clearTimeout(typingTimerRef.current);
     if (text.length > 0) {
       typingTimerRef.current = setTimeout(() => {
@@ -113,11 +161,11 @@ export default function ChatScreen() {
     }
   }, [roomId, currentUserId]);
 
+  // ── Send text message ─────────────────────────────────────────────────────
   const handleSend = useCallback(async () => {
     const text = inputText.trim();
     if (!text || sending) return;
     setSending(true);
-    // Clear typing state on send
     setTyping(roomId, currentUserId, "You", false);
     if (typingTimerRef.current) clearTimeout(typingTimerRef.current);
     if (Platform.OS !== "web") Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -133,6 +181,43 @@ export default function ChatScreen() {
     setSending(false);
   }, [inputText, sending, roomId, replyTo, currentUserId]);
 
+  // ── Send image message ────────────────────────────────────────────────────
+  const handleSendImage = useCallback(async () => {
+    if (Platform.OS !== "web") Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    // Show picker options
+    Alert.alert("Share Photo", "Choose what to share", [
+      {
+        text: "Progress Photo",
+        onPress: async () => {
+          const url = "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=400&fit=crop";
+          const msg = await sendMessage(roomId, "📸 Shared a progress photo", "image", { imageUrl: url });
+          setMessages((prev) => [...prev, msg]);
+          setTimeout(() => flatListRef.current?.scrollToEnd({ animated: true }), 100);
+        },
+      },
+      {
+        text: "Workout Screenshot",
+        onPress: async () => {
+          const url = "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=400&fit=crop";
+          const msg = await sendMessage(roomId, "🏋️ Shared a workout screenshot", "image", { imageUrl: url });
+          setMessages((prev) => [...prev, msg]);
+          setTimeout(() => flatListRef.current?.scrollToEnd({ animated: true }), 100);
+        },
+      },
+      {
+        text: "Meal Photo",
+        onPress: async () => {
+          const url = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=400&fit=crop";
+          const msg = await sendMessage(roomId, "🥗 Shared a meal photo", "image", { imageUrl: url });
+          setMessages((prev) => [...prev, msg]);
+          setTimeout(() => flatListRef.current?.scrollToEnd({ animated: true }), 100);
+        },
+      },
+      { text: "Cancel", style: "cancel" },
+    ]);
+  }, [roomId]);
+
+  // ── Reactions & Delete ────────────────────────────────────────────────────
   const handleReaction = useCallback(async (messageId: string, emoji: string) => {
     if (Platform.OS !== "web") Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     await addReaction(roomId, messageId, emoji);
@@ -167,10 +252,55 @@ export default function ChatScreen() {
     return `${d.toLocaleDateString([], { month: "short", day: "numeric" })} ${time}`;
   };
 
+  // ── Highlight search text ─────────────────────────────────────────────────
+  const renderHighlightedText = useCallback((text: string, messageId: string) => {
+    if (!searchQuery.trim()) {
+      return <Text style={styles.msgText}>{text}</Text>;
+    }
+    const q = searchQuery.toLowerCase();
+    const parts: { text: string; highlight: boolean }[] = [];
+    let remaining = text;
+    while (remaining.length > 0) {
+      const idx = remaining.toLowerCase().indexOf(q);
+      if (idx === -1) {
+        parts.push({ text: remaining, highlight: false });
+        break;
+      }
+      if (idx > 0) parts.push({ text: remaining.slice(0, idx), highlight: false });
+      parts.push({ text: remaining.slice(idx, idx + q.length), highlight: true });
+      remaining = remaining.slice(idx + q.length);
+    }
+    const isActiveMatch = messageId === activeMatchId;
+    return (
+      <Text style={styles.msgText}>
+        {parts.map((part, i) =>
+          part.highlight ? (
+            <Text
+              key={i}
+              style={{
+                backgroundColor: isActiveMatch ? SF.searchActive : SF.searchHighlight,
+                borderRadius: 2,
+                color: "#000",
+                fontWeight: "700",
+              }}
+            >
+              {part.text}
+            </Text>
+          ) : (
+            <Text key={i}>{part.text}</Text>
+          ),
+        )}
+      </Text>
+    );
+  }, [searchQuery, activeMatchId]);
+
+  // ── Render message ────────────────────────────────────────────────────────
   const renderMessage = useCallback(({ item }: { item: ChatMessage }) => {
     const isMe = item.senderId === currentUserId;
     const isSystem = item.type === "system";
     const isSelected = selectedMessage === item.id;
+    const isImage = item.type === "image" && item.imageUrl;
+    const isSearchMatch = searchMatches.some((m) => m.message.id === item.id);
 
     if (isSystem) {
       return (
@@ -183,7 +313,11 @@ export default function ChatScreen() {
     const replyMsg = item.replyToId ? messages.find((m) => m.id === item.replyToId) : null;
 
     return (
-      <View style={[styles.msgRow, isMe && styles.msgRowMe]}>
+      <View style={[
+        styles.msgRow,
+        isMe && styles.msgRowMe,
+        isSearchMatch && searchQuery.trim() ? { backgroundColor: "rgba(245,158,11,0.05)", borderRadius: 12, marginHorizontal: -4, paddingHorizontal: 4 } : undefined,
+      ]}>
         {!isMe && (
           <View style={styles.avatarCircle}>
             <Text style={styles.avatarText}>{item.senderAvatar}</Text>
@@ -204,14 +338,32 @@ export default function ChatScreen() {
               <Text style={styles.replyPreviewText} numberOfLines={1}>{replyMsg.text}</Text>
             </View>
           )}
+          {/* Image message */}
+          {isImage && (
+            <TouchableOpacity
+              activeOpacity={0.9}
+              onPress={() => setMediaViewerUrl(item.imageUrl!)}
+              style={styles.imageContainer}
+            >
+              <Image
+                source={{ uri: item.imageUrl }}
+                style={styles.chatImage}
+                resizeMode="cover"
+              />
+              <View style={styles.imageOverlay}>
+                <MaterialIcons name="fullscreen" size={20} color="#fff" />
+              </View>
+            </TouchableOpacity>
+          )}
           {item.deleted ? (
             <Text style={[styles.msgText, { fontStyle: "italic", opacity: 0.5 }]}>{item.text}</Text>
           ) : (
-            <Text style={styles.msgText}>{item.text}</Text>
+            renderHighlightedText(item.text, item.id)
           )}
           <View style={styles.msgMeta}>
             <Text style={styles.msgTime}>{formatTime(item.createdAt)}</Text>
             {item.editedAt && <Text style={styles.editedTag}>edited</Text>}
+            {isImage && <MaterialIcons name="photo" size={10} color="rgba(180,83,9,0.5)" />}
             {isMe && !item.deleted && (() => {
               const receipt = getReadReceiptSummary(item, currentUserId);
               return (
@@ -289,7 +441,7 @@ export default function ChatScreen() {
         )}
       </View>
     );
-  }, [currentUserId, selectedMessage, messages, handleReaction, handleDelete]);
+  }, [currentUserId, selectedMessage, messages, handleReaction, handleDelete, searchQuery, searchMatches, activeMatchId, readReceiptTooltip, renderHighlightedText]);
 
   return (
     <ImageBackground source={{ uri: GOLDEN_SOCIAL }} style={{ flex: 1 }} resizeMode="cover">
@@ -300,20 +452,56 @@ export default function ChatScreen() {
           keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
         >
           {/* Header */}
-          <View style={styles.header}>
-            <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
-              <MaterialIcons name="arrow-back" size={22} color={SF.fg} />
-            </TouchableOpacity>
-            <View style={{ flex: 1 }}>
-              <Text style={styles.headerTitle} numberOfLines={1}>{roomName}</Text>
-              <Text style={styles.headerSub}>
-                {roomType === "circle" ? "Circle Chat" : "Challenge Chat"} · {messages.length} messages
-              </Text>
+          {searchOpen ? (
+            <View style={styles.searchHeader}>
+              <TouchableOpacity onPress={handleSearchClose} style={styles.backBtn}>
+                <MaterialIcons name="close" size={22} color={SF.fg} />
+              </TouchableOpacity>
+              <TextInput
+                style={styles.searchInput}
+                placeholder="Search messages..."
+                placeholderTextColor="rgba(180,83,9,0.5)"
+                value={searchQuery}
+                onChangeText={(t) => { setSearchQuery(t); setSearchMatchIndex(0); }}
+                autoFocus
+                returnKeyType="search"
+              />
+              {searchMatches.length > 0 && (
+                <View style={styles.searchNav}>
+                  <Text style={styles.searchCount}>
+                    {searchMatchIndex + 1}/{searchMatches.length}
+                  </Text>
+                  <TouchableOpacity onPress={handleSearchPrev} style={styles.searchNavBtn}>
+                    <MaterialIcons name="keyboard-arrow-up" size={22} color={SF.gold} />
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={handleSearchNext} style={styles.searchNavBtn}>
+                    <MaterialIcons name="keyboard-arrow-down" size={22} color={SF.gold} />
+                  </TouchableOpacity>
+                </View>
+              )}
+              {searchQuery.trim() && searchMatches.length === 0 && (
+                <Text style={styles.searchNoResults}>No results</Text>
+              )}
             </View>
-            <TouchableOpacity style={styles.headerAction}>
-              <MaterialIcons name="people" size={22} color={SF.gold} />
-            </TouchableOpacity>
-          </View>
+          ) : (
+            <View style={styles.header}>
+              <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
+                <MaterialIcons name="arrow-back" size={22} color={SF.fg} />
+              </TouchableOpacity>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.headerTitle} numberOfLines={1}>{roomName}</Text>
+                <Text style={styles.headerSub}>
+                  {roomType === "circle" ? "Circle Chat" : "Challenge Chat"} · {messages.length} messages
+                </Text>
+              </View>
+              <TouchableOpacity style={styles.headerAction} onPress={handleSearchOpen}>
+                <MaterialIcons name="search" size={22} color={SF.gold} />
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.headerAction}>
+                <MaterialIcons name="people" size={22} color={SF.gold} />
+              </TouchableOpacity>
+            </View>
+          )}
 
           {/* Messages */}
           {loading ? (
@@ -329,7 +517,14 @@ export default function ChatScreen() {
               renderItem={renderMessage}
               contentContainerStyle={{ paddingHorizontal: 12, paddingBottom: 8, paddingTop: 8 }}
               showsVerticalScrollIndicator={false}
-              onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: false })}
+              onContentSizeChange={() => {
+                if (!searchOpen) flatListRef.current?.scrollToEnd({ animated: false });
+              }}
+              onScrollToIndexFailed={(info) => {
+                setTimeout(() => {
+                  flatListRef.current?.scrollToIndex({ index: info.index, animated: true, viewPosition: 0.5 });
+                }, 200);
+              }}
               ListEmptyComponent={
                 <View style={{ flex: 1, justifyContent: "center", alignItems: "center", paddingTop: 100 }}>
                   <Text style={{ fontSize: 40 }}>💬</Text>
@@ -367,6 +562,9 @@ export default function ChatScreen() {
 
           {/* Input */}
           <View style={[styles.inputBar, { paddingBottom: Math.max(insets.bottom, 8) }]}>
+            <TouchableOpacity style={styles.attachBtn} onPress={handleSendImage}>
+              <MaterialIcons name="photo-camera" size={22} color={SF.gold} />
+            </TouchableOpacity>
             <TextInput
               style={styles.textInput}
               placeholder="Type a message..."
@@ -391,6 +589,22 @@ export default function ChatScreen() {
           </View>
         </KeyboardAvoidingView>
       </ScreenContainer>
+
+      {/* Full-screen image viewer modal */}
+      <Modal visible={!!mediaViewerUrl} transparent animationType="fade" onRequestClose={() => setMediaViewerUrl(null)}>
+        <View style={styles.mediaViewerBg}>
+          <TouchableOpacity style={styles.mediaViewerClose} onPress={() => setMediaViewerUrl(null)}>
+            <MaterialIcons name="close" size={28} color="#fff" />
+          </TouchableOpacity>
+          {mediaViewerUrl && (
+            <Image
+              source={{ uri: mediaViewerUrl }}
+              style={styles.mediaViewerImage}
+              resizeMode="contain"
+            />
+          )}
+        </View>
+      </Modal>
     </ImageBackground>
   );
 }
@@ -410,6 +624,29 @@ const styles = StyleSheet.create({
   headerAction: {
     width: 36, height: 36, borderRadius: 18,
     backgroundColor: "rgba(245,158,11,0.10)", alignItems: "center", justifyContent: "center",
+  },
+  // Search header
+  searchHeader: {
+    flexDirection: "row", alignItems: "center", paddingHorizontal: 12,
+    paddingVertical: 8, gap: 8, backgroundColor: "rgba(10,14,20,0.92)",
+    borderBottomWidth: 1, borderBottomColor: SF.border,
+  },
+  searchInput: {
+    flex: 1, backgroundColor: "rgba(245,158,11,0.08)", borderRadius: 16,
+    paddingHorizontal: 14, paddingVertical: 8, color: SF.fg, fontSize: 14,
+    borderWidth: 1, borderColor: SF.border,
+  },
+  searchNav: {
+    flexDirection: "row", alignItems: "center", gap: 2,
+  },
+  searchNavBtn: {
+    width: 30, height: 30, borderRadius: 15, alignItems: "center", justifyContent: "center",
+  },
+  searchCount: {
+    color: SF.gold, fontSize: 11, fontWeight: "700", minWidth: 30, textAlign: "center",
+  },
+  searchNoResults: {
+    color: SF.muted, fontSize: 12, fontStyle: "italic",
   },
   // Messages
   systemMsg: {
@@ -440,6 +677,17 @@ const styles = StyleSheet.create({
   msgMeta: { flexDirection: "row", alignItems: "center", gap: 6, marginTop: 4 },
   msgTime: { color: "rgba(180,83,9,0.6)", fontSize: 10 },
   editedTag: { color: "rgba(180,83,9,0.4)", fontSize: 9, fontStyle: "italic" },
+  // Image messages
+  imageContainer: {
+    borderRadius: 12, overflow: "hidden", marginBottom: 6, position: "relative",
+  },
+  chatImage: {
+    width: SCREEN_WIDTH * 0.55, height: SCREEN_WIDTH * 0.55, borderRadius: 12,
+  },
+  imageOverlay: {
+    position: "absolute", bottom: 6, right: 6, backgroundColor: "rgba(0,0,0,0.5)",
+    borderRadius: 12, width: 28, height: 28, alignItems: "center", justifyContent: "center",
+  },
   // Reactions
   reactionsRow: { flexDirection: "row", flexWrap: "wrap", gap: 4, marginTop: 6 },
   reactionBadge: {
@@ -480,6 +728,11 @@ const styles = StyleSheet.create({
     flexDirection: "row", alignItems: "flex-end", paddingHorizontal: 12, paddingTop: 8,
     backgroundColor: "rgba(10,14,20,0.90)", borderTopWidth: 1, borderTopColor: SF.border,
     gap: 8,
+  },
+  attachBtn: {
+    width: 40, height: 40, borderRadius: 20,
+    backgroundColor: "rgba(245,158,11,0.10)", alignItems: "center", justifyContent: "center",
+    marginBottom: 2,
   },
   textInput: {
     flex: 1, backgroundColor: "rgba(245,158,11,0.06)", borderRadius: 20,
@@ -524,5 +777,17 @@ const styles = StyleSheet.create({
   },
   typingText: {
     color: SF.muted, fontSize: 12, fontStyle: "italic",
+  },
+  // Media viewer
+  mediaViewerBg: {
+    flex: 1, backgroundColor: "rgba(0,0,0,0.95)", justifyContent: "center", alignItems: "center",
+  },
+  mediaViewerClose: {
+    position: "absolute", top: 50, right: 20, zIndex: 10,
+    width: 40, height: 40, borderRadius: 20, backgroundColor: "rgba(255,255,255,0.15)",
+    alignItems: "center", justifyContent: "center",
+  },
+  mediaViewerImage: {
+    width: SCREEN_WIDTH - 32, height: SCREEN_WIDTH - 32,
   },
 });

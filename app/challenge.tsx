@@ -44,6 +44,7 @@ import {
   type TemplateCategory,
 } from "@/lib/challenge-templates";
 import { notifyChallengeInvitation } from "@/lib/social-notifications";
+import { getTotalUnreadCount } from "@/lib/chat-service";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 const HERO_BG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/golden-challenge-bg-2DXBpSZwN3LCroCHSRyD4K.webp";
@@ -55,6 +56,7 @@ export default function ChallengeScreen() {
   const params = useLocalSearchParams<{ friendId?: string; friendName?: string; friendEmoji?: string }>();
   const { guestProfile } = useGuestAuth();
   const [activeTab, setActiveTab] = useState<TabId>(params.friendId ? "new" : "active");
+  const [chatUnreadCount, setChatUnreadCount] = useState(0);
   const [activeChallenges, setActiveChallenges] = useState<Challenge[]>([]);
   const [completedChallenges, setCompletedChallenges] = useState<Challenge[]>([]);
   const [stats, setStats] = useState<ChallengeStats | null>(null);
@@ -104,6 +106,17 @@ export default function ChallengeScreen() {
   }, [userName, params.friendId]);
 
   useEffect(() => { loadData(); }, [loadData]);
+
+  // Poll unread chat count
+  useEffect(() => {
+    const fetchUnread = async () => {
+      const count = await getTotalUnreadCount();
+      setChatUnreadCount(count);
+    };
+    fetchUnread();
+    const interval = setInterval(fetchUnread, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
   const handleCreateChallenge = async () => {
     if (!selectedFriend || creating) return;
@@ -259,12 +272,24 @@ export default function ChallengeScreen() {
             style={[styles.tab, activeTab === tab && styles.tabActive]}
             onPress={() => setActiveTab(tab)}
           >
-            <Text style={[styles.tabText, activeTab === tab && styles.tabTextActive]}>
-              {tab === "active" ? `⚔️ Active (${activeChallenges.length})`
-                : tab === "completed" ? `🏆 History (${completedChallenges.length})`
-                : tab === "templates" ? "📋 Templates"
-                : "➕ New"}
-            </Text>
+            <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
+              <Text style={[styles.tabText, activeTab === tab && styles.tabTextActive]}>
+                {tab === "active" ? `⚔️ Active (${activeChallenges.length})`
+                  : tab === "completed" ? `🏆 History (${completedChallenges.length})`
+                  : tab === "templates" ? "📋 Templates"
+                  : "➕ New"}
+              </Text>
+              {tab === "active" && chatUnreadCount > 0 && (
+                <View style={{
+                  backgroundColor: "#EF4444", borderRadius: 9, minWidth: 18, height: 18,
+                  alignItems: "center", justifyContent: "center", paddingHorizontal: 4,
+                }}>
+                  <Text style={{ color: "#fff", fontSize: 10, fontWeight: "800" }}>
+                    {chatUnreadCount > 99 ? "99+" : chatUnreadCount}
+                  </Text>
+                </View>
+              )}
+            </View>
           </TouchableOpacity>
         ))}
       </View>

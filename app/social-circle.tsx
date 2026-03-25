@@ -33,6 +33,7 @@ import { calculateWeeklyProgress, getWeeklyGoals, type WeeklyProgress, type Week
 import { loadOrCreateFeed, getFeedItemIcon, getFeedItemMessage, getFeedItemColor, type ActivityFeedItem } from "@/lib/activity-feed";
 import { getActiveChallenges, type Challenge } from "@/lib/challenge-service";
 import { getActiveGroupGoals, type GroupGoal } from "@/lib/group-goals";
+import { getTotalUnreadCount } from "@/lib/chat-service";
 
 const HERO_BG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/golden-social-bg-6XESYMXaHwooBovbKXUgYi.webp";
 
@@ -63,6 +64,7 @@ export default function SocialCircleScreen() {
   const [selectedFriend, setSelectedFriend] = useState<FriendProfile | null>(null);
   const [showFriendModal, setShowFriendModal] = useState(false);
   const [sharing, setSharing] = useState(false);
+  const [chatUnreadCount, setChatUnreadCount] = useState(0);
 
   const loadData = useCallback(async () => {
     setLoading(true);
@@ -98,6 +100,17 @@ export default function SocialCircleScreen() {
   }, [guestProfile?.name]);
 
   useEffect(() => { loadData(); }, [loadData]);
+
+  // Poll unread chat count
+  useEffect(() => {
+    const fetchUnread = async () => {
+      const count = await getTotalUnreadCount();
+      setChatUnreadCount(count);
+    };
+    fetchUnread();
+    const interval = setInterval(fetchUnread, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
   const handleShare = async () => {
     if (!circleData || sharing) return;
@@ -285,11 +298,26 @@ export default function SocialCircleScreen() {
             <TouchableOpacity
               key={tab}
               style={[styles.tab, activeTab === tab && styles.tabActive]}
-              onPress={() => setActiveTab(tab)}
+              onPress={() => {
+                setActiveTab(tab);
+                if (tab === "chat") setChatUnreadCount(0);
+              }}
             >
-              <Text style={[styles.tabText, activeTab === tab && styles.tabTextActive]}>
-                {tabLabels[tab]}
-              </Text>
+              <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
+                <Text style={[styles.tabText, activeTab === tab && styles.tabTextActive]}>
+                  {tabLabels[tab]}
+                </Text>
+                {tab === "chat" && chatUnreadCount > 0 && (
+                  <View style={{
+                    backgroundColor: "#EF4444", borderRadius: 9, minWidth: 18, height: 18,
+                    alignItems: "center", justifyContent: "center", paddingHorizontal: 4,
+                  }}>
+                    <Text style={{ color: "#fff", fontSize: 10, fontWeight: "800" }}>
+                      {chatUnreadCount > 99 ? "99+" : chatUnreadCount}
+                    </Text>
+                  </View>
+                )}
+              </View>
             </TouchableOpacity>
           );
         })}
