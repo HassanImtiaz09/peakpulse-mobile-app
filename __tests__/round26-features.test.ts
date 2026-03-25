@@ -97,11 +97,11 @@ describe("Copy to Clipboard — Text Formatting", () => {
 });
 
 describe("Exercise Video Previews", () => {
-  it("returns a demo for known exercises with YouTube video ID", () => {
+  it("returns a demo for known exercises with local GIF asset", () => {
     const demo = getExerciseDemo("Bench Press");
     expect(demo).toBeDefined();
-    expect(demo.gifUrl).toBeTruthy();
-    expect(demo.gifUrl.length).toBeGreaterThan(5);
+    expect(demo.gifAsset).toBeDefined();
+    expect(typeof demo.gifAsset).toBe("number");
     expect(demo.cue).toBeTruthy();
     expect(demo.cue).toContain("shoulder blades");
   });
@@ -109,13 +109,15 @@ describe("Exercise Video Previews", () => {
   it("returns a demo via keyword fallback for unknown variants", () => {
     const demo = getExerciseDemo("Incline Dumbbell Bench Press");
     expect(demo).toBeDefined();
-    expect(demo.gifUrl).toBeTruthy();
+    expect(demo.gifAsset).toBeDefined();
+    expect(typeof demo.gifAsset).toBe("number");
   });
 
   it("returns a generic fallback for completely unknown exercises", () => {
     const demo = getExerciseDemo("Underwater Basket Weaving");
     expect(demo).toBeDefined();
-    expect(demo.gifUrl).toBeTruthy();
+    expect(demo.gifAsset).toBeDefined();
+    expect(typeof demo.gifAsset).toBe("number");
     expect(demo.cue).toContain("proper form");
   });
 
@@ -126,17 +128,17 @@ describe("Exercise Video Previews", () => {
     expect(normaliseExerciseName("Bicep's Curl!")).toBe("biceps curl");
   });
 
-  it("maps common exercises to specific YouTube video IDs with form cues", () => {
+  it("maps common exercises to local GIF assets with form cues", () => {
     const exercises = ["squat", "deadlift", "bench press", "pull up", "plank", "bicep curl"];
     for (const name of exercises) {
       const demo = getExerciseDemo(name);
-      expect(demo.gifUrl).toBeTruthy();
-      expect(demo.gifUrl.length).toBeGreaterThanOrEqual(8);
+      expect(demo.gifAsset).toBeDefined();
+      expect(typeof demo.gifAsset).toBe("number");
       expect(demo.cue.length).toBeGreaterThan(10);
     }
   });
 
-  it("covers 70+ exercises in the demo map", () => {
+  it("covers 70+ exercises in the demo map with local GIF assets", () => {
     const exercises = [
       "bench press", "push up", "dumbbell fly", "incline bench press", "cable fly",
       "pull up", "chin up", "lat pulldown", "bent over row", "deadlift", "dumbbell row",
@@ -149,7 +151,8 @@ describe("Exercise Video Previews", () => {
     ];
     for (const name of exercises) {
       const demo = getExerciseDemo(name);
-      expect(demo.gifUrl).toBeTruthy();
+      expect(demo.gifAsset).toBeDefined();
+      expect(typeof demo.gifAsset).toBe("number");
       expect(demo.cue).toBeTruthy();
     }
   });

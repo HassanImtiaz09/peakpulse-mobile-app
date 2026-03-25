@@ -14,54 +14,46 @@ import * as path from "path";
 
 const ROOT = path.resolve(__dirname, "..");
 
-describe("Round 75: Video Playback Fix", () => {
-  it("exercise-demo-player.tsx uses HTML5 video tag for web fallback", () => {
+describe("Round 75: Local GIF Asset Playback", () => {
+  it("exercise-demo-player.tsx uses expo-image for GIF display", () => {
     const content = fs.readFileSync(
       path.join(ROOT, "components/exercise-demo-player.tsx"),
       "utf-8"
     );
-    // Should have web video fallback using HTML5 video element
-    expect(content).toContain("Platform.OS");
-    expect(content).toContain("<video");
-    expect(content).toContain("autoPlay");
-    expect(content).toContain("loop");
-    expect(content).toContain("muted");
-    expect(content).toContain("playsInline");
+    expect(content).toContain("expo-image");
+    expect(content).toContain("resolveGifAsset");
+    expect(content).toContain("Image");
   });
 
-  it("enhanced-gif-player.tsx uses HTML5 video tag for web fallback", () => {
+  it("enhanced-gif-player.tsx uses expo-image for GIF display", () => {
     const content = fs.readFileSync(
       path.join(ROOT, "components/enhanced-gif-player.tsx"),
       "utf-8"
     );
-    expect(content).toContain("<video");
-    expect(content).toContain("autoPlay");
-    expect(content).toContain("loop");
-    expect(content).toContain("muted");
-    expect(content).toContain("playsInline");
+    expect(content).toContain("expo-image");
+    expect(content).toContain("resolveGifAsset");
+    expect(content).toContain("Image");
   });
 
-  it("exercise-demo-player.tsx uses expo-video VideoView for native", () => {
+  it("exercise-demo-player.tsx has fullscreen modal support", () => {
     const content = fs.readFileSync(
       path.join(ROOT, "components/exercise-demo-player.tsx"),
       "utf-8"
     );
-    expect(content).toContain("VideoView");
-    expect(content).toContain("useVideoPlayer");
-    expect(content).toContain("expo-video");
+    expect(content).toContain("Modal");
+    expect(content).toContain("fullscreen");
   });
 
-  it("enhanced-gif-player.tsx uses expo-video VideoView for native", () => {
+  it("enhanced-gif-player.tsx has fullscreen modal support", () => {
     const content = fs.readFileSync(
       path.join(ROOT, "components/enhanced-gif-player.tsx"),
       "utf-8"
     );
-    expect(content).toContain("VideoView");
-    expect(content).toContain("useVideoPlayer");
-    expect(content).toContain("expo-video");
+    expect(content).toContain("Modal");
+    expect(content).toContain("fullscreen");
   });
 
-  it("video players have error handling with error state UI", () => {
+  it("GIF players have fallback handling for missing assets", () => {
     const demoPlayer = fs.readFileSync(
       path.join(ROOT, "components/exercise-demo-player.tsx"),
       "utf-8"
@@ -70,29 +62,19 @@ describe("Round 75: Video Playback Fix", () => {
       path.join(ROOT, "components/enhanced-gif-player.tsx"),
       "utf-8"
     );
-    // Both should have error handling
-    expect(demoPlayer).toContain("error");
-    expect(demoPlayer).toContain("Video unavailable");
-    expect(enhancedPlayer).toContain("error");
-    expect(enhancedPlayer).toContain("Video unavailable");
+    // Both use resolveGifAsset which provides fallback for missing assets
+    expect(demoPlayer).toContain("resolveGifAsset");
+    expect(demoPlayer).toContain("fallback");
+    expect(enhancedPlayer).toContain("resolveGifAsset");
   });
 
-  it("video players detect MP4 URLs vs GIF URLs", () => {
-    const demoPlayer = fs.readFileSync(
-      path.join(ROOT, "components/exercise-demo-player.tsx"),
+  it("gif-resolver.ts handles URL-to-asset mapping", () => {
+    const content = fs.readFileSync(
+      path.join(ROOT, "lib/gif-resolver.ts"),
       "utf-8"
     );
-    // Should have logic to detect video vs GIF
-    expect(demoPlayer).toContain(".mp4");
-    expect(demoPlayer).toContain("isVideo");
-  });
-
-  it("video players enable caching on native", () => {
-    const demoPlayer = fs.readFileSync(
-      path.join(ROOT, "components/exercise-demo-player.tsx"),
-      "utf-8"
-    );
-    expect(demoPlayer).toContain("useCaching");
+    expect(content).toContain("resolveGifAsset");
+    expect(content).toContain("EXERCISE_GIFS");
   });
 });
 

@@ -1,8 +1,8 @@
 /**
- * Round 65 — Exercise Demo Tests (Updated: MuscleWiki video integration)
+ * Round 65 — Exercise Demo Tests (Updated: Local GIF asset integration)
  *
  * Tests for the exercise demo system:
- * - MuscleWiki video URL validity
+ * - Local GIF asset resolution
  * - Exercise demo lookup
  * - Workout type coverage
  */
@@ -12,18 +12,18 @@ import { getExerciseDemo, normaliseExerciseName } from "../lib/exercise-demos";
 // ── Exercise Demo Lookup ──────────────────────────────────────────────────────
 
 describe("Exercise Demo Lookup", () => {
-  it("returns correct demo for exact match exercises", () => {
+  it("returns correct demo for exact match exercises with local GIF assets", () => {
     const benchPress = getExerciseDemo("bench press");
-    expect(benchPress.gifUrl).toContain("musclewiki.com");
-    expect(benchPress.gifUrl).toContain(".mp4");
+    expect(benchPress.gifAsset).toBeDefined();
+    expect(typeof benchPress.gifAsset).toBe("number");
     expect(benchPress.cue).toContain("shoulder blades");
 
     const squat = getExerciseDemo("squat");
-    expect(squat.gifUrl).toContain("musclewiki.com");
+    expect(squat.gifAsset).toBeDefined();
     expect(squat.cue).toContain("Feet shoulder-width");
 
     const deadlift = getExerciseDemo("deadlift");
-    expect(deadlift.gifUrl).toContain("musclewiki.com");
+    expect(deadlift.gifAsset).toBeDefined();
     expect(deadlift.cue).toContain("Bar over mid-foot");
   });
 
@@ -31,57 +31,56 @@ describe("Exercise Demo Lookup", () => {
     const demo1 = getExerciseDemo("Bench Press");
     const demo2 = getExerciseDemo("BENCH PRESS");
     const demo3 = getExerciseDemo("bench press");
-    expect(demo1.gifUrl).toBe(demo2.gifUrl);
-    expect(demo2.gifUrl).toBe(demo3.gifUrl);
+    expect(demo1.gifAsset).toBe(demo2.gifAsset);
+    expect(demo2.gifAsset).toBe(demo3.gifAsset);
   });
 
   it("handles variant exercise names (push-up, push up, pushup)", () => {
     const demo1 = getExerciseDemo("push up");
     const demo2 = getExerciseDemo("push-up");
     const demo3 = getExerciseDemo("pushup");
-    expect(demo1.gifUrl).toBe(demo2.gifUrl);
-    expect(demo2.gifUrl).toBe(demo3.gifUrl);
-    expect(demo1.gifUrl).toContain("musclewiki.com");
+    expect(demo1.gifAsset).toBe(demo2.gifAsset);
+    expect(demo2.gifAsset).toBe(demo3.gifAsset);
+    expect(typeof demo1.gifAsset).toBe("number");
   });
 
   it("returns fallback demo for unknown exercises via keyword matching", () => {
     const demo = getExerciseDemo("barbell back squat variation");
-    // Should match "squat" keyword fallback
-    expect(demo.gifUrl).toBeTruthy();
-    expect(demo.gifUrl.length).toBeGreaterThan(10);
+    expect(demo.gifAsset).toBeDefined();
+    expect(typeof demo.gifAsset).toBe("number");
   });
 
   it("returns generic fallback for completely unknown exercises", () => {
     const demo = getExerciseDemo("xyzzy unknown exercise");
-    expect(demo.gifUrl).toBeTruthy();
+    expect(demo.gifAsset).toBeDefined();
     expect(demo.cue).toBeTruthy();
   });
 
   it("returns demos for all major muscle groups", () => {
     // Chest
-    expect(getExerciseDemo("bench press").gifUrl).toBeTruthy();
-    expect(getExerciseDemo("dumbbell fly").gifUrl).toBeTruthy();
+    expect(getExerciseDemo("bench press").gifAsset).toBeDefined();
+    expect(getExerciseDemo("dumbbell fly").gifAsset).toBeDefined();
     // Back
-    expect(getExerciseDemo("pull up").gifUrl).toBeTruthy();
-    expect(getExerciseDemo("lat pulldown").gifUrl).toBeTruthy();
-    expect(getExerciseDemo("barbell row").gifUrl).toBeTruthy();
+    expect(getExerciseDemo("pull up").gifAsset).toBeDefined();
+    expect(getExerciseDemo("lat pulldown").gifAsset).toBeDefined();
+    expect(getExerciseDemo("barbell row").gifAsset).toBeDefined();
     // Shoulders
-    expect(getExerciseDemo("overhead press").gifUrl).toBeTruthy();
-    expect(getExerciseDemo("lateral raise").gifUrl).toBeTruthy();
+    expect(getExerciseDemo("overhead press").gifAsset).toBeDefined();
+    expect(getExerciseDemo("lateral raise").gifAsset).toBeDefined();
     // Arms
-    expect(getExerciseDemo("bicep curl").gifUrl).toBeTruthy();
-    expect(getExerciseDemo("tricep pushdown").gifUrl).toBeTruthy();
+    expect(getExerciseDemo("bicep curl").gifAsset).toBeDefined();
+    expect(getExerciseDemo("tricep pushdown").gifAsset).toBeDefined();
     // Legs
-    expect(getExerciseDemo("squat").gifUrl).toBeTruthy();
-    expect(getExerciseDemo("lunge").gifUrl).toBeTruthy();
-    expect(getExerciseDemo("leg press").gifUrl).toBeTruthy();
-    expect(getExerciseDemo("romanian deadlift").gifUrl).toBeTruthy();
+    expect(getExerciseDemo("squat").gifAsset).toBeDefined();
+    expect(getExerciseDemo("lunge").gifAsset).toBeDefined();
+    expect(getExerciseDemo("leg press").gifAsset).toBeDefined();
+    expect(getExerciseDemo("romanian deadlift").gifAsset).toBeDefined();
     // Core
-    expect(getExerciseDemo("plank").gifUrl).toBeTruthy();
-    expect(getExerciseDemo("crunch").gifUrl).toBeTruthy();
+    expect(getExerciseDemo("plank").gifAsset).toBeDefined();
+    expect(getExerciseDemo("crunch").gifAsset).toBeDefined();
     // Cardio
-    expect(getExerciseDemo("burpee").gifUrl).toBeTruthy();
-    expect(getExerciseDemo("jumping jack").gifUrl).toBeTruthy();
+    expect(getExerciseDemo("burpee").gifAsset).toBeDefined();
+    expect(getExerciseDemo("jumping jack").gifAsset).toBeDefined();
   });
 });
 
@@ -99,9 +98,9 @@ describe("Exercise Name Normalisation", () => {
   });
 });
 
-// ── Video URL Validity ────────────────────────────────────────────────────────
+// ── Local GIF Asset Validity ────────────────────────────────────────────────────
 
-describe("Video URL Validity", () => {
+describe("Local GIF Asset Validity", () => {
   const exerciseNames = [
     "bench press", "push up", "dumbbell fly", "incline bench press",
     "pull up", "lat pulldown", "barbell row", "dumbbell row", "deadlift",
@@ -113,11 +112,11 @@ describe("Video URL Validity", () => {
     "burpee", "jumping jack", "kettlebell swing", "jump rope",
   ];
 
-  it("all major exercises have valid MuscleWiki video URLs", () => {
+  it("all major exercises have local GIF assets", () => {
     for (const name of exerciseNames) {
       const demo = getExerciseDemo(name);
-      // Most exercises use MuscleWiki MP4, a few fallbacks use ExerciseDB GIF
-      expect(demo.gifUrl).toMatch(/^https:\/\/(api\.musclewiki\.com|static\.exercisedb\.dev)\//);
+      expect(demo.gifAsset).toBeDefined();
+      expect(typeof demo.gifAsset).toBe("number");
     }
   });
 
@@ -129,26 +128,30 @@ describe("Video URL Validity", () => {
   });
 });
 
-// ── Video-based Demo System ────────────────────────────────────────────────────
+// ── GIF-based Demo System ────────────────────────────────────────────────────
 
-describe("Video-based Demo System", () => {
-  it("exercise-demo-player component exists with video and fullscreen support", async () => {
+describe("GIF-based Demo System", () => {
+  it("exercise-demo-player component uses local GIF assets via expo-image", async () => {
     const fs = await import("fs");
     const content = fs.readFileSync("/home/ubuntu/peakpulse-mobile/components/exercise-demo-player.tsx", "utf-8");
     expect(content).toContain("ExerciseDemoPlayer");
     expect(content).toContain("fullscreen");
     expect(content).toContain("Modal");
-    expect(content).toContain("VideoView");
+    expect(content).toContain("resolveGifAsset");
+    expect(content).toContain("expo-image");
+    expect(content).not.toContain("VideoView");
   });
 
-  it("enhanced-gif-player component exists with multi-angle views and video support", async () => {
+  it("enhanced-gif-player component uses local GIF assets via expo-image", async () => {
     const fs = await import("fs");
     const content = fs.readFileSync("/home/ubuntu/peakpulse-mobile/components/enhanced-gif-player.tsx", "utf-8");
     expect(content).toContain("EnhancedGifPlayer");
     expect(content).toContain("angleViews");
     expect(content).toContain("fullscreen");
     expect(content).toContain("Modal");
-    expect(content).toContain("VideoView");
+    expect(content).toContain("resolveGifAsset");
+    expect(content).toContain("expo-image");
+    expect(content).not.toContain("VideoView");
   });
 
   it("no YouTube player component exists", async () => {
@@ -180,26 +183,26 @@ describe("Workout Type Coverage", () => {
     "step up", "kettlebell swing",
   ];
 
-  it("all gym exercises have working demos", () => {
+  it("all gym exercises have working demos with local GIF assets", () => {
     for (const name of gymExercises) {
       const demo = getExerciseDemo(name);
-      expect(demo.gifUrl).toBeTruthy();
+      expect(demo.gifAsset).toBeDefined();
       expect(demo.cue).toBeTruthy();
     }
   });
 
-  it("all home/bodyweight exercises have working demos", () => {
+  it("all home/bodyweight exercises have working demos with local GIF assets", () => {
     for (const name of homeExercises) {
       const demo = getExerciseDemo(name);
-      expect(demo.gifUrl).toBeTruthy();
+      expect(demo.gifAsset).toBeDefined();
       expect(demo.cue).toBeTruthy();
     }
   });
 
-  it("all mixed/calisthenics exercises have working demos", () => {
+  it("all mixed/calisthenics exercises have working demos with local GIF assets", () => {
     for (const name of mixedExercises) {
       const demo = getExerciseDemo(name);
-      expect(demo.gifUrl).toBeTruthy();
+      expect(demo.gifAsset).toBeDefined();
       expect(demo.cue).toBeTruthy();
     }
   });

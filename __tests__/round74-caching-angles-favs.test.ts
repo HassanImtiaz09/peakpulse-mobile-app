@@ -60,26 +60,28 @@ describe("Round 74: Video Caching, Angle Toggle, Favorites Filter", () => {
     });
   });
 
-  // ── Video Caching (useCaching: true) ──
-  describe("Video Caching in Players", () => {
-    it("enhanced-gif-player.tsx uses useCaching: true for VideoSource", () => {
+  // ── Local GIF Assets in Players ──
+  describe("Local GIF Assets in Players", () => {
+    it("enhanced-gif-player.tsx uses expo-image for local GIF display", () => {
       const content = fs.readFileSync(path.join(ROOT, "components/enhanced-gif-player.tsx"), "utf-8");
-      expect(content).toContain("useCaching: true");
+      expect(content).toContain("expo-image");
+      expect(content).toContain("resolveGifAsset");
     });
 
-    it("exercise-demo-player.tsx uses useCaching: true for VideoSource", () => {
+    it("exercise-demo-player.tsx uses expo-image for local GIF display", () => {
       const content = fs.readFileSync(path.join(ROOT, "components/exercise-demo-player.tsx"), "utf-8");
-      expect(content).toContain("useCaching: true");
+      expect(content).toContain("expo-image");
+      expect(content).toContain("resolveGifAsset");
     });
 
-    it("enhanced-gif-player.tsx has cachedSource helper function", () => {
+    it("enhanced-gif-player.tsx uses gif-resolver for asset lookup", () => {
       const content = fs.readFileSync(path.join(ROOT, "components/enhanced-gif-player.tsx"), "utf-8");
-      expect(content).toContain("cachedSource");
+      expect(content).toContain("gif-resolver");
     });
 
-    it("exercise-demo-player.tsx has cachedSource helper function", () => {
+    it("exercise-demo-player.tsx uses gif-resolver for asset lookup", () => {
       const content = fs.readFileSync(path.join(ROOT, "components/exercise-demo-player.tsx"), "utf-8");
-      expect(content).toContain("cachedSource");
+      expect(content).toContain("gif-resolver");
     });
   });
 
@@ -204,17 +206,18 @@ describe("Round 74: Video Caching, Angle Toggle, Favorites Filter", () => {
     });
   });
 
-  // ── MuscleWiki Video URLs ──
-  describe("MuscleWiki Video URLs", () => {
-    it("exercise-demos.ts uses MuscleWiki stream URLs", () => {
+  // ── Local GIF Assets ──
+  describe("Local GIF Assets", () => {
+    it("exercise-demos.ts uses local GIF assets via gifAsset property", () => {
       const content = fs.readFileSync(path.join(ROOT, "lib/exercise-demos.ts"), "utf-8");
-      expect(content).toContain("api.musclewiki.com");
+      expect(content).toContain("gifAsset");
+      expect(content).toContain("exercise-gif-registry");
     });
 
-    it("exercise-data.ts angle views use MuscleWiki URLs", () => {
-      const content = fs.readFileSync(path.join(ROOT, "lib/exercise-data.ts"), "utf-8");
-      const musclewikiCount = (content.match(/api\.musclewiki\.com/g) || []).length;
-      expect(musclewikiCount).toBeGreaterThan(100);
+    it("gif-resolver.ts maps URLs to local GIF assets", () => {
+      const content = fs.readFileSync(path.join(ROOT, "lib/gif-resolver.ts"), "utf-8");
+      expect(content).toContain("resolveGifAsset");
+      expect(content).toContain("EXERCISE_GIFS");
     });
   });
 });
