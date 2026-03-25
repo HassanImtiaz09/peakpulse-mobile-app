@@ -12,7 +12,7 @@ import { useGuestAuth } from "@/lib/guest-auth";
 import { trpc } from "@/lib/trpc";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getExerciseDemo } from "@/lib/exercise-demos";
-import { YouTubePlayer } from "@/components/youtube-player";
+import { ExerciseDemoPlayer } from "@/components/exercise-demo-player";
 import Svg, { Circle } from "react-native-svg";
 import * as Haptics from "expo-haptics";
 import { exportWorkoutPlanPdf } from "@/lib/workout-pdf";
@@ -864,7 +864,7 @@ function ExercisePreviewCard({ exercise }: { exercise: any }) {
       </View>
       {showVideo && (
         <View style={{ paddingHorizontal: 12, paddingBottom: 12 }}>
-          <YouTubePlayer videoId={demo.videoId} cue={demo.cue} gifUrl={demo.gifUrl} height={160} />
+          <ExerciseDemoPlayer gifUrl={demo.gifUrl} cue={demo.cue} height={160} />
         </View>
       )}
     </View>

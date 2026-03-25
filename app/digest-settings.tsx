@@ -204,7 +204,7 @@ export default function DigestSettingsScreen() {
                 }}
               >
                 <View>
-                  <Text style={{ color: "#78350F", fontFamily: "DMSans_400Regular", fontSize: 10 }}>Day of Week</Text>
+                  <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 10 }}>Day of Week</Text>
                   <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_600SemiBold", fontSize: 14, marginTop: 2 }}>
                     {selectedDay.label}
                   </Text>
@@ -223,7 +223,7 @@ export default function DigestSettingsScreen() {
                 }}
               >
                 <View>
-                  <Text style={{ color: "#78350F", fontFamily: "DMSans_400Regular", fontSize: 10 }}>Delivery Time</Text>
+                  <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 10 }}>Delivery Time</Text>
                   <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_600SemiBold", fontSize: 14, marginTop: 2 }}>
                     {formatHour(prefs.hour)}
                   </Text>
@@ -267,7 +267,7 @@ export default function DigestSettingsScreen() {
                   <MaterialIcons name={item.icon as any} size={16} color="#B45309" />
                   <View style={{ flex: 1 }}>
                     <Text style={{ color: "#FFF7ED", fontFamily: "DMSans_500Medium", fontSize: 12 }}>{item.label}</Text>
-                    <Text style={{ color: "#78350F", fontFamily: "DMSans_400Regular", fontSize: 10 }}>{item.desc}</Text>
+                    <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 10 }}>{item.desc}</Text>
                   </View>
                   <MaterialIcons name="check-circle" size={14} color="#22C55E" />
                 </View>
@@ -287,7 +287,7 @@ export default function DigestSettingsScreen() {
                 }}>
                   <MaterialIcons name="history" size={16} color="#B45309" />
                   <View style={{ flex: 1 }}>
-                    <Text style={{ color: "#78350F", fontFamily: "DMSans_400Regular", fontSize: 10 }}>Last Digest Sent</Text>
+                    <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 10 }}>Last Digest Sent</Text>
                     <Text style={{ color: "#FFF7ED", fontFamily: "DMSans_500Medium", fontSize: 12 }}>
                       {new Date(lastDigestDate).toLocaleDateString("en-GB", {
                         day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit",
@@ -316,7 +316,7 @@ export default function DigestSettingsScreen() {
                   {sendingTest ? "Sending..." : "Send Test Digest Now"}
                 </Text>
               </TouchableOpacity>
-              <Text style={{ color: "#78350F", fontFamily: "DMSans_400Regular", fontSize: 10, textAlign: "center", marginTop: 8 }}>
+              <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 10, textAlign: "center", marginTop: 8 }}>
                 Sends an immediate digest notification with your current health data
               </Text>
             </View>

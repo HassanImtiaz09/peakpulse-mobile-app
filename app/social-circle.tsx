@@ -181,7 +181,7 @@ export default function SocialCircleScreen() {
         >
           <Text style={{ fontSize: 14 }}>⚔️</Text>
         </TouchableOpacity>
-        <Text style={{ color: "#92400E", fontSize: 18 }}>›</Text>
+        <Text style={{ color: "#B45309", fontSize: 18 }}>›</Text>
       </View>
     </TouchableOpacity>
   );
@@ -211,7 +211,7 @@ export default function SocialCircleScreen() {
     const isTop3 = item.rank <= 3;
     const rankEmoji = item.rank === 1 ? "🥇" : item.rank === 2 ? "🥈" : item.rank === 3 ? "🥉" : "";
     const trendIcon = item.trend === "up" ? "↑" : item.trend === "down" ? "↓" : "";
-    const trendColor = item.trend === "up" ? "#10B981" : item.trend === "down" ? "#EF4444" : "#92400E";
+    const trendColor = item.trend === "up" ? "#10B981" : item.trend === "down" ? "#EF4444" : "#B45309";
 
     return (
       <View style={[
@@ -476,7 +476,7 @@ export default function SocialCircleScreen() {
                             {e.isCurrentUser ? "You" : e.name.split(" ")[0]}
                           </Text>
                           <Text style={styles.podiumValue}>{metricDisplay.format(e.value)}</Text>
-                          <View style={[styles.podiumBar, { height: heights[i] - 60, backgroundColor: i === 1 ? "#F59E0B" : "#92400E" }]} />
+                          <View style={[styles.podiumBar, { height: heights[i] - 60, backgroundColor: i === 1 ? "#F59E0B" : "#B45309" }]} />
                         </View>
                       );
                     })}
@@ -721,11 +721,11 @@ const styles = StyleSheet.create({
   },
   tab: { paddingVertical: 12, paddingHorizontal: 16, alignItems: "center" },
   tabActive: { borderBottomWidth: 2, borderBottomColor: "#F59E0B" },
-  tabText: { color: "#92400E", fontSize: 13, fontFamily: "Outfit_700Bold" },
+  tabText: { color: "#B45309", fontSize: 13, fontFamily: "Outfit_700Bold" },
   tabTextActive: { color: "#FDE68A" },
 
   sectionTitle: { color: "#FFF7ED", fontFamily: "Outfit_800ExtraBold", fontSize: 18, marginBottom: 8 },
-  sectionSubtitle: { color: "#92400E", fontSize: 13, marginBottom: 12, lineHeight: 18 },
+  sectionSubtitle: { color: "#B45309", fontSize: 13, marginBottom: 12, lineHeight: 18 },
 
   quickLinksRow: { flexDirection: "row", gap: 10, marginBottom: 16 },
   quickLinkCard: {
@@ -733,7 +733,7 @@ const styles = StyleSheet.create({
     borderWidth: 1, borderColor: "rgba(245,158,11,0.12)", alignItems: "center", gap: 6,
   },
   quickLinkTitle: { color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 14 },
-  quickLinkSub: { color: "#92400E", fontSize: 11 },
+  quickLinkSub: { color: "#B45309", fontSize: 11 },
 
   statsRow: { flexDirection: "row", gap: 8, marginBottom: 16 },
   statCard: {
@@ -741,7 +741,7 @@ const styles = StyleSheet.create({
     borderWidth: 1, borderColor: "rgba(245,158,11,0.10)", alignItems: "center",
   },
   statValue: { color: "#FDE68A", fontFamily: "Outfit_800ExtraBold", fontSize: 16 },
-  statLabel: { color: "#92400E", fontSize: 10, marginTop: 2 },
+  statLabel: { color: "#B45309", fontSize: 10, marginTop: 2 },
 
   friendCard: {
     backgroundColor: "#150A00", borderRadius: 16, padding: 14,
@@ -754,7 +754,7 @@ const styles = StyleSheet.create({
   },
   friendName: { color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 15 },
   friendStat: { color: "#FDE68A", fontSize: 12, fontFamily: "DMSans_400Regular" },
-  friendLastActive: { color: "#92400E", fontSize: 11, marginTop: 4 },
+  friendLastActive: { color: "#B45309", fontSize: 11, marginTop: 4 },
   activeDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: "#10B981" },
   challengeBtn: {
     width: 32, height: 32, borderRadius: 16, backgroundColor: "rgba(245,158,11,0.10)",
@@ -766,7 +766,7 @@ const styles = StyleSheet.create({
     borderRadius: 20, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)",
   },
   emptyTitle: { color: "#FFF7ED", fontFamily: "Outfit_800ExtraBold", fontSize: 18, marginBottom: 6 },
-  emptySubtitle: { color: "#92400E", fontSize: 13, textAlign: "center", lineHeight: 18, marginBottom: 16 },
+  emptySubtitle: { color: "#B45309", fontSize: 13, textAlign: "center", lineHeight: 18, marginBottom: 16 },
 
   primaryBtn: {
     backgroundColor: "#F59E0B", borderRadius: 14, paddingVertical: 14, alignItems: "center",
@@ -782,7 +782,7 @@ const styles = StyleSheet.create({
   },
   activityUser: { color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 14 },
   activityText: { color: "#D1D5DB", fontSize: 13, lineHeight: 18, marginTop: 2 },
-  activityTime: { color: "#92400E", fontSize: 11, marginTop: 4 },
+  activityTime: { color: "#B45309", fontSize: 11, marginTop: 4 },
   activityBadge: {
     borderRadius: 10, paddingHorizontal: 10, paddingVertical: 5, alignSelf: "center",
   },
@@ -807,7 +807,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#150A00", borderWidth: 1, borderColor: "rgba(245,158,11,0.15)",
   },
   metricPillActive: { backgroundColor: "#F59E0B", borderColor: "#F59E0B" },
-  metricPillText: { color: "#92400E", fontSize: 13, fontFamily: "Outfit_700Bold" },
+  metricPillText: { color: "#B45309", fontSize: 13, fontFamily: "Outfit_700Bold" },
   metricPillTextActive: { color: "#FFF7ED" },
 
   podium: {
@@ -830,7 +830,7 @@ const styles = StyleSheet.create({
     marginHorizontal: -8, paddingHorizontal: 8,
   },
   rankBadge: { width: 32, alignItems: "center" },
-  rankText: { color: "#92400E", fontFamily: "Outfit_800ExtraBold", fontSize: 16 },
+  rankText: { color: "#B45309", fontFamily: "Outfit_800ExtraBold", fontSize: 16 },
   leaderboardName: { color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 14 },
   leaderboardValue: { color: "#FDE68A", fontFamily: "Outfit_800ExtraBold", fontSize: 15 },
 
@@ -839,20 +839,20 @@ const styles = StyleSheet.create({
     backgroundColor: "#150A00", borderRadius: 24, padding: 24,
     borderWidth: 2, borderColor: "rgba(245,158,11,0.18)", marginBottom: 20, alignItems: "center",
   },
-  inviteCodeLabel: { color: "#92400E", fontSize: 13, marginBottom: 10 },
+  inviteCodeLabel: { color: "#B45309", fontSize: 13, marginBottom: 10 },
   inviteCodeBox: {
     backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 16,
     paddingHorizontal: 32, paddingVertical: 16, borderWidth: 2,
     borderColor: "rgba(245,158,11,0.28)", marginBottom: 10,
   },
   inviteCode: { color: "#FDE68A", fontFamily: "Outfit_800ExtraBold", fontSize: 28, letterSpacing: 3 },
-  inviteCodeHint: { color: "#92400E", fontSize: 12, textAlign: "center" },
+  inviteCodeHint: { color: "#B45309", fontSize: 12, textAlign: "center" },
 
   shareBtn: {
     backgroundColor: "#F59E0B", borderRadius: 14, paddingVertical: 16, alignItems: "center",
   },
   shareBtnText: { color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 16 },
-  shareHint: { color: "#92400E", fontSize: 11, textAlign: "center", lineHeight: 16 },
+  shareHint: { color: "#B45309", fontSize: 11, textAlign: "center", lineHeight: 16 },
 
   tierCard: {
     backgroundColor: "#150A00", borderRadius: 16, padding: 14,
@@ -862,7 +862,7 @@ const styles = StyleSheet.create({
   tierCardAchieved: { backgroundColor: "#052e16", borderColor: "rgba(16,185,129,0.20)" },
   tierBadge: { width: 40, height: 40, borderRadius: 20, backgroundColor: "rgba(245,158,11,0.10)", alignItems: "center", justifyContent: "center" },
   tierTitle: { color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 14 },
-  tierSub: { color: "#92400E", fontSize: 12, marginTop: 2 },
+  tierSub: { color: "#B45309", fontSize: 12, marginTop: 2 },
   tierEarned: { backgroundColor: "rgba(16,185,129,0.15)", borderRadius: 10, paddingHorizontal: 10, paddingVertical: 5 },
   tierEarnedText: { color: "#10B981", fontFamily: "Outfit_700Bold", fontSize: 12 },
   tierProgress: { backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 10, paddingHorizontal: 10, paddingVertical: 5 },
@@ -885,7 +885,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1, borderBottomColor: "rgba(245,158,11,0.06)",
   },
   pendingName: { color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 14 },
-  pendingSent: { color: "#92400E", fontSize: 11, marginTop: 2 },
+  pendingSent: { color: "#B45309", fontSize: 11, marginTop: 2 },
   statusBadge: {
     backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 10,
     paddingHorizontal: 10, paddingVertical: 4,
@@ -900,7 +900,7 @@ const styles = StyleSheet.create({
     borderWidth: 1, borderColor: "rgba(245,158,11,0.10)", alignItems: "center",
   },
   inviteStatValue: { color: "#FDE68A", fontFamily: "Outfit_800ExtraBold", fontSize: 22 },
-  inviteStatLabel: { color: "#92400E", fontSize: 10, marginTop: 4 },
+  inviteStatLabel: { color: "#B45309", fontSize: 10, marginTop: 4 },
 
   // Discount
   discountCard: {
@@ -909,7 +909,7 @@ const styles = StyleSheet.create({
     borderWidth: 1, borderColor: "rgba(16,185,129,0.15)",
   },
   discountTitle: { color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 14 },
-  discountSub: { color: "#92400E", fontSize: 11, marginTop: 2 },
+  discountSub: { color: "#B45309", fontSize: 11, marginTop: 2 },
 
   // Modal
   modalOverlay: {
@@ -920,7 +920,7 @@ const styles = StyleSheet.create({
     padding: 24, paddingBottom: 40, maxHeight: "85%",
   },
   modalName: { color: "#FFF7ED", fontFamily: "Outfit_800ExtraBold", fontSize: 22 },
-  modalStatus: { color: "#92400E", fontSize: 13 },
+  modalStatus: { color: "#B45309", fontSize: 13 },
   modalStatsGrid: {
     flexDirection: "row", flexWrap: "wrap", gap: 8,
   },
@@ -929,7 +929,7 @@ const styles = StyleSheet.create({
     padding: 10, alignItems: "center",
   },
   modalStatValue: { color: "#FDE68A", fontFamily: "Outfit_800ExtraBold", fontSize: 14, marginTop: 4 },
-  modalStatLabel: { color: "#92400E", fontSize: 10, marginTop: 2 },
+  modalStatLabel: { color: "#B45309", fontSize: 10, marginTop: 2 },
   modalMilestone: {
     marginTop: 12, backgroundColor: "rgba(245,158,11,0.08)", borderRadius: 12,
     padding: 12, alignItems: "center",

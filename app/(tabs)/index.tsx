@@ -952,7 +952,7 @@ export default function HomeScreen() {
                         </View>
                       </View>
                       <Text style={{ color: SF.fg, fontFamily: "DMSans_600SemiBold", fontSize: 11, marginTop: 4 }}>Steps</Text>
-                      <Text style={{ color: "#78350F", fontFamily: "DMSans_400Regular", fontSize: 9 }}>{goalProgress.steps.current.toLocaleString()}/{goalProgress.steps.target.toLocaleString()}</Text>
+                      <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 9 }}>{goalProgress.steps.current.toLocaleString()}/{goalProgress.steps.target.toLocaleString()}</Text>
                     </View>
                     {/* Calories Ring */}
                     <View style={{ alignItems: "center", flex: 1 }}>
@@ -968,7 +968,7 @@ export default function HomeScreen() {
                         </View>
                       </View>
                       <Text style={{ color: SF.fg, fontFamily: "DMSans_600SemiBold", fontSize: 11, marginTop: 4 }}>Calories</Text>
-                      <Text style={{ color: "#78350F", fontFamily: "DMSans_400Regular", fontSize: 9 }}>{goalProgress.calories.current}/{goalProgress.calories.target} kcal</Text>
+                      <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 9 }}>{goalProgress.calories.current}/{goalProgress.calories.target} kcal</Text>
                     </View>
                     {/* Workouts Ring */}
                     <View style={{ alignItems: "center", flex: 1 }}>
@@ -984,12 +984,12 @@ export default function HomeScreen() {
                         </View>
                       </View>
                       <Text style={{ color: SF.fg, fontFamily: "DMSans_600SemiBold", fontSize: 11, marginTop: 4 }}>Workouts</Text>
-                      <Text style={{ color: "#78350F", fontFamily: "DMSans_400Regular", fontSize: 9 }}>{goalProgress.workouts.current}/{goalProgress.workouts.target}</Text>
+                      <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 9 }}>{goalProgress.workouts.current}/{goalProgress.workouts.target}</Text>
                     </View>
                   </View>
                   <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", marginTop: 12, gap: 4 }}>
-                    <MaterialIcons name="schedule" size={12} color="#78350F" />
-                    <Text style={{ color: "#78350F", fontFamily: "DMSans_400Regular", fontSize: 10 }}>
+                    <MaterialIcons name="schedule" size={12} color="#B45309" />
+                    <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 10 }}>
                       {goalProgress.daysRemaining} day{goalProgress.daysRemaining !== 1 ? "s" : ""} remaining this week
                     </Text>
                   </View>
@@ -1019,7 +1019,7 @@ export default function HomeScreen() {
                         <View style={{ flex: 1 }}>
                           <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
                             <Text style={{
-                              color: streakData.currentStreak > 0 ? "#F59E0B" : "#78350F",
+                              color: streakData.currentStreak > 0 ? "#F59E0B" : "#B45309",
                               fontFamily: "Outfit_700Bold", fontSize: 15,
                             }}>
                               {getStreakLabel(streakData.currentStreak)}
@@ -1038,7 +1038,7 @@ export default function HomeScreen() {
                               </View>
                             )}
                           </View>
-                          <Text style={{ color: "#78350F", fontFamily: "DMSans_400Regular", fontSize: 10, marginTop: 2 }}>
+                          <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 10, marginTop: 2 }}>
                             {getStreakMotivation(streakData.currentStreak, false)}
                           </Text>
                           {getNextMilestone(streakData.currentStreak) && (
@@ -1050,19 +1050,19 @@ export default function HomeScreen() {
                                   width: `${Math.min(100, Math.round(((streakData.currentStreak - (getCurrentMilestone(streakData.currentStreak)?.weeksRequired ?? 0)) / ((getNextMilestone(streakData.currentStreak)?.weeksRequired ?? 1) - (getCurrentMilestone(streakData.currentStreak)?.weeksRequired ?? 0))) * 100))}%`,
                                 }} />
                               </View>
-                              <Text style={{ color: "#78350F", fontFamily: "DMSans_400Regular", fontSize: 9 }}>
+                              <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 9 }}>
                                 {getWeeksToNextMilestone(streakData.currentStreak)}w to {getNextMilestone(streakData.currentStreak)?.name}
                               </Text>
                             </View>
                           )}
                         </View>
                       </View>
-                      <MaterialIcons name="chevron-right" size={18} color="#78350F" />
+                      <MaterialIcons name="chevron-right" size={18} color="#B45309" />
                     </View>
                     {streakData.longestStreak > 0 && streakData.longestStreak > streakData.currentStreak && (
                       <View style={{ flexDirection: "row", alignItems: "center", gap: 4, marginTop: 8, paddingTop: 8, borderTopWidth: 1, borderTopColor: "rgba(245,158,11,0.08)" }}>
-                        <MaterialIcons name="emoji-events" size={12} color="#78350F" />
-                        <Text style={{ color: "#78350F", fontFamily: "DMSans_400Regular", fontSize: 10 }}>
+                        <MaterialIcons name="emoji-events" size={12} color="#B45309" />
+                        <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 10 }}>
                           Best streak: {streakData.longestStreak} week{streakData.longestStreak !== 1 ? "s" : ""}
                         </Text>
                       </View>
@@ -1270,7 +1270,7 @@ export default function HomeScreen() {
                           }}
                         >
                           <Text style={{
-                            color: balanceWindow === w ? "#F59E0B" : "#78350F",
+                            color: balanceWindow === w ? "#F59E0B" : "#B45309",
                             fontFamily: "DMSans_600SemiBold", fontSize: 10,
                           }}>{w}d</Text>
                         </TouchableOpacity>
@@ -1297,19 +1297,19 @@ export default function HomeScreen() {
                   <View style={{ flexDirection: "row", justifyContent: "space-around", marginTop: 14, paddingTop: 12, borderTopWidth: 1, borderTopColor: "rgba(245,158,11,0.08)" }}>
                     <View style={{ alignItems: "center" }}>
                       <Text style={{ color: "#EF4444", fontFamily: "Outfit_700Bold", fontSize: 18 }}>{muscleReport.overExercised.length}</Text>
-                      <Text style={{ color: "#78350F", fontFamily: "DMSans_400Regular", fontSize: 10 }}>Over</Text>
+                      <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 10 }}>Over</Text>
                     </View>
                     <View style={{ alignItems: "center" }}>
                       <Text style={{ color: "#22C55E", fontFamily: "Outfit_700Bold", fontSize: 18 }}>{muscleReport.optimal.length}</Text>
-                      <Text style={{ color: "#78350F", fontFamily: "DMSans_400Regular", fontSize: 10 }}>Optimal</Text>
+                      <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 10 }}>Optimal</Text>
                     </View>
                     <View style={{ alignItems: "center" }}>
                       <Text style={{ color: "#3B82F6", fontFamily: "Outfit_700Bold", fontSize: 18 }}>{muscleReport.underExercised.length}</Text>
-                      <Text style={{ color: "#78350F", fontFamily: "DMSans_400Regular", fontSize: 10 }}>Under</Text>
+                      <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 10 }}>Under</Text>
                     </View>
                     <View style={{ alignItems: "center" }}>
                       <Text style={{ color: "#F59E0B", fontFamily: "Outfit_700Bold", fontSize: 18 }}>{muscleReport.totalWorkouts}</Text>
-                      <Text style={{ color: "#78350F", fontFamily: "DMSans_400Regular", fontSize: 10 }}>Workouts</Text>
+                      <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 10 }}>Workouts</Text>
                     </View>
                   </View>
 

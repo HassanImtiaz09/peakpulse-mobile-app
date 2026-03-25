@@ -9,11 +9,13 @@
  * - Offline-ready with expo-image disk caching
  */
 import React, { useState, useCallback, useRef, useEffect } from "react";
-import { View, Text, Pressable, StyleSheet, Animated, Platform } from "react-native";
+import { View, Text, Pressable, StyleSheet, Animated, Platform, Modal, Dimensions } from "react-native";
 import { Image } from "expo-image";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import * as Haptics from "expo-haptics";
 import type { ExerciseAngleView } from "@/lib/exercise-data";
+
+const { width: SCREEN_W } = Dimensions.get("window");
 
 interface EnhancedGifPlayerProps {
   /** Multi-angle views for this exercise */
@@ -51,6 +53,7 @@ export function EnhancedGifPlayer({
   const [isLooping, setIsLooping] = useState(true);
   const [showFocus, setShowFocus] = useState(false);
   const [imageKey, setImageKey] = useState(0);
+  const [fullscreen, setFullscreen] = useState(false);
   const pulseAnim = useRef(new Animated.Value(1)).current;
 
   const currentView = angleViews[activeAngle] || angleViews[0];
@@ -132,6 +135,14 @@ export function EnhancedGifPlayer({
         <View style={styles.angleLabelOverlay}>
           <Text style={styles.angleLabelText}>{currentView.label}</Text>
         </View>
+
+        {/* Fullscreen expand button */}
+        <Pressable
+          onPress={() => setFullscreen(true)}
+          style={({ pressed }) => [styles.expandBtn, pressed && { opacity: 0.7 }]}
+        >
+          <MaterialIcons name="fullscreen" size={22} color="#fff" />
+        </Pressable>
       </View>
 
       {/* Focus Annotation */}
@@ -232,6 +243,59 @@ export function EnhancedGifPlayer({
           ))}
         </View>
       )}
+
+      {/* Fullscreen Modal */}
+      <Modal
+        visible={fullscreen}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setFullscreen(false)}
+        statusBarTranslucent
+      >
+        <View style={styles.fullscreenOverlay}>
+          <View style={styles.fullscreenHeader}>
+            <Text style={styles.fullscreenTitle} numberOfLines={1}>{exerciseName}</Text>
+            <Pressable
+              onPress={() => setFullscreen(false)}
+              style={({ pressed }) => [styles.fullscreenClose, pressed && { opacity: 0.7 }]}
+            >
+              <MaterialIcons name="close" size={24} color="#fff" />
+            </Pressable>
+          </View>
+          <View style={styles.fullscreenImageWrap}>
+            <Image
+              key={`fs-${activeAngle}-${imageKey}`}
+              source={{ uri: currentView.gifUrl }}
+              style={{ width: SCREEN_W, height: SCREEN_W }}
+              contentFit="contain"
+              cachePolicy="disk"
+              transition={200}
+            />
+          </View>
+          <View style={styles.fullscreenAngleRow}>
+            {angleViews.map((view, i) => (
+              <Pressable
+                key={i}
+                onPress={() => handleAngleChange(i)}
+                style={[styles.fullscreenAngleBtn, activeAngle === i && styles.fullscreenAngleBtnActive]}
+              >
+                <Text style={[styles.fullscreenAngleTxt, activeAngle === i && { color: C.bg }]}>
+                  {getAngleShortLabel(view.label, i)}
+                </Text>
+              </Pressable>
+            ))}
+          </View>
+          {currentView.focus ? (
+            <View style={styles.fullscreenFocus}>
+              <MaterialIcons name="visibility" size={16} color={C.gold} />
+              <Text style={styles.fullscreenFocusTxt}>{currentView.focus}</Text>
+            </View>
+          ) : null}
+          <Pressable onPress={() => setFullscreen(false)} style={styles.fullscreenHint}>
+            <Text style={{ color: "rgba(255,255,255,0.4)", fontSize: 12 }}>Tap anywhere to close</Text>
+          </Pressable>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -387,5 +451,88 @@ const styles = StyleSheet.create({
   dotActive: {
     backgroundColor: C.gold,
     width: 12,
+  },
+  expandBtn: {
+    position: "absolute",
+    bottom: 8,
+    right: 8,
+    backgroundColor: "rgba(0,0,0,0.6)",
+    padding: 6,
+    borderRadius: 8,
+  },
+  fullscreenOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.95)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  fullscreenHeader: {
+    position: "absolute",
+    top: 50,
+    left: 16,
+    right: 16,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    zIndex: 10,
+  },
+  fullscreenTitle: {
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: "700",
+    flex: 1,
+    marginRight: 12,
+  },
+  fullscreenClose: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "rgba(255,255,255,0.15)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  fullscreenImageWrap: {
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  fullscreenAngleRow: {
+    flexDirection: "row",
+    gap: 8,
+    marginTop: 20,
+  },
+  fullscreenAngleBtn: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 10,
+    backgroundColor: "rgba(245,158,11,0.1)",
+    borderWidth: 1,
+    borderColor: C.border2,
+  },
+  fullscreenAngleBtnActive: {
+    backgroundColor: C.gold,
+    borderColor: C.gold2,
+  },
+  fullscreenAngleTxt: {
+    color: C.gold,
+    fontWeight: "600",
+    fontSize: 13,
+  },
+  fullscreenFocus: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    marginTop: 16,
+    paddingHorizontal: 24,
+  },
+  fullscreenFocusTxt: {
+    color: "#fff",
+    fontSize: 14,
+    lineHeight: 20,
+    flex: 1,
+  },
+  fullscreenHint: {
+    position: "absolute",
+    bottom: 40,
+    alignSelf: "center",
   },
 });

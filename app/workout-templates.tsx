@@ -90,7 +90,7 @@ export default function WorkoutTemplatesScreen() {
             {item.distanceKm ? ` · ${item.distanceKm} km` : ""}
           </Text>
           {item.usageCount > 0 && (
-            <Text style={{ color: "#78350F", fontFamily: "DMSans_400Regular", fontSize: 9, marginTop: 2 }}>
+            <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 9, marginTop: 2 }}>
               Used {item.usageCount} time{item.usageCount !== 1 ? "s" : ""}
               {item.lastUsedAt ? ` · Last: ${new Date(item.lastUsedAt).toLocaleDateString()}` : ""}
             </Text>
@@ -207,7 +207,7 @@ export default function WorkoutTemplatesScreen() {
               ListEmptyComponent={
                 suggestedTemplates.length === 0 ? (
                   <View style={{ alignItems: "center", paddingVertical: 40 }}>
-                    <MaterialIcons name="bookmark-border" size={48} color="#78350F" />
+                    <MaterialIcons name="bookmark-border" size={48} color="#B45309" />
                     <Text style={{ color: SF.fg, fontFamily: "Outfit_700Bold", fontSize: 16, marginTop: 12 }}>No Templates Yet</Text>
                     <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 13, textAlign: "center", marginTop: 4 }}>
                       Log a workout and save it as a template for quick access

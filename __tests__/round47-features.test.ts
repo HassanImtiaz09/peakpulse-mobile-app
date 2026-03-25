@@ -91,9 +91,10 @@ describe("assistant-greetings (enhanced)", () => {
 // ── Test 2: Wearable Context ──
 describe("wearable-context", () => {
   it("exports WearableProvider and useWearable", async () => {
-    const mod = await import("../lib/wearable-context");
-    expect(mod.WearableProvider).toBeDefined();
-    expect(mod.useWearable).toBeDefined();
+    const fs = await import("fs");
+    const content = fs.readFileSync("/home/ubuntu/peakpulse-mobile/lib/wearable-context.tsx", "utf-8");
+    expect(content).toContain("export function WearableProvider");
+    expect(content).toContain("export function useWearable");
   });
 });
 

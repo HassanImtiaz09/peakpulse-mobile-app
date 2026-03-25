@@ -343,7 +343,7 @@ export default function ChallengeScreen() {
                 ) : (
                   <Text style={styles.friendSelectorPlaceholder}>Tap to select a friend</Text>
                 )}
-                <Text style={{ color: "#92400E", fontSize: 18 }}>›</Text>
+                <Text style={{ color: "#B45309", fontSize: 18 }}>›</Text>
               </TouchableOpacity>
 
               {/* Create Button */}
@@ -444,11 +444,11 @@ const styles = StyleSheet.create({
   },
   tab: { flex: 1, paddingVertical: 12, alignItems: "center" },
   tabActive: { borderBottomWidth: 2, borderBottomColor: "#F59E0B" },
-  tabText: { color: "#92400E", fontSize: 12, fontWeight: "700" },
+  tabText: { color: "#B45309", fontSize: 12, fontWeight: "700" },
   tabTextActive: { color: "#FDE68A" },
 
   sectionTitle: { color: "#FFF7ED", fontSize: 18, fontWeight: "800", marginBottom: 6 },
-  sectionSubtitle: { color: "#92400E", fontSize: 13, marginBottom: 16, lineHeight: 18 },
+  sectionSubtitle: { color: "#B45309", fontSize: 13, marginBottom: 16, lineHeight: 18 },
   fieldLabel: { color: "#FDE68A", fontSize: 13, fontWeight: "700", marginBottom: 8, letterSpacing: 0.5 },
 
   challengeCard: {
@@ -460,7 +460,7 @@ const styles = StyleSheet.create({
     flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 14,
   },
   challengeType: { color: "#FFF7ED", fontSize: 15, fontWeight: "700" },
-  challengeDays: { color: "#92400E", fontSize: 12, marginTop: 2 },
+  challengeDays: { color: "#B45309", fontSize: 12, marginTop: 2 },
   dayBadge: {
     backgroundColor: "rgba(245,158,11,0.15)", borderRadius: 10, paddingHorizontal: 10, paddingVertical: 4,
   },
@@ -490,7 +490,7 @@ const styles = StyleSheet.create({
     borderRadius: 8, paddingVertical: 6,
   },
   dayCellToday: { backgroundColor: "rgba(245,158,11,0.12)", borderWidth: 1, borderColor: "rgba(245,158,11,0.25)" },
-  dayLabel: { color: "#92400E", fontSize: 9, fontWeight: "700" },
+  dayLabel: { color: "#B45309", fontSize: 9, fontWeight: "700" },
   dayValue: { color: "#FFF7ED", fontSize: 10, fontWeight: "700", marginTop: 2 },
 
   statsRow: { flexDirection: "row", gap: 8, marginBottom: 16 },
@@ -499,14 +499,14 @@ const styles = StyleSheet.create({
     borderWidth: 1, borderColor: "rgba(245,158,11,0.10)", alignItems: "center",
   },
   statValue: { color: "#FDE68A", fontSize: 18, fontWeight: "800" },
-  statLabel: { color: "#92400E", fontSize: 10, marginTop: 2 },
+  statLabel: { color: "#B45309", fontSize: 10, marginTop: 2 },
 
   emptyState: {
     alignItems: "center", padding: 32, backgroundColor: "#150A00",
     borderRadius: 20, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)",
   },
   emptyTitle: { color: "#FFF7ED", fontSize: 18, fontWeight: "800", marginBottom: 6 },
-  emptySubtitle: { color: "#92400E", fontSize: 13, textAlign: "center", lineHeight: 18, marginBottom: 16 },
+  emptySubtitle: { color: "#B45309", fontSize: 13, textAlign: "center", lineHeight: 18, marginBottom: 16 },
 
   primaryBtn: {
     backgroundColor: "#F59E0B", borderRadius: 14, paddingVertical: 14, alignItems: "center",
@@ -520,7 +520,7 @@ const styles = StyleSheet.create({
   typeCardActive: { borderColor: "#F59E0B", backgroundColor: "rgba(245,158,11,0.08)" },
   typeLabel: { color: "#FFF7ED", fontSize: 14, fontWeight: "700", marginTop: 8 },
   typeLabelActive: { color: "#FDE68A" },
-  typeUnit: { color: "#92400E", fontSize: 11, marginTop: 4 },
+  typeUnit: { color: "#B45309", fontSize: 11, marginTop: 4 },
 
   friendSelector: {
     backgroundColor: "#150A00", borderRadius: 16, padding: 16,
@@ -528,8 +528,8 @@ const styles = StyleSheet.create({
     borderWidth: 1, borderColor: "rgba(245,158,11,0.15)",
   },
   friendSelectorName: { color: "#FFF7ED", fontSize: 15, fontWeight: "700" },
-  friendSelectorStat: { color: "#92400E", fontSize: 12, marginTop: 2 },
-  friendSelectorPlaceholder: { color: "#92400E", fontSize: 14 },
+  friendSelectorStat: { color: "#B45309", fontSize: 12, marginTop: 2 },
+  friendSelectorPlaceholder: { color: "#B45309", fontSize: 14 },
 
   rulesCard: {
     marginTop: 20, backgroundColor: "#150A00", borderRadius: 16, padding: 16,
@@ -551,5 +551,5 @@ const styles = StyleSheet.create({
   },
   friendPickerRowActive: { backgroundColor: "rgba(245,158,11,0.12)", borderWidth: 1, borderColor: "#F59E0B" },
   friendPickerName: { color: "#FFF7ED", fontSize: 14, fontWeight: "700" },
-  friendPickerStat: { color: "#92400E", fontSize: 12, marginTop: 2 },
+  friendPickerStat: { color: "#B45309", fontSize: 12, marginTop: 2 },
 });

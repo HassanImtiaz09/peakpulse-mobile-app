@@ -229,14 +229,14 @@ export default function WorkoutHistoryScreen() {
             <Text style={{ color: "#FDE68A", fontFamily: "Outfit_700Bold", fontSize: 14 }}>
               {formatDuration(durationMin)}
             </Text>
-            <Text style={{ color: "#78350F", fontFamily: "DMSans_400Regular", fontSize: 9 }}>Duration</Text>
+            <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 9 }}>Duration</Text>
           </View>
           {item.workout.caloriesBurned != null && item.workout.caloriesBurned > 0 && (
             <View style={{ alignItems: "center" }}>
               <Text style={{ color: "#FDE68A", fontFamily: "Outfit_700Bold", fontSize: 14 }}>
                 {item.workout.caloriesBurned}
               </Text>
-              <Text style={{ color: "#78350F", fontFamily: "DMSans_400Regular", fontSize: 9 }}>kcal</Text>
+              <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 9 }}>kcal</Text>
             </View>
           )}
           {item.workout.distanceKm != null && item.workout.distanceKm > 0 && (
@@ -244,7 +244,7 @@ export default function WorkoutHistoryScreen() {
               <Text style={{ color: "#FDE68A", fontFamily: "Outfit_700Bold", fontSize: 14 }}>
                 {item.workout.distanceKm.toFixed(1)}
               </Text>
-              <Text style={{ color: "#78350F", fontFamily: "DMSans_400Regular", fontSize: 9 }}>km</Text>
+              <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 9 }}>km</Text>
             </View>
           )}
           {item.workout.heartRateAvg != null && item.workout.heartRateAvg > 0 && (
@@ -252,7 +252,7 @@ export default function WorkoutHistoryScreen() {
               <Text style={{ color: "#FDE68A", fontFamily: "Outfit_700Bold", fontSize: 14 }}>
                 {item.workout.heartRateAvg}
               </Text>
-              <Text style={{ color: "#78350F", fontFamily: "DMSans_400Regular", fontSize: 9 }}>bpm</Text>
+              <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 9 }}>bpm</Text>
             </View>
           )}
         </View>
@@ -315,7 +315,7 @@ export default function WorkoutHistoryScreen() {
                 <Text style={{ color: "#FDE68A", fontFamily: "Outfit_700Bold", fontSize: 13, marginTop: 2 }}>
                   {s.value}
                 </Text>
-                <Text style={{ color: "#78350F", fontFamily: "DMSans_400Regular", fontSize: 9 }}>{s.label}</Text>
+                <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 9 }}>{s.label}</Text>
               </View>
             ))}
           </View>
@@ -349,7 +349,7 @@ export default function WorkoutHistoryScreen() {
                         borderWidth: 1, borderColor: active ? item.color + "60" : "rgba(245,158,11,0.10)",
                       }}
                     >
-                      <MaterialIcons name={item.icon as any} size={14} color={active ? item.color : "#78350F"} />
+                      <MaterialIcons name={item.icon as any} size={14} color={active ? item.color : "#B45309"} />
                       <Text style={{
                         color: active ? item.color : "#B45309",
                         fontFamily: active ? "DMSans_600SemiBold" : "DMSans_400Regular", fontSize: 11,
@@ -367,12 +367,12 @@ export default function WorkoutHistoryScreen() {
               </Text>
               <View style={{ flexDirection: "row", gap: 10 }}>
                 <View style={{ flex: 1 }}>
-                  <Text style={{ color: "#78350F", fontFamily: "DMSans_400Regular", fontSize: 10, marginBottom: 4 }}>From</Text>
+                  <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 10, marginBottom: 4 }}>From</Text>
                   <TextInput
                     value={dateFrom}
                     onChangeText={setDateFrom}
                     placeholder="YYYY-MM-DD"
-                    placeholderTextColor="#78350F60"
+                    placeholderTextColor="#B4530960"
                     style={{
                       backgroundColor: "#0A0500", borderRadius: 8, paddingHorizontal: 10, paddingVertical: 8,
                       color: "#FDE68A", fontFamily: "DMSans_400Regular", fontSize: 12,
@@ -381,12 +381,12 @@ export default function WorkoutHistoryScreen() {
                   />
                 </View>
                 <View style={{ flex: 1 }}>
-                  <Text style={{ color: "#78350F", fontFamily: "DMSans_400Regular", fontSize: 10, marginBottom: 4 }}>To</Text>
+                  <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 10, marginBottom: 4 }}>To</Text>
                   <TextInput
                     value={dateTo}
                     onChangeText={setDateTo}
                     placeholder="YYYY-MM-DD"
-                    placeholderTextColor="#78350F60"
+                    placeholderTextColor="#B4530960"
                     style={{
                       backgroundColor: "#0A0500", borderRadius: 8, paddingHorizontal: 10, paddingVertical: 8,
                       color: "#FDE68A", fontFamily: "DMSans_400Regular", fontSize: 12,
@@ -420,7 +420,7 @@ export default function WorkoutHistoryScreen() {
             </View>
           ) : filteredEntries.length === 0 ? (
             <View style={{ flex: 1, alignItems: "center", justifyContent: "center", paddingHorizontal: 32 }}>
-              <MaterialIcons name="fitness-center" size={48} color="#78350F" />
+              <MaterialIcons name="fitness-center" size={48} color="#B45309" />
               <Text style={{
                 color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 16, marginTop: 16, textAlign: "center",
               }}>

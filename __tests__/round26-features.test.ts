@@ -100,8 +100,8 @@ describe("Exercise Video Previews", () => {
   it("returns a demo for known exercises with YouTube video ID", () => {
     const demo = getExerciseDemo("Bench Press");
     expect(demo).toBeDefined();
-    expect(demo.videoId).toBeTruthy();
-    expect(demo.videoId.length).toBeGreaterThan(5);
+    expect(demo.gifUrl).toBeTruthy();
+    expect(demo.gifUrl.length).toBeGreaterThan(5);
     expect(demo.cue).toBeTruthy();
     expect(demo.cue).toContain("shoulder blades");
   });
@@ -109,13 +109,13 @@ describe("Exercise Video Previews", () => {
   it("returns a demo via keyword fallback for unknown variants", () => {
     const demo = getExerciseDemo("Incline Dumbbell Bench Press");
     expect(demo).toBeDefined();
-    expect(demo.videoId).toBeTruthy();
+    expect(demo.gifUrl).toBeTruthy();
   });
 
   it("returns a generic fallback for completely unknown exercises", () => {
     const demo = getExerciseDemo("Underwater Basket Weaving");
     expect(demo).toBeDefined();
-    expect(demo.videoId).toBeTruthy();
+    expect(demo.gifUrl).toBeTruthy();
     expect(demo.cue).toContain("proper form");
   });
 
@@ -130,8 +130,8 @@ describe("Exercise Video Previews", () => {
     const exercises = ["squat", "deadlift", "bench press", "pull up", "plank", "bicep curl"];
     for (const name of exercises) {
       const demo = getExerciseDemo(name);
-      expect(demo.videoId).toBeTruthy();
-      expect(demo.videoId.length).toBeGreaterThanOrEqual(8);
+      expect(demo.gifUrl).toBeTruthy();
+      expect(demo.gifUrl.length).toBeGreaterThanOrEqual(8);
       expect(demo.cue.length).toBeGreaterThan(10);
     }
   });
@@ -149,7 +149,7 @@ describe("Exercise Video Previews", () => {
     ];
     for (const name of exercises) {
       const demo = getExerciseDemo(name);
-      expect(demo.videoId).toBeTruthy();
+      expect(demo.gifUrl).toBeTruthy();
       expect(demo.cue).toBeTruthy();
     }
   });

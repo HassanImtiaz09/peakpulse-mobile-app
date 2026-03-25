@@ -139,7 +139,7 @@ export default function GroupGoalsScreen() {
           </View>
           {!isCompleted && (
             <TouchableOpacity onPress={() => handleDelete(goal)}>
-              <Text style={{ color: "#92400E", fontSize: 14 }}>✕</Text>
+              <Text style={{ color: "#B45309", fontSize: 14 }}>✕</Text>
             </TouchableOpacity>
           )}
         </View>
@@ -322,7 +322,7 @@ export default function GroupGoalsScreen() {
               <TextInput
                 style={styles.targetInput}
                 placeholder="Or enter custom target..."
-                placeholderTextColor="#92400E"
+                placeholderTextColor="#B45309"
                 keyboardType="numeric"
                 value={customTarget}
                 onChangeText={setCustomTarget}
@@ -432,11 +432,11 @@ const styles = StyleSheet.create({
   },
   tab: { flex: 1, paddingVertical: 12, alignItems: "center" },
   tabActive: { borderBottomWidth: 2, borderBottomColor: "#F59E0B" },
-  tabText: { color: "#92400E", fontSize: 12, fontWeight: "700" },
+  tabText: { color: "#B45309", fontSize: 12, fontWeight: "700" },
   tabTextActive: { color: "#FDE68A" },
 
   sectionTitle: { color: "#FFF7ED", fontSize: 18, fontWeight: "800", marginBottom: 6 },
-  sectionSubtitle: { color: "#92400E", fontSize: 13, marginBottom: 16, lineHeight: 18 },
+  sectionSubtitle: { color: "#B45309", fontSize: 13, marginBottom: 16, lineHeight: 18 },
   fieldLabel: { color: "#FDE68A", fontSize: 13, fontWeight: "700", marginBottom: 8, letterSpacing: 0.5 },
 
   goalCard: {
@@ -448,7 +448,7 @@ const styles = StyleSheet.create({
     flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 14,
   },
   goalTitle: { color: "#FFF7ED", fontSize: 15, fontWeight: "700" },
-  goalSubtitle: { color: "#92400E", fontSize: 12, marginTop: 2 },
+  goalSubtitle: { color: "#B45309", fontSize: 12, marginTop: 2 },
 
   progressSection: { marginTop: 4 },
   progressLabel: { color: "#FFF7ED", fontSize: 13, fontWeight: "600" },
@@ -465,14 +465,14 @@ const styles = StyleSheet.create({
   },
   contribName: { color: "#FFF7ED", fontSize: 13, fontWeight: "600", maxWidth: 120 },
   contribValue: { color: "#FDE68A", fontSize: 13, fontWeight: "700" },
-  contribPct: { color: "#92400E", fontSize: 10, marginTop: 2 },
+  contribPct: { color: "#B45309", fontSize: 10, marginTop: 2 },
 
   emptyState: {
     alignItems: "center", padding: 32, backgroundColor: "#150A00",
     borderRadius: 20, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)",
   },
   emptyTitle: { color: "#FFF7ED", fontSize: 18, fontWeight: "800", marginBottom: 6 },
-  emptySubtitle: { color: "#92400E", fontSize: 13, textAlign: "center", lineHeight: 18, marginBottom: 16 },
+  emptySubtitle: { color: "#B45309", fontSize: 13, textAlign: "center", lineHeight: 18, marginBottom: 16 },
 
   primaryBtn: {
     backgroundColor: "#F59E0B", borderRadius: 14, paddingVertical: 14, alignItems: "center",
@@ -484,7 +484,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#150A00", borderRadius: 12, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)",
   },
   metricPillActive: { borderColor: "#F59E0B", backgroundColor: "rgba(245,158,11,0.08)" },
-  metricPillText: { color: "#92400E", fontSize: 13, fontWeight: "700" },
+  metricPillText: { color: "#B45309", fontSize: 13, fontWeight: "700" },
   metricPillTextActive: { color: "#FDE68A" },
 
   durationPill: {
@@ -492,7 +492,7 @@ const styles = StyleSheet.create({
     borderRadius: 12, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)",
   },
   durationPillActive: { borderColor: "#F59E0B", backgroundColor: "rgba(245,158,11,0.08)" },
-  durationText: { color: "#92400E", fontSize: 13, fontWeight: "700" },
+  durationText: { color: "#B45309", fontSize: 13, fontWeight: "700" },
   durationTextActive: { color: "#FDE68A" },
 
   targetPill: {
@@ -500,7 +500,7 @@ const styles = StyleSheet.create({
     borderRadius: 10, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)",
   },
   targetPillActive: { borderColor: "#F59E0B", backgroundColor: "rgba(245,158,11,0.08)" },
-  targetPillText: { color: "#92400E", fontSize: 13, fontWeight: "700" },
+  targetPillText: { color: "#B45309", fontSize: 13, fontWeight: "700" },
   targetPillTextActive: { color: "#FDE68A" },
 
   targetInput: {
@@ -527,6 +527,6 @@ const styles = StyleSheet.create({
     paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: "rgba(245,158,11,0.06)",
   },
   modalContribName: { color: "#FFF7ED", fontSize: 14, fontWeight: "700" },
-  modalContribPct: { color: "#92400E", fontSize: 11, marginTop: 2 },
+  modalContribPct: { color: "#B45309", fontSize: 11, marginTop: 2 },
   modalContribValue: { color: "#FDE68A", fontSize: 14, fontWeight: "700" },
 });

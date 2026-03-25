@@ -14,7 +14,7 @@ import type { MuscleGroup } from "@/components/body-diagram";
 const SF = {
   bg: "#0A0500", surface: "rgba(245,158,11,0.04)", surfaceBright: "rgba(245,158,11,0.08)",
   gold1: "#FBBF24", gold2: "#F59E0B", gold3: "#D97706",
-  muted: "#78350F", border: "rgba(245,158,11,0.10)", borderBright: "rgba(245,158,11,0.18)",
+  muted: "#B45309", border: "rgba(245,158,11,0.10)", borderBright: "rgba(245,158,11,0.18)",
   red: "#EF4444", green: "#22C55E", blue: "#3B82F6", cream: "#FFF7ED",
 };
 

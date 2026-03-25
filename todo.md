@@ -1523,3 +1523,33 @@
 ### Testing
 - [x] 0 TypeScript errors (tsc --noEmit)
 - [x] 25 unit tests passing (round70-ui-fixes.test.ts)
+
+## Round 71 — Remove YouTube, Fix GIF Accuracy, Add Fullscreen
+
+### Remove YouTube Videos
+- [x] Remove react-native-youtube-iframe and react-native-webview dependencies
+- [x] Remove react-native-web-webview dependency
+- [x] Delete youtube-player.tsx component entirely
+- [x] Remove all YouTube videoId references from exercise-demos.ts
+- [x] Remove all YouTube-related imports and code from active-workout.tsx
+- [x] Remove all YouTube-related imports and code from plans.tsx
+- [x] Remove all YouTube-related imports and code from exercise-detail.tsx
+- [x] Remove GIF/Video toggle (no more video option)
+
+### Audit and Fix GIF Accuracy
+- [x] Audit all 95+ exercise GIF URLs for duplicates (same URL used for different exercises)
+- [x] Audit for mismatches (GIF shows wrong exercise for the name)
+- [x] Fetch correct unique GIF URLs from ExerciseDB API for each exercise
+- [x] Update exercise-demos.ts with correct unique GIF URLs
+- [x] Update exercise-data.ts angleViews to use correct GIF URLs
+- [x] Ensure accurate descriptions match the actual exercise shown in GIF
+
+### Add Fullscreen GIF Enlarge
+- [x] Add tap-to-enlarge functionality to GIF player
+- [x] Fullscreen modal overlay with pinch-to-zoom
+- [x] Close button and swipe-to-dismiss
+- [x] Works in exercise library, exercise detail, and active workout screens
+
+### Testing
+- [x] 0 TypeScript errors
+- [x] All tests pass (39 test files, 1219 tests passing)

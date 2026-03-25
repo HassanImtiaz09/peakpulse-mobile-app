@@ -507,7 +507,7 @@ export default function HealthTrendsScreen() {
               <Text style={{ color: "#B45309", fontFamily: "DMSans_500Medium", fontSize: 14, marginTop: 8 }}>
                 No data available
               </Text>
-              <Text style={{ color: "#78350F", fontFamily: "DMSans_400Regular", fontSize: 12, marginTop: 4, textAlign: "center" }}>
+              <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 12, marginTop: 4, textAlign: "center" }}>
                 Connect a wearable or health platform to see your trends.
               </Text>
             </View>
@@ -557,14 +557,14 @@ export default function HealthTrendsScreen() {
                 <Text style={{ color: m.color, fontFamily: "Outfit_700Bold", fontSize: 22 }}>
                   {m.formatValue(todayNum)}
                 </Text>
-                <Text style={{ color: "#78350F", fontFamily: "DMSans_400Regular", fontSize: 10 }}>
+                <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 10 }}>
                   Today
                 </Text>
                 <View style={{ height: 1, backgroundColor: "rgba(245,158,11,0.08)", marginVertical: 8 }} />
                 <Text style={{ color: "#B45309", fontFamily: "Outfit_700Bold", fontSize: 14 }}>
                   {m.formatValue(avg)}
                 </Text>
-                <Text style={{ color: "#78350F", fontFamily: "DMSans_400Regular", fontSize: 10 }}>
+                <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 10 }}>
                   {period}-Day Avg
                 </Text>
               </TouchableOpacity>
@@ -641,9 +641,9 @@ export default function HealthTrendsScreen() {
                         borderWidth: 1, borderColor: active ? "#F59E0B60" : "rgba(245,158,11,0.10)",
                       }}
                     >
-                      <MaterialIcons name={active ? "check-box" : "check-box-outline-blank"} size={14} color={active ? "#F59E0B" : "#78350F"} />
+                      <MaterialIcons name={active ? "check-box" : "check-box-outline-blank"} size={14} color={active ? "#F59E0B" : "#B45309"} />
                       <Text style={{
-                        color: active ? "#FDE68A" : "#78350F",
+                        color: active ? "#FDE68A" : "#B45309",
                         fontFamily: active ? "DMSans_600SemiBold" : "DMSans_400Regular", fontSize: 11,
                       }}>
                         {m.label}
@@ -661,7 +661,7 @@ export default function HealthTrendsScreen() {
                 value={personalNotes}
                 onChangeText={setPersonalNotes}
                 placeholder="Add notes for your trainer, physio, or doctor (e.g., current goals, injuries, medications)..."
-                placeholderTextColor="#78350F60"
+                placeholderTextColor="#B4530960"
                 multiline
                 numberOfLines={4}
                 textAlignVertical="top"
@@ -672,7 +672,7 @@ export default function HealthTrendsScreen() {
                   minHeight: 80, lineHeight: 18,
                 }}
               />
-              <Text style={{ color: "#78350F", fontFamily: "DMSans_400Regular", fontSize: 10, marginTop: 4, marginBottom: 14 }}>
+              <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 10, marginTop: 4, marginBottom: 14 }}>
                 These notes will appear at the top of your PDF report.
               </Text>
             </View>

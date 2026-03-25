@@ -1,0 +1,310 @@
+import React, { useState, useCallback } from "react";
+import {
+  View,
+  Text,
+  Pressable,
+  Modal,
+  StyleSheet,
+  Dimensions,
+} from "react-native";
+import { Image } from "expo-image";
+import { MaterialIcons } from "@expo/vector-icons";
+import { useColors } from "@/hooks/use-colors";
+
+const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get("window");
+
+interface ExerciseDemoPlayerProps {
+  gifUrl: string;
+  cue?: string;
+  height?: number;
+  exerciseName?: string;
+}
+
+/**
+ * Exercise demo GIF player with fullscreen enlarge support.
+ * Tap the expand icon or the GIF itself to open fullscreen modal.
+ */
+export function ExerciseDemoPlayer({
+  gifUrl,
+  cue,
+  height = 200,
+  exerciseName,
+}: ExerciseDemoPlayerProps) {
+  const colors = useColors();
+  const [fullscreen, setFullscreen] = useState(false);
+
+  const openFullscreen = useCallback(() => setFullscreen(true), []);
+  const closeFullscreen = useCallback(() => setFullscreen(false), []);
+
+  return (
+    <View>
+      <Pressable
+        onPress={openFullscreen}
+        style={({ pressed }) => [pressed && { opacity: 0.9, transform: [{ scale: 0.99 }] }]}
+      >
+        <View
+          style={[
+            styles.playerContainer,
+            { height, backgroundColor: "#000", borderRadius: 12, overflow: "hidden" },
+          ]}
+        >
+          <Image
+            source={gifUrl}
+            style={StyleSheet.absoluteFill}
+            contentFit="contain"
+            cachePolicy="disk"
+            transition={200}
+          />
+          {/* GIF badge */}
+          <View style={styles.gifBadge}>
+            <MaterialIcons name="gif" size={16} color="#fff" />
+            <Text style={styles.gifBadgeText}>Exercise Guide</Text>
+          </View>
+          {/* Expand button */}
+          <Pressable
+            onPress={openFullscreen}
+            style={({ pressed }) => [
+              styles.expandButton,
+              pressed && { opacity: 0.7 },
+            ]}
+          >
+            <MaterialIcons name="fullscreen" size={22} color="#fff" />
+          </Pressable>
+        </View>
+      </Pressable>
+
+      {cue ? (
+        <View style={[styles.cueContainer, { backgroundColor: colors.surface }]}>
+          <MaterialIcons name="info-outline" size={14} color={colors.muted} />
+          <Text style={[styles.cueText, { color: colors.muted }]}>{cue}</Text>
+        </View>
+      ) : null}
+
+      {/* Fullscreen Modal */}
+      <Modal
+        visible={fullscreen}
+        transparent
+        animationType="fade"
+        onRequestClose={closeFullscreen}
+        statusBarTranslucent
+      >
+        <View style={styles.fullscreenOverlay}>
+          {/* Header */}
+          <View style={styles.fullscreenHeader}>
+            {exerciseName ? (
+              <Text style={styles.fullscreenTitle} numberOfLines={1}>
+                {exerciseName}
+              </Text>
+            ) : (
+              <View />
+            )}
+            <Pressable
+              onPress={closeFullscreen}
+              style={({ pressed }) => [
+                styles.closeButton,
+                pressed && { opacity: 0.7 },
+              ]}
+            >
+              <MaterialIcons name="close" size={24} color="#fff" />
+            </Pressable>
+          </View>
+
+          {/* Full-size GIF */}
+          <View style={styles.fullscreenImageContainer}>
+            <Image
+              source={gifUrl}
+              style={{ width: SCREEN_W, height: SCREEN_W }}
+              contentFit="contain"
+              cachePolicy="disk"
+              transition={200}
+            />
+          </View>
+
+          {/* Cue text in fullscreen */}
+          {cue ? (
+            <View style={styles.fullscreenCue}>
+              <MaterialIcons name="info-outline" size={16} color="#D4AF37" />
+              <Text style={styles.fullscreenCueText}>{cue}</Text>
+            </View>
+          ) : null}
+
+          {/* Tap to close hint */}
+          <Pressable onPress={closeFullscreen} style={styles.tapToCloseArea}>
+            <Text style={styles.tapToCloseText}>Tap anywhere to close</Text>
+          </Pressable>
+        </View>
+      </Modal>
+    </View>
+  );
+}
+
+/**
+ * Compact button that expands to show the GIF player inline.
+ */
+export function ExerciseDemoButton({
+  gifUrl,
+  cue,
+  label = "Watch Demo",
+  exerciseName,
+}: ExerciseDemoPlayerProps & { label?: string }) {
+  const colors = useColors();
+  const [expanded, setExpanded] = useState(false);
+
+  if (expanded) {
+    return (
+      <View>
+        <ExerciseDemoPlayer gifUrl={gifUrl} cue={cue} height={180} exerciseName={exerciseName} />
+        <Pressable
+          onPress={() => setExpanded(false)}
+          style={({ pressed }) => [
+            styles.collapseButton,
+            { backgroundColor: colors.surface, borderColor: colors.border },
+            pressed && { opacity: 0.7 },
+          ]}
+        >
+          <MaterialIcons name="expand-less" size={18} color={colors.muted} />
+          <Text style={[styles.demoButtonText, { color: colors.muted }]}>Collapse</Text>
+        </Pressable>
+      </View>
+    );
+  }
+
+  return (
+    <Pressable
+      onPress={() => setExpanded(true)}
+      style={({ pressed }) => [
+        styles.demoButton,
+        { backgroundColor: colors.surface, borderColor: colors.border },
+        pressed && { opacity: 0.7, transform: [{ scale: 0.97 }] },
+      ]}
+    >
+      <MaterialIcons name="play-circle-outline" size={20} color="#D4AF37" />
+      <Text style={[styles.demoButtonText, { color: colors.foreground }]}>{label}</Text>
+    </Pressable>
+  );
+}
+
+const styles = StyleSheet.create({
+  playerContainer: {
+    position: "relative",
+  },
+  gifBadge: {
+    position: "absolute",
+    top: 8,
+    left: 8,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    backgroundColor: "rgba(0,0,0,0.6)",
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 10,
+  },
+  gifBadgeText: {
+    color: "#fff",
+    fontSize: 10,
+    fontWeight: "600",
+  },
+  expandButton: {
+    position: "absolute",
+    bottom: 8,
+    right: 8,
+    backgroundColor: "rgba(0,0,0,0.6)",
+    padding: 6,
+    borderRadius: 8,
+  },
+  cueContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    marginTop: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 8,
+  },
+  cueText: {
+    fontSize: 13,
+    lineHeight: 18,
+    flex: 1,
+  },
+  fullscreenOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.95)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  fullscreenHeader: {
+    position: "absolute",
+    top: 50,
+    left: 16,
+    right: 16,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    zIndex: 10,
+  },
+  fullscreenTitle: {
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: "700",
+    flex: 1,
+    marginRight: 12,
+  },
+  closeButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "rgba(255,255,255,0.15)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  fullscreenImageContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  fullscreenCue: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    marginTop: 20,
+    paddingHorizontal: 24,
+  },
+  fullscreenCueText: {
+    color: "#fff",
+    fontSize: 14,
+    lineHeight: 20,
+    flex: 1,
+  },
+  tapToCloseArea: {
+    position: "absolute",
+    bottom: 40,
+    alignSelf: "center",
+  },
+  tapToCloseText: {
+    color: "rgba(255,255,255,0.4)",
+    fontSize: 12,
+  },
+  demoButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 8,
+    borderWidth: 1,
+  },
+  collapseButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 4,
+    paddingVertical: 6,
+    marginTop: 6,
+    borderRadius: 8,
+    borderWidth: 1,
+  },
+  demoButtonText: {
+    fontSize: 13,
+    fontWeight: "600",
+  },
+});

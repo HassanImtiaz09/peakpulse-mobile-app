@@ -289,7 +289,7 @@ export default function LogWorkoutScreen() {
           }}
         >
           <MaterialIcons name="history" size={14} color="#F59E0B" />
-          <Text style={{ color: "#F59E0B", fontFamily: "DMSans_600SemiBold", fontSize: 11 }}>History</Text>
+          <Text style={{ color: "#F59E0B", fontFamily: "DMSans_600SemiBold", fontSize: 11 }}>View Workout History</Text>
         </TouchableOpacity>
         <View style={{ width: 1, backgroundColor: "rgba(245,158,11,0.08)" }} />
         <TouchableOpacity
@@ -374,7 +374,7 @@ export default function LogWorkoutScreen() {
                   onChangeText={setHours}
                   keyboardType="number-pad"
                   placeholder="0"
-                  placeholderTextColor="#78350F"
+                  placeholderTextColor="#B45309"
                   maxLength={2}
                 />
               </View>
@@ -393,7 +393,7 @@ export default function LogWorkoutScreen() {
                   onChangeText={setMinutes}
                   keyboardType="number-pad"
                   placeholder="30"
-                  placeholderTextColor="#78350F"
+                  placeholderTextColor="#B45309"
                   maxLength={2}
                 />
               </View>
@@ -456,7 +456,7 @@ export default function LogWorkoutScreen() {
                     estimated kcal
                   </Text>
                   {selectedConfig && (
-                    <Text style={{ color: "#78350F", fontFamily: "DMSans_400Regular", fontSize: 10, marginTop: 4 }}>
+                    <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 10, marginTop: 4 }}>
                       Based on ~{selectedConfig.caloriesPerMin} kcal/min for {selectedConfig.label.toLowerCase()}
                     </Text>
                   )}
@@ -472,7 +472,7 @@ export default function LogWorkoutScreen() {
                   onChangeText={setCalories}
                   keyboardType="number-pad"
                   placeholder="Enter calories"
-                  placeholderTextColor="#78350F"
+                  placeholderTextColor="#B45309"
                 />
               )}
             </View>
@@ -485,7 +485,7 @@ export default function LogWorkoutScreen() {
                 <Text style={{ color: "#F59E0B", fontFamily: "Outfit_700Bold", fontSize: 12 }}>4</Text>
               </View>
               <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 16 }}>Details</Text>
-              <Text style={{ color: "#78350F", fontFamily: "DMSans_400Regular", fontSize: 11 }}>(optional)</Text>
+              <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 11 }}>(optional)</Text>
             </View>
             <View style={{
               backgroundColor: "#150A00", borderRadius: 16, padding: 16, gap: 12,
@@ -507,7 +507,7 @@ export default function LogWorkoutScreen() {
                     onChangeText={setDistance}
                     keyboardType="decimal-pad"
                     placeholder="e.g. 5.2"
-                    placeholderTextColor="#78350F"
+                    placeholderTextColor="#B45309"
                   />
                 </View>
               )}
@@ -527,7 +527,7 @@ export default function LogWorkoutScreen() {
                   onChangeText={setHeartRate}
                   keyboardType="number-pad"
                   placeholder="e.g. 145"
-                  placeholderTextColor="#78350F"
+                  placeholderTextColor="#B45309"
                 />
               </View>
 
@@ -545,7 +545,7 @@ export default function LogWorkoutScreen() {
                   value={title}
                   onChangeText={setTitle}
                   placeholder={`${selectedConfig?.label ?? "Workout"} Session`}
-                  placeholderTextColor="#78350F"
+                  placeholderTextColor="#B45309"
                   returnKeyType="done"
                 />
               </View>
@@ -565,7 +565,7 @@ export default function LogWorkoutScreen() {
                     value={dateStr}
                     onChangeText={setDateStr}
                     placeholder="YYYY-MM-DD"
-                    placeholderTextColor="#78350F"
+                    placeholderTextColor="#B45309"
                   />
                 </View>
                 <View style={{ flex: 1 }}>
@@ -581,7 +581,7 @@ export default function LogWorkoutScreen() {
                     value={timeStr}
                     onChangeText={setTimeStr}
                     placeholder="HH:MM"
-                    placeholderTextColor="#78350F"
+                    placeholderTextColor="#B45309"
                   />
                 </View>
               </View>
@@ -694,10 +694,10 @@ export default function LogWorkoutScreen() {
             {saving ? (
               <ActivityIndicator color="#0A0500" size="small" />
             ) : (
-              <MaterialIcons name="check-circle" size={20} color={canSave ? "#0A0500" : "#78350F"} />
+              <MaterialIcons name="check-circle" size={20} color={canSave ? "#0A0500" : "#B45309"} />
             )}
             <Text style={{
-              color: canSave ? "#0A0500" : "#78350F",
+              color: canSave ? "#0A0500" : "#B45309",
               fontFamily: "Outfit_700Bold", fontSize: 16,
             }}>
               {saving ? "Saving..." : "Log Workout"}

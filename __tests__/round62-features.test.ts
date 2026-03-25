@@ -469,7 +469,7 @@ describe("Integration and Navigation", () => {
     expect(streakDetails).toContain("#0A0500");
     expect(streakDetails).toContain("#F59E0B");
     expect(streakDetails).toContain("#FFF7ED");
-    expect(streakDetails).toContain("#78350F");
+    expect(streakDetails).toContain("#B45309");
     expect(streakDetails).toContain("#FBBF24");
   });
 });

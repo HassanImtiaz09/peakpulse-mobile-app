@@ -10,7 +10,7 @@ import { trpc } from "@/lib/trpc";
 import { useKeepAwake } from "expo-keep-awake";
 import { getExerciseDemo } from "@/lib/exercise-demos";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { YouTubePlayer, YouTubePlayerButton } from "@/components/youtube-player";
+import { ExerciseDemoPlayer } from "@/components/exercise-demo-player";
 import { BodyDiagramInline } from "@/components/body-diagram";
 import { EnhancedGifPlayer } from "@/components/enhanced-gif-player";
 import { getExerciseInfo } from "@/lib/exercise-data";
@@ -54,7 +54,7 @@ interface SetLog {
   completed: boolean;
 }
 
-// ── Demo Video Component (In-App YouTube Player) ───────────────────────────────
+// ── Demo Video Component (Exercise GIF Player) ────────────────────────────────
 function ExerciseDemoVideo({ exerciseName, compact = false }: { exerciseName: string; compact?: boolean }) {
   const demo = getExerciseDemo(exerciseName);
   const exerciseInfo = getExerciseInfo(exerciseName);
@@ -106,7 +106,7 @@ function ExerciseDemoVideo({ exerciseName, compact = false }: { exerciseName: st
         </View>
       </View>
 
-      {/* Enhanced GIF Player or YouTube Player */}
+      {/* Exercise GIF Demo */}
       {showEnhanced && exerciseInfo ? (
         <EnhancedGifPlayer
           angleViews={exerciseInfo.angleViews}
@@ -114,7 +114,7 @@ function ExerciseDemoVideo({ exerciseName, compact = false }: { exerciseName: st
           height={compact ? 160 : 220}
         />
       ) : (
-        <YouTubePlayer videoId={demo.videoId} cue={demo.cue} gifUrl={demo.gifUrl} height={compact ? 140 : 200} />
+        <ExerciseDemoPlayer gifUrl={demo.gifUrl} cue={demo.cue} height={compact ? 140 : 200} exerciseName={exerciseName} />
       )}
     </View>
   );
@@ -229,7 +229,7 @@ function FullscreenTimerModal({
           {/* Demo Video */}
           <View style={{ backgroundColor: SF.surface, borderRadius: 16, padding: 14, borderWidth: 1, borderColor: SF.border }}>
             <Text style={{ color: SF.gold, fontFamily: "Outfit_700Bold", fontSize: 13, marginBottom: 10 }}>EXERCISE DEMO</Text>
-            <YouTubePlayer videoId={demo.videoId} cue={demo.cue} gifUrl={demo.gifUrl} height={180} />
+            <ExerciseDemoPlayer gifUrl={demo.gifUrl} cue={demo.cue} height={180} exerciseName={exercise.name} />
             {exercise.notes && (
               <View style={{ marginTop: 10, backgroundColor: "rgba(245,158,11,0.06)", borderRadius: 10, padding: 10 }}>
                 <Text style={{ color: SF.muted, fontSize: 12 }}>📋 {exercise.notes}</Text>

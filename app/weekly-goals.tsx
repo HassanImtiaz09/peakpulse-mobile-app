@@ -124,7 +124,7 @@ export default function WeeklyGoalsScreen() {
               >
                 <View style={{
                   width: 26, height: 26, borderRadius: 13,
-                  backgroundColor: enabled ? SF.bg : "#78350F",
+                  backgroundColor: enabled ? SF.bg : "#B45309",
                   alignSelf: enabled ? "flex-end" : "flex-start",
                 }} />
               </TouchableOpacity>
@@ -150,7 +150,7 @@ export default function WeeklyGoalsScreen() {
                     }}
                   >
                     <View style={{ flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 6 }}>
-                      <MaterialIcons name={preset.icon as any} size={18} color={isActive ? SF.gold : "#78350F"} />
+                      <MaterialIcons name={preset.icon as any} size={18} color={isActive ? SF.gold : "#B45309"} />
                       <Text style={{ color: isActive ? SF.gold : SF.fg, fontFamily: "Outfit_700Bold", fontSize: 14 }}>
                         {preset.name}
                       </Text>
@@ -158,7 +158,7 @@ export default function WeeklyGoalsScreen() {
                     <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 10 }}>
                       {preset.description}
                     </Text>
-                    <Text style={{ color: "#78350F", fontFamily: "DMSans_400Regular", fontSize: 9, marginTop: 4 }}>
+                    <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 9, marginTop: 4 }}>
                       {preset.goals.stepsTarget.toLocaleString()} steps · {preset.goals.caloriesTarget} kcal · {preset.goals.workoutsTarget} workouts
                     </Text>
                   </TouchableOpacity>
@@ -190,7 +190,7 @@ export default function WeeklyGoalsScreen() {
                     borderWidth: 1, borderColor: SF.border,
                   }}
                 />
-                <Text style={{ color: "#78350F", fontFamily: "DMSans_400Regular", fontSize: 10, marginTop: 4 }}>
+                <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 10, marginTop: 4 }}>
                   Average: 7,000-12,000 steps/day is recommended
                 </Text>
               </View>
@@ -211,7 +211,7 @@ export default function WeeklyGoalsScreen() {
                     borderWidth: 1, borderColor: SF.border,
                   }}
                 />
-                <Text style={{ color: "#78350F", fontFamily: "DMSans_400Regular", fontSize: 10, marginTop: 4 }}>
+                <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 10, marginTop: 4 }}>
                   Active calories burned through exercise
                 </Text>
               </View>
@@ -242,7 +242,7 @@ export default function WeeklyGoalsScreen() {
                     </TouchableOpacity>
                   ))}
                 </View>
-                <Text style={{ color: "#78350F", fontFamily: "DMSans_400Regular", fontSize: 10, marginTop: 4 }}>
+                <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 10, marginTop: 4 }}>
                   3-5 workouts/week is optimal for most people
                 </Text>
               </View>
@@ -271,7 +271,7 @@ export default function WeeklyGoalsScreen() {
                           <Text style={{ color: SF.fg, fontFamily: "DMSans_600SemiBold", fontSize: 13 }}>
                             Week of {h.weekStart}
                           </Text>
-                          <Text style={{ color: "#78350F", fontFamily: "DMSans_400Regular", fontSize: 10, marginTop: 2 }}>
+                          <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 10, marginTop: 2 }}>
                             {h.progress.steps.current.toLocaleString()} steps · {h.progress.calories.current} kcal · {h.progress.workouts.current} workouts
                           </Text>
                         </View>
