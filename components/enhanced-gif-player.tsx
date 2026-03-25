@@ -16,7 +16,7 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import * as Haptics from "expo-haptics";
 import type { ExerciseAngleView } from "@/lib/exercise-data";
 import { useFavorites } from "@/lib/favorites-context";
-import { resolveGifAsset } from "@/lib/gif-resolver";
+import { resolveGifAssetOrNull } from "@/lib/gif-resolver";
 
 const { width: SCREEN_W } = Dimensions.get("window");
 
@@ -64,11 +64,14 @@ export function EnhancedGifPlayer({
   const currentView = angleViews[activeAngle] || angleViews[0];
   if (!currentView) return null;
 
-  // Resolve the GIF URL to a local asset
+  // Resolve the GIF URL to a local asset (null if not available)
   const currentAsset = useMemo(
-    () => resolveGifAsset(currentView.gifUrl),
+    () => resolveGifAssetOrNull(currentView.gifUrl),
     [currentView.gifUrl]
   );
+
+  // Check if this is a side view with no local GIF
+  const isMissingSideView = currentAsset === null && (currentView.label.includes("Side") || currentView.gifUrl.includes("side"));
 
   // Slow-motion pulse animation
   useEffect(() => {
@@ -129,15 +132,23 @@ export function EnhancedGifPlayer({
       {/* Media Display */}
       <View style={[styles.gifContainer, { height }]}>
         <Animated.View style={[styles.gifWrapper, { opacity: isSlowMotion ? pulseAnim : 1 }]}>
-          <Image
-            key={`${activeAngle}-${imageKey}`}
-            source={currentAsset}
-            style={styles.gif}
-            contentFit="contain"
-            cachePolicy="memory-disk"
-            recyclingKey={`${exerciseName}-${activeAngle}`}
-            transition={200}
-          />
+          {isMissingSideView ? (
+            <View style={styles.missingViewContainer}>
+              <MaterialIcons name="videocam-off" size={40} color="rgba(245,158,11,0.4)" />
+              <Text style={styles.missingViewTitle}>Side View Not Available</Text>
+              <Text style={styles.missingViewSubtitle}>Switch to Front view for the demo</Text>
+            </View>
+          ) : (
+            <Image
+              key={`${activeAngle}-${imageKey}`}
+              source={typeof currentAsset === "string" ? { uri: currentAsset } : currentAsset}
+              style={styles.gif}
+              contentFit="contain"
+              cachePolicy="memory-disk"
+              recyclingKey={`${exerciseName}-${activeAngle}`}
+              transition={200}
+            />
+          )}
         </Animated.View>
 
         {/* Slow-motion overlay indicator */}
@@ -292,14 +303,22 @@ export function EnhancedGifPlayer({
             </View>
           </View>
           <View style={styles.fullscreenImageWrap}>
-            <Image
-              key={`fs-${activeAngle}-${imageKey}`}
-              source={currentAsset}
-              style={{ width: SCREEN_W, height: SCREEN_W }}
-              contentFit="contain"
-              cachePolicy="memory-disk"
-              transition={200}
-            />
+            {isMissingSideView ? (
+              <View style={[styles.missingViewContainer, { width: SCREEN_W, height: SCREEN_W }]}>
+                <MaterialIcons name="videocam-off" size={56} color="rgba(245,158,11,0.4)" />
+                <Text style={[styles.missingViewTitle, { fontSize: 18 }]}>Side View Not Available</Text>
+                <Text style={styles.missingViewSubtitle}>Switch to Front view for the demo</Text>
+              </View>
+            ) : (
+              <Image
+                key={`fs-${activeAngle}-${imageKey}`}
+                source={typeof currentAsset === "string" ? { uri: currentAsset } : currentAsset}
+                style={{ width: SCREEN_W, height: SCREEN_W }}
+                contentFit="contain"
+                cachePolicy="memory-disk"
+                transition={200}
+              />
+            )}
           </View>
           <View style={styles.fullscreenAngleRow}>
             {angleViews.map((view, i) => (
@@ -561,5 +580,22 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 40,
     alignSelf: "center",
+  },
+  missingViewContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: C.bg,
+    gap: 8,
+  },
+  missingViewTitle: {
+    color: C.fg,
+    fontSize: 14,
+    fontWeight: "600",
+    letterSpacing: 0.3,
+  },
+  missingViewSubtitle: {
+    color: C.muted,
+    fontSize: 12,
   },
 });

@@ -69,7 +69,8 @@ export default function ProfileScreen() {
   const { user, isAuthenticated } = useAuth();
   const { isGuest, guestProfile, clearGuest } = useGuestAuth();
   const canUse = isAuthenticated || isGuest;
-  const { canAccess } = useSubscription();
+  const subscription = useSubscription();
+  const { canAccess } = subscription;
   const [paywallFeature, setPaywallFeature] = useState<{ name: string; icon: string; tier: "basic" | "advanced"; desc?: string } | null>(null);
   const [editing, setEditing] = useState(false);
 
@@ -198,6 +199,37 @@ export default function ProfileScreen() {
             </View>
           </View>
         </ImageBackground>
+
+        {/* Subscription Status Card */}
+        <View style={{ marginHorizontal: 20, marginBottom: 16 }}>
+          <SubscriptionStatusCard
+            tier={subscription.tier}
+            billingCycle={subscription.billingCycle}
+            expiresAt={subscription.expiresAt}
+            isTrialActive={subscription.isTrialActive}
+            daysLeftInTrial={subscription.daysLeftInTrial}
+            onUpgrade={() => router.push("/subscription" as any)}
+          />
+        </View>
+
+        {/* Personal Info Summary */}
+        <View style={{ marginHorizontal: 20, marginBottom: 16 }}>
+          <PersonalInfoCard
+            name={displayName}
+            email={displayEmail}
+            isGuest={isGuest}
+            age={age}
+            gender={gender}
+            height={height}
+            weight={weight}
+            goal={GOALS.find(g => g.key === goal)?.label ?? "—"}
+            workoutStyle={WORKOUT_STYLES.find(w => w.key === workoutStyle)?.label ?? "—"}
+            dietaryPref={DIETARY_PREFS.find(d => d.key === dietaryPref)?.label ?? "—"}
+            daysPerWeek={daysPerWeek}
+            bodyFat={profile?.currentBodyFat?.toString() ?? null}
+            targetBF={profile?.targetBodyFat?.toString() ?? null}
+          />
+        </View>
 
         {/* Stats Row */}
         {profile && (
@@ -356,21 +388,32 @@ export default function ProfileScreen() {
             <FeatureLink icon="settings" label="Settings" onPress={() => router.push("/settings" as any)} />
           </View>
 
+          {/* Feedback */}
+          <SectionHeader>Help & Feedback</SectionHeader>
+          <View style={{ gap: 8, marginBottom: 16 }}>
+            <FeatureLink icon="feedback" label="Send Feedback" onPress={() => router.push("/feedback" as any)} />
+            <FeatureLink icon="help-outline" label="User Guide" onPress={() => router.push("/user-guide" as any)} />
+          </View>
+
           {/* Subscription */}
-          <SectionHeader>Subscription</SectionHeader>
-          <TouchableOpacity
-            style={{ backgroundColor: GOLD, borderRadius: 16, paddingVertical: 14, paddingHorizontal: 16, flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 24, shadowColor: GOLD, shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 8 }}
-            onPress={() => router.push("/subscription" as any)}
-          >
-            <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-              <MaterialIcons name="workspace-premium" size={20} color={FG} />
-              <View>
-                <Text style={{ color: FG, fontFamily: "DMSans_700Bold", fontSize: 14 }}>Upgrade to Advanced</Text>
-                <Text style={{ color: CREAM, fontSize: 12, marginTop: 2 }}>Unlock all AI features from $4.99/mo</Text>
-              </View>
-            </View>
-            <MaterialIcons name="chevron-right" size={20} color={FG} />
-          </TouchableOpacity>
+          {!subscription.isAdvanced && (
+            <>
+              <SectionHeader>Subscription</SectionHeader>
+              <TouchableOpacity
+                style={{ backgroundColor: GOLD, borderRadius: 16, paddingVertical: 14, paddingHorizontal: 16, flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 24, shadowColor: GOLD, shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 8 }}
+                onPress={() => router.push("/subscription" as any)}
+              >
+                <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+                  <MaterialIcons name="workspace-premium" size={20} color={FG} />
+                  <View>
+                    <Text style={{ color: FG, fontFamily: "DMSans_700Bold", fontSize: 14 }}>Upgrade to Advanced</Text>
+                    <Text style={{ color: CREAM, fontSize: 12, marginTop: 2 }}>Unlock all AI features from $4.99/mo</Text>
+                  </View>
+                </View>
+                <MaterialIcons name="chevron-right" size={20} color={FG} />
+              </TouchableOpacity>
+            </>
+          )}
 
           {/* Guest mode — upgrade CTA */}
           {isGuest && (
@@ -462,6 +505,150 @@ const THEME_OPTIONS: Array<{ key: ThemePreference; label: string; icon: keyof ty
   { key: "light", label: "Light", icon: "light-mode", desc: "Always light" },
   { key: "dark", label: "Dark", icon: "dark-mode", desc: "Always dark" },
 ];
+
+// ── Subscription Status Card ──────────────────────────────────────────────
+function SubscriptionStatusCard({
+  tier,
+  billingCycle,
+  expiresAt,
+  isTrialActive,
+  daysLeftInTrial,
+  onUpgrade,
+}: {
+  tier: string;
+  billingCycle: string | null;
+  expiresAt: string | null;
+  isTrialActive: boolean;
+  daysLeftInTrial: number;
+  onUpgrade: () => void;
+}) {
+  const tierLabel = tier === "advanced" ? "Advanced" : tier === "basic" ? "Basic" : "Free";
+  const tierColor = tier === "advanced" ? GOLD : tier === "basic" ? ICE : MUTED;
+  const tierIcon = tier === "advanced" ? "workspace-premium" : tier === "basic" ? "star" : "person";
+  const billingLabel = billingCycle === "annual" ? "Annual" : billingCycle === "monthly" ? "Monthly" : null;
+  const expiryDate = expiresAt ? new Date(expiresAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : null;
+
+  return (
+    <View style={{ backgroundColor: SURFACE, borderRadius: 16, padding: 16, borderWidth: 1, borderColor: tier === "free" ? "rgba(30,41,59,0.6)" : `${tierColor}33` }}>
+      {/* Tier Badge Row */}
+      <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+          <View style={{ width: 36, height: 36, borderRadius: 10, backgroundColor: `${tierColor}15`, alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: `${tierColor}30` }}>
+            <MaterialIcons name={tierIcon as any} size={20} color={tierColor} />
+          </View>
+          <View>
+            <Text style={{ color: FG, fontFamily: "DMSans_700Bold", fontSize: 16 }}>{tierLabel} Plan</Text>
+            {billingLabel && <Text style={{ color: MUTED, fontSize: 11, marginTop: 1 }}>{billingLabel} billing</Text>}
+          </View>
+        </View>
+        {tier === "free" && (
+          <TouchableOpacity
+            style={{ backgroundColor: GOLD, borderRadius: 10, paddingHorizontal: 14, paddingVertical: 6 }}
+            onPress={onUpgrade}
+          >
+            <Text style={{ color: FG, fontFamily: "DMSans_700Bold", fontSize: 12 }}>Upgrade</Text>
+          </TouchableOpacity>
+        )}
+      </View>
+
+      {/* Trial Status */}
+      {isTrialActive && (
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 8, backgroundColor: `${ICE}15`, borderRadius: 10, padding: 10, marginBottom: 8, borderWidth: 1, borderColor: `${ICE}30` }}>
+          <MaterialIcons name="timer" size={16} color={ICE} />
+          <Text style={{ color: ICE, fontFamily: "DMSans_600SemiBold", fontSize: 12, flex: 1 }}>
+            Free trial active — {daysLeftInTrial} day{daysLeftInTrial !== 1 ? "s" : ""} remaining
+          </Text>
+        </View>
+      )}
+
+      {/* Expiry / Status Info */}
+      <View style={{ flexDirection: "row", gap: 12 }}>
+        <View style={{ flex: 1, backgroundColor: SURFACE2, borderRadius: 10, padding: 10, alignItems: "center" }}>
+          <Text style={{ color: MUTED, fontSize: 10, marginBottom: 2 }}>Status</Text>
+          <Text style={{ color: tier === "free" ? MUTED : "#4ADE80", fontFamily: "SpaceMono_400Regular", fontSize: 12 }}>
+            {tier === "free" ? (isTrialActive ? "Trial" : "Free") : "Active"}
+          </Text>
+        </View>
+        {expiryDate && (
+          <View style={{ flex: 1, backgroundColor: SURFACE2, borderRadius: 10, padding: 10, alignItems: "center" }}>
+            <Text style={{ color: MUTED, fontSize: 10, marginBottom: 2 }}>Renews</Text>
+            <Text style={{ color: FG, fontFamily: "SpaceMono_400Regular", fontSize: 12 }}>{expiryDate}</Text>
+          </View>
+        )}
+        <View style={{ flex: 1, backgroundColor: SURFACE2, borderRadius: 10, padding: 10, alignItems: "center" }}>
+          <Text style={{ color: MUTED, fontSize: 10, marginBottom: 2 }}>Features</Text>
+          <Text style={{ color: tierColor, fontFamily: "SpaceMono_400Regular", fontSize: 12 }}>
+            {tier === "advanced" ? "All" : tier === "basic" ? "Core" : isTrialActive ? "All" : "Limited"}
+          </Text>
+        </View>
+      </View>
+    </View>
+  );
+}
+
+// ── Personal Info Summary Card ───────────────────────────────────────────
+function PersonalInfoCard({
+  name,
+  email,
+  isGuest,
+  age,
+  gender,
+  height,
+  weight,
+  goal,
+  workoutStyle,
+  dietaryPref,
+  daysPerWeek,
+  bodyFat,
+  targetBF,
+}: {
+  name: string;
+  email: string;
+  isGuest: boolean;
+  age: string;
+  gender: string;
+  height: string;
+  weight: string;
+  goal: string;
+  workoutStyle: string;
+  dietaryPref: string;
+  daysPerWeek: string;
+  bodyFat: string | null;
+  targetBF: string | null;
+}) {
+  const rows: Array<{ icon: string; label: string; value: string }> = [
+    { icon: "person", label: "Name", value: name },
+    { icon: "email", label: "Email", value: isGuest ? "Guest Mode" : email },
+    { icon: "cake", label: "Age", value: age ? `${age} years` : "Not set" },
+    { icon: "wc", label: "Gender", value: gender.charAt(0).toUpperCase() + gender.slice(1) },
+    { icon: "straighten", label: "Height", value: height ? `${height} cm` : "Not set" },
+    { icon: "monitor-weight", label: "Weight", value: weight ? `${weight} kg` : "Not set" },
+    { icon: "flag", label: "Goal", value: goal },
+    { icon: "fitness-center", label: "Style", value: workoutStyle },
+    { icon: "restaurant", label: "Diet", value: dietaryPref },
+    { icon: "calendar-today", label: "Training", value: `${daysPerWeek}x per week` },
+  ];
+  if (bodyFat) rows.push({ icon: "speed", label: "Body Fat", value: `${bodyFat}%` });
+  if (targetBF) rows.push({ icon: "track-changes", label: "Target BF", value: `${targetBF}%` });
+
+  return (
+    <View style={{ backgroundColor: SURFACE, borderRadius: 16, overflow: "hidden", borderWidth: 1, borderColor: "rgba(30,41,59,0.6)" }}>
+      <View style={{ flexDirection: "row", alignItems: "center", gap: 8, padding: 14, borderBottomWidth: 1, borderBottomColor: "rgba(30,41,59,0.4)" }}>
+        <MaterialIcons name="badge" size={18} color={GOLD} />
+        <Text style={{ color: FG, fontFamily: "DMSans_700Bold", fontSize: 14 }}>Personal Information</Text>
+      </View>
+      {rows.map((row, i) => (
+        <View key={i} style={{ flexDirection: "row", alignItems: "center", paddingHorizontal: 14, paddingVertical: 10, borderBottomWidth: i < rows.length - 1 ? 1 : 0, borderBottomColor: "rgba(30,41,59,0.25)" }}>
+          <View style={{ width: 28, alignItems: "center" }}>
+            <MaterialIcons name={row.icon as any} size={16} color={MUTED} />
+          </View>
+          <Text style={{ color: MUTED, fontSize: 12, width: 70 }}>{row.label}</Text>
+          <Text style={{ color: FG, fontFamily: "DMSans_500Medium", fontSize: 13, flex: 1 }}>{row.value}</Text>
+        </View>
+      ))}
+    </View>
+  );
+}
 
 function ThemeToggle() {
   const { themePreference, setThemePreference } = useThemeContext();

@@ -9,6 +9,10 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
 
 export const EXERCISE_GIFS: Record<string, number> = {
+  // ══════════════════════════════════════════════════════════════════════════
+  // FRONT VIEWS
+  // ══════════════════════════════════════════════════════════════════════════
+
   // ── Chest ───────────────────────────────────────────────────────────────
   "male-barbell-bench-press-front": require("@/assets/exercise-gifs/male-barbell-bench-press-front.gif"),
   "male-bodyweight-push-up-front": require("@/assets/exercise-gifs/male-bodyweight-push-up-front.gif"),
@@ -98,6 +102,83 @@ export const EXERCISE_GIFS: Record<string, number> = {
   "male-Cardio-jump-rope-front": require("@/assets/exercise-gifs/male-Cardio-jump-rope-front.gif"),
   "high-knees": require("@/assets/exercise-gifs/high-knees.gif"),
   "male-Cardio-treadmill-sprint-front": require("@/assets/exercise-gifs/male-Cardio-treadmill-sprint-front.gif"),
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // SIDE VIEWS (52 exercises with actual side-angle footage)
+  // ══════════════════════════════════════════════════════════════════════════
+
+  // ── Chest (side) ────────────────────────────────────────────────────────
+  "male-barbell-bench-press-side_KciuhbB": require("@/assets/exercise-gifs/male-barbell-bench-press-side_KciuhbB.gif"),
+  "male-dumbbell-chest-fly-side": require("@/assets/exercise-gifs/male-dumbbell-chest-fly-side.gif"),
+  "male-Barbell-barbell-incline-bench-press-side": require("@/assets/exercise-gifs/male-Barbell-barbell-incline-bench-press-side.gif"),
+  "male-dumbbell-incline-bench-press-side": require("@/assets/exercise-gifs/male-dumbbell-incline-bench-press-side.gif"),
+  "male-dumbbell-decline-bench-press-side": require("@/assets/exercise-gifs/male-dumbbell-decline-bench-press-side.gif"),
+  "male-cable-pec-fly-side": require("@/assets/exercise-gifs/male-cable-pec-fly-side.gif"),
+  "male-Dumbbells-dumbbell-weighted-dip-side": require("@/assets/exercise-gifs/male-Dumbbells-dumbbell-weighted-dip-side.gif"),
+
+  // ── Back (side) ─────────────────────────────────────────────────────────
+  "male-machine-pulldown-side": require("@/assets/exercise-gifs/male-machine-pulldown-side.gif"),
+  "male-machine-seated-cable-row-side": require("@/assets/exercise-gifs/male-machine-seated-cable-row-side.gif"),
+  "male-Barbell-barbell-deadlift-side": require("@/assets/exercise-gifs/male-Barbell-barbell-deadlift-side.gif"),
+  "male-Barbell-landmine-t-bar-rows-side": require("@/assets/exercise-gifs/male-Barbell-landmine-t-bar-rows-side.gif"),
+
+  // ── Shoulders (side) ────────────────────────────────────────────────────
+  "male-Barbell-barbell-overhead-press-side": require("@/assets/exercise-gifs/male-Barbell-barbell-overhead-press-side.gif"),
+  "male-Dumbbells-dumbbell-overhead-press-side": require("@/assets/exercise-gifs/male-Dumbbells-dumbbell-overhead-press-side.gif"),
+  "male-Dumbbells-dumbbell-arnold-press-side": require("@/assets/exercise-gifs/male-Dumbbells-dumbbell-arnold-press-side.gif"),
+  "male-Kettlebells-kettlebell-upright-row-side": require("@/assets/exercise-gifs/male-Kettlebells-kettlebell-upright-row-side.gif"),
+  "male-Dumbbells-dumbbell-shrug-side": require("@/assets/exercise-gifs/male-Dumbbells-dumbbell-shrug-side.gif"),
+
+  // ── Arms (side) ─────────────────────────────────────────────────────────
+  "male-Dumbbells-dumbbell-curl-side": require("@/assets/exercise-gifs/male-Dumbbells-dumbbell-curl-side.gif"),
+  "male-Barbell-barbell-curl-side": require("@/assets/exercise-gifs/male-Barbell-barbell-curl-side.gif"),
+  "male-Dumbbells-dumbbell-preacher-curl-side": require("@/assets/exercise-gifs/male-Dumbbells-dumbbell-preacher-curl-side.gif"),
+  "male-dumbbell-concentration-curl-side": require("@/assets/exercise-gifs/male-dumbbell-concentration-curl-side.gif"),
+  "male-Machine-machine-tricep-pushdown-side": require("@/assets/exercise-gifs/male-Machine-machine-tricep-pushdown-side.gif"),
+  "male-Bodyweight-bodyweight-tricep-extension-side": require("@/assets/exercise-gifs/male-Bodyweight-bodyweight-tricep-extension-side.gif"),
+  "male-Kettlebells-kettlebell-skull-crusher-side": require("@/assets/exercise-gifs/male-Kettlebells-kettlebell-skull-crusher-side.gif"),
+  "male-Barbell-barbell-close-grip-bench-press-side": require("@/assets/exercise-gifs/male-Barbell-barbell-close-grip-bench-press-side.gif"),
+
+  // ── Legs (side) ─────────────────────────────────────────────────────────
+  "male-Barbell-barbell-squat-side": require("@/assets/exercise-gifs/male-Barbell-barbell-squat-side.gif"),
+  "male-Barbell-barbell-front-squat-olympic-side": require("@/assets/exercise-gifs/male-Barbell-barbell-front-squat-olympic-side.gif"),
+  "male-dumbbell-goblet-squat-side": require("@/assets/exercise-gifs/male-dumbbell-goblet-squat-side.gif"),
+  "male-bodyweight-forward-lunge-side_4k0dfH0": require("@/assets/exercise-gifs/male-bodyweight-forward-lunge-side_4k0dfH0.gif"),
+  "male-machine-leg-extension-side": require("@/assets/exercise-gifs/male-machine-leg-extension-side.gif"),
+  "male-Barbell-barbell-romanian-deadlift-side_dnNh5UH": require("@/assets/exercise-gifs/male-Barbell-barbell-romanian-deadlift-side_dnNh5UH.gif"),
+  "male-barbell-stiff-leg-deadlift-side": require("@/assets/exercise-gifs/male-barbell-stiff-leg-deadlift-side.gif"),
+  "male-Barbell-barbell-sumo-deadlift-side": require("@/assets/exercise-gifs/male-Barbell-barbell-sumo-deadlift-side.gif"),
+  "male-Barbell-barbell-hip-thrust-side": require("@/assets/exercise-gifs/male-Barbell-barbell-hip-thrust-side.gif"),
+  "male-machine-standing-calf-raises-side": require("@/assets/exercise-gifs/male-machine-standing-calf-raises-side.gif"),
+  // male-Machine-machine-hack-squat-side: hosted on CDN (too large for bundle)
+  "male-Kettlebells-kettlebell-step-up-side": require("@/assets/exercise-gifs/male-Kettlebells-kettlebell-step-up-side.gif"),
+
+  // ── Core (side) ─────────────────────────────────────────────────────────
+  "male-bodyweight-forearm-plank-side": require("@/assets/exercise-gifs/male-bodyweight-forearm-plank-side.gif"),
+  "male-Bodyweight-elbow-side-plank-side": require("@/assets/exercise-gifs/male-Bodyweight-elbow-side-plank-side.gif"),
+  "male-bodyweight-crunch-side": require("@/assets/exercise-gifs/male-bodyweight-crunch-side.gif"),
+  "male-Bodyweight-situp-side": require("@/assets/exercise-gifs/male-Bodyweight-situp-side.gif"),
+  "male-Kettlebells-kettlebell-russian-twist-side": require("@/assets/exercise-gifs/male-Kettlebells-kettlebell-russian-twist-side.gif"),
+  "male-Bodyweight-mountain-climber-side": require("@/assets/exercise-gifs/male-Bodyweight-mountain-climber-side.gif"),
+  "male-bodyweight-hanging-knee-raises-side": require("@/assets/exercise-gifs/male-bodyweight-hanging-knee-raises-side.gif"),
+  "male-Bodyweight-bicycle-crunch-side": require("@/assets/exercise-gifs/male-Bodyweight-bicycle-crunch-side.gif"),
+  "male-Bodyweight-dead-bug-side": require("@/assets/exercise-gifs/male-Bodyweight-dead-bug-side.gif"),
+  "male-cable-woodchopper-side": require("@/assets/exercise-gifs/male-cable-woodchopper-side.gif"),
+
+  // ── Cardio / HIIT (side) ───────────────────────────────────────────────
+  "male-Bodyweight-burpee-side": require("@/assets/exercise-gifs/male-Bodyweight-burpee-side.gif"),
+  "male-Cardio-cardio-jumping-jacks-side": require("@/assets/exercise-gifs/male-Cardio-cardio-jumping-jacks-side.gif"),
+  "male-Kettlebells-kettlebell-swing-side": require("@/assets/exercise-gifs/male-Kettlebells-kettlebell-swing-side.gif"),
+  "male-Cardio-jump-rope-side": require("@/assets/exercise-gifs/male-Cardio-jump-rope-side.gif"),
+  "male-Cardio-treadmill-sprint-side": require("@/assets/exercise-gifs/male-Cardio-treadmill-sprint-side.gif"),
+};
+
+/**
+ * GIFs too large for the app bundle, hosted on CDN instead.
+ * The resolver falls back to these when no local asset is found.
+ */
+export const CDN_GIFS: Record<string, string> = {
+  "male-Machine-machine-hack-squat-side": "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/male-Machine-machine-hack-squat-side_0dcc3ea3.gif",
 };
 
 /**

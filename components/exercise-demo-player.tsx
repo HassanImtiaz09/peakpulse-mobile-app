@@ -106,7 +106,7 @@ export function ExerciseDemoPlayer({
           >
             <Image
               key={`img-${activeAngle}-${currentAsset}`}
-              source={currentAsset}
+              source={typeof currentAsset === "string" ? { uri: currentAsset } : currentAsset}
               style={StyleSheet.absoluteFill}
               contentFit="contain"
               cachePolicy="memory-disk"
@@ -223,7 +223,7 @@ export function ExerciseDemoPlayer({
           <View style={styles.fullscreenImageContainer}>
             <Image
               key={`fs-${activeAngle}-${currentAsset}`}
-              source={currentAsset}
+              source={typeof currentAsset === "string" ? { uri: currentAsset } : currentAsset}
               style={{ width: SCREEN_W, height: SCREEN_W }}
               contentFit="contain"
               cachePolicy="memory-disk"

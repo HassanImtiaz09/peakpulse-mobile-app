@@ -1725,3 +1725,34 @@
 ### Testing
 - [x] 0 TypeScript errors
 - [x] All tests pass
+
+## Round 78 — Side-View GIFs, Profile Enhancement, Feedback Mechanism
+
+### Side-View GIF Fix
+- [x] Investigate current side-view GIF mapping (duplicates front view)
+- [x] Download actual side-view exercise videos from MuscleWiki API
+- [x] Convert side-view videos to GIFs and save as local assets
+- [x] Update exercise-data.ts angleViews to reference correct side-view GIF assets
+- [x] Update gif-resolver.ts to map side-view URLs to correct local GIFs
+- [x] Verify side tab shows different angle from front tab
+
+### User Profile Enhancement
+- [x] Add subscription status card (Free/Basic/Advanced with expiry date)
+- [x] Add personal information section (name, email, age, height, weight, gender)
+- [x] Add editable personal info fields with save functionality
+- [x] Display membership since date and account type
+
+### In-App Feedback Mechanism
+- [x] Create feedback screen with issue type selector (Bug Report, Feature Request, General Feedback)
+- [x] Add text input for description with character counter
+- [x] Add optional screenshot attachment capability
+- [x] Add satisfaction rating (1-5 stars)
+- [x] Store feedback locally and send to server when available
+- [x] Add feedback link in Profile screen settings section
+
+### Testing
+- [x] 0 TypeScript errors
+- [x] All tests pass
+- [x] New tests for side-view GIF resolution
+- [x] New tests for feedback screen
+- [x] New tests for profile subscription display
