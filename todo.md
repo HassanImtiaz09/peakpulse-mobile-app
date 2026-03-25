@@ -1938,3 +1938,50 @@
 - [x] Tests for AI coach animation (3 tests)
 - [x] Tests for in-app purchase flow (6 tests)
 - [x] Tests for meal UI fixes (4 tests + 3 swap image tests)
+
+## Round 83 — Weekly Summary, Exercise Tracking, Social Sharing, Invite/Circles, Golden Backgrounds
+
+### Exercise Completion Tracking
+- [x] Track which exercises are completed for today's workout
+- [x] Dashboard workout card shows done vs remaining exercises
+- [x] Persist completion state in AsyncStorage
+- [x] Checkbox/tap to mark exercises as done
+
+### Weekly Progress Summary
+- [x] Create weekly-summary screen aggregating workout completion, calorie adherence, body composition
+- [x] Shareable infographic layout with stats overlay
+- [x] Include workout days completed, calories tracked, BF% change
+- [x] Share via system share sheet
+
+### Social Sharing (Before/After)
+- [x] Share before/after comparison photos
+- [x] Customisable watermark on shared images
+- [x] Progress statistics overlay (BF% change, days, streak)
+- [x] Use expo-sharing for native share sheet
+
+### Invite & Social Circles
+- [x] Generate invite link for users to invite friends
+- [x] Social circle creation and management
+- [x] Monitor friends' progress within the circle
+- [x] Challenge friends (fitness challenges)
+- [x] Social feed within the circle
+- [x] Activity feed within the circle
+
+### Golden-Themed HD Backgrounds
+- [x] Generate golden-themed HD backgrounds matching AI coach aesthetic
+- [x] Apply backgrounds to all main screens (dashboard, plans, scan, profile)
+- [x] Make dashboard tiles translucent to show background
+- [x] Consistent golden/warm colour theme throughout
+- [x] Replaced all Unsplash hero backgrounds with golden-themed CDN images
+
+### Testing
+- [x] 0 TypeScript errors
+- [x] All 59 tests pass (round83-features.test.ts)
+- [x] New tests for exercise completion tracking (3 tests)
+- [x] New tests for weekly summary (7 tests)
+- [x] New tests for social sharing (5 tests)
+- [x] New tests for invite/social circles (15 tests)
+- [x] New tests for golden backgrounds (7 tests)
+- [x] New tests for social card generator (7 tests)
+- [x] New tests for dashboard navigation (2 tests)
+- [x] New tests for social circle screen (9 tests)

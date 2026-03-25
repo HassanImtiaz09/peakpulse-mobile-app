@@ -18,7 +18,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { schedulePantryExpiryNotifications } from "@/lib/notification-service";
 import { shareShoppingListAsText, exportShoppingListPdf, type ShoppingExportItem } from "@/lib/shopping-pdf";
 
-const PANTRY_BG = "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&q=80";
+const PANTRY_BG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/golden-pantry-bg-NX2jKAH9PuCVwSuoatLKxc.webp";
 
 type ViewMode = "inventory" | "add" | "suggestions" | "shopping" | "cookagain" | "report";
 

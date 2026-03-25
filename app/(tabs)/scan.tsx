@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import {
   ScrollView, Text, View, TouchableOpacity, ActivityIndicator, Alert, Image, Platform, ImageBackground,
-  Modal, Dimensions, PanResponder,
+  Modal, Dimensions, PanResponder, Share,
 } from "react-native";
 import ReAnimated, {
   useSharedValue, useAnimatedStyle, interpolate, Extrapolation,
@@ -9,6 +9,7 @@ import ReAnimated, {
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 import * as ImagePicker from "expo-image-picker";
+import * as Haptics from "expo-haptics";
 
 import * as FileSystem from "expo-file-system/legacy";
 
@@ -90,6 +91,7 @@ export default function ScanScreen() {
   const [progressPhotos, setProgressPhotos] = useState<ProgressPhoto[]>([]);
   const [showProgressSection, setShowProgressSection] = useState(true);
   const [showSliderComparison, setShowSliderComparison] = useState(false);
+  const [showShareOverlay, setShowShareOverlay] = useState(false);
   const sliderX = useSharedValue(Dimensions.get("window").width / 2);
 
   // Load target transformation and progress photos
@@ -842,6 +844,22 @@ export default function ScanScreen() {
                           <MaterialIcons name="fullscreen" size={18} color={ICE} />
                           <Text style={{ color: ICE, fontFamily: "DMSans_700Bold", fontSize: 13 }}>Full-Screen Slider Compare</Text>
                         </TouchableOpacity>
+                        {/* Share before/after */}
+                        <TouchableOpacity
+                          onPress={() => {
+                            if (Platform.OS !== "web") Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                            setShowShareOverlay(true);
+                          }}
+                          style={{
+                            marginTop: 8, backgroundColor: "rgba(245,158,11,0.08)", borderRadius: 12,
+                            paddingVertical: 10, alignItems: "center",
+                            borderWidth: 1, borderColor: "rgba(245,158,11,0.25)",
+                            flexDirection: "row", justifyContent: "center", gap: 6,
+                          }}
+                        >
+                          <MaterialIcons name="share" size={18} color="#F59E0B" />
+                          <Text style={{ color: "#F59E0B", fontFamily: "DMSans_700Bold", fontSize: 13 }}>Share Progress</Text>
+                        </TouchableOpacity>
                       </View>
                     )}
 
@@ -1005,6 +1023,23 @@ export default function ScanScreen() {
         )}
       </ReAnimated.ScrollView>
 
+      {/* ── SHARE PROGRESS OVERLAY ── */}
+      {showShareOverlay && progressPhotos.length >= 2 && (
+        <Modal visible={showShareOverlay} animationType="slide" transparent>
+          <ShareProgressOverlay
+            beforeUri={progressPhotos[0].uri}
+            afterUri={progressPhotos[progressPhotos.length - 1].uri}
+            beforeDate={progressPhotos[0].date}
+            afterDate={progressPhotos[progressPhotos.length - 1].date}
+            bodyFatStart={targetTransformation?.current_bf}
+            bodyFatCurrent={targetTransformation?.current_bf}
+            bodyFatTarget={targetTransformation?.target_bf}
+            daysElapsed={Math.max(1, Math.round((new Date(progressPhotos[progressPhotos.length - 1].date).getTime() - new Date(progressPhotos[0].date).getTime()) / (1000 * 60 * 60 * 24)))}
+            onClose={() => setShowShareOverlay(false)}
+          />
+        </Modal>
+      )}
+
       {/* ── FULL-SCREEN BEFORE/AFTER SLIDER ── */}
       {showSliderComparison && progressPhotos.length >= 2 && (
         <Modal visible={showSliderComparison} animationType="fade" transparent={false}>
@@ -1147,6 +1182,232 @@ function BeforeAfterSlider({
           {Math.max(1, Math.round((new Date(afterDate).getTime() - new Date(beforeDate).getTime()) / (1000 * 60 * 60 * 24)))} days of progress
         </Text>
       </View>
+    </View>
+  );
+}
+
+/* ── Share Progress Overlay ── */
+function ShareProgressOverlay({
+  beforeUri, afterUri, beforeDate, afterDate,
+  bodyFatStart, bodyFatCurrent, bodyFatTarget, daysElapsed, onClose,
+}: {
+  beforeUri: string; afterUri: string;
+  beforeDate: string; afterDate: string;
+  bodyFatStart?: number; bodyFatCurrent?: number; bodyFatTarget?: number;
+  daysElapsed: number; onClose: () => void;
+}) {
+  const [watermarkEnabled, setWatermarkEnabled] = useState(true);
+  const [statsOverlay, setStatsOverlay] = useState(true);
+  const [sharing, setSharing] = useState(false);
+
+  const fmtDate = (d: string) => new Date(d).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+
+  const handleShare = async () => {
+    if (Platform.OS !== "web") Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    setSharing(true);
+    try {
+      // Build a text-based share message with stats
+      let msg = `My PeakPulse Transformation\n\n`;
+      msg += `Before: ${fmtDate(beforeDate)}\n`;
+      msg += `After: ${fmtDate(afterDate)}\n`;
+      msg += `${daysElapsed} days of progress\n`;
+      if (statsOverlay && bodyFatStart && bodyFatCurrent) {
+        msg += `\nBody Fat: ${bodyFatStart}% \u2192 ${bodyFatCurrent}%`;
+        if (bodyFatTarget) msg += ` (Target: ${bodyFatTarget}%)`;
+        msg += `\n`;
+      }
+      if (watermarkEnabled) {
+        msg += `\n#PeakPulse #FitnessTransformation #BodyTransformation`;
+      }
+      await Share.share({ message: msg });
+    } catch {}
+    setSharing(false);
+  };
+
+  return (
+    <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.92)" }}>
+      {/* Header */}
+      <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingHorizontal: 16, paddingTop: 60, paddingBottom: 16 }}>
+        <TouchableOpacity onPress={onClose} style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: "rgba(255,255,255,0.1)", alignItems: "center", justifyContent: "center" }}>
+          <MaterialIcons name="close" size={22} color="#fff" />
+        </TouchableOpacity>
+        <Text style={{ color: "#F1F5F9", fontFamily: "DMSans_700Bold", fontSize: 18 }}>Share Progress</Text>
+        <View style={{ width: 40 }} />
+      </View>
+
+      <ScrollView contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 40 }}>
+        {/* Preview card */}
+        <View style={{ backgroundColor: "#141A22", borderRadius: 24, overflow: "hidden", borderWidth: 2, borderColor: "rgba(245,158,11,0.25)" }}>
+          {/* Photos side by side */}
+          <View style={{ flexDirection: "row" }}>
+            <View style={{ flex: 1, position: "relative" }}>
+              <Image source={{ uri: beforeUri }} style={{ width: "100%", height: 240 }} resizeMode="cover" />
+              <View style={{ position: "absolute", top: 10, left: 10, backgroundColor: "rgba(248,113,113,0.9)", borderRadius: 8, paddingHorizontal: 8, paddingVertical: 3 }}>
+                <Text style={{ color: "#fff", fontFamily: "DMSans_700Bold", fontSize: 10 }}>BEFORE</Text>
+              </View>
+              <View style={{ position: "absolute", bottom: 8, left: 10, backgroundColor: "rgba(0,0,0,0.7)", borderRadius: 6, paddingHorizontal: 6, paddingVertical: 2 }}>
+                <Text style={{ color: "rgba(255,255,255,0.7)", fontSize: 9 }}>{fmtDate(beforeDate)}</Text>
+              </View>
+            </View>
+            <View style={{ width: 2, backgroundColor: "#F59E0B" }} />
+            <View style={{ flex: 1, position: "relative" }}>
+              <Image source={{ uri: afterUri }} style={{ width: "100%", height: 240 }} resizeMode="cover" />
+              <View style={{ position: "absolute", top: 10, left: 10, backgroundColor: "rgba(74,222,128,0.9)", borderRadius: 8, paddingHorizontal: 8, paddingVertical: 3 }}>
+                <Text style={{ color: "#fff", fontFamily: "DMSans_700Bold", fontSize: 10 }}>AFTER</Text>
+              </View>
+              <View style={{ position: "absolute", bottom: 8, left: 10, backgroundColor: "rgba(0,0,0,0.7)", borderRadius: 6, paddingHorizontal: 6, paddingVertical: 2 }}>
+                <Text style={{ color: "rgba(255,255,255,0.7)", fontSize: 9 }}>{fmtDate(afterDate)}</Text>
+              </View>
+            </View>
+          </View>
+
+          {/* Stats overlay */}
+          {statsOverlay && (
+            <View style={{ padding: 16, gap: 10 }}>
+              <View style={{ flexDirection: "row", justifyContent: "center", alignItems: "center", gap: 8 }}>
+                <MaterialIcons name="schedule" size={14} color="#F59E0B" />
+                <Text style={{ color: "#FBBF24", fontFamily: "DMSans_700Bold", fontSize: 14 }}>{daysElapsed} Days of Progress</Text>
+              </View>
+              {bodyFatStart && bodyFatCurrent ? (
+                <View style={{ flexDirection: "row", justifyContent: "space-around", marginTop: 4 }}>
+                  <View style={{ alignItems: "center" }}>
+                    <Text style={{ color: "#64748B", fontSize: 10, fontFamily: "DMSans_500Medium" }}>START</Text>
+                    <Text style={{ color: "#F87171", fontFamily: "SpaceMono_700Bold", fontSize: 20 }}>{bodyFatStart}%</Text>
+                  </View>
+                  <View style={{ alignItems: "center", justifyContent: "center" }}>
+                    <MaterialIcons name="arrow-forward" size={18} color="#64748B" />
+                  </View>
+                  <View style={{ alignItems: "center" }}>
+                    <Text style={{ color: "#64748B", fontSize: 10, fontFamily: "DMSans_500Medium" }}>CURRENT</Text>
+                    <Text style={{ color: "#22D3EE", fontFamily: "SpaceMono_700Bold", fontSize: 20 }}>{bodyFatCurrent}%</Text>
+                  </View>
+                  {bodyFatTarget ? (
+                    <>
+                      <View style={{ alignItems: "center", justifyContent: "center" }}>
+                        <MaterialIcons name="arrow-forward" size={18} color="#64748B" />
+                      </View>
+                      <View style={{ alignItems: "center" }}>
+                        <Text style={{ color: "#64748B", fontSize: 10, fontFamily: "DMSans_500Medium" }}>TARGET</Text>
+                        <Text style={{ color: "#F59E0B", fontFamily: "SpaceMono_700Bold", fontSize: 20 }}>{bodyFatTarget}%</Text>
+                      </View>
+                    </>
+                  ) : null}
+                </View>
+              ) : null}
+            </View>
+          )}
+
+          {/* Watermark */}
+          {watermarkEnabled && (
+            <View style={{ paddingVertical: 12, borderTopWidth: 1, borderTopColor: "rgba(245,158,11,0.1)", alignItems: "center" }}>
+              <Text style={{ color: "#F59E0B", fontFamily: "DMSans_700Bold", fontSize: 12, letterSpacing: 3 }}>PEAKPULSE AI</Text>
+              <Text style={{ color: "#64748B", fontSize: 9, marginTop: 2 }}>Precision Performance</Text>
+            </View>
+          )}
+        </View>
+
+        {/* Options */}
+        <View style={{ marginTop: 20, gap: 12 }}>
+          <Text style={{ color: "#64748B", fontFamily: "DMSans_600SemiBold", fontSize: 10, letterSpacing: 1.5, textTransform: "uppercase" }}>CUSTOMIZE</Text>
+
+          {/* Watermark toggle */}
+          <TouchableOpacity
+            onPress={() => setWatermarkEnabled(!watermarkEnabled)}
+            style={{
+              flexDirection: "row", alignItems: "center", justifyContent: "space-between",
+              backgroundColor: "#141A22", borderRadius: 14, padding: 14,
+              borderWidth: 1, borderColor: "rgba(30,41,59,0.6)",
+            }}
+          >
+            <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+              <MaterialIcons name="branding-watermark" size={20} color={watermarkEnabled ? "#F59E0B" : "#64748B"} />
+              <Text style={{ color: "#F1F5F9", fontFamily: "DMSans_600SemiBold", fontSize: 14 }}>PeakPulse Watermark</Text>
+            </View>
+            <View style={{
+              width: 44, height: 24, borderRadius: 12,
+              backgroundColor: watermarkEnabled ? "#F59E0B" : "rgba(255,255,255,0.1)",
+              justifyContent: "center", paddingHorizontal: 2,
+            }}>
+              <View style={{
+                width: 20, height: 20, borderRadius: 10, backgroundColor: "#fff",
+                alignSelf: watermarkEnabled ? "flex-end" : "flex-start",
+              }} />
+            </View>
+          </TouchableOpacity>
+
+          {/* Stats overlay toggle */}
+          <TouchableOpacity
+            onPress={() => setStatsOverlay(!statsOverlay)}
+            style={{
+              flexDirection: "row", alignItems: "center", justifyContent: "space-between",
+              backgroundColor: "#141A22", borderRadius: 14, padding: 14,
+              borderWidth: 1, borderColor: "rgba(30,41,59,0.6)",
+            }}
+          >
+            <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+              <MaterialIcons name="analytics" size={20} color={statsOverlay ? "#22D3EE" : "#64748B"} />
+              <Text style={{ color: "#F1F5F9", fontFamily: "DMSans_600SemiBold", fontSize: 14 }}>Progress Stats</Text>
+            </View>
+            <View style={{
+              width: 44, height: 24, borderRadius: 12,
+              backgroundColor: statsOverlay ? "#22D3EE" : "rgba(255,255,255,0.1)",
+              justifyContent: "center", paddingHorizontal: 2,
+            }}>
+              <View style={{
+                width: 20, height: 20, borderRadius: 10, backgroundColor: "#fff",
+                alignSelf: statsOverlay ? "flex-end" : "flex-start",
+              }} />
+            </View>
+          </TouchableOpacity>
+        </View>
+
+        {/* Share button */}
+        <TouchableOpacity
+          onPress={handleShare}
+          disabled={sharing}
+          style={{
+            marginTop: 24, backgroundColor: "#F59E0B", borderRadius: 16,
+            paddingVertical: 16, alignItems: "center",
+            flexDirection: "row", justifyContent: "center", gap: 8,
+            opacity: sharing ? 0.6 : 1,
+          }}
+        >
+          {sharing ? (
+            <ActivityIndicator size="small" color="#0A0E14" />
+          ) : (
+            <>
+              <MaterialIcons name="share" size={20} color="#0A0E14" />
+              <Text style={{ color: "#0A0E14", fontFamily: "DMSans_700Bold", fontSize: 16 }}>Share Transformation</Text>
+            </>
+          )}
+        </TouchableOpacity>
+
+        {/* Copy text button */}
+        <TouchableOpacity
+          onPress={async () => {
+            if (Platform.OS !== "web") Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            let msg = `My PeakPulse Transformation - ${daysElapsed} days\n`;
+            if (bodyFatStart && bodyFatCurrent) msg += `Body Fat: ${bodyFatStart}% \u2192 ${bodyFatCurrent}%\n`;
+            msg += `#PeakPulse #FitnessTransformation`;
+            try {
+              const Clipboard = await import("expo-clipboard");
+              await Clipboard.setStringAsync(msg);
+              Alert.alert("Copied!", "Progress text copied to clipboard.");
+            } catch {
+              Alert.alert("Info", "Use the Share button to share your progress.");
+            }
+          }}
+          style={{
+            marginTop: 10, backgroundColor: "rgba(255,255,255,0.06)", borderRadius: 14,
+            paddingVertical: 12, alignItems: "center",
+            flexDirection: "row", justifyContent: "center", gap: 6,
+            borderWidth: 1, borderColor: "rgba(255,255,255,0.08)",
+          }}
+        >
+          <MaterialIcons name="content-copy" size={16} color="#64748B" />
+          <Text style={{ color: "#64748B", fontFamily: "DMSans_600SemiBold", fontSize: 13 }}>Copy Text to Clipboard</Text>
+        </TouchableOpacity>
+      </ScrollView>
     </View>
   );
 }

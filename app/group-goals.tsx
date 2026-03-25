@@ -28,7 +28,7 @@ import {
 } from "@/lib/group-goals";
 import { loadOrCreateSocialCircle, type FriendProfile } from "@/lib/social-circle";
 
-const HERO_BG = "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=800&q=80";
+const HERO_BG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/golden-social-bg-6XESYMXaHwooBovbKXUgYi.webp";
 
 type TabId = "active" | "create" | "history";
 

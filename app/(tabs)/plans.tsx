@@ -22,6 +22,7 @@ import { getTodayTargetMuscles } from "@/lib/muscle-balance";
 import { usePantry } from "@/lib/pantry-context";
 import { useCalories } from "@/lib/calorie-context";
 import { PremiumFeatureTeaser } from "@/components/premium-feature-banner";
+import { useExerciseCompletion } from "@/lib/exercise-completion-context";
 
 const WORKOUT_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/yauqLuTRvanJUzsJ.jpg";
 const MEAL_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/yauqLuTRvanJUzsJ.jpg";
@@ -1170,7 +1171,7 @@ function WorkoutDayCard({ day, onPress, isCompleted, onToggleComplete, isToday, 
             <Text style={{ color: BG, fontFamily: "DMSans_700Bold", fontSize: 13 }}>START WORKOUT →</Text>
           </TouchableOpacity>
           {day.exercises?.map((ex: any, idx: number) => (
-            <ExercisePreviewCard key={idx} exercise={ex} onSwap={onExerciseSwap ? () => onExerciseSwap(ex, day.focus ?? day.day) : undefined} />
+            <ExercisePreviewCard key={idx} exercise={ex} isToday={isToday} onSwap={onExerciseSwap ? () => onExerciseSwap(ex, day.focus ?? day.day) : undefined} />
           ))}
         </View>
       )}
@@ -1186,26 +1187,39 @@ function WorkoutDayCard({ day, onPress, isCompleted, onToggleComplete, isToday, 
   );
 }
 
-function ExercisePreviewCard({ exercise, onSwap }: { exercise: any; onSwap?: () => void }) {
+function ExercisePreviewCard({ exercise, onSwap, isToday }: { exercise: any; onSwap?: () => void; isToday?: boolean }) {
   const [showVideo, setShowVideo] = useState(false);
   const demo = getExerciseDemo(exercise.name ?? "");
+  const { isCompleted, toggleExercise } = useExerciseCompletion();
+  const today = new Date().toISOString().split("T")[0];
+  const done = isToday ? isCompleted(today, exercise.name ?? "") : false;
 
   return (
-    <View style={{ backgroundColor: SURFACE, borderRadius: 14, borderWidth: 1, borderColor: "rgba(30,41,59,0.6)", overflow: "hidden" }}>
+    <View style={{ backgroundColor: done ? "rgba(16,185,129,0.08)" : SURFACE, borderRadius: 14, borderWidth: 1, borderColor: done ? "rgba(16,185,129,0.3)" : "rgba(30,41,59,0.6)", overflow: "hidden" }}>
       <View style={{ padding: 12 }}>
         <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start" }}>
-          <View style={{ flex: 1 }}>
-            <Text style={{ color: FG, fontFamily: "DMSans_700Bold", fontSize: 14 }}>{exercise.name}</Text>
-            <View style={{ flexDirection: "row", gap: 12, marginTop: 4 }}>
-              <Text style={{ color: GOLD, fontSize: 12 }}>{exercise.sets} sets</Text>
-              <Text style={{ color: CREAM, fontSize: 12 }}>{exercise.reps} reps</Text>
-              {exercise.rest && <View style={{ flexDirection: "row", alignItems: "center", gap: 2 }}><MaterialIcons name="timer" size={11} color={MUTED} /><Text style={{ color: MUTED, fontSize: 12 }}>{exercise.rest}</Text></View>}
-            </View>
-            {exercise.muscleGroup && (
-              <View style={{ marginTop: 4, alignSelf: "flex-start", backgroundColor: GOLD_DIM, borderRadius: 6, paddingHorizontal: 8, paddingVertical: 2 }}>
-                <Text style={{ color: MUTED, fontSize: 10 }}>{exercise.muscleGroup}</Text>
-              </View>
+          <View style={{ flexDirection: "row", alignItems: "flex-start", flex: 1, gap: 10 }}>
+            {isToday && (
+              <TouchableOpacity
+                onPress={() => toggleExercise(today, exercise.name ?? "")}
+                style={{ width: 26, height: 26, borderRadius: 13, borderWidth: 2, borderColor: done ? "#10B981" : MUTED, backgroundColor: done ? "#10B981" : "transparent", alignItems: "center", justifyContent: "center", marginTop: 2 }}
+              >
+                {done && <MaterialIcons name="check" size={16} color="#fff" />}
+              </TouchableOpacity>
             )}
+            <View style={{ flex: 1 }}>
+              <Text style={{ color: done ? "#10B981" : FG, fontFamily: "DMSans_700Bold", fontSize: 14, textDecorationLine: done ? "line-through" : "none" }}>{exercise.name}</Text>
+              <View style={{ flexDirection: "row", gap: 12, marginTop: 4 }}>
+                <Text style={{ color: GOLD, fontSize: 12 }}>{exercise.sets} sets</Text>
+                <Text style={{ color: CREAM, fontSize: 12 }}>{exercise.reps} reps</Text>
+                {exercise.rest && <View style={{ flexDirection: "row", alignItems: "center", gap: 2 }}><MaterialIcons name="timer" size={11} color={MUTED} /><Text style={{ color: MUTED, fontSize: 12 }}>{exercise.rest}</Text></View>}
+              </View>
+              {exercise.muscleGroup && (
+                <View style={{ marginTop: 4, alignSelf: "flex-start", backgroundColor: GOLD_DIM, borderRadius: 6, paddingHorizontal: 8, paddingVertical: 2 }}>
+                  <Text style={{ color: MUTED, fontSize: 10 }}>{exercise.muscleGroup}</Text>
+                </View>
+              )}
+            </View>
           </View>
           <View style={{ flexDirection: "row", gap: 6 }}>
             {onSwap && (

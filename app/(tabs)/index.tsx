@@ -33,6 +33,7 @@ import { TrendChart, PRProgressChart, type TrendDataPoint } from "@/components/t
 import { getPRSummary, type PRSummary } from "@/lib/personal-records";
 import { useUserProfile } from "@/lib/user-profile-context";
 import { PremiumFeatureBanner, PremiumFeatureTeaser } from "@/components/premium-feature-banner";
+import { useExerciseCompletion } from "@/lib/exercise-completion-context";
 
 import {
   getStreakData, evaluateWeek, getWeekNeedingEvaluation, getCurrentMilestone,
@@ -138,6 +139,7 @@ const QUICK_ACTION_GROUPS: ActionGroup[] = [
     actions: [
       { icon: "check-circle", label: "Daily Check-In", route: "/daily-checkin", gated: false },
       { icon: "flag", label: "Weekly Goals", route: "/weekly-goals", gated: false },
+      { icon: "bar-chart", label: "Weekly Summary", route: "/weekly-summary", gated: false },
       { icon: "trending-up", label: "Progress Photos", route: "/progress-photos", gated: true, feature: "progress_photos", tier: "basic", desc: "Track your body transformation with progress photos — Basic plan and above." },
       { icon: "watch", label: "Wearables", route: "/wearable-sync", gated: true, feature: "wearable_sync", tier: "basic", desc: "Sync your fitness wearable with PeakPulse — Basic plan and above." },
     ],
@@ -438,6 +440,7 @@ export default function HomeScreen() {
     })();
   }, [canUse, wearableData.stats.steps, wearableData.stats.totalCaloriesBurnt]);
 
+  const exerciseCompletion = useExerciseCompletion();
   const { displayName: savedDisplayName, profilePhotoUri } = useUserProfile();
   const displayName = savedDisplayName?.split(" ")[0] ?? user?.name?.split(" ")[0] ?? guestProfile?.name?.split(" ")[0] ?? "Athlete";
 
@@ -739,9 +742,26 @@ export default function HomeScreen() {
                   <View style={styles.planCardOverlay}>
                     <Text style={styles.cardEyebrow}>{workoutPlan.schedule[0].day?.toUpperCase()}</Text>
                     <Text style={styles.planCardTitle}>{workoutPlan.schedule[0].focus}</Text>
-                    <Text style={styles.planCardSub}>{workoutPlan.schedule[0].exercises?.length ?? 0} exercises</Text>
+                    {(() => {
+                      const exList = (workoutPlan.schedule[0].exercises ?? []).map((e: any) => e.name ?? e);
+                      const today = new Date().toISOString().split("T")[0];
+                      const done = exerciseCompletion.getCompletedCount(today, exList);
+                      const total = exList.length;
+                      const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+                      return (
+                        <View style={{ marginTop: 8 }}>
+                          <View style={{ flexDirection: "row", justifyContent: "space-between", marginBottom: 6 }}>
+                            <Text style={{ color: SF.muted, fontFamily: "DMSans_500Medium", fontSize: 12 }}>{done}/{total} exercises done</Text>
+                            <Text style={{ color: pct === 100 ? SF.mint : SF.gold, fontFamily: "DMSans_700Bold", fontSize: 12 }}>{pct}%</Text>
+                          </View>
+                          <View style={{ height: 6, backgroundColor: "rgba(255,255,255,0.1)", borderRadius: 3, overflow: "hidden" }}>
+                            <View style={{ height: 6, borderRadius: 3, width: `${pct}%` as any, backgroundColor: pct === 100 ? SF.mint : SF.gold }} />
+                          </View>
+                        </View>
+                      );
+                    })()}
                     <TouchableOpacity style={styles.planCardBtn} onPress={() => router.push("/(tabs)/plans" as any)}>
-                      <Text style={styles.planCardBtnText}>Start Workout</Text>
+                      <Text style={styles.planCardBtnText}>{exerciseCompletion.getTodayCompletedCount((workoutPlan.schedule[0].exercises ?? []).map((e: any) => e.name ?? e)) === (workoutPlan.schedule[0].exercises?.length ?? 0) && (workoutPlan.schedule[0].exercises?.length ?? 0) > 0 ? "Workout Complete \u2713" : "Start Workout"}</Text>
                       <MaterialIcons name="arrow-forward" size={16} color={SF.bg} />
                     </TouchableOpacity>
                   </View>
@@ -1163,6 +1183,18 @@ export default function HomeScreen() {
                       {goalProgress.daysRemaining} day{goalProgress.daysRemaining !== 1 ? "s" : ""} remaining this week
                     </Text>
                   </View>
+                  <TouchableOpacity
+                    onPress={() => router.push("/weekly-summary" as any)}
+                    style={{
+                      marginTop: 12, flexDirection: "row", alignItems: "center", justifyContent: "center",
+                      gap: 6, backgroundColor: "rgba(245,158,11,0.08)", borderRadius: 12,
+                      paddingVertical: 10, borderWidth: 1, borderColor: "rgba(245,158,11,0.2)",
+                    }}
+                  >
+                    <MaterialIcons name="bar-chart" size={16} color="#F59E0B" />
+                    <Text style={{ color: "#F59E0B", fontFamily: "DMSans_700Bold", fontSize: 13 }}>View Weekly Summary</Text>
+                    <MaterialIcons name="chevron-right" size={16} color="#F59E0B" />
+                  </TouchableOpacity>
                 </View>
 
                 {/* ── Streak Badge ── */}

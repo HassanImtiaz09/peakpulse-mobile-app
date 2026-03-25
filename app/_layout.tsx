@@ -35,6 +35,7 @@ import { initWeeklyDigest } from "@/lib/weekly-health-digest";
 
 import { FavoritesProvider } from "@/lib/favorites-context";
 import { UserProfileProvider } from "@/lib/user-profile-context";
+import { ExerciseCompletionProvider } from "@/lib/exercise-completion-context";
 
 // Define background task in global scope (required by expo-task-manager)
 defineBackgroundHealthSyncTask();
@@ -256,6 +257,7 @@ export default function RootLayout() {
       <FavoritesProvider>
       <CalorieProvider>
       <PantryProvider>
+      <ExerciseCompletionProvider>
       <WearableProvider>
       <trpc.Provider client={trpcClient} queryClient={queryClient}>
         <QueryClientProvider client={queryClient}>
@@ -271,6 +273,7 @@ export default function RootLayout() {
         </QueryClientProvider>
       </trpc.Provider>
       </WearableProvider>
+      </ExerciseCompletionProvider>
       </PantryProvider>
       </CalorieProvider>
       </FavoritesProvider>

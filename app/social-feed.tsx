@@ -20,7 +20,7 @@ import { trpc } from "@/lib/trpc";
 import { useGuestAuth } from "@/lib/guest-auth";
 import { FeatureGate } from "@/components/feature-gate";
 
-const HERO_BG = "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&q=80";
+const HERO_BG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/golden-social-bg-6XESYMXaHwooBovbKXUgYi.webp";
 
 type PostType = "progress" | "achievement" | "challenge";
 

@@ -32,7 +32,7 @@ import {
   type FriendProfile,
 } from "@/lib/social-circle";
 
-const HERO_BG = "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80";
+const HERO_BG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/golden-challenge-bg-2DXBpSZwN3LCroCHSRyD4K.webp";
 
 type TabId = "active" | "completed" | "new";
 
