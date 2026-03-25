@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, Modal, ActivityIndicator, Alert } from "react-native";
+import { View, Text, TouchableOpacity, Modal, ActivityIndicator, Alert, Linking } from "react-native";
 import { useRouter } from "expo-router";
 import { useSubscription } from "@/hooks/use-subscription";
+import { useGuestAuth } from "@/lib/guest-auth";
 
 interface PaywallModalProps {
   visible: boolean;
@@ -29,7 +30,11 @@ export function PaywallModal({
 }: PaywallModalProps) {
   const router = useRouter();
   const subscription = useSubscription();
+  const { isGuest, guestProfile } = useGuestAuth();
+  const isAuthenticated = isGuest || !!guestProfile;
   const [trialLoading, setTrialLoading] = useState(false);
+  const [purchaseLoading, setPurchaseLoading] = useState(false);
+  const [billingCycle, setBillingCycle] = useState<"monthly" | "annual">("annual");
 
   const price = TIER_PRICES[requiredTier];
   const label = TIER_LABELS[requiredTier];
@@ -118,6 +123,27 @@ export function PaywallModal({
             </View>
           )}
 
+          {/* Billing cycle toggle */}
+          {!showTrialCTA && (
+            <View style={{ flexDirection: "row", backgroundColor: "#141A22", borderRadius: 10, padding: 3, marginBottom: 14 }}>
+              <TouchableOpacity
+                style={{ flex: 1, paddingVertical: 8, alignItems: "center", borderRadius: 8, backgroundColor: billingCycle === "monthly" ? color : "transparent" }}
+                onPress={() => setBillingCycle("monthly")}
+              >
+                <Text style={{ color: billingCycle === "monthly" ? "#F1F5F9" : "#B45309", fontFamily: "DMSans_600SemiBold", fontSize: 12 }}>Monthly</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={{ flex: 1, paddingVertical: 8, alignItems: "center", borderRadius: 8, backgroundColor: billingCycle === "annual" ? color : "transparent", flexDirection: "row", justifyContent: "center", gap: 4 }}
+                onPress={() => setBillingCycle("annual")}
+              >
+                <Text style={{ color: billingCycle === "annual" ? "#F1F5F9" : "#B45309", fontFamily: "DMSans_600SemiBold", fontSize: 12 }}>Annual</Text>
+                <View style={{ backgroundColor: "#22C55E30", borderRadius: 4, paddingHorizontal: 4, paddingVertical: 1 }}>
+                  <Text style={{ color: "#22C55E", fontFamily: "DMSans_700Bold", fontSize: 8 }}>-30%</Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+          )}
+
           {/* Primary CTA */}
           {showTrialCTA ? (
             <TouchableOpacity
@@ -135,26 +161,57 @@ export function PaywallModal({
             </TouchableOpacity>
           ) : (
             <TouchableOpacity
-              style={{ backgroundColor: color, borderRadius: 16, paddingVertical: 16, alignItems: "center", marginBottom: 10 }}
-              onPress={() => { onClose(); router.push("/subscription" as any); }}
+              style={{ backgroundColor: color, borderRadius: 16, paddingVertical: 16, alignItems: "center", marginBottom: 10, opacity: purchaseLoading ? 0.7 : 1 }}
+              onPress={async () => {
+                if (!isAuthenticated) {
+                  Alert.alert("Sign In Required", "Please sign in or create an account to subscribe.", [
+                    { text: "Cancel", style: "cancel" },
+                    { text: "Sign In", onPress: () => { onClose(); router.push("/login" as any); } },
+                  ]);
+                  return;
+                }
+                setPurchaseLoading(true);
+                try {
+                  const stripeUrl = requiredTier === "basic"
+                    ? (billingCycle === "monthly" ? process.env.EXPO_PUBLIC_STRIPE_BASIC_MONTHLY_URL : process.env.EXPO_PUBLIC_STRIPE_BASIC_ANNUAL_URL)
+                    : (billingCycle === "monthly" ? process.env.EXPO_PUBLIC_STRIPE_ADVANCED_MONTHLY_URL : process.env.EXPO_PUBLIC_STRIPE_ADVANCED_ANNUAL_URL);
+                  if (stripeUrl) {
+                    await Linking.openURL(stripeUrl);
+                    onClose();
+                  } else {
+                    onClose();
+                    router.push("/subscription" as any);
+                  }
+                } catch {
+                  Alert.alert("Error", "Could not open payment page. Please try again.");
+                } finally {
+                  setPurchaseLoading(false);
+                }
+              }}
+              disabled={purchaseLoading}
             >
-              <Text style={{ color: "#F1F5F9", fontFamily: "BebasNeue_400Regular", fontSize: 16 }}>
-                Upgrade to {label} ⚡
-              </Text>
+              {purchaseLoading ? (
+                <ActivityIndicator color="#F1F5F9" />
+              ) : (
+                <>
+                  <Text style={{ color: "#F1F5F9", fontFamily: "BebasNeue_400Regular", fontSize: 16 }}>
+                    Subscribe to {label} — {billingCycle === "annual" ? price.annual : price.monthly}/mo ⚡
+                  </Text>
+                  <Text style={{ color: "rgba(255,255,255,0.6)", fontSize: 10, marginTop: 2 }}>Secure payment via Stripe · Cancel anytime</Text>
+                </>
+              )}
             </TouchableOpacity>
           )}
 
-          {/* Secondary CTA — view plans (only when trial shown) */}
-          {showTrialCTA && (
-            <TouchableOpacity
-              style={{ alignItems: "center", paddingVertical: 8, marginBottom: 4 }}
-              onPress={() => { onClose(); router.push("/subscription" as any); }}
-            >
-              <Text style={{ color: "#EA580C", fontFamily: "DMSans_600SemiBold", fontSize: 13 }}>
-                View all plans instead →
-              </Text>
-            </TouchableOpacity>
-          )}
+          {/* Secondary CTA — view all plans */}
+          <TouchableOpacity
+            style={{ alignItems: "center", paddingVertical: 8, marginBottom: 4 }}
+            onPress={() => { onClose(); router.push("/subscription" as any); }}
+          >
+            <Text style={{ color: "#EA580C", fontFamily: "DMSans_600SemiBold", fontSize: 13 }}>
+              {showTrialCTA ? "View all plans instead →" : "Compare all plans →"}
+            </Text>
+          </TouchableOpacity>
 
           <TouchableOpacity style={{ alignItems: "center", paddingVertical: 10 }} onPress={onClose}>
             <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 14 }}>Maybe later</Text>

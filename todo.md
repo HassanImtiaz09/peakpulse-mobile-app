@@ -1888,3 +1888,53 @@
 - [x] Tests for premium feature promotion (7 tests)
 - [x] Tests for push notification reminders (10 tests)
 - [x] Integration checks (3 tests)
+
+## Round 82 — Dashboard Redesign, Before/After Slider, IAP, Streak, AI Coach Animation, Meal Fixes
+
+### Dashboard Redesign
+- [x] Fix greeting to say "HI, [Username]" instead of "YOUR [Name]"
+- [x] Move today's workout plan and meal plan to the top of dashboard
+- [x] Show upcoming meal prominently in the nutrition section
+- [x] Calorie progress section follows workout/meal
+- [x] Weekly goals, workouts, streak, meals section present
+- [x] Created separate "Progress Photos" tile with streak counter and camera CTA
+- [x] Reordered: Hero → Workout → Nutrition → Stats → Calories → Ring → Goals → Photos → AI Coach
+
+### Before/After Slider Comparison
+- [x] Built full-screen before/after slider with PanResponder drag gesture
+- [x] Interactive transformation view with draggable handle and vertical divider line
+- [x] Shows first and latest progress photos with BEFORE/AFTER labels and days elapsed
+- [x] Slider clips the before image to reveal the after image underneath
+
+### Streak Tracker
+- [x] Streak counter computed from consecutive days of progress photo submissions
+- [x] Displayed on dashboard in the Progress Photos tile with flame icon
+- [x] Loaded from AsyncStorage @progress_photos with date-based streak calculation
+
+### Animated AI Coach Icon
+- [x] Generated AI gym trainer/coach character icon (ai-coach-icon.png)
+- [x] Added pulsing glow animation with withRepeat + withTiming
+- [x] Prominent card placement on dashboard with gradient background and animated shadow
+
+### In-App Purchase Flow
+- [x] Paywall modal now has billing cycle toggle (monthly/annual) with -30% badge
+- [x] Direct "Subscribe" button with price that opens Stripe checkout via Linking.openURL
+- [x] Authentication check before purchase with sign-in prompt
+- [x] "Compare all plans" secondary CTA to full subscription page
+- [x] Secure payment via Stripe badge for trust
+
+### Meal UI Fixes
+- [x] sanitizeMealName function removes unicode bullets (\u00b7, \u2022, etc.)
+- [x] Applied to MealCard meal.name and swap modal alt.name
+- [x] Swap suggestions use unique Unsplash food photos (10 curated IDs rotated per suggestion)
+- [x] Server returns imageUrl per alternative; client falls back to getMealPhotoUrl
+
+### Testing
+- [x] 0 TypeScript errors
+- [x] All 29 new tests pass (round82-dashboard-slider-streak-iap.test.ts)
+- [x] Tests for dashboard redesign (6 tests)
+- [x] Tests for before/after slider (4 tests)
+- [x] Tests for streak tracker (3 tests)
+- [x] Tests for AI coach animation (3 tests)
+- [x] Tests for in-app purchase flow (6 tests)
+- [x] Tests for meal UI fixes (4 tests + 3 swap image tests)

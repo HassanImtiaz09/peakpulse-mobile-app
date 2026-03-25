@@ -89,6 +89,8 @@ export default function ScanScreen() {
   const [targetTransformation, setTargetTransformation] = useState<any>(null);
   const [progressPhotos, setProgressPhotos] = useState<ProgressPhoto[]>([]);
   const [showProgressSection, setShowProgressSection] = useState(true);
+  const [showSliderComparison, setShowSliderComparison] = useState(false);
+  const sliderX = useSharedValue(Dimensions.get("window").width / 2);
 
   // Load target transformation and progress photos
   React.useEffect(() => {
@@ -824,6 +826,22 @@ export default function ScanScreen() {
                             {Math.max(1, Math.round((new Date(progressPhotos[progressPhotos.length - 1].date).getTime() - new Date(progressPhotos[0].date).getTime()) / (1000 * 60 * 60 * 24)))} days of progress
                           </Text>
                         </View>
+                        {/* Full-screen slider button */}
+                        <TouchableOpacity
+                          onPress={() => {
+                            sliderX.value = Dimensions.get("window").width / 2;
+                            setShowSliderComparison(true);
+                          }}
+                          style={{
+                            marginTop: 12, backgroundColor: ICE_DIM, borderRadius: 12,
+                            paddingVertical: 10, alignItems: "center",
+                            borderWidth: 1, borderColor: ICE_BORDER,
+                            flexDirection: "row", justifyContent: "center", gap: 6,
+                          }}
+                        >
+                          <MaterialIcons name="fullscreen" size={18} color={ICE} />
+                          <Text style={{ color: ICE, fontFamily: "DMSans_700Bold", fontSize: 13 }}>Full-Screen Slider Compare</Text>
+                        </TouchableOpacity>
                       </View>
                     )}
 
@@ -986,6 +1004,149 @@ export default function ScanScreen() {
           </View>
         )}
       </ReAnimated.ScrollView>
+
+      {/* ── FULL-SCREEN BEFORE/AFTER SLIDER ── */}
+      {showSliderComparison && progressPhotos.length >= 2 && (
+        <Modal visible={showSliderComparison} animationType="fade" transparent={false}>
+          <BeforeAfterSlider
+            beforeUri={progressPhotos[0].uri}
+            afterUri={progressPhotos[progressPhotos.length - 1].uri}
+            beforeDate={progressPhotos[0].date}
+            afterDate={progressPhotos[progressPhotos.length - 1].date}
+            onClose={() => setShowSliderComparison(false)}
+          />
+        </Modal>
+      )}
+    </View>
+  );
+}
+
+/* ── Before/After Slider Component ── */
+function BeforeAfterSlider({
+  beforeUri, afterUri, beforeDate, afterDate, onClose,
+}: {
+  beforeUri: string; afterUri: string;
+  beforeDate: string; afterDate: string;
+  onClose: () => void;
+}) {
+  const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get("window");
+  const sliderPos = useSharedValue(SCREEN_W / 2);
+
+  const panResponder = React.useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onMoveShouldSetPanResponder: () => true,
+      onPanResponderGrant: () => {},
+      onPanResponderMove: (_, gestureState) => {
+        const newX = Math.max(20, Math.min(SCREEN_W - 20, gestureState.moveX));
+        sliderPos.value = newX;
+      },
+    })
+  ).current;
+
+  const clipStyle = useAnimatedStyle(() => ({
+    width: sliderPos.value,
+    overflow: "hidden" as const,
+  }));
+
+  const handleStyle = useAnimatedStyle(() => ({
+    left: sliderPos.value - 20,
+  }));
+
+  const lineStyle = useAnimatedStyle(() => ({
+    left: sliderPos.value - 1,
+  }));
+
+  return (
+    <View style={{ flex: 1, backgroundColor: "#000" }}>
+      {/* After image (full width, underneath) */}
+      <Image
+        source={{ uri: afterUri }}
+        style={{ position: "absolute", width: SCREEN_W, height: SCREEN_H }}
+        resizeMode="cover"
+      />
+
+      {/* Before image (clipped by slider) */}
+      <ReAnimated.View style={[{ position: "absolute", height: SCREEN_H }, clipStyle]}>
+        <Image
+          source={{ uri: beforeUri }}
+          style={{ width: SCREEN_W, height: SCREEN_H }}
+          resizeMode="cover"
+        />
+      </ReAnimated.View>
+
+      {/* Slider line */}
+      <ReAnimated.View
+        style={[{
+          position: "absolute", top: 0, width: 2, height: SCREEN_H,
+          backgroundColor: "#fff",
+        }, lineStyle]}
+      />
+
+      {/* Slider handle (draggable area) */}
+      <ReAnimated.View
+        {...panResponder.panHandlers}
+        style={[{
+          position: "absolute", top: SCREEN_H / 2 - 30, width: 40, height: 60,
+          alignItems: "center", justifyContent: "center",
+        }, handleStyle]}
+      >
+        <View style={{
+          width: 40, height: 40, borderRadius: 20, backgroundColor: "rgba(255,255,255,0.95)",
+          alignItems: "center", justifyContent: "center",
+          shadowColor: "#000", shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.5, shadowRadius: 6,
+          elevation: 8,
+        }}>
+          <MaterialIcons name="swap-horiz" size={22} color="#000" />
+        </View>
+      </ReAnimated.View>
+
+      {/* Labels */}
+      <View style={{ position: "absolute", top: 60, left: 16 }}>
+        <View style={{ backgroundColor: "rgba(248,113,113,0.9)", borderRadius: 8, paddingHorizontal: 10, paddingVertical: 5 }}>
+          <Text style={{ color: "#fff", fontFamily: "DMSans_700Bold", fontSize: 12 }}>BEFORE</Text>
+          <Text style={{ color: "rgba(255,255,255,0.7)", fontSize: 10 }}>
+            {new Date(beforeDate).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+          </Text>
+        </View>
+      </View>
+      <View style={{ position: "absolute", top: 60, right: 16 }}>
+        <View style={{ backgroundColor: "rgba(74,222,128,0.9)", borderRadius: 8, paddingHorizontal: 10, paddingVertical: 5 }}>
+          <Text style={{ color: "#fff", fontFamily: "DMSans_700Bold", fontSize: 12 }}>LATEST</Text>
+          <Text style={{ color: "rgba(255,255,255,0.7)", fontSize: 10 }}>
+            {new Date(afterDate).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+          </Text>
+        </View>
+      </View>
+
+      {/* Instruction */}
+      <View style={{ position: "absolute", bottom: 120, left: 0, right: 0, alignItems: "center" }}>
+        <View style={{ backgroundColor: "rgba(0,0,0,0.7)", borderRadius: 12, paddingHorizontal: 16, paddingVertical: 8 }}>
+          <Text style={{ color: "rgba(255,255,255,0.8)", fontFamily: "DMSans_500Medium", fontSize: 13 }}>
+            Drag the slider to compare
+          </Text>
+        </View>
+      </View>
+
+      {/* Close button */}
+      <TouchableOpacity
+        onPress={onClose}
+        style={{
+          position: "absolute", top: 56, right: 16,
+          width: 40, height: 40, borderRadius: 20,
+          backgroundColor: "rgba(0,0,0,0.7)",
+          alignItems: "center", justifyContent: "center",
+        }}
+      >
+        <MaterialIcons name="close" size={24} color="#fff" />
+      </TouchableOpacity>
+
+      {/* Days elapsed */}
+      <View style={{ position: "absolute", bottom: 60, left: 0, right: 0, alignItems: "center" }}>
+        <Text style={{ color: "rgba(255,255,255,0.6)", fontFamily: "DMSans_400Regular", fontSize: 12 }}>
+          {Math.max(1, Math.round((new Date(afterDate).getTime() - new Date(beforeDate).getTime()) / (1000 * 60 * 60 * 24)))} days of progress
+        </Text>
+      </View>
     </View>
   );
 }

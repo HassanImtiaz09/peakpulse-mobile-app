@@ -881,12 +881,24 @@ Return JSON:
         try { result = JSON.parse((response.choices[0].message.content as string) ?? "{}"); }
         catch { result = { alternatives: [] }; }
         // Generate image URLs for each alternative using Unsplash
-        const alternatives = (result.alternatives ?? []).map((alt: any) => {
-          const query = encodeURIComponent(alt.photoQuery ?? alt.name ?? "healthy meal");
+        // Curated food photos for variety — each suggestion gets a unique image
+        const FOOD_PHOTOS = [
+          "photo-1512621776951-a57141f2eefd", // colorful salad bowl
+          "photo-1490645935967-10de6ba17061", // plated meal
+          "photo-1546069901-ba9599a7e63c",  // healthy bowl
+          "photo-1504674900247-0877df9cc836", // grilled meat
+          "photo-1467003909585-2f8a72700288", // salmon dish
+          "photo-1540189549336-e6e99c3679fe", // stir fry
+          "photo-1547592180-85f173990554", // rice bowl
+          "photo-1565299624946-b28f40a0ae38", // pizza/flatbread
+          "photo-1482049016688-2d3e1b311543", // avocado toast
+          "photo-1432139509613-5c4255a1d764", // pasta dish
+        ];
+        const alternatives = (result.alternatives ?? []).map((alt: any, idx: number) => {
+          const photoId = FOOD_PHOTOS[idx % FOOD_PHOTOS.length];
           return {
             ...alt,
-            imageUrl: `https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&q=80`,
-            photoUrl: `https://source.unsplash.com/400x300/?${query}`,
+            imageUrl: `https://images.unsplash.com/${photoId}?w=400&q=80`,
           };
         });
         return { alternatives, dailyCalorieTarget: input.dailyCalorieTarget, remainingCalories: input.remainingCalories };

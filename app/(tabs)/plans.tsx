@@ -36,6 +36,13 @@ const FG = "#F1F5F9";
 const MUTED = "#64748B";
 const CREAM = "#FDE68A";
 
+// Sanitize meal names from AI — remove unicode bullets, dots, and other artifacts
+const sanitizeMealName = (name: string): string =>
+  name
+    .replace(/[\u00b7\u2022\u2023\u25e6\u2043\u2219\u25cf\u25cb\u2013\u2014]/g, "")
+    .replace(/\s{2,}/g, " ")
+    .trim();
+
 const MEAL_PHOTO_MAP: Record<string, string> = {
   breakfast: "https://images.unsplash.com/photo-1525351484163-7529414344d8?w=400&q=80",
   "morning snack": "https://images.unsplash.com/photo-1490474418585-ba9bad8fd0ea?w=400&q=80",
@@ -1026,7 +1033,7 @@ export default function PlansScreen() {
                 ) : (
                   swapMealAlts.map((alt: any, i: number) => {
                     const exceedsLimit = alt.exceedsLimit || false;
-                    const mealPhotoUrl = getMealPhotoUrl({ name: alt.name, type: alt.photoQuery ?? alt.name });
+                    const mealPhotoUrl = alt.imageUrl || getMealPhotoUrl({ name: alt.name, type: alt.photoQuery ?? alt.name });
                     return (
                       <View key={i} style={{ backgroundColor: BG, borderRadius: 14, overflow: "hidden", marginBottom: 10, borderWidth: 1, borderColor: exceedsLimit ? "rgba(248,113,113,0.3)" : alt.usesPantry ? "rgba(34,211,238,0.25)" : "rgba(30,41,59,0.6)" }}>
                         {/* Meal image */}
@@ -1049,7 +1056,7 @@ export default function PlansScreen() {
                         <View style={{ padding: 14 }}>
                           <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start" }}>
                             <View style={{ flex: 1 }}>
-                              <Text style={{ color: FG, fontFamily: "DMSans_700Bold", fontSize: 14 }}>{alt.name}</Text>
+                              <Text style={{ color: FG, fontFamily: "DMSans_700Bold", fontSize: 14 }}>{sanitizeMealName(alt.name)}</Text>
                               <View style={{ flexDirection: "row", gap: 10, marginTop: 4 }}>
                                 <Text style={{ color: exceedsLimit ? "#F87171" : GOLD, fontSize: 11, fontFamily: "SpaceMono_700Bold" }}>{alt.calories} kcal</Text>
                                 <Text style={{ color: "#3B82F6", fontSize: 11 }}>P:{alt.protein}g</Text>
@@ -1310,7 +1317,7 @@ function MealCard({ meal, onSwap }: { meal: any; onSwap?: () => void }) {
       </View>
 
       <View style={{ padding: 14 }}>
-        <Text style={{ color: FG, fontFamily: "DMSans_700Bold", fontSize: 15, marginBottom: 6 }}>{meal.name}</Text>
+        <Text style={{ color: FG, fontFamily: "DMSans_700Bold", fontSize: 15, marginBottom: 6 }}>{sanitizeMealName(meal.name)}</Text>
         <View style={{ flexDirection: "row", gap: 12, marginBottom: 10 }}>
           <Text style={{ color: "#3B82F6", fontSize: 12 }}>P: {meal.protein}g</Text>
           <Text style={{ color: CREAM, fontSize: 12 }}>C: {meal.carbs}g</Text>

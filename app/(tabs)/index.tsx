@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import Svg, { Circle, Defs, LinearGradient, Stop } from "react-native-svg";
 import Animated, {
   useSharedValue, useAnimatedProps, useAnimatedStyle,
-  withTiming, withDelay, withSpring, withSequence, Easing, interpolate,
+  withTiming, withDelay, withSpring, withSequence, withRepeat, Easing, interpolate,
   Extrapolation,
 } from "react-native-reanimated";
 import { useCalories, type MealEntry } from "@/lib/calorie-context";
@@ -313,6 +313,9 @@ export default function HomeScreen() {
   const [celebrationMilestone, setCelebrationMilestone] = React.useState<MilestoneTier | null>(null);
   const [showCelebration, setShowCelebration] = React.useState(false);
 
+  // Progress photo streak
+  const [progressPhotoStreak, setProgressPhotoStreak] = React.useState(0);
+
   // Muscle balance state
   const [muscleReport, setMuscleReport] = React.useState<MuscleBalanceReport | null>(null);
   const [suggestions, setSuggestions] = React.useState<ExerciseSuggestion[]>([]);
@@ -539,6 +542,32 @@ export default function HomeScreen() {
     })();
   }, [canUse, balanceWindow, workoutPlan]);
 
+  // Load progress photo streak
+  useEffect(() => {
+    AsyncStorage.getItem("@progress_photos").then(raw => {
+      if (!raw) return;
+      try {
+        const photos = JSON.parse(raw) as any[];
+        const dates = photos.map((p: any) => {
+          const d = new Date(p.date || p.timestamp || p.createdAt);
+          return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+        });
+        const uniqueDates = [...new Set(dates)].sort().reverse();
+        if (uniqueDates.length === 0) return;
+        let streak = 0;
+        const today = new Date();
+        for (let i = 0; i < uniqueDates.length; i++) {
+          const expected = new Date(today);
+          expected.setDate(today.getDate() - i);
+          const expStr = `${expected.getFullYear()}-${String(expected.getMonth()+1).padStart(2,"0")}-${String(expected.getDate()).padStart(2,"0")}`;
+          if (uniqueDates.includes(expStr)) streak++;
+          else break;
+        }
+        setProgressPhotoStreak(streak);
+      } catch {}
+    });
+  }, [canUse]);
+
   useEffect(() => {
     AsyncStorage.getItem("@body_scan_history").then(raw => {
       if (!raw) return;
@@ -556,6 +585,22 @@ export default function HomeScreen() {
       }
     });
   }, [canUse]);
+
+  // AI Coach pulsing glow animation
+  const aiCoachGlow = useSharedValue(0.4);
+  useEffect(() => {
+    aiCoachGlow.value = withRepeat(
+      withSequence(
+        withTiming(1, { duration: 1200, easing: Easing.inOut(Easing.ease) }),
+        withTiming(0.4, { duration: 1200, easing: Easing.inOut(Easing.ease) }),
+      ),
+      -1, // infinite
+    );
+  }, []);
+  const aiCoachPulseStyle = useAnimatedStyle(() => ({
+    shadowOpacity: aiCoachGlow.value,
+    transform: [{ scale: interpolate(aiCoachGlow.value, [0.4, 1], [1, 1.04], Extrapolation.CLAMP) }],
+  }));
 
   // 1A: Parallax animated styles
   const heroImageStyle = useAnimatedStyle(() => ({
@@ -650,9 +695,9 @@ export default function HomeScreen() {
                   <Image source={{ uri: profilePhotoUri }} style={{ width: 48, height: 48, borderRadius: 24, borderWidth: 2, borderColor: SF.gold }} />
                 ) : null}
                 <View style={{ flex: 1 }}>
-                <Text style={{ color: SF.muted, fontFamily: "DMSans_500Medium", fontSize: 14 }}>Personalized</Text>
+                <Text style={{ color: SF.muted, fontFamily: "DMSans_500Medium", fontSize: 14 }}>Welcome back</Text>
                 <Text style={{ color: SF.fg, fontFamily: "BebasNeue_400Regular", fontSize: 34, letterSpacing: 2, marginTop: 2 }}>
-                  YOUR {displayName.toUpperCase()}!
+                  HI, {displayName.toUpperCase()}
                 </Text>
                 {(activeProfile as any)?.goal && (
                   <View style={{ flexDirection: "row", gap: 8, marginTop: 8, flexWrap: "wrap" }}>
@@ -685,7 +730,58 @@ export default function HomeScreen() {
             </View>
           </View>
 
-          {/* ── Stats Ring Row (1C: staggered index 0, 4B: primary card) ── */}
+          {/* ── Today's Workout (moved to top) ── */}
+          {workoutPlan?.schedule?.[0] && (
+            <StaggeredCard index={0}>
+              <View style={styles.section}>
+                <SectionTitle title="Today's Workout" />
+                <ImageBackground source={{ uri: AT_PLANS_BG }} style={{ borderRadius: 20, overflow: "hidden" }} resizeMode="cover">
+                  <View style={styles.planCardOverlay}>
+                    <Text style={styles.cardEyebrow}>{workoutPlan.schedule[0].day?.toUpperCase()}</Text>
+                    <Text style={styles.planCardTitle}>{workoutPlan.schedule[0].focus}</Text>
+                    <Text style={styles.planCardSub}>{workoutPlan.schedule[0].exercises?.length ?? 0} exercises</Text>
+                    <TouchableOpacity style={styles.planCardBtn} onPress={() => router.push("/(tabs)/plans" as any)}>
+                      <Text style={styles.planCardBtnText}>Start Workout</Text>
+                      <MaterialIcons name="arrow-forward" size={16} color={SF.bg} />
+                    </TouchableOpacity>
+                  </View>
+                </ImageBackground>
+              </View>
+            </StaggeredCard>
+          )}
+
+          {/* ── Today's Nutrition (moved to top) ── */}
+          {(mealPlan as any)?.days?.[0] && (
+            <StaggeredCard index={1}>
+              <View style={styles.section}>
+                <SectionTitle title="Today's Nutrition" />
+                <ImageBackground source={{ uri: AT_MEALS_BG }} style={{ borderRadius: 20, overflow: "hidden" }} resizeMode="cover">
+                  <View style={styles.planCardOverlay}>
+                    <Text style={styles.cardEyebrow}>MEAL PLAN</Text>
+                    <Text style={styles.planCardTitle}>{(mealPlan as any).days[0].totalCalories} kcal target</Text>
+                    <View style={{ flexDirection: "row", gap: 10, marginTop: 10 }}>
+                      {[
+                        { label: "Protein", value: (mealPlan as any).days[0].protein + "g" },
+                        { label: "Carbs", value: (mealPlan as any).days[0].carbs + "g" },
+                        { label: "Fats", value: (mealPlan as any).days[0].fats + "g" },
+                      ].map(m => (
+                        <View key={m.label} style={styles.macroPill}>
+                          <Text style={styles.macroPillValue}>{m.value}</Text>
+                          <Text style={styles.macroPillLabel}>{m.label}</Text>
+                        </View>
+                      ))}
+                    </View>
+                    <TouchableOpacity style={styles.planCardBtn} onPress={() => router.push("/(tabs)/meals" as any)}>
+                      <Text style={styles.planCardBtnText}>View Meal Plan</Text>
+                      <MaterialIcons name="arrow-forward" size={16} color={SF.bg} />
+                    </TouchableOpacity>
+                  </View>
+                </ImageBackground>
+              </View>
+            </StaggeredCard>
+          )}
+
+          {/* ── Stats Ring Row (1C: staggered index 2, 4B: primary card) ── */}
           <StaggeredCard index={0}>
             <View style={styles.statsCard}>
               <StatRing value={String(stats.workouts)} label="Workouts" progress={Math.min(stats.workouts / 30, 1)} />
@@ -1147,6 +1243,106 @@ export default function HomeScreen() {
             </StaggeredCard>
           )}
 
+          {/* ── Progress Photos Tile ── */}
+          <StaggeredCard index={7}>
+            <View style={styles.section}>
+              <SectionTitle title="Progress Photos" />
+              <TouchableOpacity
+                onPress={() => router.push("/(tabs)/scan" as any)}
+                activeOpacity={0.85}
+                style={{
+                  backgroundColor: SF.surfacePrimary, borderRadius: 20, padding: 18,
+                  borderWidth: 1.5, borderColor: "rgba(245,158,11,0.2)",
+                }}
+              >
+                <View style={{ flexDirection: "row", alignItems: "center", gap: 14 }}>
+                  <View style={{
+                    width: 56, height: 56, borderRadius: 16,
+                    backgroundColor: "rgba(245,158,11,0.08)",
+                    alignItems: "center", justifyContent: "center",
+                    borderWidth: 1, borderColor: "rgba(245,158,11,0.2)",
+                  }}>
+                    <MaterialIcons name="photo-camera" size={28} color={SF.gold} />
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <Text style={{ color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 16 }}>Take Today's Photo</Text>
+                    <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 12, marginTop: 2 }}>
+                      {stats.photos > 0
+                        ? `${stats.photos} photo${stats.photos !== 1 ? "s" : ""} taken so far`
+                        : "Start tracking your visual transformation"}
+                    </Text>
+                    {/* Photo streak */}
+                    {progressPhotoStreak > 0 && (
+                      <View style={{ flexDirection: "row", alignItems: "center", gap: 4, marginTop: 4 }}>
+                        <MaterialIcons name="local-fire-department" size={14} color={SF.gold} />
+                        <Text style={{ color: SF.gold, fontFamily: "DMSans_700Bold", fontSize: 12 }}>
+                          {progressPhotoStreak} day streak
+                        </Text>
+                      </View>
+                    )}
+                  </View>
+                  <MaterialIcons name="chevron-right" size={22} color={SF.gold} />
+                </View>
+              </TouchableOpacity>
+            </View>
+          </StaggeredCard>
+
+          {/* ── AI Coach — Animated Card ── */}
+          <StaggeredCard index={8}>
+            <View style={styles.section}>
+              <SectionTitle title="Your AI Coach" />
+              <TouchableOpacity
+                onPress={() => {
+                  if (Platform.OS !== "web") Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                  gatedNav("/ai-coach", "ai_coaching", "smart-toy", "advanced", "Get personalised AI coaching with form analysis and progress insights — Advanced plan only.");
+                }}
+                activeOpacity={0.85}
+                style={{
+                  borderRadius: 22, overflow: "hidden",
+                  borderWidth: 1.5, borderColor: "rgba(34,211,238,0.3)",
+                }}
+              >
+                <View style={{
+                  flexDirection: "row", alignItems: "center",
+                  backgroundColor: "rgba(34,211,238,0.06)", padding: 16,
+                }}>
+                  {/* Animated coach avatar with pulsing glow */}
+                  <Animated.View
+                    style={[{
+                      width: 72, height: 72, borderRadius: 36,
+                      borderWidth: 2, borderColor: "rgba(34,211,238,0.5)",
+                      overflow: "hidden", marginRight: 14,
+                      shadowColor: "#22D3EE", shadowOffset: { width: 0, height: 0 },
+                      shadowOpacity: 0.6, shadowRadius: 12, elevation: 8,
+                    }, aiCoachPulseStyle]}
+                  >
+                    <Image
+                      source={{ uri: "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/ai-coach-icon-6WEg9FGyntLy9BEaTXyjYs.webp" }}
+                      style={{ width: 72, height: 72, borderRadius: 36 }}
+                      resizeMode="cover"
+                    />
+                  </Animated.View>
+                  <View style={{ flex: 1 }}>
+                    <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+                      <Text style={{ color: "#22D3EE", fontFamily: "DMSans_700Bold", fontSize: 17 }}>AI Coach</Text>
+                      <View style={{ backgroundColor: "rgba(34,211,238,0.15)", borderRadius: 6, paddingHorizontal: 6, paddingVertical: 2 }}>
+                        <Text style={{ color: "#22D3EE", fontFamily: "DMSans_700Bold", fontSize: 9 }}>PREMIUM</Text>
+                      </View>
+                    </View>
+                    <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 12, marginTop: 3, lineHeight: 17 }}>
+                      Get personalised workout guidance, form tips, and nutrition advice from your AI trainer.
+                    </Text>
+                    <View style={{ flexDirection: "row", alignItems: "center", gap: 4, marginTop: 6 }}>
+                      <MaterialIcons name="auto-awesome" size={13} color="#22D3EE" />
+                      <Text style={{ color: "#22D3EE", fontFamily: "DMSans_600SemiBold", fontSize: 11 }}>Tap to chat with your coach</Text>
+                    </View>
+                  </View>
+                  <MaterialIcons name="chevron-right" size={22} color="#22D3EE" />
+                </View>
+              </TouchableOpacity>
+            </View>
+          </StaggeredCard>
+
           {/* ── Milestone Celebration Modal ── */}
           {showCelebration && celebrationMilestone && (
             <Modal transparent animationType="fade" visible={showCelebration}>
@@ -1306,25 +1502,7 @@ export default function HomeScreen() {
             </View>
           </StaggeredCard>
 
-          {/* ── Today's Workout ── */}
-          {workoutPlan?.schedule?.[0] && (
-            <StaggeredCard index={4}>
-              <View style={styles.section}>
-                <SectionTitle title="Today's Workout" />
-                <ImageBackground source={{ uri: AT_PLANS_BG }} style={{ borderRadius: 20, overflow: "hidden" }} resizeMode="cover">
-                  <View style={styles.planCardOverlay}>
-                    <Text style={styles.cardEyebrow}>{workoutPlan.schedule[0].day?.toUpperCase()}</Text>
-                    <Text style={styles.planCardTitle}>{workoutPlan.schedule[0].focus}</Text>
-                    <Text style={styles.planCardSub}>{workoutPlan.schedule[0].exercises?.length ?? 0} exercises</Text>
-                    <TouchableOpacity style={styles.planCardBtn} onPress={() => router.push("/(tabs)/plans" as any)}>
-                      <Text style={styles.planCardBtnText}>Start Workout</Text>
-                      <MaterialIcons name="arrow-forward" size={16} color={SF.bg} />
-                    </TouchableOpacity>
-                  </View>
-                </ImageBackground>
-              </View>
-            </StaggeredCard>
-          )}
+          {/* Today's Workout moved to top */}
 
           {/* ── Muscle Balance Heatmap ── */}
           {muscleReport && muscleReport.totalWorkouts > 0 && (
@@ -1416,36 +1594,7 @@ export default function HomeScreen() {
             </StaggeredCard>
           )}
 
-          {/* ── Today's Nutrition ── */}
-          {(mealPlan as any)?.days?.[0] && (
-            <StaggeredCard index={5}>
-              <View style={styles.section}>
-                <SectionTitle title="Today's Nutrition" />
-                <ImageBackground source={{ uri: AT_MEALS_BG }} style={{ borderRadius: 20, overflow: "hidden" }} resizeMode="cover">
-                  <View style={styles.planCardOverlay}>
-                    <Text style={styles.cardEyebrow}>MEAL PLAN</Text>
-                    <Text style={styles.planCardTitle}>{(mealPlan as any).days[0].totalCalories} kcal target</Text>
-                    <View style={{ flexDirection: "row", gap: 10, marginTop: 10 }}>
-                      {[
-                        { label: "Protein", value: (mealPlan as any).days[0].protein + "g" },
-                        { label: "Carbs", value: (mealPlan as any).days[0].carbs + "g" },
-                        { label: "Fats", value: (mealPlan as any).days[0].fats + "g" },
-                      ].map(m => (
-                        <View key={m.label} style={styles.macroPill}>
-                          <Text style={styles.macroPillValue}>{m.value}</Text>
-                          <Text style={styles.macroPillLabel}>{m.label}</Text>
-                        </View>
-                      ))}
-                    </View>
-                    <TouchableOpacity style={styles.planCardBtn} onPress={() => router.push("/(tabs)/meals" as any)}>
-                      <Text style={styles.planCardBtnText}>View Meal Plan</Text>
-                      <MaterialIcons name="arrow-forward" size={16} color={SF.bg} />
-                    </TouchableOpacity>
-                  </View>
-                </ImageBackground>
-              </View>
-            </StaggeredCard>
-          )}
+          {/* Today's Nutrition moved to top */}
 
           {/* ── Suggested Exercises ── */}
           {muscleReport && (suggestions.length > 0 || planChanges.length > 0) && (
