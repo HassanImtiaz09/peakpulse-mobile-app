@@ -53,7 +53,7 @@ type FilterMode = "all" | "favorites" | ExerciseInfo["category"];
 export default function ExerciseLibraryScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const { isFavorite, toggleFavorite, getFavoritesList } = useFavorites();
+  const { isFavorite, toggleFavorite, getFavoritesList, count: favCount } = useFavorites();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState<FilterMode>("all");
@@ -167,15 +167,21 @@ export default function ExerciseLibraryScreen() {
           </View>
         </View>
 
-        {/* GIF Preview */}
+        {/* Preview Thumbnail */}
         <View style={styles.cardGif}>
-          <Image
-            source={{ uri: item.angleViews[0]?.gifUrl }}
-            style={styles.gifPreview}
-            contentFit="cover"
-            cachePolicy="disk"
-            transition={200}
-          />
+          {item.angleViews[0]?.gifUrl?.endsWith(".mp4") ? (
+            <View style={[styles.gifPreview, { justifyContent: "center", alignItems: "center", backgroundColor: "rgba(245,158,11,0.06)" }]}>
+              <MaterialIcons name="play-circle-outline" size={24} color={C.gold} />
+            </View>
+          ) : (
+            <Image
+              source={{ uri: item.angleViews[0]?.gifUrl }}
+              style={styles.gifPreview}
+              contentFit="cover"
+              cachePolicy="disk"
+              transition={200}
+            />
+          )}
         </View>
       </Pressable>
     );
@@ -258,6 +264,7 @@ export default function ExerciseLibraryScreen() {
                 activeFilter === item.key && styles.filterChipTextActive,
               ]}>
                 {item.label}
+                {item.key === "favorites" && favCount > 0 ? ` (${favCount})` : ""}
               </Text>
             </Pressable>
           )}

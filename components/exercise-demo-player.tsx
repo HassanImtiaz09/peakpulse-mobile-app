@@ -10,17 +10,24 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { Image } from "expo-image";
-import { VideoView, useVideoPlayer } from "expo-video";
+import { VideoView, useVideoPlayer, type VideoSource } from "expo-video";
 import { useEvent } from "expo";
 import { MaterialIcons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { useColors } from "@/hooks/use-colors";
 import { useFavorites } from "@/lib/favorites-context";
+import { getExerciseInfo, type ExerciseAngleView } from "@/lib/exercise-data";
 
 const { width: SCREEN_W } = Dimensions.get("window");
 
 function isVideoUrl(url: string): boolean {
   return url.endsWith(".mp4") || url.endsWith(".webm") || url.endsWith(".mov");
+}
+
+/** Build a VideoSource with caching enabled (native only) */
+function cachedSource(url: string): VideoSource {
+  if (Platform.OS === "web") return url;
+  return { uri: url, useCaching: true };
 }
 
 interface ExerciseDemoPlayerProps {
@@ -31,11 +38,12 @@ interface ExerciseDemoPlayerProps {
 }
 
 /**
- * Inline video player for MP4 URLs using expo-video.
+ * Inline video player for MP4 URLs using expo-video with caching.
  * Loops automatically, muted, with loading indicator.
  */
 function InlineVideoPlayer({ url, height }: { url: string; height: number }) {
-  const player = useVideoPlayer(url, (p) => {
+  const source = useMemo(() => cachedSource(url), [url]);
+  const player = useVideoPlayer(source, (p) => {
     p.loop = true;
     p.muted = true;
     p.play();
@@ -60,10 +68,11 @@ function InlineVideoPlayer({ url, height }: { url: string; height: number }) {
 }
 
 /**
- * Fullscreen video player for MP4 URLs using expo-video.
+ * Fullscreen video player for MP4 URLs using expo-video with caching.
  */
 function FullscreenVideoPlayer({ url }: { url: string }) {
-  const player = useVideoPlayer(url, (p) => {
+  const source = useMemo(() => cachedSource(url), [url]);
+  const player = useVideoPlayer(source, (p) => {
     p.loop = true;
     p.muted = true;
     p.play();
@@ -87,8 +96,16 @@ function FullscreenVideoPlayer({ url }: { url: string }) {
   );
 }
 
+/** Get angle label from ExerciseAngleView */
+function getAngleShortLabel(label: string): string {
+  if (label.includes("Side")) return "Side";
+  if (label.includes("Front")) return "Front";
+  if (label.includes("Back")) return "Back";
+  return label;
+}
+
 /**
- * Exercise demo player with fullscreen enlarge support.
+ * Exercise demo player with fullscreen enlarge support and front/side angle toggle.
  * Supports both MP4 video (MuscleWiki) and GIF fallback.
  * Tap the expand icon or the media itself to open fullscreen modal.
  */
@@ -102,7 +119,26 @@ export function ExerciseDemoPlayer({
   const [fullscreen, setFullscreen] = useState(false);
   const { isFavorite, toggleFavorite } = useFavorites();
   const favorited = exerciseName ? isFavorite(exerciseName) : false;
-  const isVideo = useMemo(() => isVideoUrl(gifUrl), [gifUrl]);
+
+  // Look up angle views for this exercise to enable front/side toggle
+  const angleViews = useMemo(() => {
+    if (!exerciseName) return [];
+    const info = getExerciseInfo(exerciseName);
+    return info?.angleViews ?? [];
+  }, [exerciseName]);
+
+  const hasMultipleAngles = angleViews.length > 1;
+  const [activeAngle, setActiveAngle] = useState(0);
+
+  // Current URL: use angle view URL if available, otherwise fall back to gifUrl
+  const currentUrl = useMemo(() => {
+    if (hasMultipleAngles && angleViews[activeAngle]) {
+      return angleViews[activeAngle].gifUrl;
+    }
+    return gifUrl;
+  }, [hasMultipleAngles, angleViews, activeAngle, gifUrl]);
+
+  const isVideo = useMemo(() => isVideoUrl(currentUrl), [currentUrl]);
 
   const handleToggleFavorite = useCallback(() => {
     if (exerciseName) {
@@ -112,6 +148,13 @@ export function ExerciseDemoPlayer({
       }
     }
   }, [exerciseName, toggleFavorite]);
+
+  const handleAngleChange = useCallback((index: number) => {
+    setActiveAngle(index);
+    if (Platform.OS !== "web") {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+    }
+  }, []);
 
   const openFullscreen = useCallback(() => setFullscreen(true), []);
   const closeFullscreen = useCallback(() => setFullscreen(false), []);
@@ -124,7 +167,7 @@ export function ExerciseDemoPlayer({
       >
         <View style={styles.playerContainer}>
           {isVideo ? (
-            <InlineVideoPlayer url={gifUrl} height={height} />
+            <InlineVideoPlayer key={`v-${activeAngle}`} url={currentUrl} height={height} />
           ) : (
             <View
               style={[
@@ -132,7 +175,8 @@ export function ExerciseDemoPlayer({
               ]}
             >
               <Image
-                source={gifUrl}
+                key={`img-${activeAngle}`}
+                source={currentUrl}
                 style={StyleSheet.absoluteFill}
                 contentFit="contain"
                 cachePolicy="disk"
@@ -145,6 +189,12 @@ export function ExerciseDemoPlayer({
             <MaterialIcons name={isVideo ? "videocam" : "gif"} size={16} color="#fff" />
             <Text style={styles.gifBadgeText}>Exercise Guide</Text>
           </View>
+          {/* Angle label overlay */}
+          {hasMultipleAngles && angleViews[activeAngle] && (
+            <View style={styles.angleLabelOverlay}>
+              <Text style={styles.angleLabelText}>{getAngleShortLabel(angleViews[activeAngle].label)}</Text>
+            </View>
+          )}
           {/* Expand button */}
           <Pressable
             onPress={openFullscreen}
@@ -157,6 +207,35 @@ export function ExerciseDemoPlayer({
           </Pressable>
         </View>
       </Pressable>
+
+      {/* Front/Side Angle Toggle */}
+      {hasMultipleAngles && (
+        <View style={styles.angleToggleRow}>
+          {angleViews.map((view, i) => (
+            <Pressable
+              key={i}
+              onPress={() => handleAngleChange(i)}
+              style={({ pressed }) => [
+                styles.angleToggleBtn,
+                activeAngle === i && styles.angleToggleBtnActive,
+                pressed && { opacity: 0.7 },
+              ]}
+            >
+              <MaterialIcons
+                name={view.label.includes("Side") ? "switch-video" : "videocam"}
+                size={14}
+                color={activeAngle === i ? "#0A0500" : "#B45309"}
+              />
+              <Text style={[
+                styles.angleToggleText,
+                activeAngle === i && styles.angleToggleTextActive,
+              ]}>
+                {getAngleShortLabel(view.label)}
+              </Text>
+            </Pressable>
+          ))}
+        </View>
+      )}
 
       {cue ? (
         <View style={[styles.cueContainer, { backgroundColor: colors.surface }]}>
@@ -214,10 +293,11 @@ export function ExerciseDemoPlayer({
           {/* Full-size media */}
           <View style={styles.fullscreenImageContainer}>
             {isVideo ? (
-              <FullscreenVideoPlayer url={gifUrl} />
+              <FullscreenVideoPlayer key={`fsv-${activeAngle}`} url={currentUrl} />
             ) : (
               <Image
-                source={gifUrl}
+                key={`fs-${activeAngle}`}
+                source={currentUrl}
                 style={{ width: SCREEN_W, height: SCREEN_W }}
                 contentFit="contain"
                 cachePolicy="disk"
@@ -225,6 +305,29 @@ export function ExerciseDemoPlayer({
               />
             )}
           </View>
+
+          {/* Fullscreen Angle Toggle */}
+          {hasMultipleAngles && (
+            <View style={styles.fullscreenAngleRow}>
+              {angleViews.map((view, i) => (
+                <Pressable
+                  key={i}
+                  onPress={() => handleAngleChange(i)}
+                  style={[
+                    styles.fullscreenAngleBtn,
+                    activeAngle === i && styles.fullscreenAngleBtnActive,
+                  ]}
+                >
+                  <Text style={[
+                    styles.fullscreenAngleTxt,
+                    activeAngle === i && { color: "#0A0500" },
+                  ]}>
+                    {getAngleShortLabel(view.label)}
+                  </Text>
+                </Pressable>
+              ))}
+            </View>
+          )}
 
           {/* Cue text in fullscreen */}
           {cue ? (
@@ -311,6 +414,21 @@ const styles = StyleSheet.create({
     fontSize: 10,
     fontWeight: "600",
   },
+  angleLabelOverlay: {
+    position: "absolute",
+    top: 8,
+    right: 48,
+    backgroundColor: "rgba(0,0,0,0.6)",
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 10,
+  },
+  angleLabelText: {
+    color: "#FDE68A",
+    fontSize: 10,
+    fontWeight: "600",
+    letterSpacing: 0.3,
+  },
   expandButton: {
     position: "absolute",
     bottom: 8,
@@ -318,6 +436,34 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0.6)",
     padding: 6,
     borderRadius: 8,
+  },
+  angleToggleRow: {
+    flexDirection: "row",
+    gap: 6,
+    marginTop: 8,
+  },
+  angleToggleBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 8,
+    backgroundColor: "rgba(245,158,11,0.08)",
+    borderWidth: 1,
+    borderColor: "rgba(245,158,11,0.15)",
+  },
+  angleToggleBtnActive: {
+    backgroundColor: "#F59E0B",
+    borderColor: "#FBBF24",
+  },
+  angleToggleText: {
+    color: "#B45309",
+    fontSize: 12,
+    fontWeight: "600",
+  },
+  angleToggleTextActive: {
+    color: "#0A0500",
   },
   cueContainer: {
     flexDirection: "row",
@@ -367,6 +513,28 @@ const styles = StyleSheet.create({
   fullscreenImageContainer: {
     justifyContent: "center",
     alignItems: "center",
+  },
+  fullscreenAngleRow: {
+    flexDirection: "row",
+    gap: 8,
+    marginTop: 20,
+  },
+  fullscreenAngleBtn: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 10,
+    backgroundColor: "rgba(245,158,11,0.1)",
+    borderWidth: 1,
+    borderColor: "rgba(245,158,11,0.25)",
+  },
+  fullscreenAngleBtnActive: {
+    backgroundColor: "#F59E0B",
+    borderColor: "#FBBF24",
+  },
+  fullscreenAngleTxt: {
+    color: "#F59E0B",
+    fontWeight: "600",
+    fontSize: 13,
   },
   fullscreenCue: {
     flexDirection: "row",

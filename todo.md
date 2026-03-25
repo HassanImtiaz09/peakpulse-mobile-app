@@ -1598,3 +1598,25 @@
 ### Testing
 - [x] 0 TypeScript errors
 - [x] All tests pass (1255 passing, 40 test files)
+
+## Round 74 — Video Caching, Angle Toggle, Favorites Filter
+
+### Video Caching / Preloading
+- [x] Create video-preload service that prefetches next exercise's video during rest periods
+- [x] Integrate preloading into active-workout.tsx (trigger on exercise transition / rest timer)
+- [x] Enable useCaching: true on all VideoSource objects in both player components
+
+### Front/Side Angle Toggle Button
+- [x] Add a compact Front/Side toggle button to ExerciseDemoPlayer
+- [x] Add a compact Front/Side toggle button to EnhancedGifPlayer (improve existing angle selector)
+- [x] Ensure toggle works in both inline and fullscreen modes
+
+### Favorites Filter in Exercise Library
+- [x] Favorites filter chip already existed — enhanced with count badge
+- [x] When active, shows only favorited exercises
+- [x] Shows empty state when no favorites exist
+- [x] Updated card preview to handle MP4 URLs with play icon placeholder
+
+### Testing
+- [x] 0 TypeScript errors
+- [x] All tests pass (1286 passing, 41 test files)

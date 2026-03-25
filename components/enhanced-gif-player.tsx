@@ -4,6 +4,7 @@
  * Features:
  * - Multi-angle views (2-3 per exercise) with angle selector
  * - Supports both MP4 video (MuscleWiki) and GIF fallback
+ * - Native video caching via useCaching for seamless playback
  * - Slow-motion playback simulation via opacity pulse
  * - Loop toggle control
  * - Focus annotations showing what to watch for each angle
@@ -12,7 +13,7 @@
 import React, { useState, useCallback, useRef, useEffect, useMemo } from "react";
 import { View, Text, Pressable, StyleSheet, Animated, Platform, Modal, Dimensions, ActivityIndicator } from "react-native";
 import { Image } from "expo-image";
-import { VideoView, useVideoPlayer } from "expo-video";
+import { VideoView, useVideoPlayer, type VideoSource } from "expo-video";
 import { useEvent } from "expo";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import * as Haptics from "expo-haptics";
@@ -23,6 +24,12 @@ const { width: SCREEN_W } = Dimensions.get("window");
 
 function isVideoUrl(url: string): boolean {
   return url.endsWith(".mp4") || url.endsWith(".webm") || url.endsWith(".mov");
+}
+
+/** Build a VideoSource with caching enabled (native only) */
+function cachedSource(url: string): VideoSource {
+  if (Platform.OS === "web") return url;
+  return { uri: url, useCaching: true };
 }
 
 interface EnhancedGifPlayerProps {
@@ -50,9 +57,10 @@ const C = {
   dim: "rgba(245,158,11,0.08)",
 };
 
-/** Inline video player using expo-video */
+/** Inline video player using expo-video with caching */
 function InlineVideoPlayer({ url, style }: { url: string; style?: object }) {
-  const player = useVideoPlayer(url, (p) => {
+  const source = useMemo(() => cachedSource(url), [url]);
+  const player = useVideoPlayer(source, (p) => {
     p.loop = true;
     p.muted = true;
     p.play();
@@ -76,9 +84,10 @@ function InlineVideoPlayer({ url, style }: { url: string; style?: object }) {
   );
 }
 
-/** Fullscreen video player using expo-video */
+/** Fullscreen video player using expo-video with caching */
 function FullscreenVideoPlayer({ url }: { url: string }) {
-  const player = useVideoPlayer(url, (p) => {
+  const source = useMemo(() => cachedSource(url), [url]);
+  const player = useVideoPlayer(source, (p) => {
     p.loop = true;
     p.muted = true;
     p.play();

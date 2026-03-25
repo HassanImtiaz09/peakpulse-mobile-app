@@ -25,6 +25,7 @@ import {
   loadRestTimerSettings,
   getRestTimeForExercise,
 } from "@/lib/rest-timer-settings";
+import { preloadExerciseVideos, clearPreloadCache } from "@/lib/video-preload";
 
 const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get("window");
 
@@ -292,6 +293,25 @@ export default function ActiveWorkoutScreen() {
   useEffect(() => {
     loadRestTimerSettings().then(setRestSettings);
   }, []);
+
+  // Preload next exercise videos when rest timer starts or exercise changes
+  useEffect(() => {
+    const nextIdx = currentExercise + 1;
+    if (nextIdx < exercises.length) {
+      preloadExerciseVideos(exercises[nextIdx].name).catch(() => {});
+    }
+  }, [currentExercise, restTimer]);
+
+  // Preload first 2 exercises at workout start
+  useEffect(() => {
+    if (workoutStarted && exercises.length > 0) {
+      preloadExerciseVideos(exercises[0].name).catch(() => {});
+      if (exercises.length > 1) {
+        preloadExerciseVideos(exercises[1].name).catch(() => {});
+      }
+    }
+    return () => clearPreloadCache();
+  }, [workoutStarted]);
 
   // Load subscription state
   useEffect(() => {
