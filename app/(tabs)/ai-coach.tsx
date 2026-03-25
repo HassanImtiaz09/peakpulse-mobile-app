@@ -16,6 +16,8 @@ import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/hooks/use-auth";
 import { useGuestAuth } from "@/lib/guest-auth";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { FeatureGate } from "@/components/feature-gate";
+import { useSubscription } from "@/hooks/use-subscription";
 
 const HERO_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/PZcnawJwIZkQHTEM.jpg";
 
@@ -69,6 +71,8 @@ export default function AICoachScreen() {
   const [chatLoading, setChatLoading] = useState(false);
   const [profile, setProfile] = useState<any>({});
   const chatListRef = useRef<FlatList>(null);
+  const { canAccess: canAccessFeature } = useSubscription();
+  const hasCoachAccess = canAccessFeature("ai_coaching");
 
   const getInsightsMutation = trpc.aiCoach.getInsights.useMutation();
   const chatMutation = trpc.aiCoach.chat.useMutation();
@@ -202,6 +206,26 @@ export default function AICoachScreen() {
     } finally {
       setChatLoading(false);
     }
+  }
+
+  // If user doesn't have AI coaching access, show the gate
+  if (!hasCoachAccess) {
+    return (
+      <View style={{ flex: 1, backgroundColor: SF.bg }}>
+        <View style={{ backgroundColor: SF.bg, paddingTop: 56, paddingHorizontal: 20, paddingBottom: 16 }}>
+          <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+            <TouchableOpacity onPress={() => router.back()} style={{ padding: 4 }}>
+              <MaterialIcons name="chevron-left" size={28} color={SF.fg} />
+            </TouchableOpacity>
+            <Text style={{ color: SF.fg, fontFamily: "BebasNeue_400Regular", fontSize: 24, letterSpacing: 3 }}>AI COACH</Text>
+            <View style={{ width: 28 }} />
+          </View>
+        </View>
+        <FeatureGate feature="ai_coaching" message="Get personalized AI coaching with form analysis, progress insights, and contextual tips. Upgrade to Advanced to unlock.">
+          <View style={{ height: 400 }} />
+        </FeatureGate>
+      </View>
+    );
   }
 
   return (

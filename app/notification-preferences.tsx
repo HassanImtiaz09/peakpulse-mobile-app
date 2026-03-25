@@ -14,6 +14,7 @@ import * as Notifications from "expo-notifications";
 import { ScreenContainer } from "@/components/screen-container";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { FeatureGate } from "@/components/feature-gate";
 import {
   requestNotificationPermissions,
   scheduleWorkoutReminder,
@@ -320,6 +321,7 @@ export default function NotificationPreferencesScreen() {
   };
 
   return (
+    <FeatureGate feature="notification_preferences" message="Customize your workout and meal reminder times. Available on Basic plan and above.">
     <ScreenContainer edges={["top", "left", "right"]} containerClassName="bg-black">
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 40 }}>
         {/* Header */}
@@ -676,6 +678,7 @@ export default function NotificationPreferencesScreen() {
         onCancel={() => setActivePicker(null)}
       />
     </ScreenContainer>
+    </FeatureGate>
   );
 }
 

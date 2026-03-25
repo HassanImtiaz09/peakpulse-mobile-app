@@ -14,6 +14,7 @@ import { useRouter } from "expo-router";
 import { ScreenContainer } from "@/components/screen-container";
 import { useAuth } from "@/hooks/use-auth";
 import { trpc } from "@/lib/trpc";
+import { FeatureGate } from "@/components/feature-gate";
 
 const { width: SCREEN_W } = Dimensions.get("window");
 const CARD_PADDING = 40;
@@ -570,6 +571,7 @@ export default function ProgressPhotosScreen() {
   }
 
   return (
+    <FeatureGate feature="progress_photos" message="Track your body transformation with side-by-side photo comparisons. Available on Basic plan and above.">
     <ScreenContainer>
       <ScrollView contentContainerStyle={{ paddingBottom: 40 }} showsVerticalScrollIndicator={false}>
         {/* Header */}
@@ -731,5 +733,6 @@ export default function ProgressPhotosScreen() {
         </View>
       </ScrollView>
     </ScreenContainer>
+    </FeatureGate>
   );
 }

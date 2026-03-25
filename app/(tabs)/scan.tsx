@@ -19,6 +19,8 @@ import { trpc } from "@/lib/trpc";
 
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { FeatureGate } from "@/components/feature-gate";
+import { useSubscription } from "@/hooks/use-subscription";
 
 const SCAN_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/OdDCyHFnLhvyAyWV.jpg";
 
@@ -68,6 +70,8 @@ export default function ScanScreen() {
   const { isAuthenticated } = useAuth();
   const { isGuest, guestProfile } = useGuestAuth();
   const canUse = isAuthenticated || isGuest;
+  const { canAccess } = useSubscription();
+  const hasBodyScanAccess = canAccess("body_scan");
 
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [uploadedPhotoUrl, setUploadedPhotoUrl] = useState<string | null>(null);
@@ -365,6 +369,13 @@ export default function ScanScreen() {
     <View style={{ flex: 1, backgroundColor: BG }}>
       {/* Fullscreen Preview Modal */}
       <TransformationPreviewModal />
+
+      {/* Feature gate for body scan — shows upgrade overlay for free users */}
+      {!hasBodyScanAccess && (
+        <FeatureGate feature="body_scan" message="AI Body Scan analyzes your physique and tracks body composition changes over time. Upgrade to Basic or higher to unlock.">
+          <View style={{ height: 400 }} />
+        </FeatureGate>
+      )}
 
       {/* Hero Header — NanoBanana ice-blue, no background image */}
       <View style={{ backgroundColor: BG, paddingTop: 56, paddingHorizontal: 20, paddingBottom: 16 }}>

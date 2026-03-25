@@ -34,6 +34,7 @@ import { defineBackgroundHealthSyncTask, registerBackgroundHealthSync } from "@/
 import { initWeeklyDigest } from "@/lib/weekly-health-digest";
 
 import { FavoritesProvider } from "@/lib/favorites-context";
+import { UserProfileProvider } from "@/lib/user-profile-context";
 
 // Define background task in global scope (required by expo-task-manager)
 defineBackgroundHealthSyncTask();
@@ -251,6 +252,7 @@ export default function RootLayout() {
   const content = (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <GuestAuthProvider>
+      <UserProfileProvider>
       <FavoritesProvider>
       <CalorieProvider>
       <PantryProvider>
@@ -272,6 +274,7 @@ export default function RootLayout() {
       </PantryProvider>
       </CalorieProvider>
       </FavoritesProvider>
+      </UserProfileProvider>
       </GuestAuthProvider>
     </GestureHandlerRootView>
   );

@@ -14,6 +14,8 @@ import * as ImagePicker from "expo-image-picker";
 import * as FileSystem from "expo-file-system/legacy";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { trpc } from "@/lib/trpc";
+import { FeatureGate } from "@/components/feature-gate";
+import { useSubscription } from "@/hooks/use-subscription";
 
 const WORKOUT_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/PZcnawJwIZkQHTEM.jpg";
 
@@ -95,6 +97,8 @@ export default function FormCheckerScreen() {
 
   const uploadPhoto = trpc.upload.photo.useMutation();
   const analyzeFormMutation = trpc.workout.analyzeForm.useMutation();
+  const { canAccess: canAccessFeature } = useSubscription();
+  const hasFormCheckAccess = canAccessFeature("form_checker");
 
   const exerciseTips = EXERCISES_WITH_TIPS[selectedExercise] ?? EXERCISES_WITH_TIPS[DEFAULT_EXERCISE];
 
@@ -196,6 +200,26 @@ export default function FormCheckerScreen() {
     inputRange: [0, 100],
     outputRange: ["0%", "100%"],
   });
+
+  // Gate form checker behind Advanced tier
+  if (!hasFormCheckAccess) {
+    return (
+      <View style={{ flex: 1, backgroundColor: "#0A0E14" }}>
+        <View style={{ backgroundColor: "#0A0E14", paddingTop: 56, paddingHorizontal: 20, paddingBottom: 16 }}>
+          <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+            <TouchableOpacity onPress={() => router.back()} style={{ padding: 4 }}>
+              <Text style={{ color: "#F1F5F9", fontSize: 18 }}>←</Text>
+            </TouchableOpacity>
+            <Text style={{ color: "#F1F5F9", fontFamily: "BebasNeue_400Regular", fontSize: 24, letterSpacing: 3 }}>FORM CHECKER</Text>
+            <View style={{ width: 28 }} />
+          </View>
+        </View>
+        <FeatureGate feature="form_checker" message="AI Form Checker analyzes your exercise technique in real-time to prevent injuries and optimize gains. Upgrade to Advanced to unlock.">
+          <View style={{ height: 400 }} />
+        </FeatureGate>
+      </View>
+    );
+  }
 
   return (
     <View style={{ flex: 1, backgroundColor: "#0A0E14" }}>

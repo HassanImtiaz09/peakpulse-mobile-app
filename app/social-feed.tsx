@@ -18,6 +18,7 @@ import { useRouter } from "expo-router";
 import * as ImagePicker from "expo-image-picker";
 import { trpc } from "@/lib/trpc";
 import { useGuestAuth } from "@/lib/guest-auth";
+import { FeatureGate } from "@/components/feature-gate";
 
 const HERO_BG = "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&q=80";
 
@@ -196,6 +197,7 @@ export default function SocialFeedScreen() {
   );
 
   return (
+    <FeatureGate feature="social_feed" message="Join the PeakPulse community, share progress, and compete in challenges. Available on Advanced plan.">
     <ScreenContainer edges={["top", "left", "right"]} containerClassName="bg-black">
       {/* Hero */}
       <ImageBackground source={{ uri: HERO_BG }} style={styles.hero}>
@@ -408,6 +410,7 @@ export default function SocialFeedScreen() {
         </View>
       </Modal>
     </ScreenContainer>
+    </FeatureGate>
   );
 }
 

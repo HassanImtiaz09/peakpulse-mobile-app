@@ -7,6 +7,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import { ScreenContainer } from "@/components/screen-container";
 import { scheduleAllDefaultReminders } from "@/lib/notifications";
+import { FeatureGate } from "@/components/feature-gate";
 
 const CHALLENGE_KEY = "@seven_day_challenge";
 const HERO_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/PZcnawJwIZkQHTEM.jpg";
@@ -124,6 +125,7 @@ export default function ChallengeOnboardingScreen() {
   const totalXP = getTotalXP();
 
   return (
+    <FeatureGate feature="challenges" message="Unlock 7-day fitness challenges and leaderboards. Available on Advanced plan.">
     <View style={{ flex: 1, backgroundColor: "#0A0E14" }}>
       {/* Hero */}
       <ImageBackground source={{ uri: HERO_BG }} style={{ height: 200 }} resizeMode="cover">
@@ -269,5 +271,6 @@ export default function ChallengeOnboardingScreen() {
         </View>
       </ScrollView>
     </View>
+    </FeatureGate>
   );
 }

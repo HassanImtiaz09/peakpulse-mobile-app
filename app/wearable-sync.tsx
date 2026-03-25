@@ -7,6 +7,7 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useWearable } from "@/lib/wearable-context";
+import { FeatureGate } from "@/components/feature-gate";
 
 const DASHBOARD_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/PZcnawJwIZkQHTEM.jpg";
 
@@ -172,6 +173,7 @@ export default function WearableSyncScreen() {
     : stats.connectedDevice ?? "Unknown";
 
   return (
+    <FeatureGate feature="wearable_sync" message="Sync your fitness wearable (Apple Watch, Fitbit, Garmin) with PeakPulse. Available on Basic plan and above.">
     <View style={{ flex: 1, backgroundColor: "#0A0E14" }}>
       {/* Hero */}
       <ImageBackground source={{ uri: DASHBOARD_BG }} style={{ height: 160 }} resizeMode="cover">
@@ -552,5 +554,6 @@ export default function WearableSyncScreen() {
         </View>
       </ScrollView>
     </View>
+    </FeatureGate>
   );
 }

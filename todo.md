@@ -1756,3 +1756,46 @@
 - [x] New tests for side-view GIF resolution
 - [x] New tests for feedback screen
 - [x] New tests for profile subscription display
+
+## Round 79 — Subscription Feature Gating + Profile Photo & Username
+
+### Subscription-Based Feature Gating
+- [x] Create FeatureGate context/provider with subscription tier awareness
+- [x] Define feature-to-tier mapping (Free/Basic/Advanced features)
+- [x] Create useFeatureGate hook for checking feature access
+- [x] Create FeatureGate wrapper component with upgrade prompt overlay
+- [x] Gate AI Body Scan behind Basic+ tier
+- [x] Gate AI Coach Chat behind Advanced tier
+- [x] Gate progress photos behind Basic+ tier
+- [x] Gate wearable sync behind Basic+ tier
+- [x] Gate exercise form check behind Advanced tier
+- [x] Gate social feed behind Advanced tier
+- [x] Gate challenges behind Advanced tier
+- [x] Gate referral behind Basic+ tier
+- [x] Gate notification preferences behind Basic+ tier
+- [x] Show upgrade prompts with tier-specific pricing when gated features are tapped
+- [x] Free tier: basic workout plans, exercise library, basic meal logging
+- [x] Basic tier: AI body scan, progress photos, wearable sync, referral, notification prefs
+- [x] Advanced tier: all features including form check, AI coaching, social feed, challenges
+
+### Profile Photo Upload & Username
+- [x] Add profile photo upload using expo-image-picker
+- [x] Create UserProfileContext with AsyncStorage persistence
+- [x] Display profile photo in profile header (replace default avatar)
+- [x] Add PhotoOptionsModal (library, camera, remove options)
+- [x] Add inline username editing with save/cancel
+- [x] Persist username to AsyncStorage via UserProfileContext
+- [x] Show username in profile header and greeting on dashboard
+- [x] Show profile photo in dashboard hero section
+- [x] Camera permission handling with user-friendly alert
+
+### Testing
+- [x] 0 TypeScript errors
+- [x] All 32 new tests pass (round79-profile-gates.test.ts)
+- [x] Tests for UserProfileContext (existence, exports, storage)
+- [x] Tests for profile photo upload (image picker, modal, permissions)
+- [x] Tests for username editing (inline edit, save, maxLength)
+- [x] Tests for dashboard profile integration
+- [x] Tests for feature gates on all premium screens
+- [x] Tests for feature tiers configuration
+- [x] Tests for root layout UserProfileProvider integration

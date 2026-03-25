@@ -10,6 +10,7 @@ import {
   buildReferralUrl,
   type ReferralData,
 } from "@/lib/referral";
+import { FeatureGate } from "@/components/feature-gate";
 
 const HERO_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/PZcnawJwIZkQHTEM.jpg";
 
@@ -61,6 +62,7 @@ export default function ReferralScreen() {
   const rewards = REWARD_TIERS.map((t: typeof REWARD_TIERS[number]) => ({ ...t, achieved: referralCount >= t.referrals }));
 
   return (
+    <FeatureGate feature="referral" message="Refer friends and earn rewards. Available on Basic plan and above.">
     <View style={{ flex: 1, backgroundColor: "#0A0E14" }}>
       {/* Hero */}
       <ImageBackground source={{ uri: HERO_BG }} style={{ height: 200 }} resizeMode="cover">
@@ -163,5 +165,6 @@ export default function ReferralScreen() {
         </View>
       </ScrollView>
     </View>
+    </FeatureGate>
   );
 }

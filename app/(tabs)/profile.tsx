@@ -14,6 +14,9 @@ import { PaywallModal } from "@/components/paywall-modal";
 import { useThemeContext, type ThemePreference } from "@/lib/theme-provider";
 import * as Haptics from "expo-haptics";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import * as ImagePicker from "expo-image-picker";
+import { useUserProfile } from "@/lib/user-profile-context";
+import { Modal } from "react-native";
 
 // Enable LayoutAnimation on Android
 if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental) {
@@ -73,6 +76,10 @@ export default function ProfileScreen() {
   const { canAccess } = subscription;
   const [paywallFeature, setPaywallFeature] = useState<{ name: string; icon: string; tier: "basic" | "advanced"; desc?: string } | null>(null);
   const [editing, setEditing] = useState(false);
+  const { profilePhotoUri, displayName: savedDisplayName, setProfilePhoto, setDisplayName: saveDisplayName } = useUserProfile();
+  const [editingName, setEditingName] = useState(false);
+  const [nameInput, setNameInput] = useState("");
+  const [showPhotoOptions, setShowPhotoOptions] = useState(false);
 
   const [age, setAge] = useState("");
   const [gender, setGender] = useState("male");
@@ -136,8 +143,59 @@ export default function ProfileScreen() {
     );
   }
 
-  const displayName = isAuthenticated ? (user?.name ?? "Athlete") : (guestProfile?.name ?? "Guest Athlete");
+  const displayName = savedDisplayName ?? (isAuthenticated ? (user?.name ?? "Athlete") : (guestProfile?.name ?? "Guest Athlete"));
   const displayEmail = isAuthenticated ? (user?.email ?? "") : "Guest Mode";
+
+  const pickImageFromLibrary = async () => {
+    setShowPhotoOptions(false);
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ["images"],
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.7,
+    });
+    if (!result.canceled && result.assets[0]) {
+      await setProfilePhoto(result.assets[0].uri);
+      if (Platform.OS !== "web") Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    }
+  };
+
+  const takePhoto = async () => {
+    setShowPhotoOptions(false);
+    const { status } = await ImagePicker.requestCameraPermissionsAsync();
+    if (status !== "granted") {
+      Alert.alert("Permission Required", "Camera access is needed to take a profile photo.");
+      return;
+    }
+    const result = await ImagePicker.launchCameraAsync({
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.7,
+    });
+    if (!result.canceled && result.assets[0]) {
+      await setProfilePhoto(result.assets[0].uri);
+      if (Platform.OS !== "web") Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    }
+  };
+
+  const removePhoto = async () => {
+    setShowPhotoOptions(false);
+    await setProfilePhoto(null);
+  };
+
+  const startEditingName = () => {
+    setNameInput(displayName);
+    setEditingName(true);
+  };
+
+  const saveName = async () => {
+    const trimmed = nameInput.trim();
+    if (trimmed.length > 0) {
+      await saveDisplayName(trimmed);
+      if (Platform.OS !== "web") Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    }
+    setEditingName(false);
+  };
 
   const gatedNav = (path: string, feature: string, icon: string, tier: "basic" | "advanced", desc?: string) => {
     if (canAccess(feature)) {
@@ -149,6 +207,13 @@ export default function ProfileScreen() {
 
   return (
     <>
+    <PhotoOptionsModal
+      visible={showPhotoOptions}
+      onClose={() => setShowPhotoOptions(false)}
+      onPickLibrary={pickImageFromLibrary}
+      onTakePhoto={takePhoto}
+      onRemove={profilePhotoUri ? removePhoto : undefined}
+    />
     <PaywallModal
       visible={!!paywallFeature}
       onClose={() => setPaywallFeature(null)}
@@ -171,11 +236,48 @@ export default function ProfileScreen() {
           </TouchableOpacity>
             <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "flex-end" }}>
               <View style={{ flexDirection: "row", alignItems: "center", gap: 14 }}>
-                <View style={{ width: 64, height: 64, borderRadius: 32, backgroundColor: GOLD_DIM, alignItems: "center", justifyContent: "center", borderWidth: 3, borderColor: GOLD }}>
-                  <MaterialIcons name="fitness-center" size={28} color={GOLD} />
-                </View>
+                <TouchableOpacity
+                  onPress={() => { setShowPhotoOptions(true); if (Platform.OS !== "web") Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); }}
+                  style={{ position: "relative" }}
+                >
+                  {profilePhotoUri ? (
+                    <Image source={{ uri: profilePhotoUri }} style={{ width: 64, height: 64, borderRadius: 32, borderWidth: 3, borderColor: GOLD }} />
+                  ) : (
+                    <View style={{ width: 64, height: 64, borderRadius: 32, backgroundColor: GOLD_DIM, alignItems: "center", justifyContent: "center", borderWidth: 3, borderColor: GOLD }}>
+                      <MaterialIcons name="fitness-center" size={28} color={GOLD} />
+                    </View>
+                  )}
+                  <View style={{ position: "absolute", bottom: -2, right: -2, width: 24, height: 24, borderRadius: 12, backgroundColor: GOLD, alignItems: "center", justifyContent: "center", borderWidth: 2, borderColor: BG }}>
+                    <MaterialIcons name="camera-alt" size={12} color={BG} />
+                  </View>
+                </TouchableOpacity>
                 <View>
-                  <Text style={{ color: FG, fontFamily: "BebasNeue_400Regular", fontSize: 20 }}>{displayName}</Text>
+                  {editingName ? (
+                    <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+                      <TextInput
+                        value={nameInput}
+                        onChangeText={setNameInput}
+                        autoFocus
+                        maxLength={30}
+                        onSubmitEditing={saveName}
+                        returnKeyType="done"
+                        style={{ color: FG, fontFamily: "BebasNeue_400Regular", fontSize: 20, borderBottomWidth: 2, borderBottomColor: GOLD, paddingBottom: 2, minWidth: 100 }}
+                        placeholderTextColor={MUTED}
+                        placeholder="Your name"
+                      />
+                      <TouchableOpacity onPress={saveName} style={{ padding: 4 }}>
+                        <MaterialIcons name="check" size={20} color={GOLD} />
+                      </TouchableOpacity>
+                      <TouchableOpacity onPress={() => setEditingName(false)} style={{ padding: 4 }}>
+                        <MaterialIcons name="close" size={18} color={MUTED} />
+                      </TouchableOpacity>
+                    </View>
+                  ) : (
+                    <TouchableOpacity onPress={startEditingName} style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+                      <Text style={{ color: FG, fontFamily: "BebasNeue_400Regular", fontSize: 20 }}>{displayName}</Text>
+                      <MaterialIcons name="edit" size={14} color={MUTED} />
+                    </TouchableOpacity>
+                  )}
                   <Text style={{ color: MUTED, fontSize: 12 }}>{displayEmail}</Text>
                   {isGuest && (
                     <View style={{ backgroundColor: GOLD_DIM, borderRadius: 6, paddingHorizontal: 8, paddingVertical: 2, marginTop: 4, alignSelf: "flex-start" }}>
@@ -647,6 +749,82 @@ function PersonalInfoCard({
         </View>
       ))}
     </View>
+  );
+}
+
+// ── Photo Options Modal ─────────────────────────────────────────────────
+function PhotoOptionsModal({
+  visible,
+  onClose,
+  onPickLibrary,
+  onTakePhoto,
+  onRemove,
+}: {
+  visible: boolean;
+  onClose: () => void;
+  onPickLibrary: () => void;
+  onTakePhoto: () => void;
+  onRemove?: () => void;
+}) {
+  return (
+    <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
+      <TouchableOpacity
+        style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.7)", justifyContent: "flex-end" }}
+        activeOpacity={1}
+        onPress={onClose}
+      >
+        <View style={{ backgroundColor: SURFACE, borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 24, paddingBottom: 40 }}>
+          <View style={{ width: 40, height: 4, borderRadius: 2, backgroundColor: MUTED, alignSelf: "center", marginBottom: 20, opacity: 0.5 }} />
+          <Text style={{ color: FG, fontFamily: "BebasNeue_400Regular", fontSize: 20, textAlign: "center", marginBottom: 20 }}>Profile Photo</Text>
+          <TouchableOpacity
+            style={{ flexDirection: "row", alignItems: "center", gap: 14, backgroundColor: SURFACE2, borderRadius: 14, padding: 16, marginBottom: 10, borderWidth: 1, borderColor: "rgba(30,41,59,0.6)" }}
+            onPress={onPickLibrary}
+          >
+            <View style={{ width: 40, height: 40, borderRadius: 12, backgroundColor: GOLD_DIM, alignItems: "center", justifyContent: "center" }}>
+              <MaterialIcons name="photo-library" size={22} color={GOLD} />
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={{ color: FG, fontFamily: "DMSans_600SemiBold", fontSize: 15 }}>Choose from Library</Text>
+              <Text style={{ color: MUTED, fontSize: 12, marginTop: 2 }}>Select an existing photo</Text>
+            </View>
+            <MaterialIcons name="chevron-right" size={20} color={MUTED} />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={{ flexDirection: "row", alignItems: "center", gap: 14, backgroundColor: SURFACE2, borderRadius: 14, padding: 16, marginBottom: 10, borderWidth: 1, borderColor: "rgba(30,41,59,0.6)" }}
+            onPress={onTakePhoto}
+          >
+            <View style={{ width: 40, height: 40, borderRadius: 12, backgroundColor: GOLD_DIM, alignItems: "center", justifyContent: "center" }}>
+              <MaterialIcons name="camera-alt" size={22} color={GOLD} />
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={{ color: FG, fontFamily: "DMSans_600SemiBold", fontSize: 15 }}>Take a Photo</Text>
+              <Text style={{ color: MUTED, fontSize: 12, marginTop: 2 }}>Use your camera</Text>
+            </View>
+            <MaterialIcons name="chevron-right" size={20} color={MUTED} />
+          </TouchableOpacity>
+          {onRemove && (
+            <TouchableOpacity
+              style={{ flexDirection: "row", alignItems: "center", gap: 14, backgroundColor: "#EF444415", borderRadius: 14, padding: 16, marginBottom: 10, borderWidth: 1, borderColor: "#EF444430" }}
+              onPress={onRemove}
+            >
+              <View style={{ width: 40, height: 40, borderRadius: 12, backgroundColor: "#EF444420", alignItems: "center", justifyContent: "center" }}>
+                <MaterialIcons name="delete" size={22} color="#EF4444" />
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={{ color: "#EF4444", fontFamily: "DMSans_600SemiBold", fontSize: 15 }}>Remove Photo</Text>
+                <Text style={{ color: MUTED, fontSize: 12, marginTop: 2 }}>Reset to default avatar</Text>
+              </View>
+            </TouchableOpacity>
+          )}
+          <TouchableOpacity
+            style={{ marginTop: 8, paddingVertical: 14, alignItems: "center", backgroundColor: SURFACE2, borderRadius: 14, borderWidth: 1, borderColor: "rgba(30,41,59,0.6)" }}
+            onPress={onClose}
+          >
+            <Text style={{ color: MUTED, fontFamily: "DMSans_600SemiBold", fontSize: 15 }}>Cancel</Text>
+          </TouchableOpacity>
+        </View>
+      </TouchableOpacity>
+    </Modal>
   );
 }
 

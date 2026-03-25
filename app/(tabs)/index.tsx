@@ -31,6 +31,7 @@ import { getWeeklyGoals, calculateWeeklyProgress, getWorkoutsThisWeek, isGoalTra
 import { shareWeeklySummaryCard, shareMilestoneCard, type WeeklySummaryCardData, type MilestoneCardData } from "@/lib/social-card-generator";
 import { TrendChart, PRProgressChart, type TrendDataPoint } from "@/components/trend-chart";
 import { getPRSummary, type PRSummary } from "@/lib/personal-records";
+import { useUserProfile } from "@/lib/user-profile-context";
 
 import {
   getStreakData, evaluateWeek, getWeekNeedingEvaluation, getCurrentMilestone,
@@ -105,7 +106,7 @@ const QUICK_ACTION_GROUPS: ActionGroup[] = [
       { icon: "history", label: "Workout Log", route: "/workout-history", gated: false },
       { icon: "calendar-today", label: "Workout History", route: "/workout-calendar", gated: false },
       { icon: "bookmark", label: "Templates", route: "/workout-templates", gated: false },
-      { icon: "center-focus-strong", label: "Form Check", route: "/form-checker", gated: false },
+      { icon: "center-focus-strong", label: "Form Check", route: "/form-checker", gated: true, feature: "form_checker", tier: "advanced", desc: "AI Form Checker analyzes your exercise technique in real-time — Advanced plan only." },
     ],
   },
   {
@@ -124,8 +125,8 @@ const QUICK_ACTION_GROUPS: ActionGroup[] = [
     title: "AI & Insights",
     icon: "smart-toy",
     actions: [
-      { icon: "smart-toy", label: "AI Coach", route: "/ai-coach", gated: false },
-      { icon: "camera-alt", label: "AI Body Scan", route: "/(tabs)/scan", gated: false },
+      { icon: "smart-toy", label: "AI Coach", route: "/ai-coach", gated: true, feature: "ai_coaching", tier: "advanced", desc: "Get personalized AI coaching with form analysis and progress insights — Advanced plan only." },
+      { icon: "camera-alt", label: "AI Body Scan", route: "/(tabs)/scan", gated: true, feature: "body_scan", tier: "basic", desc: "AI Body Scan analyzes your physique and tracks body composition — Basic plan and above." },
       { icon: "show-chart", label: "Health Trends", route: "/health-trends", gated: false },
       { icon: "notifications-active", label: "AI Reminders", route: "/notification-settings", gated: false },
     ],
@@ -433,7 +434,8 @@ export default function HomeScreen() {
     })();
   }, [canUse, wearableData.stats.steps, wearableData.stats.totalCaloriesBurnt]);
 
-  const displayName = user?.name?.split(" ")[0] ?? guestProfile?.name?.split(" ")[0] ?? "Athlete";
+  const { displayName: savedDisplayName, profilePhotoUri } = useUserProfile();
+  const displayName = savedDisplayName?.split(" ")[0] ?? user?.name?.split(" ")[0] ?? guestProfile?.name?.split(" ")[0] ?? "Athlete";
 
   // ── Server-side data (authenticated users — syncs across devices) ─────
   const { data: profile } = trpc.profile.get.useQuery(undefined, { enabled: isAuthenticated });
@@ -642,7 +644,11 @@ export default function HomeScreen() {
             </View>
             {/* Greeting + streak badge */}
             <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start" }}>
-              <View style={{ flex: 1 }}>
+              <View style={{ flexDirection: "row", alignItems: "center", gap: 12, flex: 1 }}>
+                {profilePhotoUri ? (
+                  <Image source={{ uri: profilePhotoUri }} style={{ width: 48, height: 48, borderRadius: 24, borderWidth: 2, borderColor: SF.gold }} />
+                ) : null}
+                <View style={{ flex: 1 }}>
                 <Text style={{ color: SF.muted, fontFamily: "DMSans_500Medium", fontSize: 14 }}>Personalized</Text>
                 <Text style={{ color: SF.fg, fontFamily: "BebasNeue_400Regular", fontSize: 34, letterSpacing: 2, marginTop: 2 }}>
                   YOUR {displayName.toUpperCase()}!
@@ -659,6 +665,7 @@ export default function HomeScreen() {
                     </View>
                   </View>
                 )}
+              </View>
               </View>
               {/* Streak badge */}
               {streakData && streakData.currentStreak > 0 && (
