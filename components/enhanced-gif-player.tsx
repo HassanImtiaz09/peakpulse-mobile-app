@@ -1,37 +1,24 @@
 /**
- * Enhanced GIF/Video Player
+ * Enhanced GIF Player
  *
  * Features:
  * - Multi-angle views (2-3 per exercise) with angle selector
- * - Supports both MP4 video (MuscleWiki) and GIF fallback
- * - Web: uses HTML5 <video> tag for reliable cross-origin playback
- * - Native: uses expo-video VideoView with useCaching for seamless playback
- * - Slow-motion playback simulation via opacity pulse (GIF only)
- * - Loop toggle control (GIF only)
+ * - Uses locally bundled GIF assets for reliable offline playback
+ * - Slow-motion playback simulation via opacity pulse
+ * - Loop toggle control
  * - Focus annotations showing what to watch for each angle
  * - Fullscreen modal with favorites
  */
 import React, { useState, useCallback, useRef, useEffect, useMemo } from "react";
-import { View, Text, Pressable, StyleSheet, Animated, Platform, Modal, Dimensions, ActivityIndicator } from "react-native";
+import { View, Text, Pressable, StyleSheet, Animated, Platform, Modal, Dimensions } from "react-native";
 import { Image } from "expo-image";
-import { VideoView, useVideoPlayer, type VideoSource } from "expo-video";
-import { useEvent } from "expo";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import * as Haptics from "expo-haptics";
 import type { ExerciseAngleView } from "@/lib/exercise-data";
 import { useFavorites } from "@/lib/favorites-context";
+import { resolveGifAsset } from "@/lib/gif-resolver";
 
 const { width: SCREEN_W } = Dimensions.get("window");
-
-function isVideoUrl(url: string): boolean {
-  return url.endsWith(".mp4") || url.endsWith(".webm") || url.endsWith(".mov");
-}
-
-/** Build a VideoSource with caching enabled (native only) */
-function cachedSource(url: string): VideoSource {
-  if (Platform.OS === "web") return url;
-  return { uri: url, useCaching: true };
-}
 
 interface EnhancedGifPlayerProps {
   /** Multi-angle views for this exercise */
@@ -58,100 +45,6 @@ const C = {
   dim: "rgba(245,158,11,0.08)",
 };
 
-// ─── Web HTML5 Video Player ───────────────────────────────────────────
-function WebVideoPlayer({ url, style, fill }: { url: string; style?: object; fill?: boolean }) {
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
-
-  if (Platform.OS !== "web") return null;
-
-  const containerStyle = fill
-    ? { width: SCREEN_W, height: SCREEN_W }
-    : { flex: 1, backgroundColor: C.bg, ...(style || {}) };
-
-  return (
-    <View style={containerStyle}>
-      {loading && !error && (
-        <View style={[StyleSheet.absoluteFill, { justifyContent: "center", alignItems: "center", zIndex: 2 }]}>
-          <ActivityIndicator size={fill ? "large" : "small"} color={C.gold} />
-        </View>
-      )}
-      {error && (
-        <View style={[StyleSheet.absoluteFill, { justifyContent: "center", alignItems: "center", zIndex: 2 }]}>
-          <MaterialIcons name="error-outline" size={32} color={C.gold} />
-          <Text style={{ color: C.gold, fontSize: 12, marginTop: 4 }}>Video unavailable</Text>
-        </View>
-      )}
-      {/* @ts-ignore - RNW supports HTML video element */}
-      <video
-        src={url}
-        autoPlay
-        loop
-        muted
-        playsInline
-        onLoadedData={() => setLoading(false)}
-        onError={() => { setLoading(false); setError(true); }}
-        style={{
-          width: "100%",
-          height: "100%",
-          objectFit: "contain",
-          backgroundColor: "#000",
-        }}
-      />
-    </View>
-  );
-}
-
-// ─── Native Video Player ──────────────────────────────────────────────
-function NativeVideoPlayer({ url, style, fill }: { url: string; style?: object; fill?: boolean }) {
-  const source = useMemo(() => cachedSource(url), [url]);
-  const player = useVideoPlayer(source, (p) => {
-    p.loop = true;
-    p.muted = true;
-    p.play();
-  });
-  const { status } = useEvent(player, "statusChange", { status: player.status });
-  const [hasError, setHasError] = useState(false);
-
-  useEffect(() => {
-    if (status === "error") setHasError(true);
-  }, [status]);
-
-  const containerStyle = fill
-    ? { width: SCREEN_W, height: SCREEN_W }
-    : { flex: 1 as const, backgroundColor: C.bg, ...(style || {}) };
-
-  return (
-    <View style={containerStyle}>
-      {status === "loading" && !hasError && (
-        <View style={[StyleSheet.absoluteFill, { justifyContent: "center", alignItems: "center", zIndex: 2 }]}>
-          <ActivityIndicator size={fill ? "large" : "small"} color={C.gold} />
-        </View>
-      )}
-      {hasError && (
-        <View style={[StyleSheet.absoluteFill, { justifyContent: "center", alignItems: "center", zIndex: 2 }]}>
-          <MaterialIcons name="error-outline" size={32} color={C.gold} />
-          <Text style={{ color: C.gold, fontSize: 12, marginTop: 4 }}>Video unavailable</Text>
-        </View>
-      )}
-      <VideoView
-        player={player}
-        style={StyleSheet.absoluteFill}
-        contentFit="contain"
-        nativeControls={false}
-      />
-    </View>
-  );
-}
-
-// ─── Cross-platform Video Player ──────────────────────────────────────
-function VideoPlayer({ url, style, fill }: { url: string; style?: object; fill?: boolean }) {
-  if (Platform.OS === "web") {
-    return <WebVideoPlayer url={url} style={style} fill={fill} />;
-  }
-  return <NativeVideoPlayer url={url} style={style} fill={fill} />;
-}
-
 export function EnhancedGifPlayer({
   angleViews,
   exerciseName,
@@ -171,11 +64,15 @@ export function EnhancedGifPlayer({
   const currentView = angleViews[activeAngle] || angleViews[0];
   if (!currentView) return null;
 
-  const isVideo = isVideoUrl(currentView.gifUrl);
+  // Resolve the GIF URL to a local asset
+  const currentAsset = useMemo(
+    () => resolveGifAsset(currentView.gifUrl),
+    [currentView.gifUrl]
+  );
 
-  // Slow-motion pulse animation (only for GIFs)
+  // Slow-motion pulse animation
   useEffect(() => {
-    if (isSlowMotion && !isVideo) {
+    if (isSlowMotion) {
       const animation = Animated.loop(
         Animated.sequence([
           Animated.timing(pulseAnim, { toValue: 0.6, duration: 1500, useNativeDriver: true }),
@@ -187,7 +84,7 @@ export function EnhancedGifPlayer({
     } else {
       pulseAnim.setValue(1);
     }
-  }, [isSlowMotion, isVideo, pulseAnim]);
+  }, [isSlowMotion, pulseAnim]);
 
   const handleAngleChange = useCallback((index: number) => {
     setActiveAngle(index);
@@ -231,24 +128,20 @@ export function EnhancedGifPlayer({
     <View style={styles.container}>
       {/* Media Display */}
       <View style={[styles.gifContainer, { height }]}>
-        {isVideo ? (
-          <VideoPlayer key={`v-${activeAngle}-${imageKey}-${currentView.gifUrl}`} url={currentView.gifUrl} />
-        ) : (
-          <Animated.View style={[styles.gifWrapper, { opacity: isSlowMotion ? pulseAnim : 1 }]}>
-            <Image
-              key={`${activeAngle}-${imageKey}`}
-              source={{ uri: currentView.gifUrl }}
-              style={styles.gif}
-              contentFit="contain"
-              cachePolicy="disk"
-              recyclingKey={`${exerciseName}-${activeAngle}`}
-              transition={200}
-            />
-          </Animated.View>
-        )}
+        <Animated.View style={[styles.gifWrapper, { opacity: isSlowMotion ? pulseAnim : 1 }]}>
+          <Image
+            key={`${activeAngle}-${imageKey}`}
+            source={currentAsset}
+            style={styles.gif}
+            contentFit="contain"
+            cachePolicy="memory-disk"
+            recyclingKey={`${exerciseName}-${activeAngle}`}
+            transition={200}
+          />
+        </Animated.View>
 
-        {/* Slow-motion overlay indicator (GIF only) */}
-        {isSlowMotion && !isVideo && (
+        {/* Slow-motion overlay indicator */}
+        {isSlowMotion && (
           <View style={styles.slowMotionBadge}>
             <MaterialIcons name="slow-motion-video" size={12} color={C.gold} />
             <Text style={styles.slowMotionText}>SLOW-MO</Text>
@@ -319,41 +212,37 @@ export function EnhancedGifPlayer({
             />
           </Pressable>
 
-          {/* Slow-motion toggle (GIF only) */}
-          {!isVideo && (
-            <Pressable
-              onPress={toggleSlowMotion}
-              style={({ pressed }) => [
-                styles.controlButton,
-                isSlowMotion && styles.controlButtonActive,
-                pressed && { opacity: 0.7 },
-              ]}
-            >
-              <MaterialIcons
-                name="slow-motion-video"
-                size={16}
-                color={isSlowMotion ? C.bg : C.gold}
-              />
-            </Pressable>
-          )}
+          {/* Slow-motion toggle */}
+          <Pressable
+            onPress={toggleSlowMotion}
+            style={({ pressed }) => [
+              styles.controlButton,
+              isSlowMotion && styles.controlButtonActive,
+              pressed && { opacity: 0.7 },
+            ]}
+          >
+            <MaterialIcons
+              name="slow-motion-video"
+              size={16}
+              color={isSlowMotion ? C.bg : C.gold}
+            />
+          </Pressable>
 
-          {/* Loop toggle (GIF only) */}
-          {!isVideo && (
-            <Pressable
-              onPress={toggleLoop}
-              style={({ pressed }) => [
-                styles.controlButton,
-                isLooping && styles.controlButtonActive,
-                pressed && { opacity: 0.7 },
-              ]}
-            >
-              <MaterialIcons
-                name="loop"
-                size={16}
-                color={isLooping ? C.bg : C.gold}
-              />
-            </Pressable>
-          )}
+          {/* Loop toggle */}
+          <Pressable
+            onPress={toggleLoop}
+            style={({ pressed }) => [
+              styles.controlButton,
+              isLooping && styles.controlButtonActive,
+              pressed && { opacity: 0.7 },
+            ]}
+          >
+            <MaterialIcons
+              name="loop"
+              size={16}
+              color={isLooping ? C.bg : C.gold}
+            />
+          </Pressable>
         </View>
       </View>
 
@@ -403,18 +292,14 @@ export function EnhancedGifPlayer({
             </View>
           </View>
           <View style={styles.fullscreenImageWrap}>
-            {isVideo ? (
-              <VideoPlayer key={`fsv-${activeAngle}-${currentView.gifUrl}`} url={currentView.gifUrl} fill />
-            ) : (
-              <Image
-                key={`fs-${activeAngle}-${imageKey}`}
-                source={{ uri: currentView.gifUrl }}
-                style={{ width: SCREEN_W, height: SCREEN_W }}
-                contentFit="contain"
-                cachePolicy="disk"
-                transition={200}
-              />
-            )}
+            <Image
+              key={`fs-${activeAngle}-${imageKey}`}
+              source={currentAsset}
+              style={{ width: SCREEN_W, height: SCREEN_W }}
+              contentFit="contain"
+              cachePolicy="memory-disk"
+              transition={200}
+            />
           </View>
           <View style={styles.fullscreenAngleRow}>
             {angleViews.map((view, i) => (

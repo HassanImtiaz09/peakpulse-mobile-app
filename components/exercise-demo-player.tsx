@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo, useEffect, useRef } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import {
   View,
   Text,
@@ -7,126 +7,25 @@ import {
   StyleSheet,
   Dimensions,
   Platform,
-  ActivityIndicator,
 } from "react-native";
 import { Image } from "expo-image";
-import { VideoView, useVideoPlayer, type VideoSource } from "expo-video";
-import { useEvent } from "expo";
 import { MaterialIcons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { useColors } from "@/hooks/use-colors";
 import { useFavorites } from "@/lib/favorites-context";
-import { getExerciseInfo, type ExerciseAngleView } from "@/lib/exercise-data";
+import { getExerciseInfo } from "@/lib/exercise-data";
+import { resolveGifAsset } from "@/lib/gif-resolver";
 
 const { width: SCREEN_W } = Dimensions.get("window");
 
-function isVideoUrl(url: string): boolean {
-  return url.endsWith(".mp4") || url.endsWith(".webm") || url.endsWith(".mov");
-}
-
-/** Build a VideoSource with caching enabled (native only) */
-function cachedSource(url: string): VideoSource {
-  if (Platform.OS === "web") return url;
-  return { uri: url, useCaching: true };
-}
-
 interface ExerciseDemoPlayerProps {
-  gifUrl: string;
+  /** Legacy gifUrl prop (ignored if gifAsset is provided) */
+  gifUrl?: string;
+  /** Local GIF asset (require() number) */
+  gifAsset?: number;
   cue?: string;
   height?: number;
   exerciseName?: string;
-}
-
-// ─── Web HTML5 Video Player ───────────────────────────────────────────
-// On web, expo-video can have issues. Use a native HTML5 <video> tag for reliability.
-function WebVideoPlayer({ url, height, fill }: { url: string; height?: number; fill?: boolean }) {
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
-
-  if (Platform.OS !== "web") return null;
-
-  return (
-    <View style={fill ? { width: SCREEN_W, height: SCREEN_W } : { height: height ?? 200, backgroundColor: "#000", borderRadius: 12, overflow: "hidden" }}>
-      {loading && !error && (
-        <View style={[StyleSheet.absoluteFill, { justifyContent: "center", alignItems: "center", zIndex: 2 }]}>
-          <ActivityIndicator size="large" color="#D4AF37" />
-        </View>
-      )}
-      {error && (
-        <View style={[StyleSheet.absoluteFill, { justifyContent: "center", alignItems: "center", zIndex: 2 }]}>
-          <MaterialIcons name="error-outline" size={32} color="#F59E0B" />
-          <Text style={{ color: "#F59E0B", fontSize: 12, marginTop: 4 }}>Video unavailable</Text>
-        </View>
-      )}
-      {/* @ts-ignore - RNW supports HTML video element */}
-      <video
-        src={url}
-        autoPlay
-        loop
-        muted
-        playsInline
-        onLoadedData={() => setLoading(false)}
-        onError={() => { setLoading(false); setError(true); }}
-        style={{
-          width: "100%",
-          height: "100%",
-          objectFit: "contain",
-          backgroundColor: "#000",
-          borderRadius: fill ? 0 : 12,
-        }}
-      />
-    </View>
-  );
-}
-
-// ─── Native Video Player ──────────────────────────────────────────────
-function NativeVideoPlayer({ url, height, fill }: { url: string; height?: number; fill?: boolean }) {
-  const source = useMemo(() => cachedSource(url), [url]);
-  const player = useVideoPlayer(source, (p) => {
-    p.loop = true;
-    p.muted = true;
-    p.play();
-  });
-  const { status } = useEvent(player, "statusChange", { status: player.status });
-  const [hasError, setHasError] = useState(false);
-
-  useEffect(() => {
-    if (status === "error") setHasError(true);
-  }, [status]);
-
-  const containerStyle = fill
-    ? { width: SCREEN_W, height: SCREEN_W }
-    : { height: height ?? 200, backgroundColor: "#000", borderRadius: 12, overflow: "hidden" as const };
-
-  return (
-    <View style={containerStyle}>
-      {status === "loading" && !hasError && (
-        <View style={[StyleSheet.absoluteFill, { justifyContent: "center", alignItems: "center", zIndex: 2 }]}>
-          <ActivityIndicator size="large" color="#D4AF37" />
-        </View>
-      )}
-      {hasError && (
-        <View style={[StyleSheet.absoluteFill, { justifyContent: "center", alignItems: "center", zIndex: 2 }]}>
-          <MaterialIcons name="error-outline" size={32} color="#F59E0B" />
-          <Text style={{ color: "#F59E0B", fontSize: 12, marginTop: 4 }}>Video unavailable</Text>
-        </View>
-      )}
-      <VideoView
-        player={player}
-        style={StyleSheet.absoluteFill}
-        contentFit="contain"
-        nativeControls={false}
-      />
-    </View>
-  );
-}
-
-// ─── Cross-platform Video Player ──────────────────────────────────────
-function VideoPlayer({ url, height, fill }: { url: string; height?: number; fill?: boolean }) {
-  if (Platform.OS === "web") {
-    return <WebVideoPlayer url={url} height={height} fill={fill} />;
-  }
-  return <NativeVideoPlayer url={url} height={height} fill={fill} />;
 }
 
 /** Get angle label from ExerciseAngleView */
@@ -139,11 +38,12 @@ function getAngleShortLabel(label: string): string {
 
 /**
  * Exercise demo player with fullscreen enlarge support and front/side angle toggle.
- * Supports both MP4 video (MuscleWiki) and GIF fallback.
+ * Uses locally bundled GIF assets for reliable offline playback.
  * Tap the expand icon or the media itself to open fullscreen modal.
  */
 export function ExerciseDemoPlayer({
   gifUrl,
+  gifAsset,
   cue,
   height = 200,
   exerciseName,
@@ -163,15 +63,15 @@ export function ExerciseDemoPlayer({
   const hasMultipleAngles = angleViews.length > 1;
   const [activeAngle, setActiveAngle] = useState(0);
 
-  // Current URL: use angle view URL if available, otherwise fall back to gifUrl
-  const currentUrl = useMemo(() => {
+  // Resolve the GIF asset: prefer gifAsset prop, then resolve from URL
+  const currentAsset = useMemo(() => {
     if (hasMultipleAngles && angleViews[activeAngle]) {
-      return angleViews[activeAngle].gifUrl;
+      return resolveGifAsset(angleViews[activeAngle].gifUrl);
     }
-    return gifUrl;
-  }, [hasMultipleAngles, angleViews, activeAngle, gifUrl]);
-
-  const isVideo = useMemo(() => isVideoUrl(currentUrl), [currentUrl]);
+    if (gifAsset) return gifAsset;
+    if (gifUrl) return resolveGifAsset(gifUrl);
+    return resolveGifAsset(""); // fallback
+  }, [hasMultipleAngles, angleViews, activeAngle, gifAsset, gifUrl]);
 
   const handleToggleFavorite = useCallback(() => {
     if (exerciseName) {
@@ -199,27 +99,23 @@ export function ExerciseDemoPlayer({
         style={({ pressed }) => [pressed && { opacity: 0.9, transform: [{ scale: 0.99 }] }]}
       >
         <View style={styles.playerContainer}>
-          {isVideo ? (
-            <VideoPlayer key={`v-${activeAngle}-${currentUrl}`} url={currentUrl} height={height} />
-          ) : (
-            <View
-              style={[
-                { height, backgroundColor: "#000", borderRadius: 12, overflow: "hidden" },
-              ]}
-            >
-              <Image
-                key={`img-${activeAngle}`}
-                source={currentUrl}
-                style={StyleSheet.absoluteFill}
-                contentFit="contain"
-                cachePolicy="disk"
-                transition={200}
-              />
-            </View>
-          )}
+          <View
+            style={[
+              { height, backgroundColor: "#000", borderRadius: 12, overflow: "hidden" },
+            ]}
+          >
+            <Image
+              key={`img-${activeAngle}-${currentAsset}`}
+              source={currentAsset}
+              style={StyleSheet.absoluteFill}
+              contentFit="contain"
+              cachePolicy="memory-disk"
+              transition={200}
+            />
+          </View>
           {/* Badge */}
           <View style={styles.gifBadge}>
-            <MaterialIcons name={isVideo ? "videocam" : "gif"} size={16} color="#fff" />
+            <MaterialIcons name="gif" size={16} color="#fff" />
             <Text style={styles.gifBadgeText}>Exercise Guide</Text>
           </View>
           {/* Angle label overlay */}
@@ -325,18 +221,14 @@ export function ExerciseDemoPlayer({
 
           {/* Full-size media */}
           <View style={styles.fullscreenImageContainer}>
-            {isVideo ? (
-              <VideoPlayer key={`fsv-${activeAngle}-${currentUrl}`} url={currentUrl} fill />
-            ) : (
-              <Image
-                key={`fs-${activeAngle}`}
-                source={currentUrl}
-                style={{ width: SCREEN_W, height: SCREEN_W }}
-                contentFit="contain"
-                cachePolicy="disk"
-                transition={200}
-              />
-            )}
+            <Image
+              key={`fs-${activeAngle}-${currentAsset}`}
+              source={currentAsset}
+              style={{ width: SCREEN_W, height: SCREEN_W }}
+              contentFit="contain"
+              cachePolicy="memory-disk"
+              transition={200}
+            />
           </View>
 
           {/* Fullscreen angle toggle */}
@@ -385,6 +277,7 @@ export function ExerciseDemoPlayer({
  */
 export function ExerciseDemoButton({
   gifUrl,
+  gifAsset,
   cue,
   label = "Watch Demo",
   exerciseName,
@@ -395,7 +288,7 @@ export function ExerciseDemoButton({
   if (expanded) {
     return (
       <View>
-        <ExerciseDemoPlayer gifUrl={gifUrl} cue={cue} height={180} exerciseName={exerciseName} />
+        <ExerciseDemoPlayer gifUrl={gifUrl} gifAsset={gifAsset} cue={cue} height={180} exerciseName={exerciseName} />
         <Pressable
           onPress={() => setExpanded(false)}
           style={({ pressed }) => [

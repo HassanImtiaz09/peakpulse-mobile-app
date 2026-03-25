@@ -1642,3 +1642,22 @@
 ### Testing
 - [x] 0 TypeScript errors
 - [x] All tests pass (1303+ passing, 44 test files)
+
+## Round 76 — Local GIF Assets + App Overview Document
+
+### Convert MuscleWiki Videos to Local GIFs
+- [x] Download MuscleWiki MP4 videos for all ~80 exercises
+- [x] Convert MP4 videos to compact GIF files (small size, good quality)
+- [x] Save GIFs as local assets in assets/exercise-gifs/
+- [x] Update exercise-demos.ts to use require() for local GIF assets
+- [x] Update player components to render local GIFs via expo-image (no video player needed)
+- [x] Remove expo-video dependency from player components
+
+### App Overview Document
+- [ ] Generate UI screenshots of key app screens
+- [ ] Create detailed app overview markdown with all features documented
+- [ ] Include screen descriptions, user flows, and feature explanations
+
+### Testing
+- [x] 0 TypeScript errors
+- [x] All tests pass (35 new tests + all existing)
