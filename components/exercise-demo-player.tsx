@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from "react";
+import React, { useState, useCallback, useMemo, useEffect, useRef } from "react";
 import {
   View,
   Text,
@@ -37,11 +37,50 @@ interface ExerciseDemoPlayerProps {
   exerciseName?: string;
 }
 
-/**
- * Inline video player for MP4 URLs using expo-video with caching.
- * Loops automatically, muted, with loading indicator.
- */
-function InlineVideoPlayer({ url, height }: { url: string; height: number }) {
+// ─── Web HTML5 Video Player ───────────────────────────────────────────
+// On web, expo-video can have issues. Use a native HTML5 <video> tag for reliability.
+function WebVideoPlayer({ url, height, fill }: { url: string; height?: number; fill?: boolean }) {
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+
+  if (Platform.OS !== "web") return null;
+
+  return (
+    <View style={fill ? { width: SCREEN_W, height: SCREEN_W } : { height: height ?? 200, backgroundColor: "#000", borderRadius: 12, overflow: "hidden" }}>
+      {loading && !error && (
+        <View style={[StyleSheet.absoluteFill, { justifyContent: "center", alignItems: "center", zIndex: 2 }]}>
+          <ActivityIndicator size="large" color="#D4AF37" />
+        </View>
+      )}
+      {error && (
+        <View style={[StyleSheet.absoluteFill, { justifyContent: "center", alignItems: "center", zIndex: 2 }]}>
+          <MaterialIcons name="error-outline" size={32} color="#F59E0B" />
+          <Text style={{ color: "#F59E0B", fontSize: 12, marginTop: 4 }}>Video unavailable</Text>
+        </View>
+      )}
+      {/* @ts-ignore - RNW supports HTML video element */}
+      <video
+        src={url}
+        autoPlay
+        loop
+        muted
+        playsInline
+        onLoadedData={() => setLoading(false)}
+        onError={() => { setLoading(false); setError(true); }}
+        style={{
+          width: "100%",
+          height: "100%",
+          objectFit: "contain",
+          backgroundColor: "#000",
+          borderRadius: fill ? 0 : 12,
+        }}
+      />
+    </View>
+  );
+}
+
+// ─── Native Video Player ──────────────────────────────────────────────
+function NativeVideoPlayer({ url, height, fill }: { url: string; height?: number; fill?: boolean }) {
   const source = useMemo(() => cachedSource(url), [url]);
   const player = useVideoPlayer(source, (p) => {
     p.loop = true;
@@ -49,12 +88,27 @@ function InlineVideoPlayer({ url, height }: { url: string; height: number }) {
     p.play();
   });
   const { status } = useEvent(player, "statusChange", { status: player.status });
+  const [hasError, setHasError] = useState(false);
+
+  useEffect(() => {
+    if (status === "error") setHasError(true);
+  }, [status]);
+
+  const containerStyle = fill
+    ? { width: SCREEN_W, height: SCREEN_W }
+    : { height: height ?? 200, backgroundColor: "#000", borderRadius: 12, overflow: "hidden" as const };
 
   return (
-    <View style={{ height, backgroundColor: "#000", borderRadius: 12, overflow: "hidden" }}>
-      {status === "loading" && (
-        <View style={[StyleSheet.absoluteFill, { justifyContent: "center", alignItems: "center" }]}>
+    <View style={containerStyle}>
+      {status === "loading" && !hasError && (
+        <View style={[StyleSheet.absoluteFill, { justifyContent: "center", alignItems: "center", zIndex: 2 }]}>
           <ActivityIndicator size="large" color="#D4AF37" />
+        </View>
+      )}
+      {hasError && (
+        <View style={[StyleSheet.absoluteFill, { justifyContent: "center", alignItems: "center", zIndex: 2 }]}>
+          <MaterialIcons name="error-outline" size={32} color="#F59E0B" />
+          <Text style={{ color: "#F59E0B", fontSize: 12, marginTop: 4 }}>Video unavailable</Text>
         </View>
       )}
       <VideoView
@@ -67,33 +121,12 @@ function InlineVideoPlayer({ url, height }: { url: string; height: number }) {
   );
 }
 
-/**
- * Fullscreen video player for MP4 URLs using expo-video with caching.
- */
-function FullscreenVideoPlayer({ url }: { url: string }) {
-  const source = useMemo(() => cachedSource(url), [url]);
-  const player = useVideoPlayer(source, (p) => {
-    p.loop = true;
-    p.muted = true;
-    p.play();
-  });
-  const { status } = useEvent(player, "statusChange", { status: player.status });
-
-  return (
-    <View style={{ width: SCREEN_W, height: SCREEN_W }}>
-      {status === "loading" && (
-        <View style={[StyleSheet.absoluteFill, { justifyContent: "center", alignItems: "center" }]}>
-          <ActivityIndicator size="large" color="#D4AF37" />
-        </View>
-      )}
-      <VideoView
-        player={player}
-        style={StyleSheet.absoluteFill}
-        contentFit="contain"
-        nativeControls={false}
-      />
-    </View>
-  );
+// ─── Cross-platform Video Player ──────────────────────────────────────
+function VideoPlayer({ url, height, fill }: { url: string; height?: number; fill?: boolean }) {
+  if (Platform.OS === "web") {
+    return <WebVideoPlayer url={url} height={height} fill={fill} />;
+  }
+  return <NativeVideoPlayer url={url} height={height} fill={fill} />;
 }
 
 /** Get angle label from ExerciseAngleView */
@@ -167,7 +200,7 @@ export function ExerciseDemoPlayer({
       >
         <View style={styles.playerContainer}>
           {isVideo ? (
-            <InlineVideoPlayer key={`v-${activeAngle}`} url={currentUrl} height={height} />
+            <VideoPlayer key={`v-${activeAngle}-${currentUrl}`} url={currentUrl} height={height} />
           ) : (
             <View
               style={[
@@ -293,7 +326,7 @@ export function ExerciseDemoPlayer({
           {/* Full-size media */}
           <View style={styles.fullscreenImageContainer}>
             {isVideo ? (
-              <FullscreenVideoPlayer key={`fsv-${activeAngle}`} url={currentUrl} />
+              <VideoPlayer key={`fsv-${activeAngle}-${currentUrl}`} url={currentUrl} fill />
             ) : (
               <Image
                 key={`fs-${activeAngle}`}
@@ -306,7 +339,7 @@ export function ExerciseDemoPlayer({
             )}
           </View>
 
-          {/* Fullscreen Angle Toggle */}
+          {/* Fullscreen angle toggle */}
           {hasMultipleAngles && (
             <View style={styles.fullscreenAngleRow}>
               {angleViews.map((view, i) => (

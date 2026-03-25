@@ -1620,3 +1620,25 @@
 ### Testing
 - [x] 0 TypeScript errors
 - [x] All tests pass (1286 passing, 41 test files)
+
+## Round 75 — Fix Demo Videos + Detailed Muscle Diagram
+
+### Fix Demo Videos Not Playing
+- [x] Diagnosed CORS issue — MuscleWiki videos lack CORS headers for web playback
+- [x] Added HTML5 <video> tag fallback for web (bypasses CORS restriction)
+- [x] Native uses expo-video VideoView with caching enabled
+- [x] Added error state UI with retry button when videos fail to load
+- [x] Both ExerciseDemoPlayer and EnhancedGifPlayer updated with dual-platform support
+
+### Detailed Anatomical Muscle Diagram
+- [x] Installed react-native-body-highlighter for professional anatomical SVG body diagrams
+- [x] Rewrote body-diagram.tsx with 3 components: BodyDiagramInteractive (detail), BodyDiagramInline (cards), BodyDiagram (full)
+- [x] Mapped all 17 MuscleGroup types to body-highlighter Slug types (front + back)
+- [x] Primary muscles highlighted in gold (#F59E0B), secondary in amber (#B45309)
+- [x] Interactive front/back toggle on exercise detail screen
+- [x] Inline compact diagrams on exercise library cards and active workout
+- [x] Muscle label chips with color-coded dots
+
+### Testing
+- [x] 0 TypeScript errors
+- [x] All tests pass (1303+ passing, 44 test files)

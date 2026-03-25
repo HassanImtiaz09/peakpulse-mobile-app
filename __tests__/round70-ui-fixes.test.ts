@@ -68,9 +68,9 @@ describe("Round 70 — 3D Body Diagram Redesign", () => {
     expect(fs.existsSync(path.join(PROJECT, "components/body-diagram.tsx"))).toBe(true);
   });
 
-  it("uses SVG gradients for 3D effect", () => {
+  it("uses react-native-body-highlighter for detailed anatomy", () => {
     const content = fs.readFileSync(path.join(PROJECT, "components/body-diagram.tsx"), "utf-8");
-    expect(content).toMatch(/LinearGradient|linearGradient|Defs|defs/);
+    expect(content).toMatch(/react-native-body-highlighter/);
   });
 
   it("has front and back body views", () => {

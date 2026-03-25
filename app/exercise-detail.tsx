@@ -12,7 +12,7 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import * as Haptics from "expo-haptics";
 import { ScreenContainer } from "@/components/screen-container";
 import { EnhancedGifPlayer } from "@/components/enhanced-gif-player";
-import { BodyDiagram } from "@/components/body-diagram";
+import { BodyDiagramInteractive } from "@/components/body-diagram";
 import { useFavorites } from "@/lib/favorites-context";
 import { getExerciseInfo, getAlternativeExercises } from "@/lib/exercise-data";
 import { Image } from "expo-image";
@@ -102,13 +102,9 @@ export default function ExerciseDetailScreen() {
           {/* Body Diagram */}
           <View style={styles.diagramCard}>
             <Text style={styles.sectionLabel}>MUSCLES TARGETED</Text>
-            <BodyDiagram
+            <BodyDiagramInteractive
               primary={exercise.primaryMuscles}
               secondary={exercise.secondaryMuscles}
-              width={100}
-              height={160}
-              showLabels={true}
-              showBothViews={true}
             />
           </View>
 

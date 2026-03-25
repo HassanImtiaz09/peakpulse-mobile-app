@@ -4,9 +4,10 @@
  * Features:
  * - Multi-angle views (2-3 per exercise) with angle selector
  * - Supports both MP4 video (MuscleWiki) and GIF fallback
- * - Native video caching via useCaching for seamless playback
- * - Slow-motion playback simulation via opacity pulse
- * - Loop toggle control
+ * - Web: uses HTML5 <video> tag for reliable cross-origin playback
+ * - Native: uses expo-video VideoView with useCaching for seamless playback
+ * - Slow-motion playback simulation via opacity pulse (GIF only)
+ * - Loop toggle control (GIF only)
  * - Focus annotations showing what to watch for each angle
  * - Fullscreen modal with favorites
  */
@@ -57,8 +58,52 @@ const C = {
   dim: "rgba(245,158,11,0.08)",
 };
 
-/** Inline video player using expo-video with caching */
-function InlineVideoPlayer({ url, style }: { url: string; style?: object }) {
+// ─── Web HTML5 Video Player ───────────────────────────────────────────
+function WebVideoPlayer({ url, style, fill }: { url: string; style?: object; fill?: boolean }) {
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+
+  if (Platform.OS !== "web") return null;
+
+  const containerStyle = fill
+    ? { width: SCREEN_W, height: SCREEN_W }
+    : { flex: 1, backgroundColor: C.bg, ...(style || {}) };
+
+  return (
+    <View style={containerStyle}>
+      {loading && !error && (
+        <View style={[StyleSheet.absoluteFill, { justifyContent: "center", alignItems: "center", zIndex: 2 }]}>
+          <ActivityIndicator size={fill ? "large" : "small"} color={C.gold} />
+        </View>
+      )}
+      {error && (
+        <View style={[StyleSheet.absoluteFill, { justifyContent: "center", alignItems: "center", zIndex: 2 }]}>
+          <MaterialIcons name="error-outline" size={32} color={C.gold} />
+          <Text style={{ color: C.gold, fontSize: 12, marginTop: 4 }}>Video unavailable</Text>
+        </View>
+      )}
+      {/* @ts-ignore - RNW supports HTML video element */}
+      <video
+        src={url}
+        autoPlay
+        loop
+        muted
+        playsInline
+        onLoadedData={() => setLoading(false)}
+        onError={() => { setLoading(false); setError(true); }}
+        style={{
+          width: "100%",
+          height: "100%",
+          objectFit: "contain",
+          backgroundColor: "#000",
+        }}
+      />
+    </View>
+  );
+}
+
+// ─── Native Video Player ──────────────────────────────────────────────
+function NativeVideoPlayer({ url, style, fill }: { url: string; style?: object; fill?: boolean }) {
   const source = useMemo(() => cachedSource(url), [url]);
   const player = useVideoPlayer(source, (p) => {
     p.loop = true;
@@ -66,12 +111,27 @@ function InlineVideoPlayer({ url, style }: { url: string; style?: object }) {
     p.play();
   });
   const { status } = useEvent(player, "statusChange", { status: player.status });
+  const [hasError, setHasError] = useState(false);
+
+  useEffect(() => {
+    if (status === "error") setHasError(true);
+  }, [status]);
+
+  const containerStyle = fill
+    ? { width: SCREEN_W, height: SCREEN_W }
+    : { flex: 1 as const, backgroundColor: C.bg, ...(style || {}) };
 
   return (
-    <View style={[{ flex: 1, backgroundColor: C.bg }, style]}>
-      {status === "loading" && (
-        <View style={[StyleSheet.absoluteFill, { justifyContent: "center", alignItems: "center" }]}>
-          <ActivityIndicator size="small" color={C.gold} />
+    <View style={containerStyle}>
+      {status === "loading" && !hasError && (
+        <View style={[StyleSheet.absoluteFill, { justifyContent: "center", alignItems: "center", zIndex: 2 }]}>
+          <ActivityIndicator size={fill ? "large" : "small"} color={C.gold} />
+        </View>
+      )}
+      {hasError && (
+        <View style={[StyleSheet.absoluteFill, { justifyContent: "center", alignItems: "center", zIndex: 2 }]}>
+          <MaterialIcons name="error-outline" size={32} color={C.gold} />
+          <Text style={{ color: C.gold, fontSize: 12, marginTop: 4 }}>Video unavailable</Text>
         </View>
       )}
       <VideoView
@@ -84,31 +144,12 @@ function InlineVideoPlayer({ url, style }: { url: string; style?: object }) {
   );
 }
 
-/** Fullscreen video player using expo-video with caching */
-function FullscreenVideoPlayer({ url }: { url: string }) {
-  const source = useMemo(() => cachedSource(url), [url]);
-  const player = useVideoPlayer(source, (p) => {
-    p.loop = true;
-    p.muted = true;
-    p.play();
-  });
-  const { status } = useEvent(player, "statusChange", { status: player.status });
-
-  return (
-    <View style={{ width: SCREEN_W, height: SCREEN_W }}>
-      {status === "loading" && (
-        <View style={[StyleSheet.absoluteFill, { justifyContent: "center", alignItems: "center" }]}>
-          <ActivityIndicator size="large" color={C.gold} />
-        </View>
-      )}
-      <VideoView
-        player={player}
-        style={StyleSheet.absoluteFill}
-        contentFit="contain"
-        nativeControls={false}
-      />
-    </View>
-  );
+// ─── Cross-platform Video Player ──────────────────────────────────────
+function VideoPlayer({ url, style, fill }: { url: string; style?: object; fill?: boolean }) {
+  if (Platform.OS === "web") {
+    return <WebVideoPlayer url={url} style={style} fill={fill} />;
+  }
+  return <NativeVideoPlayer url={url} style={style} fill={fill} />;
 }
 
 export function EnhancedGifPlayer({
@@ -191,7 +232,7 @@ export function EnhancedGifPlayer({
       {/* Media Display */}
       <View style={[styles.gifContainer, { height }]}>
         {isVideo ? (
-          <InlineVideoPlayer key={`v-${activeAngle}-${imageKey}`} url={currentView.gifUrl} />
+          <VideoPlayer key={`v-${activeAngle}-${imageKey}-${currentView.gifUrl}`} url={currentView.gifUrl} />
         ) : (
           <Animated.View style={[styles.gifWrapper, { opacity: isSlowMotion ? pulseAnim : 1 }]}>
             <Image
@@ -363,7 +404,7 @@ export function EnhancedGifPlayer({
           </View>
           <View style={styles.fullscreenImageWrap}>
             {isVideo ? (
-              <FullscreenVideoPlayer key={`fsv-${activeAngle}`} url={currentView.gifUrl} />
+              <VideoPlayer key={`fsv-${activeAngle}-${currentView.gifUrl}`} url={currentView.gifUrl} fill />
             ) : (
               <Image
                 key={`fs-${activeAngle}-${imageKey}`}
@@ -448,8 +489,8 @@ const styles = StyleSheet.create({
   },
   slowMotionText: {
     color: C.gold,
-    fontFamily: "Outfit_700Bold",
     fontSize: 9,
+    fontWeight: "700",
     letterSpacing: 1,
   },
   angleLabelOverlay: {
@@ -465,8 +506,8 @@ const styles = StyleSheet.create({
   },
   angleLabelText: {
     color: C.gold3,
-    fontFamily: "DMSans_500Medium",
     fontSize: 10,
+    fontWeight: "500",
     letterSpacing: 0.3,
   },
   focusBox: {
@@ -481,7 +522,6 @@ const styles = StyleSheet.create({
   },
   focusText: {
     color: C.gold3,
-    fontFamily: "DMSans_400Regular",
     fontSize: 11,
     lineHeight: 16,
     flex: 1,
@@ -513,8 +553,8 @@ const styles = StyleSheet.create({
   },
   angleButtonText: {
     color: C.muted,
-    fontFamily: "DMSans_500Medium",
     fontSize: 10,
+    fontWeight: "500",
     letterSpacing: 0.3,
   },
   angleButtonTextActive: {
