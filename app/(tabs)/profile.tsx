@@ -17,6 +17,7 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import * as ImagePicker from "expo-image-picker";
 import { useUserProfile } from "@/lib/user-profile-context";
 import { Modal } from "react-native";
+import { PremiumFeatureBanner, PremiumFeatureTeaser } from "@/components/premium-feature-banner";
 
 // Enable LayoutAnimation on Android
 if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental) {
@@ -330,6 +331,29 @@ export default function ProfileScreen() {
             daysPerWeek={daysPerWeek}
             bodyFat={profile?.currentBodyFat?.toString() ?? null}
             targetBF={profile?.targetBodyFat?.toString() ?? null}
+          />
+        </View>
+
+        {/* Premium Feature Promotions */}
+        <View style={{ marginHorizontal: 20, marginBottom: 16, gap: 8 }}>
+          <PremiumFeatureBanner
+            feature="ai_coaching"
+            title="Personalised AI Coach"
+            description="Your AI fitness coach provides real-time guidance, exercise form tips, and workout adjustments tailored to your goals."
+            icon="smart-toy"
+            accentColor="#F59E0B"
+            requiredTier="advanced"
+            compact
+          />
+          <PremiumFeatureTeaser
+            feature="body_scan"
+            text="AI Body Scan — track your physique transformation with AI"
+            requiredTier="basic"
+          />
+          <PremiumFeatureTeaser
+            feature="wearable_sync"
+            text="Connect your wearable for real-time health data sync"
+            requiredTier="basic"
           />
         </View>
 

@@ -1842,3 +1842,49 @@
 - [x] Tests for today-focused workout section (todayWorkout, otherWorkoutDays)
 - [x] Tests for body scan progress tracking (photos, timeline, goal card)
 - [x] Tests for dashboard progress ring (SVG circle, percentage, navigation)
+
+## Round 81 — Before/After Comparison, Calorie-Aware Meal Swaps, Premium Promotion, Push Notifications
+
+### B### Before & After Photo Comparison
+- [x] Add before-and-after comparison view in Body Scan progress section
+- [x] Place first and latest progress photos side-by-side with BEFORE/LATEST labels
+- [x] Show date labels and days elapsed between first and latest photo
+- [x] Only renders when at least 2 progress photos exist
+
+### Calorie/Macro-Aware Meal Swap
+- [x] Integrate calorie tracking via useCalories into meal swap flow
+- [x] Daily nutritional totals update automatically when a meal is swapped
+- [x] Enforce daily caloric intake limit — Alert.alert warns before applying swap
+- [x] Show EXCEEDS LIMIT badge on swap suggestions that go over budget
+- [x] Meal swap suggestions show meal images via getMealPhotoUrl
+- [x] Server endpoint returns imageUrl and dailyCalorieTarget support
+- [x] Calorie budget bar shows remaining kcal in swap modal header
+
+### Premium Feature Promotion
+- [x] PremiumFeatureBanner + PremiumFeatureTeaser reusable components created
+- [x] Dashboard: AI Coach, Body Scan, Pantry, AI Photo Logging banners
+- [x] Plans: AI Coach teaser in workout section, Pantry + AI Photo Logging in meals
+- [x] Scan: AI Body Transformation Tracking banner + progress photo teaser
+- [x] Profile: AI Coach banner + Body Scan + Wearable Sync teasers
+- [x] Banners auto-hide when user has required subscription tier
+- [x] Upgrade CTAs route to subscription screen
+
+### Push Notification Reminders
+- [x] scheduleProgressPhotoReminder function in notifications.ts
+- [x] Daily reminder option with configurable time
+- [x] Weekly reminder option with configurable day-of-week and time
+- [x] Off/Daily/Weekly frequency selector in notification-preferences
+- [x] Day-of-week selector for weekly frequency
+- [x] Time picker for reminder time
+- [x] Progress photo summary in schedule card
+- [x] Notification routes to /(tabs)/scan when tapped
+- [x] Preferences saved to AsyncStorage and survive app restarts
+
+### Testing
+- [x] 0 TypeScript errors
+- [x] All 30 new tests pass (round81-comparison-calories-premium-notifs.test.ts)
+- [x] Tests for before/after comparison (4 tests)
+- [x] Tests for calorie-aware meal swap (6 tests)
+- [x] Tests for premium feature promotion (7 tests)
+- [x] Tests for push notification reminders (10 tests)
+- [x] Integration checks (3 tests)

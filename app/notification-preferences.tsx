@@ -27,6 +27,9 @@ import {
   scheduleWaterReminder,
   cancelWaterReminder,
   setWeeklyRecapEnabled,
+  scheduleProgressPhotoReminder,
+  cancelProgressPhotoReminder,
+  getProgressPhotoReminderSettings,
 } from "@/lib/notifications";
 
 const PREF_KEY = "@notif_preferences";
@@ -56,6 +59,10 @@ interface NotifPrefs {
   weeklyRecapEnabled: boolean;
   weeklyRecapHour: number;
   weeklyRecapMinute: number;
+  progressPhotoFrequency: "daily" | "weekly" | "off";
+  progressPhotoHour: number;
+  progressPhotoMinute: number;
+  progressPhotoWeekday: number;
 }
 
 const DEFAULT_PREFS: NotifPrefs = {
@@ -83,6 +90,10 @@ const DEFAULT_PREFS: NotifPrefs = {
   weeklyRecapEnabled: true,
   weeklyRecapHour: 19,
   weeklyRecapMinute: 0,
+  progressPhotoFrequency: "off" as const,
+  progressPhotoHour: 9,
+  progressPhotoMinute: 0,
+  progressPhotoWeekday: 2,
 };
 
 function formatTime(hour: number, minute: number): string {
@@ -183,7 +194,7 @@ export default function NotificationPreferencesScreen() {
   const [prefs, setPrefs] = useState<NotifPrefs>(DEFAULT_PREFS);
   const [saving, setSaving] = useState(false);
   const [hasPermission, setHasPermission] = useState(false);
-  const [activePicker, setActivePicker] = useState<"workout" | "meal" | "checkin" | "aiCoach" | "breakfast" | "lunch" | "dinner" | "weeklyRecap" | null>(null);
+  const [activePicker, setActivePicker] = useState<"workout" | "meal" | "checkin" | "aiCoach" | "breakfast" | "lunch" | "dinner" | "weeklyRecap" | "progressPhoto" | null>(null);
 
   useEffect(() => {
     loadPrefs();
@@ -234,6 +245,18 @@ export default function NotificationPreferencesScreen() {
       }
       await setAICoachReminderEnabled(newPrefs.aiCoachEnabled, newPrefs.aiCoachHour, newPrefs.aiCoachMinute);
       await setWeeklyRecapEnabled(newPrefs.weeklyRecapEnabled, newPrefs.weeklyRecapHour, newPrefs.weeklyRecapMinute);
+
+      // Progress photo reminders
+      if (newPrefs.progressPhotoFrequency !== "off") {
+        await scheduleProgressPhotoReminder(
+          newPrefs.progressPhotoFrequency,
+          newPrefs.progressPhotoHour,
+          newPrefs.progressPhotoMinute,
+          newPrefs.progressPhotoWeekday,
+        );
+      } else {
+        await cancelProgressPhotoReminder();
+      }
 
       // Meal-time reminders
       if (newPrefs.mealTimesEnabled) {
@@ -291,6 +314,9 @@ export default function NotificationPreferencesScreen() {
     } else if (activePicker === "weeklyRecap") {
       updated.weeklyRecapHour = hour;
       updated.weeklyRecapMinute = minute;
+    } else if (activePicker === "progressPhoto") {
+      updated.progressPhotoHour = hour;
+      updated.progressPhotoMinute = minute;
     } else if (activePicker === "breakfast") {
       updated.breakfastHour = hour;
       updated.breakfastMinute = minute;
@@ -582,6 +608,94 @@ export default function NotificationPreferencesScreen() {
           )}
         </View>
 
+        {/* ── Progress Photo Reminders ── */}
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionIcon}>📸</Text>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.sectionTitle}>Progress Photo Reminder</Text>
+              <Text style={styles.sectionSub}>Get reminded to take transformation photos</Text>
+            </View>
+          </View>
+          {/* Frequency selector */}
+          <View style={{ flexDirection: "row", gap: 8, marginTop: 12, marginBottom: 8 }}>
+            {(["off", "daily", "weekly"] as const).map((freq) => (
+              <TouchableOpacity
+                key={freq}
+                style={{
+                  flex: 1,
+                  paddingVertical: 10,
+                  borderRadius: 10,
+                  backgroundColor: prefs.progressPhotoFrequency === freq ? "#F59E0B" : "#1E293B",
+                  alignItems: "center",
+                  borderWidth: 1,
+                  borderColor: prefs.progressPhotoFrequency === freq ? "#F59E0B" : "rgba(30,41,59,0.6)",
+                }}
+                onPress={async () => {
+                  const updated = { ...prefs, progressPhotoFrequency: freq };
+                  setPrefs(updated);
+                  await savePrefs(updated);
+                }}
+              >
+                <Text style={{
+                  color: prefs.progressPhotoFrequency === freq ? "#0A0E14" : "#94A3B8",
+                  fontFamily: "DMSans_700Bold",
+                  fontSize: 12,
+                  textTransform: "capitalize",
+                }}>{freq}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+          {prefs.progressPhotoFrequency !== "off" && (
+            <>
+              <TouchableOpacity
+                style={styles.timeRow}
+                onPress={() => setActivePicker("progressPhoto")}
+              >
+                <Text style={styles.timeLabel}>Reminder Time</Text>
+                <View style={styles.timeValue}>
+                  <Text style={styles.timeValueText}>
+                    {formatTime(prefs.progressPhotoHour, prefs.progressPhotoMinute)}
+                  </Text>
+                  <Text style={styles.timeEditIcon}>{"\u270f\ufe0f"}</Text>
+                </View>
+              </TouchableOpacity>
+              {prefs.progressPhotoFrequency === "weekly" && (
+                <View style={{ marginTop: 8 }}>
+                  <Text style={{ color: "#94A3B8", fontSize: 12, marginBottom: 6, fontFamily: "DMSans_600SemiBold" }}>Day of Week</Text>
+                  <View style={{ flexDirection: "row", gap: 4 }}>
+                    {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day, i) => (
+                      <TouchableOpacity
+                        key={day}
+                        style={{
+                          flex: 1,
+                          paddingVertical: 8,
+                          borderRadius: 8,
+                          backgroundColor: prefs.progressPhotoWeekday === (i + 1) ? "#F59E0B" : "#1E293B",
+                          alignItems: "center",
+                          borderWidth: 1,
+                          borderColor: prefs.progressPhotoWeekday === (i + 1) ? "#F59E0B" : "rgba(30,41,59,0.6)",
+                        }}
+                        onPress={async () => {
+                          const updated = { ...prefs, progressPhotoWeekday: i + 1 };
+                          setPrefs(updated);
+                          await savePrefs(updated);
+                        }}
+                      >
+                        <Text style={{
+                          color: prefs.progressPhotoWeekday === (i + 1) ? "#0A0E14" : "#94A3B8",
+                          fontFamily: "DMSans_700Bold",
+                          fontSize: 10,
+                        }}>{day}</Text>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                </View>
+              )}
+            </>
+          )}
+        </View>
+
         {/* Summary card */}
         <View style={styles.summaryCard}>
           <Text style={styles.summaryTitle}>📅 Your Schedule</Text>
@@ -628,7 +742,12 @@ export default function NotificationPreferencesScreen() {
               \ud83d\udcca Weekly recap every Sunday at {formatTime(prefs.weeklyRecapHour, prefs.weeklyRecapMinute)}
             </Text>
           )}
-          {!prefs.workoutEnabled && !prefs.mealEnabled && !prefs.checkinEnabled && !prefs.aiCoachEnabled && !prefs.mealTimesEnabled && !prefs.waterEnabled && !prefs.weeklyRecapEnabled && (
+          {prefs.progressPhotoFrequency !== "off" && (
+            <Text style={styles.summaryItem}>
+              📸 Progress photo {prefs.progressPhotoFrequency === "daily" ? `daily at ${formatTime(prefs.progressPhotoHour, prefs.progressPhotoMinute)}` : `weekly on ${["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][prefs.progressPhotoWeekday - 1]} at ${formatTime(prefs.progressPhotoHour, prefs.progressPhotoMinute)}`}
+            </Text>
+          )}
+          {!prefs.workoutEnabled && !prefs.mealEnabled && !prefs.checkinEnabled && !prefs.aiCoachEnabled && !prefs.mealTimesEnabled && !prefs.waterEnabled && !prefs.weeklyRecapEnabled && prefs.progressPhotoFrequency === "off" && (
             <Text style={styles.summaryItem}>All reminders are currently off.</Text>
           )}
         </View>
@@ -649,6 +768,7 @@ export default function NotificationPreferencesScreen() {
           activePicker === "meal" ? prefs.mealHour :
           activePicker === "aiCoach" ? prefs.aiCoachHour :
           activePicker === "weeklyRecap" ? prefs.weeklyRecapHour :
+          activePicker === "progressPhoto" ? prefs.progressPhotoHour :
           activePicker === "breakfast" ? prefs.breakfastHour :
           activePicker === "lunch" ? prefs.lunchHour :
           activePicker === "dinner" ? prefs.dinnerHour :
@@ -659,6 +779,7 @@ export default function NotificationPreferencesScreen() {
           activePicker === "meal" ? prefs.mealMinute :
           activePicker === "aiCoach" ? prefs.aiCoachMinute :
           activePicker === "weeklyRecap" ? prefs.weeklyRecapMinute :
+          activePicker === "progressPhoto" ? prefs.progressPhotoMinute :
           activePicker === "breakfast" ? prefs.breakfastMinute :
           activePicker === "lunch" ? prefs.lunchMinute :
           activePicker === "dinner" ? prefs.dinnerMinute :
@@ -669,6 +790,7 @@ export default function NotificationPreferencesScreen() {
           activePicker === "meal" ? "Set Meal Log Reminder" :
           activePicker === "aiCoach" ? "Set AI Coach Reminder (Sunday)" :
           activePicker === "weeklyRecap" ? "Set Weekly Recap Time (Sunday)" :
+          activePicker === "progressPhoto" ? "Set Progress Photo Reminder" :
           activePicker === "breakfast" ? "Set Breakfast Reminder" :
           activePicker === "lunch" ? "Set Lunch Reminder" :
           activePicker === "dinner" ? "Set Dinner Reminder" :

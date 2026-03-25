@@ -517,3 +517,118 @@ export async function cancelTrialReminders(): Promise<void> {
 
   await AsyncStorage.multiRemove([TRIAL_DAY5_NOTIF_ID_KEY, TRIAL_DAY7_NOTIF_ID_KEY]);
 }
+
+// ── Progress Photo Reminder Notifications ──────────────────────────────────
+
+const PROGRESS_PHOTO_NOTIF_ID_KEY = "@progress_photo_notif_id";
+export const PROGRESS_PHOTO_FREQUENCY_KEY = "@progress_photo_frequency"; // "daily" | "weekly" | "off"
+export const PROGRESS_PHOTO_HOUR_KEY = "@progress_photo_hour";
+export const PROGRESS_PHOTO_MINUTE_KEY = "@progress_photo_minute";
+export const PROGRESS_PHOTO_WEEKDAY_KEY = "@progress_photo_weekday"; // 1-7 for weekly (1=Sun)
+
+/**
+ * Schedule a progress photo reminder notification.
+ * @param frequency "daily" | "weekly" | "off"
+ * @param hour Hour of day (0-23, default 9)
+ * @param minute Minute (default 0)
+ * @param weekday Day of week for weekly (1=Sun, 2=Mon, ..., 7=Sat; default 2=Monday)
+ */
+export async function scheduleProgressPhotoReminder(
+  frequency: "daily" | "weekly" | "off" = "daily",
+  hour: number = 9,
+  minute: number = 0,
+  weekday: number = 2,
+): Promise<void> {
+  if (Platform.OS === "web") return;
+
+  // Cancel existing
+  await cancelProgressPhotoReminder();
+
+  if (frequency === "off") return;
+
+  const granted = await requestNotificationPermissions();
+  if (!granted) return;
+
+  // Save preferences
+  await AsyncStorage.setItem(PROGRESS_PHOTO_FREQUENCY_KEY, frequency);
+  await AsyncStorage.setItem(PROGRESS_PHOTO_HOUR_KEY, String(hour));
+  await AsyncStorage.setItem(PROGRESS_PHOTO_MINUTE_KEY, String(minute));
+  await AsyncStorage.setItem(PROGRESS_PHOTO_WEEKDAY_KEY, String(weekday));
+
+  const dailyMessages = [
+    { title: "📸 Progress Photo Time!", body: "Take your daily progress photo to track your transformation journey." },
+    { title: "📸 Capture Your Progress", body: "A quick photo today keeps your transformation on track. Open Body Scan now!" },
+    { title: "📸 Daily Photo Reminder", body: "Consistency is key! Take your progress photo to see how far you've come." },
+  ];
+
+  const weeklyMessages = [
+    { title: "📸 Weekly Progress Photo", body: "It's time for your weekly body transformation check-in. See your progress!" },
+    { title: "📸 Weekly Check-In", body: "Take your weekly progress photo and compare with last week. You're doing great!" },
+    { title: "📸 Transformation Update", body: "Your weekly progress photo is due! Track your body transformation journey." },
+  ];
+
+  const messages = frequency === "daily" ? dailyMessages : weeklyMessages;
+  const msg = messages[Math.floor(Math.random() * messages.length)];
+
+  let trigger: any;
+  if (frequency === "daily") {
+    trigger = {
+      type: Notifications.SchedulableTriggerInputTypes.DAILY,
+      hour,
+      minute,
+    };
+  } else {
+    // Weekly
+    trigger = {
+      weekday,
+      hour,
+      minute,
+      repeats: true,
+    };
+  }
+
+  const id = await Notifications.scheduleNotificationAsync({
+    content: {
+      title: msg.title,
+      body: msg.body,
+      data: { url: "/(tabs)/scan", type: "progress_photo_reminder" },
+      categoryIdentifier: "peakpulse",
+    },
+    trigger,
+  });
+
+  await AsyncStorage.setItem(PROGRESS_PHOTO_NOTIF_ID_KEY, id);
+}
+
+/**
+ * Cancel the progress photo reminder notification.
+ */
+export async function cancelProgressPhotoReminder(): Promise<void> {
+  if (Platform.OS === "web") return;
+  const existingId = await AsyncStorage.getItem(PROGRESS_PHOTO_NOTIF_ID_KEY);
+  if (existingId) {
+    await Notifications.cancelScheduledNotificationAsync(existingId).catch(() => {});
+    await AsyncStorage.removeItem(PROGRESS_PHOTO_NOTIF_ID_KEY);
+  }
+}
+
+/**
+ * Get the current progress photo reminder settings.
+ */
+export async function getProgressPhotoReminderSettings(): Promise<{
+  frequency: "daily" | "weekly" | "off";
+  hour: number;
+  minute: number;
+  weekday: number;
+}> {
+  const frequency = (await AsyncStorage.getItem(PROGRESS_PHOTO_FREQUENCY_KEY)) as "daily" | "weekly" | "off" | null;
+  const hour = parseInt(await AsyncStorage.getItem(PROGRESS_PHOTO_HOUR_KEY) ?? "9", 10);
+  const minute = parseInt(await AsyncStorage.getItem(PROGRESS_PHOTO_MINUTE_KEY) ?? "0", 10);
+  const weekday = parseInt(await AsyncStorage.getItem(PROGRESS_PHOTO_WEEKDAY_KEY) ?? "2", 10);
+  return {
+    frequency: frequency ?? "off",
+    hour,
+    minute,
+    weekday,
+  };
+}

@@ -32,6 +32,7 @@ import { shareWeeklySummaryCard, shareMilestoneCard, type WeeklySummaryCardData,
 import { TrendChart, PRProgressChart, type TrendDataPoint } from "@/components/trend-chart";
 import { getPRSummary, type PRSummary } from "@/lib/personal-records";
 import { useUserProfile } from "@/lib/user-profile-context";
+import { PremiumFeatureBanner, PremiumFeatureTeaser } from "@/components/premium-feature-banner";
 
 import {
   getStreakData, evaluateWeek, getWeekNeedingEvaluation, getCurrentMilestone,
@@ -1702,6 +1703,38 @@ export default function HomeScreen() {
                   <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 11, marginTop: 8 }}>Tip {tipIndex + 1} of {TIPS_AND_TRICKS.length} · Updates every 5 min</Text>
                 </View>
               </View>
+            </View>
+          </StaggeredCard>
+
+          {/* ── Premium Feature Promotions ── */}
+          <StaggeredCard index={7}>
+            <View style={{ gap: 10 }}>
+              <PremiumFeatureBanner
+                feature="body_scan"
+                title="AI Body Transformation Tracking"
+                description="Track your physique transformation with AI-powered body scans, before/after comparisons, and personalised progress timelines."
+                icon="body"
+                accentColor="#38BDF8"
+                requiredTier="basic"
+              />
+              <PremiumFeatureBanner
+                feature="ai_coaching"
+                title="Personalised AI Coach"
+                description="Get real-time guidance from your AI fitness coach — exercise form tips, workout adjustments, and motivation tailored to your goals."
+                icon="smart-toy"
+                accentColor="#F59E0B"
+                requiredTier="advanced"
+              />
+              <PremiumFeatureTeaser
+                feature="progress_photos"
+                text="Unlock AI Photo Logging to track meals and body progress with your camera"
+                requiredTier="basic"
+              />
+              <PremiumFeatureTeaser
+                feature="wearable_sync"
+                text="Sync your wearable device for real-time health data integration"
+                requiredTier="basic"
+              />
             </View>
           </StaggeredCard>
 

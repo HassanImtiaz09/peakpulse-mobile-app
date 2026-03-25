@@ -21,6 +21,7 @@ import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { FeatureGate } from "@/components/feature-gate";
 import { useSubscription } from "@/hooks/use-subscription";
+import { PremiumFeatureBanner, PremiumFeatureTeaser } from "@/components/premium-feature-banner";
 
 const SCAN_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/OdDCyHFnLhvyAyWV.jpg";
 
@@ -775,6 +776,57 @@ export default function ScanScreen() {
                       </TouchableOpacity>
                     </View>
 
+                    {/* ── BEFORE & AFTER COMPARISON ── */}
+                    {progressPhotos.length >= 2 && (
+                      <View style={{ backgroundColor: SURFACE, borderRadius: 18, padding: 16, borderWidth: 1, borderColor: ICE_BORDER }}>
+                        <View style={{ flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 14 }}>
+                          <MaterialIcons name="compare" size={18} color={ICE} />
+                          <Text style={{ color: FG, fontFamily: "DMSans_700Bold", fontSize: 14 }}>Before & After</Text>
+                        </View>
+                        <View style={{ flexDirection: "row", gap: 8 }}>
+                          {/* BEFORE — first photo */}
+                          <View style={{ flex: 1, alignItems: "center" }}>
+                            <View style={{ position: "relative", width: "100%" }}>
+                              <Image
+                                source={{ uri: progressPhotos[0].uri }}
+                                style={{ width: "100%", height: 180, borderRadius: 14, backgroundColor: BG }}
+                                resizeMode="cover"
+                              />
+                              <View style={{ position: "absolute", top: 8, left: 8, backgroundColor: "rgba(0,0,0,0.75)", borderRadius: 8, paddingHorizontal: 8, paddingVertical: 3 }}>
+                                <Text style={{ color: "#F87171", fontFamily: "DMSans_700Bold", fontSize: 10 }}>BEFORE</Text>
+                              </View>
+                            </View>
+                            <Text style={{ color: MUTED, fontSize: 10, marginTop: 6 }}>
+                              {new Date(progressPhotos[0].date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                            </Text>
+                          </View>
+                          {/* AFTER — latest photo */}
+                          <View style={{ flex: 1, alignItems: "center" }}>
+                            <View style={{ position: "relative", width: "100%" }}>
+                              <Image
+                                source={{ uri: progressPhotos[progressPhotos.length - 1].uri }}
+                                style={{ width: "100%", height: 180, borderRadius: 14, backgroundColor: BG }}
+                                resizeMode="cover"
+                              />
+                              <View style={{ position: "absolute", top: 8, left: 8, backgroundColor: "rgba(0,0,0,0.75)", borderRadius: 8, paddingHorizontal: 8, paddingVertical: 3 }}>
+                                <Text style={{ color: "#4ADE80", fontFamily: "DMSans_700Bold", fontSize: 10 }}>LATEST</Text>
+                              </View>
+                            </View>
+                            <Text style={{ color: MUTED, fontSize: 10, marginTop: 6 }}>
+                              {new Date(progressPhotos[progressPhotos.length - 1].date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                            </Text>
+                          </View>
+                        </View>
+                        {/* Days elapsed */}
+                        <View style={{ flexDirection: "row", justifyContent: "center", alignItems: "center", marginTop: 10, gap: 6 }}>
+                          <MaterialIcons name="schedule" size={13} color={MUTED} />
+                          <Text style={{ color: MUTED, fontSize: 11 }}>
+                            {Math.max(1, Math.round((new Date(progressPhotos[progressPhotos.length - 1].date).getTime() - new Date(progressPhotos[0].date).getTime()) / (1000 * 60 * 60 * 24)))} days of progress
+                          </Text>
+                        </View>
+                      </View>
+                    )}
+
                     {/* Progress Photo Timeline */}
                     {progressPhotos.length > 0 && (
                       <View style={{ backgroundColor: SURFACE, borderRadius: 18, padding: 16, borderWidth: 1, borderColor: "rgba(30,41,59,0.6)" }}>
@@ -800,6 +852,23 @@ export default function ScanScreen() {
                     )}
                   </View>
                 )}
+
+                {/* Premium Feature Teasers */}
+                <View style={{ gap: 8, marginTop: 10 }}>
+                  <PremiumFeatureBanner
+                    feature="body_scan"
+                    title="AI Body Transformation Tracking"
+                    description="Unlock AI-powered body composition analysis, progress photo reminders, and before/after comparisons to visualise your transformation."
+                    icon="body"
+                    accentColor="#22D3EE"
+                    requiredTier="basic"
+                  />
+                  <PremiumFeatureTeaser
+                    feature="progress_photos"
+                    text="Set up daily or weekly photo reminders to track your progress"
+                    requiredTier="basic"
+                  />
+                </View>
               </View>
             )}
           </View>

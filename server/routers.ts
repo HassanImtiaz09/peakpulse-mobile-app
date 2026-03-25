@@ -849,6 +849,8 @@ Return JSON:
         dietaryPreference: z.string().default("omnivore"),
         pantryItems: z.array(z.string()).default([]),
         includeBeyondPantry: z.boolean().default(true),
+        dailyCalorieTarget: z.number().default(2000),
+        remainingCalories: z.number().default(2000),
       }))
       .mutation(async ({ input }) => {
         const pantryNote = input.pantryItems.length > 0
@@ -857,15 +859,17 @@ Return JSON:
         const beyondNote = input.includeBeyondPantry
           ? "Also include 2-3 alternatives that use ingredients NOT in the pantry for variety."
           : "Only suggest meals using the available pantry items.";
+        const calorieNote = `The user's daily calorie target is ${input.dailyCalorieTarget} kcal. They have ${input.remainingCalories} kcal remaining for this meal slot (after subtracting other meals). Prioritize alternatives that fit within this remaining budget. If an alternative exceeds the remaining budget, mark it with "exceedsLimit": true.`;
         const prompt = `You are an expert nutritionist. The user wants to swap their ${input.mealType} meal "${input.mealName}" (${input.calories} kcal, P:${input.protein}g C:${input.carbs}g F:${input.fat}g). Diet: ${input.dietaryPreference}.
 
 ${pantryNote}
 ${beyondNote}
+${calorieNote}
 
-Generate 6 alternative meals (within 50 kcal of ${input.calories}). Mark which ones use pantry items.
+Generate 6 alternative meals. Mark which ones use pantry items. For each meal, also provide a "photoQuery" field with a descriptive search term for finding a photo of the meal (e.g. "grilled salmon with vegetables").
 
 Return JSON:
-{"alternatives":[{"name":"Meal Name","calories":${input.calories},"protein":${input.protein},"carbs":${input.carbs},"fat":${input.fat},"prepTime":"15 min","usesPantry":true,"pantryItemsUsed":["chicken","rice"],"description":"Quick description","ingredients":["150g chicken breast","80g rice"],"instructions":["Step 1","Step 2"],"photoQuery":"grilled chicken rice bowl"}]}`;
+{"alternatives":[{"name":"Meal Name","calories":400,"protein":30,"carbs":40,"fat":15,"prepTime":"15 min","usesPantry":true,"pantryItemsUsed":["chicken","rice"],"description":"Quick description","ingredients":["150g chicken breast","80g rice"],"instructions":["Step 1","Step 2"],"photoQuery":"grilled chicken rice bowl","exceedsLimit":false}]}`;
         const response = await invokeLLM({
           messages: [
             { role: "system", content: "You are a professional nutritionist. Always respond with valid JSON only." },
@@ -876,7 +880,16 @@ Return JSON:
         let result: any;
         try { result = JSON.parse((response.choices[0].message.content as string) ?? "{}"); }
         catch { result = { alternatives: [] }; }
-        return { alternatives: result.alternatives ?? [] };
+        // Generate image URLs for each alternative using Unsplash
+        const alternatives = (result.alternatives ?? []).map((alt: any) => {
+          const query = encodeURIComponent(alt.photoQuery ?? alt.name ?? "healthy meal");
+          return {
+            ...alt,
+            imageUrl: `https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&q=80`,
+            photoUrl: `https://source.unsplash.com/400x300/?${query}`,
+          };
+        });
+        return { alternatives, dailyCalorieTarget: input.dailyCalorieTarget, remainingCalories: input.remainingCalories };
       }),
   }),
 

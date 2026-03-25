@@ -20,6 +20,8 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { BodyHeatmap } from "@/components/body-heatmap";
 import { getTodayTargetMuscles } from "@/lib/muscle-balance";
 import { usePantry } from "@/lib/pantry-context";
+import { useCalories } from "@/lib/calorie-context";
+import { PremiumFeatureTeaser } from "@/components/premium-feature-banner";
 
 const WORKOUT_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/yauqLuTRvanJUzsJ.jpg";
 const MEAL_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/yauqLuTRvanJUzsJ.jpg";
@@ -110,6 +112,8 @@ export default function PlansScreen() {
 
   const { items: pantryItems } = usePantry();
   const pantryNames = useMemo(() => pantryItems.map(p => p.name), [pantryItems]);
+  const { calorieGoal, totalCalories } = useCalories();
+  const caloriesRemaining = Math.max(0, calorieGoal - totalCalories);
 
   // Exercise swap state
   const [swapExModal, setSwapExModal] = useState<{ exercise: any; dayFocus: string } | null>(null);
@@ -275,11 +279,22 @@ export default function PlansScreen() {
     Alert.alert("Exercise Swapped", `Replaced ${swapExModal.exercise.name} with ${newExercise.name}`);
   }, [swapExModal, workoutPlan, isAuthenticated]);
 
+  // ── Compute daily calorie target from meal plan ──
+  const dailyCalorieTarget = useMemo(() => {
+    // Use the calorie goal from calorie context, or derive from profile
+    if (calorieGoal && calorieGoal > 0) return calorieGoal;
+    return activeProfile?.calorieTarget ?? 2000;
+  }, [calorieGoal, activeProfile]);
+
   // ── Meal Swap Handler ──
   const handleMealSwap = useCallback(async (meal: any, dayIndex: number, mealIndex: number) => {
     setSwapMealModal({ meal, dayIndex, mealIndex });
     setSwapMealAlts([]);
     setSwapMealLoading(true);
+    // Calculate remaining calories for this day excluding the meal being swapped
+    const dayMeals = mealPlan?.days?.[dayIndex]?.meals ?? [];
+    const otherMealsCals = dayMeals.reduce((s: number, m: any, i: number) => i === mealIndex ? s : s + (m.calories ?? 0), 0);
+    const remainingForSlot = Math.max(0, dailyCalorieTarget - otherMealsCals);
     try {
       const result = await mealSwap.mutateAsync({
         mealName: meal.name,
@@ -291,6 +306,8 @@ export default function PlansScreen() {
         dietaryPreference: dietaryPref,
         pantryItems: pantryNames,
         includeBeyondPantry,
+        dailyCalorieTarget,
+        remainingCalories: remainingForSlot,
       });
       setSwapMealAlts(result.alternatives ?? []);
     } catch (e: any) {
@@ -298,9 +315,29 @@ export default function PlansScreen() {
     } finally {
       setSwapMealLoading(false);
     }
-  }, [mealSwap, dietaryPref, pantryNames, includeBeyondPantry]);
+  }, [mealSwap, dietaryPref, pantryNames, includeBeyondPantry, dailyCalorieTarget, mealPlan]);
 
   const applyMealSwap = useCallback((newMeal: any) => {
+    if (!swapMealModal || !mealPlan?.days) return;
+    // Check if this swap would exceed daily calorie limit
+    const dayMeals = mealPlan.days[swapMealModal.dayIndex]?.meals ?? [];
+    const otherMealsCals = dayMeals.reduce((s: number, m: any, i: number) => i === swapMealModal.mealIndex ? s : s + (m.calories ?? 0), 0);
+    const newDayTotal = otherMealsCals + (newMeal.calories ?? 0);
+    if (newDayTotal > dailyCalorieTarget) {
+      Alert.alert(
+        "Exceeds Daily Limit",
+        `This swap would bring today's total to ${newDayTotal} kcal (target: ${dailyCalorieTarget} kcal). Swap anyway?`,
+        [
+          { text: "Cancel", style: "cancel" },
+          { text: "Swap Anyway", style: "destructive", onPress: () => doApplyMealSwap(newMeal) },
+        ]
+      );
+      return;
+    }
+    doApplyMealSwap(newMeal);
+  }, [swapMealModal, mealPlan, isAuthenticated, dailyCalorieTarget]);
+
+  const doApplyMealSwap = useCallback((newMeal: any) => {
     if (!swapMealModal || !mealPlan?.days) return;
     const updatedDays = mealPlan.days.map((day: any, di: number) => {
       if (di !== swapMealModal.dayIndex) return day;
@@ -603,6 +640,20 @@ export default function PlansScreen() {
                   <MaterialIcons name="chevron-right" size={20} color={GOLD} />
                 </TouchableOpacity>
 
+                {/* Premium Feature Teasers */}
+                <View style={{ gap: 8, marginTop: 10 }}>
+                  <PremiumFeatureTeaser
+                    feature="ai_coaching"
+                    text="Get personalised AI Coach guidance for your workout plan"
+                    requiredTier="advanced"
+                  />
+                  <PremiumFeatureTeaser
+                    feature="form_checker"
+                    text="Unlock AI Form Check to perfect your exercise technique"
+                    requiredTier="advanced"
+                  />
+                </View>
+
                 {/* Customize / Regenerate (collapsible) */}
                 <TouchableOpacity
                   style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6, marginTop: 16, paddingVertical: 10 }}
@@ -782,6 +833,20 @@ export default function PlansScreen() {
                   </>
                 )}
 
+                {/* Premium Feature Teasers */}
+                <View style={{ gap: 8, marginTop: 10 }}>
+                  <PremiumFeatureTeaser
+                    feature="pantry"
+                    text="Unlock Smart Pantry to get meals customised to your ingredients"
+                    requiredTier="basic"
+                  />
+                  <PremiumFeatureTeaser
+                    feature="progress_photos"
+                    text="AI Photo Logging — snap your meal and auto-track calories"
+                    requiredTier="basic"
+                  />
+                </View>
+
                 {/* Customize / Regenerate (collapsible) */}
                 <TouchableOpacity
                   style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6, marginTop: 16, paddingVertical: 10 }}
@@ -920,8 +985,19 @@ export default function PlansScreen() {
                   <MaterialIcons name="close" size={22} color={MUTED} />
                 </TouchableOpacity>
               </View>
+              {/* Daily calorie budget banner */}
+              <View style={{ flexDirection: "row", alignItems: "center", gap: 8, marginTop: 10, backgroundColor: BG, borderRadius: 10, padding: 10, borderWidth: 1, borderColor: GOLD_BORDER }}>
+                <MaterialIcons name="local-fire-department" size={16} color={GOLD} />
+                <View style={{ flex: 1 }}>
+                  <Text style={{ color: FG, fontSize: 12, fontFamily: "DMSans_600SemiBold" }}>Daily Budget: {dailyCalorieTarget} kcal</Text>
+                  <View style={{ height: 4, backgroundColor: "rgba(30,41,59,0.6)", borderRadius: 2, marginTop: 4, overflow: "hidden" }}>
+                    <View style={{ height: 4, borderRadius: 2, backgroundColor: totalCalories > dailyCalorieTarget ? "#F87171" : GOLD, width: `${Math.min(100, (totalCalories / dailyCalorieTarget) * 100)}%` }} />
+                  </View>
+                  <Text style={{ color: MUTED, fontSize: 10, marginTop: 3 }}>{totalCalories} / {dailyCalorieTarget} kcal consumed today</Text>
+                </View>
+              </View>
               {/* Pantry toggle */}
-              <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginTop: 12, backgroundColor: BG, borderRadius: 12, padding: 12 }}>
+              <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginTop: 10, backgroundColor: BG, borderRadius: 12, padding: 12 }}>
                 <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
                   <MaterialIcons name="kitchen" size={16} color={GOLD} />
                   <View>
@@ -948,45 +1024,61 @@ export default function PlansScreen() {
                 {swapMealAlts.length === 0 ? (
                   <Text style={{ color: MUTED, textAlign: "center", padding: 20 }}>No alternatives found. Try again.</Text>
                 ) : (
-                  swapMealAlts.map((alt: any, i: number) => (
-                    <View key={i} style={{ backgroundColor: BG, borderRadius: 14, padding: 14, marginBottom: 10, borderWidth: 1, borderColor: alt.usesPantry ? "rgba(34,211,238,0.25)" : "rgba(30,41,59,0.6)" }}>
-                      <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start" }}>
-                        <View style={{ flex: 1 }}>
-                          <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
-                            <Text style={{ color: FG, fontFamily: "DMSans_700Bold", fontSize: 14 }}>{alt.name}</Text>
-                            {alt.usesPantry && (
-                              <View style={{ backgroundColor: "rgba(34,211,238,0.15)", borderRadius: 6, paddingHorizontal: 6, paddingVertical: 2 }}>
-                                <Text style={{ color: "#22D3EE", fontSize: 9, fontFamily: "DMSans_700Bold" }}>PANTRY</Text>
+                  swapMealAlts.map((alt: any, i: number) => {
+                    const exceedsLimit = alt.exceedsLimit || false;
+                    const mealPhotoUrl = getMealPhotoUrl({ name: alt.name, type: alt.photoQuery ?? alt.name });
+                    return (
+                      <View key={i} style={{ backgroundColor: BG, borderRadius: 14, overflow: "hidden", marginBottom: 10, borderWidth: 1, borderColor: exceedsLimit ? "rgba(248,113,113,0.3)" : alt.usesPantry ? "rgba(34,211,238,0.25)" : "rgba(30,41,59,0.6)" }}>
+                        {/* Meal image */}
+                        <Image
+                          source={{ uri: mealPhotoUrl }}
+                          style={{ width: "100%", height: 100 }}
+                          resizeMode="cover"
+                        />
+                        {exceedsLimit && (
+                          <View style={{ position: "absolute", top: 8, right: 8, backgroundColor: "rgba(248,113,113,0.9)", borderRadius: 6, paddingHorizontal: 8, paddingVertical: 3, flexDirection: "row", alignItems: "center", gap: 4 }}>
+                            <MaterialIcons name="warning" size={10} color="#0A0E14" />
+                            <Text style={{ color: "#0A0E14", fontSize: 9, fontFamily: "DMSans_700Bold" }}>EXCEEDS LIMIT</Text>
+                          </View>
+                        )}
+                        {alt.usesPantry && (
+                          <View style={{ position: "absolute", top: 8, left: 8, backgroundColor: "rgba(34,211,238,0.85)", borderRadius: 6, paddingHorizontal: 8, paddingVertical: 3 }}>
+                            <Text style={{ color: "#0A0E14", fontSize: 9, fontFamily: "DMSans_700Bold" }}>PANTRY</Text>
+                          </View>
+                        )}
+                        <View style={{ padding: 14 }}>
+                          <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start" }}>
+                            <View style={{ flex: 1 }}>
+                              <Text style={{ color: FG, fontFamily: "DMSans_700Bold", fontSize: 14 }}>{alt.name}</Text>
+                              <View style={{ flexDirection: "row", gap: 10, marginTop: 4 }}>
+                                <Text style={{ color: exceedsLimit ? "#F87171" : GOLD, fontSize: 11, fontFamily: "SpaceMono_700Bold" }}>{alt.calories} kcal</Text>
+                                <Text style={{ color: "#3B82F6", fontSize: 11 }}>P:{alt.protein}g</Text>
+                                <Text style={{ color: CREAM, fontSize: 11 }}>C:{alt.carbs}g</Text>
+                                <Text style={{ color: GOLD, fontSize: 11 }}>F:{alt.fat}g</Text>
                               </View>
-                            )}
-                          </View>
-                          <View style={{ flexDirection: "row", gap: 10, marginTop: 4 }}>
-                            <Text style={{ color: GOLD, fontSize: 11 }}>{alt.calories} kcal</Text>
-                            <Text style={{ color: "#3B82F6", fontSize: 11 }}>P:{alt.protein}g</Text>
-                            <Text style={{ color: CREAM, fontSize: 11 }}>C:{alt.carbs}g</Text>
-                            <Text style={{ color: GOLD, fontSize: 11 }}>F:{alt.fat}g</Text>
-                          </View>
-                          {alt.prepTime && <Text style={{ color: MUTED, fontSize: 11, marginTop: 2 }}>{alt.prepTime}</Text>}
-                        </View>
-                        <TouchableOpacity
-                          style={{ backgroundColor: "#22D3EE", borderRadius: 10, paddingHorizontal: 14, paddingVertical: 8 }}
-                          onPress={() => applyMealSwap(alt)}
-                        >
-                          <Text style={{ color: BG, fontFamily: "DMSans_700Bold", fontSize: 12 }}>Select</Text>
-                        </TouchableOpacity>
-                      </View>
-                      {alt.description && <Text style={{ color: MUTED, fontSize: 11, marginTop: 6, lineHeight: 16 }}>{alt.description}</Text>}
-                      {alt.pantryItemsUsed?.length > 0 && (
-                        <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 4, marginTop: 6 }}>
-                          {alt.pantryItemsUsed.map((item: string, j: number) => (
-                            <View key={j} style={{ backgroundColor: "rgba(34,211,238,0.10)", borderRadius: 6, paddingHorizontal: 6, paddingVertical: 2 }}>
-                              <Text style={{ color: "#22D3EE", fontSize: 10 }}>{item}</Text>
+                              {alt.prepTime && <Text style={{ color: MUTED, fontSize: 11, marginTop: 2 }}>⏱ {alt.prepTime}</Text>}
                             </View>
-                          ))}
+                            <TouchableOpacity
+                              style={{ backgroundColor: exceedsLimit ? "rgba(248,113,113,0.8)" : "#22D3EE", borderRadius: 10, paddingHorizontal: 14, paddingVertical: 8 }}
+                              onPress={() => applyMealSwap(alt)}
+                            >
+                              <Text style={{ color: BG, fontFamily: "DMSans_700Bold", fontSize: 12 }}>Select</Text>
+                            </TouchableOpacity>
+                          </View>
+                          {alt.description && <Text style={{ color: MUTED, fontSize: 11, marginTop: 6, lineHeight: 16 }}>{alt.description}</Text>}
+                          {alt.pantryItemsUsed?.length > 0 && (
+                            <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 4, marginTop: 6 }}>
+                              {alt.pantryItemsUsed.map((item: string, j: number) => (
+                                <View key={j} style={{ backgroundColor: "rgba(34,211,238,0.10)", borderRadius: 6, paddingHorizontal: 6, paddingVertical: 2 }}>
+                                  <Text style={{ color: "#22D3EE", fontSize: 10 }}>{item}</Text>
+                                </View>
+                              ))}
+                            </View>
+                          )}
                         </View>
-                      )}
-                    </View>
-                  ))
+                      </View>
+                    );
+                  })
                 )}
               </ScrollView>
             )}
