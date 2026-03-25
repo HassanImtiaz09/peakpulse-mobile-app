@@ -65,6 +65,12 @@ const DIETARY_PREFS = [
 
 type Step = "upload" | "analyzing" | "results" | "goal_setup" | "generating";
 
+interface ProgressPhoto {
+  uri: string;
+  date: string;
+  note?: string;
+}
+
 export default function ScanScreen() {
   const router = useRouter();
   const { isAuthenticated } = useAuth();
@@ -77,6 +83,72 @@ export default function ScanScreen() {
   const [uploadedPhotoUrl, setUploadedPhotoUrl] = useState<string | null>(null);
   const [step, setStep] = useState<Step>("upload");
   const [selectedTransform, setSelectedTransform] = useState<number | null>(null);
+
+  // Progress tracking state
+  const [targetTransformation, setTargetTransformation] = useState<any>(null);
+  const [progressPhotos, setProgressPhotos] = useState<ProgressPhoto[]>([]);
+  const [showProgressSection, setShowProgressSection] = useState(true);
+
+  // Load target transformation and progress photos
+  React.useEffect(() => {
+    AsyncStorage.getItem("@target_transformation").then(raw => {
+      if (raw) setTargetTransformation(JSON.parse(raw));
+    });
+    AsyncStorage.getItem("@progress_photos").then(raw => {
+      if (raw) setProgressPhotos(JSON.parse(raw));
+    });
+  }, [step]);
+
+  async function takeProgressPhoto() {
+    try {
+      const { status } = await ImagePicker.requestCameraPermissionsAsync();
+      if (status !== "granted") {
+        Alert.alert("Permission Required", "Camera access is needed to take progress photos.");
+        return;
+      }
+      const result = await ImagePicker.launchCameraAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        quality: 0.8, allowsEditing: true, aspect: [3, 4],
+      });
+      if (!result.canceled && result.assets[0]) {
+        const newPhoto: ProgressPhoto = {
+          uri: result.assets[0].uri,
+          date: new Date().toISOString(),
+        };
+        const updated = [...progressPhotos, newPhoto];
+        setProgressPhotos(updated);
+        await AsyncStorage.setItem("@progress_photos", JSON.stringify(updated));
+        if (Platform.OS !== "web") {
+          const Haptics = require("expo-haptics");
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        }
+        Alert.alert("Progress Photo Saved", "Your progress photo has been added to your timeline.");
+      }
+    } catch (e: any) {
+      Alert.alert("Error", e.message);
+    }
+  }
+
+  async function pickProgressPhoto() {
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        quality: 0.8, allowsEditing: true, aspect: [3, 4],
+      });
+      if (!result.canceled && result.assets[0]) {
+        const newPhoto: ProgressPhoto = {
+          uri: result.assets[0].uri,
+          date: new Date().toISOString(),
+        };
+        const updated = [...progressPhotos, newPhoto];
+        setProgressPhotos(updated);
+        await AsyncStorage.setItem("@progress_photos", JSON.stringify(updated));
+        Alert.alert("Progress Photo Saved", "Your progress photo has been added to your timeline.");
+      }
+    } catch (e: any) {
+      Alert.alert("Error", e.message);
+    }
+  }
 
   // Goal setup state
   const [workoutStyle, setWorkoutStyle] = useState("gym");
@@ -631,6 +703,105 @@ export default function ScanScreen() {
             >
               <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}><MaterialIcons name="photo-camera" size={14} color={ICE} /><Text style={{ color: ICE, fontFamily: "DMSans_600SemiBold", fontSize: 14 }}>New Scan</Text></View>
             </TouchableOpacity>
+
+            {/* ── PROGRESS TRACKING SECTION ── */}
+            {targetTransformation && (
+              <View style={{ marginTop: 24 }}>
+                <TouchableOpacity
+                  style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}
+                  onPress={() => setShowProgressSection(v => !v)}
+                >
+                  <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+                    <MaterialIcons name="trending-up" size={20} color={ICE} />
+                    <Text style={{ color: FG, fontFamily: "BebasNeue_400Regular", fontSize: 22, letterSpacing: 2 }}>YOUR PROGRESS</Text>
+                  </View>
+                  <MaterialIcons name={showProgressSection ? "expand-less" : "expand-more"} size={24} color={MUTED} />
+                </TouchableOpacity>
+
+                {showProgressSection && (
+                  <View style={{ gap: 12 }}>
+                    {/* Goal Card */}
+                    <View style={{ backgroundColor: SURFACE, borderRadius: 18, padding: 16, borderWidth: 1, borderColor: ICE_BORDER }}>
+                      <Text style={{ color: ICE, fontFamily: "DMSans_700Bold", fontSize: 12, letterSpacing: 1, marginBottom: 10 }}>TRANSFORMATION GOAL</Text>
+                      <View style={{ flexDirection: "row", gap: 12 }}>
+                        {targetTransformation.imageUrl && (
+                          <Image
+                            source={{ uri: targetTransformation.imageUrl }}
+                            style={{ width: 80, height: 100, borderRadius: 12, backgroundColor: SURFACE }}
+                            resizeMode="cover"
+                          />
+                        )}
+                        <View style={{ flex: 1 }}>
+                          <Text style={{ color: FG, fontFamily: "SpaceMono_700Bold", fontSize: 24 }}>{targetTransformation.target_bf}% BF</Text>
+                          <Text style={{ color: MUTED, fontSize: 12, lineHeight: 16, marginTop: 4 }}>{targetTransformation.description}</Text>
+                          <View style={{ flexDirection: "row", gap: 8, marginTop: 8 }}>
+                            <View style={{ backgroundColor: ICE_DIM, borderRadius: 8, paddingHorizontal: 8, paddingVertical: 4 }}>
+                              <Text style={{ color: ICE, fontSize: 11 }}>{targetTransformation.estimated_weeks}w timeline</Text>
+                            </View>
+                          </View>
+                        </View>
+                      </View>
+                      {/* Progress bar */}
+                      {scan?.estimatedBodyFat && (
+                        <View style={{ marginTop: 14 }}>
+                          <View style={{ flexDirection: "row", justifyContent: "space-between", marginBottom: 6 }}>
+                            <Text style={{ color: MUTED, fontSize: 11 }}>Current: {scan.estimatedBodyFat?.toFixed(1)}%</Text>
+                            <Text style={{ color: ICE, fontSize: 11 }}>Target: {targetTransformation.target_bf}%</Text>
+                          </View>
+                          <View style={{ height: 8, backgroundColor: BG, borderRadius: 4, overflow: "hidden" }}>
+                            <View style={{
+                              height: 8, borderRadius: 4, backgroundColor: ICE,
+                              width: `${Math.min(100, Math.max(5, ((scan.estimatedBodyFat - targetTransformation.target_bf) > 0 ? (1 - (scan.estimatedBodyFat - targetTransformation.target_bf) / scan.estimatedBodyFat) * 100 : 100)))}%`,
+                            }} />
+                          </View>
+                        </View>
+                      )}
+                    </View>
+
+                    {/* Take Progress Photo CTA */}
+                    <View style={{ flexDirection: "row", gap: 10 }}>
+                      <TouchableOpacity
+                        style={{ flex: 1, backgroundColor: ICE, borderRadius: 14, paddingVertical: 14, alignItems: "center", flexDirection: "row", justifyContent: "center", gap: 6 }}
+                        onPress={takeProgressPhoto}
+                      >
+                        <MaterialIcons name="photo-camera" size={18} color={BG} />
+                        <Text style={{ color: BG, fontFamily: "DMSans_700Bold", fontSize: 13 }}>Take Progress Photo</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        style={{ backgroundColor: SURFACE, borderRadius: 14, paddingVertical: 14, paddingHorizontal: 16, alignItems: "center", borderWidth: 1, borderColor: ICE_BORDER }}
+                        onPress={pickProgressPhoto}
+                      >
+                        <MaterialIcons name="photo-library" size={18} color={ICE} />
+                      </TouchableOpacity>
+                    </View>
+
+                    {/* Progress Photo Timeline */}
+                    {progressPhotos.length > 0 && (
+                      <View style={{ backgroundColor: SURFACE, borderRadius: 18, padding: 16, borderWidth: 1, borderColor: "rgba(30,41,59,0.6)" }}>
+                        <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+                          <Text style={{ color: FG, fontFamily: "DMSans_700Bold", fontSize: 14 }}>Progress Timeline</Text>
+                          <Text style={{ color: MUTED, fontSize: 12 }}>{progressPhotos.length} photo{progressPhotos.length !== 1 ? "s" : ""}</Text>
+                        </View>
+                        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginHorizontal: -4 }}>
+                          {progressPhotos.slice().reverse().map((photo, i) => (
+                            <View key={i} style={{ marginHorizontal: 4, alignItems: "center" }}>
+                              <Image
+                                source={{ uri: photo.uri }}
+                                style={{ width: 80, height: 106, borderRadius: 12, backgroundColor: BG }}
+                                resizeMode="cover"
+                              />
+                              <Text style={{ color: MUTED, fontSize: 9, marginTop: 4 }}>
+                                {new Date(photo.date).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                              </Text>
+                            </View>
+                          ))}
+                        </ScrollView>
+                      </View>
+                    )}
+                  </View>
+                )}
+              </View>
+            )}
           </View>
         )}
 

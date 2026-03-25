@@ -805,6 +805,81 @@ Return a JSON coaching report with this exact structure:
       }),
   }),
 
+  exerciseSwap: router({
+    // AI-powered exercise swap — generates alternatives targeting the same muscle group
+    generate: guestOrUserProcedure
+      .input(z.object({
+        exerciseName: z.string(),
+        muscleGroup: z.string(),
+        dayFocus: z.string(),
+        workoutStyle: z.string().default("gym"),
+        reason: z.string().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const prompt = `You are an expert personal trainer. The user wants to swap "${input.exerciseName}" from their ${input.dayFocus} workout. Target muscle: ${input.muscleGroup}. Style: ${input.workoutStyle}. ${input.reason ? `Reason: ${input.reason}` : ""}
+
+Generate exactly 5 alternative exercises that target the same muscle group(s). Each must be practical for the given workout style.
+
+Return JSON:
+{"alternatives":[{"name":"Exercise Name","sets":"4x10","reps":"10-12","rest":"90s","muscleGroup":"${input.muscleGroup}","equipment":"Barbell","difficulty":"intermediate","notes":"Form cue or tip","reason":"Why this is a good swap"}]}`;
+        const response = await invokeLLM({
+          messages: [
+            { role: "system", content: "You are a professional personal trainer. Always respond with valid JSON only." },
+            { role: "user", content: prompt },
+          ],
+          response_format: { type: "json_object" },
+        });
+        let result: any;
+        try { result = JSON.parse((response.choices[0].message.content as string) ?? "{}"); }
+        catch { result = { alternatives: [] }; }
+        return { alternatives: result.alternatives ?? [] };
+      }),
+  }),
+
+  mealSwapWithPantry: router({
+    // AI-powered meal swap using pantry items — generates alternatives from available ingredients
+    generate: guestOrUserProcedure
+      .input(z.object({
+        mealName: z.string(),
+        mealType: z.string(),
+        calories: z.number(),
+        protein: z.number(),
+        carbs: z.number(),
+        fat: z.number(),
+        dietaryPreference: z.string().default("omnivore"),
+        pantryItems: z.array(z.string()).default([]),
+        includeBeyondPantry: z.boolean().default(true),
+      }))
+      .mutation(async ({ input }) => {
+        const pantryNote = input.pantryItems.length > 0
+          ? `Available pantry items: ${input.pantryItems.join(", ")}. Prioritize using these ingredients where possible.`
+          : "";
+        const beyondNote = input.includeBeyondPantry
+          ? "Also include 2-3 alternatives that use ingredients NOT in the pantry for variety."
+          : "Only suggest meals using the available pantry items.";
+        const prompt = `You are an expert nutritionist. The user wants to swap their ${input.mealType} meal "${input.mealName}" (${input.calories} kcal, P:${input.protein}g C:${input.carbs}g F:${input.fat}g). Diet: ${input.dietaryPreference}.
+
+${pantryNote}
+${beyondNote}
+
+Generate 6 alternative meals (within 50 kcal of ${input.calories}). Mark which ones use pantry items.
+
+Return JSON:
+{"alternatives":[{"name":"Meal Name","calories":${input.calories},"protein":${input.protein},"carbs":${input.carbs},"fat":${input.fat},"prepTime":"15 min","usesPantry":true,"pantryItemsUsed":["chicken","rice"],"description":"Quick description","ingredients":["150g chicken breast","80g rice"],"instructions":["Step 1","Step 2"],"photoQuery":"grilled chicken rice bowl"}]}`;
+        const response = await invokeLLM({
+          messages: [
+            { role: "system", content: "You are a professional nutritionist. Always respond with valid JSON only." },
+            { role: "user", content: prompt },
+          ],
+          response_format: { type: "json_object" },
+        });
+        let result: any;
+        try { result = JSON.parse((response.choices[0].message.content as string) ?? "{}"); }
+        catch { result = { alternatives: [] }; }
+        return { alternatives: result.alternatives ?? [] };
+      }),
+  }),
+
   upload: router({
     // Photo upload — works for guests (stored to S3 without user ID)
     photo: guestOrUserProcedure

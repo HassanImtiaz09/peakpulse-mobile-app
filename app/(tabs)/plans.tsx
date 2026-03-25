@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useMemo } from "react";
 import {
   ScrollView, Text, View, TouchableOpacity, ActivityIndicator,
-  Alert, ImageBackground, Image, Platform,
+  Alert, ImageBackground, Image, Platform, Modal, TextInput, FlatList,
 } from "react-native";
 import Animated, {
   useSharedValue, useAnimatedStyle, interpolate, Extrapolation,
@@ -19,6 +19,7 @@ import { exportWorkoutPlanPdf } from "@/lib/workout-pdf";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { BodyHeatmap } from "@/components/body-heatmap";
 import { getTodayTargetMuscles } from "@/lib/muscle-balance";
+import { usePantry } from "@/lib/pantry-context";
 
 const WORKOUT_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/yauqLuTRvanJUzsJ.jpg";
 const MEAL_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/yauqLuTRvanJUzsJ.jpg";
@@ -34,19 +35,22 @@ const MUTED = "#64748B";
 const CREAM = "#FDE68A";
 
 const MEAL_PHOTO_MAP: Record<string, string> = {
-  breakfast: "https://images.unsplash.com/photo-1533089860892-a7c6f0a88666?w=400&q=80",
+  breakfast: "https://images.unsplash.com/photo-1525351484163-7529414344d8?w=400&q=80",
   "morning snack": "https://images.unsplash.com/photo-1490474418585-ba9bad8fd0ea?w=400&q=80",
   lunch: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&q=80",
   "afternoon snack": "https://images.unsplash.com/photo-1505576399279-565b52d4ac71?w=400&q=80",
   dinner: "https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=400&q=80",
   snack: "https://images.unsplash.com/photo-1505576399279-565b52d4ac71?w=400&q=80",
+  suhoor: "https://images.unsplash.com/photo-1525351484163-7529414344d8?w=400&q=80",
+  iftar: "https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=400&q=80",
   default: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&q=80",
 };
 
 function getMealPhotoUrl(meal: any): string {
+  if (meal.photoUrl) return meal.photoUrl;
   if (meal.photoQuery) {
     const query = encodeURIComponent(meal.photoQuery);
-    return `https://source.unsplash.com/400x300/?${query},food`;
+    return `https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&q=80`;
   }
   const type = (meal.type ?? "default").toLowerCase();
   return MEAL_PHOTO_MAP[type] ?? MEAL_PHOTO_MAP.default;
@@ -103,6 +107,22 @@ export default function PlansScreen() {
   const [mealGoal, setMealGoal] = useState("build_muscle");
   const [ramadanMode, setRamadanMode] = useState(false);
   const [showMealCustomize, setShowMealCustomize] = useState(false);
+
+  const { items: pantryItems } = usePantry();
+  const pantryNames = useMemo(() => pantryItems.map(p => p.name), [pantryItems]);
+
+  // Exercise swap state
+  const [swapExModal, setSwapExModal] = useState<{ exercise: any; dayFocus: string } | null>(null);
+  const [swapExAlts, setSwapExAlts] = useState<any[]>([]);
+  const [swapExLoading, setSwapExLoading] = useState(false);
+  const exerciseSwap = trpc.exerciseSwap.generate.useMutation();
+
+  // Meal swap state
+  const [swapMealModal, setSwapMealModal] = useState<{ meal: any; dayIndex: number; mealIndex: number } | null>(null);
+  const [swapMealAlts, setSwapMealAlts] = useState<any[]>([]);
+  const [swapMealLoading, setSwapMealLoading] = useState(false);
+  const [includeBeyondPantry, setIncludeBeyondPantry] = useState(true);
+  const mealSwap = trpc.mealSwapWithPantry.generate.useMutation();
 
   const { data: dbWorkoutPlan, refetch: refetchWorkout } = trpc.workoutPlan.getActive.useQuery(undefined, { enabled: isAuthenticated });
   const { data: dbMealPlan, refetch: refetchMeal } = trpc.mealPlan.getActive.useQuery(undefined, { enabled: isAuthenticated });
@@ -211,6 +231,97 @@ export default function PlansScreen() {
       !d.day?.toLowerCase().includes(todayName.toLowerCase())
     );
   }, [mealPlan, todayName]);
+
+  // ── Exercise Swap Handler ──
+  const handleExerciseSwap = useCallback(async (exercise: any, dayFocus: string) => {
+    setSwapExModal({ exercise, dayFocus });
+    setSwapExAlts([]);
+    setSwapExLoading(true);
+    try {
+      const result = await exerciseSwap.mutateAsync({
+        exerciseName: exercise.name,
+        muscleGroup: exercise.muscleGroup ?? dayFocus,
+        dayFocus,
+        workoutStyle: workoutStyle,
+      });
+      setSwapExAlts(result.alternatives ?? []);
+    } catch (e: any) {
+      Alert.alert("Error", e.message);
+    } finally {
+      setSwapExLoading(false);
+    }
+  }, [exerciseSwap, workoutStyle]);
+
+  const applyExerciseSwap = useCallback((newExercise: any) => {
+    if (!swapExModal || !workoutPlan?.schedule) return;
+    const updatedSchedule = workoutPlan.schedule.map((day: any) => ({
+      ...day,
+      exercises: day.exercises?.map((ex: any) =>
+        ex.name === swapExModal.exercise.name
+          ? { ...newExercise, sets: newExercise.sets?.includes("x") ? parseInt(newExercise.sets) || ex.sets : (newExercise.sets ?? ex.sets), reps: newExercise.reps ?? ex.reps, rest: newExercise.rest ?? ex.rest }
+          : ex
+      ),
+    }));
+    const updatedPlan = { ...workoutPlan, schedule: updatedSchedule };
+    if (isAuthenticated) {
+      // For authenticated users, we'd need a server update — for now update local state
+      setLocalWorkoutPlan(updatedPlan);
+    } else {
+      setLocalWorkoutPlan(updatedPlan);
+      AsyncStorage.setItem("@guest_workout_plan", JSON.stringify(updatedPlan));
+    }
+    setSwapExModal(null);
+    if (Platform.OS !== "web") Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    Alert.alert("Exercise Swapped", `Replaced ${swapExModal.exercise.name} with ${newExercise.name}`);
+  }, [swapExModal, workoutPlan, isAuthenticated]);
+
+  // ── Meal Swap Handler ──
+  const handleMealSwap = useCallback(async (meal: any, dayIndex: number, mealIndex: number) => {
+    setSwapMealModal({ meal, dayIndex, mealIndex });
+    setSwapMealAlts([]);
+    setSwapMealLoading(true);
+    try {
+      const result = await mealSwap.mutateAsync({
+        mealName: meal.name,
+        mealType: meal.type ?? "meal",
+        calories: meal.calories ?? 400,
+        protein: meal.protein ?? 30,
+        carbs: meal.carbs ?? 40,
+        fat: meal.fat ?? 15,
+        dietaryPreference: dietaryPref,
+        pantryItems: pantryNames,
+        includeBeyondPantry,
+      });
+      setSwapMealAlts(result.alternatives ?? []);
+    } catch (e: any) {
+      Alert.alert("Error", e.message);
+    } finally {
+      setSwapMealLoading(false);
+    }
+  }, [mealSwap, dietaryPref, pantryNames, includeBeyondPantry]);
+
+  const applyMealSwap = useCallback((newMeal: any) => {
+    if (!swapMealModal || !mealPlan?.days) return;
+    const updatedDays = mealPlan.days.map((day: any, di: number) => {
+      if (di !== swapMealModal.dayIndex) return day;
+      return {
+        ...day,
+        meals: day.meals?.map((m: any, mi: number) =>
+          mi === swapMealModal.mealIndex ? { ...newMeal, type: swapMealModal.meal.type } : m
+        ),
+      };
+    });
+    const updatedPlan = { ...mealPlan, days: updatedDays };
+    if (isAuthenticated) {
+      setLocalMealPlan(updatedPlan);
+    } else {
+      setLocalMealPlan(updatedPlan);
+      AsyncStorage.setItem("@guest_meal_plan", JSON.stringify(updatedPlan));
+    }
+    setSwapMealModal(null);
+    if (Platform.OS !== "web") Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    Alert.alert("Meal Swapped", `Replaced with ${newMeal.name}`);
+  }, [swapMealModal, mealPlan, isAuthenticated]);
 
   if (!canUse) {
     return (
@@ -450,6 +561,7 @@ export default function PlansScreen() {
                         if (!todayWorkout.isRest) router.push({ pathname: "/active-workout", params: { dayData: JSON.stringify(todayWorkout) } } as any);
                       }}
                       isToday
+                      onExerciseSwap={handleExerciseSwap}
                     />
                   </>
                 )}
@@ -470,6 +582,7 @@ export default function PlansScreen() {
                         onPress={() => {
                           if (!day.isRest) router.push({ pathname: "/active-workout", params: { dayData: JSON.stringify(day) } } as any);
                         }}
+                        onExerciseSwap={handleExerciseSwap}
                       />
                     ))}
                   </>
@@ -651,7 +764,7 @@ export default function PlansScreen() {
                       <MaterialIcons name="today" size={16} color={GOLD} />
                       <Text style={{ color: GOLD, fontFamily: "DMSans_700Bold", fontSize: 15 }}>Today — {todayName}</Text>
                     </View>
-                    <MealDayCard day={todayMeals} defaultExpanded />
+                    <MealDayCard day={todayMeals} defaultExpanded dayIndex={mealPlan.days?.findIndex((d: any) => d.day?.toLowerCase().includes(todayName.toLowerCase())) ?? 0} onMealSwap={handleMealSwap} />
                   </>
                 )}
 
@@ -662,9 +775,10 @@ export default function PlansScreen() {
                       <MaterialIcons name="date-range" size={16} color={MUTED} />
                       <Text style={{ color: MUTED, fontFamily: "DMSans_700Bold", fontSize: 13 }}>Rest of the Week</Text>
                     </View>
-                    {otherMealDays.map((day: any, i: number) => (
-                      <MealDayCard key={i} day={day} />
-                    ))}
+                    {otherMealDays.map((day: any, i: number) => {
+                      const actualIndex = mealPlan.days?.findIndex((d: any) => d.day === day.day) ?? i;
+                      return <MealDayCard key={i} day={day} dayIndex={actualIndex} onMealSwap={handleMealSwap} />;
+                    })}
                   </>
                 )}
 
@@ -737,6 +851,148 @@ export default function PlansScreen() {
           </View>
         )}
       </Animated.ScrollView>
+
+      {/* ── Exercise Swap Modal ── */}
+      <Modal visible={!!swapExModal} transparent animationType="slide" onRequestClose={() => setSwapExModal(null)} statusBarTranslucent>
+        <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.85)", justifyContent: "flex-end" }}>
+          <View style={{ backgroundColor: SURFACE, borderTopLeftRadius: 24, borderTopRightRadius: 24, maxHeight: "80%", paddingBottom: 40 }}>
+            <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", padding: 20, borderBottomWidth: 1, borderBottomColor: "rgba(30,41,59,0.6)" }}>
+              <View style={{ flex: 1 }}>
+                <Text style={{ color: "#22D3EE", fontFamily: "DMSans_700Bold", fontSize: 12, letterSpacing: 1 }}>AI EXERCISE SWAP</Text>
+                <Text style={{ color: FG, fontFamily: "DMSans_700Bold", fontSize: 16, marginTop: 2 }}>Replace: {swapExModal?.exercise?.name}</Text>
+                <Text style={{ color: MUTED, fontSize: 12, marginTop: 2 }}>Target: {swapExModal?.exercise?.muscleGroup ?? swapExModal?.dayFocus}</Text>
+              </View>
+              <TouchableOpacity onPress={() => setSwapExModal(null)} style={{ padding: 8 }}>
+                <MaterialIcons name="close" size={22} color={MUTED} />
+              </TouchableOpacity>
+            </View>
+            {swapExLoading ? (
+              <View style={{ padding: 40, alignItems: "center" }}>
+                <ActivityIndicator size="large" color="#22D3EE" />
+                <Text style={{ color: MUTED, marginTop: 12, fontSize: 13 }}>AI Coach is finding alternatives...</Text>
+              </View>
+            ) : (
+              <ScrollView style={{ padding: 16 }} showsVerticalScrollIndicator={false}>
+                {swapExAlts.length === 0 ? (
+                  <Text style={{ color: MUTED, textAlign: "center", padding: 20 }}>No alternatives found. Try again.</Text>
+                ) : (
+                  swapExAlts.map((alt: any, i: number) => (
+                    <View key={i} style={{ backgroundColor: BG, borderRadius: 14, padding: 14, marginBottom: 10, borderWidth: 1, borderColor: "rgba(34,211,238,0.15)" }}>
+                      <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start" }}>
+                        <View style={{ flex: 1 }}>
+                          <Text style={{ color: FG, fontFamily: "DMSans_700Bold", fontSize: 14 }}>{alt.name}</Text>
+                          <View style={{ flexDirection: "row", gap: 10, marginTop: 4 }}>
+                            <Text style={{ color: GOLD, fontSize: 11 }}>{alt.sets}</Text>
+                            <Text style={{ color: CREAM, fontSize: 11 }}>{alt.reps} reps</Text>
+                            {alt.rest && <Text style={{ color: MUTED, fontSize: 11 }}>{alt.rest}</Text>}
+                          </View>
+                          {alt.equipment && <Text style={{ color: MUTED, fontSize: 11, marginTop: 2 }}>{alt.equipment}</Text>}
+                        </View>
+                        <TouchableOpacity
+                          style={{ backgroundColor: "#22D3EE", borderRadius: 10, paddingHorizontal: 14, paddingVertical: 8 }}
+                          onPress={() => applyExerciseSwap(alt)}
+                        >
+                          <Text style={{ color: BG, fontFamily: "DMSans_700Bold", fontSize: 12 }}>Select</Text>
+                        </TouchableOpacity>
+                      </View>
+                      {alt.reason && <Text style={{ color: MUTED, fontSize: 11, marginTop: 6, lineHeight: 16 }}>{alt.reason}</Text>}
+                      {alt.notes && <Text style={{ color: "#22D3EE", fontSize: 11, marginTop: 4, lineHeight: 16 }}>{alt.notes}</Text>}
+                    </View>
+                  ))
+                )}
+              </ScrollView>
+            )}
+          </View>
+        </View>
+      </Modal>
+
+      {/* ── Meal Swap Modal ── */}
+      <Modal visible={!!swapMealModal} transparent animationType="slide" onRequestClose={() => setSwapMealModal(null)} statusBarTranslucent>
+        <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.85)", justifyContent: "flex-end" }}>
+          <View style={{ backgroundColor: SURFACE, borderTopLeftRadius: 24, borderTopRightRadius: 24, maxHeight: "85%", paddingBottom: 40 }}>
+            <View style={{ padding: 20, borderBottomWidth: 1, borderBottomColor: "rgba(30,41,59,0.6)" }}>
+              <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                <View style={{ flex: 1 }}>
+                  <Text style={{ color: "#22D3EE", fontFamily: "DMSans_700Bold", fontSize: 12, letterSpacing: 1 }}>AI MEAL SWAP</Text>
+                  <Text style={{ color: FG, fontFamily: "DMSans_700Bold", fontSize: 16, marginTop: 2 }}>Replace: {swapMealModal?.meal?.name}</Text>
+                </View>
+                <TouchableOpacity onPress={() => setSwapMealModal(null)} style={{ padding: 8 }}>
+                  <MaterialIcons name="close" size={22} color={MUTED} />
+                </TouchableOpacity>
+              </View>
+              {/* Pantry toggle */}
+              <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginTop: 12, backgroundColor: BG, borderRadius: 12, padding: 12 }}>
+                <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+                  <MaterialIcons name="kitchen" size={16} color={GOLD} />
+                  <View>
+                    <Text style={{ color: FG, fontSize: 13, fontFamily: "DMSans_600SemiBold" }}>Use Pantry Items</Text>
+                    <Text style={{ color: MUTED, fontSize: 11 }}>{pantryNames.length} items available</Text>
+                  </View>
+                </View>
+                <TouchableOpacity
+                  style={{ width: 44, height: 26, borderRadius: 13, backgroundColor: includeBeyondPantry ? "#22D3EE" : GOLD_DIM, justifyContent: "center", paddingHorizontal: 2 }}
+                  onPress={() => setIncludeBeyondPantry(v => !v)}
+                >
+                  <View style={{ width: 22, height: 22, borderRadius: 11, backgroundColor: FG, alignSelf: includeBeyondPantry ? "flex-end" : "flex-start" }} />
+                </TouchableOpacity>
+              </View>
+              <Text style={{ color: MUTED, fontSize: 11, marginTop: 6 }}>{includeBeyondPantry ? "Showing pantry + other alternatives" : "Only showing pantry-based alternatives"}</Text>
+            </View>
+            {swapMealLoading ? (
+              <View style={{ padding: 40, alignItems: "center" }}>
+                <ActivityIndicator size="large" color="#22D3EE" />
+                <Text style={{ color: MUTED, marginTop: 12, fontSize: 13 }}>AI is finding meal alternatives...</Text>
+              </View>
+            ) : (
+              <ScrollView style={{ padding: 16 }} showsVerticalScrollIndicator={false}>
+                {swapMealAlts.length === 0 ? (
+                  <Text style={{ color: MUTED, textAlign: "center", padding: 20 }}>No alternatives found. Try again.</Text>
+                ) : (
+                  swapMealAlts.map((alt: any, i: number) => (
+                    <View key={i} style={{ backgroundColor: BG, borderRadius: 14, padding: 14, marginBottom: 10, borderWidth: 1, borderColor: alt.usesPantry ? "rgba(34,211,238,0.25)" : "rgba(30,41,59,0.6)" }}>
+                      <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start" }}>
+                        <View style={{ flex: 1 }}>
+                          <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+                            <Text style={{ color: FG, fontFamily: "DMSans_700Bold", fontSize: 14 }}>{alt.name}</Text>
+                            {alt.usesPantry && (
+                              <View style={{ backgroundColor: "rgba(34,211,238,0.15)", borderRadius: 6, paddingHorizontal: 6, paddingVertical: 2 }}>
+                                <Text style={{ color: "#22D3EE", fontSize: 9, fontFamily: "DMSans_700Bold" }}>PANTRY</Text>
+                              </View>
+                            )}
+                          </View>
+                          <View style={{ flexDirection: "row", gap: 10, marginTop: 4 }}>
+                            <Text style={{ color: GOLD, fontSize: 11 }}>{alt.calories} kcal</Text>
+                            <Text style={{ color: "#3B82F6", fontSize: 11 }}>P:{alt.protein}g</Text>
+                            <Text style={{ color: CREAM, fontSize: 11 }}>C:{alt.carbs}g</Text>
+                            <Text style={{ color: GOLD, fontSize: 11 }}>F:{alt.fat}g</Text>
+                          </View>
+                          {alt.prepTime && <Text style={{ color: MUTED, fontSize: 11, marginTop: 2 }}>{alt.prepTime}</Text>}
+                        </View>
+                        <TouchableOpacity
+                          style={{ backgroundColor: "#22D3EE", borderRadius: 10, paddingHorizontal: 14, paddingVertical: 8 }}
+                          onPress={() => applyMealSwap(alt)}
+                        >
+                          <Text style={{ color: BG, fontFamily: "DMSans_700Bold", fontSize: 12 }}>Select</Text>
+                        </TouchableOpacity>
+                      </View>
+                      {alt.description && <Text style={{ color: MUTED, fontSize: 11, marginTop: 6, lineHeight: 16 }}>{alt.description}</Text>}
+                      {alt.pantryItemsUsed?.length > 0 && (
+                        <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 4, marginTop: 6 }}>
+                          {alt.pantryItemsUsed.map((item: string, j: number) => (
+                            <View key={j} style={{ backgroundColor: "rgba(34,211,238,0.10)", borderRadius: 6, paddingHorizontal: 6, paddingVertical: 2 }}>
+                              <Text style={{ color: "#22D3EE", fontSize: 10 }}>{item}</Text>
+                            </View>
+                          ))}
+                        </View>
+                      )}
+                    </View>
+                  ))
+                )}
+              </ScrollView>
+            )}
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -767,7 +1023,7 @@ function MacroCard({ label, value, unit, color }: any) {
   );
 }
 
-function WorkoutDayCard({ day, onPress, isCompleted, onToggleComplete, isToday }: { day: any; onPress: () => void; isCompleted?: boolean; onToggleComplete?: () => void; isToday?: boolean }) {
+function WorkoutDayCard({ day, onPress, isCompleted, onToggleComplete, isToday, onExerciseSwap }: { day: any; onPress: () => void; isCompleted?: boolean; onToggleComplete?: () => void; isToday?: boolean; onExerciseSwap?: (exercise: any, dayFocus: string) => void }) {
   const [expanded, setExpanded] = useState(!!isToday);
   return (
     <View style={{ backgroundColor: isCompleted ? "rgba(34,197,94,0.06)" : isToday ? GOLD_DIM : SURFACE, borderRadius: 16, marginBottom: 8, borderWidth: 1, borderColor: isCompleted ? "rgba(34,197,94,0.25)" : isToday ? GOLD_BORDER : "rgba(30,41,59,0.6)", overflow: "hidden" }}>
@@ -815,7 +1071,7 @@ function WorkoutDayCard({ day, onPress, isCompleted, onToggleComplete, isToday }
             <Text style={{ color: BG, fontFamily: "DMSans_700Bold", fontSize: 13 }}>START WORKOUT →</Text>
           </TouchableOpacity>
           {day.exercises?.map((ex: any, idx: number) => (
-            <ExercisePreviewCard key={idx} exercise={ex} />
+            <ExercisePreviewCard key={idx} exercise={ex} onSwap={onExerciseSwap ? () => onExerciseSwap(ex, day.focus ?? day.day) : undefined} />
           ))}
         </View>
       )}
@@ -831,7 +1087,7 @@ function WorkoutDayCard({ day, onPress, isCompleted, onToggleComplete, isToday }
   );
 }
 
-function ExercisePreviewCard({ exercise }: { exercise: any }) {
+function ExercisePreviewCard({ exercise, onSwap }: { exercise: any; onSwap?: () => void }) {
   const [showVideo, setShowVideo] = useState(false);
   const demo = getExerciseDemo(exercise.name ?? "");
 
@@ -852,12 +1108,23 @@ function ExercisePreviewCard({ exercise }: { exercise: any }) {
               </View>
             )}
           </View>
-          <TouchableOpacity
-            style={{ backgroundColor: showVideo ? GOLD : GOLD_DIM, borderRadius: 8, paddingHorizontal: 10, paddingVertical: 6, borderWidth: 1, borderColor: GOLD_BORDER }}
-            onPress={() => setShowVideo(!showVideo)}
-          >
-            <Text style={{ color: showVideo ? BG : GOLD, fontFamily: "DMSans_700Bold", fontSize: 11 }}>{showVideo ? "Hide" : "Demo"}</Text>
-          </TouchableOpacity>
+          <View style={{ flexDirection: "row", gap: 6 }}>
+            {onSwap && (
+              <TouchableOpacity
+                style={{ backgroundColor: "rgba(34,211,238,0.12)", borderRadius: 8, paddingHorizontal: 10, paddingVertical: 6, borderWidth: 1, borderColor: "rgba(34,211,238,0.25)", flexDirection: "row", alignItems: "center", gap: 4 }}
+                onPress={onSwap}
+              >
+                <MaterialIcons name="swap-horiz" size={13} color="#22D3EE" />
+                <Text style={{ color: "#22D3EE", fontFamily: "DMSans_700Bold", fontSize: 11 }}>Swap</Text>
+              </TouchableOpacity>
+            )}
+            <TouchableOpacity
+              style={{ backgroundColor: showVideo ? GOLD : GOLD_DIM, borderRadius: 8, paddingHorizontal: 10, paddingVertical: 6, borderWidth: 1, borderColor: GOLD_BORDER }}
+              onPress={() => setShowVideo(!showVideo)}
+            >
+              <Text style={{ color: showVideo ? BG : GOLD, fontFamily: "DMSans_700Bold", fontSize: 11 }}>{showVideo ? "Hide" : "Demo"}</Text>
+            </TouchableOpacity>
+          </View>
         </View>
         {exercise.notes && (
           <View style={{ flexDirection: "row", gap: 4, alignItems: "flex-start", marginTop: 6 }}><MaterialIcons name="lightbulb" size={11} color={MUTED} style={{ marginTop: 2 }} /><Text style={{ color: MUTED, fontSize: 11, lineHeight: 15, flex: 1 }}>{exercise.notes}</Text></View>
@@ -865,14 +1132,19 @@ function ExercisePreviewCard({ exercise }: { exercise: any }) {
       </View>
       {showVideo && (
         <View style={{ paddingHorizontal: 12, paddingBottom: 12 }}>
-          <ExerciseDemoPlayer gifUrl={demo.gifUrl} cue={demo.cue} height={160} />
+          <ExerciseDemoPlayer
+            gifAsset={demo.gifAsset}
+            cue={demo.cue}
+            height={160}
+            exerciseName={exercise.name ?? ""}
+          />
         </View>
       )}
     </View>
   );
 }
 
-function MealDayCard({ day, defaultExpanded }: { day: any; defaultExpanded?: boolean }) {
+function MealDayCard({ day, defaultExpanded, dayIndex, onMealSwap }: { day: any; defaultExpanded?: boolean; dayIndex?: number; onMealSwap?: (meal: any, dayIndex: number, mealIndex: number) => void }) {
   const [expanded, setExpanded] = useState(!!defaultExpanded);
   const dayCalories = day.meals?.reduce((s: number, m: any) => s + (m.calories ?? 0), 0) ?? 0;
   return (
@@ -899,7 +1171,7 @@ function MealDayCard({ day, defaultExpanded }: { day: any; defaultExpanded?: boo
       {expanded && (
         <View style={{ paddingHorizontal: 12, paddingBottom: 12, gap: 10 }}>
           {day.meals?.map((meal: any, i: number) => (
-            <MealCard key={i} meal={meal} />
+            <MealCard key={i} meal={meal} onSwap={onMealSwap && dayIndex !== undefined ? () => onMealSwap(meal, dayIndex, i) : undefined} />
           ))}
         </View>
       )}
@@ -907,7 +1179,7 @@ function MealDayCard({ day, defaultExpanded }: { day: any; defaultExpanded?: boo
   );
 }
 
-function MealCard({ meal }: { meal: any }) {
+function MealCard({ meal, onSwap }: { meal: any; onSwap?: () => void }) {
   const [showPrep, setShowPrep] = useState(false);
   const photoUrl = getMealPhotoUrl(meal);
   const mealTypeColor: Record<string, string> = {
@@ -930,8 +1202,19 @@ function MealCard({ meal }: { meal: any }) {
       <View style={{ position: "absolute", top: 10, left: 10, backgroundColor: color, borderRadius: 8, paddingHorizontal: 10, paddingVertical: 4 }}>
         <Text style={{ color: BG, fontSize: 10, fontFamily: "DMSans_700Bold", textTransform: "uppercase" }}>{meal.type ?? "Meal"}</Text>
       </View>
-      <View style={{ position: "absolute", top: 10, right: 10, backgroundColor: "rgba(0,0,0,0.7)", borderRadius: 8, paddingHorizontal: 10, paddingVertical: 4 }}>
-        <Text style={{ color: GOLD, fontSize: 11, fontFamily: "SpaceMono_700Bold" }}>{meal.calories} kcal</Text>
+      <View style={{ position: "absolute", top: 10, right: 10, flexDirection: "row", gap: 6 }}>
+        {onSwap && (
+          <TouchableOpacity
+            style={{ backgroundColor: "rgba(34,211,238,0.85)", borderRadius: 8, paddingHorizontal: 10, paddingVertical: 4, flexDirection: "row", alignItems: "center", gap: 3 }}
+            onPress={onSwap}
+          >
+            <MaterialIcons name="swap-horiz" size={12} color="#0A0E14" />
+            <Text style={{ color: "#0A0E14", fontSize: 10, fontFamily: "DMSans_700Bold" }}>Swap</Text>
+          </TouchableOpacity>
+        )}
+        <View style={{ backgroundColor: "rgba(0,0,0,0.7)", borderRadius: 8, paddingHorizontal: 10, paddingVertical: 4 }}>
+          <Text style={{ color: GOLD, fontSize: 11, fontFamily: "SpaceMono_700Bold" }}>{meal.calories} kcal</Text>
+        </View>
       </View>
 
       <View style={{ padding: 14 }}>

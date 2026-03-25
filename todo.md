@@ -1799,3 +1799,46 @@
 - [x] Tests for feature gates on all premium screens
 - [x] Tests for feature tiers configuration
 - [x] Tests for root layout UserProfileProvider integration
+
+## Round 80 — Workout Demos, Day-Specific Meals, Today-Focused Workouts, Body Scan Progress, Dashboard Ring
+
+### Workout Demo Video Fix
+- [x] Fix Demo button in workout plan to show correct exercise (not same one for all)
+- [x] Pass exerciseName and gifAsset to ExerciseDemoPlayer so correct GIF loads
+- [x] Front and side view tabs already supported in ExerciseDemoPlayer
+- [x] Side view tab auto-hidden when exercise has only one angle view (hasMultipleAngles check)
+
+### Meal Plan Day-Specific Fix
+- [x] Meals show different content for each day of the week (todayMeals + otherMealDays)
+- [x] Users can see meal plans for remaining days of the week (REST OF THE WEEK section)
+- [x] Added meal swap with pantry integration (usePantry + mealSwapWithPantry endpoint)
+- [x] AI offers alternative meal suggestions including outside pantry choices (includeBeyondPantry toggle)
+- [x] Fixed breakfast image URL (replaced broken source.unsplash.com with direct images.unsplash.com)
+
+### Workout Section Redesign (Today-Focused)
+- [x] Workout tab primarily shows today's exercises (todayWorkout section at top)
+- [x] Remaining weekday exercises shown further down (otherWorkoutDays + REST OF THE WEEK)
+- [x] Added exercise swap functionality (handleExerciseSwap + swapExModal)
+- [x] AI Coach guides exercise selection via exerciseSwap server endpoint (targets specific muscle groups)
+
+### Body Scan Progress Tracking
+- [x] Shows user's chosen transformation (target BF% + AI image) in YOUR PROGRESS section
+- [x] Progress photos stored locally via AsyncStorage (@progress_photos)
+- [x] Take Progress Photo (camera) and Pick Progress Photo (library) buttons
+- [x] Progress photo timeline with date labels in Body Scan section
+- [x] Progress bar showing current vs target BF%
+
+### Dashboard Transformation Progress Ring
+- [x] Added SVG progress ring on dashboard showing transformation progress percentage
+- [x] Ring shows current BF% → target BF% with visual fill
+- [x] Shows target image thumbnail, body fat to go text, and navigates to scan tab
+- [x] Fallback BF% card shown when no target is set
+
+### Testing
+- [x] 0 TypeScript errors
+- [x] All 36 new tests pass (round80-workout-meals-progress.test.ts)
+- [x] Tests for workout demo fix (exerciseName passing, angle views)
+- [x] Tests for day-specific meals (todayMeals, otherMealDays, pantry, swap)
+- [x] Tests for today-focused workout section (todayWorkout, otherWorkoutDays)
+- [x] Tests for body scan progress tracking (photos, timeline, goal card)
+- [x] Tests for dashboard progress ring (SVG circle, percentage, navigation)

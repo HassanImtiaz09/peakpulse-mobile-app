@@ -742,8 +742,92 @@ export default function HomeScreen() {
             </StaggeredCard>
           )}
 
-          {/* ── BF% Estimate Card (1C: staggered index 2) ── */}
-          {latestBF && (
+          {/* ── TRANSFORMATION PROGRESS RING (1C: staggered index 2) ── */}
+          {latestBF && targetBF && (
+            <StaggeredCard index={2}>
+              <TouchableOpacity
+                style={{ marginHorizontal: 16, marginBottom: 16, backgroundColor: SF.surface, borderRadius: 20, padding: 18, borderWidth: 1, borderColor: SF.gold }}
+                activeOpacity={0.85}
+                onPress={() => router.push("/(tabs)/scan" as any)}
+              >
+                <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
+                  <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+                    <MaterialIcons name="track-changes" size={18} color={SF.gold} />
+                    <Text style={{ color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 15 }}>Transformation Goal</Text>
+                  </View>
+                  <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
+                    <Text style={{ color: SF.gold2, fontFamily: "DMSans_500Medium", fontSize: 11 }}>Body Scan</Text>
+                    <MaterialIcons name="chevron-right" size={16} color={SF.gold2} />
+                  </View>
+                </View>
+
+                <View style={{ flexDirection: "row", alignItems: "center", gap: 20 }}>
+                  {/* Progress Ring */}
+                  {(() => {
+                    const currentBF = latestBF.bf;
+                    const targetBFVal = targetBF.target_bf;
+                    const startBF = currentBF; // First scan BF as starting point
+                    const totalDrop = Math.max(startBF - targetBFVal, 0.1);
+                    const dropped = Math.max(startBF - currentBF, 0);
+                    const progressPct = totalDrop > 0 ? Math.min(1, dropped / totalDrop) : 0;
+                    // If user hasn't made progress yet (first scan), show a small slice
+                    const displayPct = progressPct === 0 ? 0.05 : progressPct;
+                    const ringSize = 100;
+                    const strokeWidth = 10;
+                    const radius = (ringSize - strokeWidth) / 2;
+                    const circumference = 2 * Math.PI * radius;
+                    const strokeDashoffset = circumference * (1 - displayPct);
+                    return (
+                      <View style={{ width: ringSize, height: ringSize, alignItems: "center", justifyContent: "center" }}>
+                        <Svg width={ringSize} height={ringSize} style={{ transform: [{ rotate: "-90deg" }] }}>
+                          <Circle cx={ringSize / 2} cy={ringSize / 2} r={radius} stroke="rgba(245,158,11,0.12)" strokeWidth={strokeWidth} fill="none" />
+                          <Circle cx={ringSize / 2} cy={ringSize / 2} r={radius} stroke={SF.gold} strokeWidth={strokeWidth} fill="none" strokeLinecap="round" strokeDasharray={circumference} strokeDashoffset={strokeDashoffset} />
+                        </Svg>
+                        <View style={{ position: "absolute", alignItems: "center" }}>
+                          <Text style={{ color: SF.gold, fontFamily: "BebasNeue_400Regular", fontSize: 22 }}>{Math.round(progressPct * 100)}%</Text>
+                          <Text style={{ color: SF.muted, fontSize: 8, fontFamily: "DMSans_500Medium" }}>PROGRESS</Text>
+                        </View>
+                      </View>
+                    );
+                  })()}
+
+                  <View style={{ flex: 1 }}>
+                    <View style={{ flexDirection: "row", alignItems: "baseline", gap: 6 }}>
+                      <Text style={{ color: SF.fg, fontFamily: "SpaceMono_700Bold", fontSize: 20 }}>{latestBF.bf}%</Text>
+                      <MaterialIcons name="arrow-forward" size={14} color={SF.gold} />
+                      <Text style={{ color: SF.gold, fontFamily: "SpaceMono_700Bold", fontSize: 20 }}>{targetBF.target_bf}%</Text>
+                    </View>
+                    <Text style={{ color: SF.muted, fontSize: 12, marginTop: 2 }}>
+                      {Math.abs(latestBF.bf - targetBF.target_bf).toFixed(1)}% body fat to go
+                    </Text>
+                    <View style={{ flexDirection: "row", gap: 8, marginTop: 8 }}>
+                      <View style={{ backgroundColor: "rgba(245,158,11,0.12)", borderRadius: 8, paddingHorizontal: 8, paddingVertical: 3 }}>
+                        <Text style={{ color: SF.gold2, fontSize: 10, fontFamily: "DMSans_600SemiBold" }}>Current: {latestBF.bf}%</Text>
+                      </View>
+                      <View style={{ backgroundColor: "rgba(34,211,238,0.12)", borderRadius: 8, paddingHorizontal: 8, paddingVertical: 3 }}>
+                        <Text style={{ color: SF.ice, fontSize: 10, fontFamily: "DMSans_600SemiBold" }}>Target: {targetBF.target_bf}%</Text>
+                      </View>
+                    </View>
+                  </View>
+                </View>
+
+                {/* Target image thumbnail */}
+                {targetBF?.imageUrl && (
+                  <View style={{ flexDirection: "row", alignItems: "center", gap: 12, marginTop: 14, backgroundColor: "rgba(245,158,11,0.06)", borderRadius: 14, padding: 10, borderWidth: 1, borderColor: "rgba(245,158,11,0.12)" }}>
+                    <Image source={{ uri: targetBF.imageUrl }} style={{ width: 50, height: 65, borderRadius: 10 }} resizeMode="cover" />
+                    <View style={{ flex: 1 }}>
+                      <Text style={{ color: SF.gold2, fontFamily: "DMSans_700Bold", fontSize: 12 }}>Your Goal Physique</Text>
+                      <Text style={{ color: SF.muted, fontSize: 11, marginTop: 2 }}>AI-generated transformation preview</Text>
+                    </View>
+                    <MaterialIcons name="zoom-in" size={18} color={SF.gold} />
+                  </View>
+                )}
+              </TouchableOpacity>
+            </StaggeredCard>
+          )}
+
+          {/* ── BF% Estimate Card (fallback when no target set) ── */}
+          {latestBF && !targetBF && (
             <StaggeredCard index={2}>
               <View style={{ marginHorizontal: 16, marginBottom: 16, backgroundColor: SF.surface, borderRadius: 20, padding: 18, borderWidth: 1, borderColor: SF.border2 }}>
                 <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
@@ -764,32 +848,10 @@ export default function HomeScreen() {
                     {latestBF.confidence ? (
                       <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 12, marginTop: 2 }}>Range: {latestBF.confidence}</Text>
                     ) : null}
-                    {targetBF && (
-                      <View style={{ flexDirection: "row", alignItems: "center", gap: 6, marginTop: 6 }}>
-                        <MaterialIcons name="flag" size={13} color={SF.gold2} />
-                        <Text style={{ color: SF.gold2, fontFamily: "DMSans_600SemiBold", fontSize: 12 }}>Target: {targetBF.target_bf}% BF</Text>
-                        <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 12 }}>({Math.abs(latestBF.bf - targetBF.target_bf).toFixed(1)}% to go)</Text>
-                      </View>
-                    )}
+
                   </View>
                 </View>
-                {/* Target Body Image Preview */}
-                {targetBF?.imageUrl && (
-                  <TouchableOpacity
-                    style={{ marginTop: 14, borderRadius: 16, overflow: "hidden", borderWidth: 1.5, borderColor: SF.gold }}
-                    activeOpacity={0.85}
-                    onPress={() => setShowTargetImageModal(true)}
-                  >
-                    <Image source={{ uri: targetBF.imageUrl }} style={{ width: "100%", height: 180 }} resizeMode="cover" />
-                    <View style={{ position: "absolute", bottom: 0, left: 0, right: 0, backgroundColor: "rgba(10,5,0,0.80)", paddingVertical: 8, paddingHorizontal: 14, flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
-                      <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
-                        <MaterialIcons name="flag" size={14} color={SF.gold} />
-                        <Text style={{ color: SF.gold, fontFamily: "DMSans_700Bold", fontSize: 13 }}>Your Goal: {targetBF.target_bf}% BF</Text>
-                      </View>
-                      <Text style={{ color: SF.gold2, fontFamily: "DMSans_500Medium", fontSize: 11 }}>Tap to expand</Text>
-                    </View>
-                  </TouchableOpacity>
-                )}
+
                 <TouchableOpacity
                   style={{ marginTop: 14, backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 12, paddingVertical: 10, alignItems: "center", borderWidth: 1, borderColor: SF.border2, flexDirection: "row", justifyContent: "center", gap: 6 }}
                   onPress={() => router.push("/(tabs)/scan" as any)}
