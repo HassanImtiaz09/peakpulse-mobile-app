@@ -1,7 +1,7 @@
 import { Tabs, useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { HapticTab } from "@/components/haptic-tab";
-import { Platform, View, StyleSheet } from "react-native";
+import { Platform, View, StyleSheet, Image } from "react-native";
 import { BlurView } from "expo-blur";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useEffect } from "react";
@@ -25,7 +25,11 @@ function AuroraTabIcon({ route, focused }: { route: string; focused: boolean }) 
   if (isAccent) {
     return (
       <View style={[styles.aiCoachIcon, focused && styles.aiCoachIconActive]}>
-        <MaterialIcons name={def.icon} size={22} color={focused ? "#0A0500" : "#FDE68A"} />
+        <Image
+          source={{ uri: "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/ai-coach-icon_c7090906.png" }}
+          style={{ width: 26, height: 26, borderRadius: 6 }}
+          resizeMode="contain"
+        />
       </View>
     );
   }

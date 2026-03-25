@@ -8,7 +8,7 @@ import React, { useState, useEffect, useRef } from "react";
 import {
   View, Text, ScrollView, TouchableOpacity, TextInput,
   ActivityIndicator, ImageBackground, KeyboardAvoidingView,
-  Platform, FlatList, Alert,
+  Platform, FlatList, Alert, Image,
 } from "react-native";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -208,7 +208,10 @@ export default function AICoachScreen() {
       {/* Hero */}
       <ImageBackground source={{ uri: HERO_BG }} style={{ height: 160 }} resizeMode="cover">
         <View style={{ flex: 1, backgroundColor: "rgba(8,5,0,0.78)", justifyContent: "flex-end", padding: 20, paddingTop: 52 }}>
-          <Text style={{ color: SF.gold, fontFamily: "Outfit_700Bold", fontSize: 11, letterSpacing: 1.5 }}>🤖 PEAKPULSE</Text>
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+            <Image source={{ uri: "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/ai-coach-icon_c7090906.png" }} style={{ width: 28, height: 28, borderRadius: 6 }} />
+            <Text style={{ color: SF.gold, fontFamily: "Outfit_700Bold", fontSize: 11, letterSpacing: 1.5 }}>PEAKPULSE</Text>
+          </View>
           <Text style={{ color: SF.fg, fontFamily: "Outfit_800ExtraBold", fontSize: 28, letterSpacing: -0.5 }}>AI Coach</Text>
           <Text style={{ color: SF.gold3, fontFamily: "DMSans_400Regular", fontSize: 12, marginTop: 2 }}>
             Form analysis · Progress insights · Personalised tips

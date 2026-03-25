@@ -1,12 +1,13 @@
 /**
- * Body Diagram Component
+ * Body Diagram Component — 3D Anatomical Model
  *
- * SVG-based human body diagram (front and back views) with muscle group highlighting.
- * Highlights primary and secondary muscle groups targeted by an exercise.
+ * SVG-based human body diagram with 3D depth effects using gradients,
+ * shadows, and anatomically detailed muscle group paths.
+ * Supports front and back views with primary/secondary muscle highlighting.
  */
 import React, { useMemo } from "react";
 import { View, Text, StyleSheet } from "react-native";
-import Svg, { Path, G, Rect } from "react-native-svg";
+import Svg, { Path, G, Defs, LinearGradient, RadialGradient, Stop, Ellipse, Circle } from "react-native-svg";
 
 export type MuscleGroup =
   | "chest"
@@ -28,112 +29,124 @@ export type MuscleGroup =
   | "full_body";
 
 interface BodyDiagramProps {
-  /** Primary muscle groups (highlighted in gold) */
   primary: MuscleGroup[];
-  /** Secondary muscle groups (highlighted in dim gold) */
   secondary?: MuscleGroup[];
-  /** Width of the diagram */
   width?: number;
-  /** Height of the diagram */
   height?: number;
-  /** Whether to show labels */
   showLabels?: boolean;
-  /** Whether to show both front and back views */
   showBothViews?: boolean;
 }
 
-// Colors
+// 3D Color palette with depth
 const C = {
   bg: "transparent",
-  body: "#2A1A00",
-  bodyStroke: "rgba(245,158,11,0.2)",
+  // Body base colors (dark with subtle warmth for 3D effect)
+  bodyBase: "#1A0F00",
+  bodyMid: "#2A1800",
+  bodyLight: "#3D2400",
+  bodyStroke: "rgba(245,158,11,0.15)",
+  // Highlighted muscle colors
   primary: "#F59E0B",
-  primaryGlow: "rgba(245,158,11,0.4)",
-  secondary: "rgba(245,158,11,0.35)",
-  secondaryGlow: "rgba(245,158,11,0.15)",
+  primaryLight: "#FBBF24",
+  primaryDark: "#D97706",
+  primaryGlow: "rgba(245,158,11,0.5)",
+  secondary: "rgba(245,158,11,0.4)",
+  secondaryLight: "rgba(251,191,36,0.3)",
+  secondaryDark: "rgba(217,119,6,0.3)",
+  // Labels
   label: "#FDE68A",
   muted: "#B45309",
+  // Outline / contour
+  outline: "rgba(245,158,11,0.12)",
+  contour: "rgba(245,158,11,0.08)",
 };
 
-// Muscle region SVG paths for FRONT view (simplified anatomical paths)
-// Viewbox: 0 0 120 240
+// ─── FRONT VIEW MUSCLES ─── (viewBox: 0 0 200 380)
+// More anatomically detailed paths with curves for 3D appearance
 const FRONT_MUSCLES: Record<string, string> = {
-  // Head/neck
-  head: "M52,8 Q60,0 68,8 Q72,16 68,24 L52,24 Q48,16 52,8 Z",
-  neck: "M54,24 L66,24 L64,32 L56,32 Z",
-  // Chest (pectorals)
-  chest: "M38,42 Q42,36 52,38 L60,38 Q68,36 72,38 Q82,42 82,52 Q78,56 72,56 L60,54 L48,56 Q42,56 38,52 Z",
-  // Shoulders (deltoids)
-  shoulders_l: "M28,36 Q32,32 38,36 L40,46 Q36,50 30,48 Q26,44 28,36 Z",
-  shoulders_r: "M82,36 Q88,32 92,36 Q94,44 90,48 Q84,50 80,46 L82,36 Z",
-  // Biceps
-  biceps_l: "M28,50 Q32,48 34,52 L34,70 Q32,74 28,72 Q24,68 24,58 Z",
-  biceps_r: "M86,52 Q88,48 92,50 Q96,58 96,68 Q92,72 88,70 L86,52 Z",
+  // Head
+  head: "M86,14 Q100,2 114,14 Q120,28 114,42 L86,42 Q80,28 86,14 Z",
+  neck: "M90,42 L110,42 L108,54 L92,54 Z",
+  // Chest — two pec shapes with separation line
+  chest_l: "M62,72 Q68,64 82,66 L96,68 L96,82 Q92,92 82,94 Q70,92 62,86 Z",
+  chest_r: "M104,68 Q118,64 128,66 Q138,72 138,86 Q130,92 118,94 L104,82 L104,68 Z",
+  // Shoulders (deltoids) — rounded cap shape
+  shoulders_l: "M44,60 Q52,52 62,58 L66,72 Q62,80 54,78 Q42,74 40,66 Z",
+  shoulders_r: "M138,58 Q148,52 156,60 Q160,66 158,74 Q150,80 142,78 Q138,74 134,72 Z",
+  // Biceps — bulging shape
+  biceps_l: "M42,80 Q48,76 54,80 L56,104 Q52,112 46,110 Q38,106 38,92 Z",
+  biceps_r: "M146,80 Q152,76 158,80 Q162,92 162,106 Q156,110 150,108 L144,104 Z",
   // Forearms
-  forearms_l: "M26,74 Q30,72 34,74 L32,96 Q28,98 26,96 L26,74 Z",
-  forearms_r: "M86,74 Q90,72 94,74 L94,96 Q92,98 88,96 L86,74 Z",
-  // Abs
-  abs: "M48,56 L72,56 Q74,62 74,72 L74,88 Q72,94 68,96 L52,96 Q48,94 46,88 L46,72 Q46,62 48,56 Z",
-  // Obliques
-  obliques_l: "M38,56 L48,56 L46,88 L42,92 Q36,86 36,72 Z",
-  obliques_r: "M72,56 L82,56 Q84,72 84,86 Q78,92 74,88 L72,56 Z",
-  // Quads
-  quads_l: "M42,98 Q46,96 52,98 L54,140 Q52,148 48,150 Q42,148 40,140 Z",
-  quads_r: "M68,98 Q74,96 78,98 Q80,140 78,148 Q72,150 68,148 L66,140 Z",
+  forearms_l: "M40,114 Q46,110 54,114 L52,158 Q46,162 42,160 L40,114 Z",
+  forearms_r: "M146,114 Q154,110 160,114 L158,160 Q154,162 148,158 Z",
+  // Abs — 6-pack segments
+  abs_upper: "M82,94 L118,94 Q120,100 120,108 L80,108 Q80,100 82,94 Z",
+  abs_mid: "M80,110 L120,110 L120,128 L80,128 Z",
+  abs_lower: "M80,130 L120,130 Q122,142 118,152 L82,152 Q78,142 80,130 Z",
+  // Obliques — side muscles
+  obliques_l: "M62,88 L80,94 L78,148 Q72,154 66,148 Q58,132 58,108 Z",
+  obliques_r: "M120,94 L138,88 Q142,108 142,132 Q136,148 130,154 Q122,148 122,148 Z",
+  // Quads — inner/outer separation
+  quads_l: "M68,158 Q78,152 88,158 L90,228 Q86,240 80,242 Q70,240 66,228 Z",
+  quads_r: "M112,158 Q122,152 132,158 Q134,228 132,240 Q122,244 116,242 L110,228 Z",
   // Hip flexors
-  hip_flexors: "M52,96 L68,96 L66,104 L54,104 Z",
-  // Calves (front - tibialis)
-  calves_l: "M42,154 Q46,150 50,154 L50,186 Q48,192 44,190 Q40,186 42,154 Z",
-  calves_r: "M70,154 Q74,150 78,154 Q80,186 76,190 Q72,192 70,186 Z",
+  hip_flexors: "M88,152 L112,152 L110,166 L90,166 Z",
+  // Calves (tibialis anterior)
+  calves_l: "M68,248 Q76,242 84,248 L84,302 Q80,310 74,308 Q66,304 68,248 Z",
+  calves_r: "M116,248 Q124,242 132,248 Q134,304 128,308 Q122,310 118,302 Z",
   // Feet
-  feet_l: "M40,192 L52,192 L52,200 Q48,204 40,200 Z",
-  feet_r: "M68,192 L80,192 Q80,200 72,204 Q68,200 68,192 Z",
+  feet_l: "M64,312 L86,312 L86,326 Q80,332 64,326 Z",
+  feet_r: "M114,312 L136,312 Q136,326 120,332 Q114,326 114,312 Z",
 };
 
-// Muscle region SVG paths for BACK view
+// ─── BACK VIEW MUSCLES ─── (viewBox: 0 0 200 380)
 const BACK_MUSCLES: Record<string, string> = {
-  head: "M52,8 Q60,0 68,8 Q72,16 68,24 L52,24 Q48,16 52,8 Z",
-  neck: "M54,24 L66,24 L64,32 L56,32 Z",
-  // Traps
-  traps: "M42,32 Q50,28 60,28 Q70,28 78,32 L80,44 Q70,40 60,40 Q50,40 40,44 Z",
-  // Lats
-  lats_l: "M36,44 Q40,40 46,44 L46,72 Q42,78 36,74 Z",
-  lats_r: "M74,44 Q80,40 84,44 L84,74 Q78,78 74,72 Z",
-  // Back (mid back / rhomboids)
-  back: "M46,44 L74,44 L74,72 L46,72 Z",
-  // Lower back
-  lower_back: "M46,72 L74,72 L74,92 Q70,96 60,96 Q50,96 46,92 Z",
+  head: "M86,14 Q100,2 114,14 Q120,28 114,42 L86,42 Q80,28 86,14 Z",
+  neck: "M90,42 L110,42 L108,54 L92,54 Z",
+  // Traps — diamond shape
+  traps: "M68,52 Q84,46 100,46 Q116,46 132,52 L136,72 Q116,66 100,66 Q84,66 64,72 Z",
+  // Lats — wide V-shape
+  lats_l: "M56,74 Q64,68 76,74 L76,118 Q68,126 56,120 Z",
+  lats_r: "M124,74 Q136,68 144,74 L144,120 Q132,126 124,118 Z",
+  // Mid back (rhomboids)
+  back: "M76,74 L124,74 L124,118 L76,118 Z",
+  // Lower back (erector spinae)
+  lower_back: "M76,120 L124,120 L124,148 Q118,156 100,156 Q82,156 76,148 Z",
   // Rear delts
-  shoulders_l: "M28,36 Q32,32 38,36 L40,46 Q36,50 30,48 Q26,44 28,36 Z",
-  shoulders_r: "M82,36 Q88,32 92,36 Q94,44 90,48 Q84,50 80,46 L82,36 Z",
-  // Triceps
-  triceps_l: "M28,50 Q32,48 34,52 L34,70 Q32,74 28,72 Q24,68 24,58 Z",
-  triceps_r: "M86,52 Q88,48 92,50 Q96,58 96,68 Q92,72 88,70 L86,52 Z",
+  shoulders_l: "M44,60 Q52,52 62,58 L66,72 Q62,80 54,78 Q42,74 40,66 Z",
+  shoulders_r: "M138,58 Q148,52 156,60 Q160,66 158,74 Q150,80 142,78 Q138,74 134,72 Z",
+  // Triceps — horseshoe shape
+  triceps_l: "M42,80 Q48,76 54,80 L56,104 Q52,112 46,110 Q38,106 38,92 Z",
+  triceps_r: "M146,80 Q152,76 158,80 Q162,92 162,106 Q156,110 150,108 L144,104 Z",
   // Forearms
-  forearms_l: "M26,74 Q30,72 34,74 L32,96 Q28,98 26,96 L26,74 Z",
-  forearms_r: "M86,74 Q90,72 94,74 L94,96 Q92,98 88,96 L86,74 Z",
+  forearms_l: "M40,114 Q46,110 54,114 L52,158 Q46,162 42,160 L40,114 Z",
+  forearms_r: "M146,114 Q154,110 160,114 L158,160 Q154,162 148,158 Z",
   // Glutes
-  glutes_l: "M42,94 Q50,92 56,96 L56,112 Q50,116 42,112 Z",
-  glutes_r: "M64,96 Q70,92 78,94 L78,112 Q70,116 64,112 Z",
+  glutes_l: "M68,150 Q82,146 94,152 L94,178 Q82,184 68,178 Z",
+  glutes_r: "M106,152 Q118,146 132,150 L132,178 Q118,184 106,178 Z",
   // Hamstrings
-  hamstrings_l: "M42,114 Q46,112 52,114 L54,148 Q50,152 44,150 Q40,146 42,114 Z",
-  hamstrings_r: "M68,114 Q74,112 78,114 Q80,146 76,150 Q70,152 66,148 Z",
-  // Calves
-  calves_l: "M42,154 Q46,150 50,154 L50,186 Q48,192 44,190 Q40,186 42,154 Z",
-  calves_r: "M70,154 Q74,150 78,154 Q80,186 76,190 Q72,192 70,186 Z",
-  feet_l: "M40,192 L52,192 L52,200 Q48,204 40,200 Z",
-  feet_r: "M68,192 L80,192 Q80,200 72,204 Q68,200 68,192 Z",
+  hamstrings_l: "M68,182 Q78,178 88,182 L90,238 Q84,244 76,242 Q66,238 68,182 Z",
+  hamstrings_r: "M112,182 Q122,178 132,182 Q134,238 126,242 Q118,244 112,238 Z",
+  // Calves (gastrocnemius — diamond shape)
+  calves_l: "M68,248 Q76,242 84,248 L84,302 Q80,310 74,308 Q66,304 68,248 Z",
+  calves_r: "M116,248 Q124,242 132,248 Q134,304 128,308 Q122,310 118,302 Z",
+  feet_l: "M64,312 L86,312 L86,326 Q80,332 64,326 Z",
+  feet_r: "M114,312 L136,312 Q136,326 120,332 Q114,326 114,312 Z",
 };
+
+// Body outline paths for 3D contour effect
+const BODY_OUTLINE_FRONT = "M100,8 Q120,2 124,20 Q128,38 118,46 L114,54 Q126,56 140,60 Q162,68 164,82 Q166,100 162,116 L158,162 Q154,168 148,162 L146,114 Q140,108 134,112 L138,92 Q142,80 140,72 Q136,64 128,66 Q122,64 118,66 L104,68 L96,68 Q92,64 86,66 Q78,64 72,66 Q64,72 62,80 L66,92 L70,112 Q64,108 58,114 L56,162 Q50,168 46,162 L42,116 Q38,100 40,82 Q42,68 60,60 Q74,56 86,54 L82,46 Q72,38 76,20 Q80,2 100,8 Z M88,152 Q96,148 100,148 Q104,148 112,152 L116,158 Q124,152 134,158 Q138,228 136,244 Q128,252 118,248 L118,302 Q122,312 136,312 Q138,326 120,334 Q114,328 114,312 L112,248 Q108,244 100,244 Q92,244 88,248 L86,312 Q86,328 80,334 Q64,326 66,312 L86,312 Q78,312 82,302 L82,248 Q72,252 66,244 Q62,228 66,158 Q76,152 84,158 Z";
+const BODY_OUTLINE_BACK = BODY_OUTLINE_FRONT; // Same silhouette
 
 // Map MuscleGroup to SVG path keys
 const MUSCLE_TO_FRONT_PATHS: Record<MuscleGroup, string[]> = {
-  chest: ["chest"],
+  chest: ["chest_l", "chest_r"],
   back: [],
   shoulders: ["shoulders_l", "shoulders_r"],
   biceps: ["biceps_l", "biceps_r"],
   triceps: [],
   forearms: ["forearms_l", "forearms_r"],
-  abs: ["abs"],
+  abs: ["abs_upper", "abs_mid", "abs_lower"],
   obliques: ["obliques_l", "obliques_r"],
   quads: ["quads_l", "quads_r"],
   hamstrings: [],
@@ -143,7 +156,7 @@ const MUSCLE_TO_FRONT_PATHS: Record<MuscleGroup, string[]> = {
   lats: [],
   lower_back: [],
   hip_flexors: ["hip_flexors"],
-  full_body: ["chest", "shoulders_l", "shoulders_r", "biceps_l", "biceps_r", "abs", "quads_l", "quads_r", "calves_l", "calves_r"],
+  full_body: ["chest_l", "chest_r", "shoulders_l", "shoulders_r", "biceps_l", "biceps_r", "abs_upper", "abs_mid", "abs_lower", "quads_l", "quads_r", "calves_l", "calves_r"],
 };
 
 const MUSCLE_TO_BACK_PATHS: Record<MuscleGroup, string[]> = {
@@ -166,7 +179,6 @@ const MUSCLE_TO_BACK_PATHS: Record<MuscleGroup, string[]> = {
   full_body: ["back", "traps", "lats_l", "lats_r", "shoulders_l", "shoulders_r", "triceps_l", "triceps_r", "glutes_l", "glutes_r", "hamstrings_l", "hamstrings_r", "calves_l", "calves_r"],
 };
 
-// Determine which view to show based on muscle groups
 function needsFrontView(muscles: MuscleGroup[]): boolean {
   return muscles.some(m => MUSCLE_TO_FRONT_PATHS[m]?.length > 0);
 }
@@ -175,7 +187,8 @@ function needsBackView(muscles: MuscleGroup[]): boolean {
   return muscles.some(m => MUSCLE_TO_BACK_PATHS[m]?.length > 0);
 }
 
-function BodyView({
+/** Render a single body view (front or back) with 3D gradient effects */
+function BodyView3D({
   view,
   primaryPaths,
   secondaryPaths,
@@ -192,27 +205,146 @@ function BodyView({
 
   return (
     <View style={{ alignItems: "center" }}>
-      <Svg width={width} height={height} viewBox="0 0 120 210">
-        {/* Body outline */}
+      <Svg width={width} height={height} viewBox="0 0 200 340">
+        <Defs>
+          {/* 3D body gradient — top-lit for depth */}
+          <LinearGradient id="bodyGrad" x1="0" y1="0" x2="0" y2="1">
+            <Stop offset="0" stopColor={C.bodyLight} stopOpacity="0.7" />
+            <Stop offset="0.5" stopColor={C.bodyMid} stopOpacity="0.5" />
+            <Stop offset="1" stopColor={C.bodyBase} stopOpacity="0.6" />
+          </LinearGradient>
+          {/* Primary muscle gradient — glowing 3D effect */}
+          <RadialGradient id="primaryGrad" cx="0.5" cy="0.4" rx="0.6" ry="0.6">
+            <Stop offset="0" stopColor={C.primaryLight} stopOpacity="1" />
+            <Stop offset="0.6" stopColor={C.primary} stopOpacity="0.9" />
+            <Stop offset="1" stopColor={C.primaryDark} stopOpacity="0.8" />
+          </RadialGradient>
+          {/* Secondary muscle gradient */}
+          <RadialGradient id="secondaryGrad" cx="0.5" cy="0.4" rx="0.6" ry="0.6">
+            <Stop offset="0" stopColor={C.secondaryLight} stopOpacity="0.6" />
+            <Stop offset="0.6" stopColor={C.secondary} stopOpacity="0.5" />
+            <Stop offset="1" stopColor={C.secondaryDark} stopOpacity="0.4" />
+          </RadialGradient>
+          {/* Ambient glow for highlighted muscles */}
+          <RadialGradient id="glowGrad" cx="0.5" cy="0.5" rx="0.8" ry="0.8">
+            <Stop offset="0" stopColor={C.primary} stopOpacity="0.3" />
+            <Stop offset="1" stopColor={C.primary} stopOpacity="0" />
+          </RadialGradient>
+        </Defs>
+
+        {/* Subtle ambient glow behind highlighted muscles */}
+        {Array.from(primaryPaths).map((key) => {
+          const path = musclePaths[key];
+          if (!path) return null;
+          return (
+            <Path
+              key={`glow-${key}`}
+              d={path}
+              fill="url(#glowGrad)"
+              stroke="none"
+              strokeWidth={0}
+              transform="scale(1.08) translate(-8, -8)"
+            />
+          );
+        })}
+
+        {/* Body contour outline for 3D silhouette */}
+        <Path
+          d={view === "front" ? BODY_OUTLINE_FRONT : BODY_OUTLINE_BACK}
+          fill="none"
+          stroke={C.contour}
+          strokeWidth={0.8}
+          opacity={0.3}
+        />
+
+        {/* Muscle regions */}
         <G>
           {Object.entries(musclePaths).map(([key, path]) => {
             const isPrimary = primaryPaths.has(key);
             const isSecondary = secondaryPaths.has(key);
 
+            let fill = "url(#bodyGrad)";
+            let stroke = C.bodyStroke;
+            let strokeWidth = 0.6;
+            let opacity = 0.4;
+
+            if (isPrimary) {
+              fill = "url(#primaryGrad)";
+              stroke = C.primaryLight;
+              strokeWidth = 1.2;
+              opacity = 1;
+            } else if (isSecondary) {
+              fill = "url(#secondaryGrad)";
+              stroke = C.secondary;
+              strokeWidth = 0.8;
+              opacity = 0.85;
+            }
+
             return (
-              <Path
-                key={key}
-                d={path}
-                fill={isPrimary ? C.primary : isSecondary ? C.secondary : C.body}
-                stroke={isPrimary ? C.primary : isSecondary ? C.secondaryGlow : C.bodyStroke}
-                strokeWidth={isPrimary ? 1.5 : 0.8}
-                opacity={isPrimary ? 1 : isSecondary ? 0.8 : 0.5}
-              />
+              <G key={key}>
+                {/* Shadow layer for 3D depth */}
+                {(isPrimary || isSecondary) && (
+                  <Path
+                    d={path}
+                    fill="none"
+                    stroke={isPrimary ? C.primaryDark : C.secondaryDark}
+                    strokeWidth={2.5}
+                    opacity={0.3}
+                  />
+                )}
+                {/* Main muscle shape */}
+                <Path
+                  d={path}
+                  fill={fill}
+                  stroke={stroke}
+                  strokeWidth={strokeWidth}
+                  opacity={opacity}
+                  strokeLinejoin="round"
+                />
+                {/* Inner highlight for 3D bulge effect on primary muscles */}
+                {isPrimary && (
+                  <Path
+                    d={path}
+                    fill="none"
+                    stroke={C.primaryLight}
+                    strokeWidth={0.4}
+                    opacity={0.5}
+                    strokeDasharray="2,3"
+                  />
+                )}
+              </G>
             );
           })}
         </G>
+
+        {/* Center line for anatomical reference */}
+        <Path
+          d="M100,46 L100,156"
+          stroke={C.outline}
+          strokeWidth={0.4}
+          opacity={0.2}
+          strokeDasharray="3,4"
+        />
+
+        {/* Joint indicators for 3D depth */}
+        {[
+          [100, 46], // neck
+          [54, 78], [146, 78], // shoulders
+          [50, 112], [150, 112], // elbows
+          [100, 152], // hips
+          [82, 244], [118, 244], // knees
+        ].map(([cx, cy], i) => (
+          <Circle
+            key={`joint-${i}`}
+            cx={cx}
+            cy={cy}
+            r={2}
+            fill={C.outline}
+            opacity={0.15}
+          />
+        ))}
       </Svg>
-      <Text style={styles.viewLabel}>{view === "front" ? "Front" : "Back"}</Text>
+      <Text style={styles.viewLabel}>{view === "front" ? "FRONT" : "BACK"}</Text>
     </View>
   );
 }
@@ -227,7 +359,6 @@ export function BodyDiagram({
 }: BodyDiagramProps) {
   const allMuscles = [...primary, ...secondary];
 
-  // Compute which paths to highlight
   const { frontPrimary, frontSecondary, backPrimary, backSecondary } = useMemo(() => {
     const fp = new Set<string>();
     const fs = new Set<string>();
@@ -249,11 +380,9 @@ export function BodyDiagram({
   const showFront = needsFrontView(allMuscles);
   const showBack = needsBackView(allMuscles);
 
-  // If showBothViews, always show both
   const renderFront = showBothViews || showFront;
   const renderBack = showBothViews || showBack;
 
-  // If only one view needed and not forcing both
   const singleView = !showBothViews && ((showFront && !showBack) || (!showFront && showBack));
   const viewWidth = singleView ? width : Math.floor(width * 0.48);
   const viewHeight = singleView ? height : height;
@@ -262,7 +391,7 @@ export function BodyDiagram({
     <View style={styles.container}>
       <View style={styles.diagramRow}>
         {renderFront && (
-          <BodyView
+          <BodyView3D
             view="front"
             primaryPaths={frontPrimary}
             secondaryPaths={frontSecondary}
@@ -271,7 +400,7 @@ export function BodyDiagram({
           />
         )}
         {renderBack && (
-          <BodyView
+          <BodyView3D
             view="back"
             primaryPaths={backPrimary}
             secondaryPaths={backSecondary}
@@ -300,7 +429,7 @@ export function BodyDiagram({
   );
 }
 
-/** Compact inline body diagram for exercise cards */
+/** Compact inline body diagram for exercise cards — 3D mini version */
 export function BodyDiagramInline({
   primary,
   secondary = [],
@@ -335,11 +464,12 @@ const styles = StyleSheet.create({
   },
   viewLabel: {
     color: "#B45309",
-    fontFamily: "DMSans_400Regular",
-    fontSize: 8,
-    marginTop: 2,
+    fontFamily: "DMSans_600SemiBold",
+    fontSize: 7,
+    marginTop: 3,
     textAlign: "center",
-    letterSpacing: 0.5,
+    letterSpacing: 1.5,
+    textTransform: "uppercase",
   },
   labelRow: {
     flexDirection: "row",
@@ -352,6 +482,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 3,
+    backgroundColor: "rgba(245,158,11,0.06)",
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "rgba(245,158,11,0.12)",
   },
   labelDot: {
     width: 6,

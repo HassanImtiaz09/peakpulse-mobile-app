@@ -1494,3 +1494,32 @@
 - [x] 28 unit tests passing (round69-custom-workout.test.ts)
 - [x] Tests cover: PR system, AI insights engine, custom workout screen, trend charts, integration
 - [x] 0 TypeScript errors (tsc --noEmit exit code 0)
+
+## Round 70 — UI/UX Fixes and Redesigns
+
+### Bug Fixes
+- [x] Fix multi-angle GIF views — all angle views now use the same correct GIF URL per exercise (Python script updated all 95 exercises)
+- [x] Fix bottom tab bar overlapping "Using as Guest" bar — added marginBottom: 90 to guest/trial banners
+
+### Quick Actions Redesign
+- [x] Grouped 28 Quick Action options into 5 meaningful categories (Workout, Nutrition, Progress, Body, Settings)
+- [x] Each category is tappable to expand/collapse its options (expandedGroups state)
+- [x] PRO badges on premium features to drive upgrades
+
+### Body Diagram Redesign
+- [x] Redesigned body-diagram.tsx with SVG gradients, shadows, and detailed muscle paths for 3D appearance
+- [x] Accurately highlights targeted muscle groups with gold (primary) and amber (secondary) colors
+- [x] Used in exercise library, exercise detail, and workout exercise selection
+
+### Workout Exercise Selection Enhancement
+- [x] Body diagram with highlighted muscles shown in exercise header card during workout
+- [x] Demo link button (play-circle-outline icon) added next to exercise info
+
+### AI Assistant Icon Redesign
+- [x] Generated vibrant gold/amber AI fitness trainer icon (assets/images/ai-coach-icon.png)
+- [x] Used in tab bar (replaces MaterialIcons smart-toy) and AI Coach screen header
+- [x] Glowing gold aura with circuit-board patterns on athletic figure
+
+### Testing
+- [x] 0 TypeScript errors (tsc --noEmit)
+- [x] 25 unit tests passing (round70-ui-fixes.test.ts)

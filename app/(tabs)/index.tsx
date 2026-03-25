@@ -80,38 +80,89 @@ const SF = {
   macroFat: "#FB923C",     // rose-orange
 };
 
-// Quick Action definitions with MaterialIcons (3A)
-const QUICK_ACTIONS_ALL = [
-  { icon: "camera-alt" as const, label: "AI Body Scan", route: "/(tabs)/scan", gated: false },
-  { icon: "fitness-center" as const, label: "Start Workout", route: "/(tabs)/plans", gated: false },
-  { icon: "restaurant" as const, label: "Log Meal", route: "/(tabs)/meals", gated: false },
-  { icon: "photo-camera" as const, label: "Snap a Meal", route: "/(tabs)/meals", gated: false },
-  { icon: "trending-up" as const, label: "Progress", route: "/progress-photos", gated: true, feature: "progress_photos", tier: "basic" as const, desc: "Track your body transformation with progress photos — Basic plan and above." },
-  { icon: "smart-toy" as const, label: "AI Coach", route: "/ai-coach", gated: false },
-  { icon: "check-circle" as const, label: "Daily Check-In", route: "/daily-checkin", gated: false },
-  { icon: "edit-note" as const, label: "Log Workout", route: "/log-workout", gated: false },
-  // Below the fold (hidden by default)
-  { icon: "show-chart" as const, label: "Health Trends", route: "/health-trends", gated: false },
-  { icon: "history" as const, label: "Workout Log", route: "/workout-history", gated: false },
-  { icon: "kitchen" as const, label: "My Pantry", route: "/pantry", gated: false },
-  { icon: "center-focus-strong" as const, label: "Form Check", route: "/form-checker", gated: false },
-  { icon: "location-on" as const, label: "Find Gym", route: "/gym-finder", gated: false },
-  { icon: "watch" as const, label: "Wearables", route: "/wearable-sync", gated: true, feature: "wearable_sync", tier: "basic" as const, desc: "Sync your fitness wearable with PeakPulse — Basic plan and above." },
-  { icon: "group" as const, label: "Community", route: "/social-feed", gated: true, feature: "social_feed", tier: "advanced" as const, desc: "Join the PeakPulse community — Advanced plan only." },
-  { icon: "bolt" as const, label: "7-Day Challenge", route: "/challenge-onboarding", gated: true, feature: "challenges", tier: "advanced" as const, desc: "Unlock 7-day fitness challenges — Advanced plan only." },
-  { icon: "card-giftcard" as const, label: "Refer a Friend", route: "/referral", gated: false },
-  { icon: "workspace-premium" as const, label: "Upgrade", route: "/subscription", gated: false },
-  { icon: "calendar-today" as const, label: "Workout History", route: "/workout-calendar", gated: false },
-  { icon: "notifications-active" as const, label: "AI Reminders", route: "/notification-settings", gated: false },
-  { icon: "receipt-long" as const, label: "Scan Receipt", route: "/scan-receipt", gated: false },
-  { icon: "photo-library" as const, label: "Meal Timeline", route: "/meal-timeline", gated: false },
-  { icon: "auto-awesome" as const, label: "Meal Prep", route: "/meal-prep", gated: false },
-  { icon: "flag" as const, label: "Weekly Goals", route: "/weekly-goals", gated: false },
-  { icon: "bookmark" as const, label: "Templates", route: "/workout-templates", gated: false },
-  { icon: "people" as const, label: "Social Circle", route: "/social-circle", gated: false },
-  { icon: "sports-martial-arts" as const, label: "Challenges", route: "/challenge", gated: false },
-  { icon: "groups" as const, label: "Group Goals", route: "/group-goals", gated: false },
+// Quick Action definitions grouped into categories (3A)
+type QuickAction = {
+  icon: keyof typeof MaterialIcons.glyphMap;
+  label: string;
+  route: string;
+  gated: boolean;
+  feature?: string;
+  tier?: "basic" | "advanced";
+  desc?: string;
+};
+type ActionGroup = {
+  title: string;
+  icon: keyof typeof MaterialIcons.glyphMap;
+  actions: QuickAction[];
+};
+const QUICK_ACTION_GROUPS: ActionGroup[] = [
+  {
+    title: "Workout",
+    icon: "fitness-center",
+    actions: [
+      { icon: "fitness-center", label: "Start Workout", route: "/(tabs)/plans", gated: false },
+      { icon: "edit-note", label: "Log Workout", route: "/log-workout", gated: false },
+      { icon: "history", label: "Workout Log", route: "/workout-history", gated: false },
+      { icon: "calendar-today", label: "Workout History", route: "/workout-calendar", gated: false },
+      { icon: "bookmark", label: "Templates", route: "/workout-templates", gated: false },
+      { icon: "center-focus-strong", label: "Form Check", route: "/form-checker", gated: false },
+    ],
+  },
+  {
+    title: "Nutrition",
+    icon: "restaurant",
+    actions: [
+      { icon: "restaurant", label: "Log Meal", route: "/(tabs)/meals", gated: false },
+      { icon: "photo-camera", label: "Snap a Meal", route: "/(tabs)/meals", gated: false },
+      { icon: "receipt-long", label: "Scan Receipt", route: "/scan-receipt", gated: false },
+      { icon: "kitchen", label: "My Pantry", route: "/pantry", gated: false },
+      { icon: "photo-library", label: "Meal Timeline", route: "/meal-timeline", gated: false },
+      { icon: "auto-awesome", label: "Meal Prep", route: "/meal-prep", gated: false },
+    ],
+  },
+  {
+    title: "AI & Insights",
+    icon: "smart-toy",
+    actions: [
+      { icon: "smart-toy", label: "AI Coach", route: "/ai-coach", gated: false },
+      { icon: "camera-alt", label: "AI Body Scan", route: "/(tabs)/scan", gated: false },
+      { icon: "show-chart", label: "Health Trends", route: "/health-trends", gated: false },
+      { icon: "notifications-active", label: "AI Reminders", route: "/notification-settings", gated: false },
+    ],
+  },
+  {
+    title: "Progress & Goals",
+    icon: "trending-up",
+    actions: [
+      { icon: "check-circle", label: "Daily Check-In", route: "/daily-checkin", gated: false },
+      { icon: "flag", label: "Weekly Goals", route: "/weekly-goals", gated: false },
+      { icon: "trending-up", label: "Progress Photos", route: "/progress-photos", gated: true, feature: "progress_photos", tier: "basic", desc: "Track your body transformation with progress photos — Basic plan and above." },
+      { icon: "watch", label: "Wearables", route: "/wearable-sync", gated: true, feature: "wearable_sync", tier: "basic", desc: "Sync your fitness wearable with PeakPulse — Basic plan and above." },
+    ],
+  },
+  {
+    title: "Social & Challenges",
+    icon: "people",
+    actions: [
+      { icon: "group", label: "Community", route: "/social-feed", gated: true, feature: "social_feed", tier: "advanced", desc: "Join the PeakPulse community — Advanced plan only." },
+      { icon: "bolt", label: "7-Day Challenge", route: "/challenge-onboarding", gated: true, feature: "challenges", tier: "advanced", desc: "Unlock 7-day fitness challenges — Advanced plan only." },
+      { icon: "sports-martial-arts", label: "Challenges", route: "/challenge", gated: false },
+      { icon: "people", label: "Social Circle", route: "/social-circle", gated: false },
+      { icon: "groups", label: "Group Goals", route: "/group-goals", gated: false },
+      { icon: "card-giftcard", label: "Refer a Friend", route: "/referral", gated: false },
+    ],
+  },
+  {
+    title: "More",
+    icon: "more-horiz",
+    actions: [
+      { icon: "location-on", label: "Find Gym", route: "/gym-finder", gated: false },
+      { icon: "workspace-premium", label: "Upgrade Plan", route: "/subscription", gated: false },
+    ],
+  },
 ];
+// Flat list for backward compatibility
+const QUICK_ACTIONS_ALL = QUICK_ACTION_GROUPS.flatMap(g => g.actions);
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 const AnimatedView = Animated.View;
@@ -246,7 +297,8 @@ export default function HomeScreen() {
   const [sharing, setSharing] = useState(false);
   const [savingToLibrary, setSavingToLibrary] = useState(false);
   const [onboardingChecked, setOnboardingChecked] = useState(false);
-  const [showAllActions, setShowAllActions] = useState(false); // 2A: Quick Actions collapse
+  const [expandedGroup, setExpandedGroup] = useState<string | null>(null); // 2A: Quick Actions grouped
+  const [showAllActions, setShowAllActions] = useState(false); // backward compat
   const canUse = isAuthenticated || isGuest;
   const wearableData = useWearable();
   const [tipIndex, setTipIndex] = React.useState(0);
@@ -1092,47 +1144,91 @@ export default function HomeScreen() {
             </Modal>
           )}
 
-          {/* ── Quick Actions (2A: collapsible, 3A: MaterialIcons) ── */}
+          {/* ── Quick Actions — Grouped Categories ── */}
           <StaggeredCard index={3}>
             <View style={styles.section}>
-              <SectionTitle
-                title="Quick Actions"
-                rightElement={
-                  QUICK_ACTIONS_ALL.length > 6 ? (
-                    <TouchableOpacity
-                      style={{ flexDirection: "row", alignItems: "center", gap: 4 }}
-                      onPress={() => setShowAllActions(!showAllActions)}
-                    >
-                      <Text style={{ color: SF.orange, fontFamily: "DMSans_600SemiBold", fontSize: 12 }}>
-                        {showAllActions ? "Show Less" : `See All (${QUICK_ACTIONS_ALL.length})`}
-                      </Text>
-                      <MaterialIcons name={showAllActions ? "expand-less" : "expand-more"} size={16} color={SF.orange} />
-                    </TouchableOpacity>
-                  ) : undefined
-                }
-              />
-              {actionRows.map((row, ri) => (
-                <View key={ri} style={styles.qaRow}>
-                  {row.map((action) => (
-                    <QuickActionCard
-                      key={action.label}
-                      icon={action.icon}
-                      label={action.label}
-                      onPress={() => {
-                        if (action.gated && action.feature && action.tier) {
-                          gatedNav(action.route, action.feature, action.icon, action.tier, action.desc);
-                        } else {
-                          router.push(action.route as any);
-                        }
-                      }}
-                    />
-                  ))}
-                  {/* Fill empty slots in last row */}
-                  {row.length < 3 && Array.from({ length: 3 - row.length }).map((_, i) => (
-                    <View key={`empty-${i}`} style={{ flex: 1 }} />
-                  ))}
-                </View>
-              ))}
+              <SectionTitle title="Quick Actions" />
+              <View style={{ gap: 8 }}>
+                {QUICK_ACTION_GROUPS.map((group) => {
+                  const isExpanded = expandedGroup === group.title;
+                  const hasPremium = group.actions.some(a => a.gated);
+                  const premiumCount = group.actions.filter(a => a.gated).length;
+                  return (
+                    <View key={group.title} style={styles.qaGroupContainer}>
+                      {/* Group Header — tappable */}
+                      <TouchableOpacity
+                        style={[styles.qaGroupHeader, isExpanded && styles.qaGroupHeaderActive]}
+                        onPress={() => {
+                          if (Platform.OS !== "web") Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                          setExpandedGroup(isExpanded ? null : group.title);
+                        }}
+                        activeOpacity={0.7}
+                      >
+                        <View style={styles.qaGroupHeaderLeft}>
+                          <View style={[styles.qaGroupIconBox, isExpanded && styles.qaGroupIconBoxActive]}>
+                            <MaterialIcons name={group.icon} size={20} color={isExpanded ? SF.bg : SF.gold} />
+                          </View>
+                          <View style={{ flex: 1 }}>
+                            <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+                              <Text style={[styles.qaGroupTitle, isExpanded && { color: SF.gold }]}>{group.title}</Text>
+                              {hasPremium && (
+                                <View style={styles.qaGroupPremiumBadge}>
+                                  <MaterialIcons name="workspace-premium" size={10} color="#F59E0B" />
+                                  <Text style={styles.qaGroupPremiumText}>{premiumCount} Premium</Text>
+                                </View>
+                              )}
+                            </View>
+                            <Text style={styles.qaGroupCount}>{group.actions.length} actions</Text>
+                          </View>
+                        </View>
+                        <MaterialIcons name={isExpanded ? "expand-less" : "expand-more"} size={22} color={isExpanded ? SF.gold : SF.muted} />
+                      </TouchableOpacity>
+
+                      {/* Expanded Actions Grid */}
+                      {isExpanded && (
+                        <View style={styles.qaGroupBody}>
+                          {(() => {
+                            const rows: QuickAction[][] = [];
+                            for (let i = 0; i < group.actions.length; i += 3) rows.push(group.actions.slice(i, i + 3));
+                            return rows.map((row, ri) => (
+                              <View key={ri} style={styles.qaRow}>
+                                {row.map((action) => (
+                                  <View key={action.label} style={{ flex: 1, position: "relative" }}>
+                                    <QuickActionCard
+                                      icon={action.icon}
+                                      label={action.label}
+                                      onPress={() => {
+                                        if (action.gated && action.feature && action.tier) {
+                                          gatedNav(action.route, action.feature, action.icon, action.tier, action.desc);
+                                        } else {
+                                          router.push(action.route as any);
+                                        }
+                                      }}
+                                    />
+                                    {action.gated && action.tier && (
+                                      <View style={[
+                                        styles.qaActionBadge,
+                                        action.tier === "advanced" ? styles.qaActionBadgeAdvanced : styles.qaActionBadgeBasic,
+                                      ]}>
+                                        <Text style={styles.qaActionBadgeText}>
+                                          {action.tier === "advanced" ? "ADV" : "BASIC"}
+                                        </Text>
+                                      </View>
+                                    )}
+                                  </View>
+                                ))}
+                                {row.length < 3 && Array.from({ length: 3 - row.length }).map((_, i) => (
+                                  <View key={`empty-${i}`} style={{ flex: 1 }} />
+                                ))}
+                              </View>
+                            ));
+                          })()}
+                        </View>
+                      )}
+                    </View>
+                  );
+                })}
+              </View>
             </View>
           </StaggeredCard>
 
@@ -1625,6 +1721,22 @@ const styles = StyleSheet.create({
   qaCard: { flex: 1, backgroundColor: SF.surface, borderRadius: 18, padding: 14, borderWidth: 1, borderColor: SF.border },
   qaIconBox: { width: 44, height: 44, borderRadius: 12, backgroundColor: "rgba(245,158,11,0.08)", alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: SF.border },
   qaLabel: { color: SF.emerald3, fontFamily: "DMSans_500Medium", fontSize: 11, textAlign: "center" },
+  // Grouped Quick Actions styles
+  qaGroupContainer: { backgroundColor: SF.surface, borderRadius: 16, borderWidth: 1, borderColor: SF.border, overflow: "hidden" as const },
+  qaGroupHeader: { flexDirection: "row" as const, alignItems: "center" as const, justifyContent: "space-between" as const, paddingHorizontal: 14, paddingVertical: 12 },
+  qaGroupHeaderActive: { backgroundColor: "rgba(245,158,11,0.06)", borderBottomWidth: 1, borderBottomColor: SF.border },
+  qaGroupHeaderLeft: { flexDirection: "row" as const, alignItems: "center" as const, gap: 10, flex: 1 },
+  qaGroupIconBox: { width: 36, height: 36, borderRadius: 10, backgroundColor: "rgba(245,158,11,0.08)", alignItems: "center" as const, justifyContent: "center" as const, borderWidth: 1, borderColor: SF.border },
+  qaGroupIconBoxActive: { backgroundColor: SF.gold, borderColor: SF.gold },
+  qaGroupTitle: { color: SF.fg, fontFamily: "DMSans_600SemiBold", fontSize: 14 },
+  qaGroupCount: { color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 11, marginTop: 1 },
+  qaGroupPremiumBadge: { flexDirection: "row" as const, alignItems: "center" as const, gap: 3, backgroundColor: "rgba(245,158,11,0.12)", paddingHorizontal: 6, paddingVertical: 2, borderRadius: 6, borderWidth: 1, borderColor: "rgba(245,158,11,0.25)" },
+  qaGroupPremiumText: { color: "#F59E0B", fontFamily: "DMSans_600SemiBold", fontSize: 9, letterSpacing: 0.5 },
+  qaGroupBody: { paddingHorizontal: 10, paddingVertical: 10, gap: 0 },
+  qaActionBadge: { position: "absolute" as const, top: 4, right: 4, paddingHorizontal: 5, paddingVertical: 2, borderRadius: 6, zIndex: 1 },
+  qaActionBadgeBasic: { backgroundColor: "rgba(34,197,94,0.15)", borderWidth: 1, borderColor: "rgba(34,197,94,0.3)" },
+  qaActionBadgeAdvanced: { backgroundColor: "rgba(168,85,247,0.15)", borderWidth: 1, borderColor: "rgba(168,85,247,0.3)" },
+  qaActionBadgeText: { fontFamily: "DMSans_700Bold", fontSize: 7, letterSpacing: 0.8, color: "#A855F7" },
   planCardOverlay: { backgroundColor: "rgba(10,5,0,0.78)", padding: 20 },
   planCardTitle: { color: SF.fg, fontFamily: "Outfit_700Bold", fontSize: 20, marginTop: 4 },
   planCardSub: { color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 13, marginTop: 4 },
@@ -1638,12 +1750,12 @@ const styles = StyleSheet.create({
   ctaSub: { color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 14, textAlign: "center", lineHeight: 20, marginBottom: 20 },
   ctaBtn: { backgroundColor: SF.emerald, borderRadius: 16, paddingVertical: 14, paddingHorizontal: 32, flexDirection: "row", alignItems: "center", gap: 8 },
   ctaBtnText: { color: SF.bg, fontFamily: "DMSans_700Bold", fontSize: 16 },
-  guestBanner: { marginHorizontal: 16, marginTop: 20, backgroundColor: SF.surface, borderRadius: 16, padding: 16, borderWidth: 1, borderColor: SF.border, flexDirection: "row", alignItems: "center", gap: 12 },
+  guestBanner: { marginHorizontal: 16, marginTop: 20, marginBottom: 100, backgroundColor: SF.surface, borderRadius: 16, padding: 16, borderWidth: 1, borderColor: SF.border, flexDirection: "row", alignItems: "center", gap: 12 },
   guestBannerTitle: { color: SF.emerald2, fontFamily: "DMSans_600SemiBold", fontSize: 13 },
   guestBannerSub: { color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 12, marginTop: 2 },
   guestBannerBtn: { backgroundColor: SF.surface2, borderRadius: 10, paddingHorizontal: 12, paddingVertical: 7, borderWidth: 1, borderColor: SF.border2 },
   guestBannerBtnText: { color: SF.emerald, fontFamily: "DMSans_600SemiBold", fontSize: 12 },
-  trialBanner: { flexDirection: "row", alignItems: "center", gap: 10, marginHorizontal: 16, marginTop: 16, backgroundColor: "#1c1000", borderRadius: 14, padding: 14, borderWidth: 1, borderColor: "#F59E0B40" },
+  trialBanner: { flexDirection: "row", alignItems: "center", gap: 10, marginHorizontal: 16, marginTop: 16, marginBottom: 100, backgroundColor: "#1c1000", borderRadius: 14, padding: 14, borderWidth: 1, borderColor: "#F59E0B40" },
   trialBannerExpired: { backgroundColor: "#1a0000", borderColor: "#ef444440" },
   trialBannerTitle: { color: "#F59E0B", fontFamily: "DMSans_600SemiBold", fontSize: 13, marginBottom: 2 },
   trialBannerSub: { color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 11, lineHeight: 16 },

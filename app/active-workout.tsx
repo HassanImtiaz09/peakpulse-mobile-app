@@ -17,6 +17,7 @@ import { getExerciseInfo } from "@/lib/exercise-data";
 import { useFavorites } from "@/lib/favorites-context";
 import { logWorkoutPRs } from "@/lib/personal-records";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import * as Haptics from "expo-haptics";
 import {
   type RestTimerSettings,
   DEFAULT_REST_TIMERS,
@@ -572,16 +573,39 @@ export default function ActiveWorkoutScreen() {
         {/* Current Exercise */}
         {exercise && (
           <View style={{ paddingHorizontal: 20 }}>
-            {/* Exercise header card */}
+            {/* Exercise header card with body diagram */}
             <View style={{ backgroundColor: SF.surface, borderRadius: 20, padding: 16, marginBottom: 12, borderWidth: 1, borderColor: SF.border }}>
-              <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
-                <View style={{ flex: 1 }}>
-                  <Text style={{ color: SF.gold2, fontSize: 11, fontFamily: "Outfit_700Bold", marginBottom: 4 }}>{exercise.muscleGroup?.toUpperCase()}</Text>
-                  <Text style={{ color: SF.fg, fontFamily: "Outfit_800ExtraBold", fontSize: 20 }}>{exercise.name}</Text>
+              <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 10 }}>
+                {/* Body diagram + exercise info */}
+                <View style={{ flexDirection: "row", flex: 1, gap: 10, alignItems: "center" }}>
+                  {(() => {
+                    const info = getExerciseInfo(exercise.name);
+                    if (info) return (
+                      <View style={{ backgroundColor: "rgba(245,158,11,0.04)", borderRadius: 12, padding: 4, borderWidth: 1, borderColor: "rgba(245,158,11,0.1)" }}>
+                        <BodyDiagramInline primary={info.primaryMuscles} secondary={info.secondaryMuscles} />
+                      </View>
+                    );
+                    return null;
+                  })()}
+                  <View style={{ flex: 1 }}>
+                    <Text style={{ color: SF.gold2, fontSize: 11, fontFamily: "Outfit_700Bold", marginBottom: 4 }}>{exercise.muscleGroup?.toUpperCase()}</Text>
+                    <Text style={{ color: SF.fg, fontFamily: "Outfit_800ExtraBold", fontSize: 20 }}>{exercise.name}</Text>
+                  </View>
                 </View>
                 <View style={{ alignItems: "flex-end" }}>
                   <Text style={{ color: SF.muted, fontSize: 12 }}>{exercise.sets} sets × {exercise.reps}</Text>
                   <Text style={{ color: SF.muted, fontSize: 11, marginTop: 2 }}>Rest: {exercise.rest}</Text>
+                  {/* Demo link */}
+                  <TouchableOpacity
+                    onPress={() => {
+                      // Scroll down to the demo video section
+                      if (Platform.OS !== "web") Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                    }}
+                    style={{ marginTop: 6, flexDirection: "row", alignItems: "center", gap: 3, backgroundColor: "rgba(245,158,11,0.08)", paddingHorizontal: 8, paddingVertical: 4, borderRadius: 8, borderWidth: 1, borderColor: "rgba(245,158,11,0.15)" }}
+                  >
+                    <MaterialIcons name="play-circle-outline" size={12} color={SF.gold} />
+                    <Text style={{ color: SF.gold, fontFamily: "DMSans_600SemiBold", fontSize: 10 }}>Demo</Text>
+                  </TouchableOpacity>
                 </View>
               </View>
               {exercise.notes && (
