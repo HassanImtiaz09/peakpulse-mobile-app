@@ -2069,3 +2069,34 @@
 - [x] 4 tests for background auto-sync
 - [x] 12 tests for achievements gallery
 - [x] 2 tests for dashboard integration
+
+## Round 86 — Read Receipts & Typing Indicators
+
+### Read Receipts
+- [x] Track which users have read each message (ReadReceipt interface with userId, userName, readAt)
+- [x] Show read receipt indicators (double checkmarks gold=read, grey=delivered, single=sent)
+- [x] Display "Seen by X, Y" tooltip on tap of read receipt with names list
+- [x] Update read status when messages come into view (markMessagesAsRead on init + poll)
+- [x] Persist read state in AsyncStorage (readBy array on each ChatMessage)
+- [x] Simulated read receipts from circle members for demo
+
+### Typing Indicators
+- [x] Track typing state per user per room (TypingEntry with expiresAt)
+- [x] Show animated typing indicator bar with 3 dots when others are typing
+- [x] Display names of who is typing ("Alex is typing...", "Alex and Sarah are typing...", "Alex and 2 others are typing...")
+- [x] Auto-expire typing state after 4-second timeout (TYPING_TIMEOUT_MS)
+- [x] Broadcast typing state on text input changes (handleTextChange)
+- [x] Simulated typing from circle members for demo
+
+### Testing
+- [x] 0 TypeScript errors
+- [x] All 54 tests pass (round86-features.test.ts)
+- [x] 3 tests for read receipt types
+- [x] 5 tests for markMessagesAsRead
+- [x] 3 tests for getReadReceiptSummary
+- [x] 3 tests for simulateReadReceipts
+- [x] 9 tests for typing indicators
+- [x] 14 tests for chat screen read receipt UI
+- [x] 13 tests for chat screen typing indicator UI
+- [x] 3 tests for seed data read receipts
+- [x] 2 tests for exports

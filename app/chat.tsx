@@ -17,7 +17,9 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
   getMessages, sendMessage, sendSystemMessage, addReaction, deleteMessage,
   getOrCreateRoom, seedChatRoom, markRoomAsRead, getChatUser,
-  QUICK_REACTIONS, type ChatMessage, type ChatRoom,
+  markMessagesAsRead, getReadReceiptSummary, simulateReadReceipts,
+  setTyping, getTypingUsers, formatTypingText, simulateTyping,
+  QUICK_REACTIONS, type ChatMessage, type ChatRoom, type ReadReceipt,
 } from "@/lib/chat-service";
 import { GOLDEN_SOCIAL, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgrounds";
 
@@ -44,6 +46,9 @@ export default function ChatScreen() {
   const [replyTo, setReplyTo] = useState<ChatMessage | null>(null);
   const [selectedMessage, setSelectedMessage] = useState<string | null>(null);
   const [currentUserId, setCurrentUserId] = useState("local_user");
+  const [typingText, setTypingText] = useState("");
+  const [readReceiptTooltip, setReadReceiptTooltip] = useState<{ messageId: string; names: string[] } | null>(null);
+  const typingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const flatListRef = useRef<FlatList>(null);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -56,24 +61,37 @@ export default function ChatScreen() {
       setCurrentUserId(user.id);
       const msgs = await getMessages(roomId, 100);
       setMessages(msgs);
-      await markRoomAsRead(roomId);
+      await markMessagesAsRead(roomId);
       setLoading(false);
     })();
   }, [roomId]);
 
-  // Poll for new messages every 3 seconds
+  // Poll for new messages, typing indicators, and read receipts every 3 seconds
   useEffect(() => {
     pollRef.current = setInterval(async () => {
+      // Fetch messages (includes updated readBy)
       const msgs = await getMessages(roomId, 100);
       setMessages((prev) => {
-        if (msgs.length !== prev.length || (msgs.length > 0 && msgs[msgs.length - 1]?.id !== prev[prev.length - 1]?.id)) {
-          return msgs;
-        }
+        // Check if messages changed (new messages or updated readBy)
+        const prevJson = JSON.stringify(prev.map((m) => ({ id: m.id, rb: m.readBy?.length ?? 0 })));
+        const newJson = JSON.stringify(msgs.map((m) => ({ id: m.id, rb: m.readBy?.length ?? 0 })));
+        if (prevJson !== newJson) return msgs;
         return prev;
       });
+
+      // Update typing indicators
+      simulateTyping(roomId);
+      const typers = getTypingUsers(roomId, currentUserId);
+      setTypingText(formatTypingText(typers));
+
+      // Simulate other members reading our messages
+      await simulateReadReceipts(roomId);
+
+      // Mark incoming messages as read
+      await markMessagesAsRead(roomId);
     }, 3000);
     return () => { if (pollRef.current) clearInterval(pollRef.current); };
-  }, [roomId]);
+  }, [roomId, currentUserId]);
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
@@ -82,10 +100,26 @@ export default function ChatScreen() {
     }
   }, [messages.length]);
 
+  // Broadcast typing state when user types
+  const handleTextChange = useCallback((text: string) => {
+    setInputText(text);
+    setTyping(roomId, currentUserId, "You", text.length > 0);
+    // Auto-clear typing after 4 seconds of no input
+    if (typingTimerRef.current) clearTimeout(typingTimerRef.current);
+    if (text.length > 0) {
+      typingTimerRef.current = setTimeout(() => {
+        setTyping(roomId, currentUserId, "You", false);
+      }, 4000);
+    }
+  }, [roomId, currentUserId]);
+
   const handleSend = useCallback(async () => {
     const text = inputText.trim();
     if (!text || sending) return;
     setSending(true);
+    // Clear typing state on send
+    setTyping(roomId, currentUserId, "You", false);
+    if (typingTimerRef.current) clearTimeout(typingTimerRef.current);
     if (Platform.OS !== "web") Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     try {
       const msg = await sendMessage(roomId, text, "text", { replyToId: replyTo?.id });
@@ -97,7 +131,7 @@ export default function ChatScreen() {
       Alert.alert("Error", "Failed to send message");
     }
     setSending(false);
-  }, [inputText, sending, roomId, replyTo]);
+  }, [inputText, sending, roomId, replyTo, currentUserId]);
 
   const handleReaction = useCallback(async (messageId: string, emoji: string) => {
     if (Platform.OS !== "web") Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -178,7 +212,46 @@ export default function ChatScreen() {
           <View style={styles.msgMeta}>
             <Text style={styles.msgTime}>{formatTime(item.createdAt)}</Text>
             {item.editedAt && <Text style={styles.editedTag}>edited</Text>}
+            {isMe && !item.deleted && (() => {
+              const receipt = getReadReceiptSummary(item, currentUserId);
+              return (
+                <TouchableOpacity
+                  onPress={() => {
+                    if (receipt.readByNames.length > 0) {
+                      setReadReceiptTooltip(
+                        readReceiptTooltip?.messageId === item.id
+                          ? null
+                          : { messageId: item.id, names: receipt.readByNames }
+                      );
+                    }
+                  }}
+                  style={styles.readReceiptBtn}
+                >
+                  {receipt.isRead ? (
+                    <View style={styles.readReceiptRow}>
+                      <MaterialIcons name="done-all" size={14} color={SF.gold} />
+                      {receipt.readCount > 0 && (
+                        <Text style={styles.readCountText}>{receipt.readCount}</Text>
+                      )}
+                    </View>
+                  ) : receipt.isDelivered ? (
+                    <MaterialIcons name="done-all" size={14} color="rgba(180,83,9,0.4)" />
+                  ) : (
+                    <MaterialIcons name="done" size={14} color="rgba(180,83,9,0.3)" />
+                  )}
+                </TouchableOpacity>
+              );
+            })()}
           </View>
+          {/* Read receipt tooltip */}
+          {isMe && readReceiptTooltip?.messageId === item.id && (
+            <View style={styles.readReceiptTooltip}>
+              <Text style={styles.readReceiptTooltipTitle}>Seen by</Text>
+              {readReceiptTooltip.names.map((name, i) => (
+                <Text key={i} style={styles.readReceiptTooltipName}>{name}</Text>
+              ))}
+            </View>
+          )}
 
           {/* Reactions */}
           {Object.keys(item.reactions).length > 0 && (
@@ -267,6 +340,18 @@ export default function ChatScreen() {
             />
           )}
 
+          {/* Typing indicator */}
+          {typingText.length > 0 && (
+            <View style={styles.typingBar}>
+              <View style={styles.typingDots}>
+                <View style={[styles.typingDot, { opacity: 0.4 }]} />
+                <View style={[styles.typingDot, { opacity: 0.7 }]} />
+                <View style={[styles.typingDot, { opacity: 1.0 }]} />
+              </View>
+              <Text style={styles.typingText}>{typingText}</Text>
+            </View>
+          )}
+
           {/* Reply preview */}
           {replyTo && (
             <View style={styles.replyBar}>
@@ -287,7 +372,7 @@ export default function ChatScreen() {
               placeholder="Type a message..."
               placeholderTextColor="rgba(180,83,9,0.5)"
               value={inputText}
-              onChangeText={setInputText}
+              onChangeText={handleTextChange}
               multiline
               maxLength={1000}
               returnKeyType="default"
@@ -404,5 +489,40 @@ const styles = StyleSheet.create({
   sendBtn: {
     width: 40, height: 40, borderRadius: 20, backgroundColor: SF.gold,
     alignItems: "center", justifyContent: "center", marginBottom: 2,
+  },
+  // Read receipts
+  readReceiptBtn: {
+    flexDirection: "row", alignItems: "center", marginLeft: 2,
+  },
+  readReceiptRow: {
+    flexDirection: "row", alignItems: "center", gap: 2,
+  },
+  readCountText: {
+    color: SF.gold, fontSize: 9, fontWeight: "700",
+  },
+  readReceiptTooltip: {
+    backgroundColor: "rgba(10,14,20,0.95)", borderRadius: 10,
+    paddingHorizontal: 12, paddingVertical: 8, marginTop: 4,
+    borderWidth: 1, borderColor: SF.border,
+  },
+  readReceiptTooltipTitle: {
+    color: SF.gold, fontSize: 11, fontWeight: "700", marginBottom: 4,
+  },
+  readReceiptTooltipName: {
+    color: SF.fg, fontSize: 12, lineHeight: 18,
+  },
+  // Typing indicator
+  typingBar: {
+    flexDirection: "row", alignItems: "center", paddingHorizontal: 16,
+    paddingVertical: 6, gap: 8,
+  },
+  typingDots: {
+    flexDirection: "row", alignItems: "center", gap: 3,
+  },
+  typingDot: {
+    width: 6, height: 6, borderRadius: 3, backgroundColor: SF.gold,
+  },
+  typingText: {
+    color: SF.muted, fontSize: 12, fontStyle: "italic",
   },
 });

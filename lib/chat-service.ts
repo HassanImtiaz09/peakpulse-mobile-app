@@ -19,9 +19,16 @@ export interface ChatMessage {
   imageUrl?: string;
   replyToId?: string;
   reactions: Record<string, string[]>; // emoji -> userId[]
+  readBy: ReadReceipt[]; // per-message read receipts
   createdAt: string;
   editedAt?: string;
   deleted?: boolean;
+}
+
+export interface ReadReceipt {
+  userId: string;
+  userName: string;
+  readAt: string;
 }
 
 export interface ChatRoom {
@@ -193,6 +200,7 @@ export async function sendMessage(
     imageUrl: options?.imageUrl,
     replyToId: options?.replyToId,
     reactions: {},
+    readBy: [],
     createdAt: new Date().toISOString(),
   };
 
@@ -317,6 +325,7 @@ async function simulateResponse(roomId: string, _triggerText: string): Promise<v
     text: response,
     type: "text",
     reactions: {},
+    readBy: [],
     createdAt: new Date().toISOString(),
   };
 
@@ -352,6 +361,7 @@ export async function seedChatRoom(roomId: string, roomName: string, type: "circ
       text: `Welcome to ${roomName}! This is your group chat. Share progress, motivate each other, and stay accountable together.`,
       type: "system",
       reactions: {},
+      readBy: [],
       createdAt: new Date(now - 86400000).toISOString(),
     },
     {
@@ -363,6 +373,12 @@ export async function seedChatRoom(roomId: string, roomName: string, type: "circ
       text: "Hey everyone! Excited to be part of this group. Let's crush our goals together! 🔥",
       type: "text",
       reactions: { "💪": ["member_sarah", "member_james"], "🔥": ["member_priya"] },
+      readBy: [
+        { userId: "member_sarah", userName: "Sarah K.", readAt: new Date(now - 80000000).toISOString() },
+        { userId: "member_james", userName: "James T.", readAt: new Date(now - 79000000).toISOString() },
+        { userId: "member_priya", userName: "Priya R.", readAt: new Date(now - 78000000).toISOString() },
+        { userId: "member_marcus", userName: "Marcus L.", readAt: new Date(now - 77000000).toISOString() },
+      ],
       createdAt: new Date(now - 82800000).toISOString(),
     },
     {
@@ -374,6 +390,11 @@ export async function seedChatRoom(roomId: string, roomName: string, type: "circ
       text: "Just finished my morning run — 5K in 28 minutes! New personal best 🎉",
       type: "text",
       reactions: { "🎉": ["member_alex", "member_marcus"], "👏": ["member_james", "member_priya"] },
+      readBy: [
+        { userId: "member_alex", userName: "Alex M.", readAt: new Date(now - 70000000).toISOString() },
+        { userId: "member_james", userName: "James T.", readAt: new Date(now - 69000000).toISOString() },
+        { userId: "member_priya", userName: "Priya R.", readAt: new Date(now - 68500000).toISOString() },
+      ],
       createdAt: new Date(now - 72000000).toISOString(),
     },
     {
@@ -385,6 +406,10 @@ export async function seedChatRoom(roomId: string, roomName: string, type: "circ
       text: "Amazing Sarah! I hit a new squat PR today — 120kg! The form checker really helped me fix my depth.",
       type: "text",
       reactions: { "💪": ["member_alex", "member_sarah"] },
+      readBy: [
+        { userId: "member_alex", userName: "Alex M.", readAt: new Date(now - 66000000).toISOString() },
+        { userId: "member_sarah", userName: "Sarah K.", readAt: new Date(now - 65000000).toISOString() },
+      ],
       createdAt: new Date(now - 68400000).toISOString(),
     },
     {
@@ -396,6 +421,10 @@ export async function seedChatRoom(roomId: string, roomName: string, type: "circ
       text: "Love the energy in this group! Who's up for a 7-day step challenge? 10K steps daily minimum 🚶‍♀️",
       type: "text",
       reactions: { "🙋": ["member_alex", "member_sarah", "member_marcus"], "✅": ["member_james"] },
+      readBy: [
+        { userId: "member_alex", userName: "Alex M.", readAt: new Date(now - 40000000).toISOString() },
+        { userId: "member_marcus", userName: "Marcus L.", readAt: new Date(now - 39000000).toISOString() },
+      ],
       createdAt: new Date(now - 43200000).toISOString(),
     },
     {
@@ -407,6 +436,7 @@ export async function seedChatRoom(roomId: string, roomName: string, type: "circ
       text: "Count me in! Also, meal prep Sunday is tomorrow — anyone sharing their plans?",
       type: "text",
       reactions: { "🍽️": ["member_priya", "member_sarah"] },
+      readBy: [],
       createdAt: new Date(now - 21600000).toISOString(),
     },
   ];
@@ -419,20 +449,150 @@ export async function seedChatRoom(roomId: string, roomName: string, type: "circ
 
 export const QUICK_REACTIONS = ["💪", "🔥", "👏", "🎉", "❤️", "😂", "🙌", "💯"];
 
+// ── Read Receipts (per-message) ──────────────────────────────────────────────
+
+/**
+ * Mark all messages in a room as read by the current user.
+ * Updates the readBy array on each message that hasn't been read yet.
+ */
+export async function markMessagesAsRead(roomId: string): Promise<number> {
+  const user = await getChatUser();
+  const data = await AsyncStorage.getItem(CHAT_MESSAGES_PREFIX + roomId);
+  if (!data) return 0;
+  const messages: ChatMessage[] = JSON.parse(data);
+  let changed = 0;
+  const now = new Date().toISOString();
+  for (const msg of messages) {
+    if (!msg.readBy) msg.readBy = [];
+    if (msg.senderId !== user.id && !msg.readBy.some((r) => r.userId === user.id)) {
+      msg.readBy.push({ userId: user.id, userName: user.name, readAt: now });
+      changed++;
+    }
+  }
+  if (changed > 0) {
+    await saveMessages(roomId, messages);
+  }
+  // Also clear room-level unread
+  await markRoomAsRead(roomId);
+  return changed;
+}
+
+/**
+ * Get the read receipt summary for a specific message.
+ */
+export function getReadReceiptSummary(
+  message: ChatMessage,
+  currentUserId: string,
+): { readByNames: string[]; readCount: number; isDelivered: boolean; isRead: boolean } {
+  const receipts = (message.readBy ?? []).filter(
+    (r) => r.userId !== message.senderId && r.userId !== currentUserId,
+  );
+  return {
+    readByNames: receipts.map((r) => r.userName),
+    readCount: receipts.length,
+    isDelivered: true, // all local messages are delivered
+    isRead: receipts.length > 0,
+  };
+}
+
+/**
+ * Simulate other members reading messages (for demo).
+ * Called periodically to create realistic read receipts on the user's messages.
+ */
+export async function simulateReadReceipts(roomId: string): Promise<void> {
+  if (Math.random() > 0.4) return; // 40% chance per poll
+  const data = await AsyncStorage.getItem(CHAT_MESSAGES_PREFIX + roomId);
+  if (!data) return;
+  const messages: ChatMessage[] = JSON.parse(data);
+  const now = new Date().toISOString();
+  let changed = false;
+
+  // Find user's messages that haven't been fully read
+  for (const msg of messages) {
+    if (msg.senderId !== "local_user" || msg.type === "system") continue;
+    if (!msg.readBy) msg.readBy = [];
+    // Pick a random member who hasn't read it yet
+    const unreadMembers = CIRCLE_MEMBERS.filter(
+      (m) => !msg.readBy.some((r) => r.userId === m.id),
+    );
+    if (unreadMembers.length > 0 && Math.random() > 0.5) {
+      const member = unreadMembers[Math.floor(Math.random() * unreadMembers.length)];
+      msg.readBy.push({ userId: member.id, userName: member.name, readAt: now });
+      changed = true;
+    }
+  }
+  if (changed) {
+    await saveMessages(roomId, messages);
+  }
+}
+
 // ── Typing Indicators ────────────────────────────────────────────────────────
 
-const typingUsers: Map<string, Set<string>> = new Map();
-
-export function setTyping(roomId: string, userId: string, isTyping: boolean): void {
-  if (!typingUsers.has(roomId)) typingUsers.set(roomId, new Set());
-  const set = typingUsers.get(roomId)!;
-  if (isTyping) set.add(userId);
-  else set.delete(userId);
+interface TypingEntry {
+  userId: string;
+  userName: string;
+  expiresAt: number; // timestamp ms
 }
 
-export function getTypingUsers(roomId: string): string[] {
-  return Array.from(typingUsers.get(roomId) ?? []);
+const TYPING_TIMEOUT_MS = 4000; // auto-expire after 4 seconds of no input
+const typingEntries: Map<string, TypingEntry[]> = new Map();
+
+/**
+ * Set a user's typing state in a room. Auto-expires after TYPING_TIMEOUT_MS.
+ */
+export function setTyping(roomId: string, userId: string, userName: string, isTyping: boolean): void {
+  if (!typingEntries.has(roomId)) typingEntries.set(roomId, []);
+  const entries = typingEntries.get(roomId)!;
+  const idx = entries.findIndex((e) => e.userId === userId);
+  if (isTyping) {
+    const entry: TypingEntry = { userId, userName, expiresAt: Date.now() + TYPING_TIMEOUT_MS };
+    if (idx >= 0) entries[idx] = entry;
+    else entries.push(entry);
+  } else {
+    if (idx >= 0) entries.splice(idx, 1);
+  }
 }
+
+/**
+ * Get currently typing users in a room (excluding expired entries and current user).
+ */
+export function getTypingUsers(roomId: string, currentUserId?: string): { userId: string; userName: string }[] {
+  const entries = typingEntries.get(roomId) ?? [];
+  const now = Date.now();
+  // Clean expired entries
+  const active = entries.filter((e) => e.expiresAt > now);
+  typingEntries.set(roomId, active);
+  return active
+    .filter((e) => e.userId !== currentUserId)
+    .map((e) => ({ userId: e.userId, userName: e.userName }));
+}
+
+/**
+ * Format typing indicator text (e.g., "Alex is typing...", "Alex and Sarah are typing...")
+ */
+export function formatTypingText(users: { userName: string }[]): string {
+  if (users.length === 0) return "";
+  if (users.length === 1) return `${users[0].userName} is typing...`;
+  if (users.length === 2) return `${users[0].userName} and ${users[1].userName} are typing...`;
+  return `${users[0].userName} and ${users.length - 1} others are typing...`;
+}
+
+/**
+ * Simulate other circle members occasionally typing (for demo purposes).
+ * Call this periodically to create realistic typing indicators.
+ */
+export function simulateTyping(roomId: string): void {
+  if (Math.random() > 0.3) return; // 30% chance per poll
+  const member = CIRCLE_MEMBERS[Math.floor(Math.random() * CIRCLE_MEMBERS.length)];
+  setTyping(roomId, member.id, member.name, true);
+  // Auto-stop after 2-4 seconds
+  setTimeout(() => {
+    setTyping(roomId, member.id, member.name, false);
+  }, 2000 + Math.random() * 2000);
+}
+
+export { CIRCLE_MEMBERS };
+export { TYPING_TIMEOUT_MS };
 
 // ── Message Count ────────────────────────────────────────────────────────────
 
