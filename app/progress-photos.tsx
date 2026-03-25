@@ -110,11 +110,11 @@ const CollageTemplate = React.forwardRef<View, {
   return (
     <View
       ref={ref as any}
-      style={{ width: COLLAGE_W, height: COLLAGE_H, backgroundColor: "#0A0500", flexDirection: "column", overflow: "hidden" }}
+      style={{ width: COLLAGE_W, height: COLLAGE_H, backgroundColor: "#0A0E14", flexDirection: "column", overflow: "hidden" }}
       collapsable={false}
     >
       {/* Header */}
-      <View style={{ height: 100, backgroundColor: "#0A0500", flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 12 }}>
+      <View style={{ height: 100, backgroundColor: "#0A0E14", flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 12 }}>
         <Text style={{ color: "#F59E0B", fontSize: 36, fontWeight: "900", letterSpacing: 2 }}>⚡ PEAKPULSE</Text>
         <Text style={{ color: "#B45309", fontSize: 28 }}>TRANSFORMATION</Text>
       </View>
@@ -143,7 +143,7 @@ const CollageTemplate = React.forwardRef<View, {
       </View>
 
       {/* Delta bar */}
-      <View style={{ height: 160, backgroundColor: "#0A0500", flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 48, paddingHorizontal: 40 }}>
+      <View style={{ height: 160, backgroundColor: "#0A0E14", flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 48, paddingHorizontal: 40 }}>
         {weightDelta != null && (
           <View style={{ alignItems: "center" }}>
             <Text style={{ color: weightDelta <= 0 ? "#10B981" : "#F87171", fontSize: 44, fontWeight: "900" }}>
@@ -166,7 +166,7 @@ const CollageTemplate = React.forwardRef<View, {
       </View>
 
       {/* Footer */}
-      <View style={{ height: 60, backgroundColor: "#0A0500", alignItems: "center", justifyContent: "center" }}>
+      <View style={{ height: 60, backgroundColor: "#0A0E14", alignItems: "center", justifyContent: "center" }}>
         <Text style={{ color: "#451A03", fontSize: 22, letterSpacing: 1 }}>peakpulse.ai  •  #PeakPulseTransformation</Text>
       </View>
     </View>
@@ -189,14 +189,14 @@ function CaptionSheet({ visible, caption, onChangeCaption, onClose, onShare, sha
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
       <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{ flex: 1 }}>
         <TouchableOpacity style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.6)" }} activeOpacity={1} onPress={onClose} />
-        <View style={{ backgroundColor: "#0A0500", borderTopLeftRadius: 28, borderTopRightRadius: 28, paddingHorizontal: 20, paddingTop: 16, paddingBottom: 36, borderTopWidth: 1, borderColor: "rgba(245,158,11,0.2)" }}>
+        <View style={{ backgroundColor: "#0A0E14", borderTopLeftRadius: 28, borderTopRightRadius: 28, paddingHorizontal: 20, paddingTop: 16, paddingBottom: 36, borderTopWidth: 1, borderColor: "rgba(245,158,11,0.2)" }}>
           <View style={{ width: 40, height: 4, backgroundColor: "#451A03", borderRadius: 2, alignSelf: "center", marginBottom: 16 }} />
-          <Text style={{ color: "#FFF7ED", fontWeight: "700", fontSize: 17, marginBottom: 4 }}>Customise Your Caption</Text>
+          <Text style={{ color: "#F1F5F9", fontWeight: "700", fontSize: 17, marginBottom: 4 }}>Customise Your Caption</Text>
           <Text style={{ color: "#B45309", fontSize: 12, marginBottom: 16 }}>Edit caption below. Auto-copied on share.</Text>
-          <View style={{ backgroundColor: "#150A00", borderRadius: 16, borderWidth: 1, borderColor: "rgba(245,158,11,0.15)", marginBottom: 12 }}>
+          <View style={{ backgroundColor: "#141A22", borderRadius: 16, borderWidth: 1, borderColor: "rgba(245,158,11,0.15)", marginBottom: 12 }}>
             <TextInput
               value={caption} onChangeText={onChangeCaption} multiline numberOfLines={6}
-              style={{ color: "#FFF7ED", fontSize: 14, lineHeight: 22, padding: 14, minHeight: 130, textAlignVertical: "top" }}
+              style={{ color: "#F1F5F9", fontSize: 14, lineHeight: 22, padding: 14, minHeight: 130, textAlignVertical: "top" }}
               placeholderTextColor="#451A03"
             />
           </View>
@@ -221,8 +221,8 @@ function CaptionSheet({ visible, caption, onChangeCaption, onClose, onShare, sha
               style={{ flex: 1.4, backgroundColor: sharing ? "rgba(245,158,11,0.4)" : "#F59E0B", borderRadius: 14, paddingVertical: 14, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6 }}
               onPress={onShare} disabled={sharing}>
               {sharing
-                ? <><ActivityIndicator size="small" color="#0A0500" /><Text style={{ color: "#0A0500", fontWeight: "700", fontSize: 13 }}>Saving…</Text></>
-                : <><Text style={{ fontSize: 16 }}>📤</Text><Text style={{ color: "#0A0500", fontWeight: "700", fontSize: 13 }}>Share Collage</Text></>}
+                ? <><ActivityIndicator size="small" color="#0A0E14" /><Text style={{ color: "#0A0E14", fontWeight: "700", fontSize: 13 }}>Saving…</Text></>
+                : <><Text style={{ fontSize: 16 }}>📤</Text><Text style={{ color: "#0A0E14", fontWeight: "700", fontSize: 13 }}>Share Collage</Text></>}
             </TouchableOpacity>
           </View>
           <Text style={{ color: "#451A03", fontSize: 10, textAlign: "center", marginTop: 10 }}>Caption auto-copied to clipboard when you tap Share</Text>
@@ -262,7 +262,7 @@ function TimelineScrubber({ groups, leftIdx, rightIdx, onLeftChange, onRightChan
             <TouchableOpacity
               style={{
                 paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20,
-                backgroundColor: isLeft ? "#F59E0B" : isRight ? "#10B981" : isBetween ? "rgba(245,158,11,0.08)" : "#150A00",
+                backgroundColor: isLeft ? "#F59E0B" : isRight ? "#10B981" : isBetween ? "rgba(245,158,11,0.08)" : "#141A22",
                 borderWidth: 1,
                 borderColor: isLeft ? "#F59E0B" : isRight ? "#10B981" : "rgba(245,158,11,0.15)",
               }}
@@ -279,11 +279,11 @@ function TimelineScrubber({ groups, leftIdx, rightIdx, onLeftChange, onRightChan
                 }
               }}
             >
-              <Text style={{ color: isLeft || isRight ? "#0A0500" : "#B45309", fontSize: 12, fontWeight: isLeft || isRight ? "700" : "400" }}>
+              <Text style={{ color: isLeft || isRight ? "#0A0E14" : "#B45309", fontSize: 12, fontWeight: isLeft || isRight ? "700" : "400" }}>
                 {item.label}
               </Text>
-              {isLeft && <Text style={{ color: "#0A0500", fontSize: 9, fontWeight: "700", textAlign: "center" }}>THEN</Text>}
-              {isRight && <Text style={{ color: "#0A0500", fontSize: 9, fontWeight: "700", textAlign: "center" }}>NOW</Text>}
+              {isLeft && <Text style={{ color: "#0A0E14", fontSize: 9, fontWeight: "700", textAlign: "center" }}>THEN</Text>}
+              {isRight && <Text style={{ color: "#0A0E14", fontSize: 9, fontWeight: "700", textAlign: "center" }}>NOW</Text>}
             </TouchableOpacity>
           );
         }}
@@ -387,7 +387,7 @@ function ComparisonSlider({ leftPhoto, rightPhoto, userName, userGoal }: {
       />
 
       <View
-        style={{ marginHorizontal: 20, marginBottom: 16, borderRadius: 20, overflow: "hidden", backgroundColor: "#150A00", borderWidth: 1, borderColor: "rgba(245,158,11,0.18)" }}
+        style={{ marginHorizontal: 20, marginBottom: 16, borderRadius: 20, overflow: "hidden", backgroundColor: "#141A22", borderWidth: 1, borderColor: "rgba(245,158,11,0.18)" }}
         onLayout={onLayout}
       >
         {/* Section label */}
@@ -409,7 +409,7 @@ function ComparisonSlider({ leftPhoto, rightPhoto, userName, userGoal }: {
             backgroundColor: "#F59E0B", alignItems: "center", justifyContent: "center",
             shadowColor: "#000", shadowOpacity: 0.5, shadowRadius: 6, elevation: 8,
           }}>
-            <Text style={{ color: "#0A0500", fontSize: 16, fontWeight: "700" }}>⇔</Text>
+            <Text style={{ color: "#0A0E14", fontSize: 16, fontWeight: "700" }}>⇔</Text>
           </Animated.View>
           {/* THEN label */}
           <View style={{ position: "absolute", top: 10, left: 10, backgroundColor: "rgba(10,5,0,0.72)", borderRadius: 8, paddingHorizontal: 10, paddingVertical: 4, borderWidth: 1, borderColor: "#F59E0B60" }}>
@@ -459,7 +459,7 @@ function ComparisonSlider({ leftPhoto, rightPhoto, userName, userGoal }: {
             onPress={openCaptionSheet}
           >
             <Text style={{ fontSize: 16 }}>📤</Text>
-            <Text style={{ color: "#0A0500", fontWeight: "700", fontSize: 14 }}>Export & Share Collage</Text>
+            <Text style={{ color: "#0A0E14", fontWeight: "700", fontSize: 14 }}>Export & Share Collage</Text>
           </TouchableOpacity>
           <Text style={{ color: "#451A03", fontSize: 10, textAlign: "center", marginTop: 6 }}>
             Saves a 1080×1350 branded image · caption auto-copied to clipboard
@@ -574,11 +574,11 @@ export default function ProgressPhotosScreen() {
       <ScrollView contentContainerStyle={{ paddingBottom: 40 }} showsVerticalScrollIndicator={false}>
         {/* Header */}
         <View style={{ paddingHorizontal: 20, paddingTop: 16, paddingBottom: 16, flexDirection: "row", alignItems: "center", gap: 12 }}>
-          <TouchableOpacity onPress={() => router.back()} style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: "#150A00", alignItems: "center", justifyContent: "center" }}>
-            <Text style={{ color: "#FFF7ED", fontSize: 16 }}>←</Text>
+          <TouchableOpacity onPress={() => router.back()} style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: "#141A22", alignItems: "center", justifyContent: "center" }}>
+            <Text style={{ color: "#F1F5F9", fontSize: 16 }}>←</Text>
           </TouchableOpacity>
           <View>
-            <Text style={{ color: "#FFF7ED", fontSize: 22, fontWeight: "800" }}>Progress Photos</Text>
+            <Text style={{ color: "#F1F5F9", fontSize: 22, fontWeight: "800" }}>Progress Photos</Text>
             <Text style={{ color: "#B45309", fontSize: 12 }}>Track your transformation journey</Text>
           </View>
         </View>
@@ -600,7 +600,7 @@ export default function ProgressPhotosScreen() {
             userName={(profile as any)?.name} userGoal={(profile as any)?.goal}
           />
         ) : photos && photos.length === 1 ? (
-          <View style={{ marginHorizontal: 20, marginBottom: 20, backgroundColor: "#150A00", borderRadius: 20, padding: 18, borderWidth: 1, borderColor: "rgba(245,158,11,0.12)", alignItems: "center" }}>
+          <View style={{ marginHorizontal: 20, marginBottom: 20, backgroundColor: "#141A22", borderRadius: 20, padding: 18, borderWidth: 1, borderColor: "rgba(245,158,11,0.12)", alignItems: "center" }}>
             <Text style={{ fontSize: 32, marginBottom: 8 }}>📸</Text>
             <Text style={{ color: "#F59E0B", fontWeight: "700", fontSize: 14, textAlign: "center", marginBottom: 4 }}>Add one more photo to unlock</Text>
             <Text style={{ color: "#B45309", fontSize: 12, textAlign: "center" }}>Add 2+ photos to see before/after comparison.</Text>
@@ -608,22 +608,22 @@ export default function ProgressPhotosScreen() {
         ) : null}
 
         {/* Upload New Photo */}
-        <View style={{ marginHorizontal: 20, marginBottom: 20, backgroundColor: "#150A00", borderRadius: 20, padding: 16, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}>
-          <Text style={{ color: "#FFF7ED", fontWeight: "700", fontSize: 14, marginBottom: 12 }}>Add New Photo</Text>
+        <View style={{ marginHorizontal: 20, marginBottom: 20, backgroundColor: "#141A22", borderRadius: 20, padding: 16, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}>
+          <Text style={{ color: "#F1F5F9", fontWeight: "700", fontSize: 14, marginBottom: 12 }}>Add New Photo</Text>
           {selectedImage ? (
             <View style={{ marginBottom: 12 }}>
-              <Image source={{ uri: selectedImage }} style={{ width: "100%", height: 280, borderRadius: 14, backgroundColor: "#150A00" }} resizeMode="cover" />
+              <Image source={{ uri: selectedImage }} style={{ width: "100%", height: 280, borderRadius: 14, backgroundColor: "#141A22" }} resizeMode="cover" />
               <TouchableOpacity style={{ position: "absolute", top: 10, right: 10, backgroundColor: "rgba(100,116,139,0.56)", borderRadius: 16, paddingHorizontal: 10, paddingVertical: 5 }} onPress={() => setSelectedImage(null)}>
-                <Text style={{ color: "#FFF7ED", fontWeight: "700", fontSize: 12 }}>✕</Text>
+                <Text style={{ color: "#F1F5F9", fontWeight: "700", fontSize: 12 }}>✕</Text>
               </TouchableOpacity>
             </View>
           ) : (
             <View style={{ flexDirection: "row", gap: 10, marginBottom: 12 }}>
-              <TouchableOpacity style={{ flex: 1, backgroundColor: "#150A00", borderRadius: 14, paddingVertical: 16, alignItems: "center", borderWidth: 1, borderColor: "rgba(245,158,11,0.10)", gap: 6 }} onPress={() => pickImage(true)}>
+              <TouchableOpacity style={{ flex: 1, backgroundColor: "#141A22", borderRadius: 14, paddingVertical: 16, alignItems: "center", borderWidth: 1, borderColor: "rgba(245,158,11,0.10)", gap: 6 }} onPress={() => pickImage(true)}>
                 <Text style={{ fontSize: 24 }}>📷</Text>
                 <Text style={{ color: "#B45309", fontSize: 12 }}>Camera</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={{ flex: 1, backgroundColor: "#150A00", borderRadius: 14, paddingVertical: 16, alignItems: "center", borderWidth: 1, borderColor: "rgba(245,158,11,0.10)", gap: 6 }} onPress={() => pickImage(false)}>
+              <TouchableOpacity style={{ flex: 1, backgroundColor: "#141A22", borderRadius: 14, paddingVertical: 16, alignItems: "center", borderWidth: 1, borderColor: "rgba(245,158,11,0.10)", gap: 6 }} onPress={() => pickImage(false)}>
                 <Text style={{ fontSize: 24 }}>🖼️</Text>
                 <Text style={{ color: "#B45309", fontSize: 12 }}>Gallery</Text>
               </TouchableOpacity>
@@ -632,28 +632,28 @@ export default function ProgressPhotosScreen() {
           {selectedImage && (
             <>
               <TextInput value={note} onChangeText={setNote} placeholder="Add a note (optional)" placeholderTextColor="#451A03"
-                style={{ backgroundColor: "#150A00", borderRadius: 10, paddingHorizontal: 12, paddingVertical: 10, color: "#FFF7ED", fontSize: 13, marginBottom: 10, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }} returnKeyType="done" />
+                style={{ backgroundColor: "#141A22", borderRadius: 10, paddingHorizontal: 12, paddingVertical: 10, color: "#F1F5F9", fontSize: 13, marginBottom: 10, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }} returnKeyType="done" />
               {/* Optional weight + BF% */}
               <View style={{ flexDirection: "row", gap: 10, marginBottom: 10 }}>
                 <View style={{ flex: 1 }}>
                   <Text style={{ color: "#B45309", fontSize: 11, marginBottom: 4 }}>Weight (kg) — optional</Text>
                   <TextInput value={weightInput} onChangeText={setWeightInput} placeholder="e.g. 82.5" placeholderTextColor="#451A03" keyboardType="decimal-pad"
-                    style={{ backgroundColor: "#150A00", borderRadius: 10, paddingHorizontal: 12, paddingVertical: 10, color: "#FFF7ED", fontSize: 13, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }} returnKeyType="done" />
+                    style={{ backgroundColor: "#141A22", borderRadius: 10, paddingHorizontal: 12, paddingVertical: 10, color: "#F1F5F9", fontSize: 13, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }} returnKeyType="done" />
                 </View>
                 <View style={{ flex: 1 }}>
                   <Text style={{ color: "#B45309", fontSize: 11, marginBottom: 4 }}>Body Fat % — optional</Text>
                   <TextInput value={bfInput} onChangeText={setBfInput} placeholder="e.g. 18.0" placeholderTextColor="#451A03" keyboardType="decimal-pad"
-                    style={{ backgroundColor: "#150A00", borderRadius: 10, paddingHorizontal: 12, paddingVertical: 10, color: "#FFF7ED", fontSize: 13, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }} returnKeyType="done" />
+                    style={{ backgroundColor: "#141A22", borderRadius: 10, paddingHorizontal: 12, paddingVertical: 10, color: "#F1F5F9", fontSize: 13, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }} returnKeyType="done" />
                 </View>
               </View>
               <TouchableOpacity style={{ flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 12 }} onPress={() => setIsBaseline(!isBaseline)}>
                 <View style={{ width: 20, height: 20, borderRadius: 6, backgroundColor: isBaseline ? "#F59E0B" : "rgba(245,158,11,0.10)", borderWidth: 1, borderColor: "#F59E0B", alignItems: "center", justifyContent: "center" }}>
-                  {isBaseline && <Text style={{ color: "#FFF7ED", fontSize: 12 }}>✓</Text>}
+                  {isBaseline && <Text style={{ color: "#F1F5F9", fontSize: 12 }}>✓</Text>}
                 </View>
                 <Text style={{ color: "#B45309", fontSize: 13 }}>Set as baseline photo</Text>
               </TouchableOpacity>
               <TouchableOpacity style={{ backgroundColor: "#F59E0B", borderRadius: 12, paddingVertical: 12, alignItems: "center", opacity: uploadPhoto.isPending ? 0.7 : 1 }} onPress={savePhoto} disabled={uploadPhoto.isPending}>
-                {uploadPhoto.isPending ? <ActivityIndicator color="#FFF7ED" size="small" /> : <Text style={{ color: "#FFF7ED", fontWeight: "700" }}>Save Photo</Text>}
+                {uploadPhoto.isPending ? <ActivityIndicator color="#F1F5F9" size="small" /> : <Text style={{ color: "#F1F5F9", fontWeight: "700" }}>Save Photo</Text>}
               </TouchableOpacity>
             </>
           )}
@@ -661,7 +661,7 @@ export default function ProgressPhotosScreen() {
 
         {/* AI Analysis Result */}
         {analysis && (
-          <View style={{ marginHorizontal: 20, marginBottom: 20, backgroundColor: "#150A00", borderRadius: 20, padding: 16, borderWidth: 1, borderColor: "#A78BFA30" }}>
+          <View style={{ marginHorizontal: 20, marginBottom: 20, backgroundColor: "#141A22", borderRadius: 20, padding: 16, borderWidth: 1, borderColor: "#A78BFA30" }}>
             <Text style={{ color: "#FBBF24", fontWeight: "700", fontSize: 13, marginBottom: 10 }}>✨ AI Analysis</Text>
             <Text style={{ color: "#F59E0B", fontSize: 14, lineHeight: 20, marginBottom: 12 }}>{String(analysis.summary)}</Text>
             {analysis.details?.map((d: string, i: number) => (
@@ -683,20 +683,20 @@ export default function ProgressPhotosScreen() {
 
         {/* Photos Grid */}
         <View style={{ paddingHorizontal: 20 }}>
-          <Text style={{ color: "#FFF7ED", fontWeight: "700", fontSize: 16, marginBottom: 12 }}>Your Photos ({photos?.length ?? 0})</Text>
+          <Text style={{ color: "#F1F5F9", fontWeight: "700", fontSize: 16, marginBottom: 12 }}>Your Photos ({photos?.length ?? 0})</Text>
           {!photos || photos.length === 0 ? (
-            <View style={{ backgroundColor: "#150A00", borderRadius: 16, padding: 32, alignItems: "center", borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}>
+            <View style={{ backgroundColor: "#141A22", borderRadius: 16, padding: 32, alignItems: "center", borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}>
               <Text style={{ fontSize: 40, marginBottom: 8 }}>📸</Text>
               <Text style={{ color: "#B45309", fontSize: 13, textAlign: "center" }}>No photos yet. Add your first to start tracking.</Text>
             </View>
           ) : (
             <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 10 }}>
               {sortedPhotos.map((photo, i) => (
-                <View key={photo.id} style={{ width: "48%", backgroundColor: "#150A00", borderRadius: 14, overflow: "hidden", borderWidth: photo.isBaseline ? 2 : 1, borderColor: photo.isBaseline ? "#F59E0B" : "rgba(245,158,11,0.10)" }}>
+                <View key={photo.id} style={{ width: "48%", backgroundColor: "#141A22", borderRadius: 14, overflow: "hidden", borderWidth: photo.isBaseline ? 2 : 1, borderColor: photo.isBaseline ? "#F59E0B" : "rgba(245,158,11,0.10)" }}>
                   <Image source={{ uri: photo.photoUrl }} style={{ width: "100%", height: 160 }} resizeMode="cover" />
                   {photo.isBaseline && (
                     <View style={{ position: "absolute", top: 8, left: 8, backgroundColor: "#F59E0B", borderRadius: 8, paddingHorizontal: 8, paddingVertical: 3 }}>
-                      <Text style={{ color: "#FFF7ED", fontSize: 10, fontWeight: "700" }}>BASELINE</Text>
+                      <Text style={{ color: "#F1F5F9", fontSize: 10, fontWeight: "700" }}>BASELINE</Text>
                     </View>
                   )}
                   {i === 0 && (

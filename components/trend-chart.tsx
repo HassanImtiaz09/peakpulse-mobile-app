@@ -12,10 +12,10 @@ import type { MuscleGroup } from "@/components/body-diagram";
 
 // ── Theme ────────────────────────────────────────────────────────────────────
 const SF = {
-  bg: "#0A0500", surface: "rgba(245,158,11,0.04)", surfaceBright: "rgba(245,158,11,0.08)",
+  bg: "#0A0E14", surface: "rgba(245,158,11,0.04)", surfaceBright: "rgba(245,158,11,0.08)",
   gold1: "#FBBF24", gold2: "#F59E0B", gold3: "#D97706",
   muted: "#B45309", border: "rgba(245,158,11,0.10)", borderBright: "rgba(245,158,11,0.18)",
-  red: "#EF4444", green: "#22C55E", blue: "#3B82F6", cream: "#FFF7ED",
+  red: "#EF4444", green: "#22C55E", blue: "#3B82F6", cream: "#F1F5F9",
 };
 
 // ── Types ────────────────────────────────────────────────────────────────────
@@ -112,7 +112,7 @@ export function TrendChart({ data, title = "Muscle Balance Trend", height = 200,
   if (data.length === 0) {
     return (
       <View style={{ backgroundColor: SF.surface, borderRadius: 16, padding: 16, borderWidth: 1, borderColor: SF.border }}>
-        <Text style={{ color: SF.cream, fontFamily: "Outfit_700Bold", fontSize: 14, marginBottom: 8 }}>{title}</Text>
+        <Text style={{ color: SF.cream, fontFamily: "DMSans_700Bold", fontSize: 14, marginBottom: 8 }}>{title}</Text>
         <View style={{ alignItems: "center", paddingVertical: 30 }}>
           <MaterialIcons name="show-chart" size={32} color={SF.muted} />
           <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 12, marginTop: 8 }}>
@@ -125,7 +125,7 @@ export function TrendChart({ data, title = "Muscle Balance Trend", height = 200,
 
   return (
     <View style={{ backgroundColor: SF.surface, borderRadius: 16, padding: 16, borderWidth: 1, borderColor: SF.border }}>
-      <Text style={{ color: SF.cream, fontFamily: "Outfit_700Bold", fontSize: 14, marginBottom: 4 }}>{title}</Text>
+      <Text style={{ color: SF.cream, fontFamily: "DMSans_700Bold", fontSize: 14, marginBottom: 4 }}>{title}</Text>
 
       {/* Legend */}
       <View style={{ flexDirection: "row", gap: 12, marginBottom: 8, flexWrap: "wrap" }}>
@@ -230,24 +230,24 @@ export function TrendChart({ data, title = "Muscle Balance Trend", height = 200,
           backgroundColor: SF.surfaceBright, borderRadius: 10, padding: 10, marginTop: 8,
           borderWidth: 1, borderColor: SF.borderBright,
         }}>
-          <Text style={{ color: SF.cream, fontFamily: "Outfit_700Bold", fontSize: 11, marginBottom: 4 }}>
+          <Text style={{ color: SF.cream, fontFamily: "DMSans_700Bold", fontSize: 11, marginBottom: 4 }}>
             {data[selectedPoint].label}
           </Text>
           <View style={{ flexDirection: "row", gap: 12 }}>
             <View>
-              <Text style={{ color: SF.gold1, fontFamily: "Outfit_700Bold", fontSize: 16 }}>{data[selectedPoint].overallScore}</Text>
+              <Text style={{ color: SF.gold1, fontFamily: "DMSans_700Bold", fontSize: 16 }}>{data[selectedPoint].overallScore}</Text>
               <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 8 }}>Score</Text>
             </View>
             <View>
-              <Text style={{ color: SF.green, fontFamily: "Outfit_700Bold", fontSize: 16 }}>{data[selectedPoint].optimalCount}</Text>
+              <Text style={{ color: SF.green, fontFamily: "DMSans_700Bold", fontSize: 16 }}>{data[selectedPoint].optimalCount}</Text>
               <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 8 }}>Optimal</Text>
             </View>
             <View>
-              <Text style={{ color: SF.red, fontFamily: "Outfit_700Bold", fontSize: 16 }}>{data[selectedPoint].overCount}</Text>
+              <Text style={{ color: SF.red, fontFamily: "DMSans_700Bold", fontSize: 16 }}>{data[selectedPoint].overCount}</Text>
               <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 8 }}>Over</Text>
             </View>
             <View>
-              <Text style={{ color: SF.blue, fontFamily: "Outfit_700Bold", fontSize: 16 }}>{data[selectedPoint].underCount}</Text>
+              <Text style={{ color: SF.blue, fontFamily: "DMSans_700Bold", fontSize: 16 }}>{data[selectedPoint].underCount}</Text>
               <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 8 }}>Under</Text>
             </View>
           </View>
@@ -306,7 +306,7 @@ export function PRProgressChart({ data, title, unit, color = SF.gold1, height = 
   if (data.length === 0) {
     return (
       <View style={{ backgroundColor: SF.surface, borderRadius: 14, padding: 14, borderWidth: 1, borderColor: SF.border }}>
-        <Text style={{ color: SF.cream, fontFamily: "Outfit_700Bold", fontSize: 13, marginBottom: 8 }}>{title}</Text>
+        <Text style={{ color: SF.cream, fontFamily: "DMSans_700Bold", fontSize: 13, marginBottom: 8 }}>{title}</Text>
         <View style={{ alignItems: "center", paddingVertical: 20 }}>
           <MaterialIcons name="show-chart" size={24} color={SF.muted} />
           <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 11, marginTop: 6 }}>
@@ -347,7 +347,7 @@ export function PRProgressChart({ data, title, unit, color = SF.gold1, height = 
   return (
     <View style={{ backgroundColor: SF.surface, borderRadius: 14, padding: 14, borderWidth: 1, borderColor: SF.border }}>
       <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
-        <Text style={{ color: SF.cream, fontFamily: "Outfit_700Bold", fontSize: 13 }}>{title}</Text>
+        <Text style={{ color: SF.cream, fontFamily: "DMSans_700Bold", fontSize: 13 }}>{title}</Text>
         {data.length >= 2 && (
           <View style={{ flexDirection: "row", alignItems: "center", gap: 3 }}>
             <MaterialIcons name={trendUp ? "trending-up" : "trending-down"} size={14} color={trendUp ? SF.green : SF.red} />
@@ -360,7 +360,7 @@ export function PRProgressChart({ data, title, unit, color = SF.gold1, height = 
 
       {/* Current best */}
       <View style={{ flexDirection: "row", alignItems: "baseline", gap: 4, marginBottom: 8 }}>
-        <Text style={{ color, fontFamily: "Outfit_700Bold", fontSize: 22 }}>{lastVal}</Text>
+        <Text style={{ color, fontFamily: "DMSans_700Bold", fontSize: 22 }}>{lastVal}</Text>
         <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 11 }}>{unit}</Text>
       </View>
 

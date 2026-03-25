@@ -7,11 +7,11 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { ScreenContainer } from "@/components/screen-container";
 
 const SF = {
-  bg:      "#0A0500",
-  surface: "#150A00",
+  bg:      "#0A0E14",
+  surface: "#141A22",
   border:  "rgba(245,158,11,0.15)",
   border2: "rgba(245,158,11,0.25)",
-  fg:      "#FFF7ED",
+  fg:      "#F1F5F9",
   muted: "#B45309",
   gold:    "#F59E0B",
   gold2:   "#FBBF24",
@@ -127,8 +127,8 @@ export default function UserGuideScreen() {
           >
             <MaterialIcons name="arrow-back" size={20} color={SF.gold} />
           </TouchableOpacity>
-          <Text style={{ color: SF.gold, fontFamily: "Outfit_700Bold", fontSize: 11, letterSpacing: 2, marginBottom: 6 }}>PEAKPULSE AI</Text>
-          <Text style={{ color: SF.fg, fontFamily: "Outfit_800ExtraBold", fontSize: 28 }}>User Guide</Text>
+          <Text style={{ color: SF.gold, fontFamily: "DMSans_700Bold", fontSize: 11, letterSpacing: 2, marginBottom: 6 }}>PEAKPULSE AI</Text>
+          <Text style={{ color: SF.fg, fontFamily: "BebasNeue_400Regular", fontSize: 28 }}>User Guide</Text>
           <Text style={{ color: SF.gold3, fontFamily: "DMSans_400Regular", fontSize: 13, marginTop: 4 }}>
             Everything you need to get the most out of the app
           </Text>
@@ -140,7 +140,7 @@ export default function UserGuideScreen() {
         <View style={{ backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 16, padding: 16, marginBottom: 20, borderWidth: 1, borderColor: SF.border2, flexDirection: "row", gap: 12, alignItems: "flex-start" }}>
           <Text style={{ fontSize: 28 }}>⚡</Text>
           <View style={{ flex: 1 }}>
-            <Text style={{ color: SF.gold, fontFamily: "Outfit_700Bold", fontSize: 14, marginBottom: 4 }}>Quick Start</Text>
+            <Text style={{ color: SF.gold, fontFamily: "DMSans_700Bold", fontSize: 14, marginBottom: 4 }}>Quick Start</Text>
             <Text style={{ color: SF.gold3, fontFamily: "DMSans_400Regular", fontSize: 13, lineHeight: 20 }}>
               1. Take an AI Body Scan → 2. Generate your plans → 3. Log your first meal → 4. Complete your first workout. That's it — the AI handles the rest.
             </Text>
@@ -173,7 +173,7 @@ export default function UserGuideScreen() {
                 <View style={{ width: 44, height: 44, borderRadius: 12, backgroundColor: "rgba(245,158,11,0.10)", alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: SF.border }}>
                   <Text style={{ fontSize: 22 }}>{section.icon}</Text>
                 </View>
-                <Text style={{ color: SF.fg, fontFamily: "Outfit_700Bold", fontSize: 16, flex: 1 }}>{section.title}</Text>
+                <Text style={{ color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 16, flex: 1 }}>{section.title}</Text>
                 <MaterialIcons name={isOpen ? "expand-less" : "expand-more"} size={22} color={SF.muted} />
               </TouchableOpacity>
 
@@ -182,7 +182,7 @@ export default function UserGuideScreen() {
                   {section.steps.map((step, si) => (
                     <View key={si} style={{ flexDirection: "row", gap: 12, alignItems: "flex-start" }}>
                       <View style={{ width: 24, height: 24, borderRadius: 12, backgroundColor: SF.gold, alignItems: "center", justifyContent: "center", flexShrink: 0, marginTop: 1 }}>
-                        <Text style={{ color: SF.bg, fontFamily: "Outfit_700Bold", fontSize: 11 }}>{si + 1}</Text>
+                        <Text style={{ color: SF.bg, fontFamily: "DMSans_700Bold", fontSize: 11 }}>{si + 1}</Text>
                       </View>
                       <Text style={{ color: SF.gold3, fontFamily: "DMSans_400Regular", fontSize: 14, lineHeight: 21, flex: 1 }}>{step}</Text>
                     </View>
@@ -196,7 +196,7 @@ export default function UserGuideScreen() {
         {/* Footer */}
         <View style={{ marginTop: 20, backgroundColor: SF.surface, borderRadius: 16, padding: 16, borderWidth: 1, borderColor: SF.border, alignItems: "center", gap: 8 }}>
           <Text style={{ fontSize: 28 }}>🔥</Text>
-          <Text style={{ color: SF.fg, fontFamily: "Outfit_700Bold", fontSize: 15, textAlign: "center" }}>You're ready to transform.</Text>
+          <Text style={{ color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 15, textAlign: "center" }}>You're ready to transform.</Text>
           <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 13, textAlign: "center", lineHeight: 20 }}>
             Consistency beats perfection. Show up every day and let the AI guide you.
           </Text>
@@ -204,7 +204,7 @@ export default function UserGuideScreen() {
             style={{ backgroundColor: SF.gold, borderRadius: 14, paddingVertical: 14, paddingHorizontal: 32, marginTop: 8 }}
             onPress={() => router.back()}
           >
-            <Text style={{ color: SF.bg, fontFamily: "Outfit_800ExtraBold", fontSize: 15 }}>Let's Go ⚡</Text>
+            <Text style={{ color: SF.bg, fontFamily: "BebasNeue_400Regular", fontSize: 15 }}>Let's Go ⚡</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>

@@ -23,6 +23,16 @@ import { getTodayTargetMuscles } from "@/lib/muscle-balance";
 const WORKOUT_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/yauqLuTRvanJUzsJ.jpg";
 const MEAL_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/yauqLuTRvanJUzsJ.jpg";
 
+// NanoBanana design tokens
+const GOLD = "#F59E0B";
+const GOLD_DIM = "rgba(245,158,11,0.12)";
+const GOLD_BORDER = "rgba(245,158,11,0.20)";
+const BG = "#0A0E14";
+const SURFACE = "#141A22";
+const FG = "#F1F5F9";
+const MUTED = "#64748B";
+const CREAM = "#FDE68A";
+
 const MEAL_PHOTO_MAP: Record<string, string> = {
   breakfast: "https://images.unsplash.com/photo-1533089860892-a7c6f0a88666?w=400&q=80",
   "morning snack": "https://images.unsplash.com/photo-1490474418585-ba9bad8fd0ea?w=400&q=80",
@@ -204,20 +214,16 @@ export default function PlansScreen() {
 
   if (!canUse) {
     return (
-      <View style={{ flex: 1, backgroundColor: "#0A0500" }}>
-        <ImageBackground source={{ uri: WORKOUT_BG }} style={{ flex: 1 }} resizeMode="cover">
-          <View style={{ flex: 1, backgroundColor: "rgba(8,8,16,0.8)", alignItems: "center", justifyContent: "center", padding: 32 }}>
-            <MaterialIcons name="fitness-center" size={48} color="#F59E0B" style={{ marginBottom: 16 }} />
-            <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_800ExtraBold", fontSize: 22, textAlign: "center", marginBottom: 8 }}>Unlock Your Plans</Text>
-            <Text style={{ color: "#B45309", fontSize: 14, textAlign: "center", lineHeight: 20, marginBottom: 24 }}>Sign in or continue as guest to get started.</Text>
-            <TouchableOpacity
-              style={{ backgroundColor: "#F59E0B", paddingHorizontal: 32, paddingVertical: 14, borderRadius: 16, shadowColor: "#F59E0B", shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.5, shadowRadius: 12 }}
-              onPress={() => router.push("/login" as any)}
-            >
-              <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_800ExtraBold", fontSize: 16 }}>Get Started →</Text>
-            </TouchableOpacity>
-          </View>
-        </ImageBackground>
+      <View style={{ flex: 1, backgroundColor: BG, alignItems: "center", justifyContent: "center", padding: 32 }}>
+        <MaterialIcons name="fitness-center" size={48} color={GOLD} style={{ marginBottom: 16 }} />
+        <Text style={{ color: FG, fontFamily: "BebasNeue_400Regular", fontSize: 28, letterSpacing: 3, textAlign: "center", marginBottom: 8 }}>UNLOCK YOUR PLANS</Text>
+        <Text style={{ color: MUTED, fontSize: 14, textAlign: "center", lineHeight: 20, marginBottom: 24 }}>Sign in or continue as guest to get started.</Text>
+        <TouchableOpacity
+          style={{ backgroundColor: GOLD, paddingHorizontal: 32, paddingVertical: 14, borderRadius: 16 }}
+          onPress={() => router.push("/login" as any)}
+        >
+          <Text style={{ color: BG, fontFamily: "DMSans_700Bold", fontSize: 16 }}>Get Started</Text>
+        </TouchableOpacity>
       </View>
     );
   }
@@ -252,49 +258,44 @@ export default function PlansScreen() {
   const mealGoalLabel = GOALS.find(g => g.key === mealGoal)?.label ?? mealGoal;
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#0A0500" }}>
-      {/* Hero Header with Parallax */}
-      <View style={{ width: "100%", height: 140, overflow: "hidden" }}>
-        <Animated.View style={[{ position: "absolute", top: 0, left: 0, right: 0, height: 240 }, heroImageStyle]}>
-          <ImageBackground source={{ uri: activeTab === 1 ? MEAL_BG : WORKOUT_BG }} style={{ width: "100%", height: "100%" }} resizeMode="cover" />
-        </Animated.View>
-        <Animated.View style={[{ flex: 1, backgroundColor: "rgba(8,8,16,0.72)", justifyContent: "flex-end", padding: 20, paddingTop: 52 }, heroContentStyle]}>
-          <TouchableOpacity
-            style={{ position: "absolute", top: 52, right: 20, flexDirection: "row", alignItems: "center", gap: 4, backgroundColor: "rgba(245,158,11,0.12)", borderRadius: 20, paddingHorizontal: 10, paddingVertical: 5, borderWidth: 1, borderColor: "rgba(245,158,11,0.20)" }}
-            onPress={() => router.push("/user-guide" as any)}
-          >
-            <MaterialIcons name="help-outline" size={14} color="#FBBF24" />
-            <Text style={{ color: "#FBBF24", fontFamily: "DMSans_500Medium", fontSize: 11 }}>Guide</Text>
+    <View style={{ flex: 1, backgroundColor: BG }}>
+      {/* Hero Header — NanoBanana flat dark */}
+      <View style={{ backgroundColor: BG, paddingTop: 56, paddingHorizontal: 20, paddingBottom: 12 }}>
+        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+          <TouchableOpacity onPress={() => router.back()} style={{ padding: 4 }}>
+            <MaterialIcons name="chevron-left" size={28} color={FG} />
           </TouchableOpacity>
-          <Text style={{ color: "#FBBF24", fontFamily: "Outfit_700Bold", fontSize: 12, letterSpacing: 1 }}>AI-POWERED</Text>
-          <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_800ExtraBold", fontSize: 24, letterSpacing: -0.5 }}>Your Plans</Text>
-        </Animated.View>
+          <Text style={{ color: FG, fontFamily: "BebasNeue_400Regular", fontSize: 24, letterSpacing: 3 }}>WORKOUT PLANS</Text>
+          <TouchableOpacity onPress={() => router.push("/user-guide" as any)} style={{ padding: 4 }}>
+            <MaterialIcons name="more-horiz" size={22} color={MUTED} />
+          </TouchableOpacity>
+        </View>
       </View>
 
       {/* Tab Bar + Exercise Library Button */}
-      <View style={{ flexDirection: "row", paddingHorizontal: 20, marginTop: 10, marginBottom: 12, gap: 8 }}>
+      <View style={{ flexDirection: "row", paddingHorizontal: 20, marginBottom: 12, gap: 8 }}>
         {TABS.map((tab, i) => (
           <TouchableOpacity
             key={tab}
-            style={{ flex: 1, paddingVertical: 10, borderRadius: 12, alignItems: "center", backgroundColor: activeTab === i ? "#F59E0B" : "#150A00", borderWidth: 1, borderColor: activeTab === i ? "#F59E0B" : "rgba(245,158,11,0.10)" }}
+            style={{ flex: 1, paddingVertical: 10, borderRadius: 12, alignItems: "center", backgroundColor: activeTab === i ? GOLD : SURFACE, borderWidth: 1, borderColor: activeTab === i ? GOLD : "rgba(30,41,59,0.6)" }}
             onPress={() => setActiveTab(i)}
           >
-            <Text style={{ color: activeTab === i ? "#FFF7ED" : "#B45309", fontFamily: "Outfit_700Bold", fontSize: 13 }}>{tab}</Text>
+            <Text style={{ color: activeTab === i ? BG : MUTED, fontFamily: "DMSans_700Bold", fontSize: 13 }}>{tab}</Text>
           </TouchableOpacity>
         ))}
         <TouchableOpacity
-          style={{ paddingVertical: 10, paddingHorizontal: 12, borderRadius: 12, alignItems: "center", backgroundColor: "#150A00", borderWidth: 1, borderColor: "rgba(245,158,11,0.25)", flexDirection: "row", gap: 4 }}
+          style={{ paddingVertical: 10, paddingHorizontal: 12, borderRadius: 12, alignItems: "center", backgroundColor: SURFACE, borderWidth: 1, borderColor: GOLD_BORDER, flexDirection: "row", gap: 4 }}
           onPress={() => router.push("/exercise-library" as any)}
         >
-          <MaterialIcons name="menu-book" size={16} color="#F59E0B" />
-          <Text style={{ color: "#F59E0B", fontFamily: "Outfit_700Bold", fontSize: 11 }}>Library</Text>
+          <MaterialIcons name="menu-book" size={16} color={GOLD} />
+          <Text style={{ color: GOLD, fontFamily: "DMSans_700Bold", fontSize: 11 }}>Library</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={{ paddingVertical: 10, paddingHorizontal: 12, borderRadius: 12, alignItems: "center", backgroundColor: "rgba(245,158,11,0.12)", borderWidth: 1, borderColor: "rgba(245,158,11,0.25)", flexDirection: "row", gap: 4 }}
+          style={{ paddingVertical: 10, paddingHorizontal: 12, borderRadius: 12, alignItems: "center", backgroundColor: GOLD_DIM, borderWidth: 1, borderColor: GOLD_BORDER, flexDirection: "row", gap: 4 }}
           onPress={() => router.push("/create-workout" as any)}
         >
-          <MaterialIcons name="add-circle-outline" size={16} color="#F59E0B" />
-          <Text style={{ color: "#F59E0B", fontFamily: "Outfit_700Bold", fontSize: 11 }}>Create</Text>
+          <MaterialIcons name="add-circle-outline" size={16} color={GOLD} />
+          <Text style={{ color: GOLD, fontFamily: "DMSans_700Bold", fontSize: 11 }}>Create</Text>
         </TouchableOpacity>
       </View>
 
@@ -325,9 +326,9 @@ export default function PlansScreen() {
                   ))}
                 </View>
 
-                <View style={{ backgroundColor: "#FBBF2410", borderRadius: 10, padding: 10, marginBottom: 16, borderWidth: 1, borderColor: "#FBBF2430", flexDirection: "row", gap: 8 }}>
-                  <MaterialIcons name="warning-amber" size={14} color="#FCD34D" />
-                  <Text style={{ color: "#FCD34D", fontSize: 11, lineHeight: 16, flex: 1 }}>AI plans are for guidance. Consult a professional before starting.</Text>
+                <View style={{ backgroundColor: GOLD_DIM, borderRadius: 10, padding: 10, marginBottom: 16, borderWidth: 1, borderColor: GOLD_BORDER, flexDirection: "row", gap: 8 }}>
+                  <MaterialIcons name="warning-amber" size={14} color={CREAM} />
+                  <Text style={{ color: CREAM, fontSize: 11, lineHeight: 16, flex: 1 }}>AI plans are for guidance. Consult a professional before starting.</Text>
                 </View>
 
                 <SectionLabel>Days Per Week</SectionLabel>
@@ -335,28 +336,28 @@ export default function PlansScreen() {
                   {DAYS_OPTIONS.map(d => (
                     <TouchableOpacity
                       key={d}
-                      style={{ flex: 1, paddingVertical: 10, borderRadius: 12, alignItems: "center", backgroundColor: daysPerWeek === d ? "#F59E0B" : "#150A00", borderWidth: 1, borderColor: daysPerWeek === d ? "#F59E0B" : "rgba(245,158,11,0.10)" }}
+                      style={{ flex: 1, paddingVertical: 10, borderRadius: 12, alignItems: "center", backgroundColor: daysPerWeek === d ? GOLD : SURFACE, borderWidth: 1, borderColor: daysPerWeek === d ? GOLD : "rgba(30,41,59,0.6)" }}
                       onPress={() => setDaysPerWeek(d)}
                     >
-                      <Text style={{ color: daysPerWeek === d ? "#FFF7ED" : "#B45309", fontFamily: "Outfit_700Bold" }}>{d}x</Text>
+                      <Text style={{ color: daysPerWeek === d ? BG : MUTED, fontFamily: "SpaceMono_700Bold" }}>{d}x</Text>
                     </TouchableOpacity>
                   ))}
                 </View>
 
                 <TouchableOpacity
-                  style={{ backgroundColor: "#F59E0B", borderRadius: 16, paddingVertical: 14, alignItems: "center", marginBottom: 24, opacity: generateWorkout.isPending ? 0.7 : 1 }}
+                  style={{ backgroundColor: GOLD, borderRadius: 16, paddingVertical: 14, alignItems: "center", marginBottom: 24, opacity: generateWorkout.isPending ? 0.7 : 1 }}
                   onPress={() => generateWorkout.mutate({ goal, workoutStyle, daysPerWeek })}
                   disabled={generateWorkout.isPending}
                 >
                   {generateWorkout.isPending ? (
                     <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-                      <ActivityIndicator color="#FFF7ED" size="small" />
-                      <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 15 }}>Generating Plan...</Text>
+                      <ActivityIndicator color={BG} size="small" />
+                      <Text style={{ color: BG, fontFamily: "DMSans_700Bold", fontSize: 15 }}>Generating Plan...</Text>
                     </View>
                   ) : (
                     <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
-                      <MaterialIcons name="auto-awesome" size={16} color="#FFF7ED" />
-                      <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 15 }}>Generate Workout Plan</Text>
+                      <MaterialIcons name="auto-awesome" size={16} color={BG} />
+                      <Text style={{ color: BG, fontFamily: "DMSans_700Bold", fontSize: 15 }}>Generate Workout Plan</Text>
                     </View>
                   )}
                 </TouchableOpacity>
@@ -364,17 +365,17 @@ export default function PlansScreen() {
             ) : (
               <>
                 {/* ── Plan Summary Bar ── */}
-                <View style={{ backgroundColor: "#150A00", borderRadius: 14, padding: 14, marginBottom: 12, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                <View style={{ backgroundColor: SURFACE, borderRadius: 14, padding: 14, marginBottom: 12, borderWidth: 1, borderColor: "rgba(30,41,59,0.6)", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
                   <View style={{ flex: 1 }}>
                     <View style={{ flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 4 }}>
                       <View style={{ backgroundColor: "rgba(34,197,94,0.15)", borderRadius: 6, paddingHorizontal: 8, paddingVertical: 2 }}>
-                        <Text style={{ color: "#4ADE80", fontSize: 10, fontFamily: "Outfit_700Bold" }}>ACTIVE</Text>
+                        <Text style={{ color: "#4ADE80", fontSize: 10, fontFamily: "DMSans_700Bold" }}>ACTIVE</Text>
                       </View>
-                      <Text style={{ color: "#B45309", fontSize: 11 }}>{goalLabel} · {styleLabel} · {daysPerWeek}x/wk</Text>
+                      <Text style={{ color: MUTED, fontSize: 11 }}>{goalLabel} · {styleLabel} · {daysPerWeek}x/wk</Text>
                     </View>
                     <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
                       {workoutStats && (
-                        <Text style={{ color: "#FBBF24", fontSize: 12, fontFamily: "Outfit_700Bold" }}>
+                        <Text style={{ color: GOLD, fontSize: 12, fontFamily: "SpaceMono_700Bold" }}>
                           {workoutStats.completedCount}/{workoutStats.totalWorkoutDays} done ({Math.round(workoutStats.pct * 100)}%)
                         </Text>
                       )}
@@ -387,32 +388,32 @@ export default function PlansScreen() {
                         exportWorkoutPlanPdf(workoutPlan, user?.name || (isGuest ? "Guest" : undefined));
                       }}
                       activeOpacity={0.7}
-                      style={{ backgroundColor: "rgba(245,158,11,0.12)", borderRadius: 8, padding: 6, borderWidth: 1, borderColor: "rgba(245,158,11,0.25)" }}
+                      style={{ backgroundColor: GOLD_DIM, borderRadius: 8, padding: 6, borderWidth: 1, borderColor: GOLD_BORDER }}
                     >
-                      <MaterialIcons name="picture-as-pdf" size={16} color="#FBBF24" />
+                      <MaterialIcons name="picture-as-pdf" size={16} color={GOLD} />
                     </TouchableOpacity>
                     <TouchableOpacity
                       onPress={resetWeekProgress}
-                      style={{ backgroundColor: "rgba(245,158,11,0.12)", borderRadius: 8, padding: 6, borderWidth: 1, borderColor: "rgba(245,158,11,0.25)" }}
+                      style={{ backgroundColor: GOLD_DIM, borderRadius: 8, padding: 6, borderWidth: 1, borderColor: GOLD_BORDER }}
                     >
-                      <MaterialIcons name="restart-alt" size={16} color="#FBBF24" />
+                      <MaterialIcons name="restart-alt" size={16} color={GOLD} />
                     </TouchableOpacity>
                   </View>
                 </View>
 
                 {/* Compact progress bar */}
                 {workoutStats && (
-                  <View style={{ height: 4, backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 2, marginBottom: 16, overflow: "hidden" }}>
-                    <View style={{ height: 4, borderRadius: 2, backgroundColor: workoutStats.pct >= 1 ? "#22C55E" : "#F59E0B", width: `${Math.round(workoutStats.pct * 100)}%` }} />
+                  <View style={{ height: 4, backgroundColor: "rgba(30,41,59,0.6)", borderRadius: 2, marginBottom: 16, overflow: "hidden" }}>
+                    <View style={{ height: 4, borderRadius: 2, backgroundColor: workoutStats.pct >= 1 ? "#22C55E" : GOLD, width: `${Math.round(workoutStats.pct * 100)}%` }} />
                   </View>
                 )}
 
                 {/* AI Insight */}
                 {workoutPlan.insight && (
-                  <View style={{ backgroundColor: "#7C3AED10", borderRadius: 12, padding: 12, marginBottom: 14, borderWidth: 1, borderColor: "rgba(245,158,11,0.12)" }}>
+                  <View style={{ backgroundColor: GOLD_DIM, borderRadius: 12, padding: 12, marginBottom: 14, borderWidth: 1, borderColor: GOLD_BORDER }}>
                     <View style={{ flexDirection: "row", gap: 8, alignItems: "flex-start" }}>
-                      <MaterialIcons name="auto-awesome" size={14} color="#FBBF24" style={{ marginTop: 2 }} />
-                      <Text style={{ color: "#FBBF24", fontSize: 12, lineHeight: 18, flex: 1 }}>{String(workoutPlan.insight)}</Text>
+                      <MaterialIcons name="auto-awesome" size={14} color={GOLD} style={{ marginTop: 2 }} />
+                      <Text style={{ color: CREAM, fontSize: 12, lineHeight: 18, flex: 1 }}>{String(workoutPlan.insight)}</Text>
                     </View>
                   </View>
                 )}
@@ -421,14 +422,14 @@ export default function PlansScreen() {
                 {todayWorkout && (
                   <>
                     <View style={{ flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 10 }}>
-                      <MaterialIcons name="today" size={16} color="#FBBF24" />
-                      <Text style={{ color: "#FBBF24", fontFamily: "Outfit_700Bold", fontSize: 15 }}>Today — {todayName}</Text>
+                      <MaterialIcons name="today" size={16} color={GOLD} />
+                      <Text style={{ color: GOLD, fontFamily: "DMSans_700Bold", fontSize: 15 }}>Today — {todayName}</Text>
                     </View>
 
                     {/* Body Diagram — Today's Target Muscles */}
                     {todayMuscles.primary.length > 0 && !todayWorkout.isRest && (
-                      <View style={{ backgroundColor: "rgba(245,158,11,0.06)", borderRadius: 16, padding: 14, marginBottom: 12, borderWidth: 1, borderColor: "rgba(245,158,11,0.12)", alignItems: "center" }}>
-                        <Text style={{ color: "#FDE68A", fontFamily: "Outfit_700Bold", fontSize: 12, marginBottom: 8, letterSpacing: 0.5 }}>TODAY'S TARGET MUSCLES</Text>
+                      <View style={{ backgroundColor: GOLD_DIM, borderRadius: 16, padding: 14, marginBottom: 12, borderWidth: 1, borderColor: GOLD_BORDER, alignItems: "center" }}>
+                        <Text style={{ color: CREAM, fontFamily: "DMSans_700Bold", fontSize: 12, marginBottom: 8, letterSpacing: 0.5 }}>TODAY'S TARGET MUSCLES</Text>
                         <BodyHeatmap
                           gender={userGender}
                           mode="target"
@@ -457,8 +458,8 @@ export default function PlansScreen() {
                 {otherWorkoutDays.length > 0 && (
                   <>
                     <View style={{ flexDirection: "row", alignItems: "center", gap: 8, marginTop: 8, marginBottom: 10 }}>
-                      <MaterialIcons name="date-range" size={16} color="#B45309" />
-                      <Text style={{ color: "#B45309", fontFamily: "Outfit_700Bold", fontSize: 13 }}>Rest of the Week</Text>
+                      <MaterialIcons name="date-range" size={16} color={MUTED} />
+                      <Text style={{ color: MUTED, fontFamily: "DMSans_700Bold", fontSize: 13 }}>Rest of the Week</Text>
                     </View>
                     {otherWorkoutDays.map((day: any, i: number) => (
                       <WorkoutDayCard
@@ -476,17 +477,17 @@ export default function PlansScreen() {
 
                 {/* AI Form Check CTA */}
                 <TouchableOpacity
-                  style={{ backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 16, padding: 16, marginTop: 8, borderWidth: 1, borderColor: "rgba(245,158,11,0.25)", flexDirection: "row", alignItems: "center", gap: 14 }}
+                  style={{ backgroundColor: GOLD_DIM, borderRadius: 16, padding: 16, marginTop: 8, borderWidth: 1, borderColor: GOLD_BORDER, flexDirection: "row", alignItems: "center", gap: 14 }}
                   onPress={() => router.push("/form-checker" as any)}
                 >
-                  <View style={{ width: 44, height: 44, borderRadius: 12, backgroundColor: "#F59E0B", alignItems: "center", justifyContent: "center" }}>
-                    <MaterialIcons name="center-focus-strong" size={22} color="#FFF7ED" />
+                  <View style={{ width: 44, height: 44, borderRadius: 12, backgroundColor: GOLD, alignItems: "center", justifyContent: "center" }}>
+                    <MaterialIcons name="center-focus-strong" size={22} color={BG} />
                   </View>
                   <View style={{ flex: 1 }}>
-                    <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 15 }}>AI Form Check</Text>
-                    <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 12, marginTop: 2 }}>Record a set for AI form analysis</Text>
+                    <Text style={{ color: FG, fontFamily: "DMSans_700Bold", fontSize: 15 }}>AI Form Check</Text>
+                    <Text style={{ color: MUTED, fontFamily: "DMSans_400Regular", fontSize: 12, marginTop: 2 }}>Record a set for AI form analysis</Text>
                   </View>
-                  <MaterialIcons name="chevron-right" size={20} color="#F59E0B" />
+                  <MaterialIcons name="chevron-right" size={20} color={GOLD} />
                 </TouchableOpacity>
 
                 {/* Customize / Regenerate (collapsible) */}
@@ -494,8 +495,8 @@ export default function PlansScreen() {
                   style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6, marginTop: 16, paddingVertical: 10 }}
                   onPress={() => setShowCustomize(!showCustomize)}
                 >
-                  <MaterialIcons name={showCustomize ? "expand-less" : "tune"} size={16} color="#B45309" />
-                  <Text style={{ color: "#B45309", fontFamily: "Outfit_700Bold", fontSize: 12 }}>{showCustomize ? "Hide Options" : "Customize & Regenerate"}</Text>
+                  <MaterialIcons name={showCustomize ? "expand-less" : "tune"} size={16} color={MUTED} />
+                  <Text style={{ color: MUTED, fontFamily: "DMSans_700Bold", fontSize: 12 }}>{showCustomize ? "Hide Options" : "Customize & Regenerate"}</Text>
                 </TouchableOpacity>
 
                 {showCustomize && (
@@ -517,15 +518,15 @@ export default function PlansScreen() {
                       {DAYS_OPTIONS.map(d => (
                         <TouchableOpacity
                           key={d}
-                          style={{ flex: 1, paddingVertical: 10, borderRadius: 12, alignItems: "center", backgroundColor: daysPerWeek === d ? "#F59E0B" : "#150A00", borderWidth: 1, borderColor: daysPerWeek === d ? "#F59E0B" : "rgba(245,158,11,0.10)" }}
+                          style={{ flex: 1, paddingVertical: 10, borderRadius: 12, alignItems: "center", backgroundColor: daysPerWeek === d ? GOLD : SURFACE, borderWidth: 1, borderColor: daysPerWeek === d ? GOLD : "rgba(30,41,59,0.6)" }}
                           onPress={() => setDaysPerWeek(d)}
                         >
-                          <Text style={{ color: daysPerWeek === d ? "#FFF7ED" : "#B45309", fontFamily: "Outfit_700Bold" }}>{d}x</Text>
+                          <Text style={{ color: daysPerWeek === d ? BG : MUTED, fontFamily: "SpaceMono_700Bold" }}>{d}x</Text>
                         </TouchableOpacity>
                       ))}
                     </View>
                     <TouchableOpacity
-                      style={{ backgroundColor: "rgba(245,158,11,0.12)", borderRadius: 14, paddingVertical: 12, alignItems: "center", borderWidth: 1, borderColor: "rgba(245,158,11,0.25)", flexDirection: "row", justifyContent: "center", gap: 8, opacity: generateWorkout.isPending ? 0.7 : 1 }}
+                      style={{ backgroundColor: GOLD_DIM, borderRadius: 14, paddingVertical: 12, alignItems: "center", borderWidth: 1, borderColor: "rgba(30,41,59,0.6)", flexDirection: "row", justifyContent: "center", gap: 8, opacity: generateWorkout.isPending ? 0.7 : 1 }}
                       onPress={() => {
                         Alert.alert("Regenerate Workout Plan?", "This will replace your current plan.", [
                           { text: "Cancel", style: "cancel" },
@@ -536,13 +537,13 @@ export default function PlansScreen() {
                     >
                       {generateWorkout.isPending ? (
                         <>
-                          <ActivityIndicator color="#F59E0B" size="small" />
-                          <Text style={{ color: "#F59E0B", fontFamily: "Outfit_700Bold", fontSize: 13 }}>Regenerating...</Text>
+                          <ActivityIndicator color={GOLD} size="small" />
+                          <Text style={{ color: GOLD, fontFamily: "DMSans_700Bold", fontSize: 13 }}>Regenerating...</Text>
                         </>
                       ) : (
                         <>
-                          <MaterialIcons name="refresh" size={16} color="#F59E0B" />
-                          <Text style={{ color: "#F59E0B", fontFamily: "Outfit_700Bold", fontSize: 13 }}>Regenerate Workout Plan</Text>
+                          <MaterialIcons name="refresh" size={16} color={GOLD} />
+                          <Text style={{ color: GOLD, fontFamily: "DMSans_700Bold", fontSize: 13 }}>Regenerate Workout Plan</Text>
                         </>
                       )}
                     </TouchableOpacity>
@@ -574,41 +575,41 @@ export default function PlansScreen() {
 
                 {(dietaryPref === "halal" || ramadanMode) && (
                   <TouchableOpacity
-                    style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", backgroundColor: ramadanMode ? "rgba(245,158,11,0.10)" : "#150A00", borderRadius: 12, padding: 14, marginBottom: 16, borderWidth: 1, borderColor: ramadanMode ? "#F59E0B" : "rgba(245,158,11,0.10)" }}
+                    style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", backgroundColor: ramadanMode ? "rgba(245,158,11,0.10)" : SURFACE, borderRadius: 12, padding: 14, marginBottom: 16, borderWidth: 1, borderColor: ramadanMode ? "#F59E0B" : "rgba(245,158,11,0.10)" }}
                     onPress={() => setRamadanMode(v => !v)}
                   >
                     <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
-                      <MaterialIcons name="nightlight-round" size={20} color="#FBBF24" />
+                      <MaterialIcons name="nightlight-round" size={20} color={GOLD} />
                       <View>
-                        <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 14 }}>Ramadan Mode</Text>
-                        <Text style={{ color: "#B45309", fontSize: 11, marginTop: 2 }}>Suhoor, Iftar & Isha meals</Text>
+                        <Text style={{ color: FG, fontFamily: "DMSans_700Bold", fontSize: 14 }}>Ramadan Mode</Text>
+                        <Text style={{ color: MUTED, fontSize: 11, marginTop: 2 }}>Suhoor, Iftar & Isha meals</Text>
                       </View>
                     </View>
-                    <View style={{ width: 44, height: 26, borderRadius: 13, backgroundColor: ramadanMode ? "#F59E0B" : "rgba(245,158,11,0.15)", justifyContent: "center", paddingHorizontal: 2 }}>
-                      <View style={{ width: 22, height: 22, borderRadius: 11, backgroundColor: "#FFF7ED", alignSelf: ramadanMode ? "flex-end" : "flex-start" }} />
+                    <View style={{ width: 44, height: 26, borderRadius: 13, backgroundColor: ramadanMode ? GOLD : GOLD_DIM, justifyContent: "center", paddingHorizontal: 2 }}>
+                      <View style={{ width: 22, height: 22, borderRadius: 11, backgroundColor: FG, alignSelf: ramadanMode ? "flex-end" : "flex-start" }} />
                     </View>
                   </TouchableOpacity>
                 )}
 
-                <View style={{ backgroundColor: "#FBBF2410", borderRadius: 10, padding: 10, marginBottom: 16, borderWidth: 1, borderColor: "#FBBF2430", flexDirection: "row", gap: 8 }}>
-                  <MaterialIcons name="warning-amber" size={14} color="#FCD34D" />
-                  <Text style={{ color: "#FCD34D", fontSize: 11, lineHeight: 16, flex: 1 }}>AI plans are for guidance. Consult a nutritionist for major changes.</Text>
+                <View style={{ backgroundColor: GOLD_DIM, borderRadius: 10, padding: 10, marginBottom: 16, borderWidth: 1, borderColor: GOLD_BORDER, flexDirection: "row", gap: 8 }}>
+                  <MaterialIcons name="warning-amber" size={14} color={CREAM} />
+                  <Text style={{ color: CREAM, fontSize: 11, lineHeight: 16, flex: 1 }}>AI plans are for guidance. Consult a nutritionist for major changes.</Text>
                 </View>
 
                 <TouchableOpacity
-                  style={{ backgroundColor: "#FDE68A", borderRadius: 16, paddingVertical: 14, alignItems: "center", marginBottom: 24, opacity: generateMeal.isPending ? 0.7 : 1 }}
+                  style={{ backgroundColor: GOLD, borderRadius: 16, paddingVertical: 14, alignItems: "center", marginBottom: 24, opacity: generateMeal.isPending ? 0.7 : 1 }}
                   onPress={() => generateMeal.mutate({ goal: mealGoal, dietaryPreference: dietaryPref, ramadanMode, weightKg: activeProfile?.weightKg ?? undefined, heightCm: activeProfile?.heightCm ?? undefined, age: activeProfile?.age ?? undefined, gender: activeProfile?.gender ?? undefined, activityLevel: activeProfile?.activityLevel ?? undefined })}
                   disabled={generateMeal.isPending}
                 >
                   {generateMeal.isPending ? (
                     <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-                      <ActivityIndicator color="#FFF7ED" size="small" />
-                      <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 15 }}>Generating Plan...</Text>
+                      <ActivityIndicator color={BG} size="small" />
+                      <Text style={{ color: BG, fontFamily: "DMSans_700Bold", fontSize: 15 }}>Generating Plan...</Text>
                     </View>
                   ) : (
                     <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
-                      <MaterialIcons name="auto-awesome" size={16} color="#FFF7ED" />
-                      <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 15 }}>Generate Meal Plan</Text>
+                      <MaterialIcons name="auto-awesome" size={16} color={BG} />
+                      <Text style={{ color: BG, fontFamily: "DMSans_700Bold", fontSize: 15 }}>Generate Meal Plan</Text>
                     </View>
                   )}
                 </TouchableOpacity>
@@ -616,29 +617,29 @@ export default function PlansScreen() {
             ) : (
               <>
                 {/* ── Meal Plan Summary Bar ── */}
-                <View style={{ backgroundColor: "#150A00", borderRadius: 14, padding: 14, marginBottom: 12, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}>
+                <View style={{ backgroundColor: SURFACE, borderRadius: 14, padding: 14, marginBottom: 12, borderWidth: 1, borderColor: "rgba(30,41,59,0.6)" }}>
                   <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
                     <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
                       <View style={{ backgroundColor: "rgba(34,197,94,0.15)", borderRadius: 6, paddingHorizontal: 8, paddingVertical: 2 }}>
-                        <Text style={{ color: "#4ADE80", fontSize: 10, fontFamily: "Outfit_700Bold" }}>ACTIVE</Text>
+                        <Text style={{ color: "#4ADE80", fontSize: 10, fontFamily: "DMSans_700Bold" }}>ACTIVE</Text>
                       </View>
-                      <Text style={{ color: "#B45309", fontSize: 11 }}>{mealGoalLabel} · {dietLabel}</Text>
+                      <Text style={{ color: MUTED, fontSize: 11 }}>{mealGoalLabel} · {dietLabel}</Text>
                     </View>
                   </View>
                   {/* Macro summary row */}
                   <View style={{ flexDirection: "row", gap: 8 }}>
-                    <MacroCard label="Calories" value={mealPlan.dailyCalories} unit="kcal" color="#FBBF24" />
+                    <MacroCard label="Calories" value={mealPlan.dailyCalories} unit="kcal" color={GOLD} />
                     <MacroCard label="Protein" value={mealPlan.proteinTarget} unit="g" color="#3B82F6" />
-                    <MacroCard label="Carbs" value={mealPlan.carbTarget} unit="g" color="#FDE68A" />
-                    <MacroCard label="Fat" value={mealPlan.fatTarget} unit="g" color="#FBBF24" />
+                    <MacroCard label="Carbs" value={mealPlan.carbTarget} unit="g" color={CREAM} />
+                    <MacroCard label="Fat" value={mealPlan.fatTarget} unit="g" color={GOLD} />
                   </View>
                 </View>
 
                 {mealPlan.insight && (
                   <View style={{ backgroundColor: "#22C55E10", borderRadius: 12, padding: 12, marginBottom: 14, borderWidth: 1, borderColor: "#22C55E30" }}>
                     <View style={{ flexDirection: "row", gap: 8, alignItems: "flex-start" }}>
-                      <MaterialIcons name="lightbulb" size={14} color="#FBBF24" style={{ marginTop: 2 }} />
-                      <Text style={{ color: "#FBBF24", fontSize: 12, lineHeight: 18, flex: 1 }}>{String(mealPlan.insight)}</Text>
+                      <MaterialIcons name="lightbulb" size={14} color={GOLD} style={{ marginTop: 2 }} />
+                      <Text style={{ color: GOLD, fontSize: 12, lineHeight: 18, flex: 1 }}>{String(mealPlan.insight)}</Text>
                     </View>
                   </View>
                 )}
@@ -647,8 +648,8 @@ export default function PlansScreen() {
                 {todayMeals && (
                   <>
                     <View style={{ flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 10 }}>
-                      <MaterialIcons name="today" size={16} color="#FBBF24" />
-                      <Text style={{ color: "#FBBF24", fontFamily: "Outfit_700Bold", fontSize: 15 }}>Today — {todayName}</Text>
+                      <MaterialIcons name="today" size={16} color={GOLD} />
+                      <Text style={{ color: GOLD, fontFamily: "DMSans_700Bold", fontSize: 15 }}>Today — {todayName}</Text>
                     </View>
                     <MealDayCard day={todayMeals} defaultExpanded />
                   </>
@@ -658,8 +659,8 @@ export default function PlansScreen() {
                 {otherMealDays.length > 0 && (
                   <>
                     <View style={{ flexDirection: "row", alignItems: "center", gap: 8, marginTop: 8, marginBottom: 10 }}>
-                      <MaterialIcons name="date-range" size={16} color="#B45309" />
-                      <Text style={{ color: "#B45309", fontFamily: "Outfit_700Bold", fontSize: 13 }}>Rest of the Week</Text>
+                      <MaterialIcons name="date-range" size={16} color={MUTED} />
+                      <Text style={{ color: MUTED, fontFamily: "DMSans_700Bold", fontSize: 13 }}>Rest of the Week</Text>
                     </View>
                     {otherMealDays.map((day: any, i: number) => (
                       <MealDayCard key={i} day={day} />
@@ -672,8 +673,8 @@ export default function PlansScreen() {
                   style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6, marginTop: 16, paddingVertical: 10 }}
                   onPress={() => setShowMealCustomize(!showMealCustomize)}
                 >
-                  <MaterialIcons name={showMealCustomize ? "expand-less" : "tune"} size={16} color="#B45309" />
-                  <Text style={{ color: "#B45309", fontFamily: "Outfit_700Bold", fontSize: 12 }}>{showMealCustomize ? "Hide Options" : "Customize & Regenerate"}</Text>
+                  <MaterialIcons name={showMealCustomize ? "expand-less" : "tune"} size={16} color={MUTED} />
+                  <Text style={{ color: MUTED, fontFamily: "DMSans_700Bold", fontSize: 12 }}>{showMealCustomize ? "Hide Options" : "Customize & Regenerate"}</Text>
                 </TouchableOpacity>
 
                 {showMealCustomize && (
@@ -692,23 +693,23 @@ export default function PlansScreen() {
                     </View>
                     {(dietaryPref === "halal" || ramadanMode) && (
                       <TouchableOpacity
-                        style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", backgroundColor: ramadanMode ? "rgba(245,158,11,0.10)" : "#150A00", borderRadius: 12, padding: 14, marginBottom: 16, borderWidth: 1, borderColor: ramadanMode ? "#F59E0B" : "rgba(245,158,11,0.10)" }}
+                        style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", backgroundColor: ramadanMode ? "rgba(245,158,11,0.10)" : SURFACE, borderRadius: 12, padding: 14, marginBottom: 16, borderWidth: 1, borderColor: ramadanMode ? "#F59E0B" : "rgba(245,158,11,0.10)" }}
                         onPress={() => setRamadanMode(v => !v)}
                       >
                         <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
-                          <MaterialIcons name="nightlight-round" size={20} color="#FBBF24" />
+                          <MaterialIcons name="nightlight-round" size={20} color={GOLD} />
                           <View>
-                            <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 14 }}>Ramadan Mode</Text>
-                            <Text style={{ color: "#B45309", fontSize: 11, marginTop: 2 }}>Suhoor, Iftar & Isha meals</Text>
+                            <Text style={{ color: FG, fontFamily: "DMSans_700Bold", fontSize: 14 }}>Ramadan Mode</Text>
+                            <Text style={{ color: MUTED, fontSize: 11, marginTop: 2 }}>Suhoor, Iftar & Isha meals</Text>
                           </View>
                         </View>
-                        <View style={{ width: 44, height: 26, borderRadius: 13, backgroundColor: ramadanMode ? "#F59E0B" : "rgba(245,158,11,0.15)", justifyContent: "center", paddingHorizontal: 2 }}>
-                          <View style={{ width: 22, height: 22, borderRadius: 11, backgroundColor: "#FFF7ED", alignSelf: ramadanMode ? "flex-end" : "flex-start" }} />
+                        <View style={{ width: 44, height: 26, borderRadius: 13, backgroundColor: ramadanMode ? GOLD : GOLD_DIM, justifyContent: "center", paddingHorizontal: 2 }}>
+                          <View style={{ width: 22, height: 22, borderRadius: 11, backgroundColor: FG, alignSelf: ramadanMode ? "flex-end" : "flex-start" }} />
                         </View>
                       </TouchableOpacity>
                     )}
                     <TouchableOpacity
-                      style={{ backgroundColor: "rgba(245,158,11,0.12)", borderRadius: 14, paddingVertical: 12, alignItems: "center", borderWidth: 1, borderColor: "rgba(245,158,11,0.25)", flexDirection: "row", justifyContent: "center", gap: 8, opacity: generateMeal.isPending ? 0.7 : 1 }}
+                      style={{ backgroundColor: "rgba(245,158,11,0.12)", borderRadius: 14, paddingVertical: 12, alignItems: "center", borderWidth: 1, borderColor: GOLD_BORDER, flexDirection: "row", justifyContent: "center", gap: 8, opacity: generateMeal.isPending ? 0.7 : 1 }}
                       onPress={() => {
                         Alert.alert("Regenerate Meal Plan?", "This will replace your current plan.", [
                           { text: "Cancel", style: "cancel" },
@@ -719,13 +720,13 @@ export default function PlansScreen() {
                     >
                       {generateMeal.isPending ? (
                         <>
-                          <ActivityIndicator color="#F59E0B" size="small" />
-                          <Text style={{ color: "#F59E0B", fontFamily: "Outfit_700Bold", fontSize: 13 }}>Regenerating...</Text>
+                          <ActivityIndicator color={GOLD} size="small" />
+                          <Text style={{ color: GOLD, fontFamily: "DMSans_700Bold", fontSize: 13 }}>Regenerating...</Text>
                         </>
                       ) : (
                         <>
-                          <MaterialIcons name="refresh" size={16} color="#F59E0B" />
-                          <Text style={{ color: "#F59E0B", fontFamily: "Outfit_700Bold", fontSize: 13 }}>Regenerate Meal Plan</Text>
+                          <MaterialIcons name="refresh" size={16} color={GOLD} />
+                          <Text style={{ color: GOLD, fontFamily: "DMSans_700Bold", fontSize: 13 }}>Regenerate Meal Plan</Text>
                         </>
                       )}
                     </TouchableOpacity>
@@ -741,27 +742,27 @@ export default function PlansScreen() {
 }
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
-  return <Text style={{ color: "#B45309", fontSize: 11, fontFamily: "Outfit_700Bold", letterSpacing: 1, marginBottom: 8, textTransform: "uppercase" }}>{children}</Text>;
+  return <Text style={{ color: MUTED, fontSize: 11, fontFamily: "DMSans_700Bold", letterSpacing: 1, marginBottom: 8, textTransform: "uppercase" }}>{children}</Text>;
 }
 
 function OptionChip({ iconName, label, selected, onPress }: { iconName: string; label: string; selected: boolean; onPress: () => void }) {
   return (
     <TouchableOpacity
-      style={{ flexDirection: "row", alignItems: "center", gap: 6, paddingHorizontal: 14, paddingVertical: 8, borderRadius: 12, backgroundColor: selected ? "#F59E0B" : "#150A00", borderWidth: 1, borderColor: selected ? "#F59E0B" : "rgba(245,158,11,0.10)" }}
+      style={{ flexDirection: "row", alignItems: "center", gap: 6, paddingHorizontal: 14, paddingVertical: 8, borderRadius: 12, backgroundColor: selected ? GOLD : SURFACE, borderWidth: 1, borderColor: selected ? GOLD : "rgba(30,41,59,0.6)" }}
       onPress={onPress}
     >
-      <MaterialIcons name={iconName as any} size={14} color={selected ? "#FFF7ED" : "#B45309"} />
-      <Text style={{ color: selected ? "#FFF7ED" : "#B45309", fontFamily: "DMSans_600SemiBold", fontSize: 13 }}>{label}</Text>
+      <MaterialIcons name={iconName as any} size={14} color={selected ? BG : MUTED} />
+      <Text style={{ color: selected ? BG : MUTED, fontFamily: "DMSans_600SemiBold", fontSize: 13 }}>{label}</Text>
     </TouchableOpacity>
   );
 }
 
 function MacroCard({ label, value, unit, color }: any) {
   return (
-    <View style={{ flex: 1, backgroundColor: "#0A0500", borderRadius: 10, padding: 8, alignItems: "center", borderWidth: 1, borderColor: color + "30" }}>
-      <Text style={{ color, fontFamily: "Outfit_800ExtraBold", fontSize: 14 }}>{value ?? "—"}</Text>
-      <Text style={{ color: "#B45309", fontSize: 9, marginTop: 1 }}>{unit}</Text>
-      <Text style={{ color: "#B45309", fontSize: 9, marginTop: 1 }}>{label}</Text>
+    <View style={{ flex: 1, backgroundColor: SURFACE, borderRadius: 10, padding: 8, alignItems: "center", borderWidth: 1, borderColor: color + "30" }}>
+      <Text style={{ color, fontFamily: "SpaceMono_700Bold", fontSize: 14 }}>{value ?? "—"}</Text>
+      <Text style={{ color: MUTED, fontSize: 9, marginTop: 1 }}>{unit}</Text>
+      <Text style={{ color: MUTED, fontSize: 9, marginTop: 1 }}>{label}</Text>
     </View>
   );
 }
@@ -769,7 +770,7 @@ function MacroCard({ label, value, unit, color }: any) {
 function WorkoutDayCard({ day, onPress, isCompleted, onToggleComplete, isToday }: { day: any; onPress: () => void; isCompleted?: boolean; onToggleComplete?: () => void; isToday?: boolean }) {
   const [expanded, setExpanded] = useState(!!isToday);
   return (
-    <View style={{ backgroundColor: isCompleted ? "rgba(34,197,94,0.06)" : isToday ? "rgba(245,158,11,0.06)" : "#150A00", borderRadius: 16, marginBottom: 8, borderWidth: 1, borderColor: isCompleted ? "rgba(34,197,94,0.25)" : isToday ? "rgba(245,158,11,0.25)" : "rgba(245,158,11,0.10)", overflow: "hidden" }}>
+    <View style={{ backgroundColor: isCompleted ? "rgba(34,197,94,0.06)" : isToday ? GOLD_DIM : SURFACE, borderRadius: 16, marginBottom: 8, borderWidth: 1, borderColor: isCompleted ? "rgba(34,197,94,0.25)" : isToday ? GOLD_BORDER : "rgba(30,41,59,0.6)", overflow: "hidden" }}>
       <TouchableOpacity
         style={{ padding: 14 }}
         onPress={() => setExpanded(!expanded)}
@@ -781,26 +782,26 @@ function WorkoutDayCard({ day, onPress, isCompleted, onToggleComplete, isToday }
                 onPress={onToggleComplete}
                 style={{
                   width: 36, height: 36, borderRadius: 10,
-                  backgroundColor: isCompleted ? "#22C55E" : "rgba(245,158,11,0.10)",
+                  backgroundColor: isCompleted ? "#22C55E" : GOLD_DIM,
                   alignItems: "center", justifyContent: "center",
-                  borderWidth: isCompleted ? 0 : 1, borderColor: "rgba(245,158,11,0.20)",
+                  borderWidth: isCompleted ? 0 : 1, borderColor: GOLD_BORDER,
                 }}
               >
-                <MaterialIcons name={isCompleted ? "check" : "fitness-center"} size={16} color={isCompleted ? "#FFF7ED" : "#F59E0B"} />
+                <MaterialIcons name={isCompleted ? "check" : "fitness-center"} size={16} color={isCompleted ? FG : GOLD} />
               </TouchableOpacity>
             ) : (
-              <View style={{ width: 36, height: 36, borderRadius: 10, backgroundColor: "rgba(245,158,11,0.10)", alignItems: "center", justifyContent: "center" }}>
-                <MaterialIcons name={day.isRest ? "bedtime" : "fitness-center"} size={16} color={day.isRest ? "#FDE68A" : "#F59E0B"} />
+              <View style={{ width: 36, height: 36, borderRadius: 10, backgroundColor: GOLD_DIM, alignItems: "center", justifyContent: "center" }}>
+                <MaterialIcons name={day.isRest ? "bedtime" : "fitness-center"} size={16} color={day.isRest ? CREAM : GOLD} />
               </View>
             )}
             <View>
-              <Text style={{ color: isCompleted ? "#22C55E" : "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 14, textDecorationLine: isCompleted ? "line-through" : "none" }}>{day.day}</Text>
-              <Text style={{ color: isCompleted ? "#4ADE80" : (day.isRest ? "#FDE68A" : "#FBBF24"), fontSize: 12 }}>{isCompleted ? "Completed" : day.focus}</Text>
+              <Text style={{ color: isCompleted ? "#22C55E" : FG, fontFamily: "DMSans_700Bold", fontSize: 14, textDecorationLine: isCompleted ? "line-through" : "none" }}>{day.day}</Text>
+              <Text style={{ color: isCompleted ? "#4ADE80" : (day.isRest ? CREAM : GOLD), fontSize: 12 }}>{isCompleted ? "Completed" : day.focus}</Text>
             </View>
           </View>
           <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-            {!day.isRest && <Text style={{ color: "#B45309", fontSize: 12 }}>{day.exercises?.length ?? 0} exercises</Text>}
-            <MaterialIcons name={expanded ? "expand-less" : "expand-more"} size={18} color="#B45309" />
+            {!day.isRest && <Text style={{ color: MUTED, fontSize: 12 }}>{day.exercises?.length ?? 0} exercises</Text>}
+            <MaterialIcons name={expanded ? "expand-less" : "expand-more"} size={18} color={MUTED} />
           </View>
         </View>
       </TouchableOpacity>
@@ -808,10 +809,10 @@ function WorkoutDayCard({ day, onPress, isCompleted, onToggleComplete, isToday }
       {expanded && !day.isRest && (
         <View style={{ paddingHorizontal: 14, paddingBottom: 14, gap: 10 }}>
           <TouchableOpacity
-            style={{ backgroundColor: "#F59E0B", borderRadius: 12, paddingVertical: 10, alignItems: "center", marginBottom: 4 }}
+            style={{ backgroundColor: GOLD, borderRadius: 12, paddingVertical: 10, alignItems: "center", marginBottom: 4 }}
             onPress={onPress}
           >
-            <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 13 }}>START WORKOUT →</Text>
+            <Text style={{ color: BG, fontFamily: "DMSans_700Bold", fontSize: 13 }}>START WORKOUT →</Text>
           </TouchableOpacity>
           {day.exercises?.map((ex: any, idx: number) => (
             <ExercisePreviewCard key={idx} exercise={ex} />
@@ -821,7 +822,7 @@ function WorkoutDayCard({ day, onPress, isCompleted, onToggleComplete, isToday }
 
       {expanded && day.isRest && (
         <View style={{ paddingHorizontal: 14, paddingBottom: 14 }}>
-          <Text style={{ color: "#FDE68A", fontFamily: "DMSans_400Regular", fontSize: 13, lineHeight: 18 }}>
+          <Text style={{ color: CREAM, fontFamily: "DMSans_400Regular", fontSize: 13, lineHeight: 18 }}>
             Rest day — focus on recovery, stretching, and light movement. Your muscles grow during rest!
           </Text>
         </View>
@@ -835,31 +836,31 @@ function ExercisePreviewCard({ exercise }: { exercise: any }) {
   const demo = getExerciseDemo(exercise.name ?? "");
 
   return (
-    <View style={{ backgroundColor: "#0A0500", borderRadius: 14, borderWidth: 1, borderColor: "rgba(245,158,11,0.08)", overflow: "hidden" }}>
+    <View style={{ backgroundColor: SURFACE, borderRadius: 14, borderWidth: 1, borderColor: "rgba(30,41,59,0.6)", overflow: "hidden" }}>
       <View style={{ padding: 12 }}>
         <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start" }}>
           <View style={{ flex: 1 }}>
-            <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 14 }}>{exercise.name}</Text>
+            <Text style={{ color: FG, fontFamily: "DMSans_700Bold", fontSize: 14 }}>{exercise.name}</Text>
             <View style={{ flexDirection: "row", gap: 12, marginTop: 4 }}>
-              <Text style={{ color: "#FBBF24", fontSize: 12 }}>{exercise.sets} sets</Text>
-              <Text style={{ color: "#FDE68A", fontSize: 12 }}>{exercise.reps} reps</Text>
-              {exercise.rest && <View style={{ flexDirection: "row", alignItems: "center", gap: 2 }}><MaterialIcons name="timer" size={11} color="#B45309" /><Text style={{ color: "#B45309", fontSize: 12 }}>{exercise.rest}</Text></View>}
+              <Text style={{ color: GOLD, fontSize: 12 }}>{exercise.sets} sets</Text>
+              <Text style={{ color: CREAM, fontSize: 12 }}>{exercise.reps} reps</Text>
+              {exercise.rest && <View style={{ flexDirection: "row", alignItems: "center", gap: 2 }}><MaterialIcons name="timer" size={11} color={MUTED} /><Text style={{ color: MUTED, fontSize: 12 }}>{exercise.rest}</Text></View>}
             </View>
             {exercise.muscleGroup && (
-              <View style={{ marginTop: 4, alignSelf: "flex-start", backgroundColor: "rgba(245,158,11,0.08)", borderRadius: 6, paddingHorizontal: 8, paddingVertical: 2 }}>
-                <Text style={{ color: "#B45309", fontSize: 10 }}>{exercise.muscleGroup}</Text>
+              <View style={{ marginTop: 4, alignSelf: "flex-start", backgroundColor: GOLD_DIM, borderRadius: 6, paddingHorizontal: 8, paddingVertical: 2 }}>
+                <Text style={{ color: MUTED, fontSize: 10 }}>{exercise.muscleGroup}</Text>
               </View>
             )}
           </View>
           <TouchableOpacity
-            style={{ backgroundColor: showVideo ? "#F59E0B" : "rgba(245,158,11,0.12)", borderRadius: 8, paddingHorizontal: 10, paddingVertical: 6, borderWidth: 1, borderColor: "rgba(245,158,11,0.25)" }}
+            style={{ backgroundColor: showVideo ? GOLD : GOLD_DIM, borderRadius: 8, paddingHorizontal: 10, paddingVertical: 6, borderWidth: 1, borderColor: GOLD_BORDER }}
             onPress={() => setShowVideo(!showVideo)}
           >
-            <Text style={{ color: showVideo ? "#FFF7ED" : "#F59E0B", fontFamily: "Outfit_700Bold", fontSize: 11 }}>{showVideo ? "Hide" : "Demo"}</Text>
+            <Text style={{ color: showVideo ? BG : GOLD, fontFamily: "DMSans_700Bold", fontSize: 11 }}>{showVideo ? "Hide" : "Demo"}</Text>
           </TouchableOpacity>
         </View>
         {exercise.notes && (
-          <View style={{ flexDirection: "row", gap: 4, alignItems: "flex-start", marginTop: 6 }}><MaterialIcons name="lightbulb" size={11} color="#B45309" style={{ marginTop: 2 }} /><Text style={{ color: "#B45309", fontSize: 11, lineHeight: 15, flex: 1 }}>{exercise.notes}</Text></View>
+          <View style={{ flexDirection: "row", gap: 4, alignItems: "flex-start", marginTop: 6 }}><MaterialIcons name="lightbulb" size={11} color={MUTED} style={{ marginTop: 2 }} /><Text style={{ color: MUTED, fontSize: 11, lineHeight: 15, flex: 1 }}>{exercise.notes}</Text></View>
         )}
       </View>
       {showVideo && (
@@ -875,23 +876,23 @@ function MealDayCard({ day, defaultExpanded }: { day: any; defaultExpanded?: boo
   const [expanded, setExpanded] = useState(!!defaultExpanded);
   const dayCalories = day.meals?.reduce((s: number, m: any) => s + (m.calories ?? 0), 0) ?? 0;
   return (
-    <View style={{ backgroundColor: defaultExpanded ? "rgba(245,158,11,0.06)" : "#150A00", borderRadius: 18, marginBottom: 10, borderWidth: 1, borderColor: defaultExpanded ? "rgba(245,158,11,0.25)" : "rgba(245,158,11,0.10)", overflow: "hidden" }}>
+    <View style={{ backgroundColor: defaultExpanded ? GOLD_DIM : SURFACE, borderRadius: 18, marginBottom: 10, borderWidth: 1, borderColor: defaultExpanded ? GOLD_BORDER : "rgba(30,41,59,0.6)", overflow: "hidden" }}>
       <TouchableOpacity
         style={{ padding: 16, flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}
         onPress={() => setExpanded(!expanded)}
       >
         <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
-          <View style={{ width: 36, height: 36, borderRadius: 10, backgroundColor: "rgba(245,158,11,0.10)", alignItems: "center", justifyContent: "center" }}>
-            <MaterialIcons name="calendar-today" size={16} color="#F59E0B" />
+          <View style={{ width: 36, height: 36, borderRadius: 10, backgroundColor: GOLD_DIM, alignItems: "center", justifyContent: "center" }}>
+            <MaterialIcons name="calendar-today" size={16} color={GOLD} />
           </View>
           <View>
-            <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 15 }}>{day.day}</Text>
-            <Text style={{ color: "#B45309", fontSize: 12 }}>{day.meals?.length ?? 0} meals</Text>
+            <Text style={{ color: FG, fontFamily: "DMSans_700Bold", fontSize: 15 }}>{day.day}</Text>
+            <Text style={{ color: MUTED, fontSize: 12 }}>{day.meals?.length ?? 0} meals</Text>
           </View>
         </View>
         <View style={{ alignItems: "flex-end" }}>
-          <Text style={{ color: "#FBBF24", fontFamily: "Outfit_800ExtraBold", fontSize: 15 }}>{dayCalories} kcal</Text>
-          <MaterialIcons name={expanded ? "expand-less" : "expand-more"} size={18} color="#B45309" style={{ marginTop: 2 }} />
+          <Text style={{ color: GOLD, fontFamily: "SpaceMono_700Bold", fontSize: 15 }}>{dayCalories} kcal</Text>
+          <MaterialIcons name={expanded ? "expand-less" : "expand-more"} size={18} color={MUTED} style={{ marginTop: 2 }} />
         </View>
       </TouchableOpacity>
 
@@ -920,73 +921,73 @@ function MealCard({ meal }: { meal: any }) {
   const color = mealTypeColor[(meal.type ?? "").toLowerCase()] ?? "#B45309";
 
   return (
-    <View style={{ backgroundColor: "#150A00", borderRadius: 16, overflow: "hidden", borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}>
+    <View style={{ backgroundColor: SURFACE, borderRadius: 16, overflow: "hidden", borderWidth: 1, borderColor: "rgba(30,41,59,0.6)" }}>
       <Image
         source={{ uri: photoUrl }}
         style={{ width: "100%", height: 140 }}
         resizeMode="cover"
       />
       <View style={{ position: "absolute", top: 10, left: 10, backgroundColor: color, borderRadius: 8, paddingHorizontal: 10, paddingVertical: 4 }}>
-        <Text style={{ color: "#FFF7ED", fontSize: 10, fontFamily: "Outfit_700Bold", textTransform: "uppercase" }}>{meal.type ?? "Meal"}</Text>
+        <Text style={{ color: BG, fontSize: 10, fontFamily: "DMSans_700Bold", textTransform: "uppercase" }}>{meal.type ?? "Meal"}</Text>
       </View>
       <View style={{ position: "absolute", top: 10, right: 10, backgroundColor: "rgba(0,0,0,0.7)", borderRadius: 8, paddingHorizontal: 10, paddingVertical: 4 }}>
-        <Text style={{ color: "#FBBF24", fontSize: 11, fontFamily: "Outfit_700Bold" }}>{meal.calories} kcal</Text>
+        <Text style={{ color: GOLD, fontSize: 11, fontFamily: "SpaceMono_700Bold" }}>{meal.calories} kcal</Text>
       </View>
 
       <View style={{ padding: 14 }}>
-        <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 15, marginBottom: 6 }}>{meal.name}</Text>
+        <Text style={{ color: FG, fontFamily: "DMSans_700Bold", fontSize: 15, marginBottom: 6 }}>{meal.name}</Text>
         <View style={{ flexDirection: "row", gap: 12, marginBottom: 10 }}>
           <Text style={{ color: "#3B82F6", fontSize: 12 }}>P: {meal.protein}g</Text>
-          <Text style={{ color: "#FDE68A", fontSize: 12 }}>C: {meal.carbs}g</Text>
-          <Text style={{ color: "#FBBF24", fontSize: 12 }}>F: {meal.fat}g</Text>
+          <Text style={{ color: CREAM, fontSize: 12 }}>C: {meal.carbs}g</Text>
+          <Text style={{ color: GOLD, fontSize: 12 }}>F: {meal.fat}g</Text>
           {meal.prepTime && (
             <View style={{ flexDirection: "row", alignItems: "center", gap: 2 }}>
-              <MaterialIcons name="timer" size={11} color="#B45309" />
-              <Text style={{ color: "#B45309", fontSize: 12 }}>{meal.prepTime}</Text>
+              <MaterialIcons name="timer" size={11} color={MUTED} />
+              <Text style={{ color: MUTED, fontSize: 12 }}>{meal.prepTime}</Text>
             </View>
           )}
         </View>
 
         <TouchableOpacity
-          style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", backgroundColor: showPrep ? "#22C55E15" : "#0A0500", borderRadius: 12, padding: 12, borderWidth: 1, borderColor: showPrep ? "rgba(245,158,11,0.18)" : "rgba(245,158,11,0.08)" }}
+          style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", backgroundColor: showPrep ? "rgba(34,197,94,0.08)" : SURFACE, borderRadius: 12, padding: 12, borderWidth: 1, borderColor: showPrep ? GOLD_BORDER : "rgba(30,41,59,0.6)" }}
           onPress={() => setShowPrep(!showPrep)}
         >
           <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-            <MaterialIcons name="restaurant" size={16} color={showPrep ? "#FBBF24" : "#B45309"} />
-            <Text style={{ color: showPrep ? "#FBBF24" : "#B45309", fontFamily: "DMSans_600SemiBold", fontSize: 13 }}>How to Prep This Meal</Text>
+            <MaterialIcons name="restaurant" size={16} color={showPrep ? GOLD : MUTED} />
+            <Text style={{ color: showPrep ? GOLD : MUTED, fontFamily: "DMSans_600SemiBold", fontSize: 13 }}>How to Prep This Meal</Text>
           </View>
-          <MaterialIcons name={showPrep ? "expand-less" : "expand-more"} size={16} color="#B45309" />
+          <MaterialIcons name={showPrep ? "expand-less" : "expand-more"} size={16} color={MUTED} />
         </TouchableOpacity>
 
         {showPrep && (
           <View style={{ marginTop: 10, gap: 8 }}>
             {meal.ingredients?.length > 0 && (
-              <View style={{ backgroundColor: "#0A0500", borderRadius: 12, padding: 12 }}>
-                <Text style={{ color: "#B45309", fontSize: 11, fontFamily: "Outfit_700Bold", letterSpacing: 1, marginBottom: 8 }}>INGREDIENTS</Text>
+              <View style={{ backgroundColor: BG, borderRadius: 12, padding: 12 }}>
+                <Text style={{ color: MUTED, fontSize: 11, fontFamily: "DMSans_700Bold", letterSpacing: 1, marginBottom: 8 }}>INGREDIENTS</Text>
                 {meal.ingredients.map((ing: string, i: number) => (
                   <View key={i} style={{ flexDirection: "row", alignItems: "flex-start", gap: 8, marginBottom: 4 }}>
-                    <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: "#FDE68A", marginTop: 5 }} />
-                    <Text style={{ color: "#F59E0B", fontSize: 13, flex: 1, lineHeight: 18 }}>{ing}</Text>
+                    <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: CREAM, marginTop: 5 }} />
+                    <Text style={{ color: GOLD, fontSize: 13, flex: 1, lineHeight: 18 }}>{ing}</Text>
                   </View>
                 ))}
               </View>
             )}
             {meal.instructions?.length > 0 && (
-              <View style={{ backgroundColor: "#0A0500", borderRadius: 12, padding: 12 }}>
-                <Text style={{ color: "#B45309", fontSize: 11, fontFamily: "Outfit_700Bold", letterSpacing: 1, marginBottom: 8 }}>PREP STEPS</Text>
+              <View style={{ backgroundColor: BG, borderRadius: 12, padding: 12 }}>
+                <Text style={{ color: MUTED, fontSize: 11, fontFamily: "DMSans_700Bold", letterSpacing: 1, marginBottom: 8 }}>PREP STEPS</Text>
                 {meal.instructions.map((step: string, i: number) => (
                   <View key={i} style={{ flexDirection: "row", alignItems: "flex-start", gap: 10, marginBottom: 8 }}>
-                    <View style={{ width: 22, height: 22, borderRadius: 11, backgroundColor: "#F59E0B", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                      <Text style={{ color: "#FFF7ED", fontSize: 11, fontFamily: "Outfit_700Bold" }}>{i + 1}</Text>
+                    <View style={{ width: 22, height: 22, borderRadius: 11, backgroundColor: GOLD, alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                      <Text style={{ color: BG, fontSize: 11, fontFamily: "DMSans_700Bold" }}>{i + 1}</Text>
                     </View>
-                    <Text style={{ color: "#F59E0B", fontSize: 13, flex: 1, lineHeight: 20 }}>{step}</Text>
+                    <Text style={{ color: FG, fontSize: 13, flex: 1, lineHeight: 20 }}>{step}</Text>
                   </View>
                 ))}
               </View>
             )}
             {(!meal.ingredients?.length && !meal.instructions?.length) && (
-              <View style={{ backgroundColor: "#0A0500", borderRadius: 12, padding: 12 }}>
-                <Text style={{ color: "#B45309", fontSize: 13, textAlign: "center" }}>
+              <View style={{ backgroundColor: BG, borderRadius: 12, padding: 12 }}>
+                <Text style={{ color: MUTED, fontSize: 13, textAlign: "center" }}>
                   Regenerate your meal plan to get detailed prep instructions for each meal.
                 </Text>
               </View>

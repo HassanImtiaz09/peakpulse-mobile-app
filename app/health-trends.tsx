@@ -197,7 +197,7 @@ function HealthChart({ data, metricKey, color, formatValue, decimals }: ChartPro
 
       {/* Data points */}
       {points.map((p, i) => (
-        <Circle key={i} cx={p.x} cy={p.y} r={3} fill={color} stroke="#0A0500" strokeWidth={1.5} />
+        <Circle key={i} cx={p.x} cy={p.y} r={3} fill={color} stroke="#0A0E14" strokeWidth={1.5} />
       ))}
 
       {/* X-axis labels */}
@@ -262,19 +262,19 @@ function StatSummary({
   return (
     <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 10, paddingHorizontal: 4 }}>
       <View style={{ alignItems: "center", flex: 1 }}>
-        <Text style={{ color: config.color, fontFamily: "Outfit_700Bold", fontSize: 16 }}>
+        <Text style={{ color: config.color, fontFamily: "DMSans_700Bold", fontSize: 16 }}>
           {config.formatValue(avg)}
         </Text>
         <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 9 }}>Average</Text>
       </View>
       <View style={{ alignItems: "center", flex: 1 }}>
-        <Text style={{ color: "#22C55E", fontFamily: "Outfit_700Bold", fontSize: 16 }}>
+        <Text style={{ color: "#22C55E", fontFamily: "DMSans_700Bold", fontSize: 16 }}>
           {config.formatValue(max)}
         </Text>
         <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 9 }}>Best</Text>
       </View>
       <View style={{ alignItems: "center", flex: 1 }}>
-        <Text style={{ color: "#F59E0B", fontFamily: "Outfit_700Bold", fontSize: 16 }}>
+        <Text style={{ color: "#F59E0B", fontFamily: "DMSans_700Bold", fontSize: 16 }}>
           {config.formatValue(min)}
         </Text>
         <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 9 }}>Lowest</Text>
@@ -289,7 +289,7 @@ function StatSummary({
           <Text
             style={{
               color: trendUp ? "#22C55E" : trendDown ? "#EF4444" : "#B45309",
-              fontFamily: "Outfit_700Bold",
+              fontFamily: "DMSans_700Bold",
               fontSize: 14,
             }}
           >
@@ -376,7 +376,7 @@ export default function HealthTrendsScreen() {
   );
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#0A0500" }}>
+    <View style={{ flex: 1, backgroundColor: "#0A0E14" }}>
       {/* Hero Header */}
       <ImageBackground source={{ uri: DASHBOARD_BG }} style={{ height: 150 }} resizeMode="cover">
         <View style={{ flex: 1, backgroundColor: "rgba(8,8,16,0.72)", justifyContent: "flex-end", padding: 20, paddingTop: 52 }}>
@@ -387,17 +387,17 @@ export default function HealthTrendsScreen() {
             }}
             onPress={() => router.back()}
           >
-            <Text style={{ color: "#FFF7ED", fontSize: 18 }}>←</Text>
+            <Text style={{ color: "#F1F5F9", fontSize: 18 }}>←</Text>
           </TouchableOpacity>
-          <Text style={{ color: "#FBBF24", fontFamily: "Outfit_700Bold", fontSize: 12, letterSpacing: 1 }}>ANALYTICS</Text>
-          <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_800ExtraBold", fontSize: 26, letterSpacing: -0.5 }}>Health Trends</Text>
+          <Text style={{ color: "#FBBF24", fontFamily: "DMSans_700Bold", fontSize: 12, letterSpacing: 1 }}>ANALYTICS</Text>
+          <Text style={{ color: "#F1F5F9", fontFamily: "BebasNeue_400Regular", fontSize: 26, letterSpacing: -0.5 }}>Health Trends</Text>
         </View>
       </ImageBackground>
 
       <ScrollView contentContainerStyle={{ padding: 20, paddingBottom: 40 }} showsVerticalScrollIndicator={false}>
         {/* Period Selector */}
         <View style={{
-          flexDirection: "row", backgroundColor: "#150A00", borderRadius: 14, padding: 4,
+          flexDirection: "row", backgroundColor: "#141A22", borderRadius: 14, padding: 4,
           marginBottom: 16, borderWidth: 1, borderColor: "rgba(245,158,11,0.15)",
         }}>
           {([7, 30] as const).map((p) => (
@@ -411,8 +411,8 @@ export default function HealthTrendsScreen() {
             >
               <Text
                 style={{
-                  color: period === p ? "#0A0500" : "#B45309",
-                  fontFamily: "Outfit_700Bold",
+                  color: period === p ? "#0A0E14" : "#B45309",
+                  fontFamily: "DMSans_700Bold",
                   fontSize: 14,
                 }}
               >
@@ -440,7 +440,7 @@ export default function HealthTrendsScreen() {
                   paddingHorizontal: 14,
                   paddingVertical: 8,
                   borderRadius: 12,
-                  backgroundColor: isActive ? m.color + "20" : "#150A00",
+                  backgroundColor: isActive ? m.color + "20" : "#141A22",
                   borderWidth: 1,
                   borderColor: isActive ? m.color + "50" : "rgba(245,158,11,0.10)",
                 }}
@@ -450,7 +450,7 @@ export default function HealthTrendsScreen() {
                 <Text
                   style={{
                     color: isActive ? m.color : "#B45309",
-                    fontFamily: isActive ? "Outfit_700Bold" : "DMSans_500Medium",
+                    fontFamily: isActive ? "DMSans_700Bold" : "DMSans_500Medium",
                     fontSize: 12,
                   }}
                 >
@@ -463,7 +463,7 @@ export default function HealthTrendsScreen() {
 
         {/* Chart Card */}
         <View style={{
-          backgroundColor: "#150A00",
+          backgroundColor: "#141A22",
           borderRadius: 20,
           padding: 16,
           marginBottom: 16,
@@ -473,7 +473,7 @@ export default function HealthTrendsScreen() {
           {/* Chart Header */}
           <View style={{ flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 4 }}>
             <MaterialIcons name={currentConfig.icon as any} size={20} color={currentConfig.color} />
-            <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 16 }}>
+            <Text style={{ color: "#F1F5F9", fontFamily: "DMSans_700Bold", fontSize: 16 }}>
               {currentConfig.label}
             </Text>
             <View style={{ flex: 1 }} />
@@ -518,7 +518,7 @@ export default function HealthTrendsScreen() {
         <View style={{ marginBottom: 12 }}>
           <View style={{ flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 12 }}>
             <View style={{ width: 3, height: 16, backgroundColor: "#F59E0B", borderRadius: 2 }} />
-            <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 15 }}>
+            <Text style={{ color: "#F1F5F9", fontFamily: "DMSans_700Bold", fontSize: 15 }}>
               {period === 7 ? "7-Day" : "30-Day"} Summary
             </Text>
           </View>
@@ -542,7 +542,7 @@ export default function HealthTrendsScreen() {
                 key={m.key}
                 style={{
                   width: "47%",
-                  backgroundColor: selectedMetric === m.key ? m.color + "12" : "#150A00",
+                  backgroundColor: selectedMetric === m.key ? m.color + "12" : "#141A22",
                   borderRadius: 16,
                   padding: 14,
                   borderWidth: 1,
@@ -554,14 +554,14 @@ export default function HealthTrendsScreen() {
                   <MaterialIcons name={m.icon as any} size={16} color={m.color} />
                   <Text style={{ color: "#B45309", fontFamily: "DMSans_600SemiBold", fontSize: 11 }}>{m.label}</Text>
                 </View>
-                <Text style={{ color: m.color, fontFamily: "Outfit_700Bold", fontSize: 22 }}>
+                <Text style={{ color: m.color, fontFamily: "DMSans_700Bold", fontSize: 22 }}>
                   {m.formatValue(todayNum)}
                 </Text>
                 <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 10 }}>
                   Today
                 </Text>
                 <View style={{ height: 1, backgroundColor: "rgba(245,158,11,0.08)", marginVertical: 8 }} />
-                <Text style={{ color: "#B45309", fontFamily: "Outfit_700Bold", fontSize: 14 }}>
+                <Text style={{ color: "#B45309", fontFamily: "DMSans_700Bold", fontSize: 14 }}>
                   {m.formatValue(avg)}
                 </Text>
                 <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 10 }}>
@@ -574,12 +574,12 @@ export default function HealthTrendsScreen() {
 
         {/* Data Source Info */}
         <View style={{
-          backgroundColor: "#150A00", borderRadius: 16, padding: 16, marginTop: 16,
+          backgroundColor: "#141A22", borderRadius: 16, padding: 16, marginTop: 16,
           borderWidth: 1, borderColor: "rgba(245,158,11,0.10)",
         }}>
           <View style={{ flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 8 }}>
             <MaterialIcons name="info-outline" size={18} color="#F59E0B" />
-            <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 14 }}>Data Source</Text>
+            <Text style={{ color: "#F1F5F9", fontFamily: "DMSans_700Bold", fontSize: 14 }}>Data Source</Text>
           </View>
           <Text style={{ color: "#B45309", fontSize: 12, lineHeight: 18 }}>
             {stats.dataSource === "healthkit"
@@ -603,7 +603,7 @@ export default function HealthTrendsScreen() {
 
         {/* ═══ Export Health Report ═══ */}
         <View style={{
-          backgroundColor: "#150A00", borderRadius: 16, padding: 16, marginTop: 16,
+          backgroundColor: "#141A22", borderRadius: 16, padding: 16, marginTop: 16,
           borderWidth: 1, borderColor: "rgba(245,158,11,0.20)",
         }}>
           <TouchableOpacity
@@ -612,7 +612,7 @@ export default function HealthTrendsScreen() {
           >
             <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
               <MaterialIcons name="picture-as-pdf" size={18} color="#F59E0B" />
-              <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 14 }}>Export Health Report</Text>
+              <Text style={{ color: "#F1F5F9", fontFamily: "DMSans_700Bold", fontSize: 14 }}>Export Health Report</Text>
             </View>
             <MaterialIcons name={showReportConfig ? "expand-less" : "expand-more"} size={20} color="#B45309" />
           </TouchableOpacity>
@@ -624,7 +624,7 @@ export default function HealthTrendsScreen() {
           {showReportConfig && (
             <View>
               {/* Metric Selection */}
-              <Text style={{ color: "#FDE68A", fontFamily: "Outfit_600SemiBold", fontSize: 12, marginBottom: 8 }}>
+              <Text style={{ color: "#FDE68A", fontFamily: "DMSans_600SemiBold", fontSize: 12, marginBottom: 8 }}>
                 Select Metrics to Include
               </Text>
               <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 6, marginBottom: 14 }}>
@@ -654,7 +654,7 @@ export default function HealthTrendsScreen() {
               </View>
 
               {/* Personal Notes */}
-              <Text style={{ color: "#FDE68A", fontFamily: "Outfit_600SemiBold", fontSize: 12, marginBottom: 8 }}>
+              <Text style={{ color: "#FDE68A", fontFamily: "DMSans_600SemiBold", fontSize: 12, marginBottom: 8 }}>
                 Notes for Healthcare Provider
               </Text>
               <TextInput
@@ -666,7 +666,7 @@ export default function HealthTrendsScreen() {
                 numberOfLines={4}
                 textAlignVertical="top"
                 style={{
-                  backgroundColor: "#0A0500", borderRadius: 10, padding: 12,
+                  backgroundColor: "#0A0E14", borderRadius: 10, padding: 12,
                   color: "#FDE68A", fontFamily: "DMSans_400Regular", fontSize: 12,
                   borderWidth: 1, borderColor: "rgba(245,158,11,0.15)",
                   minHeight: 80, lineHeight: 18,
@@ -690,11 +690,11 @@ export default function HealthTrendsScreen() {
               onPress={() => handleExport("share")}
             >
               {exporting ? (
-                <ActivityIndicator color="#0A0500" size="small" />
+                <ActivityIndicator color="#0A0E14" size="small" />
               ) : (
-                <MaterialIcons name="share" size={16} color="#0A0500" />
+                <MaterialIcons name="share" size={16} color="#0A0E14" />
               )}
-              <Text style={{ color: "#0A0500", fontFamily: "Outfit_700Bold", fontSize: 13 }}>
+              <Text style={{ color: "#0A0E14", fontFamily: "DMSans_700Bold", fontSize: 13 }}>
                 {exporting ? "Generating..." : `Share ${period}-Day Report`}
               </Text>
             </TouchableOpacity>

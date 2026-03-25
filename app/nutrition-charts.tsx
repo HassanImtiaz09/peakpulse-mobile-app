@@ -134,7 +134,7 @@ export default function NutritionChartsScreen() {
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
-          <MaterialIcons name="arrow-back" size={24} color="#FFF7ED" />
+          <MaterialIcons name="arrow-back" size={24} color="#F1F5F9" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Nutrition Insights</Text>
         <View style={{ width: 40 }} />
@@ -202,7 +202,7 @@ export default function NutritionChartsScreen() {
                           x={x + 16}
                           y={180 - barH - 6}
                           textAnchor="middle"
-                          fill="#FFF7ED"
+                          fill="#F1F5F9"
                           fontSize={9}
                           fontWeight="bold"
                         >
@@ -255,7 +255,7 @@ export default function NutritionChartsScreen() {
                   const fatPct = totalG > 0 ? (d.fat / totalG) * 100 : 34;
                   return (
                     <View key={d.date} style={{ flexDirection: "row", alignItems: "center", marginBottom: 8 }}>
-                      <Text style={{ color: "#B45309", fontSize: 10, fontFamily: "Outfit_700Bold", width: 32 }}>
+                      <Text style={{ color: "#B45309", fontSize: 10, fontFamily: "DMSans_700Bold", width: 32 }}>
                         {d.shortLabel}
                       </Text>
                       <View style={{ flex: 1, flexDirection: "row", height: 16, borderRadius: 8, overflow: "hidden", backgroundColor: "rgba(245,158,11,0.06)" }}>
@@ -267,7 +267,7 @@ export default function NutritionChartsScreen() {
                           </>
                         )}
                       </View>
-                      <Text style={{ color: "#B45309", fontSize: 9, fontFamily: "Outfit_700Bold", width: 36, textAlign: "right" }}>
+                      <Text style={{ color: "#B45309", fontSize: 9, fontFamily: "DMSans_700Bold", width: 36, textAlign: "right" }}>
                         {totalG > 0 ? `${totalG}g` : "—"}
                       </Text>
                     </View>
@@ -317,8 +317,8 @@ export default function NutritionChartsScreen() {
                               return <Path key={idx} d={path} fill={s.color} opacity={0.9} />;
                             })}
                             {/* Center hole for donut effect */}
-                            <Circle cx={cx} cy={cy} r={42} fill="#150A00" />
-                            <SvgText x={cx} y={cy - 4} textAnchor="middle" fill="#FFF7ED" fontSize={18} fontWeight="bold">
+                            <Circle cx={cx} cy={cy} r={42} fill="#141A22" />
+                            <SvgText x={cx} y={cy - 4} textAnchor="middle" fill="#F1F5F9" fontSize={18} fontWeight="bold">
                               {todayData.calories}
                             </SvgText>
                             <SvgText x={cx} y={cy + 14} textAnchor="middle" fill="#B45309" fontSize={10}>
@@ -330,7 +330,7 @@ export default function NutritionChartsScreen() {
                     ) : (
                       <>
                         <Circle cx={90} cy={90} r={70} fill="rgba(245,158,11,0.06)" />
-                        <Circle cx={90} cy={90} r={42} fill="#150A00" />
+                        <Circle cx={90} cy={90} r={42} fill="#141A22" />
                         <SvgText x={90} y={90} textAnchor="middle" fill="#B45309" fontSize={12}>
                           No data
                         </SvgText>
@@ -348,7 +348,7 @@ export default function NutritionChartsScreen() {
                     <View key={m.label} style={{ alignItems: "center" }}>
                       <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
                         <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: m.color }} />
-                        <Text style={{ color: "#FFF7ED", fontSize: 12, fontFamily: "Outfit_700Bold" }}>{m.value}g</Text>
+                        <Text style={{ color: "#F1F5F9", fontSize: 12, fontFamily: "DMSans_700Bold" }}>{m.value}g</Text>
                       </View>
                       <Text style={{ color: "#B45309", fontSize: 10, marginTop: 2 }}>{m.label} ({m.pct}%)</Text>
                     </View>
@@ -371,8 +371,8 @@ export default function NutritionChartsScreen() {
                 ].map(stat => (
                   <View key={stat.label} style={{ flex: 1, minWidth: "45%", backgroundColor: "rgba(245,158,11,0.06)", borderRadius: 12, padding: 12, borderWidth: 1, borderColor: "rgba(245,158,11,0.08)" }}>
                     <MaterialIcons name={stat.icon as any} size={18} color="#F59E0B" />
-                    <Text style={{ color: "#FFF7ED", fontSize: 16, fontFamily: "Outfit_700Bold", marginTop: 4 }}>{stat.value}</Text>
-                    <Text style={{ color: "#B45309", fontSize: 10, fontFamily: "Outfit_700Bold" }}>{stat.label}</Text>
+                    <Text style={{ color: "#F1F5F9", fontSize: 16, fontFamily: "DMSans_700Bold", marginTop: 4 }}>{stat.value}</Text>
+                    <Text style={{ color: "#B45309", fontSize: 10, fontFamily: "DMSans_700Bold" }}>{stat.label}</Text>
                   </View>
                 ))}
               </View>
@@ -385,20 +385,20 @@ export default function NutritionChartsScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#0A0500" },
+  container: { flex: 1, backgroundColor: "#0A0E14" },
   header: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingHorizontal: 16, paddingVertical: 12 },
   backBtn: { width: 40, height: 40, borderRadius: 20, backgroundColor: "rgba(245,158,11,0.10)", alignItems: "center", justifyContent: "center" },
-  headerTitle: { color: "#FFF7ED", fontSize: 18, fontFamily: "Outfit_800ExtraBold" },
+  headerTitle: { color: "#F1F5F9", fontSize: 18, fontFamily: "BebasNeue_400Regular" },
   toggleRow: { flexDirection: "row", gap: 8, marginBottom: 16, marginTop: 8 },
   toggleBtn: { flex: 1, paddingVertical: 10, borderRadius: 12, alignItems: "center", backgroundColor: "rgba(245,158,11,0.06)", borderWidth: 1, borderColor: "rgba(245,158,11,0.08)" },
   toggleBtnActive: { backgroundColor: "#F59E0B", borderColor: "#F59E0B" },
-  toggleText: { color: "#B45309", fontSize: 13, fontFamily: "Outfit_700Bold" },
-  toggleTextActive: { color: "#FFF7ED" },
-  chartCard: { backgroundColor: "#150A00", borderRadius: 16, padding: 16, marginBottom: 16, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" },
-  chartTitle: { color: "#FFF7ED", fontSize: 15, fontFamily: "Outfit_700Bold" },
-  chartSubtitle: { color: "#B45309", fontSize: 11, fontFamily: "Outfit_700Bold", marginTop: 2 },
+  toggleText: { color: "#B45309", fontSize: 13, fontFamily: "DMSans_700Bold" },
+  toggleTextActive: { color: "#F1F5F9" },
+  chartCard: { backgroundColor: "#141A22", borderRadius: 16, padding: 16, marginBottom: 16, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" },
+  chartTitle: { color: "#F1F5F9", fontSize: 15, fontFamily: "DMSans_700Bold" },
+  chartSubtitle: { color: "#B45309", fontSize: 11, fontFamily: "DMSans_700Bold", marginTop: 2 },
   macroLegend: { flexDirection: "row", gap: 12, marginTop: 8 },
   legendItem: { flexDirection: "row", alignItems: "center", gap: 4 },
   legendDot: { width: 8, height: 8, borderRadius: 4 },
-  legendText: { color: "#B45309", fontSize: 10, fontFamily: "Outfit_700Bold" },
+  legendText: { color: "#B45309", fontSize: 10, fontFamily: "DMSans_700Bold" },
 });

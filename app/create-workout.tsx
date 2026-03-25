@@ -23,10 +23,10 @@ import {
 
 // ── Theme ────────────────────────────────────────────────────────────────────
 const SF = {
-  bg: "#0A0500", surface: "rgba(245,158,11,0.04)", surfaceBright: "rgba(245,158,11,0.08)",
+  bg: "#0A0E14", surface: "rgba(245,158,11,0.04)", surfaceBright: "rgba(245,158,11,0.08)",
   gold1: "#FBBF24", gold2: "#F59E0B", gold3: "#D97706", gold4: "#B45309",
   muted: "#B45309", border: "rgba(245,158,11,0.10)", borderBright: "rgba(245,158,11,0.18)",
-  red: "#EF4444", green: "#22C55E", blue: "#3B82F6", cream: "#FFF7ED",
+  red: "#EF4444", green: "#22C55E", blue: "#3B82F6", cream: "#F1F5F9",
 };
 
 interface SelectedExercise {
@@ -230,7 +230,7 @@ export default function CreateWorkoutScreen() {
 
         {/* Info */}
         <View style={{ flex: 1 }}>
-          <Text style={{ color: SF.cream, fontFamily: "Outfit_700Bold", fontSize: 13 }}>{item.name}</Text>
+          <Text style={{ color: SF.cream, fontFamily: "DMSans_700Bold", fontSize: 13 }}>{item.name}</Text>
           <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 10, marginTop: 1 }}>
             {item.primaryMuscles.map(m => m.replace(/_/g, " ")).join(", ")} · {item.equipment}
           </Text>
@@ -246,7 +246,7 @@ export default function CreateWorkoutScreen() {
           borderWidth: selected ? 0 : 1.5, borderColor: SF.borderBright,
           alignItems: "center", justifyContent: "center",
         }}>
-          {selected && <MaterialIcons name="check" size={16} color="#0A0500" />}
+          {selected && <MaterialIcons name="check" size={16} color="#0A0E14" />}
         </View>
       </TouchableOpacity>
     );
@@ -276,7 +276,7 @@ export default function CreateWorkoutScreen() {
               <MaterialIcons name="arrow-back" size={22} color={SF.gold1} />
             </TouchableOpacity>
             <View style={{ flex: 1 }}>
-              <Text style={{ color: SF.cream, fontFamily: "Outfit_700Bold", fontSize: 18 }}>Create Workout</Text>
+              <Text style={{ color: SF.cream, fontFamily: "DMSans_700Bold", fontSize: 18 }}>Create Workout</Text>
               <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 11 }}>
                 {selectedExercises.length} exercises selected
               </Text>
@@ -286,7 +286,7 @@ export default function CreateWorkoutScreen() {
                 onPress={() => setStep("configure")}
                 style={{ backgroundColor: SF.gold2, borderRadius: 10, paddingHorizontal: 14, paddingVertical: 8 }}
               >
-                <Text style={{ color: "#0A0500", fontFamily: "Outfit_700Bold", fontSize: 12 }}>Next</Text>
+                <Text style={{ color: "#0A0E14", fontFamily: "DMSans_700Bold", fontSize: 12 }}>Next</Text>
               </TouchableOpacity>
             )}
           </View>
@@ -377,14 +377,14 @@ export default function CreateWorkoutScreen() {
               {/* Mini balance indicator */}
               {balance && (
                 <View style={{ alignItems: "center" }}>
-                  <Text style={{ color: balance.rating === "excellent" ? SF.green : balance.rating === "good" ? SF.gold1 : SF.red, fontFamily: "Outfit_700Bold", fontSize: 16 }}>
+                  <Text style={{ color: balance.rating === "excellent" ? SF.green : balance.rating === "good" ? SF.gold1 : SF.red, fontFamily: "DMSans_700Bold", fontSize: 16 }}>
                     {balance.overallScore}
                   </Text>
                   <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 8 }}>Balance</Text>
                 </View>
               )}
               <View style={{ flex: 1 }}>
-                <Text style={{ color: SF.cream, fontFamily: "Outfit_700Bold", fontSize: 13 }}>
+                <Text style={{ color: SF.cream, fontFamily: "DMSans_700Bold", fontSize: 13 }}>
                   {selectedExercises.length} exercises
                 </Text>
                 {calorieEst && (
@@ -397,7 +397,7 @@ export default function CreateWorkoutScreen() {
                 onPress={() => setStep("configure")}
                 style={{ backgroundColor: SF.gold2, borderRadius: 12, paddingHorizontal: 20, paddingVertical: 10 }}
               >
-                <Text style={{ color: "#0A0500", fontFamily: "Outfit_700Bold", fontSize: 13 }}>Configure</Text>
+                <Text style={{ color: "#0A0E14", fontFamily: "DMSans_700Bold", fontSize: 13 }}>Configure</Text>
               </TouchableOpacity>
             </View>
           )}
@@ -417,7 +417,7 @@ export default function CreateWorkoutScreen() {
               <MaterialIcons name="arrow-back" size={22} color={SF.gold1} />
             </TouchableOpacity>
             <View style={{ flex: 1 }}>
-              <Text style={{ color: SF.cream, fontFamily: "Outfit_700Bold", fontSize: 18 }}>Configure Workout</Text>
+              <Text style={{ color: SF.cream, fontFamily: "DMSans_700Bold", fontSize: 18 }}>Configure Workout</Text>
               <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 11 }}>
                 Adjust sets, reps, and rest for each exercise
               </Text>
@@ -426,7 +426,7 @@ export default function CreateWorkoutScreen() {
               onPress={() => setStep("insights")}
               style={{ backgroundColor: SF.gold2, borderRadius: 10, paddingHorizontal: 14, paddingVertical: 8 }}
             >
-              <Text style={{ color: "#0A0500", fontFamily: "Outfit_700Bold", fontSize: 12 }}>Review</Text>
+              <Text style={{ color: "#0A0E14", fontFamily: "DMSans_700Bold", fontSize: 12 }}>Review</Text>
             </TouchableOpacity>
           </View>
 
@@ -458,7 +458,7 @@ export default function CreateWorkoutScreen() {
               >
                 <MaterialIcons name="auto-awesome" size={18} color={SF.gold1} />
                 <View style={{ flex: 1 }}>
-                  <Text style={{ color: SF.gold1, fontFamily: "Outfit_700Bold", fontSize: 12 }}>AI Coach Insights</Text>
+                  <Text style={{ color: SF.gold1, fontFamily: "DMSans_700Bold", fontSize: 12 }}>AI Coach Insights</Text>
                   <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 10 }}>
                     {coachInsights.length} suggestions · Tap to view
                   </Text>
@@ -474,7 +474,7 @@ export default function CreateWorkoutScreen() {
                 borderWidth: 1, borderColor: SF.border,
               }}>
                 <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
-                  <Text style={{ color: SF.cream, fontFamily: "Outfit_700Bold", fontSize: 13 }}>Muscle Balance</Text>
+                  <Text style={{ color: SF.cream, fontFamily: "DMSans_700Bold", fontSize: 13 }}>Muscle Balance</Text>
                   <View style={{
                     backgroundColor: balance.rating === "excellent" ? "rgba(34,197,94,0.15)" : balance.rating === "good" ? "rgba(245,158,11,0.15)" : "rgba(239,68,68,0.15)",
                     paddingHorizontal: 8, paddingVertical: 2, borderRadius: 6,
@@ -527,7 +527,7 @@ export default function CreateWorkoutScreen() {
                   {/* Exercise Header */}
                   <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
                     <View style={{ flex: 1 }}>
-                      <Text style={{ color: SF.cream, fontFamily: "Outfit_700Bold", fontSize: 13 }}>{ex.name}</Text>
+                      <Text style={{ color: SF.cream, fontFamily: "DMSans_700Bold", fontSize: 13 }}>{ex.name}</Text>
                       <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 10 }}>
                         {info?.primaryMuscles.map(m => m.replace(/_/g, " ")).join(", ")}
                       </Text>
@@ -560,7 +560,7 @@ export default function CreateWorkoutScreen() {
                         >
                           <MaterialIcons name="remove" size={14} color={SF.gold1} />
                         </TouchableOpacity>
-                        <Text style={{ color: SF.cream, fontFamily: "Outfit_700Bold", fontSize: 16, minWidth: 20, textAlign: "center" }}>{ex.sets}</Text>
+                        <Text style={{ color: SF.cream, fontFamily: "DMSans_700Bold", fontSize: 16, minWidth: 20, textAlign: "center" }}>{ex.sets}</Text>
                         <TouchableOpacity
                           onPress={() => updateExercise(idx, "sets", Math.min(8, ex.sets + 1))}
                           style={{ width: 26, height: 26, borderRadius: 6, backgroundColor: SF.surfaceBright, alignItems: "center", justifyContent: "center" }}
@@ -580,7 +580,7 @@ export default function CreateWorkoutScreen() {
                         >
                           <MaterialIcons name="remove" size={14} color={SF.gold1} />
                         </TouchableOpacity>
-                        <Text style={{ color: SF.cream, fontFamily: "Outfit_700Bold", fontSize: 16, minWidth: 20, textAlign: "center" }}>{ex.reps}</Text>
+                        <Text style={{ color: SF.cream, fontFamily: "DMSans_700Bold", fontSize: 16, minWidth: 20, textAlign: "center" }}>{ex.reps}</Text>
                         <TouchableOpacity
                           onPress={() => updateExercise(idx, "reps", Math.min(50, ex.reps + 1))}
                           style={{ width: 26, height: 26, borderRadius: 6, backgroundColor: SF.surfaceBright, alignItems: "center", justifyContent: "center" }}
@@ -600,7 +600,7 @@ export default function CreateWorkoutScreen() {
                         >
                           <MaterialIcons name="remove" size={14} color={SF.gold1} />
                         </TouchableOpacity>
-                        <Text style={{ color: SF.cream, fontFamily: "Outfit_700Bold", fontSize: 14, minWidth: 28, textAlign: "center" }}>{ex.restSeconds}s</Text>
+                        <Text style={{ color: SF.cream, fontFamily: "DMSans_700Bold", fontSize: 14, minWidth: 28, textAlign: "center" }}>{ex.restSeconds}s</Text>
                         <TouchableOpacity
                           onPress={() => updateExercise(idx, "restSeconds", Math.min(300, ex.restSeconds + 15))}
                           style={{ width: 26, height: 26, borderRadius: 6, backgroundColor: SF.surfaceBright, alignItems: "center", justifyContent: "center" }}
@@ -640,8 +640,8 @@ export default function CreateWorkoutScreen() {
               style={{ backgroundColor: SF.gold2, borderRadius: 12, paddingVertical: 12, alignItems: "center" }}
             >
               <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
-                <MaterialIcons name="auto-awesome" size={16} color="#0A0500" />
-                <Text style={{ color: "#0A0500", fontFamily: "Outfit_700Bold", fontSize: 14 }}>Review AI Insights</Text>
+                <MaterialIcons name="auto-awesome" size={16} color="#0A0E14" />
+                <Text style={{ color: "#0A0E14", fontFamily: "DMSans_700Bold", fontSize: 14 }}>Review AI Insights</Text>
               </View>
             </TouchableOpacity>
           </View>
@@ -654,7 +654,7 @@ export default function CreateWorkoutScreen() {
                 maxHeight: "80%", paddingTop: 16, paddingBottom: Math.max(insets.bottom, 20),
               }}>
                 <View style={{ flexDirection: "row", alignItems: "center", paddingHorizontal: 16, marginBottom: 12 }}>
-                  <Text style={{ color: SF.cream, fontFamily: "Outfit_700Bold", fontSize: 16, flex: 1 }}>AI Coach Insights</Text>
+                  <Text style={{ color: SF.cream, fontFamily: "DMSans_700Bold", fontSize: 16, flex: 1 }}>AI Coach Insights</Text>
                   <TouchableOpacity onPress={() => setShowInsightsModal(false)}>
                     <MaterialIcons name="close" size={22} color={SF.muted} />
                   </TouchableOpacity>
@@ -674,7 +674,7 @@ export default function CreateWorkoutScreen() {
                         />
                         <Text style={{
                           color: insight.type === "warning" ? SF.red : insight.type === "praise" ? SF.green : SF.gold1,
-                          fontFamily: "Outfit_700Bold", fontSize: 12,
+                          fontFamily: "DMSans_700Bold", fontSize: 12,
                         }}>{insight.title}</Text>
                       </View>
                       <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 11, lineHeight: 16 }}>
@@ -701,7 +701,7 @@ export default function CreateWorkoutScreen() {
             <MaterialIcons name="arrow-back" size={22} color={SF.gold1} />
           </TouchableOpacity>
           <View style={{ flex: 1 }}>
-            <Text style={{ color: SF.cream, fontFamily: "Outfit_700Bold", fontSize: 18 }}>AI Analysis</Text>
+            <Text style={{ color: SF.cream, fontFamily: "DMSans_700Bold", fontSize: 18 }}>AI Analysis</Text>
             <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 11 }}>
               {workoutName || "Custom Workout"} · {selectedExercises.length} exercises
             </Text>
@@ -717,20 +717,20 @@ export default function CreateWorkoutScreen() {
             }}>
               <View style={{ flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 12 }}>
                 <MaterialIcons name="local-fire-department" size={16} color={SF.gold1} />
-                <Text style={{ color: SF.cream, fontFamily: "Outfit_700Bold", fontSize: 14 }}>Calorie Estimate</Text>
+                <Text style={{ color: SF.cream, fontFamily: "DMSans_700Bold", fontSize: 14 }}>Calorie Estimate</Text>
               </View>
 
               <View style={{ flexDirection: "row", justifyContent: "space-around", marginBottom: 12 }}>
                 <View style={{ alignItems: "center" }}>
-                  <Text style={{ color: SF.gold1, fontFamily: "Outfit_700Bold", fontSize: 24 }}>{calorieEst.totalCalories}</Text>
+                  <Text style={{ color: SF.gold1, fontFamily: "DMSans_700Bold", fontSize: 24 }}>{calorieEst.totalCalories}</Text>
                   <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 10 }}>kcal burned</Text>
                 </View>
                 <View style={{ alignItems: "center" }}>
-                  <Text style={{ color: SF.gold3, fontFamily: "Outfit_700Bold", fontSize: 24 }}>{calorieEst.durationMinutes}</Text>
+                  <Text style={{ color: SF.gold3, fontFamily: "DMSans_700Bold", fontSize: 24 }}>{calorieEst.durationMinutes}</Text>
                   <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 10 }}>minutes</Text>
                 </View>
                 <View style={{ alignItems: "center" }}>
-                  <Text style={{ color: "#F97316", fontFamily: "Outfit_700Bold", fontSize: 24 }}>+{calorieEst.afterburnCalories}</Text>
+                  <Text style={{ color: "#F97316", fontFamily: "DMSans_700Bold", fontSize: 24 }}>+{calorieEst.afterburnCalories}</Text>
                   <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 10 }}>afterburn</Text>
                 </View>
               </View>
@@ -753,7 +753,7 @@ export default function CreateWorkoutScreen() {
             }}>
               <View style={{ flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 12 }}>
                 <MaterialIcons name="trending-up" size={16} color={SF.green} />
-                <Text style={{ color: SF.cream, fontFamily: "Outfit_700Bold", fontSize: 14 }}>Projected Results</Text>
+                <Text style={{ color: SF.cream, fontFamily: "DMSans_700Bold", fontSize: 14 }}>Projected Results</Text>
                 <View style={{
                   backgroundColor: bodyCompEst.confidence === "high" ? "rgba(34,197,94,0.15)" : "rgba(245,158,11,0.15)",
                   paddingHorizontal: 6, paddingVertical: 1, borderRadius: 4, marginLeft: "auto",
@@ -768,7 +768,7 @@ export default function CreateWorkoutScreen() {
               <View style={{ flexDirection: "row", justifyContent: "space-around", marginBottom: 12 }}>
                 {bodyCompEst.estimatedMonthlyMuscleGainKg > 0 && (
                   <View style={{ alignItems: "center" }}>
-                    <Text style={{ color: SF.green, fontFamily: "Outfit_700Bold", fontSize: 20 }}>
+                    <Text style={{ color: SF.green, fontFamily: "DMSans_700Bold", fontSize: 20 }}>
                       +{bodyCompEst.estimatedMonthlyMuscleGainKg}
                     </Text>
                     <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 9 }}>kg muscle/month</Text>
@@ -776,14 +776,14 @@ export default function CreateWorkoutScreen() {
                 )}
                 {bodyCompEst.estimatedMonthlyFatLossKg > 0 && (
                   <View style={{ alignItems: "center" }}>
-                    <Text style={{ color: SF.blue, fontFamily: "Outfit_700Bold", fontSize: 20 }}>
+                    <Text style={{ color: SF.blue, fontFamily: "DMSans_700Bold", fontSize: 20 }}>
                       -{bodyCompEst.estimatedMonthlyFatLossKg}
                     </Text>
                     <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 9 }}>kg fat/month</Text>
                   </View>
                 )}
                 <View style={{ alignItems: "center" }}>
-                  <Text style={{ color: SF.gold1, fontFamily: "Outfit_700Bold", fontSize: 20 }}>
+                  <Text style={{ color: SF.gold1, fontFamily: "DMSans_700Bold", fontSize: 20 }}>
                     {bodyCompEst.weeklyMuscleStimulusScore}
                   </Text>
                   <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 9 }}>stimulus score</Text>
@@ -819,7 +819,7 @@ export default function CreateWorkoutScreen() {
             }}>
               <View style={{ flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 12 }}>
                 <MaterialIcons name="accessibility-new" size={16} color={SF.gold1} />
-                <Text style={{ color: SF.cream, fontFamily: "Outfit_700Bold", fontSize: 14 }}>Muscle Coverage</Text>
+                <Text style={{ color: SF.cream, fontFamily: "DMSans_700Bold", fontSize: 14 }}>Muscle Coverage</Text>
               </View>
 
               <BodyHeatmap
@@ -840,7 +840,7 @@ export default function CreateWorkoutScreen() {
             backgroundColor: SF.surface, borderRadius: 16, padding: 16, marginBottom: 12,
             borderWidth: 1.5, borderColor: SF.borderBright,
           }}>
-            <Text style={{ color: SF.cream, fontFamily: "Outfit_700Bold", fontSize: 14, marginBottom: 10 }}>Workout Summary</Text>
+            <Text style={{ color: SF.cream, fontFamily: "DMSans_700Bold", fontSize: 14, marginBottom: 10 }}>Workout Summary</Text>
             {selectedExercises.map((ex, i) => (
               <View key={i} style={{ flexDirection: "row", justifyContent: "space-between", paddingVertical: 4, borderBottomWidth: i < selectedExercises.length - 1 ? 1 : 0, borderBottomColor: SF.border }}>
                 <Text style={{ color: SF.cream, fontFamily: "DMSans_500Medium", fontSize: 11, flex: 1 }}>{ex.name}</Text>
@@ -850,8 +850,8 @@ export default function CreateWorkoutScreen() {
               </View>
             ))}
             <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 8, paddingTop: 8, borderTopWidth: 1, borderTopColor: SF.borderBright }}>
-              <Text style={{ color: SF.gold1, fontFamily: "Outfit_700Bold", fontSize: 12 }}>Total</Text>
-              <Text style={{ color: SF.gold1, fontFamily: "Outfit_700Bold", fontSize: 12 }}>
+              <Text style={{ color: SF.gold1, fontFamily: "DMSans_700Bold", fontSize: 12 }}>Total</Text>
+              <Text style={{ color: SF.gold1, fontFamily: "DMSans_700Bold", fontSize: 12 }}>
                 {selectedExercises.reduce((s, e) => s + e.sets, 0)} sets · {calorieEst?.durationMinutes ?? "?"} min
               </Text>
             </View>
@@ -874,13 +874,13 @@ export default function CreateWorkoutScreen() {
           >
             {saving ? (
               <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-                <ActivityIndicator size="small" color="#0A0500" />
-                <Text style={{ color: "#0A0500", fontFamily: "Outfit_700Bold", fontSize: 14 }}>Saving...</Text>
+                <ActivityIndicator size="small" color="#0A0E14" />
+                <Text style={{ color: "#0A0E14", fontFamily: "DMSans_700Bold", fontSize: 14 }}>Saving...</Text>
               </View>
             ) : (
               <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
-                <MaterialIcons name="save" size={18} color="#0A0500" />
-                <Text style={{ color: "#0A0500", fontFamily: "Outfit_700Bold", fontSize: 14 }}>Save to My Plan</Text>
+                <MaterialIcons name="save" size={18} color="#0A0E14" />
+                <Text style={{ color: "#0A0E14", fontFamily: "DMSans_700Bold", fontSize: 14 }}>Save to My Plan</Text>
               </View>
             )}
           </TouchableOpacity>

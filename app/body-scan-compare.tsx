@@ -15,9 +15,9 @@ const PHOTO_W = SCREEN_W - 40;
 const PHOTO_H = Math.round(PHOTO_W * (4 / 3));
 
 const SF = {
-  bg: "#0A0500", surface: "#150A00", surface2: "#1F0D00",
+  bg: "#0A0E14", surface: "#141A22", surface2: "#1F0D00",
   border: "rgba(245,158,11,0.12)", border2: "rgba(245,158,11,0.20)",
-  fg: "#FFF7ED", muted: "#B45309",
+  fg: "#F1F5F9", muted: "#B45309",
   gold: "#F59E0B", gold2: "#FBBF24", gold3: "#FDE68A",
   green: "#10B981", red: "#F87171",
 };
@@ -155,7 +155,7 @@ export default function BodyScanCompareScreen() {
             <MaterialIcons name="arrow-back" size={24} color={SF.gold} />
           </TouchableOpacity>
           <Text style={{ fontSize: 48, marginBottom: 16 }}>📸</Text>
-          <Text style={{ color: SF.fg, fontFamily: "Outfit_700Bold", fontSize: 18, textAlign: "center", marginBottom: 8 }}>
+          <Text style={{ color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 18, textAlign: "center", marginBottom: 8 }}>
             Need 2+ Body Scans
           </Text>
           <Text style={{ color: SF.muted, fontSize: 13, textAlign: "center", lineHeight: 20 }}>
@@ -165,7 +165,7 @@ export default function BodyScanCompareScreen() {
             style={{ marginTop: 24, backgroundColor: SF.gold, borderRadius: 14, paddingHorizontal: 24, paddingVertical: 12 }}
             onPress={() => router.back()}
           >
-            <Text style={{ color: SF.bg, fontFamily: "Outfit_700Bold", fontSize: 14 }}>Go Back</Text>
+            <Text style={{ color: SF.bg, fontFamily: "DMSans_700Bold", fontSize: 14 }}>Go Back</Text>
           </TouchableOpacity>
         </View>
       </ScreenContainer>
@@ -182,7 +182,7 @@ export default function BodyScanCompareScreen() {
               <MaterialIcons name="arrow-back" size={24} color={SF.gold} />
             </TouchableOpacity>
             <View style={{ flex: 1 }}>
-              <Text style={{ color: SF.fg, fontFamily: "Outfit_700Bold", fontSize: 22 }}>Progress Comparison</Text>
+              <Text style={{ color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 22 }}>Progress Comparison</Text>
               <Text style={{ color: SF.muted, fontSize: 12, marginTop: 2 }}>
                 {daysBetween > 0 ? `${daysBetween} days apart` : "Select two dates to compare"}
               </Text>
@@ -199,8 +199,8 @@ export default function BodyScanCompareScreen() {
             }}
             onPress={() => setDatePickerVisible("left")}
           >
-            <Text style={{ color: SF.gold, fontFamily: "Outfit_700Bold", fontSize: 10, letterSpacing: 1, marginBottom: 4 }}>BEFORE</Text>
-            <Text style={{ color: SF.fg, fontFamily: "Outfit_700Bold", fontSize: 14 }}>
+            <Text style={{ color: SF.gold, fontFamily: "DMSans_700Bold", fontSize: 10, letterSpacing: 1, marginBottom: 4 }}>BEFORE</Text>
+            <Text style={{ color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 14 }}>
               {leftScan ? formatDate(leftScan.date) : "Select"}
             </Text>
             {leftScan?.bodyFatPercent != null && (
@@ -219,8 +219,8 @@ export default function BodyScanCompareScreen() {
             }}
             onPress={() => setDatePickerVisible("right")}
           >
-            <Text style={{ color: SF.green, fontFamily: "Outfit_700Bold", fontSize: 10, letterSpacing: 1, marginBottom: 4 }}>AFTER</Text>
-            <Text style={{ color: SF.fg, fontFamily: "Outfit_700Bold", fontSize: 14 }}>
+            <Text style={{ color: SF.green, fontFamily: "DMSans_700Bold", fontSize: 10, letterSpacing: 1, marginBottom: 4 }}>AFTER</Text>
+            <Text style={{ color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 14 }}>
               {rightScan ? formatDate(rightScan.date) : "Select"}
             </Text>
             {rightScan?.bodyFatPercent != null && (
@@ -269,10 +269,10 @@ export default function BodyScanCompareScreen() {
 
               {/* Labels */}
               <View style={{ position: "absolute", top: 12, left: 12, backgroundColor: "rgba(10,5,0,0.75)", borderRadius: 8, paddingHorizontal: 10, paddingVertical: 4 }}>
-                <Text style={{ color: SF.gold, fontFamily: "Outfit_700Bold", fontSize: 11 }}>BEFORE</Text>
+                <Text style={{ color: SF.gold, fontFamily: "DMSans_700Bold", fontSize: 11 }}>BEFORE</Text>
               </View>
               <View style={{ position: "absolute", top: 12, right: 12, backgroundColor: "rgba(10,5,0,0.75)", borderRadius: 8, paddingHorizontal: 10, paddingVertical: 4 }}>
-                <Text style={{ color: SF.green, fontFamily: "Outfit_700Bold", fontSize: 11 }}>AFTER</Text>
+                <Text style={{ color: SF.green, fontFamily: "DMSans_700Bold", fontSize: 11 }}>AFTER</Text>
               </View>
             </View>
 
@@ -287,7 +287,7 @@ export default function BodyScanCompareScreen() {
             borderWidth: 1, borderColor: SF.border,
           }}>
             <Text style={{ fontSize: 40, marginBottom: 8 }}>🖼️</Text>
-            <Text style={{ color: SF.fg, fontFamily: "Outfit_700Bold", fontSize: 14, marginBottom: 4 }}>No Photos Available</Text>
+            <Text style={{ color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 14, marginBottom: 4 }}>No Photos Available</Text>
             <Text style={{ color: SF.muted, fontSize: 12, textAlign: "center" }}>
               The selected scans don't have photos attached. Take a photo during your next body scan to enable the visual comparison.
             </Text>
@@ -297,7 +297,7 @@ export default function BodyScanCompareScreen() {
         {/* Stats comparison */}
         {stats.length > 0 && (
           <View style={{ marginHorizontal: 20, marginBottom: 16 }}>
-            <Text style={{ color: SF.fg, fontFamily: "Outfit_700Bold", fontSize: 16, marginBottom: 12 }}>Stats Comparison</Text>
+            <Text style={{ color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 16, marginBottom: 12 }}>Stats Comparison</Text>
             {stats.map((stat, i) => (
               <View
                 key={i}
@@ -306,17 +306,17 @@ export default function BodyScanCompareScreen() {
                   borderWidth: 1, borderColor: SF.border, marginBottom: 8,
                 }}
               >
-                <Text style={{ color: SF.muted, fontSize: 10, fontFamily: "Outfit_700Bold", letterSpacing: 1, marginBottom: 8 }}>
+                <Text style={{ color: SF.muted, fontSize: 10, fontFamily: "DMSans_700Bold", letterSpacing: 1, marginBottom: 8 }}>
                   {stat.label.toUpperCase()}
                 </Text>
                 <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
                   <View style={{ alignItems: "center", flex: 1 }}>
-                    <Text style={{ color: SF.gold, fontFamily: "Outfit_700Bold", fontSize: 20 }}>{stat.left}</Text>
+                    <Text style={{ color: SF.gold, fontFamily: "DMSans_700Bold", fontSize: 20 }}>{stat.left}</Text>
                     <Text style={{ color: SF.muted, fontSize: 9, marginTop: 2 }}>Before</Text>
                   </View>
                   <View style={{ alignItems: "center", paddingHorizontal: 12 }}>
                     {stat.delta ? (
-                      <Text style={{ color: stat.delta.color, fontFamily: "Outfit_800ExtraBold", fontSize: 16 }}>
+                      <Text style={{ color: stat.delta.color, fontFamily: "BebasNeue_400Regular", fontSize: 16 }}>
                         {stat.delta.text}
                       </Text>
                     ) : (
@@ -324,7 +324,7 @@ export default function BodyScanCompareScreen() {
                     )}
                   </View>
                   <View style={{ alignItems: "center", flex: 1 }}>
-                    <Text style={{ color: SF.green, fontFamily: "Outfit_700Bold", fontSize: 20 }}>{stat.right}</Text>
+                    <Text style={{ color: SF.green, fontFamily: "DMSans_700Bold", fontSize: 20 }}>{stat.right}</Text>
                     <Text style={{ color: SF.muted, fontSize: 9, marginTop: 2 }}>After</Text>
                   </View>
                 </View>
@@ -335,7 +335,7 @@ export default function BodyScanCompareScreen() {
 
         {/* Timeline */}
         <View style={{ paddingHorizontal: 20, marginBottom: 16 }}>
-          <Text style={{ color: SF.fg, fontFamily: "Outfit_700Bold", fontSize: 16, marginBottom: 12 }}>Scan Timeline</Text>
+          <Text style={{ color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 16, marginBottom: 12 }}>Scan Timeline</Text>
           {allScans.map((scan, i) => {
             const isLeft = i === leftIdx;
             const isRight = i === rightIdx;
@@ -363,7 +363,7 @@ export default function BodyScanCompareScreen() {
                   </View>
                 )}
                 <View style={{ flex: 1 }}>
-                  <Text style={{ color: SF.fg, fontFamily: "Outfit_700Bold", fontSize: 13 }}>{formatDate(scan.date)}</Text>
+                  <Text style={{ color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 13 }}>{formatDate(scan.date)}</Text>
                   <View style={{ flexDirection: "row", gap: 10, marginTop: 3 }}>
                     {scan.bodyFatPercent != null && <Text style={{ color: SF.muted, fontSize: 11 }}>{scan.bodyFatPercent}% BF</Text>}
                     {scan.weightKg != null && <Text style={{ color: SF.muted, fontSize: 11 }}>{scan.weightKg} kg</Text>}
@@ -371,12 +371,12 @@ export default function BodyScanCompareScreen() {
                 </View>
                 {isLeft && (
                   <View style={{ backgroundColor: SF.gold, borderRadius: 8, paddingHorizontal: 8, paddingVertical: 3 }}>
-                    <Text style={{ color: SF.bg, fontSize: 9, fontFamily: "Outfit_700Bold" }}>BEFORE</Text>
+                    <Text style={{ color: SF.bg, fontSize: 9, fontFamily: "DMSans_700Bold" }}>BEFORE</Text>
                   </View>
                 )}
                 {isRight && (
                   <View style={{ backgroundColor: SF.green, borderRadius: 8, paddingHorizontal: 8, paddingVertical: 3 }}>
-                    <Text style={{ color: SF.bg, fontSize: 9, fontFamily: "Outfit_700Bold" }}>AFTER</Text>
+                    <Text style={{ color: SF.bg, fontSize: 9, fontFamily: "DMSans_700Bold" }}>AFTER</Text>
                   </View>
                 )}
               </TouchableOpacity>
@@ -392,7 +392,7 @@ export default function BodyScanCompareScreen() {
         }}>
           <Text style={{ color: SF.gold3, fontSize: 12, lineHeight: 18 }}>
             {"💡 "}
-            <Text style={{ fontFamily: "Outfit_700Bold" }}>Tip:</Text>
+            <Text style={{ fontFamily: "DMSans_700Bold" }}>Tip:</Text>
             {" Take body scan photos in the same lighting and pose for the most accurate comparison. Weekly scans are ideal for tracking progress."}
           </Text>
         </View>
@@ -409,7 +409,7 @@ export default function BodyScanCompareScreen() {
               flexDirection: "row", justifyContent: "space-between", alignItems: "center",
               padding: 20, borderBottomWidth: 1, borderBottomColor: SF.border,
             }}>
-              <Text style={{ color: SF.fg, fontFamily: "Outfit_700Bold", fontSize: 18 }}>
+              <Text style={{ color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 18 }}>
                 Select {datePickerVisible === "left" ? "Before" : "After"} Date
               </Text>
               <TouchableOpacity onPress={() => setDatePickerVisible(null)} style={{ padding: 4 }}>
@@ -441,7 +441,7 @@ export default function BodyScanCompareScreen() {
                     }}
                   >
                     <View style={{ flex: 1 }}>
-                      <Text style={{ color: SF.fg, fontFamily: "Outfit_700Bold", fontSize: 14 }}>{formatDate(item.date)}</Text>
+                      <Text style={{ color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 14 }}>{formatDate(item.date)}</Text>
                       <View style={{ flexDirection: "row", gap: 10, marginTop: 3 }}>
                         {item.bodyFatPercent != null && <Text style={{ color: SF.muted, fontSize: 11 }}>{item.bodyFatPercent}% BF</Text>}
                         {item.weightKg != null && <Text style={{ color: SF.muted, fontSize: 11 }}>{item.weightKg} kg</Text>}

@@ -119,14 +119,14 @@ export default function DigestSettingsScreen() {
 
   if (loading) {
     return (
-      <View style={{ flex: 1, backgroundColor: "#0A0500", alignItems: "center", justifyContent: "center" }}>
+      <View style={{ flex: 1, backgroundColor: "#0A0E14", alignItems: "center", justifyContent: "center" }}>
         <ActivityIndicator color="#F59E0B" size="large" />
       </View>
     );
   }
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#0A0500" }}>
+    <View style={{ flex: 1, backgroundColor: "#0A0E14" }}>
       <ImageBackground source={{ uri: DASHBOARD_BG }} style={{ flex: 1 }} imageStyle={{ opacity: 0.10 }}>
         <ScreenContainer edges={["top", "left", "right"]} className="flex-1">
           {/* Header */}
@@ -138,7 +138,7 @@ export default function DigestSettingsScreen() {
               <MaterialIcons name="arrow-back" size={22} color="#FDE68A" />
             </TouchableOpacity>
             <View style={{ flex: 1 }}>
-              <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 18 }}>
+              <Text style={{ color: "#F1F5F9", fontFamily: "DMSans_700Bold", fontSize: 18 }}>
                 Weekly Digest Settings
               </Text>
               <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 11 }}>
@@ -150,7 +150,7 @@ export default function DigestSettingsScreen() {
           <ScrollView contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 100 }}>
             {/* ═══ Enable/Disable Toggle ═══ */}
             <View style={{
-              backgroundColor: "#150A00", borderRadius: 14, padding: 16, marginBottom: 12,
+              backgroundColor: "#141A22", borderRadius: 14, padding: 16, marginBottom: 12,
               borderWidth: 1, borderColor: "rgba(245,158,11,0.15)",
             }}>
               <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
@@ -162,7 +162,7 @@ export default function DigestSettingsScreen() {
                     <MaterialIcons name="notifications-active" size={20} color="#F59E0B" />
                   </View>
                   <View style={{ flex: 1 }}>
-                    <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 14 }}>
+                    <Text style={{ color: "#F1F5F9", fontFamily: "DMSans_700Bold", fontSize: 14 }}>
                       Weekly Health Digest
                     </Text>
                     <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 11, marginTop: 2 }}>
@@ -182,13 +182,13 @@ export default function DigestSettingsScreen() {
 
             {/* ═══ Schedule Settings ═══ */}
             <View style={{
-              backgroundColor: "#150A00", borderRadius: 14, padding: 16, marginBottom: 12,
+              backgroundColor: "#141A22", borderRadius: 14, padding: 16, marginBottom: 12,
               borderWidth: 1, borderColor: "rgba(245,158,11,0.12)",
               opacity: prefs.enabled ? 1 : 0.5,
             }}>
               <View style={{ flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 14 }}>
                 <MaterialIcons name="schedule" size={16} color="#F59E0B" />
-                <Text style={{ color: "#FDE68A", fontFamily: "Outfit_600SemiBold", fontSize: 13 }}>
+                <Text style={{ color: "#FDE68A", fontFamily: "DMSans_600SemiBold", fontSize: 13 }}>
                   Delivery Schedule
                 </Text>
               </View>
@@ -199,13 +199,13 @@ export default function DigestSettingsScreen() {
                 disabled={!prefs.enabled || saving}
                 style={{
                   flexDirection: "row", alignItems: "center", justifyContent: "space-between",
-                  backgroundColor: "#0A0500", borderRadius: 10, padding: 14, marginBottom: 10,
+                  backgroundColor: "#0A0E14", borderRadius: 10, padding: 14, marginBottom: 10,
                   borderWidth: 1, borderColor: "rgba(245,158,11,0.10)",
                 }}
               >
                 <View>
                   <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 10 }}>Day of Week</Text>
-                  <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_600SemiBold", fontSize: 14, marginTop: 2 }}>
+                  <Text style={{ color: "#F1F5F9", fontFamily: "DMSans_600SemiBold", fontSize: 14, marginTop: 2 }}>
                     {selectedDay.label}
                   </Text>
                 </View>
@@ -218,13 +218,13 @@ export default function DigestSettingsScreen() {
                 disabled={!prefs.enabled || saving}
                 style={{
                   flexDirection: "row", alignItems: "center", justifyContent: "space-between",
-                  backgroundColor: "#0A0500", borderRadius: 10, padding: 14,
+                  backgroundColor: "#0A0E14", borderRadius: 10, padding: 14,
                   borderWidth: 1, borderColor: "rgba(245,158,11,0.10)",
                 }}
               >
                 <View>
                   <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 10 }}>Delivery Time</Text>
-                  <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_600SemiBold", fontSize: 14, marginTop: 2 }}>
+                  <Text style={{ color: "#F1F5F9", fontFamily: "DMSans_600SemiBold", fontSize: 14, marginTop: 2 }}>
                     {formatHour(prefs.hour)}
                   </Text>
                 </View>
@@ -244,12 +244,12 @@ export default function DigestSettingsScreen() {
 
             {/* ═══ What's Included ═══ */}
             <View style={{
-              backgroundColor: "#150A00", borderRadius: 14, padding: 16, marginBottom: 12,
+              backgroundColor: "#141A22", borderRadius: 14, padding: 16, marginBottom: 12,
               borderWidth: 1, borderColor: "rgba(245,158,11,0.12)",
             }}>
               <View style={{ flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 12 }}>
                 <MaterialIcons name="analytics" size={16} color="#F59E0B" />
-                <Text style={{ color: "#FDE68A", fontFamily: "Outfit_600SemiBold", fontSize: 13 }}>
+                <Text style={{ color: "#FDE68A", fontFamily: "DMSans_600SemiBold", fontSize: 13 }}>
                   What's Included
                 </Text>
               </View>
@@ -266,7 +266,7 @@ export default function DigestSettingsScreen() {
                 }}>
                   <MaterialIcons name={item.icon as any} size={16} color="#B45309" />
                   <View style={{ flex: 1 }}>
-                    <Text style={{ color: "#FFF7ED", fontFamily: "DMSans_500Medium", fontSize: 12 }}>{item.label}</Text>
+                    <Text style={{ color: "#F1F5F9", fontFamily: "DMSans_500Medium", fontSize: 12 }}>{item.label}</Text>
                     <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 10 }}>{item.desc}</Text>
                   </View>
                   <MaterialIcons name="check-circle" size={14} color="#22C55E" />
@@ -276,7 +276,7 @@ export default function DigestSettingsScreen() {
 
             {/* ═══ Test & Status ═══ */}
             <View style={{
-              backgroundColor: "#150A00", borderRadius: 14, padding: 16, marginBottom: 12,
+              backgroundColor: "#141A22", borderRadius: 14, padding: 16, marginBottom: 12,
               borderWidth: 1, borderColor: "rgba(245,158,11,0.12)",
             }}>
               {/* Last Digest */}
@@ -288,7 +288,7 @@ export default function DigestSettingsScreen() {
                   <MaterialIcons name="history" size={16} color="#B45309" />
                   <View style={{ flex: 1 }}>
                     <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 10 }}>Last Digest Sent</Text>
-                    <Text style={{ color: "#FFF7ED", fontFamily: "DMSans_500Medium", fontSize: 12 }}>
+                    <Text style={{ color: "#F1F5F9", fontFamily: "DMSans_500Medium", fontSize: 12 }}>
                       {new Date(lastDigestDate).toLocaleDateString("en-GB", {
                         day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit",
                       })}
@@ -308,11 +308,11 @@ export default function DigestSettingsScreen() {
                 }}
               >
                 {sendingTest ? (
-                  <ActivityIndicator color="#0A0500" size="small" />
+                  <ActivityIndicator color="#0A0E14" size="small" />
                 ) : (
-                  <MaterialIcons name="send" size={16} color="#0A0500" />
+                  <MaterialIcons name="send" size={16} color="#0A0E14" />
                 )}
-                <Text style={{ color: "#0A0500", fontFamily: "Outfit_700Bold", fontSize: 14 }}>
+                <Text style={{ color: "#0A0E14", fontFamily: "DMSans_700Bold", fontSize: 14 }}>
                   {sendingTest ? "Sending..." : "Send Test Digest Now"}
                 </Text>
               </TouchableOpacity>
@@ -344,14 +344,14 @@ export default function DigestSettingsScreen() {
           flex: 1, backgroundColor: "rgba(0,0,0,0.7)", justifyContent: "center", alignItems: "center",
         }}>
           <View style={{
-            backgroundColor: "#150A00", borderRadius: 16, width: 280, maxHeight: 400,
+            backgroundColor: "#141A22", borderRadius: 16, width: 280, maxHeight: 400,
             borderWidth: 1, borderColor: "rgba(245,158,11,0.20)",
           }}>
             <View style={{
               flexDirection: "row", alignItems: "center", justifyContent: "space-between",
               padding: 16, borderBottomWidth: 1, borderBottomColor: "rgba(245,158,11,0.10)",
             }}>
-              <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 16 }}>Select Day</Text>
+              <Text style={{ color: "#F1F5F9", fontFamily: "DMSans_700Bold", fontSize: 16 }}>Select Day</Text>
               <TouchableOpacity onPress={() => setShowDayPicker(false)}>
                 <MaterialIcons name="close" size={20} color="#B45309" />
               </TouchableOpacity>
@@ -375,8 +375,8 @@ export default function DigestSettingsScreen() {
                     }}
                   >
                     <Text style={{
-                      color: active ? "#F59E0B" : "#FFF7ED",
-                      fontFamily: active ? "Outfit_700Bold" : "DMSans_400Regular", fontSize: 14,
+                      color: active ? "#F59E0B" : "#F1F5F9",
+                      fontFamily: active ? "DMSans_700Bold" : "DMSans_400Regular", fontSize: 14,
                     }}>
                       {item.label}
                     </Text>
@@ -395,14 +395,14 @@ export default function DigestSettingsScreen() {
           flex: 1, backgroundColor: "rgba(0,0,0,0.7)", justifyContent: "center", alignItems: "center",
         }}>
           <View style={{
-            backgroundColor: "#150A00", borderRadius: 16, width: 280, maxHeight: 420,
+            backgroundColor: "#141A22", borderRadius: 16, width: 280, maxHeight: 420,
             borderWidth: 1, borderColor: "rgba(245,158,11,0.20)",
           }}>
             <View style={{
               flexDirection: "row", alignItems: "center", justifyContent: "space-between",
               padding: 16, borderBottomWidth: 1, borderBottomColor: "rgba(245,158,11,0.10)",
             }}>
-              <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 16 }}>Select Time</Text>
+              <Text style={{ color: "#F1F5F9", fontFamily: "DMSans_700Bold", fontSize: 16 }}>Select Time</Text>
               <TouchableOpacity onPress={() => setShowHourPicker(false)}>
                 <MaterialIcons name="close" size={20} color="#B45309" />
               </TouchableOpacity>
@@ -426,8 +426,8 @@ export default function DigestSettingsScreen() {
                     }}
                   >
                     <Text style={{
-                      color: active ? "#F59E0B" : "#FFF7ED",
-                      fontFamily: active ? "Outfit_700Bold" : "DMSans_400Regular", fontSize: 14,
+                      color: active ? "#F59E0B" : "#F1F5F9",
+                      fontFamily: active ? "DMSans_700Bold" : "DMSans_400Regular", fontSize: 14,
                     }}>
                       {formatHour(item)}
                     </Text>

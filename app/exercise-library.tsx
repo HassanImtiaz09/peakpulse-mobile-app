@@ -34,12 +34,12 @@ import {
 import type { MuscleGroup } from "@/components/body-diagram";
 
 const C = {
-  bg: "#0A0500",
-  surface: "#150A00",
+  bg: "#0A0E14",
+  surface: "#141A22",
   surface2: "#1A0F00",
   border: "rgba(245,158,11,0.15)",
   border2: "rgba(245,158,11,0.25)",
-  fg: "#FFF7ED",
+  fg: "#F1F5F9",
   muted: "#B45309",
   gold: "#F59E0B",
   gold2: "#FBBF24",
@@ -338,7 +338,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     flex: 1,
     color: C.fg,
-    fontFamily: "Outfit_700Bold",
+    fontFamily: "DMSans_700Bold",
     fontSize: 20,
     marginLeft: 12,
   },
@@ -352,7 +352,7 @@ const styles = StyleSheet.create({
   },
   countText: {
     color: C.gold,
-    fontFamily: "Outfit_700Bold",
+    fontFamily: "DMSans_700Bold",
     fontSize: 13,
   },
   searchContainer: {
@@ -529,7 +529,7 @@ const styles = StyleSheet.create({
   },
   emptyTitle: {
     color: C.fg,
-    fontFamily: "Outfit_700Bold",
+    fontFamily: "DMSans_700Bold",
     fontSize: 18,
   },
   emptySubtitle: {

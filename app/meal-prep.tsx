@@ -10,7 +10,7 @@ import { trpc } from "@/lib/trpc";
 
 import * as Haptics from "expo-haptics";
 
-const SF = { bg: "#0A0500", card: "#150A00", orange: "#F59E0B", gold: "#FBBF24", cream: "#FDE68A", muted: "#B45309", text: "#FFF7ED", border: "rgba(245,158,11,0.10)", green: "#22C55E", red: "#EF4444", blue: "#60A5FA" };
+const SF = { bg: "#0A0E14", card: "#141A22", orange: "#F59E0B", gold: "#FBBF24", cream: "#FDE68A", muted: "#B45309", text: "#F1F5F9", border: "rgba(245,158,11,0.10)", green: "#22C55E", red: "#EF4444", blue: "#60A5FA" };
 
 // ── Ingredient Matching ──────────────────────────────────────────
 interface IngredientMatch {
@@ -567,10 +567,10 @@ export default function MealPrepScreen() {
                       activeOpacity={0.7}
                     >
                       {isCooking ? (
-                        <ActivityIndicator color="#0A0500" size="small" />
+                        <ActivityIndicator color="#0A0E14" size="small" />
                       ) : (
                         <>
-                          <MaterialIcons name="local-fire-department" size={16} color="#0A0500" />
+                          <MaterialIcons name="local-fire-department" size={16} color="#0A0E14" />
                           <Text style={styles.cookNowBtnText}>Cook Now</Text>
                         </>
                       )}
@@ -683,10 +683,10 @@ export default function MealPrepScreen() {
             {!generated && (
               <TouchableOpacity style={styles.generateBtn} onPress={generateRecipes} disabled={loading || pantryItems.length === 0}>
                 {loading ? (
-                  <ActivityIndicator color="#0A0500" size="small" />
+                  <ActivityIndicator color="#0A0E14" size="small" />
                 ) : (
                   <>
-                    <MaterialIcons name="auto-awesome" size={20} color="#0A0500" />
+                    <MaterialIcons name="auto-awesome" size={20} color="#0A0E14" />
                     <Text style={styles.generateBtnText}>
                       {pantryItems.length === 0 ? "Add pantry items first" : `Generate Recipes (${expiringItems.length} expiring)`}
                     </Text>
@@ -775,65 +775,65 @@ export default function MealPrepScreen() {
 const styles = StyleSheet.create({
   header: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingHorizontal: 16, paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: SF.border },
   backBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: SF.card, alignItems: "center", justifyContent: "center" },
-  headerTitle: { color: SF.text, fontFamily: "Outfit_700Bold", fontSize: 18 },
+  headerTitle: { color: SF.text, fontFamily: "DMSans_700Bold", fontSize: 18 },
   tabRow: { flexDirection: "row", paddingHorizontal: 16, paddingTop: 12, gap: 8 },
   tabBtn: { flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6, paddingVertical: 10, borderRadius: 10, borderWidth: 1, borderColor: SF.border, backgroundColor: SF.card },
   tabBtnActive: { borderColor: SF.orange + "40", backgroundColor: "rgba(245,158,11,0.08)" },
-  tabText: { color: SF.muted, fontFamily: "Outfit_700Bold", fontSize: 13 },
+  tabText: { color: SF.muted, fontFamily: "DMSans_700Bold", fontSize: 13 },
   tabTextActive: { color: SF.text },
   section: { paddingHorizontal: 16, marginTop: 16 },
   sectionHeader: { flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 10 },
-  sectionTitle: { color: SF.text, fontFamily: "Outfit_700Bold", fontSize: 15 },
+  sectionTitle: { color: SF.text, fontFamily: "DMSans_700Bold", fontSize: 15 },
   chipRow: { flexDirection: "row", flexWrap: "wrap", gap: 6 },
   chip: { flexDirection: "row", alignItems: "center", gap: 4, backgroundColor: SF.card, borderRadius: 8, paddingHorizontal: 8, paddingVertical: 5, borderWidth: 1 },
   chipDot: { width: 6, height: 6, borderRadius: 3 },
-  chipText: { color: SF.text, fontSize: 11, fontFamily: "Outfit_700Bold", maxWidth: 80 },
-  chipDays: { fontSize: 10, fontFamily: "Outfit_700Bold" },
+  chipText: { color: SF.text, fontSize: 11, fontFamily: "DMSans_700Bold", maxWidth: 80 },
+  chipDays: { fontSize: 10, fontFamily: "DMSans_700Bold" },
   moreText: { color: SF.muted, fontSize: 11, alignSelf: "center" },
   servingsRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingHorizontal: 16, marginTop: 16 },
   servingsLabel: { color: SF.muted, fontSize: 13 },
   servingsControl: { flexDirection: "row", alignItems: "center", gap: 12, backgroundColor: SF.card, borderRadius: 10, paddingHorizontal: 8, paddingVertical: 4 },
   servingsBtn: { width: 28, height: 28, borderRadius: 14, backgroundColor: "rgba(245,158,11,0.10)", alignItems: "center", justifyContent: "center" },
-  servingsValue: { color: SF.text, fontFamily: "Outfit_700Bold", fontSize: 16, minWidth: 24, textAlign: "center" },
+  servingsValue: { color: SF.text, fontFamily: "DMSans_700Bold", fontSize: 16, minWidth: 24, textAlign: "center" },
   generateBtn: { flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8, backgroundColor: SF.orange, borderRadius: 14, marginHorizontal: 16, marginTop: 20, paddingVertical: 14 },
-  generateBtnText: { color: "#0A0500", fontFamily: "Outfit_700Bold", fontSize: 15 },
+  generateBtnText: { color: "#0A0E14", fontFamily: "DMSans_700Bold", fontSize: 15 },
   loadingSection: { alignItems: "center", marginTop: 40, gap: 12 },
   loadingText: { color: SF.muted, fontSize: 13 },
   emptySection: { alignItems: "center", marginTop: 40, gap: 8 },
-  emptyTitle: { color: SF.text, fontFamily: "Outfit_700Bold", fontSize: 16 },
+  emptyTitle: { color: SF.text, fontFamily: "DMSans_700Bold", fontSize: 16 },
   emptyText: { color: SF.muted, fontSize: 12, textAlign: "center", paddingHorizontal: 20 },
   recipeCard: { backgroundColor: SF.card, borderRadius: 14, padding: 14, marginTop: 10, borderWidth: 1, borderColor: SF.border },
   recipeHeader: { flexDirection: "row", alignItems: "flex-start" },
-  recipeName: { color: SF.text, fontFamily: "Outfit_700Bold", fontSize: 15 },
+  recipeName: { color: SF.text, fontFamily: "DMSans_700Bold", fontSize: 15 },
   recipeMetaRow: { flexDirection: "row", gap: 10, marginTop: 4 },
   recipeMeta: { flexDirection: "row", alignItems: "center", gap: 3 },
   recipeMetaText: { color: SF.muted, fontSize: 10 },
   expiringPills: { flexDirection: "row", alignItems: "center", gap: 4, marginTop: 8, flexWrap: "wrap" },
   expiringPill: { backgroundColor: "rgba(34,197,94,0.10)", borderRadius: 6, paddingHorizontal: 6, paddingVertical: 2 },
-  expiringPillText: { color: SF.green, fontSize: 9, fontFamily: "Outfit_700Bold" },
+  expiringPillText: { color: SF.green, fontSize: 9, fontFamily: "DMSans_700Bold" },
   // Scale control
   scaleRow: { flexDirection: "row", alignItems: "center", gap: 8, marginTop: 8, paddingTop: 8, borderTopWidth: 1, borderTopColor: SF.border },
   scaleLabel: { color: SF.muted, fontSize: 11 },
   scaleControl: { flexDirection: "row", alignItems: "center", gap: 8, backgroundColor: "rgba(245,158,11,0.06)", borderRadius: 8, paddingHorizontal: 4, paddingVertical: 2 },
   scaleBtn: { width: 24, height: 24, borderRadius: 12, backgroundColor: "rgba(245,158,11,0.15)", alignItems: "center", justifyContent: "center" },
-  scaleValue: { color: SF.text, fontFamily: "Outfit_700Bold", fontSize: 14, minWidth: 20, textAlign: "center" },
-  resetScale: { color: SF.orange, fontSize: 10, fontFamily: "Outfit_700Bold", marginLeft: 4 },
+  scaleValue: { color: SF.text, fontFamily: "DMSans_700Bold", fontSize: 14, minWidth: 20, textAlign: "center" },
+  resetScale: { color: SF.orange, fontSize: 10, fontFamily: "DMSans_700Bold", marginLeft: 4 },
   macroRow: { flexDirection: "row", gap: 16, marginTop: 8 },
   macroItem: { alignItems: "center" },
-  macroVal: { fontFamily: "Outfit_700Bold", fontSize: 13 },
+  macroVal: { fontFamily: "DMSans_700Bold", fontSize: 13 },
   macroLabel: { color: SF.muted, fontSize: 9, marginTop: 1 },
   // Stars
   starsRow: { flexDirection: "row", alignItems: "center", gap: 2, marginTop: 8 },
-  ratingText: { color: SF.gold, fontSize: 11, fontFamily: "Outfit_700Bold", marginLeft: 6 },
+  ratingText: { color: SF.gold, fontSize: 11, fontFamily: "DMSans_700Bold", marginLeft: 6 },
   // Review
   reviewSection: { marginTop: 6 },
   reviewEditBox: { backgroundColor: "rgba(245,158,11,0.04)", borderRadius: 8, padding: 8, borderWidth: 1, borderColor: SF.border },
   reviewInput: { color: SF.text, fontSize: 12, minHeight: 50, textAlignVertical: "top", padding: 0 },
   reviewActions: { flexDirection: "row", justifyContent: "flex-end", gap: 8, marginTop: 6 },
   reviewCancelBtn: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 6 },
-  reviewCancelText: { color: SF.muted, fontSize: 11, fontFamily: "Outfit_700Bold" },
+  reviewCancelText: { color: SF.muted, fontSize: 11, fontFamily: "DMSans_700Bold" },
   reviewSaveBtn: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 6, backgroundColor: "rgba(245,158,11,0.15)" },
-  reviewSaveText: { color: SF.orange, fontSize: 11, fontFamily: "Outfit_700Bold" },
+  reviewSaveText: { color: SF.orange, fontSize: 11, fontFamily: "DMSans_700Bold" },
   reviewDisplay: { flexDirection: "row", alignItems: "flex-start", gap: 6, backgroundColor: "rgba(251,191,36,0.04)", borderRadius: 6, padding: 8 },
   reviewText: { color: SF.cream, fontSize: 11, flex: 1, lineHeight: 16 },
   addReviewBtn: { flexDirection: "row", alignItems: "center", gap: 4, paddingVertical: 4 },
@@ -841,49 +841,49 @@ const styles = StyleSheet.create({
   saveBtn: { width: 32, height: 32, borderRadius: 16, alignItems: "center", justifyContent: "center", backgroundColor: "rgba(245,158,11,0.06)" },
   saveBtnActive: { backgroundColor: "rgba(251,191,36,0.15)" },
   saveForLaterBtn: { flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6, marginTop: 10, paddingVertical: 8, borderRadius: 8, borderWidth: 1, borderColor: SF.gold + "30", backgroundColor: "rgba(251,191,36,0.06)" },
-  saveForLaterText: { color: SF.gold, fontSize: 12, fontFamily: "Outfit_700Bold" },
+  saveForLaterText: { color: SF.gold, fontSize: 12, fontFamily: "DMSans_700Bold" },
   savedIndicator: { flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 4, marginTop: 10, paddingVertical: 6 },
-  savedIndicatorText: { color: SF.gold, fontSize: 11, fontFamily: "Outfit_700Bold" },
+  savedIndicatorText: { color: SF.gold, fontSize: 11, fontFamily: "DMSans_700Bold" },
   expandedContent: { marginTop: 12, borderTopWidth: 1, borderTopColor: SF.border, paddingTop: 12 },
-  subHeading: { color: SF.cream, fontFamily: "Outfit_700Bold", fontSize: 12, marginBottom: 6 },
+  subHeading: { color: SF.cream, fontFamily: "DMSans_700Bold", fontSize: 12, marginBottom: 6 },
   ingredientRow: { flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 4 },
   ingredientText: { color: SF.text, fontSize: 12, flex: 1 },
-  pantryBadge: { color: SF.green, fontSize: 9, fontFamily: "Outfit_700Bold", backgroundColor: "rgba(34,197,94,0.10)", borderRadius: 4, paddingHorizontal: 4, paddingVertical: 1 },
+  pantryBadge: { color: SF.green, fontSize: 9, fontFamily: "DMSans_700Bold", backgroundColor: "rgba(34,197,94,0.10)", borderRadius: 4, paddingHorizontal: 4, paddingVertical: 1 },
   stepRow: { flexDirection: "row", gap: 8, marginBottom: 6 },
   stepNum: { width: 20, height: 20, borderRadius: 10, backgroundColor: "rgba(245,158,11,0.10)", alignItems: "center", justifyContent: "center" },
-  stepNumText: { color: SF.orange, fontSize: 10, fontFamily: "Outfit_700Bold" },
+  stepNumText: { color: SF.orange, fontSize: 10, fontFamily: "DMSans_700Bold" },
   stepText: { color: SF.text, fontSize: 12, flex: 1, lineHeight: 18 },
   storageRow: { flexDirection: "row", alignItems: "center", gap: 6, marginTop: 10, backgroundColor: "rgba(96,165,250,0.08)", borderRadius: 8, padding: 8 },
   storageText: { color: SF.blue, fontSize: 11, flex: 1 },
   removeBtn: { flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6, marginTop: 12, paddingVertical: 8, borderRadius: 8, borderWidth: 1, borderColor: SF.red + "30", backgroundColor: "rgba(239,68,68,0.06)" },
-  removeText: { color: SF.red, fontSize: 12, fontFamily: "Outfit_700Bold" },
+  removeText: { color: SF.red, fontSize: 12, fontFamily: "DMSans_700Bold" },
   tipsSection: { flexDirection: "row", gap: 8, marginHorizontal: 16, marginTop: 16, backgroundColor: "rgba(251,191,36,0.06)", borderRadius: 10, padding: 12 },
   tipText: { color: SF.cream, fontSize: 11, lineHeight: 16 },
   regenBtn: { flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6, marginHorizontal: 16, marginTop: 16, paddingVertical: 12, borderRadius: 12, borderWidth: 1, borderColor: SF.border },
-  regenText: { color: SF.orange, fontFamily: "Outfit_700Bold", fontSize: 13 },
+  regenText: { color: SF.orange, fontFamily: "DMSans_700Bold", fontSize: 13 },
   savedDate: { color: SF.muted, fontSize: 10, marginTop: 10, marginLeft: 4 },
   goGenerateBtn: { backgroundColor: SF.orange, borderRadius: 10, paddingHorizontal: 16, paddingVertical: 8, marginTop: 12 },
-  goGenerateText: { color: "#0A0500", fontFamily: "Outfit_700Bold", fontSize: 13 },
+  goGenerateText: { color: "#0A0E14", fontFamily: "DMSans_700Bold", fontSize: 13 },
   // Saved header with reorder toggle
   savedHeader: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
   reorderToggle: { flexDirection: "row", alignItems: "center", gap: 4, paddingHorizontal: 10, paddingVertical: 6, borderRadius: 8, borderWidth: 1, borderColor: SF.border },
   reorderToggleActive: { borderColor: SF.orange + "40", backgroundColor: "rgba(245,158,11,0.08)" },
-  reorderToggleText: { color: SF.muted, fontSize: 11, fontFamily: "Outfit_700Bold" },
+  reorderToggleText: { color: SF.muted, fontSize: 11, fontFamily: "DMSans_700Bold" },
   // Reorder buttons
   reorderRow: { flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 16, marginTop: 8, paddingTop: 8, borderTopWidth: 1, borderTopColor: SF.border },
   reorderBtn: { flexDirection: "row", alignItems: "center", gap: 4, paddingHorizontal: 12, paddingVertical: 6, borderRadius: 8, backgroundColor: "rgba(245,158,11,0.08)" },
   reorderBtnDisabled: { backgroundColor: "rgba(245,158,11,0.02)" },
-  reorderBtnText: { color: SF.orange, fontSize: 11, fontFamily: "Outfit_700Bold" },
-  reorderPos: { color: SF.muted, fontSize: 12, fontFamily: "Outfit_700Bold", minWidth: 24, textAlign: "center" },
+  reorderBtnText: { color: SF.orange, fontSize: 11, fontFamily: "DMSans_700Bold" },
+  reorderPos: { color: SF.muted, fontSize: 12, fontFamily: "DMSans_700Bold", minWidth: 24, textAlign: "center" },
   // Cook Now
   cookNowSection: { marginTop: 14, paddingTop: 12, borderTopWidth: 1, borderTopColor: SF.border },
   cookNowAvailRow: { flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 8 },
-  cookNowAvailText: { fontSize: 12, fontFamily: "Outfit_700Bold" },
+  cookNowAvailText: { fontSize: 12, fontFamily: "DMSans_700Bold" },
   cookNowIngRow: { flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 3, paddingLeft: 4 },
   cookNowIngText: { color: SF.text, fontSize: 11, flex: 1 },
-  cookNowPantryTag: { color: SF.green, fontSize: 9, fontFamily: "Outfit_700Bold", backgroundColor: "rgba(34,197,94,0.10)", borderRadius: 4, paddingHorizontal: 4, paddingVertical: 1 },
+  cookNowPantryTag: { color: SF.green, fontSize: 9, fontFamily: "DMSans_700Bold", backgroundColor: "rgba(34,197,94,0.10)", borderRadius: 4, paddingHorizontal: 4, paddingVertical: 1 },
   cookNowBtn: { flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8, backgroundColor: SF.orange, borderRadius: 12, paddingVertical: 12, marginTop: 12 },
-  cookNowBtnText: { color: "#0A0500", fontFamily: "Outfit_700Bold", fontSize: 14 },
+  cookNowBtnText: { color: "#0A0E14", fontFamily: "DMSans_700Bold", fontSize: 14 },
   cookSuccessRow: { flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8, marginTop: 12, paddingVertical: 10, backgroundColor: "rgba(34,197,94,0.10)", borderRadius: 10 },
-  cookSuccessText: { color: SF.green, fontSize: 12, fontFamily: "Outfit_700Bold" },
+  cookSuccessText: { color: SF.green, fontSize: 12, fontFamily: "DMSans_700Bold" },
 });

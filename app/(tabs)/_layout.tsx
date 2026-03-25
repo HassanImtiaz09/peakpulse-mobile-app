@@ -36,7 +36,7 @@ function AuroraTabIcon({ route, focused }: { route: string; focused: boolean }) 
 
   return (
     <View style={[styles.tabIconWrapper, focused && styles.tabIconWrapperActive]}>
-      <MaterialIcons name={def.icon} size={22} color={focused ? "#F59E0B" : "#B45309"} />
+      <MaterialIcons name={def.icon} size={22} color={focused ? "#F59E0B" : "#64748B"} />
       {focused && <View style={styles.activeGlow} />}
     </View>
   );
@@ -48,7 +48,7 @@ function AuroraTabIcon({ route, focused }: { route: string; focused: boolean }) 
  */
 function TabBarBackground() {
   if (Platform.OS === "web") {
-    return <View style={[StyleSheet.absoluteFill, { backgroundColor: "rgba(10,5,0,0.92)" }]} />;
+    return <View style={[StyleSheet.absoluteFill, { backgroundColor: "rgba(10,14,20,0.95)" }]} />;
   }
   return (
     <BlurView
@@ -88,7 +88,7 @@ export default function TabLayout() {
     <Tabs
       screenOptions={({ route }) => ({
         tabBarActiveTintColor: "#F59E0B",
-        tabBarInactiveTintColor: "#B45309",
+        tabBarInactiveTintColor: "#64748B",
         headerShown: false,
         tabBarButton: HapticTab,
         tabBarIcon: ({ focused }) => <AuroraTabIcon route={route.name} focused={focused} />,
@@ -99,7 +99,7 @@ export default function TabLayout() {
           height: tabBarHeight,
           // 6A: transparent background so BlurView shows through
           backgroundColor: "transparent",
-          borderTopColor: "rgba(245,158,11,0.15)",
+          borderTopColor: "rgba(30,41,59,0.6)",
           borderTopWidth: 1,
           position: "absolute",
         },
@@ -119,7 +119,7 @@ export default function TabLayout() {
         options={{
           title: "AI Coach",
           tabBarLabelStyle: {
-            fontFamily: "Outfit_700Bold",
+            fontFamily: "DMSans_700Bold",
             fontSize: 10,
             letterSpacing: 0.3,
             marginTop: 0,

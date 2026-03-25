@@ -9,7 +9,7 @@ import { ScreenContainer } from "@/components/screen-container";
 import { usePantry, type PantryCategory } from "@/lib/pantry-context";
 import { trpc } from "@/lib/trpc";
 
-const SF = { bg: "#0A0500", card: "#150A00", orange: "#F59E0B", gold: "#FBBF24", cream: "#FDE68A", muted: "#B45309", text: "#FFF7ED", border: "rgba(245,158,11,0.10)", green: "#22C55E", blue: "#60A5FA" };
+const SF = { bg: "#0A0E14", card: "#141A22", orange: "#F59E0B", gold: "#FBBF24", cream: "#FDE68A", muted: "#B45309", text: "#F1F5F9", border: "rgba(245,158,11,0.10)", green: "#22C55E", blue: "#60A5FA" };
 
 interface ReceiptItem {
   name: string;
@@ -180,7 +180,7 @@ export default function ScanReceiptScreen() {
         {/* Row 1: Checkbox + Name + Edit icon */}
         <View style={styles.itemRow}>
           <TouchableOpacity onPress={() => toggleItem(index)} style={[styles.checkbox, item.selected && styles.checkboxChecked]}>
-            {item.selected && <MaterialIcons name="check" size={14} color="#0A0500" />}
+            {item.selected && <MaterialIcons name="check" size={14} color="#0A0E14" />}
           </TouchableOpacity>
           <MaterialIcons name={CATEGORY_ICONS[item.category] ?? "category"} size={18} color={item.selected ? SF.orange : SF.muted} style={{ marginRight: 8 }} />
           {isEditingName ? (
@@ -248,7 +248,7 @@ export default function ScanReceiptScreen() {
           <Text style={styles.pickDesc}>AI extracts items and adds them to your pantry with estimated expiry dates.</Text>
           <View style={styles.pickBtns}>
             <TouchableOpacity style={styles.pickBtn} onPress={() => pickImage(true)}>
-              <MaterialIcons name="photo-camera" size={22} color="#0A0500" />
+              <MaterialIcons name="photo-camera" size={22} color="#0A0E14" />
               <Text style={styles.pickBtnText}>Take Photo</Text>
             </TouchableOpacity>
             <TouchableOpacity style={[styles.pickBtn, styles.pickBtnAlt]} onPress={() => pickImage(false)}>
@@ -309,7 +309,7 @@ export default function ScanReceiptScreen() {
               onPress={added ? () => router.push("/pantry") : addToPantry}
               disabled={!added && selectedCount === 0}
             >
-              <MaterialIcons name={added ? "check-circle" : "add-shopping-cart"} size={18} color="#0A0500" />
+              <MaterialIcons name={added ? "check-circle" : "add-shopping-cart"} size={18} color="#0A0E14" />
               <Text style={styles.addBtnText}>{added ? "View Pantry" : `Add ${selectedCount} to Pantry`}</Text>
             </TouchableOpacity>
           </View>
@@ -368,50 +368,50 @@ export default function ScanReceiptScreen() {
 const styles = StyleSheet.create({
   header: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingHorizontal: 16, paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: SF.border },
   backBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: SF.card, alignItems: "center", justifyContent: "center" },
-  headerTitle: { color: SF.text, fontFamily: "Outfit_700Bold", fontSize: 18 },
+  headerTitle: { color: SF.text, fontFamily: "DMSans_700Bold", fontSize: 18 },
   pickSection: { flex: 1, alignItems: "center", justifyContent: "center", paddingHorizontal: 32, gap: 12 },
-  pickTitle: { color: SF.text, fontFamily: "Outfit_700Bold", fontSize: 20, marginTop: 8 },
+  pickTitle: { color: SF.text, fontFamily: "DMSans_700Bold", fontSize: 20, marginTop: 8 },
   pickDesc: { color: SF.muted, fontSize: 13, textAlign: "center", lineHeight: 20 },
   pickBtns: { flexDirection: "row", gap: 12, marginTop: 16 },
   pickBtn: { flexDirection: "row", alignItems: "center", gap: 8, backgroundColor: SF.orange, borderRadius: 14, paddingHorizontal: 20, paddingVertical: 12 },
   pickBtnAlt: { backgroundColor: "rgba(245,158,11,0.10)", borderWidth: 1, borderColor: SF.border },
-  pickBtnText: { color: "#0A0500", fontFamily: "Outfit_700Bold", fontSize: 14 },
+  pickBtnText: { color: "#0A0E14", fontFamily: "DMSans_700Bold", fontSize: 14 },
   scanningSection: { flex: 1, alignItems: "center", justifyContent: "center", paddingHorizontal: 32 },
   receiptPreview: { width: 200, height: 280, borderRadius: 12, borderWidth: 1, borderColor: SF.border },
-  scanningText: { color: SF.text, fontFamily: "Outfit_700Bold", fontSize: 16, marginTop: 12 },
+  scanningText: { color: SF.text, fontFamily: "DMSans_700Bold", fontSize: 16, marginTop: 12 },
   summaryCard: { marginHorizontal: 16, marginTop: 12, backgroundColor: SF.card, borderRadius: 12, padding: 12, borderWidth: 1, borderColor: "rgba(34,197,94,0.15)" },
-  summaryTitle: { color: SF.text, fontFamily: "Outfit_700Bold", fontSize: 15 },
+  summaryTitle: { color: SF.text, fontFamily: "DMSans_700Bold", fontSize: 15 },
   summaryDetail: { color: SF.muted, fontSize: 11 },
   editHint: { flexDirection: "row", alignItems: "center", gap: 6, paddingHorizontal: 16, paddingTop: 8 },
   editHintText: { color: SF.muted, fontSize: 11, fontStyle: "italic" },
   selectionBar: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", paddingHorizontal: 16, paddingVertical: 6 },
   selectionText: { color: SF.muted, fontSize: 12 },
-  selectionAction: { color: SF.orange, fontSize: 12, fontFamily: "Outfit_700Bold" },
+  selectionAction: { color: SF.orange, fontSize: 12, fontFamily: "DMSans_700Bold" },
   itemCard: { backgroundColor: SF.card, borderRadius: 10, padding: 10, marginBottom: 6, borderWidth: 1, borderColor: SF.border },
   itemSelected: { borderColor: "rgba(245,158,11,0.25)" },
   itemRow: { flexDirection: "row", alignItems: "center" },
   checkbox: { width: 22, height: 22, borderRadius: 6, borderWidth: 2, borderColor: SF.muted, alignItems: "center", justifyContent: "center", marginRight: 8 },
   checkboxChecked: { backgroundColor: SF.orange, borderColor: SF.orange },
-  itemName: { color: SF.text, fontFamily: "Outfit_700Bold", fontSize: 13, flex: 1 },
+  itemName: { color: SF.text, fontFamily: "DMSans_700Bold", fontSize: 13, flex: 1 },
   itemDeselected: { color: SF.muted, textDecorationLine: "line-through" },
-  nameInput: { flex: 1, color: SF.text, fontFamily: "Outfit_700Bold", fontSize: 13, borderBottomWidth: 1, borderBottomColor: SF.orange, paddingVertical: 2, paddingHorizontal: 0 },
-  priceText: { color: SF.cream, fontSize: 12, fontFamily: "Outfit_700Bold", marginLeft: 8 },
+  nameInput: { flex: 1, color: SF.text, fontFamily: "DMSans_700Bold", fontSize: 13, borderBottomWidth: 1, borderBottomColor: SF.orange, paddingVertical: 2, paddingHorizontal: 0 },
+  priceText: { color: SF.cream, fontSize: 12, fontFamily: "DMSans_700Bold", marginLeft: 8 },
   editRow: { flexDirection: "row", alignItems: "center", gap: 6, marginTop: 6, marginLeft: 30 },
   editPill: { flexDirection: "row", alignItems: "center", gap: 3, backgroundColor: "rgba(245,158,11,0.06)", borderRadius: 6, paddingHorizontal: 6, paddingVertical: 3, borderWidth: 1, borderColor: SF.border },
-  editPillText: { color: SF.blue, fontSize: 10, fontFamily: "Outfit_700Bold", textTransform: "capitalize" },
+  editPillText: { color: SF.blue, fontSize: 10, fontFamily: "DMSans_700Bold", textTransform: "capitalize" },
   qtyControl: { flexDirection: "row", alignItems: "center", gap: 6, marginLeft: "auto", backgroundColor: "rgba(245,158,11,0.06)", borderRadius: 6, paddingHorizontal: 6, paddingVertical: 3 },
-  qtyText: { color: SF.text, fontSize: 11, fontFamily: "Outfit_700Bold", minWidth: 20, textAlign: "center" },
+  qtyText: { color: SF.text, fontSize: 11, fontFamily: "DMSans_700Bold", minWidth: 20, textAlign: "center" },
   bottomBar: { position: "absolute", bottom: 0, left: 0, right: 0, flexDirection: "row", gap: 10, paddingHorizontal: 16, paddingVertical: 12, paddingBottom: 32, backgroundColor: SF.bg, borderTopWidth: 1, borderTopColor: SF.border },
   rescanBtn: { flexDirection: "row", alignItems: "center", gap: 6, paddingHorizontal: 16, paddingVertical: 12, borderRadius: 12, borderWidth: 1, borderColor: SF.border },
-  rescanText: { color: SF.orange, fontFamily: "Outfit_700Bold", fontSize: 13 },
+  rescanText: { color: SF.orange, fontFamily: "DMSans_700Bold", fontSize: 13 },
   addBtn: { flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8, backgroundColor: SF.orange, borderRadius: 12, paddingVertical: 12 },
   addBtnDone: { backgroundColor: SF.green },
-  addBtnText: { color: "#0A0500", fontFamily: "Outfit_700Bold", fontSize: 14 },
+  addBtnText: { color: "#0A0E14", fontFamily: "DMSans_700Bold", fontSize: 14 },
   modalOverlay: { flex: 1, backgroundColor: "rgba(0,0,0,0.6)", justifyContent: "flex-end" },
   modalSheet: { backgroundColor: "#1A1000", borderTopLeftRadius: 20, borderTopRightRadius: 20, padding: 20, paddingBottom: 40 },
-  modalTitle: { color: SF.text, fontFamily: "Outfit_700Bold", fontSize: 17, marginBottom: 12, textAlign: "center" },
+  modalTitle: { color: SF.text, fontFamily: "DMSans_700Bold", fontSize: 17, marginBottom: 12, textAlign: "center" },
   modalOption: { flexDirection: "row", alignItems: "center", gap: 10, paddingVertical: 12, paddingHorizontal: 8, borderRadius: 10 },
   modalOptionActive: { backgroundColor: "rgba(245,158,11,0.08)" },
-  modalOptionText: { color: SF.text, fontFamily: "Outfit_700Bold", fontSize: 14, flex: 1 },
+  modalOptionText: { color: SF.text, fontFamily: "DMSans_700Bold", fontSize: 14, flex: 1 },
   modalOptionSub: { color: SF.muted, fontSize: 11 },
 });

@@ -88,10 +88,10 @@ export function generateWorkoutCardHTML(data: WorkoutCardData): string {
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: 'Inter', -apple-system, sans-serif; background: #0A0500; color: #FFF7ED; }
+  body { font-family: 'Inter', -apple-system, sans-serif; background: #0A0E14; color: #F1F5F9; }
   .card {
     width: 400px; min-height: 520px; margin: 0 auto;
-    background: linear-gradient(160deg, #1C0E02 0%, #0A0500 50%, #1A0A00 100%);
+    background: linear-gradient(160deg, #1A2030 0%, #0A0E14 50%, #141A22 100%);
     border: 2px solid rgba(245,158,11,0.25);
     border-radius: 24px; overflow: hidden; position: relative;
   }
@@ -114,7 +114,7 @@ export function generateWorkoutCardHTML(data: WorkoutCardData): string {
     color: ${color}; margin-bottom: 6px;
   }
   .workout-title {
-    font-size: 22px; font-weight: 900; color: #FFF7ED; line-height: 1.2;
+    font-size: 22px; font-weight: 900; color: #F1F5F9; line-height: 1.2;
   }
   .date {
     font-size: 12px; color: #B45309; margin-top: 6px;
@@ -212,10 +212,10 @@ export function generateWeeklySummaryCardHTML(data: WeeklySummaryCardData): stri
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: 'Inter', -apple-system, sans-serif; background: #0A0500; color: #FFF7ED; }
+  body { font-family: 'Inter', -apple-system, sans-serif; background: #0A0E14; color: #F1F5F9; }
   .card {
     width: 400px; min-height: 580px; margin: 0 auto;
-    background: linear-gradient(160deg, #1C0E02 0%, #0A0500 50%, #1A0A00 100%);
+    background: linear-gradient(160deg, #1A2030 0%, #0A0E14 50%, #141A22 100%);
     border: 2px solid rgba(245,158,11,0.25);
     border-radius: 24px; overflow: hidden; position: relative;
   }
@@ -233,7 +233,7 @@ export function generateWeeklySummaryCardHTML(data: WeeklySummaryCardData): stri
     color: #F59E0B; margin-bottom: 6px;
   }
   .week-range {
-    font-size: 18px; font-weight: 900; color: #FFF7ED;
+    font-size: 18px; font-weight: 900; color: #F1F5F9;
   }
   .stats {
     padding: 20px 24px; position: relative;
@@ -362,10 +362,10 @@ export function generateMilestoneCardHTML(data: MilestoneCardData): string {
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: 'Inter', -apple-system, sans-serif; background: #0A0500; color: #FFF7ED; }
+  body { font-family: 'Inter', -apple-system, sans-serif; background: #0A0E14; color: #F1F5F9; }
   .card {
     width: 400px; min-height: 560px; margin: 0 auto;
-    background: linear-gradient(160deg, #1C0E02 0%, #0A0500 40%, #1A0A00 100%);
+    background: linear-gradient(160deg, #1A2030 0%, #0A0E14 40%, #141A22 100%);
     border: 2px solid ${c}40;
     border-radius: 24px; overflow: hidden; position: relative;
   }
@@ -397,7 +397,7 @@ export function generateMilestoneCardHTML(data: MilestoneCardData): string {
     padding: 4px 12px; border-radius: 6px; margin-bottom: 10px;
   }
   .milestone-name {
-    font-size: 28px; font-weight: 900; color: #FFF7ED; line-height: 1.2;
+    font-size: 28px; font-weight: 900; color: #F1F5F9; line-height: 1.2;
   }
   .milestone-desc {
     font-size: 13px; color: #B45309; margin-top: 8px; line-height: 1.5;

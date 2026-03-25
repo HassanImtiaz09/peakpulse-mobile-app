@@ -197,12 +197,12 @@ export default function ChallengeScreen() {
   // ── Main Render ───────────────────────────────────────────────
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#0A0500" }}>
+    <View style={{ flex: 1, backgroundColor: "#0A0E14" }}>
       {/* Hero */}
       <ImageBackground source={{ uri: HERO_BG }} style={{ height: 170 }} resizeMode="cover">
         <View style={styles.heroOverlay}>
           <TouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
-            <Text style={{ color: "#FFF7ED", fontSize: 18 }}>←</Text>
+            <Text style={{ color: "#F1F5F9", fontSize: 18 }}>←</Text>
           </TouchableOpacity>
           <Text style={styles.heroLabel}>CHALLENGES</Text>
           <Text style={styles.heroTitle}>Friend Duels</Text>
@@ -411,10 +411,10 @@ export default function ChallengeScreen() {
               </View>
             )}
             <TouchableOpacity
-              style={[styles.primaryBtn, { marginTop: 16, backgroundColor: "#1C0E02" }]}
+              style={[styles.primaryBtn, { marginTop: 16, backgroundColor: "#1A2030" }]}
               onPress={() => setShowFriendPicker(false)}
             >
-              <Text style={[styles.primaryBtnText, { color: "#FFF7ED" }]}>Cancel</Text>
+              <Text style={[styles.primaryBtnText, { color: "#F1F5F9" }]}>Cancel</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -435,11 +435,11 @@ const styles = StyleSheet.create({
     borderRadius: 20, width: 36, height: 36, alignItems: "center", justifyContent: "center",
   },
   heroLabel: { color: "#FDE68A", fontSize: 11, fontWeight: "800", letterSpacing: 1.5 },
-  heroTitle: { color: "#FFF7ED", fontSize: 24, fontWeight: "800" },
+  heroTitle: { color: "#F1F5F9", fontSize: 24, fontWeight: "800" },
   heroStat: { color: "#FDE68A", fontSize: 12 },
 
   tabBar: {
-    flexDirection: "row", backgroundColor: "#150A00", borderBottomWidth: 1,
+    flexDirection: "row", backgroundColor: "#141A22", borderBottomWidth: 1,
     borderBottomColor: "rgba(245,158,11,0.10)",
   },
   tab: { flex: 1, paddingVertical: 12, alignItems: "center" },
@@ -447,19 +447,19 @@ const styles = StyleSheet.create({
   tabText: { color: "#B45309", fontSize: 12, fontWeight: "700" },
   tabTextActive: { color: "#FDE68A" },
 
-  sectionTitle: { color: "#FFF7ED", fontSize: 18, fontWeight: "800", marginBottom: 6 },
+  sectionTitle: { color: "#F1F5F9", fontSize: 18, fontWeight: "800", marginBottom: 6 },
   sectionSubtitle: { color: "#B45309", fontSize: 13, marginBottom: 16, lineHeight: 18 },
   fieldLabel: { color: "#FDE68A", fontSize: 13, fontWeight: "700", marginBottom: 8, letterSpacing: 0.5 },
 
   challengeCard: {
-    backgroundColor: "#150A00", borderRadius: 20, padding: 16, marginBottom: 12,
+    backgroundColor: "#141A22", borderRadius: 20, padding: 16, marginBottom: 12,
     borderWidth: 1, borderColor: "rgba(245,158,11,0.10)",
   },
   challengeCardWon: { borderColor: "rgba(16,185,129,0.25)", backgroundColor: "#0A1A0F" },
   challengeHeader: {
     flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 14,
   },
-  challengeType: { color: "#FFF7ED", fontSize: 15, fontWeight: "700" },
+  challengeType: { color: "#F1F5F9", fontSize: 15, fontWeight: "700" },
   challengeDays: { color: "#B45309", fontSize: 12, marginTop: 2 },
   dayBadge: {
     backgroundColor: "rgba(245,158,11,0.15)", borderRadius: 10, paddingHorizontal: 10, paddingVertical: 4,
@@ -470,7 +470,7 @@ const styles = StyleSheet.create({
     flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 14,
   },
   participant: { alignItems: "center", width: "35%" },
-  participantName: { color: "#FFF7ED", fontSize: 13, fontWeight: "700", marginTop: 4 },
+  participantName: { color: "#F1F5F9", fontSize: 13, fontWeight: "700", marginTop: 4 },
   participantScore: { color: "#FDE68A", fontSize: 18, fontWeight: "800", marginTop: 2 },
   vsCircle: {
     width: 40, height: 40, borderRadius: 20, backgroundColor: "rgba(245,158,11,0.15)",
@@ -491,48 +491,48 @@ const styles = StyleSheet.create({
   },
   dayCellToday: { backgroundColor: "rgba(245,158,11,0.12)", borderWidth: 1, borderColor: "rgba(245,158,11,0.25)" },
   dayLabel: { color: "#B45309", fontSize: 9, fontWeight: "700" },
-  dayValue: { color: "#FFF7ED", fontSize: 10, fontWeight: "700", marginTop: 2 },
+  dayValue: { color: "#F1F5F9", fontSize: 10, fontWeight: "700", marginTop: 2 },
 
   statsRow: { flexDirection: "row", gap: 8, marginBottom: 16 },
   statCard: {
-    flex: 1, backgroundColor: "#150A00", borderRadius: 14, padding: 12,
+    flex: 1, backgroundColor: "#141A22", borderRadius: 14, padding: 12,
     borderWidth: 1, borderColor: "rgba(245,158,11,0.10)", alignItems: "center",
   },
   statValue: { color: "#FDE68A", fontSize: 18, fontWeight: "800" },
   statLabel: { color: "#B45309", fontSize: 10, marginTop: 2 },
 
   emptyState: {
-    alignItems: "center", padding: 32, backgroundColor: "#150A00",
+    alignItems: "center", padding: 32, backgroundColor: "#141A22",
     borderRadius: 20, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)",
   },
-  emptyTitle: { color: "#FFF7ED", fontSize: 18, fontWeight: "800", marginBottom: 6 },
+  emptyTitle: { color: "#F1F5F9", fontSize: 18, fontWeight: "800", marginBottom: 6 },
   emptySubtitle: { color: "#B45309", fontSize: 13, textAlign: "center", lineHeight: 18, marginBottom: 16 },
 
   primaryBtn: {
     backgroundColor: "#F59E0B", borderRadius: 14, paddingVertical: 14, alignItems: "center",
   },
-  primaryBtnText: { color: "#FFF7ED", fontSize: 15, fontWeight: "700" },
+  primaryBtnText: { color: "#F1F5F9", fontSize: 15, fontWeight: "700" },
 
   typeCard: {
-    flex: 1, backgroundColor: "#150A00", borderRadius: 16, padding: 16,
+    flex: 1, backgroundColor: "#141A22", borderRadius: 16, padding: 16,
     alignItems: "center", borderWidth: 1, borderColor: "rgba(245,158,11,0.10)",
   },
   typeCardActive: { borderColor: "#F59E0B", backgroundColor: "rgba(245,158,11,0.08)" },
-  typeLabel: { color: "#FFF7ED", fontSize: 14, fontWeight: "700", marginTop: 8 },
+  typeLabel: { color: "#F1F5F9", fontSize: 14, fontWeight: "700", marginTop: 8 },
   typeLabelActive: { color: "#FDE68A" },
   typeUnit: { color: "#B45309", fontSize: 11, marginTop: 4 },
 
   friendSelector: {
-    backgroundColor: "#150A00", borderRadius: 16, padding: 16,
+    backgroundColor: "#141A22", borderRadius: 16, padding: 16,
     flexDirection: "row", alignItems: "center", justifyContent: "space-between",
     borderWidth: 1, borderColor: "rgba(245,158,11,0.15)",
   },
-  friendSelectorName: { color: "#FFF7ED", fontSize: 15, fontWeight: "700" },
+  friendSelectorName: { color: "#F1F5F9", fontSize: 15, fontWeight: "700" },
   friendSelectorStat: { color: "#B45309", fontSize: 12, marginTop: 2 },
   friendSelectorPlaceholder: { color: "#B45309", fontSize: 14 },
 
   rulesCard: {
-    marginTop: 20, backgroundColor: "#150A00", borderRadius: 16, padding: 16,
+    marginTop: 20, backgroundColor: "#141A22", borderRadius: 16, padding: 16,
     borderWidth: 1, borderColor: "rgba(245,158,11,0.08)",
   },
   rulesTitle: { color: "#FDE68A", fontSize: 14, fontWeight: "700", marginBottom: 10 },
@@ -541,15 +541,15 @@ const styles = StyleSheet.create({
   // Modal
   modalOverlay: { flex: 1, backgroundColor: "rgba(0,0,0,0.85)", justifyContent: "flex-end" },
   modalContent: {
-    backgroundColor: "#150A00", borderTopLeftRadius: 28, borderTopRightRadius: 28,
+    backgroundColor: "#141A22", borderTopLeftRadius: 28, borderTopRightRadius: 28,
     padding: 24, paddingBottom: 40, maxHeight: "70%",
   },
-  modalTitle: { color: "#FFF7ED", fontSize: 20, fontWeight: "800", marginBottom: 16 },
+  modalTitle: { color: "#F1F5F9", fontSize: 20, fontWeight: "800", marginBottom: 16 },
   friendPickerRow: {
     flexDirection: "row", alignItems: "center", gap: 12, padding: 12,
     backgroundColor: "rgba(245,158,11,0.04)", borderRadius: 14,
   },
   friendPickerRowActive: { backgroundColor: "rgba(245,158,11,0.12)", borderWidth: 1, borderColor: "#F59E0B" },
-  friendPickerName: { color: "#FFF7ED", fontSize: 14, fontWeight: "700" },
+  friendPickerName: { color: "#F1F5F9", fontSize: 14, fontWeight: "700" },
   friendPickerStat: { color: "#B45309", fontSize: 12, marginTop: 2 },
 });

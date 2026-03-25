@@ -124,7 +124,7 @@ export default function ChallengeOnboardingScreen() {
   const totalXP = getTotalXP();
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#0A0500" }}>
+    <View style={{ flex: 1, backgroundColor: "#0A0E14" }}>
       {/* Hero */}
       <ImageBackground source={{ uri: HERO_BG }} style={{ height: 200 }} resizeMode="cover">
         <View style={{ flex: 1, backgroundColor: "rgba(8,8,16,0.75)", justifyContent: "flex-end", padding: 20, paddingTop: 52 }}>
@@ -132,25 +132,25 @@ export default function ChallengeOnboardingScreen() {
             style={{ position: "absolute", top: 52, left: 20, backgroundColor: "#FFFFFF20", borderRadius: 20, width: 36, height: 36, alignItems: "center", justifyContent: "center" }}
             onPress={() => router.back()}
           >
-            <Text style={{ color: "#FFF7ED", fontSize: 18 }}>←</Text>
+            <Text style={{ color: "#F1F5F9", fontSize: 18 }}>←</Text>
           </TouchableOpacity>
-          <Text style={{ color: "#FDE68A", fontFamily: "Outfit_700Bold", fontSize: 12, letterSpacing: 1 }}>7-DAY CHALLENGE</Text>
-          <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_800ExtraBold", fontSize: 26 }}>Your First Week</Text>
+          <Text style={{ color: "#FDE68A", fontFamily: "DMSans_700Bold", fontSize: 12, letterSpacing: 1 }}>7-DAY CHALLENGE</Text>
+          <Text style={{ color: "#F1F5F9", fontFamily: "BebasNeue_400Regular", fontSize: 26 }}>Your First Week</Text>
           <Text style={{ color: "#B45309", fontSize: 13, marginTop: 4 }}>Complete 7 days to unlock Advanced free for 1 month</Text>
         </View>
       </ImageBackground>
 
       <ScrollView contentContainerStyle={{ paddingBottom: 40 }} showsVerticalScrollIndicator={false}>
         {/* Progress Bar */}
-        <View style={{ margin: 20, backgroundColor: "#150A00", borderRadius: 20, padding: 16, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}>
+        <View style={{ margin: 20, backgroundColor: "#141A22", borderRadius: 20, padding: 16, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}>
           <View style={{ flexDirection: "row", justifyContent: "space-between", marginBottom: 12 }}>
             <View>
               <Text style={{ color: "#B45309", fontSize: 12 }}>Progress</Text>
-              <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_800ExtraBold", fontSize: 20 }}>{completedDays}/7 Days</Text>
+              <Text style={{ color: "#F1F5F9", fontFamily: "BebasNeue_400Regular", fontSize: 20 }}>{completedDays}/7 Days</Text>
             </View>
             <View style={{ alignItems: "flex-end" }}>
               <Text style={{ color: "#B45309", fontSize: 12 }}>XP Earned</Text>
-              <Text style={{ color: "#FDE68A", fontFamily: "Outfit_800ExtraBold", fontSize: 20 }}>⚡ {totalXP} XP</Text>
+              <Text style={{ color: "#FDE68A", fontFamily: "BebasNeue_400Regular", fontSize: 20 }}>⚡ {totalXP} XP</Text>
             </View>
           </View>
           <View style={{ height: 8, backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 4, overflow: "hidden" }}>
@@ -164,7 +164,7 @@ export default function ChallengeOnboardingScreen() {
                   width: 32, height: 32, borderRadius: 16, alignItems: "center", justifyContent: "center",
                   backgroundColor: status === "complete" ? "#FDE68A" : status === "active" ? "#FDE68A" : "rgba(245,158,11,0.10)",
                 }}>
-                  <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_800ExtraBold", fontSize: 11 }}>{d.day}</Text>
+                  <Text style={{ color: "#F1F5F9", fontFamily: "BebasNeue_400Regular", fontSize: 11 }}>{d.day}</Text>
                 </View>
               );
             })}
@@ -179,10 +179,10 @@ export default function ChallengeOnboardingScreen() {
           >
             <Text style={{ fontSize: 28 }}>🔔</Text>
             <View style={{ flex: 1 }}>
-              <Text style={{ color: "#FBBF24", fontFamily: "Outfit_700Bold", fontSize: 14 }}>Enable Daily Reminders</Text>
+              <Text style={{ color: "#FBBF24", fontFamily: "DMSans_700Bold", fontSize: 14 }}>Enable Daily Reminders</Text>
               <Text style={{ color: "#B45309", fontSize: 12, marginTop: 2 }}>Daily reminders to keep you on track</Text>
             </View>
-            <Text style={{ color: "#F59E0B", fontFamily: "Outfit_700Bold" }}>→</Text>
+            <Text style={{ color: "#F59E0B", fontFamily: "DMSans_700Bold" }}>→</Text>
           </TouchableOpacity>
         )}
 
@@ -197,7 +197,7 @@ export default function ChallengeOnboardingScreen() {
             <View key={day.day} style={{ marginHorizontal: 20, marginBottom: 10 }}>
               <TouchableOpacity
                 style={{
-                  backgroundColor: status === "complete" ? "#052e16" : status === "active" ? "#150A00" : "#150A00",
+                  backgroundColor: status === "complete" ? "#052e16" : status === "active" ? "#141A22" : "#141A22",
                   borderRadius: 16, padding: 16,
                   borderWidth: 2,
                   borderColor: status === "complete" ? "#FDE68A" : status === "active" ? "#FDE68A" : "rgba(245,158,11,0.10)",
@@ -217,12 +217,12 @@ export default function ChallengeOnboardingScreen() {
                   </View>
                   <View style={{ flex: 1 }}>
                     <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-                      <Text style={{ color: "#B45309", fontSize: 11, fontFamily: "Outfit_700Bold" }}>DAY {day.day}</Text>
+                      <Text style={{ color: "#B45309", fontSize: 11, fontFamily: "DMSans_700Bold" }}>DAY {day.day}</Text>
                       <View style={{ backgroundColor: status === "complete" ? "rgba(245,158,11,0.10)" : "#F59E0B20", borderRadius: 6, paddingHorizontal: 6, paddingVertical: 2 }}>
-                        <Text style={{ color: status === "complete" ? "#FDE68A" : "#FDE68A", fontSize: 10, fontFamily: "Outfit_700Bold" }}>+{day.xp} XP</Text>
+                        <Text style={{ color: status === "complete" ? "#FDE68A" : "#FDE68A", fontSize: 10, fontFamily: "DMSans_700Bold" }}>+{day.xp} XP</Text>
                       </View>
                     </View>
-                    <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 15 }}>{day.title}</Text>
+                    <Text style={{ color: "#F1F5F9", fontFamily: "DMSans_700Bold", fontSize: 15 }}>{day.title}</Text>
                     <Text style={{ color: "#B45309", fontSize: 12, marginTop: 2 }}>{completedTasks}/{day.tasks.length} tasks</Text>
                   </View>
                   {status !== "locked" && (
@@ -237,7 +237,7 @@ export default function ChallengeOnboardingScreen() {
                     {day.tasks.map((task, idx) => (
                       <TouchableOpacity
                         key={idx}
-                        style={{ flexDirection: "row", alignItems: "center", gap: 12, paddingVertical: 8, paddingHorizontal: 12, backgroundColor: "#150A00", borderRadius: 12 }}
+                        style={{ flexDirection: "row", alignItems: "center", gap: 12, paddingVertical: 8, paddingHorizontal: 12, backgroundColor: "#141A22", borderRadius: 12 }}
                         onPress={() => toggleTask(day.day, idx)}
                       >
                         <View style={{
@@ -246,7 +246,7 @@ export default function ChallengeOnboardingScreen() {
                           backgroundColor: tasks[idx] ? "#FDE68A" : "transparent",
                           alignItems: "center", justifyContent: "center",
                         }}>
-                          {tasks[idx] && <Text style={{ color: "#FFF7ED", fontSize: 12, fontFamily: "Outfit_700Bold" }}>✓</Text>}
+                          {tasks[idx] && <Text style={{ color: "#F1F5F9", fontSize: 12, fontFamily: "DMSans_700Bold" }}>✓</Text>}
                         </View>
                         <Text style={{ color: tasks[idx] ? "#B45309" : "#D1D5DB", fontSize: 14, flex: 1, textDecorationLine: tasks[idx] ? "line-through" : "none" }}>
                           {task}
@@ -262,9 +262,9 @@ export default function ChallengeOnboardingScreen() {
 
         {/* Reward Banner */}
         <View style={{ marginHorizontal: 20, marginTop: 8, backgroundColor: "#F59E0B10", borderRadius: 16, padding: 16, borderWidth: 1, borderColor: "#F59E0B30" }}>
-          <Text style={{ color: "#FDE68A", fontFamily: "Outfit_800ExtraBold", fontSize: 14, textAlign: "center" }}>🏆 Complete All 7 Days</Text>
+          <Text style={{ color: "#FDE68A", fontFamily: "BebasNeue_400Regular", fontSize: 14, textAlign: "center" }}>🏆 Complete All 7 Days</Text>
           <Text style={{ color: "#B45309", fontSize: 13, textAlign: "center", marginTop: 6, lineHeight: 18 }}>
-            Finish the challenge to unlock <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold" }}>Advanced Plan free for 30 days</Text> + earn the "Week 1 Warrior" badge
+            Finish the challenge to unlock <Text style={{ color: "#F1F5F9", fontFamily: "DMSans_700Bold" }}>Advanced Plan free for 30 days</Text> + earn the "Week 1 Warrior" badge
           </Text>
         </View>
       </ScrollView>

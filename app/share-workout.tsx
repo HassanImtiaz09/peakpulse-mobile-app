@@ -16,9 +16,9 @@ const CARD_W = SCREEN_W - 40;
 const CARD_H = Math.round(CARD_W * (16 / 9));
 
 const SF = {
-  bg: "#0A0500", surface: "#150A00", surface2: "#1F0D00",
+  bg: "#0A0E14", surface: "#141A22", surface2: "#1F0D00",
   border: "rgba(245,158,11,0.12)", border2: "rgba(245,158,11,0.20)",
-  fg: "#FFF7ED", muted: "#B45309",
+  fg: "#F1F5F9", muted: "#B45309",
   gold: "#F59E0B", gold2: "#FBBF24", gold3: "#FDE68A",
   green: "#10B981", red: "#F87171",
 };
@@ -56,7 +56,7 @@ function getMilestoneText(total: number): string | null {
 const StreakCard = React.forwardRef<View, { data: ShareData }>(({ data }, ref) => (
   <View ref={ref as any} collapsable={false}
     style={{
-      width: CARD_W, height: CARD_H, backgroundColor: "#0A0500",
+      width: CARD_W, height: CARD_H, backgroundColor: "#0A0E14",
       borderRadius: 28, overflow: "hidden", padding: 0,
     }}
   >
@@ -106,7 +106,7 @@ StreakCard.displayName = "StreakCard";
 const SessionCard = React.forwardRef<View, { data: ShareData }>(({ data }, ref) => (
   <View ref={ref as any} collapsable={false}
     style={{
-      width: CARD_W, height: CARD_H, backgroundColor: "#0A0500",
+      width: CARD_W, height: CARD_H, backgroundColor: "#0A0E14",
       borderRadius: 28, overflow: "hidden",
     }}
   >
@@ -160,7 +160,7 @@ SessionCard.displayName = "SessionCard";
 const MilestoneCard = React.forwardRef<View, { data: ShareData; milestone: string }>(({ data, milestone }, ref) => (
   <View ref={ref as any} collapsable={false}
     style={{
-      width: CARD_W, height: CARD_H, backgroundColor: "#0A0500",
+      width: CARD_W, height: CARD_H, backgroundColor: "#0A0E14",
       borderRadius: 28, overflow: "hidden",
     }}
   >
@@ -354,7 +354,7 @@ export default function ShareWorkoutScreen() {
               <MaterialIcons name="arrow-back" size={24} color={SF.gold} />
             </TouchableOpacity>
             <View style={{ flex: 1 }}>
-              <Text style={{ color: SF.fg, fontFamily: "Outfit_700Bold", fontSize: 22 }}>Share Workout</Text>
+              <Text style={{ color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 22 }}>Share Workout</Text>
               <Text style={{ color: SF.muted, fontSize: 12, marginTop: 2 }}>Choose a template and share to social media</Text>
             </View>
           </View>
@@ -376,7 +376,7 @@ export default function ShareWorkoutScreen() {
               }}
             >
               <Text style={{ fontSize: 20, marginBottom: 4 }}>{t.icon}</Text>
-              <Text style={{ color: selectedTemplate === t.key ? SF.gold : SF.muted, fontFamily: "Outfit_700Bold", fontSize: 12 }}>{t.label}</Text>
+              <Text style={{ color: selectedTemplate === t.key ? SF.gold : SF.muted, fontFamily: "DMSans_700Bold", fontSize: 12 }}>{t.label}</Text>
             </TouchableOpacity>
           ))}
         </View>
@@ -405,7 +405,7 @@ export default function ShareWorkoutScreen() {
             ) : (
               <>
                 <MaterialIcons name="share" size={20} color={SF.bg} />
-                <Text style={{ color: SF.bg, fontFamily: "Outfit_800ExtraBold", fontSize: 16 }}>Share to Social Media</Text>
+                <Text style={{ color: SF.bg, fontFamily: "BebasNeue_400Regular", fontSize: 16 }}>Share to Social Media</Text>
               </>
             )}
           </TouchableOpacity>
@@ -413,7 +413,7 @@ export default function ShareWorkoutScreen() {
 
         {/* Social platform hints */}
         <View style={{ paddingHorizontal: 20, marginBottom: 16 }}>
-          <Text style={{ color: SF.fg, fontFamily: "Outfit_700Bold", fontSize: 14, marginBottom: 10 }}>Share To</Text>
+          <Text style={{ color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 14, marginBottom: 10 }}>Share To</Text>
           <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
             {[
               { name: "Instagram Stories", icon: "📸", color: "#E4405F" },
@@ -433,7 +433,7 @@ export default function ShareWorkoutScreen() {
                 onPress={handleShare}
               >
                 <Text style={{ fontSize: 16 }}>{platform.icon}</Text>
-                <Text style={{ color: SF.fg, fontSize: 12, fontFamily: "Outfit_700Bold" }}>{platform.name}</Text>
+                <Text style={{ color: SF.fg, fontSize: 12, fontFamily: "DMSans_700Bold" }}>{platform.name}</Text>
               </TouchableOpacity>
             ))}
           </View>
@@ -447,7 +447,7 @@ export default function ShareWorkoutScreen() {
         }}>
           <Text style={{ color: SF.gold3, fontSize: 12, lineHeight: 18 }}>
             {"💡 "}
-            <Text style={{ fontFamily: "Outfit_700Bold" }}>Tip:</Text>
+            <Text style={{ fontFamily: "DMSans_700Bold" }}>Tip:</Text>
             {" The image is saved to your device when you share. For Instagram Stories, tap \"Share to Social Media\" and select Instagram — the image will be perfectly sized for Stories (9:16)."}
           </Text>
         </View>

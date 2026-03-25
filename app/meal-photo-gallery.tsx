@@ -179,7 +179,7 @@ export default function MealPhotoGalleryScreen() {
           <MaterialIcons
             name={(MEAL_ICONS[item.mealType] || "restaurant") as any}
             size={10}
-            color="#FFF7ED"
+            color="#F1F5F9"
           />
           <Text style={styles.photoMealType}>{item.mealType}</Text>
         </View>
@@ -189,7 +189,7 @@ export default function MealPhotoGalleryScreen() {
       </View>
       {item.isArchived && (
         <View style={styles.archiveBadge}>
-          <MaterialIcons name="archive" size={10} color="#FFF7ED" />
+          <MaterialIcons name="archive" size={10} color="#F1F5F9" />
         </View>
       )}
     </TouchableOpacity>
@@ -220,7 +220,7 @@ export default function MealPhotoGalleryScreen() {
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
-          <MaterialIcons name="arrow-back" size={24} color="#FFF7ED" />
+          <MaterialIcons name="arrow-back" size={24} color="#F1F5F9" />
         </TouchableOpacity>
         <View style={{ alignItems: "center" }}>
           <Text style={styles.headerTitle}>Meal Gallery</Text>
@@ -299,7 +299,7 @@ export default function MealPhotoGalleryScreen() {
         <View style={styles.modalBg}>
           <View style={[styles.modalContent, { paddingTop: insets.top + 8, paddingBottom: insets.bottom + 8 }]}>
             <TouchableOpacity style={styles.modalClose} onPress={() => setSelectedPhoto(null)}>
-              <MaterialIcons name="close" size={24} color="#FFF7ED" />
+              <MaterialIcons name="close" size={24} color="#F1F5F9" />
             </TouchableOpacity>
 
             {selectedPhoto && (
@@ -391,7 +391,7 @@ export default function MealPhotoGalleryScreen() {
                 onPress={confirmSaveFavourite}
                 disabled={!saveName.trim()}
               >
-                <MaterialIcons name="star" size={16} color="#0A0500" />
+                <MaterialIcons name="star" size={16} color="#0A0E14" />
                 <Text style={styles.saveConfirmText}>Save</Text>
               </TouchableOpacity>
             </View>
@@ -403,11 +403,11 @@ export default function MealPhotoGalleryScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#0A0500" },
+  container: { flex: 1, backgroundColor: "#0A0E14" },
   header: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingHorizontal: 16, paddingVertical: 12 },
   backBtn: { width: 40, height: 40, borderRadius: 20, backgroundColor: "rgba(245,158,11,0.10)", alignItems: "center", justifyContent: "center" },
-  headerTitle: { color: "#FFF7ED", fontSize: 18, fontFamily: "Outfit_800ExtraBold" },
-  headerSub: { color: "#B45309", fontSize: 11, fontFamily: "Outfit_700Bold" },
+  headerTitle: { color: "#F1F5F9", fontSize: 18, fontFamily: "BebasNeue_400Regular" },
+  headerSub: { color: "#B45309", fontSize: 11, fontFamily: "DMSans_700Bold" },
 
   filterRow: { flexDirection: "row", paddingHorizontal: 16, gap: 8, marginBottom: 8 },
   filterBtn: {
@@ -416,7 +416,7 @@ const styles = StyleSheet.create({
     borderWidth: 1, borderColor: "rgba(245,158,11,0.10)",
   },
   filterBtnActive: { backgroundColor: "rgba(245,158,11,0.15)", borderColor: "rgba(245,158,11,0.30)" },
-  filterLabel: { color: "#B45309", fontSize: 11, fontFamily: "Outfit_700Bold" },
+  filterLabel: { color: "#B45309", fontSize: 11, fontFamily: "DMSans_700Bold" },
   filterLabelActive: { color: "#F59E0B" },
 
   infoBanner: {
@@ -428,10 +428,10 @@ const styles = StyleSheet.create({
   infoText: { color: "#B45309", fontSize: 10, fontFamily: "DMSans_400Regular", flex: 1, lineHeight: 14 },
 
   dateHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 8, paddingHorizontal: 2 },
-  dateLabel: { color: "#FFF7ED", fontSize: 15, fontFamily: "Outfit_700Bold" },
-  dateCount: { color: "#B45309", fontSize: 11, fontFamily: "Outfit_700Bold" },
+  dateLabel: { color: "#F1F5F9", fontSize: 15, fontFamily: "DMSans_700Bold" },
+  dateCount: { color: "#B45309", fontSize: 11, fontFamily: "DMSans_700Bold" },
 
-  photoThumb: { width: PHOTO_SIZE, height: PHOTO_SIZE, borderRadius: 12, overflow: "hidden", backgroundColor: "#150A00" },
+  photoThumb: { width: PHOTO_SIZE, height: PHOTO_SIZE, borderRadius: 12, overflow: "hidden", backgroundColor: "#141A22" },
   photoArchived: { opacity: 0.5 },
   photoImage: { width: "100%", height: "100%", borderRadius: 12 },
   photoOverlay: {
@@ -441,7 +441,7 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 12, borderBottomRightRadius: 12,
     flexDirection: "row", justifyContent: "space-between", alignItems: "center",
   },
-  photoMealType: { color: "#FFF7ED", fontSize: 9, fontFamily: "Outfit_700Bold", textTransform: "capitalize" },
+  photoMealType: { color: "#F1F5F9", fontSize: 9, fontFamily: "DMSans_700Bold", textTransform: "capitalize" },
   archiveBadge: {
     position: "absolute", top: 4, right: 4,
     width: 20, height: 20, borderRadius: 10,
@@ -449,18 +449,18 @@ const styles = StyleSheet.create({
   },
 
   emptyState: { flex: 1, alignItems: "center", justifyContent: "center", paddingHorizontal: 40 },
-  emptyTitle: { color: "#FFF7ED", fontSize: 18, fontFamily: "Outfit_800ExtraBold", marginTop: 16 },
-  emptyText: { color: "#B45309", fontSize: 13, fontFamily: "Outfit_700Bold", textAlign: "center", marginTop: 8, lineHeight: 20 },
+  emptyTitle: { color: "#F1F5F9", fontSize: 18, fontFamily: "BebasNeue_400Regular", marginTop: 16 },
+  emptyText: { color: "#B45309", fontSize: 13, fontFamily: "DMSans_700Bold", textAlign: "center", marginTop: 8, lineHeight: 20 },
   emptyBtn: { marginTop: 20, backgroundColor: "#F59E0B", paddingHorizontal: 24, paddingVertical: 12, borderRadius: 12 },
-  emptyBtnText: { color: "#FFF7ED", fontSize: 14, fontFamily: "Outfit_700Bold" },
+  emptyBtnText: { color: "#F1F5F9", fontSize: 14, fontFamily: "DMSans_700Bold" },
 
   modalBg: { flex: 1, backgroundColor: "rgba(0,0,0,0.95)" },
   modalContent: { flex: 1, justifyContent: "center", paddingHorizontal: 16 },
   modalClose: { position: "absolute", top: 60, right: 16, zIndex: 10, width: 40, height: 40, borderRadius: 20, backgroundColor: "rgba(245,158,11,0.15)", alignItems: "center", justifyContent: "center" },
   modalImage: { width: "100%", height: SCREEN_W, borderRadius: 16 },
-  modalDetails: { marginTop: 16, backgroundColor: "#150A00", borderRadius: 16, padding: 16, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" },
-  modalName: { color: "#FFF7ED", fontSize: 16, fontFamily: "Outfit_700Bold", maxWidth: SCREEN_W - 120 },
-  modalMeta: { color: "#B45309", fontSize: 11, fontFamily: "Outfit_700Bold", marginTop: 2 },
+  modalDetails: { marginTop: 16, backgroundColor: "#141A22", borderRadius: 16, padding: 16, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" },
+  modalName: { color: "#F1F5F9", fontSize: 16, fontFamily: "DMSans_700Bold", maxWidth: SCREEN_W - 120 },
+  modalMeta: { color: "#B45309", fontSize: 11, fontFamily: "DMSans_700Bold", marginTop: 2 },
   favBtn: {
     width: 40, height: 40, borderRadius: 12,
     backgroundColor: "rgba(245,158,11,0.08)", alignItems: "center", justifyContent: "center",
@@ -469,26 +469,26 @@ const styles = StyleSheet.create({
   favBtnActive: { backgroundColor: "rgba(245,158,11,0.20)", borderColor: "rgba(245,158,11,0.40)" },
   macroGrid: { flexDirection: "row", justifyContent: "space-between", marginTop: 12, paddingTop: 12, borderTopWidth: 1, borderTopColor: "rgba(245,158,11,0.08)" },
   macroItem: { alignItems: "center" },
-  macroValue: { fontSize: 16, fontFamily: "Outfit_700Bold" },
-  macroUnit: { fontSize: 10, fontFamily: "Outfit_700Bold" },
-  macroLabel: { color: "#B45309", fontSize: 9, fontFamily: "Outfit_700Bold", marginTop: 2 },
+  macroValue: { fontSize: 16, fontFamily: "DMSans_700Bold" },
+  macroUnit: { fontSize: 10, fontFamily: "DMSans_700Bold" },
+  macroLabel: { color: "#B45309", fontSize: 9, fontFamily: "DMSans_700Bold", marginTop: 2 },
 
   // Save favourite modal
   saveModalBg: { flex: 1, backgroundColor: "rgba(0,0,0,0.8)", justifyContent: "center", alignItems: "center" },
   saveModalContent: {
-    width: SCREEN_W - 48, backgroundColor: "#150A00", borderRadius: 20, padding: 24,
+    width: SCREEN_W - 48, backgroundColor: "#141A22", borderRadius: 20, padding: 24,
     borderWidth: 1, borderColor: "rgba(245,158,11,0.20)",
   },
-  saveModalTitle: { color: "#FFF7ED", fontSize: 18, fontFamily: "Outfit_800ExtraBold", marginBottom: 8 },
+  saveModalTitle: { color: "#F1F5F9", fontSize: 18, fontFamily: "BebasNeue_400Regular", marginBottom: 8 },
   saveModalDesc: { color: "#B45309", fontSize: 13, fontFamily: "DMSans_400Regular", lineHeight: 18, marginBottom: 16 },
   saveInput: {
     backgroundColor: "rgba(245,158,11,0.06)", borderRadius: 12, padding: 14,
-    color: "#FFF7ED", fontFamily: "DMSans_600SemiBold", fontSize: 15,
+    color: "#F1F5F9", fontFamily: "DMSans_600SemiBold", fontSize: 15,
     borderWidth: 1, borderColor: "rgba(245,158,11,0.20)", marginBottom: 16,
   },
   saveModalBtns: { flexDirection: "row", gap: 12 },
   saveCancelBtn: { flex: 1, paddingVertical: 12, borderRadius: 12, alignItems: "center", backgroundColor: "rgba(245,158,11,0.08)", borderWidth: 1, borderColor: "rgba(245,158,11,0.15)" },
-  saveCancelText: { color: "#B45309", fontFamily: "Outfit_700Bold", fontSize: 14 },
+  saveCancelText: { color: "#B45309", fontFamily: "DMSans_700Bold", fontSize: 14 },
   saveConfirmBtn: { flex: 1, flexDirection: "row", gap: 6, paddingVertical: 12, borderRadius: 12, alignItems: "center", justifyContent: "center", backgroundColor: "#F59E0B" },
-  saveConfirmText: { color: "#0A0500", fontFamily: "Outfit_700Bold", fontSize: 14 },
+  saveConfirmText: { color: "#0A0E14", fontFamily: "DMSans_700Bold", fontSize: 14 },
 });

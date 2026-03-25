@@ -197,12 +197,12 @@ export default function GroupGoalsScreen() {
   // ── Main Render ───────────────────────────────────────────────
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#0A0500" }}>
+    <View style={{ flex: 1, backgroundColor: "#0A0E14" }}>
       {/* Hero */}
       <ImageBackground source={{ uri: HERO_BG }} style={{ height: 170 }} resizeMode="cover">
         <View style={styles.heroOverlay}>
           <TouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
-            <Text style={{ color: "#FFF7ED", fontSize: 18 }}>←</Text>
+            <Text style={{ color: "#F1F5F9", fontSize: 18 }}>←</Text>
           </TouchableOpacity>
           <Text style={styles.heroLabel}>CIRCLE</Text>
           <Text style={styles.heroTitle}>Group Goals</Text>
@@ -399,10 +399,10 @@ export default function GroupGoalsScreen() {
                 </View>
               ))}
             <TouchableOpacity
-              style={[styles.primaryBtn, { marginTop: 16, backgroundColor: "#1C0E02" }]}
+              style={[styles.primaryBtn, { marginTop: 16, backgroundColor: "#1A2030" }]}
               onPress={() => setShowContribModal(null)}
             >
-              <Text style={[styles.primaryBtnText, { color: "#FFF7ED" }]}>Close</Text>
+              <Text style={[styles.primaryBtnText, { color: "#F1F5F9" }]}>Close</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -423,11 +423,11 @@ const styles = StyleSheet.create({
     borderRadius: 20, width: 36, height: 36, alignItems: "center", justifyContent: "center",
   },
   heroLabel: { color: "#FDE68A", fontSize: 11, fontWeight: "800", letterSpacing: 1.5 },
-  heroTitle: { color: "#FFF7ED", fontSize: 24, fontWeight: "800" },
+  heroTitle: { color: "#F1F5F9", fontSize: 24, fontWeight: "800" },
   heroStat: { color: "#FDE68A", fontSize: 12 },
 
   tabBar: {
-    flexDirection: "row", backgroundColor: "#150A00", borderBottomWidth: 1,
+    flexDirection: "row", backgroundColor: "#141A22", borderBottomWidth: 1,
     borderBottomColor: "rgba(245,158,11,0.10)",
   },
   tab: { flex: 1, paddingVertical: 12, alignItems: "center" },
@@ -435,23 +435,23 @@ const styles = StyleSheet.create({
   tabText: { color: "#B45309", fontSize: 12, fontWeight: "700" },
   tabTextActive: { color: "#FDE68A" },
 
-  sectionTitle: { color: "#FFF7ED", fontSize: 18, fontWeight: "800", marginBottom: 6 },
+  sectionTitle: { color: "#F1F5F9", fontSize: 18, fontWeight: "800", marginBottom: 6 },
   sectionSubtitle: { color: "#B45309", fontSize: 13, marginBottom: 16, lineHeight: 18 },
   fieldLabel: { color: "#FDE68A", fontSize: 13, fontWeight: "700", marginBottom: 8, letterSpacing: 0.5 },
 
   goalCard: {
-    backgroundColor: "#150A00", borderRadius: 20, padding: 16, marginBottom: 12,
+    backgroundColor: "#141A22", borderRadius: 20, padding: 16, marginBottom: 12,
     borderWidth: 1, borderColor: "rgba(245,158,11,0.10)",
   },
   goalCardAchieved: { borderColor: "rgba(16,185,129,0.25)", backgroundColor: "#0A1A0F" },
   goalHeader: {
     flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 14,
   },
-  goalTitle: { color: "#FFF7ED", fontSize: 15, fontWeight: "700" },
+  goalTitle: { color: "#F1F5F9", fontSize: 15, fontWeight: "700" },
   goalSubtitle: { color: "#B45309", fontSize: 12, marginTop: 2 },
 
   progressSection: { marginTop: 4 },
-  progressLabel: { color: "#FFF7ED", fontSize: 13, fontWeight: "600" },
+  progressLabel: { color: "#F1F5F9", fontSize: 13, fontWeight: "600" },
   progressPct: { color: "#FDE68A", fontSize: 14, fontWeight: "800" },
   progressBarBg: {
     height: 10, backgroundColor: "rgba(245,158,11,0.08)", borderRadius: 5, overflow: "hidden",
@@ -463,32 +463,32 @@ const styles = StyleSheet.create({
     flexDirection: "row", justifyContent: "space-between", alignItems: "center",
     paddingVertical: 8, borderBottomWidth: 1, borderBottomColor: "rgba(245,158,11,0.06)",
   },
-  contribName: { color: "#FFF7ED", fontSize: 13, fontWeight: "600", maxWidth: 120 },
+  contribName: { color: "#F1F5F9", fontSize: 13, fontWeight: "600", maxWidth: 120 },
   contribValue: { color: "#FDE68A", fontSize: 13, fontWeight: "700" },
   contribPct: { color: "#B45309", fontSize: 10, marginTop: 2 },
 
   emptyState: {
-    alignItems: "center", padding: 32, backgroundColor: "#150A00",
+    alignItems: "center", padding: 32, backgroundColor: "#141A22",
     borderRadius: 20, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)",
   },
-  emptyTitle: { color: "#FFF7ED", fontSize: 18, fontWeight: "800", marginBottom: 6 },
+  emptyTitle: { color: "#F1F5F9", fontSize: 18, fontWeight: "800", marginBottom: 6 },
   emptySubtitle: { color: "#B45309", fontSize: 13, textAlign: "center", lineHeight: 18, marginBottom: 16 },
 
   primaryBtn: {
     backgroundColor: "#F59E0B", borderRadius: 14, paddingVertical: 14, alignItems: "center",
   },
-  primaryBtnText: { color: "#FFF7ED", fontSize: 15, fontWeight: "700" },
+  primaryBtnText: { color: "#F1F5F9", fontSize: 15, fontWeight: "700" },
 
   metricPill: {
     flexDirection: "row", alignItems: "center", gap: 6, paddingHorizontal: 14, paddingVertical: 10,
-    backgroundColor: "#150A00", borderRadius: 12, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)",
+    backgroundColor: "#141A22", borderRadius: 12, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)",
   },
   metricPillActive: { borderColor: "#F59E0B", backgroundColor: "rgba(245,158,11,0.08)" },
   metricPillText: { color: "#B45309", fontSize: 13, fontWeight: "700" },
   metricPillTextActive: { color: "#FDE68A" },
 
   durationPill: {
-    flex: 1, alignItems: "center", paddingVertical: 10, backgroundColor: "#150A00",
+    flex: 1, alignItems: "center", paddingVertical: 10, backgroundColor: "#141A22",
     borderRadius: 12, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)",
   },
   durationPillActive: { borderColor: "#F59E0B", backgroundColor: "rgba(245,158,11,0.08)" },
@@ -496,7 +496,7 @@ const styles = StyleSheet.create({
   durationTextActive: { color: "#FDE68A" },
 
   targetPill: {
-    paddingHorizontal: 16, paddingVertical: 8, backgroundColor: "#150A00",
+    paddingHorizontal: 16, paddingVertical: 8, backgroundColor: "#141A22",
     borderRadius: 10, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)",
   },
   targetPillActive: { borderColor: "#F59E0B", backgroundColor: "rgba(245,158,11,0.08)" },
@@ -504,7 +504,7 @@ const styles = StyleSheet.create({
   targetPillTextActive: { color: "#FDE68A" },
 
   targetInput: {
-    backgroundColor: "#150A00", borderRadius: 12, padding: 14, color: "#FFF7ED",
+    backgroundColor: "#141A22", borderRadius: 12, padding: 14, color: "#F1F5F9",
     fontSize: 14, borderWidth: 1, borderColor: "rgba(245,158,11,0.15)", marginTop: 8,
   },
 
@@ -513,20 +513,20 @@ const styles = StyleSheet.create({
     borderWidth: 1, borderColor: "rgba(245,158,11,0.12)",
   },
   summaryTitle: { color: "#FDE68A", fontSize: 13, fontWeight: "700", marginBottom: 6 },
-  summaryText: { color: "#FFF7ED", fontSize: 13, lineHeight: 20 },
+  summaryText: { color: "#F1F5F9", fontSize: 13, lineHeight: 20 },
 
   // Modal
   modalOverlay: { flex: 1, backgroundColor: "rgba(0,0,0,0.85)", justifyContent: "flex-end" },
   modalContent: {
-    backgroundColor: "#150A00", borderTopLeftRadius: 28, borderTopRightRadius: 28,
+    backgroundColor: "#141A22", borderTopLeftRadius: 28, borderTopRightRadius: 28,
     padding: 24, paddingBottom: 40, maxHeight: "70%",
   },
-  modalTitle: { color: "#FFF7ED", fontSize: 20, fontWeight: "800", marginBottom: 16 },
+  modalTitle: { color: "#F1F5F9", fontSize: 20, fontWeight: "800", marginBottom: 16 },
   modalContribRow: {
     flexDirection: "row", justifyContent: "space-between", alignItems: "center",
     paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: "rgba(245,158,11,0.06)",
   },
-  modalContribName: { color: "#FFF7ED", fontSize: 14, fontWeight: "700" },
+  modalContribName: { color: "#F1F5F9", fontSize: 14, fontWeight: "700" },
   modalContribPct: { color: "#B45309", fontSize: 11, marginTop: 2 },
   modalContribValue: { color: "#FDE68A", fontSize: 14, fontWeight: "700" },
 });

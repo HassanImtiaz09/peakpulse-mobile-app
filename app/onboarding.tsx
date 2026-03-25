@@ -15,17 +15,20 @@ import { scheduleAllDefaultReminders } from "@/lib/notifications";
 const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get("window");
 
 const SF = {
-  bg:      "#0A0500",
-  surface: "#150A00",
-  border:  "rgba(245,158,11,0.15)",
+  bg:      "#0A0E14",
+  surface: "#141A22",
+  border:  "rgba(30,41,59,0.6)",
   border2: "rgba(245,158,11,0.25)",
-  fg:      "#FFF7ED",
-  muted: "#B45309",
+  fg:      "#F1F5F9",
+  muted:   "#64748B",
   gold:    "#F59E0B",
   orange:  "#EA580C",
-  red:     "#DC2626",
+  red:     "#EF4444",
   gold2:   "#FBBF24",
   gold3:   "#FDE68A",
+  ice:     "#22D3EE",
+  mint:    "#10B981",
+  rose:    "#F472B6",
 };
 
 const BG = {
@@ -389,7 +392,7 @@ export default function OnboardingScreen() {
         <View style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, justifyContent: "flex-end", paddingBottom: 60, paddingHorizontal: 24 }}>
           {previewBF !== null && (
             <View style={{ alignSelf: "center", backgroundColor: "rgba(10,5,0,0.85)", borderRadius: 20, paddingHorizontal: 24, paddingVertical: 16, marginBottom: 20, borderWidth: 2, borderColor: SF.gold }}>
-              <Text style={{ color: SF.gold, fontFamily: "Outfit_800ExtraBold", fontSize: 28, textAlign: "center" }}>{previewBF}% Body Fat</Text>
+              <Text style={{ color: SF.gold, fontFamily: "SpaceMono_700Bold", fontSize: 28, textAlign: "center" }}>{previewBF}% Body Fat</Text>
               <Text style={{ color: SF.gold3, fontFamily: "DMSans_400Regular", fontSize: 14, textAlign: "center", marginTop: 4 }}>
                 {previewBF <= 12 ? "Competition lean — elite level" : previewBF <= 15 ? "Athletic & defined — visible abs" : previewBF <= 18 ? "Fit & healthy — great muscle tone" : "Average healthy build"}
               </Text>
@@ -406,7 +409,7 @@ export default function OnboardingScreen() {
               setPreviewBF(null);
             }}
           >
-            <Text style={{ color: SF.bg, fontFamily: "Outfit_800ExtraBold", fontSize: 17 }}>
+            <Text style={{ color: SF.bg, fontFamily: "BebasNeue_400Regular", fontSize: 17 }}>
               {previewBF !== null ? `Select ${previewBF}% as My Target →` : "Close"}
             </Text>
           </TouchableOpacity>
@@ -441,9 +444,9 @@ export default function OnboardingScreen() {
             </View>
             <View style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: 32, paddingBottom: 56 }}>
               <View style={{ backgroundColor: "rgba(245,158,11,0.12)", borderRadius: 20, paddingHorizontal: 14, paddingVertical: 6, alignSelf: "flex-start", marginBottom: 14, borderWidth: 1, borderColor: SF.border2 }}>
-                <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}><MaterialIcons name={slide.iconName as any} size={14} color={slide.accent} /><Text style={{ color: slide.accent, fontFamily: "Outfit_700Bold", fontSize: 11, letterSpacing: 2 }}>{slide.label}</Text></View>
+                <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}><MaterialIcons name={slide.iconName as any} size={14} color={slide.accent} /><Text style={{ color: slide.accent, fontFamily: "DMSans_700Bold", fontSize: 11, letterSpacing: 2 }}>{slide.label}</Text></View>
               </View>
-              <Text style={{ color: SF.fg, fontFamily: "Outfit_800ExtraBold", fontSize: 36, lineHeight: 42, marginBottom: 12 }}>{slide.title}</Text>
+              <Text style={{ color: SF.fg, fontFamily: "BebasNeue_400Regular", fontSize: 42, lineHeight: 48, letterSpacing: 2, marginBottom: 12 }}>{slide.title}</Text>
               <Text style={{ color: SF.gold3, fontFamily: "DMSans_400Regular", fontSize: 15, lineHeight: 22, marginBottom: 16 }}>{slide.subtitle}</Text>
               {/* Feature pills */}
               {(slide as any).features && (
@@ -460,7 +463,7 @@ export default function OnboardingScreen() {
                 style={{ backgroundColor: slide.accent, borderRadius: 18, paddingVertical: 18, alignItems: "center", shadowColor: slide.accent, shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.5, shadowRadius: 16 }}
                 onPress={() => animateTransition(step + 1)}
               >
-                <Text style={{ color: SF.bg, fontFamily: "Outfit_800ExtraBold", fontSize: 17 }}>
+                <Text style={{ color: SF.bg, fontFamily: "BebasNeue_400Regular", fontSize: 17 }}>
                   {step === 3 ? "Get Started ⚡" : "Next →"}
                 </Text>
               </TouchableOpacity>
@@ -477,8 +480,8 @@ export default function OnboardingScreen() {
       <View style={{ flex: 1, backgroundColor: SF.bg }}>
         <ImageBackground source={{ uri: BG.ob2 }} style={{ height: 200 }} resizeMode="cover">
           <View style={{ flex: 1, backgroundColor: "rgba(10,5,0,0.75)", justifyContent: "flex-end", padding: 24, paddingBottom: 20 }}>
-            <Text style={{ color: SF.gold, fontFamily: "Outfit_700Bold", fontSize: 11, letterSpacing: 2, marginBottom: 6 }}>AI BODY ANALYSIS</Text>
-            <Text style={{ color: SF.fg, fontFamily: "Outfit_800ExtraBold", fontSize: 26 }}>Your Transformation</Text>
+            <Text style={{ color: SF.gold, fontFamily: "DMSans_600SemiBold", fontSize: 11, letterSpacing: 2, marginBottom: 6 }}>AI BODY ANALYSIS</Text>
+            <Text style={{ color: SF.fg, fontFamily: "BebasNeue_400Regular", fontSize: 32, letterSpacing: 2 }}>YOUR TRANSFORMATION</Text>
           </View>
         </ImageBackground>
 
@@ -486,7 +489,7 @@ export default function OnboardingScreen() {
           {analyzingScan ? (
             <View style={{ alignItems: "center", paddingVertical: 60 }}>
               <ActivityIndicator color={SF.gold} size="large" />
-              <Text style={{ color: SF.gold, fontFamily: "Outfit_700Bold", fontSize: 16, marginTop: 20 }}>Analysing your physique...</Text>
+              <Text style={{ color: SF.gold, fontFamily: "DMSans_700Bold", fontSize: 16, marginTop: 20 }}>Analysing your physique...</Text>
               <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 13, marginTop: 8, textAlign: "center", lineHeight: 20 }}>
                 Our AI is generating transformation previews at different body fat percentages. This takes 15-30 seconds.
               </Text>
@@ -497,9 +500,9 @@ export default function OnboardingScreen() {
               {scanBF !== null && (
                 <View style={{ backgroundColor: "rgba(245,158,11,0.12)", borderRadius: 16, padding: 16, marginBottom: 16, borderWidth: 1.5, borderColor: SF.gold }}>
                   <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
-                    <Text style={{ color: SF.gold, fontFamily: "Outfit_700Bold", fontSize: 12, letterSpacing: 1 }}>YOUR CURRENT BODY FAT</Text>
+                    <Text style={{ color: SF.gold, fontFamily: "DMSans_700Bold", fontSize: 12, letterSpacing: 1 }}>YOUR CURRENT BODY FAT</Text>
                     <View style={{ backgroundColor: SF.gold, borderRadius: 10, paddingHorizontal: 12, paddingVertical: 5 }}>
-                      <Text style={{ color: SF.bg, fontFamily: "Outfit_800ExtraBold", fontSize: 20 }}>{scanBF.toFixed(1)}%</Text>
+                      <Text style={{ color: SF.bg, fontFamily: "SpaceMono_700Bold", fontSize: 20 }}>{scanBF.toFixed(1)}%</Text>
                     </View>
                   </View>
                   {scanBFLow !== null && scanBFHigh !== null && (
@@ -561,10 +564,10 @@ export default function OnboardingScreen() {
                     {/* Info row + select button */}
                     <View style={{ padding: 16 }}>
                       <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
-                        <Text style={{ color: SF.fg, fontFamily: "Outfit_700Bold", fontSize: 16 }}>{t.target_bf}% Body Fat</Text>
+                        <Text style={{ color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 16 }}>{t.target_bf}% Body Fat</Text>
                         {isSelected && (
                           <View style={{ backgroundColor: SF.gold, borderRadius: 12, paddingHorizontal: 10, paddingVertical: 4 }}>
-                            <Text style={{ color: SF.bg, fontFamily: "Outfit_700Bold", fontSize: 11 }}>✓ Selected</Text>
+                            <Text style={{ color: SF.bg, fontFamily: "DMSans_700Bold", fontSize: 11 }}>✓ Selected</Text>
                           </View>
                         )}
                       </View>
@@ -581,7 +584,7 @@ export default function OnboardingScreen() {
                         style={{ backgroundColor: isSelected ? SF.gold : "rgba(245,158,11,0.12)", borderRadius: 12, paddingVertical: 12, alignItems: "center", borderWidth: 1, borderColor: isSelected ? SF.gold : SF.border2 }}
                         onPress={() => setSelectedTransformation(isSelected ? null : t)}
                       >
-                        <Text style={{ color: isSelected ? SF.bg : SF.gold, fontFamily: "Outfit_700Bold", fontSize: 14 }}>
+                        <Text style={{ color: isSelected ? SF.bg : SF.gold, fontFamily: "DMSans_700Bold", fontSize: 14 }}>
                           {isSelected ? "✓ This is my target" : `Select ${t.target_bf}% as My Target`}
                         </Text>
                       </TouchableOpacity>
@@ -594,7 +597,7 @@ export default function OnboardingScreen() {
                 onPress={() => animateTransition(10)}
                 disabled={!selectedTransformation}
               >
-                <Text style={{ color: SF.bg, fontFamily: "Outfit_800ExtraBold", fontSize: 17 }}>
+                <Text style={{ color: SF.bg, fontFamily: "BebasNeue_400Regular", fontSize: 17 }}>
                   {selectedTransformation ? `Build My Plan for ${selectedTransformation.target_bf}% BF →` : "Select a Target to Continue"}
                 </Text>
               </TouchableOpacity>
@@ -608,7 +611,7 @@ export default function OnboardingScreen() {
           ) : (
             <View style={{ alignItems: "center", paddingVertical: 60 }}>
               <Text style={{ fontSize: 48, marginBottom: 16 }}>⚠️</Text>
-              <Text style={{ color: SF.fg, fontFamily: "Outfit_700Bold", fontSize: 18, textAlign: "center", marginBottom: 8 }}>Analysis unavailable</Text>
+              <Text style={{ color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 18, textAlign: "center", marginBottom: 8 }}>Analysis unavailable</Text>
               <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 14, textAlign: "center", lineHeight: 20, marginBottom: 32 }}>
                 We couldn't generate transformation images right now. You can try the full Body Scan from the app later.
               </Text>
@@ -616,7 +619,7 @@ export default function OnboardingScreen() {
                 style={{ backgroundColor: SF.gold, borderRadius: 18, paddingVertical: 18, paddingHorizontal: 40, alignItems: "center" }}
                 onPress={() => animateTransition(10)}
               >
-                <Text style={{ color: SF.bg, fontFamily: "Outfit_800ExtraBold", fontSize: 17 }}>Continue Anyway →</Text>
+                <Text style={{ color: SF.bg, fontFamily: "BebasNeue_400Regular", fontSize: 17 }}>Continue Anyway →</Text>
               </TouchableOpacity>
             </View>
           )}
@@ -642,8 +645,8 @@ export default function OnboardingScreen() {
             <View style={{ width: 100, height: 100, borderRadius: 30, backgroundColor: "rgba(245,158,11,0.15)", alignItems: "center", justifyContent: "center", marginBottom: 24, borderWidth: 2, borderColor: SF.gold }}>
               <Text style={{ fontSize: 52 }}>🔥</Text>
             </View>
-            <Text style={{ color: SF.gold, fontFamily: "Outfit_700Bold", fontSize: 11, letterSpacing: 2.5, marginBottom: 10 }}>BUILDING YOUR PLAN</Text>
-            <Text style={{ color: SF.fg, fontFamily: "Outfit_800ExtraBold", fontSize: 32, textAlign: "center", marginBottom: 12 }}>
+            <Text style={{ color: SF.gold, fontFamily: "DMSans_600SemiBold", fontSize: 11, letterSpacing: 2.5, marginBottom: 10 }}>BUILDING YOUR PLAN</Text>
+            <Text style={{ color: SF.fg, fontFamily: "BebasNeue_400Regular", fontSize: 38, letterSpacing: 2, textAlign: "center", marginBottom: 12 }}>
               {"Welcome,\n"}{name || "Athlete"}{"!"}
             </Text>
             {selectedTransformation ? (
@@ -657,7 +660,7 @@ export default function OnboardingScreen() {
             )}
             {estimatedTDEE && (
               <View style={{ backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 14, paddingHorizontal: 20, paddingVertical: 12, marginBottom: 20, borderWidth: 1, borderColor: SF.border2, alignSelf: "stretch" }}>
-                <Text style={{ color: SF.gold2, fontFamily: "Outfit_700Bold", fontSize: 14, textAlign: "center" }}>
+                <Text style={{ color: SF.gold2, fontFamily: "DMSans_700Bold", fontSize: 14, textAlign: "center" }}>
                   🎯 Your personalised daily target: {estimatedTDEE} kcal
                 </Text>
                 <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 12, textAlign: "center", marginTop: 4 }}>
@@ -682,7 +685,7 @@ export default function OnboardingScreen() {
             <View style={{ width: "100%", backgroundColor: SF.gold, paddingVertical: 18, borderRadius: 18, alignItems: "center", shadowColor: SF.gold, shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.55, shadowRadius: 18, opacity: 0.9 }}>
               <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
                 <ActivityIndicator color={SF.bg} size="small" />
-                <Text style={{ color: SF.bg, fontFamily: "Outfit_800ExtraBold", fontSize: 17 }}>Generating Your Plans...</Text>
+                <Text style={{ color: SF.bg, fontFamily: "BebasNeue_400Regular", fontSize: 17 }}>Generating Your Plans...</Text>
               </View>
             </View>
             <Text style={{ color: SF.muted, fontSize: 12, textAlign: "center", marginTop: 14, fontFamily: "DMSans_400Regular" }}>
@@ -714,8 +717,8 @@ export default function OnboardingScreen() {
               <View key={i} style={{ flex: 1, height: 3, borderRadius: 2, backgroundColor: i <= setupStep ? SF.gold : "rgba(245,158,11,0.20)" }} />
             ))}
           </View>
-          <Text style={{ color: SF.gold, fontFamily: "Outfit_700Bold", fontSize: 11, letterSpacing: 2, marginBottom: 6 }}>STEP {setupStep + 1} OF 5</Text>
-          <Text style={{ color: SF.fg, fontFamily: "Outfit_800ExtraBold", fontSize: 24 }}>{SETUP_TITLES[setupStep]}</Text>
+              <Text style={{ color: SF.gold, fontFamily: "DMSans_600SemiBold", fontSize: 11, letterSpacing: 2, marginBottom: 6 }}>STEP {setupStep + 1} OF 5</Text>
+          <Text style={{ color: SF.fg, fontFamily: "BebasNeue_400Regular", fontSize: 30, letterSpacing: 2 }}>{SETUP_TITLES[setupStep]}</Text>
           <Text style={{ color: SF.gold3, fontFamily: "DMSans_400Regular", fontSize: 13, marginTop: 4 }}>{SETUP_SUBTITLES[setupStep]}</Text>
         </View>
       </ImageBackground>
@@ -746,7 +749,7 @@ export default function OnboardingScreen() {
                   >
                     <MaterialIcons name={g.iconName as any} size={28} color={goal === g.key ? SF.gold : SF.gold2} />
                     <View style={{ flex: 1 }}>
-                      <Text style={{ color: SF.fg, fontFamily: "Outfit_700Bold", fontSize: 16 }}>{g.label}</Text>
+                      <Text style={{ color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 16 }}>{g.label}</Text>
                       <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 12, marginTop: 2 }}>{g.desc}</Text>
                     </View>
                     {goal === g.key && <MaterialIcons name="check-circle" size={22} color={SF.gold} />}
@@ -802,7 +805,7 @@ export default function OnboardingScreen() {
                     style={{ flex: 1, paddingVertical: 12, borderRadius: 12, alignItems: "center", backgroundColor: gender === g ? "rgba(245,158,11,0.15)" : SF.surface, borderWidth: gender === g ? 2 : 1, borderColor: gender === g ? SF.gold : SF.border }}
                     onPress={() => setGender(g)}
                   >
-                    <Text style={{ color: gender === g ? SF.gold : SF.fg, fontFamily: "Outfit_700Bold", fontSize: 14 }}>{g === "male" ? "♂ Male" : "♀ Female"}</Text>
+                    <Text style={{ color: gender === g ? SF.gold : SF.fg, fontFamily: "DMSans_700Bold", fontSize: 14 }}>{g === "male" ? "♂ Male" : "♀ Female"}</Text>
                   </TouchableOpacity>
                 ))}
               </View>
@@ -815,7 +818,7 @@ export default function OnboardingScreen() {
                     onPress={() => setActivityLevel(a.key)}
                   >
                     <View style={{ flex: 1 }}>
-                      <Text style={{ color: SF.fg, fontFamily: "Outfit_700Bold", fontSize: 14 }}>{a.label}</Text>
+                      <Text style={{ color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 14 }}>{a.label}</Text>
                       <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 12 }}>{a.desc}</Text>
                     </View>
                     {activityLevel === a.key && <MaterialIcons name="check-circle" size={20} color={SF.gold} />}
@@ -836,7 +839,7 @@ export default function OnboardingScreen() {
                 >
                   <MaterialIcons name={w.iconName as any} size={28} color={workoutStyle === w.key ? SF.gold : SF.gold2} />
                   <View style={{ flex: 1 }}>
-                    <Text style={{ color: SF.fg, fontFamily: "Outfit_700Bold", fontSize: 16 }}>{w.label}</Text>
+                    <Text style={{ color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 16 }}>{w.label}</Text>
                     <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 12, marginTop: 2 }}>{w.desc}</Text>
                   </View>
                   {workoutStyle === w.key && <MaterialIcons name="check-circle" size={22} color={SF.gold} />}
@@ -855,7 +858,7 @@ export default function OnboardingScreen() {
                   onPress={() => setDietaryPref(d.key)}
                 >
                   <MaterialIcons name={d.iconName as any} size={32} color={dietaryPref === d.key ? SF.gold : SF.gold2} />
-                  <Text style={{ color: SF.fg, fontFamily: "Outfit_700Bold", fontSize: 15 }}>{d.label}</Text>
+                  <Text style={{ color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 15 }}>{d.label}</Text>
                 </TouchableOpacity>
               ))}
             </View>
@@ -874,7 +877,7 @@ export default function OnboardingScreen() {
                     style={{ width: (SCREEN_W - 80) / 2, backgroundColor: daysPerWeek === d ? "rgba(245,158,11,0.15)" : SF.surface, borderRadius: 20, paddingVertical: 28, alignItems: "center", borderWidth: daysPerWeek === d ? 2 : 1, borderColor: daysPerWeek === d ? SF.gold : SF.border }}
                     onPress={() => setDaysPerWeek(d)}
                   >
-                    <Text style={{ color: daysPerWeek === d ? SF.gold : SF.fg, fontFamily: "Outfit_800ExtraBold", fontSize: 40 }}>{d}</Text>
+                    <Text style={{ color: daysPerWeek === d ? SF.gold : SF.fg, fontFamily: "BebasNeue_400Regular", fontSize: 40 }}>{d}</Text>
                     <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 13, marginTop: 4 }}>days / week</Text>
                     {d === 4 && <Text style={{ color: SF.gold2, fontFamily: "DMSans_600SemiBold", fontSize: 11, marginTop: 4 }}>Recommended</Text>}
                   </TouchableOpacity>
@@ -886,7 +889,7 @@ export default function OnboardingScreen() {
           {/* Step 8: Photo capture */}
           {step === 8 && (
             <View>
-              <Text style={{ color: SF.fg, fontSize: 28, fontFamily: "Outfit_800ExtraBold", marginBottom: 8 }}>AI Body Scan</Text>
+              <Text style={{ color: SF.fg, fontSize: 28, fontFamily: "BebasNeue_400Regular", marginBottom: 8 }}>AI Body Scan</Text>
               {goal === "maintain" ? (
                 <View style={{ backgroundColor: "rgba(245,158,11,0.08)", borderRadius: 12, padding: 16, marginBottom: 24, borderWidth: 1, borderColor: SF.border }}>
                   <Text style={{ color: SF.gold3, fontSize: 14, fontFamily: "DMSans_500Medium", lineHeight: 20 }}>
@@ -922,7 +925,7 @@ export default function OnboardingScreen() {
                   >
                     <MaterialIcons name="camera-alt" size={28} color={SF.bg} />
                     <View style={{ flex: 1 }}>
-                      <Text style={{ color: SF.bg, fontFamily: "Outfit_800ExtraBold", fontSize: 17 }}>Take Photo Now</Text>
+                      <Text style={{ color: SF.bg, fontFamily: "BebasNeue_400Regular", fontSize: 17 }}>Take Photo Now</Text>
                       <Text style={{ color: SF.bg + "BB", fontFamily: "DMSans_400Regular", fontSize: 12, marginTop: 2 }}>Use your camera for best results</Text>
                     </View>
                     <MaterialIcons name="chevron-right" size={22} color={SF.bg} />
@@ -933,7 +936,7 @@ export default function OnboardingScreen() {
                   >
                     <MaterialIcons name="photo-library" size={28} color={SF.gold2} />
                     <View style={{ flex: 1 }}>
-                      <Text style={{ color: SF.fg, fontFamily: "Outfit_700Bold", fontSize: 17 }}>Choose from Library</Text>
+                      <Text style={{ color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 17 }}>Choose from Library</Text>
                       <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 12, marginTop: 2 }}>Select an existing photo</Text>
                     </View>
                     <MaterialIcons name="chevron-right" size={22} color={SF.muted} />
@@ -952,7 +955,7 @@ export default function OnboardingScreen() {
           style={{ flex: 1, paddingVertical: 16, borderRadius: 16, alignItems: "center", backgroundColor: SF.surface, borderWidth: 1, borderColor: SF.border }}
           onPress={() => animateTransition(step - 1)}
         >
-          <Text style={{ color: SF.muted, fontFamily: "Outfit_700Bold", fontSize: 16 }}>← Back</Text>
+          <Text style={{ color: SF.muted, fontFamily: "DMSans_700Bold", fontSize: 16 }}>← Back</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={{ flex: 2, paddingVertical: 16, borderRadius: 16, alignItems: "center", backgroundColor: SF.gold, opacity: saving || analyzingScan ? 0.7 : 1, shadowColor: SF.gold, shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.45, shadowRadius: 14 }}
@@ -962,12 +965,12 @@ export default function OnboardingScreen() {
           {saving || analyzingScan ? (
             <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
               <ActivityIndicator color={SF.bg} size="small" />
-              <Text style={{ color: SF.bg, fontFamily: "Outfit_800ExtraBold", fontSize: 16 }}>
+              <Text style={{ color: SF.bg, fontFamily: "BebasNeue_400Regular", fontSize: 16 }}>
                 {analyzingScan ? "Analysing..." : "Saving..."}
               </Text>
             </View>
           ) : (
-            <Text style={{ color: SF.bg, fontFamily: "Outfit_800ExtraBold", fontSize: 16 }}>
+            <Text style={{ color: SF.bg, fontFamily: "BebasNeue_400Regular", fontSize: 16 }}>
               {step === 8 ? (scanPhoto ? (goal === "maintain" ? "Continue →" : "Analyse My Physique ⚡") : "Skip for Now →") : "Continue →"}
             </Text>
           )}

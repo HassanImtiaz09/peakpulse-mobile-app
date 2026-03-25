@@ -245,12 +245,12 @@ export default function SocialCircleScreen() {
   // ── Main Render ───────────────────────────────────────────────
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#0A0500" }}>
+    <View style={{ flex: 1, backgroundColor: "#0A0E14" }}>
       {/* Hero */}
       <ImageBackground source={{ uri: HERO_BG }} style={{ height: 180 }} resizeMode="cover">
         <View style={styles.heroOverlay}>
           <TouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
-            <Text style={{ color: "#FFF7ED", fontSize: 18 }}>←</Text>
+            <Text style={{ color: "#F1F5F9", fontSize: 18 }}>←</Text>
           </TouchableOpacity>
           <Text style={styles.heroLabel}>SOCIAL CIRCLE</Text>
           <Text style={styles.heroTitle}>Your Fitness Crew</Text>
@@ -685,10 +685,10 @@ export default function SocialCircleScreen() {
                     <Text style={styles.primaryBtnText}>Remove from Circle</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
-                    style={[styles.primaryBtn, { backgroundColor: "#1C0E02" }]}
+                    style={[styles.primaryBtn, { backgroundColor: "#1A2030" }]}
                     onPress={() => { setShowFriendModal(false); setSelectedFriend(null); }}
                   >
-                    <Text style={[styles.primaryBtnText, { color: "#FFF7ED" }]}>Close</Text>
+                    <Text style={[styles.primaryBtnText, { color: "#F1F5F9" }]}>Close</Text>
                   </TouchableOpacity>
                 </View>
               </>
@@ -711,40 +711,40 @@ const styles = StyleSheet.create({
     position: "absolute", top: 52, left: 20, backgroundColor: "#FFFFFF20",
     borderRadius: 20, width: 36, height: 36, alignItems: "center", justifyContent: "center",
   },
-  heroLabel: { color: "#FDE68A", fontFamily: "Outfit_700Bold", fontSize: 11, letterSpacing: 1.5 },
-  heroTitle: { color: "#FFF7ED", fontFamily: "Outfit_800ExtraBold", fontSize: 24 },
+  heroLabel: { color: "#FDE68A", fontFamily: "DMSans_700Bold", fontSize: 11, letterSpacing: 1.5 },
+  heroTitle: { color: "#F1F5F9", fontFamily: "BebasNeue_400Regular", fontSize: 24 },
   heroStat: { color: "#FDE68A", fontSize: 12, fontFamily: "DMSans_400Regular" },
 
   tabBar: {
-    backgroundColor: "#150A00", borderBottomWidth: 1,
+    backgroundColor: "#141A22", borderBottomWidth: 1,
     borderBottomColor: "rgba(245,158,11,0.10)", flexGrow: 0,
   },
   tab: { paddingVertical: 12, paddingHorizontal: 16, alignItems: "center" },
   tabActive: { borderBottomWidth: 2, borderBottomColor: "#F59E0B" },
-  tabText: { color: "#B45309", fontSize: 13, fontFamily: "Outfit_700Bold" },
+  tabText: { color: "#B45309", fontSize: 13, fontFamily: "DMSans_700Bold" },
   tabTextActive: { color: "#FDE68A" },
 
-  sectionTitle: { color: "#FFF7ED", fontFamily: "Outfit_800ExtraBold", fontSize: 18, marginBottom: 8 },
+  sectionTitle: { color: "#F1F5F9", fontFamily: "BebasNeue_400Regular", fontSize: 18, marginBottom: 8 },
   sectionSubtitle: { color: "#B45309", fontSize: 13, marginBottom: 12, lineHeight: 18 },
 
   quickLinksRow: { flexDirection: "row", gap: 10, marginBottom: 16 },
   quickLinkCard: {
-    flex: 1, backgroundColor: "#150A00", borderRadius: 20, padding: 16,
+    flex: 1, backgroundColor: "#141A22", borderRadius: 20, padding: 16,
     borderWidth: 1, borderColor: "rgba(245,158,11,0.12)", alignItems: "center", gap: 6,
   },
-  quickLinkTitle: { color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 14 },
+  quickLinkTitle: { color: "#F1F5F9", fontFamily: "DMSans_700Bold", fontSize: 14 },
   quickLinkSub: { color: "#B45309", fontSize: 11 },
 
   statsRow: { flexDirection: "row", gap: 8, marginBottom: 16 },
   statCard: {
-    flex: 1, backgroundColor: "#150A00", borderRadius: 16, padding: 12,
+    flex: 1, backgroundColor: "#141A22", borderRadius: 16, padding: 12,
     borderWidth: 1, borderColor: "rgba(245,158,11,0.10)", alignItems: "center",
   },
-  statValue: { color: "#FDE68A", fontFamily: "Outfit_800ExtraBold", fontSize: 16 },
+  statValue: { color: "#FDE68A", fontFamily: "BebasNeue_400Regular", fontSize: 16 },
   statLabel: { color: "#B45309", fontSize: 10, marginTop: 2 },
 
   friendCard: {
-    backgroundColor: "#150A00", borderRadius: 16, padding: 14,
+    backgroundColor: "#141A22", borderRadius: 16, padding: 14,
     flexDirection: "row", alignItems: "center", gap: 12,
     borderWidth: 1, borderColor: "rgba(245,158,11,0.08)",
   },
@@ -752,7 +752,7 @@ const styles = StyleSheet.create({
     width: 48, height: 48, borderRadius: 24, backgroundColor: "rgba(245,158,11,0.10)",
     alignItems: "center", justifyContent: "center",
   },
-  friendName: { color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 15 },
+  friendName: { color: "#F1F5F9", fontFamily: "DMSans_700Bold", fontSize: 15 },
   friendStat: { color: "#FDE68A", fontSize: 12, fontFamily: "DMSans_400Regular" },
   friendLastActive: { color: "#B45309", fontSize: 11, marginTop: 4 },
   activeDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: "#10B981" },
@@ -762,16 +762,16 @@ const styles = StyleSheet.create({
   },
 
   emptyState: {
-    alignItems: "center", padding: 32, backgroundColor: "#150A00",
+    alignItems: "center", padding: 32, backgroundColor: "#141A22",
     borderRadius: 20, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)",
   },
-  emptyTitle: { color: "#FFF7ED", fontFamily: "Outfit_800ExtraBold", fontSize: 18, marginBottom: 6 },
+  emptyTitle: { color: "#F1F5F9", fontFamily: "BebasNeue_400Regular", fontSize: 18, marginBottom: 6 },
   emptySubtitle: { color: "#B45309", fontSize: 13, textAlign: "center", lineHeight: 18, marginBottom: 16 },
 
   primaryBtn: {
     backgroundColor: "#F59E0B", borderRadius: 14, paddingVertical: 14, alignItems: "center",
   },
-  primaryBtnText: { color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 15 },
+  primaryBtnText: { color: "#F1F5F9", fontFamily: "DMSans_700Bold", fontSize: 15 },
 
   // Activity Feed
   activityItem: {
@@ -780,18 +780,18 @@ const styles = StyleSheet.create({
   activityIcon: {
     width: 44, height: 44, borderRadius: 22, alignItems: "center", justifyContent: "center",
   },
-  activityUser: { color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 14 },
+  activityUser: { color: "#F1F5F9", fontFamily: "DMSans_700Bold", fontSize: 14 },
   activityText: { color: "#D1D5DB", fontSize: 13, lineHeight: 18, marginTop: 2 },
   activityTime: { color: "#B45309", fontSize: 11, marginTop: 4 },
   activityBadge: {
     borderRadius: 10, paddingHorizontal: 10, paddingVertical: 5, alignSelf: "center",
   },
-  activityBadgeText: { fontFamily: "Outfit_700Bold", fontSize: 12 },
+  activityBadgeText: { fontFamily: "DMSans_700Bold", fontSize: 12 },
   activitySeparator: {
     height: 1, backgroundColor: "rgba(245,158,11,0.06)",
   },
   legendCard: {
-    marginTop: 20, backgroundColor: "#150A00", borderRadius: 20, padding: 16,
+    marginTop: 20, backgroundColor: "#141A22", borderRadius: 20, padding: 16,
     borderWidth: 1, borderColor: "rgba(245,158,11,0.10)",
   },
   legendDot: { width: 8, height: 8, borderRadius: 4 },
@@ -799,24 +799,24 @@ const styles = StyleSheet.create({
 
   // Leaderboard
   leaderboardContainer: {
-    backgroundColor: "#150A00", borderRadius: 20, padding: 16,
+    backgroundColor: "#141A22", borderRadius: 20, padding: 16,
     borderWidth: 1, borderColor: "rgba(245,158,11,0.10)",
   },
   metricPill: {
     paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20,
-    backgroundColor: "#150A00", borderWidth: 1, borderColor: "rgba(245,158,11,0.15)",
+    backgroundColor: "#141A22", borderWidth: 1, borderColor: "rgba(245,158,11,0.15)",
   },
   metricPillActive: { backgroundColor: "#F59E0B", borderColor: "#F59E0B" },
-  metricPillText: { color: "#B45309", fontSize: 13, fontFamily: "Outfit_700Bold" },
-  metricPillTextActive: { color: "#FFF7ED" },
+  metricPillText: { color: "#B45309", fontSize: 13, fontFamily: "DMSans_700Bold" },
+  metricPillTextActive: { color: "#F1F5F9" },
 
   podium: {
     flexDirection: "row", justifyContent: "center", alignItems: "flex-end",
     gap: 8, marginBottom: 8, paddingTop: 16,
   },
   podiumItem: { alignItems: "center", width: 90, justifyContent: "flex-end" },
-  podiumName: { color: "#FFF7ED", fontSize: 12, fontFamily: "Outfit_700Bold", marginTop: 4 },
-  podiumValue: { color: "#FDE68A", fontSize: 13, fontFamily: "Outfit_800ExtraBold", marginTop: 2 },
+  podiumName: { color: "#F1F5F9", fontSize: 12, fontFamily: "DMSans_700Bold", marginTop: 4 },
+  podiumValue: { color: "#FDE68A", fontSize: 13, fontFamily: "BebasNeue_400Regular", marginTop: 2 },
   podiumBar: {
     width: "100%", borderTopLeftRadius: 8, borderTopRightRadius: 8, marginTop: 6,
   },
@@ -830,13 +830,13 @@ const styles = StyleSheet.create({
     marginHorizontal: -8, paddingHorizontal: 8,
   },
   rankBadge: { width: 32, alignItems: "center" },
-  rankText: { color: "#B45309", fontFamily: "Outfit_800ExtraBold", fontSize: 16 },
-  leaderboardName: { color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 14 },
-  leaderboardValue: { color: "#FDE68A", fontFamily: "Outfit_800ExtraBold", fontSize: 15 },
+  rankText: { color: "#B45309", fontFamily: "BebasNeue_400Regular", fontSize: 16 },
+  leaderboardName: { color: "#F1F5F9", fontFamily: "DMSans_700Bold", fontSize: 14 },
+  leaderboardValue: { color: "#FDE68A", fontFamily: "BebasNeue_400Regular", fontSize: 15 },
 
   // Invite
   inviteCodeCard: {
-    backgroundColor: "#150A00", borderRadius: 24, padding: 24,
+    backgroundColor: "#141A22", borderRadius: 24, padding: 24,
     borderWidth: 2, borderColor: "rgba(245,158,11,0.18)", marginBottom: 20, alignItems: "center",
   },
   inviteCodeLabel: { color: "#B45309", fontSize: 13, marginBottom: 10 },
@@ -845,31 +845,31 @@ const styles = StyleSheet.create({
     paddingHorizontal: 32, paddingVertical: 16, borderWidth: 2,
     borderColor: "rgba(245,158,11,0.28)", marginBottom: 10,
   },
-  inviteCode: { color: "#FDE68A", fontFamily: "Outfit_800ExtraBold", fontSize: 28, letterSpacing: 3 },
+  inviteCode: { color: "#FDE68A", fontFamily: "BebasNeue_400Regular", fontSize: 28, letterSpacing: 3 },
   inviteCodeHint: { color: "#B45309", fontSize: 12, textAlign: "center" },
 
   shareBtn: {
     backgroundColor: "#F59E0B", borderRadius: 14, paddingVertical: 16, alignItems: "center",
   },
-  shareBtnText: { color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 16 },
+  shareBtnText: { color: "#F1F5F9", fontFamily: "DMSans_700Bold", fontSize: 16 },
   shareHint: { color: "#B45309", fontSize: 11, textAlign: "center", lineHeight: 16 },
 
   tierCard: {
-    backgroundColor: "#150A00", borderRadius: 16, padding: 14,
+    backgroundColor: "#141A22", borderRadius: 16, padding: 14,
     flexDirection: "row", alignItems: "center", gap: 12, marginBottom: 8,
     borderWidth: 1, borderColor: "rgba(245,158,11,0.10)",
   },
   tierCardAchieved: { backgroundColor: "#052e16", borderColor: "rgba(16,185,129,0.20)" },
   tierBadge: { width: 40, height: 40, borderRadius: 20, backgroundColor: "rgba(245,158,11,0.10)", alignItems: "center", justifyContent: "center" },
-  tierTitle: { color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 14 },
+  tierTitle: { color: "#F1F5F9", fontFamily: "DMSans_700Bold", fontSize: 14 },
   tierSub: { color: "#B45309", fontSize: 12, marginTop: 2 },
   tierEarned: { backgroundColor: "rgba(16,185,129,0.15)", borderRadius: 10, paddingHorizontal: 10, paddingVertical: 5 },
-  tierEarnedText: { color: "#10B981", fontFamily: "Outfit_700Bold", fontSize: 12 },
+  tierEarnedText: { color: "#10B981", fontFamily: "DMSans_700Bold", fontSize: 12 },
   tierProgress: { backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 10, paddingHorizontal: 10, paddingVertical: 5 },
-  tierProgressText: { color: "#B45309", fontFamily: "Outfit_700Bold", fontSize: 12 },
+  tierProgressText: { color: "#B45309", fontFamily: "DMSans_700Bold", fontSize: 12 },
 
   howItWorks: {
-    marginTop: 20, backgroundColor: "#150A00", borderRadius: 20, padding: 20,
+    marginTop: 20, backgroundColor: "#141A22", borderRadius: 20, padding: 20,
     borderWidth: 1, borderColor: "rgba(245,158,11,0.10)",
   },
   stepRow: { flexDirection: "row", alignItems: "flex-start", gap: 12, marginBottom: 12 },
@@ -877,38 +877,38 @@ const styles = StyleSheet.create({
     width: 28, height: 28, borderRadius: 14, backgroundColor: "#F59E0B",
     alignItems: "center", justifyContent: "center",
   },
-  stepNum: { color: "#FFF7ED", fontFamily: "Outfit_800ExtraBold", fontSize: 13 },
+  stepNum: { color: "#F1F5F9", fontFamily: "BebasNeue_400Regular", fontSize: 13 },
   stepText: { color: "#D1D5DB", fontSize: 13, flex: 1, lineHeight: 18, paddingTop: 4 },
 
   pendingRow: {
     flexDirection: "row", alignItems: "center", paddingVertical: 10,
     borderBottomWidth: 1, borderBottomColor: "rgba(245,158,11,0.06)",
   },
-  pendingName: { color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 14 },
+  pendingName: { color: "#F1F5F9", fontFamily: "DMSans_700Bold", fontSize: 14 },
   pendingSent: { color: "#B45309", fontSize: 11, marginTop: 2 },
   statusBadge: {
     backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 10,
     paddingHorizontal: 10, paddingVertical: 4,
   },
-  statusText: { color: "#B45309", fontFamily: "Outfit_700Bold", fontSize: 11 },
+  statusText: { color: "#B45309", fontFamily: "DMSans_700Bold", fontSize: 11 },
 
   inviteStats: {
     flexDirection: "row", gap: 8, marginTop: 20,
   },
   inviteStatItem: {
-    flex: 1, backgroundColor: "#150A00", borderRadius: 16, padding: 14,
+    flex: 1, backgroundColor: "#141A22", borderRadius: 16, padding: 14,
     borderWidth: 1, borderColor: "rgba(245,158,11,0.10)", alignItems: "center",
   },
-  inviteStatValue: { color: "#FDE68A", fontFamily: "Outfit_800ExtraBold", fontSize: 22 },
+  inviteStatValue: { color: "#FDE68A", fontFamily: "BebasNeue_400Regular", fontSize: 22 },
   inviteStatLabel: { color: "#B45309", fontSize: 10, marginTop: 4 },
 
   // Discount
   discountCard: {
-    backgroundColor: "#150A00", borderRadius: 16, padding: 14,
+    backgroundColor: "#141A22", borderRadius: 16, padding: 14,
     flexDirection: "row", alignItems: "center", gap: 12, marginBottom: 8,
     borderWidth: 1, borderColor: "rgba(16,185,129,0.15)",
   },
-  discountTitle: { color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 14 },
+  discountTitle: { color: "#F1F5F9", fontFamily: "DMSans_700Bold", fontSize: 14 },
   discountSub: { color: "#B45309", fontSize: 11, marginTop: 2 },
 
   // Modal
@@ -916,10 +916,10 @@ const styles = StyleSheet.create({
     flex: 1, backgroundColor: "rgba(0,0,0,0.85)", justifyContent: "flex-end",
   },
   modalContent: {
-    backgroundColor: "#150A00", borderTopLeftRadius: 28, borderTopRightRadius: 28,
+    backgroundColor: "#141A22", borderTopLeftRadius: 28, borderTopRightRadius: 28,
     padding: 24, paddingBottom: 40, maxHeight: "85%",
   },
-  modalName: { color: "#FFF7ED", fontFamily: "Outfit_800ExtraBold", fontSize: 22 },
+  modalName: { color: "#F1F5F9", fontFamily: "BebasNeue_400Regular", fontSize: 22 },
   modalStatus: { color: "#B45309", fontSize: 13 },
   modalStatsGrid: {
     flexDirection: "row", flexWrap: "wrap", gap: 8,
@@ -928,11 +928,11 @@ const styles = StyleSheet.create({
     width: "23%", backgroundColor: "rgba(245,158,11,0.06)", borderRadius: 14,
     padding: 10, alignItems: "center",
   },
-  modalStatValue: { color: "#FDE68A", fontFamily: "Outfit_800ExtraBold", fontSize: 14, marginTop: 4 },
+  modalStatValue: { color: "#FDE68A", fontFamily: "BebasNeue_400Regular", fontSize: 14, marginTop: 4 },
   modalStatLabel: { color: "#B45309", fontSize: 10, marginTop: 2 },
   modalMilestone: {
     marginTop: 12, backgroundColor: "rgba(245,158,11,0.08)", borderRadius: 12,
     padding: 12, alignItems: "center",
   },
-  modalMilestoneText: { color: "#FDE68A", fontFamily: "Outfit_700Bold", fontSize: 13 },
+  modalMilestoneText: { color: "#FDE68A", fontFamily: "DMSans_700Bold", fontSize: 13 },
 });

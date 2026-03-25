@@ -181,7 +181,7 @@ function buildMealPdfHtml(data: MealLogExportData): string {
     /* ─── Header ─── */
     .header {
       background: linear-gradient(135deg, #1C0A00 0%, #2D1600 50%, #1C0A00 100%);
-      color: #FFF7ED;
+      color: #F1F5F9;
       padding: 28px 24px;
       border-radius: 12px;
       margin-bottom: 16px;

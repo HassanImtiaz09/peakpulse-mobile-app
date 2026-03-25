@@ -55,6 +55,11 @@ import {
   Outfit_800ExtraBold,
   Outfit_900Black,
 } from "@expo-google-fonts/outfit";
+import { BebasNeue_400Regular } from "@expo-google-fonts/bebas-neue";
+import {
+  SpaceMono_400Regular,
+  SpaceMono_700Bold,
+} from "@expo-google-fonts/space-mono";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -147,6 +152,9 @@ export default function RootLayout() {
     Outfit_700Bold,
     Outfit_800ExtraBold,
     Outfit_900Black,
+    BebasNeue_400Regular,
+    SpaceMono_400Regular,
+    SpaceMono_700Bold,
   });
 
   const initialInsets = initialWindowMetrics?.insets ?? DEFAULT_WEB_INSETS;

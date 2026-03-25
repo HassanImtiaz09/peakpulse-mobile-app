@@ -1,15 +1,25 @@
 import React, { useState } from "react";
 import {
   View, Text, TouchableOpacity, ScrollView, TextInput, KeyboardAvoidingView,
-  Platform, ActivityIndicator, ImageBackground, Image,
+  Platform, ActivityIndicator, Image,
 } from "react-native";
 import { useRouter } from "expo-router";
-import { ScreenContainer } from "@/components/screen-container";
 import { startOAuthLogin } from "@/constants/oauth";
 import { useGuestAuth } from "@/lib/guest-auth";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
-const HERO_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/PZcnawJwIZkQHTEM.jpg";
-const APP_LOGO = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/PZcnawJwIZkQHTEM.jpg";
+const C = {
+  bg: "#0A0E14",
+  surface: "#141A22",
+  border: "rgba(30,41,59,0.6)",
+  fg: "#F1F5F9",
+  muted: "#64748B",
+  gold: "#F59E0B",
+  gold2: "#FBBF24",
+  gold3: "#FDE68A",
+  ice: "#22D3EE",
+  mint: "#10B981",
+};
 
 type AuthMode = "choose" | "email";
 
@@ -52,220 +62,217 @@ export default function LoginScreen() {
   }
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#0A0500" }}>
-      <ImageBackground
-        source={{ uri: HERO_BG }}
-        style={{ flex: 1 }}
-        resizeMode="cover"
-      >
-        {/* Dark overlay for readability */}
-        <View style={{ flex: 1, backgroundColor: "rgba(8,8,16,0.72)" }}>
-          <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : undefined}>
-            <ScrollView
-              contentContainerStyle={{ flexGrow: 1 }}
-              showsVerticalScrollIndicator={false}
-              keyboardShouldPersistTaps="handled"
-            >
-              {/* Hero Logo Section */}
-              <View style={{ alignItems: "center", paddingTop: 80, paddingBottom: 32, paddingHorizontal: 24 }}>
-                <Image
-                  source={{ uri: APP_LOGO }}
-                  style={{ width: 90, height: 90, borderRadius: 22, marginBottom: 20 }}
-                  resizeMode="cover"
-                />
-                <Text style={{
-                  color: "#FFF7ED", fontSize: 38, fontFamily: "Outfit_800ExtraBold",
-                  letterSpacing: -1, textAlign: "center",
-                  textShadowColor: "#F59E0B", textShadowOffset: { width: 0, height: 0 }, textShadowRadius: 20,
-                }}>
-                  PeakPulse AI
-                </Text>
-                <Text style={{ color: "#FDE68A", fontSize: 15, textAlign: "center", marginTop: 8, lineHeight: 22, fontFamily: "DMSans_500Medium" }}>
-                  Transform your body with AI-powered{"\n"}personalized fitness plans
-                </Text>
-              </View>
+    <View style={{ flex: 1, backgroundColor: C.bg }}>
+      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : undefined}>
+        <ScrollView
+          contentContainerStyle={{ flexGrow: 1 }}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+        >
+          {/* Radial glow background effect */}
+          <View style={{ flex: 1, alignItems: "center", justifyContent: "center", paddingHorizontal: 24, paddingTop: 80, paddingBottom: 40 }}>
+            {/* Ambient glow behind logo */}
+            <View style={{
+              position: "absolute", top: 60, width: 300, height: 300,
+              borderRadius: 150, backgroundColor: "rgba(245,158,11,0.08)",
+              shadowColor: C.gold, shadowOffset: { width: 0, height: 0 },
+              shadowOpacity: 0.3, shadowRadius: 80,
+            }} />
 
-              {/* Feature pills */}
-              <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8, paddingHorizontal: 24, justifyContent: "center", marginBottom: 36 }}>
-                {[
-                  "📸 AI Body Scan",
-                  "🏋️ Smart Plans",
-                  "🥗 Meal Prep",
-                  "📊 Progress AI",
-                  "⌚ Wearables",
-                  "🗺️ Gym Finder",
-                ].map((f, i) => (
-                  <View key={i} style={{
-                    backgroundColor: "rgba(124,58,237,0.2)",
-                    borderRadius: 20, paddingHorizontal: 14, paddingVertical: 7,
-                    borderWidth: 1, borderColor: "rgba(124,58,237,0.4)",
-                  }}>
-                    <Text style={{ color: "#F59E0B", fontSize: 12, fontFamily: "DMSans_600SemiBold" }}>{f}</Text>
+            {/* Logo */}
+            <View style={{
+              width: 100, height: 100, borderRadius: 28,
+              backgroundColor: "rgba(245,158,11,0.12)",
+              alignItems: "center", justifyContent: "center",
+              marginBottom: 20, borderWidth: 1.5, borderColor: "rgba(245,158,11,0.25)",
+            }}>
+              <MaterialIcons name="local-fire-department" size={52} color={C.gold} />
+            </View>
+
+            {/* Brand name */}
+            <Text style={{
+              color: C.fg, fontFamily: "BebasNeue_400Regular",
+              fontSize: 48, letterSpacing: 4, textAlign: "center",
+            }}>
+              PEAKPULSE
+            </Text>
+            <Text style={{
+              color: C.muted, fontFamily: "DMSans_500Medium",
+              fontSize: 14, textAlign: "center", marginTop: 4, marginBottom: 40,
+            }}>
+              AI-Powered Fitness Transformation
+            </Text>
+
+            {/* Auth Card */}
+            <View style={{
+              width: "100%", backgroundColor: C.surface,
+              borderRadius: 24, padding: 24,
+              borderWidth: 1, borderColor: C.border,
+            }}>
+              {mode === "choose" && (
+                <View style={{ gap: 14 }}>
+                  {/* Google OAuth — Primary CTA */}
+                  <TouchableOpacity
+                    style={{
+                      backgroundColor: "#FFFFFF", borderRadius: 16,
+                      paddingVertical: 16, flexDirection: "row",
+                      alignItems: "center", justifyContent: "center", gap: 10,
+                    }}
+                    onPress={() => startOAuthLogin()}
+                  >
+                    <Text style={{ fontSize: 18 }}>G</Text>
+                    <Text style={{ color: "#1F2937", fontFamily: "DMSans_700Bold", fontSize: 16 }}>
+                      Continue with Google
+                    </Text>
+                  </TouchableOpacity>
+
+                  {/* Email — Secondary ghost button */}
+                  <TouchableOpacity
+                    style={{
+                      backgroundColor: "transparent", borderRadius: 16,
+                      paddingVertical: 16, flexDirection: "row",
+                      alignItems: "center", justifyContent: "center", gap: 10,
+                      borderWidth: 1, borderColor: C.border,
+                    }}
+                    onPress={() => setMode("email")}
+                  >
+                    <MaterialIcons name="email" size={18} color={C.muted} />
+                    <Text style={{ color: C.fg, fontFamily: "DMSans_600SemiBold", fontSize: 15 }}>
+                      Continue with Email
+                    </Text>
+                  </TouchableOpacity>
+
+                  {/* Guest — Text link only */}
+                  <TouchableOpacity
+                    style={{ alignItems: "center", paddingVertical: 10 }}
+                    onPress={handleGuestContinue}
+                    disabled={loading}
+                  >
+                    {loading ? (
+                      <ActivityIndicator size="small" color={C.muted} />
+                    ) : (
+                      <Text style={{ color: C.muted, fontFamily: "DMSans_400Regular", fontSize: 14 }}>
+                        Skip — Continue as Guest
+                      </Text>
+                    )}
+                  </TouchableOpacity>
+                </View>
+              )}
+
+              {mode === "email" && (
+                <View style={{ gap: 14 }}>
+                  <TouchableOpacity
+                    style={{ flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 4 }}
+                    onPress={() => { setMode("choose"); setEmailError(""); }}
+                  >
+                    <MaterialIcons name="arrow-back" size={18} color={C.gold} />
+                    <Text style={{ color: C.gold, fontFamily: "DMSans_600SemiBold", fontSize: 14 }}>Back</Text>
+                  </TouchableOpacity>
+
+                  <Text style={{ color: C.fg, fontFamily: "BebasNeue_400Regular", fontSize: 28, letterSpacing: 2 }}>
+                    ENTER YOUR DETAILS
+                  </Text>
+                  <Text style={{ color: C.muted, fontFamily: "DMSans_400Regular", fontSize: 13 }}>
+                    Your data stays on your device. No password required.
+                  </Text>
+
+                  <View>
+                    <Text style={{ color: C.muted, fontSize: 11, fontFamily: "DMSans_600SemiBold", letterSpacing: 1, marginBottom: 6 }}>YOUR NAME</Text>
+                    <TextInput
+                      value={name}
+                      onChangeText={setName}
+                      placeholder="e.g. Alex Johnson"
+                      placeholderTextColor="rgba(100,116,139,0.5)"
+                      style={{
+                        backgroundColor: C.bg, borderRadius: 14,
+                        paddingHorizontal: 16, paddingVertical: 14,
+                        color: C.fg, fontSize: 16, fontFamily: "DMSans_400Regular",
+                        borderWidth: 1, borderColor: C.border,
+                      }}
+                      returnKeyType="next"
+                      autoCapitalize="words"
+                    />
                   </View>
-                ))}
-              </View>
 
-              {/* Auth Card */}
-              <View style={{
-                marginHorizontal: 20,
-                backgroundColor: "rgba(13,13,24,0.92)",
-                borderRadius: 28,
-                padding: 24,
-                borderWidth: 1,
-                borderColor: "rgba(124,58,237,0.3)",
-                marginBottom: 40,
-              }}>
-                {mode === "choose" && (
-                  <View style={{ gap: 12 }}>
-                    <Text style={{ color: "#FFF7ED", fontSize: 20, fontFamily: "Outfit_800ExtraBold", textAlign: "center", marginBottom: 4 }}>
-                      Get Started
-                    </Text>
-
-                    {/* Google OAuth */}
-                    <TouchableOpacity
+                  <View>
+                    <Text style={{ color: C.muted, fontSize: 11, fontFamily: "DMSans_600SemiBold", letterSpacing: 1, marginBottom: 6 }}>EMAIL ADDRESS</Text>
+                    <TextInput
+                      value={email}
+                      onChangeText={setEmail}
+                      placeholder="you@example.com"
+                      placeholderTextColor="rgba(100,116,139,0.5)"
+                      keyboardType="email-address"
+                      autoCapitalize="none"
+                      autoCorrect={false}
                       style={{
-                        backgroundColor: "#FFF7ED",
-                        borderRadius: 16, paddingVertical: 15,
-                        flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 10,
+                        backgroundColor: C.bg, borderRadius: 14,
+                        paddingHorizontal: 16, paddingVertical: 14,
+                        color: C.fg, fontSize: 16, fontFamily: "DMSans_400Regular",
+                        borderWidth: 1, borderColor: emailError ? C.gold : C.border,
                       }}
-                      onPress={() => startOAuthLogin()}
-                    >
-                      <Text style={{ fontSize: 18 }}>🔵</Text>
-                      <Text style={{ color: "#111827", fontFamily: "Outfit_700Bold", fontSize: 15 }}>Continue with Google</Text>
-                    </TouchableOpacity>
-
-                    {/* Email */}
-                    <TouchableOpacity
-                      style={{
-                        backgroundColor: "#F59E0B",
-                        borderRadius: 16, paddingVertical: 15,
-                        flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 10,
-                      }}
-                      onPress={() => setMode("email")}
-                    >
-                      <Text style={{ fontSize: 18 }}>✉️</Text>
-                      <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 15 }}>Continue with Email</Text>
-                    </TouchableOpacity>
-
-                    {/* Divider */}
-                    <View style={{ flexDirection: "row", alignItems: "center", gap: 12, marginVertical: 2 }}>
-                      <View style={{ flex: 1, height: 1, backgroundColor: "rgba(245,158,11,0.10)" }} />
-                      <Text style={{ color: "#451A03", fontSize: 12 }}>or</Text>
-                      <View style={{ flex: 1, height: 1, backgroundColor: "rgba(245,158,11,0.10)" }} />
-                    </View>
-
-                    {/* Guest / Skip */}
-                    <TouchableOpacity
-                      style={{
-                        backgroundColor: "transparent",
-                        borderRadius: 16, paddingVertical: 15,
-                        flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 10,
-                        borderWidth: 1, borderColor: "rgba(245,158,11,0.15)",
-                      }}
-                      onPress={handleGuestContinue}
-                      disabled={loading}
-                    >
-                      {loading ? (
-                        <ActivityIndicator size="small" color="#B45309" />
-                      ) : (
-                        <>
-                          <Text style={{ fontSize: 18 }}>👤</Text>
-                          <Text style={{ color: "#B45309", fontFamily: "DMSans_600SemiBold", fontSize: 15 }}>Skip — Use as Guest</Text>
-                        </>
-                      )}
-                    </TouchableOpacity>
-
-                    <Text style={{ color: "#451A03", fontSize: 11, textAlign: "center", lineHeight: 16, marginTop: 4 }}>
-                      Guest mode stores your data locally on this device only.{"\n"}
-                      By continuing, you agree to our Terms of Service.
-                    </Text>
+                      returnKeyType="done"
+                      onSubmitEditing={handleEmailContinue}
+                    />
+                    {emailError ? (
+                      <Text style={{ color: C.gold, fontSize: 12, marginTop: 6, fontFamily: "DMSans_400Regular" }}>{emailError}</Text>
+                    ) : null}
                   </View>
-                )}
 
-                {mode === "email" && (
-                  <View style={{ gap: 14 }}>
-                    <TouchableOpacity
-                      style={{ flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 4 }}
-                      onPress={() => { setMode("choose"); setEmailError(""); }}
-                    >
-                      <Text style={{ color: "#F59E0B", fontSize: 18 }}>←</Text>
-                      <Text style={{ color: "#F59E0B", fontFamily: "DMSans_600SemiBold", fontSize: 14 }}>Back</Text>
-                    </TouchableOpacity>
+                  <TouchableOpacity
+                    style={{
+                      backgroundColor: C.gold, borderRadius: 16,
+                      paddingVertical: 16, alignItems: "center",
+                      marginTop: 4, opacity: loading ? 0.7 : 1,
+                    }}
+                    onPress={handleEmailContinue}
+                    disabled={loading}
+                  >
+                    {loading ? (
+                      <ActivityIndicator color={C.bg} />
+                    ) : (
+                      <Text style={{ color: C.bg, fontFamily: "DMSans_700Bold", fontSize: 16 }}>Continue</Text>
+                    )}
+                  </TouchableOpacity>
 
-                    <Text style={{ color: "#FFF7ED", fontSize: 20, fontFamily: "Outfit_800ExtraBold" }}>Enter your details</Text>
-                    <Text style={{ color: "#B45309", fontSize: 13 }}>
-                      Your data stays on your device. No password required.
-                    </Text>
+                  <Text style={{ color: "rgba(100,116,139,0.5)", fontSize: 11, textAlign: "center", lineHeight: 16, fontFamily: "DMSans_400Regular" }}>
+                    Your email is stored locally for personalization only.{"\n"}
+                    No account is created on our servers.
+                  </Text>
+                </View>
+              )}
+            </View>
 
-                    <View>
-                      <Text style={{ color: "#B45309", fontSize: 11, fontFamily: "Outfit_700Bold", marginBottom: 6, letterSpacing: 0.5 }}>YOUR NAME</Text>
-                      <TextInput
-                        value={name}
-                        onChangeText={setName}
-                        placeholder="e.g. Alex Johnson"
-                        placeholderTextColor="#451A03"
-                        style={{
-                          backgroundColor: "#150A00", borderRadius: 14,
-                          paddingHorizontal: 16, paddingVertical: 14,
-                          color: "#FFF7ED", fontSize: 16,
-                          borderWidth: 1, borderColor: "rgba(245,158,11,0.10)",
-                        }}
-                        returnKeyType="next"
-                        autoCapitalize="words"
-                      />
-                    </View>
+            {/* Social proof stats — pitch for undecided users */}
+            <View style={{
+              flexDirection: "row", justifyContent: "center", gap: 24,
+              marginTop: 32, paddingHorizontal: 16,
+            }}>
+              {[
+                { value: "4.9", label: "Rating", icon: "star" as const },
+                { value: "77", label: "Exercises", icon: "fitness-center" as const },
+                { value: "7", label: "Wearables", icon: "watch" as const },
+              ].map((stat, i) => (
+                <View key={i} style={{ alignItems: "center", gap: 4 }}>
+                  <MaterialIcons name={stat.icon} size={16} color={C.gold} />
+                  <Text style={{ color: C.fg, fontFamily: "SpaceMono_700Bold", fontSize: 18 }}>
+                    {stat.value}
+                  </Text>
+                  <Text style={{ color: C.muted, fontFamily: "DMSans_400Regular", fontSize: 11 }}>
+                    {stat.label}
+                  </Text>
+                </View>
+              ))}
+            </View>
 
-                    <View>
-                      <Text style={{ color: "#B45309", fontSize: 11, fontFamily: "Outfit_700Bold", marginBottom: 6, letterSpacing: 0.5 }}>EMAIL ADDRESS</Text>
-                      <TextInput
-                        value={email}
-                        onChangeText={setEmail}
-                        placeholder="you@example.com"
-                        placeholderTextColor="#451A03"
-                        keyboardType="email-address"
-                        autoCapitalize="none"
-                        autoCorrect={false}
-                        style={{
-                          backgroundColor: "#150A00", borderRadius: 14,
-                          paddingHorizontal: 16, paddingVertical: 14,
-                          color: "#FFF7ED", fontSize: 16,
-                          borderWidth: 1, borderColor: emailError ? "#B45309" : "rgba(245,158,11,0.10)",
-                        }}
-                        returnKeyType="done"
-                        onSubmitEditing={handleEmailContinue}
-                      />
-                      {emailError ? (
-                        <Text style={{ color: "#B45309", fontSize: 12, marginTop: 6 }}>{emailError}</Text>
-                      ) : null}
-                    </View>
-
-                    <TouchableOpacity
-                      style={{
-                        backgroundColor: "#F59E0B", borderRadius: 16,
-                        paddingVertical: 16, alignItems: "center",
-                        marginTop: 4, opacity: loading ? 0.7 : 1,
-                      }}
-                      onPress={handleEmailContinue}
-                      disabled={loading}
-                    >
-                      {loading ? (
-                        <ActivityIndicator color="#FFF7ED" />
-                      ) : (
-                        <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 16 }}>Continue →</Text>
-                      )}
-                    </TouchableOpacity>
-
-                    <Text style={{ color: "#451A03", fontSize: 11, textAlign: "center", lineHeight: 16 }}>
-                      Your email is stored locally for personalization only.{"\n"}
-                      No account is created on our servers.
-                    </Text>
-                  </View>
-                )}
-              </View>
-            </ScrollView>
-          </KeyboardAvoidingView>
-        </View>
-      </ImageBackground>
+            <Text style={{
+              color: "rgba(100,116,139,0.4)", fontSize: 11, textAlign: "center",
+              marginTop: 24, fontFamily: "DMSans_400Regular",
+            }}>
+              By continuing, you agree to our Terms of Service
+            </Text>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </View>
   );
 }

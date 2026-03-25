@@ -510,7 +510,7 @@ export default function NotificationPreferencesScreen() {
                       await savePrefs(updated);
                     }}
                   >
-                    <Text style={{ color: prefs.waterIntervalHours === h ? "#fff" : "#888", fontSize: 13, fontFamily: "Outfit_700Bold" }}>{h}h</Text>
+                    <Text style={{ color: prefs.waterIntervalHours === h ? "#fff" : "#888", fontSize: 13, fontFamily: "DMSans_700Bold" }}>{h}h</Text>
                   </TouchableOpacity>
                 ))}
               </View>
@@ -634,7 +634,7 @@ export default function NotificationPreferencesScreen() {
         {/* Tip */}
         <View style={styles.tipCard}>
           <Text style={styles.tipText}>
-            💡 <Text style={{ fontFamily: "Outfit_700Bold" }}>Pro tip:</Text> Users who receive daily reminders are 3× more likely to hit their fitness goals. Keep at least one reminder on!
+            💡 <Text style={{ fontFamily: "DMSans_700Bold" }}>Pro tip:</Text> Users who receive daily reminders are 3× more likely to hit their fitness goals. Keep at least one reminder on!
           </Text>
         </View>
       </ScrollView>
@@ -698,7 +698,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     color: "#fff",
     fontSize: 26,
-    fontFamily: "Outfit_800ExtraBold",
+    fontFamily: "BebasNeue_400Regular",
     marginBottom: 4,
   },
   headerSub: {
@@ -722,7 +722,7 @@ const styles = StyleSheet.create({
   permBannerTitle: {
     color: "#fff",
     fontSize: 15,
-    fontFamily: "Outfit_700Bold",
+    fontFamily: "DMSans_700Bold",
   },
   permBannerSub: {
     color: "#888",
@@ -732,7 +732,7 @@ const styles = StyleSheet.create({
   permBannerArrow: {
     color: "#F59E0B",
     fontSize: 18,
-    fontFamily: "Outfit_700Bold",
+    fontFamily: "DMSans_700Bold",
   },
   section: {
     backgroundColor: "#111",
@@ -755,7 +755,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     color: "#fff",
     fontSize: 16,
-    fontFamily: "Outfit_700Bold",
+    fontFamily: "DMSans_700Bold",
   },
   sectionSub: {
     color: "#888",
@@ -784,7 +784,7 @@ const styles = StyleSheet.create({
   timeValueText: {
     color: "#F59E0B",
     fontSize: 16,
-    fontFamily: "Outfit_700Bold",
+    fontFamily: "DMSans_700Bold",
   },
   timeEditIcon: {
     fontSize: 14,
@@ -801,7 +801,7 @@ const styles = StyleSheet.create({
   summaryTitle: {
     color: "#fff",
     fontSize: 15,
-    fontFamily: "Outfit_700Bold",
+    fontFamily: "DMSans_700Bold",
     marginBottom: 10,
   },
   summaryItem: {
@@ -841,7 +841,7 @@ const styles = StyleSheet.create({
   modalTitle: {
     color: "#fff",
     fontSize: 18,
-    fontFamily: "Outfit_800ExtraBold",
+    fontFamily: "BebasNeue_400Regular",
     textAlign: "center",
     marginBottom: 20,
   },
@@ -882,12 +882,12 @@ const styles = StyleSheet.create({
   },
   pickerItemTextActive: {
     color: "#F59E0B",
-    fontFamily: "Outfit_700Bold",
+    fontFamily: "DMSans_700Bold",
   },
   previewTime: {
     color: "#fff",
     fontSize: 16,
-    fontFamily: "Outfit_700Bold",
+    fontFamily: "DMSans_700Bold",
     textAlign: "center",
     marginBottom: 20,
   },
@@ -917,6 +917,6 @@ const styles = StyleSheet.create({
   confirmBtnText: {
     color: "#fff",
     fontSize: 15,
-    fontFamily: "Outfit_700Bold",
+    fontFamily: "DMSans_700Bold",
   },
 });

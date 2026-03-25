@@ -19,12 +19,12 @@ import { Image } from "expo-image";
 import { getExerciseDemo } from "@/lib/exercise-demos";
 
 const C = {
-  bg: "#0A0500",
-  surface: "#150A00",
+  bg: "#0A0E14",
+  surface: "#141A22",
   surface2: "#1A0F00",
   border: "rgba(245,158,11,0.15)",
   border2: "rgba(245,158,11,0.25)",
-  fg: "#FFF7ED",
+  fg: "#F1F5F9",
   muted: "#B45309",
   gold: "#F59E0B",
   gold2: "#FBBF24",
@@ -279,7 +279,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     flex: 1,
     color: C.fg,
-    fontFamily: "Outfit_700Bold",
+    fontFamily: "DMSans_700Bold",
     fontSize: 18,
     textAlign: "center",
     marginHorizontal: 12,
@@ -293,7 +293,7 @@ const styles = StyleSheet.create({
   },
   sectionLabel: {
     color: C.muted,
-    fontFamily: "Outfit_700Bold",
+    fontFamily: "DMSans_700Bold",
     fontSize: 9,
     letterSpacing: 1.5,
     marginBottom: 8,
@@ -301,7 +301,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     color: C.muted,
-    fontFamily: "Outfit_700Bold",
+    fontFamily: "DMSans_700Bold",
     fontSize: 10,
     letterSpacing: 1.5,
     marginBottom: 12,
@@ -335,7 +335,7 @@ const styles = StyleSheet.create({
   },
   infoLabel: {
     color: C.muted,
-    fontFamily: "Outfit_700Bold",
+    fontFamily: "DMSans_700Bold",
     fontSize: 8,
     letterSpacing: 1.2,
   },
@@ -410,7 +410,7 @@ const styles = StyleSheet.create({
   },
   cueTitle: {
     color: C.muted,
-    fontFamily: "Outfit_700Bold",
+    fontFamily: "DMSans_700Bold",
     fontSize: 9,
     letterSpacing: 1.2,
   },

@@ -28,12 +28,12 @@ import { classifyIntent, type NavigationIntent } from "@/lib/assistant-navigatio
 const { width: W, height: H } = Dimensions.get("window");
 
 const SF = {
-  bg: "#0A0500",
-  surface: "#150A00",
+  bg: "#0A0E14",
+  surface: "#141A22",
   surface2: "#1F0D00",
   border: "rgba(245,158,11,0.12)",
   border2: "rgba(245,158,11,0.22)",
-  fg: "#FFF7ED",
+  fg: "#F1F5F9",
   muted: "#B45309",
   gold: "#F59E0B",
   gold2: "#FBBF24",
@@ -652,7 +652,7 @@ const styles = StyleSheet.create({
   },
   premiumBadgeText: {
     color: "#FFF",
-    fontFamily: "Outfit_700Bold",
+    fontFamily: "DMSans_700Bold",
     fontSize: 8,
     letterSpacing: 0.5,
   },
@@ -746,7 +746,7 @@ const styles = StyleSheet.create({
   },
   chatTitle: {
     color: SF.fg,
-    fontFamily: "Outfit_700Bold",
+    fontFamily: "DMSans_700Bold",
     fontSize: 16,
   },
   chatSubtitle: {
@@ -790,7 +790,7 @@ const styles = StyleSheet.create({
   },
   emptyTitle: {
     color: SF.fg,
-    fontFamily: "Outfit_800ExtraBold",
+    fontFamily: "BebasNeue_400Regular",
     fontSize: 22,
     textAlign: "center",
     marginBottom: 8,

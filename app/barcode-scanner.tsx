@@ -27,9 +27,9 @@ const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get("window");
 const SCAN_AREA_SIZE = SCREEN_W * 0.7;
 
 const SF = {
-  bg: "#0A0500",
-  surface: "#150A00",
-  fg: "#FFF7ED",
+  bg: "#0A0E14",
+  surface: "#141A22",
+  fg: "#F1F5F9",
   muted: "#B45309",
   gold: "#F59E0B",
   gold2: "#FBBF24",
@@ -406,7 +406,7 @@ export default function BarcodeScannerScreen() {
                       onPress={() => handleRelogFromHistory(item)}
                     >
                       <MaterialIcons name="add-circle" size={16} color={SF.fg} />
-                      <Text style={{ color: SF.fg, fontFamily: "Outfit_700Bold", fontSize: 11 }}>Log</Text>
+                      <Text style={{ color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 11 }}>Log</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
                       style={styles.historyDeleteBtn}
@@ -603,7 +603,7 @@ const styles = StyleSheet.create({
   permTitle: {
     color: SF.fg,
     fontSize: 22,
-    fontFamily: "Outfit_800ExtraBold",
+    fontFamily: "BebasNeue_400Regular",
     textAlign: "center",
     marginBottom: 12,
   },
@@ -624,7 +624,7 @@ const styles = StyleSheet.create({
   permBtnText: {
     color: SF.fg,
     fontSize: 16,
-    fontFamily: "Outfit_700Bold",
+    fontFamily: "DMSans_700Bold",
   },
   backBtn: {
     paddingVertical: 12,
@@ -654,7 +654,7 @@ const styles = StyleSheet.create({
   topTitle: {
     color: SF.fg,
     fontSize: 18,
-    fontFamily: "Outfit_700Bold",
+    fontFamily: "DMSans_700Bold",
   },
   // Scan area
   scanAreaContainer: {
@@ -732,7 +732,7 @@ const styles = StyleSheet.create({
   instructionTitle: {
     color: SF.fg,
     fontSize: 15,
-    fontFamily: "Outfit_700Bold",
+    fontFamily: "DMSans_700Bold",
     marginBottom: 2,
   },
   instructionSub: {
@@ -762,7 +762,7 @@ const styles = StyleSheet.create({
   resultName: {
     color: SF.fg,
     fontSize: 20,
-    fontFamily: "Outfit_800ExtraBold",
+    fontFamily: "BebasNeue_400Regular",
     lineHeight: 26,
   },
   resultBrand: {
@@ -812,7 +812,7 @@ const styles = StyleSheet.create({
   nutritionValue: {
     color: SF.gold,
     fontSize: 20,
-    fontFamily: "Outfit_800ExtraBold",
+    fontFamily: "BebasNeue_400Regular",
   },
   nutritionLabel: {
     color: SF.muted,
@@ -839,7 +839,7 @@ const styles = StyleSheet.create({
   addBtnText: {
     color: SF.fg,
     fontSize: 16,
-    fontFamily: "Outfit_700Bold",
+    fontFamily: "DMSans_700Bold",
   },
   // Not found
   notFoundCard: {
@@ -907,7 +907,7 @@ const styles = StyleSheet.create({
   historyName: {
     color: SF.fg,
     fontSize: 15,
-    fontFamily: "Outfit_700Bold",
+    fontFamily: "DMSans_700Bold",
     marginBottom: 2,
   },
   historyBrand: {
@@ -924,7 +924,7 @@ const styles = StyleSheet.create({
   historyMacroText: {
     color: SF.gold,
     fontSize: 11,
-    fontFamily: "Outfit_700Bold",
+    fontFamily: "DMSans_700Bold",
   },
   historyLogBtn: {
     flexDirection: "row",

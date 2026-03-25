@@ -153,7 +153,7 @@ export function ExerciseDemoPlayer({
               <MaterialIcons
                 name={view.label.includes("Side") ? "switch-video" : "videocam"}
                 size={14}
-                color={activeAngle === i ? "#0A0500" : "#B45309"}
+                color={activeAngle === i ? "#0A0E14" : "#B45309"}
               />
               <Text style={[
                 styles.angleToggleText,
@@ -245,7 +245,7 @@ export function ExerciseDemoPlayer({
                 >
                   <Text style={[
                     styles.fullscreenAngleTxt,
-                    activeAngle === i && { color: "#0A0500" },
+                    activeAngle === i && { color: "#0A0E14" },
                   ]}>
                     {getAngleShortLabel(view.label)}
                   </Text>
@@ -389,7 +389,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   angleToggleTextActive: {
-    color: "#0A0500",
+    color: "#0A0E14",
   },
   cueContainer: {
     flexDirection: "row",

@@ -64,20 +64,20 @@ const AT_PLANS_BG = "https://files.manuscdn.com/user_upload_by_module/session_fi
 const AT_MEALS_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/PZcnawJwIZkQHTEM.jpg";
 const APP_LOGO = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/PZcnawJwIZkQHTEM.jpg";
 
-// Aurora Titan colour tokens
+// NanoBanana colour tokens — per-screen accent semantics
 const SF = {
-  bg: "#0A0500", surface: "#1C0E02", surface2: "#1F0D00",
-  surfacePrimary: "#1C0E02", // primary card surface (slightly lighter)
-  border: "rgba(245,158,11,0.12)", border2: "rgba(245,158,11,0.20)",
-  borderPrimary: "rgba(245,158,11,0.25)", // primary card border (higher opacity)
-  fg: "#FFF7ED", muted: "#B45309", gold: "#F59E0B", orange: "#EA580C",
+  bg: "#0A0E14", surface: "#141A22", surface2: "#1A2030",
+  surfacePrimary: "#141A22",
+  border: "rgba(30,41,59,0.6)", border2: "rgba(30,41,59,0.8)",
+  borderPrimary: "rgba(30,41,59,0.9)",
+  fg: "#F1F5F9", muted: "#64748B", gold: "#F59E0B", orange: "#EA580C",
   gold2: "#FBBF24", gold3: "#FDE68A", red: "#DC2626",
   emerald: "#F59E0B", emerald2: "#FBBF24", emerald3: "#FDE68A",
   teal: "#EA580C", teal2: "#F97316",
-  // Macro colours (4C)
-  macroProtein: "#60A5FA", // blue-tinted
-  macroCarbs: "#FBBF24",   // warm amber
-  macroFat: "#FB923C",     // rose-orange
+  ice: "#22D3EE", mint: "#10B981", rose: "#F472B6",
+  macroProtein: "#60A5FA",
+  macroCarbs: "#FBBF24",
+  macroFat: "#FB923C",
 };
 
 // Quick Action definitions grouped into categories (3A)
@@ -167,12 +167,12 @@ const QUICK_ACTIONS_ALL = QUICK_ACTION_GROUPS.flatMap(g => g.actions);
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 const AnimatedView = Animated.View;
 
-// Stat ring icon mapping (3A: emoji → MaterialIcons)
-const STAT_RING_ICONS: Record<string, keyof typeof MaterialIcons.glyphMap> = {
-  Workouts: "fitness-center",
-  Streak: "local-fire-department",
-  Meals: "restaurant",
-  Photos: "photo-camera",
+// Stat ring icon mapping + per-ring accent colors (NanoBanana: gold, ice, mint, rose)
+const STAT_RING_META: Record<string, { icon: keyof typeof MaterialIcons.glyphMap; color: string }> = {
+  Workouts: { icon: "fitness-center", color: SF.gold },
+  Streak: { icon: "local-fire-department", color: SF.ice },
+  Meals: { icon: "restaurant", color: SF.mint },
+  Photos: { icon: "photo-camera", color: SF.rose },
 };
 
 // ── StatRing with pulse animation (6B) ──────────────────────────────────────
@@ -182,7 +182,9 @@ function StatRing({ value, label, progress = 0 }: { value: string; label: string
   const prevValueRef = React.useRef(value);
   const R = 26;
   const circumference = 2 * Math.PI * R;
-  const iconName = STAT_RING_ICONS[label] ?? "help-outline";
+  const meta = STAT_RING_META[label] ?? { icon: "help-outline" as const, color: SF.gold };
+  const iconName = meta.icon;
+  const ringColor = meta.color;
 
   useEffect(() => {
     animProgress.value = withTiming(Math.min(Math.max(progress, 0), 1), { duration: 1200, easing: Easing.out(Easing.cubic) });
@@ -207,10 +209,10 @@ function StatRing({ value, label, progress = 0 }: { value: string; label: string
       <View style={styles.ringContainer}>
         <Svg width={64} height={64} style={StyleSheet.absoluteFill}>
           <Circle cx={32} cy={32} r={R} stroke="rgba(245,158,11,0.12)" strokeWidth={3.5} fill="none" />
-          <AnimatedCircle cx={32} cy={32} r={R} stroke={SF.emerald} strokeWidth={3.5} fill="none"
+          <AnimatedCircle cx={32} cy={32} r={R} stroke={ringColor} strokeWidth={3.5} fill="none"
             strokeDasharray={circumference} animatedProps={animatedProps} strokeLinecap="round" rotation="-90" origin="32,32" />
         </Svg>
-        <MaterialIcons name={iconName} size={20} color={SF.gold} />
+        <MaterialIcons name={iconName} size={20} color={ringColor} />
       </View>
       <Text style={styles.ringValue}>{value}</Text>
       <Text style={styles.ringLabel}>{label}</Text>
@@ -622,55 +624,57 @@ export default function HomeScreen() {
           onScroll={handleScroll}
           scrollEventThrottle={16}
         >
-          {/* ── Hero Header with Parallax (1A) ── */}
-          <View style={{ width: "100%", height: 300, overflow: "hidden" }}>
-            <AnimatedView style={[{ position: "absolute", top: 0, left: 0, right: 0, height: 450 }, heroImageStyle]}>
-              <ImageBackground source={{ uri: AT_DASHBOARD_BG }} style={{ width: "100%", height: "100%" }} resizeMode="cover" />
-            </AnimatedView>
-            <AnimatedView style={[styles.heroOverlay, heroContentStyle]}>
-              <View style={styles.heroTopBar}>
-                <View style={styles.heroBadge}>
-                  <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
-                    <MaterialIcons name="bolt" size={12} color={SF.emerald} />
-                    <Text style={styles.heroBadgeText}>PEAKPULSE AI</Text>
-                  </View>
-                </View>
-                <View style={{ flexDirection: "row", gap: 8, alignItems: "center" }}>
-                  <TouchableOpacity style={[styles.heroProfileBtn, { paddingHorizontal: 10 }]} onPress={() => router.push("/user-guide" as any)}>
-                    <MaterialIcons name="help-outline" size={16} color={SF.emerald2} />
-                    <Text style={styles.heroProfileBtnText}>Guide</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity style={styles.heroProfileBtn} onPress={() => router.push("/(tabs)/profile" as any)}>
-                    <MaterialIcons name="person" size={16} color={SF.emerald2} />
-                    <Text style={styles.heroProfileBtnText}>Profile</Text>
-                  </TouchableOpacity>
-                </View>
+          {/* ── Hero Header (NanoBanana: dark, no background image) ── */}
+          <View style={{ backgroundColor: SF.bg, paddingTop: 56, paddingHorizontal: 20, paddingBottom: 20 }}>
+            {/* Top bar: hamburger + icons */}
+            <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
+              <TouchableOpacity onPress={() => router.push("/user-guide" as any)} style={{ padding: 4 }}>
+                <MaterialIcons name="menu" size={24} color={SF.fg} />
+              </TouchableOpacity>
+              <View style={{ flexDirection: "row", gap: 16, alignItems: "center" }}>
+                <TouchableOpacity onPress={() => {}} style={{ padding: 4 }}>
+                  <MaterialIcons name="refresh" size={22} color={SF.muted} />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => router.push("/notification-settings" as any)} style={{ padding: 4 }}>
+                  <MaterialIcons name="notifications-none" size={22} color={SF.muted} />
+                </TouchableOpacity>
               </View>
-              <View style={{ paddingBottom: 24 }}>
-                <Text style={styles.heroGreeting}>Good morning,</Text>
-                <Text style={styles.heroName}>{displayName}</Text>
+            </View>
+            {/* Greeting + streak badge */}
+            <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start" }}>
+              <View style={{ flex: 1 }}>
+                <Text style={{ color: SF.muted, fontFamily: "DMSans_500Medium", fontSize: 14 }}>Personalized</Text>
+                <Text style={{ color: SF.fg, fontFamily: "BebasNeue_400Regular", fontSize: 34, letterSpacing: 2, marginTop: 2 }}>
+                  YOUR {displayName.toUpperCase()}!
+                </Text>
                 {(activeProfile as any)?.goal && (
                   <View style={{ flexDirection: "row", gap: 8, marginTop: 8, flexWrap: "wrap" }}>
                     <View style={styles.heroPill}>
                       <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
-                        <MaterialIcons name="flag" size={12} color={SF.emerald2} />
+                        <MaterialIcons name="flag" size={12} color={SF.gold} />
                         <Text style={styles.heroPillText}>
                           {(activeProfile as any).goal === "build_muscle" ? "Build Muscle" : (activeProfile as any).goal === "lose_fat" ? "Lose Fat" : (activeProfile as any).goal}
                         </Text>
                       </View>
                     </View>
-                    {(activeProfile as any)?.workoutStyle && (
-                      <View style={styles.heroPill}>
-                        <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
-                          <MaterialIcons name="fitness-center" size={12} color={SF.emerald2} />
-                          <Text style={styles.heroPillText}>{(activeProfile as any).workoutStyle}</Text>
-                        </View>
-                      </View>
-                    )}
                   </View>
                 )}
               </View>
-            </AnimatedView>
+              {/* Streak badge */}
+              {streakData && streakData.currentStreak > 0 && (
+                <View style={{
+                  backgroundColor: "rgba(245,158,11,0.12)", borderRadius: 14,
+                  paddingHorizontal: 12, paddingVertical: 8,
+                  borderWidth: 1, borderColor: "rgba(245,158,11,0.25)",
+                  flexDirection: "row", alignItems: "center", gap: 6,
+                }}>
+                  <MaterialIcons name="local-fire-department" size={18} color={SF.gold} />
+                  <Text style={{ color: SF.gold, fontFamily: "SpaceMono_700Bold", fontSize: 14 }}>
+                    {streakData.currentStreak * 7} DAYS
+                  </Text>
+                </View>
+              )}
+            </View>
           </View>
 
           {/* ── Stats Ring Row (1C: staggered index 0, 4B: primary card) ── */}
@@ -736,18 +740,18 @@ export default function HomeScreen() {
             <StaggeredCard index={2}>
               <View style={{ marginHorizontal: 16, marginBottom: 16, backgroundColor: SF.surface, borderRadius: 20, padding: 18, borderWidth: 1, borderColor: SF.border2 }}>
                 <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-                  <Text style={{ color: SF.gold, fontFamily: "Outfit_700Bold", fontSize: 11, letterSpacing: 1.5 }}>BODY FAT ESTIMATE</Text>
+                  <Text style={{ color: SF.gold, fontFamily: "DMSans_700Bold", fontSize: 11, letterSpacing: 1.5 }}>BODY FAT ESTIMATE</Text>
                   <TouchableOpacity onPress={() => router.push("/(tabs)/scan" as any)}>
                     <Text style={{ color: SF.orange, fontFamily: "DMSans_600SemiBold", fontSize: 12 }}>Update →</Text>
                   </TouchableOpacity>
                 </View>
                 <View style={{ flexDirection: "row", alignItems: "center", gap: 16 }}>
                   <View style={{ width: 72, height: 72, borderRadius: 36, backgroundColor: "rgba(245,158,11,0.12)", alignItems: "center", justifyContent: "center", borderWidth: 2, borderColor: SF.gold }}>
-                    <Text style={{ color: SF.gold, fontFamily: "Outfit_800ExtraBold", fontSize: 22 }}>{latestBF.bf}%</Text>
+                    <Text style={{ color: SF.gold, fontFamily: "BebasNeue_400Regular", fontSize: 22 }}>{latestBF.bf}%</Text>
                     <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 9 }}>BODY FAT</Text>
                   </View>
                   <View style={{ flex: 1 }}>
-                    <Text style={{ color: SF.fg, fontFamily: "Outfit_700Bold", fontSize: 16 }}>
+                    <Text style={{ color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 16 }}>
                       {latestBF.bf <= 12 ? "Competition Lean" : latestBF.bf <= 15 ? "Athletic & Defined" : latestBF.bf <= 18 ? "Fit & Healthy" : latestBF.bf <= 22 ? "Average Build" : "Above Average"}
                     </Text>
                     {latestBF.confidence ? (
@@ -773,7 +777,7 @@ export default function HomeScreen() {
                     <View style={{ position: "absolute", bottom: 0, left: 0, right: 0, backgroundColor: "rgba(10,5,0,0.80)", paddingVertical: 8, paddingHorizontal: 14, flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
                       <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
                         <MaterialIcons name="flag" size={14} color={SF.gold} />
-                        <Text style={{ color: SF.gold, fontFamily: "Outfit_700Bold", fontSize: 13 }}>Your Goal: {targetBF.target_bf}% BF</Text>
+                        <Text style={{ color: SF.gold, fontFamily: "DMSans_700Bold", fontSize: 13 }}>Your Goal: {targetBF.target_bf}% BF</Text>
                       </View>
                       <Text style={{ color: SF.gold2, fontFamily: "DMSans_500Medium", fontSize: 11 }}>Tap to expand</Text>
                     </View>
@@ -798,7 +802,7 @@ export default function HomeScreen() {
               )}
               <View style={{ position: "absolute", bottom: 0, left: 0, right: 0, paddingBottom: 60, paddingHorizontal: 24 }}>
                 <View style={{ alignSelf: "center", backgroundColor: "rgba(10,5,0,0.85)", borderRadius: 20, paddingHorizontal: 24, paddingVertical: 16, marginBottom: 20, borderWidth: 2, borderColor: SF.gold }}>
-                  <Text style={{ color: SF.gold, fontFamily: "Outfit_800ExtraBold", fontSize: 28, textAlign: "center" }}>{targetBF?.target_bf}% Body Fat</Text>
+                  <Text style={{ color: SF.gold, fontFamily: "BebasNeue_400Regular", fontSize: 28, textAlign: "center" }}>{targetBF?.target_bf}% Body Fat</Text>
                   <Text style={{ color: SF.gold3, fontFamily: "DMSans_400Regular", fontSize: 14, textAlign: "center", marginTop: 4 }}>Your AI-generated target physique</Text>
                 </View>
                 <View style={{ flexDirection: "row", gap: 10 }}>
@@ -823,7 +827,7 @@ export default function HomeScreen() {
                     disabled={savingToLibrary}
                   >
                     {savingToLibrary ? <ActivityIndicator color={SF.gold} size="small" /> : <MaterialIcons name="save-alt" size={18} color={SF.gold} />}
-                    <Text style={{ color: SF.gold, fontFamily: "Outfit_800ExtraBold", fontSize: 13 }}>{savingToLibrary ? "Saving..." : "Save"}</Text>
+                    <Text style={{ color: SF.gold, fontFamily: "BebasNeue_400Regular", fontSize: 13 }}>{savingToLibrary ? "Saving..." : "Save"}</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={{ flex: 1, backgroundColor: "rgba(245,158,11,0.15)", borderRadius: 18, paddingVertical: 14, alignItems: "center", borderWidth: 1.5, borderColor: SF.gold, flexDirection: "row", justifyContent: "center", gap: 6, opacity: sharing ? 0.7 : 1 }}
@@ -846,13 +850,13 @@ export default function HomeScreen() {
                     disabled={sharing}
                   >
                     {sharing ? <ActivityIndicator color={SF.gold} size="small" /> : <MaterialIcons name="share" size={18} color={SF.gold} />}
-                    <Text style={{ color: SF.gold, fontFamily: "Outfit_800ExtraBold", fontSize: 13 }}>{sharing ? "Preparing..." : "Share"}</Text>
+                    <Text style={{ color: SF.gold, fontFamily: "BebasNeue_400Regular", fontSize: 13 }}>{sharing ? "Preparing..." : "Share"}</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={{ flex: 1, backgroundColor: SF.gold, borderRadius: 18, paddingVertical: 14, alignItems: "center" }}
                     onPress={() => setShowTargetImageModal(false)}
                   >
-                    <Text style={{ color: SF.bg, fontFamily: "Outfit_800ExtraBold", fontSize: 15 }}>Close</Text>
+                    <Text style={{ color: SF.bg, fontFamily: "BebasNeue_400Regular", fontSize: 15 }}>Close</Text>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -878,27 +882,27 @@ export default function HomeScreen() {
                   <View style={{ flexDirection: "row", justifyContent: "space-around" }}>
                     <View style={{ alignItems: "center" }}>
                       <MaterialIcons name="directions-walk" size={20} color="#22C55E" />
-                      <Text style={{ color: "#22C55E", fontFamily: "Outfit_700Bold", fontSize: 16, marginTop: 2 }}>{wearableData.stats.steps.toLocaleString()}</Text>
+                      <Text style={{ color: "#22C55E", fontFamily: "DMSans_700Bold", fontSize: 16, marginTop: 2 }}>{wearableData.stats.steps.toLocaleString()}</Text>
                       <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 9 }}>Steps</Text>
                     </View>
                     <View style={{ alignItems: "center" }}>
                       <MaterialIcons name="favorite" size={20} color="#EF4444" />
-                      <Text style={{ color: "#EF4444", fontFamily: "Outfit_700Bold", fontSize: 16, marginTop: 2 }}>{wearableData.stats.heartRate}</Text>
+                      <Text style={{ color: "#EF4444", fontFamily: "DMSans_700Bold", fontSize: 16, marginTop: 2 }}>{wearableData.stats.heartRate}</Text>
                       <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 9 }}>BPM</Text>
                     </View>
                     <View style={{ alignItems: "center" }}>
                       <MaterialIcons name="local-fire-department" size={20} color="#F59E0B" />
-                      <Text style={{ color: "#F59E0B", fontFamily: "Outfit_700Bold", fontSize: 16, marginTop: 2 }}>{wearableData.stats.totalCaloriesBurnt}</Text>
+                      <Text style={{ color: "#F59E0B", fontFamily: "DMSans_700Bold", fontSize: 16, marginTop: 2 }}>{wearableData.stats.totalCaloriesBurnt}</Text>
                       <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 9 }}>Burnt</Text>
                     </View>
                     <View style={{ alignItems: "center" }}>
                       <MaterialIcons name="bedtime" size={20} color="#8B5CF6" />
-                      <Text style={{ color: "#8B5CF6", fontFamily: "Outfit_700Bold", fontSize: 16, marginTop: 2 }}>{wearableData.stats.sleepHours}h</Text>
+                      <Text style={{ color: "#8B5CF6", fontFamily: "DMSans_700Bold", fontSize: 16, marginTop: 2 }}>{wearableData.stats.sleepHours}h</Text>
                       <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 9 }}>Sleep</Text>
                     </View>
                     <View style={{ alignItems: "center" }}>
                       <MaterialIcons name="straighten" size={20} color="#3B82F6" />
-                      <Text style={{ color: "#3B82F6", fontFamily: "Outfit_700Bold", fontSize: 16, marginTop: 2 }}>{wearableData.stats.distance}</Text>
+                      <Text style={{ color: "#3B82F6", fontFamily: "DMSans_700Bold", fontSize: 16, marginTop: 2 }}>{wearableData.stats.distance}</Text>
                       <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 9 }}>km</Text>
                     </View>
                   </View>
@@ -912,7 +916,7 @@ export default function HomeScreen() {
                     }}
                   >
                     <MaterialIcons name="show-chart" size={16} color="#3B82F6" />
-                    <Text style={{ color: "#3B82F6", fontFamily: "Outfit_700Bold", fontSize: 12 }}>View Health Trends</Text>
+                    <Text style={{ color: "#3B82F6", fontFamily: "DMSans_700Bold", fontSize: 12 }}>View Health Trends</Text>
                     <MaterialIcons name="chevron-right" size={14} color="#3B82F6" />
                   </TouchableOpacity>
                 </TouchableOpacity>
@@ -948,7 +952,7 @@ export default function HomeScreen() {
                             strokeLinecap="round" transform="rotate(-90 34 34)" />
                         </Svg>
                         <View style={{ position: "absolute" }}>
-                          <Text style={{ color: "#22C55E", fontFamily: "Outfit_700Bold", fontSize: 13, textAlign: "center" }}>{goalProgress.steps.percentage}%</Text>
+                          <Text style={{ color: "#22C55E", fontFamily: "DMSans_700Bold", fontSize: 13, textAlign: "center" }}>{goalProgress.steps.percentage}%</Text>
                         </View>
                       </View>
                       <Text style={{ color: SF.fg, fontFamily: "DMSans_600SemiBold", fontSize: 11, marginTop: 4 }}>Steps</Text>
@@ -964,7 +968,7 @@ export default function HomeScreen() {
                             strokeLinecap="round" transform="rotate(-90 34 34)" />
                         </Svg>
                         <View style={{ position: "absolute" }}>
-                          <Text style={{ color: "#F59E0B", fontFamily: "Outfit_700Bold", fontSize: 13, textAlign: "center" }}>{goalProgress.calories.percentage}%</Text>
+                          <Text style={{ color: "#F59E0B", fontFamily: "DMSans_700Bold", fontSize: 13, textAlign: "center" }}>{goalProgress.calories.percentage}%</Text>
                         </View>
                       </View>
                       <Text style={{ color: SF.fg, fontFamily: "DMSans_600SemiBold", fontSize: 11, marginTop: 4 }}>Calories</Text>
@@ -980,7 +984,7 @@ export default function HomeScreen() {
                             strokeLinecap="round" transform="rotate(-90 34 34)" />
                         </Svg>
                         <View style={{ position: "absolute" }}>
-                          <Text style={{ color: "#EF4444", fontFamily: "Outfit_700Bold", fontSize: 13, textAlign: "center" }}>{goalProgress.workouts.percentage}%</Text>
+                          <Text style={{ color: "#EF4444", fontFamily: "DMSans_700Bold", fontSize: 13, textAlign: "center" }}>{goalProgress.workouts.percentage}%</Text>
                         </View>
                       </View>
                       <Text style={{ color: SF.fg, fontFamily: "DMSans_600SemiBold", fontSize: 11, marginTop: 4 }}>Workouts</Text>
@@ -1020,7 +1024,7 @@ export default function HomeScreen() {
                           <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
                             <Text style={{
                               color: streakData.currentStreak > 0 ? "#F59E0B" : "#B45309",
-                              fontFamily: "Outfit_700Bold", fontSize: 15,
+                              fontFamily: "DMSans_700Bold", fontSize: 15,
                             }}>
                               {getStreakLabel(streakData.currentStreak)}
                             </Text>
@@ -1031,7 +1035,7 @@ export default function HomeScreen() {
                               }}>
                                 <Text style={{
                                   color: getCurrentMilestone(streakData.currentStreak)?.color ?? "#F59E0B",
-                                  fontFamily: "Outfit_700Bold", fontSize: 9,
+                                  fontFamily: "DMSans_700Bold", fontSize: 9,
                                 }}>
                                   {getCurrentMilestone(streakData.currentStreak)?.name}
                                 </Text>
@@ -1078,17 +1082,17 @@ export default function HomeScreen() {
             <Modal transparent animationType="fade" visible={showCelebration}>
               <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.85)", alignItems: "center", justifyContent: "center", padding: 32 }}>
                 <View style={{
-                  backgroundColor: "#1C0E02", borderRadius: 28, padding: 32, alignItems: "center",
+                  backgroundColor: SF.surface2, borderRadius: 28, padding: 32, alignItems: "center",
                   borderWidth: 2, borderColor: celebrationMilestone.color + "40", width: "100%", maxWidth: 340,
                 }}>
                   <Text style={{ fontSize: 56, marginBottom: 12 }}>{celebrationMilestone.emoji}</Text>
-                  <Text style={{ color: celebrationMilestone.color, fontFamily: "Outfit_800ExtraBold", fontSize: 28, textAlign: "center" }}>
+                  <Text style={{ color: celebrationMilestone.color, fontFamily: "BebasNeue_400Regular", fontSize: 28, textAlign: "center" }}>
                     {celebrationMilestone.name}
                   </Text>
-                  <Text style={{ color: "#F59E0B", fontFamily: "Outfit_700Bold", fontSize: 14, marginTop: 4 }}>
+                  <Text style={{ color: "#F59E0B", fontFamily: "DMSans_700Bold", fontSize: 14, marginTop: 4 }}>
                     {celebrationMilestone.badge} STREAK MILESTONE
                   </Text>
-                  <Text style={{ color: "#FFF7ED", fontFamily: "DMSans_400Regular", fontSize: 14, textAlign: "center", marginTop: 12, lineHeight: 20 }}>
+                  <Text style={{ color: "#F1F5F9", fontFamily: "DMSans_400Regular", fontSize: 14, textAlign: "center", marginTop: 12, lineHeight: 20 }}>
                     {celebrationMilestone.description}
                   </Text>
                   <View style={{ flexDirection: "row", gap: 8, marginTop: 24 }}>
@@ -1122,7 +1126,7 @@ export default function HomeScreen() {
                     }}
                   >
                     <MaterialIcons name="share" size={16} color={celebrationMilestone.color} />
-                    <Text style={{ color: celebrationMilestone.color, fontFamily: "Outfit_700Bold", fontSize: 14 }}>Share Achievement</Text>
+                    <Text style={{ color: celebrationMilestone.color, fontFamily: "DMSans_700Bold", fontSize: 14 }}>Share Achievement</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
                     onPress={async () => {
@@ -1137,7 +1141,7 @@ export default function HomeScreen() {
                       paddingVertical: 14, borderRadius: 16,
                     }}
                   >
-                    <Text style={{ color: "#0A0500", fontFamily: "Outfit_700Bold", fontSize: 16 }}>Celebrate!</Text>
+                    <Text style={{ color: SF.bg, fontFamily: "DMSans_700Bold", fontSize: 16 }}>Celebrate!</Text>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -1296,19 +1300,19 @@ export default function HomeScreen() {
                   {/* Summary Stats */}
                   <View style={{ flexDirection: "row", justifyContent: "space-around", marginTop: 14, paddingTop: 12, borderTopWidth: 1, borderTopColor: "rgba(245,158,11,0.08)" }}>
                     <View style={{ alignItems: "center" }}>
-                      <Text style={{ color: "#EF4444", fontFamily: "Outfit_700Bold", fontSize: 18 }}>{muscleReport.overExercised.length}</Text>
+                      <Text style={{ color: "#EF4444", fontFamily: "DMSans_700Bold", fontSize: 18 }}>{muscleReport.overExercised.length}</Text>
                       <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 10 }}>Over</Text>
                     </View>
                     <View style={{ alignItems: "center" }}>
-                      <Text style={{ color: "#22C55E", fontFamily: "Outfit_700Bold", fontSize: 18 }}>{muscleReport.optimal.length}</Text>
+                      <Text style={{ color: "#22C55E", fontFamily: "DMSans_700Bold", fontSize: 18 }}>{muscleReport.optimal.length}</Text>
                       <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 10 }}>Optimal</Text>
                     </View>
                     <View style={{ alignItems: "center" }}>
-                      <Text style={{ color: "#3B82F6", fontFamily: "Outfit_700Bold", fontSize: 18 }}>{muscleReport.underExercised.length}</Text>
+                      <Text style={{ color: "#3B82F6", fontFamily: "DMSans_700Bold", fontSize: 18 }}>{muscleReport.underExercised.length}</Text>
                       <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 10 }}>Under</Text>
                     </View>
                     <View style={{ alignItems: "center" }}>
-                      <Text style={{ color: "#F59E0B", fontFamily: "Outfit_700Bold", fontSize: 18 }}>{muscleReport.totalWorkouts}</Text>
+                      <Text style={{ color: "#F59E0B", fontFamily: "DMSans_700Bold", fontSize: 18 }}>{muscleReport.totalWorkouts}</Text>
                       <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 10 }}>Workouts</Text>
                     </View>
                   </View>
@@ -1405,7 +1409,7 @@ export default function HomeScreen() {
                         />
                         <Text style={{
                           color: s.priority === "high" ? "#3B82F6" : "#EF4444",
-                          fontFamily: "Outfit_700Bold", fontSize: 12,
+                          fontFamily: "DMSans_700Bold", fontSize: 12,
                         }}>{s.exerciseName}</Text>
                         <View style={{
                           backgroundColor: s.priority === "high" ? "rgba(59,130,246,0.2)" : "rgba(239,68,68,0.15)",
@@ -1428,7 +1432,7 @@ export default function HomeScreen() {
                     <>
                       <View style={{ flexDirection: "row", alignItems: "center", gap: 6, marginTop: 4, marginBottom: 8 }}>
                         <MaterialIcons name="swap-horiz" size={14} color="#F59E0B" />
-                        <Text style={{ color: "#F59E0B", fontFamily: "Outfit_700Bold", fontSize: 12 }}>
+                        <Text style={{ color: "#F59E0B", fontFamily: "DMSans_700Bold", fontSize: 12 }}>
                           Suggested Plan Changes
                         </Text>
                       </View>
@@ -1498,11 +1502,11 @@ export default function HomeScreen() {
                       >
                         <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
                           {applyingChanges ? (
-                            <ActivityIndicator size="small" color="#0A0500" />
+                            <ActivityIndicator size="small" color={SF.bg} />
                           ) : (
-                            <MaterialIcons name="check-circle" size={16} color="#0A0500" />
+                            <MaterialIcons name="check-circle" size={16} color={SF.bg} />
                           )}
-                          <Text style={{ color: "#0A0500", fontFamily: "Outfit_700Bold", fontSize: 13 }}>
+                          <Text style={{ color: SF.bg, fontFamily: "DMSans_700Bold", fontSize: 13 }}>
                             {applyingChanges ? "Applying..." : "Apply to My Plan"}
                           </Text>
                         </View>
@@ -1540,7 +1544,7 @@ export default function HomeScreen() {
                     <View style={{ backgroundColor: "rgba(34,197,94,0.08)", borderRadius: 12, padding: 12, borderWidth: 1, borderColor: "rgba(34,197,94,0.15)" }}>
                       <View style={{ flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 8 }}>
                         <MaterialIcons name="emoji-events" size={14} color="#22C55E" />
-                        <Text style={{ color: "#22C55E", fontFamily: "Outfit_700Bold", fontSize: 12 }}>Recent PRs</Text>
+                        <Text style={{ color: "#22C55E", fontFamily: "DMSans_700Bold", fontSize: 12 }}>Recent PRs</Text>
                       </View>
                       {prSummary.recentPRs.map((pr, i) => (
                         <View key={i} style={{ flexDirection: "row", justifyContent: "space-between", paddingVertical: 3 }}>
@@ -1558,7 +1562,7 @@ export default function HomeScreen() {
                     <View style={{ backgroundColor: "rgba(245,158,11,0.04)", borderRadius: 12, padding: 12, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}>
                       <View style={{ flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 8 }}>
                         <MaterialIcons name="fitness-center" size={14} color={SF.gold} />
-                        <Text style={{ color: SF.gold, fontFamily: "Outfit_700Bold", fontSize: 12 }}>Top Lifts</Text>
+                        <Text style={{ color: SF.gold, fontFamily: "DMSans_700Bold", fontSize: 12 }}>Top Lifts</Text>
                       </View>
                       {prSummary.topLifts.slice(0, 5).map((lift, i) => (
                         <View key={i} style={{ flexDirection: "row", justifyContent: "space-between", paddingVertical: 3 }}>
@@ -1572,15 +1576,15 @@ export default function HomeScreen() {
                   {/* Stats */}
                   <View style={{ flexDirection: "row", justifyContent: "space-around", paddingTop: 8 }}>
                     <View style={{ alignItems: "center" }}>
-                      <Text style={{ color: SF.gold, fontFamily: "Outfit_700Bold", fontSize: 18 }}>{prSummary.totalExercisesTracked}</Text>
+                      <Text style={{ color: SF.gold, fontFamily: "DMSans_700Bold", fontSize: 18 }}>{prSummary.totalExercisesTracked}</Text>
                       <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 9 }}>Exercises</Text>
                     </View>
                     <View style={{ alignItems: "center" }}>
-                      <Text style={{ color: SF.gold, fontFamily: "Outfit_700Bold", fontSize: 18 }}>{prSummary.totalPREntries}</Text>
+                      <Text style={{ color: SF.gold, fontFamily: "DMSans_700Bold", fontSize: 18 }}>{prSummary.totalPREntries}</Text>
                       <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 9 }}>Entries</Text>
                     </View>
                     <View style={{ alignItems: "center" }}>
-                      <Text style={{ color: "#22C55E", fontFamily: "Outfit_700Bold", fontSize: 18 }}>{prSummary.recentPRs.length}</Text>
+                      <Text style={{ color: "#22C55E", fontFamily: "DMSans_700Bold", fontSize: 18 }}>{prSummary.recentPRs.length}</Text>
                       <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 9 }}>New PRs</Text>
                     </View>
                   </View>
@@ -1681,7 +1685,7 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   welcomeOverlay: { flex: 1, backgroundColor: "rgba(10,5,0,0.72)", alignItems: "center", justifyContent: "center", padding: 32 },
   welcomeLogo: { width: 80, height: 80, borderRadius: 20, marginBottom: 24 },
-  welcomeTitle: { color: SF.fg, fontSize: 38, fontFamily: "Outfit_800ExtraBold", textAlign: "center", letterSpacing: -1 },
+  welcomeTitle: { color: SF.fg, fontSize: 42, fontFamily: "BebasNeue_400Regular", textAlign: "center", letterSpacing: 4 },
   welcomeSub: { color: SF.emerald3, fontSize: 15, textAlign: "center", marginTop: 12, lineHeight: 22, fontFamily: "DMSans_400Regular" },
   welcomeBtn: { marginTop: 40, backgroundColor: SF.emerald, borderRadius: 20, paddingVertical: 16, paddingHorizontal: 40, flexDirection: "row", alignItems: "center" },
   welcomeBtnText: { color: SF.bg, fontFamily: "DMSans_700Bold", fontSize: 16 },
@@ -1692,21 +1696,21 @@ const styles = StyleSheet.create({
   heroProfileBtn: { flexDirection: "row", alignItems: "center", gap: 4, backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 20, paddingHorizontal: 12, paddingVertical: 6, borderWidth: 1, borderColor: SF.border },
   heroProfileBtnText: { color: SF.emerald2, fontFamily: "DMSans_500Medium", fontSize: 13 },
   heroGreeting: { color: SF.emerald3, fontFamily: "DMSans_500Medium", fontSize: 14 },
-  heroName: { color: SF.fg, fontFamily: "Outfit_800ExtraBold", fontSize: 30, letterSpacing: -0.5, marginTop: 2 },
+  heroName: { color: SF.fg, fontFamily: "BebasNeue_400Regular", fontSize: 34, letterSpacing: 2, marginTop: 2 },
   heroPill: { backgroundColor: "rgba(245,158,11,0.12)", borderRadius: 10, paddingHorizontal: 10, paddingVertical: 4, borderWidth: 1, borderColor: SF.border2 },
   heroPillText: { color: SF.emerald2, fontFamily: "DMSans_500Medium", fontSize: 12 },
   // 4B: Primary card style (stats, calorie)
-  statsCard: { backgroundColor: SF.surfacePrimary, marginHorizontal: 16, marginTop: -20, borderRadius: 24, padding: 20, borderWidth: 1.5, borderColor: SF.borderPrimary, flexDirection: "row", gap: 8, shadowColor: "#F59E0B", shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.08, shadowRadius: 12, elevation: 4 },
+  statsCard: { backgroundColor: SF.surfacePrimary, marginHorizontal: 16, marginTop: 4, borderRadius: 24, padding: 20, borderWidth: 1, borderColor: SF.border, flexDirection: "row", gap: 8 },
   statsDivider: { width: 1, backgroundColor: SF.border },
   ringItem: { alignItems: "center", flex: 1 },
   ringContainer: { width: 64, height: 64, alignItems: "center", justifyContent: "center", marginBottom: 6 },
-  ringValue: { color: SF.fg, fontFamily: "Outfit_700Bold", fontSize: 14 },
+  ringValue: { color: SF.fg, fontFamily: "SpaceMono_700Bold", fontSize: 14 },
   ringLabel: { color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 10, marginTop: 1 },
   // 4B: Primary card for calorie
-  calorieCard: { marginHorizontal: 16, marginTop: 12, backgroundColor: SF.surfacePrimary, borderRadius: 20, padding: 16, borderWidth: 1.5, borderColor: SF.borderPrimary, shadowColor: "#F59E0B", shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.08, shadowRadius: 12, elevation: 4 },
+  calorieCard: { marginHorizontal: 16, marginTop: 12, backgroundColor: SF.surfacePrimary, borderRadius: 20, padding: 16, borderWidth: 1, borderColor: SF.border },
   calorieHeader: { flexDirection: "row", justifyContent: "space-between", marginBottom: 12 },
   cardEyebrow: { color: SF.muted, fontFamily: "DMSans_600SemiBold", fontSize: 10, letterSpacing: 1.5, textTransform: "uppercase", marginBottom: 3 },
-  calorieValue: { color: SF.fg, fontFamily: "Outfit_700Bold", fontSize: 22 },
+  calorieValue: { color: SF.fg, fontFamily: "SpaceMono_700Bold", fontSize: 22 },
   calorieGoal: { color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 14 },
   // 4C: Taller progress bar
   progressTrack: { height: 10, backgroundColor: SF.border, borderRadius: 5, overflow: "hidden" },
@@ -1715,7 +1719,7 @@ const styles = StyleSheet.create({
   macroLabel: { color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 10 },
   // 2B: Increased section spacing (24→32)
   section: { paddingHorizontal: 16, marginTop: 32 },
-  sectionTitle: { color: SF.fg, fontFamily: "Outfit_700Bold", fontSize: 18 },
+  sectionTitle: { color: SF.fg, fontFamily: "BebasNeue_400Regular", fontSize: 22, letterSpacing: 2 },
   qaRow: { flexDirection: "row", gap: 10, marginBottom: 10 },
   // Secondary card style (quick actions, tips)
   qaCard: { flex: 1, backgroundColor: SF.surface, borderRadius: 18, padding: 14, borderWidth: 1, borderColor: SF.border },
@@ -1738,7 +1742,7 @@ const styles = StyleSheet.create({
   qaActionBadgeAdvanced: { backgroundColor: "rgba(168,85,247,0.15)", borderWidth: 1, borderColor: "rgba(168,85,247,0.3)" },
   qaActionBadgeText: { fontFamily: "DMSans_700Bold", fontSize: 7, letterSpacing: 0.8, color: "#A855F7" },
   planCardOverlay: { backgroundColor: "rgba(10,5,0,0.78)", padding: 20 },
-  planCardTitle: { color: SF.fg, fontFamily: "Outfit_700Bold", fontSize: 20, marginTop: 4 },
+  planCardTitle: { color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 20, marginTop: 4 },
   planCardSub: { color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 13, marginTop: 4 },
   planCardBtn: { backgroundColor: SF.emerald, borderRadius: 14, paddingVertical: 12, alignItems: "center", marginTop: 16, flexDirection: "row", justifyContent: "center", gap: 6 },
   planCardBtnText: { color: SF.bg, fontFamily: "DMSans_700Bold", fontSize: 14 },
@@ -1746,7 +1750,7 @@ const styles = StyleSheet.create({
   macroPillValue: { color: SF.emerald, fontFamily: "DMSans_700Bold", fontSize: 13 },
   macroPillLabel: { color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 10 },
   ctaOverlay: { backgroundColor: "rgba(10,5,0,0.82)", padding: 28, alignItems: "center" },
-  ctaTitle: { color: SF.fg, fontFamily: "Outfit_800ExtraBold", fontSize: 22, textAlign: "center", marginBottom: 8 },
+  ctaTitle: { color: SF.fg, fontFamily: "BebasNeue_400Regular", fontSize: 28, textAlign: "center", marginBottom: 8, letterSpacing: 2 },
   ctaSub: { color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 14, textAlign: "center", lineHeight: 20, marginBottom: 20 },
   ctaBtn: { backgroundColor: SF.emerald, borderRadius: 16, paddingVertical: 14, paddingHorizontal: 32, flexDirection: "row", alignItems: "center", gap: 8 },
   ctaBtnText: { color: SF.bg, fontFamily: "DMSans_700Bold", fontSize: 16 },
@@ -1760,5 +1764,5 @@ const styles = StyleSheet.create({
   trialBannerTitle: { color: "#F59E0B", fontFamily: "DMSans_600SemiBold", fontSize: 13, marginBottom: 2 },
   trialBannerSub: { color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 11, lineHeight: 16 },
   trialBannerBtn: { backgroundColor: "#F59E0B", borderRadius: 10, paddingHorizontal: 12, paddingVertical: 7 },
-  trialBannerBtnText: { color: "#0A0500", fontFamily: "DMSans_700Bold", fontSize: 12 },
+  trialBannerBtnText: { color: SF.bg, fontFamily: "DMSans_700Bold", fontSize: 12 },
 });

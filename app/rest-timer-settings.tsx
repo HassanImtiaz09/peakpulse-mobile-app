@@ -15,9 +15,9 @@ import {
 } from "@/lib/rest-timer-settings";
 
 const SF = {
-  bg: "#0A0500", surface: "#150A00", surface2: "#1F0D00",
+  bg: "#0A0E14", surface: "#141A22", surface2: "#1F0D00",
   border: "rgba(245,158,11,0.12)", border2: "rgba(245,158,11,0.20)",
-  fg: "#FFF7ED", muted: "#B45309",
+  fg: "#F1F5F9", muted: "#B45309",
   gold: "#F59E0B", gold2: "#FBBF24", gold3: "#FDE68A",
 };
 
@@ -132,7 +132,7 @@ export default function RestTimerSettingsScreen() {
               <MaterialIcons name="arrow-back" size={24} color={SF.gold} />
             </TouchableOpacity>
             <View style={{ flex: 1 }}>
-              <Text style={{ color: SF.fg, fontFamily: "Outfit_700Bold", fontSize: 22 }}>Rest Timer Settings</Text>
+              <Text style={{ color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 22 }}>Rest Timer Settings</Text>
               <Text style={{ color: SF.muted, fontSize: 12, marginTop: 2 }}>Customise rest intervals per exercise type</Text>
             </View>
             <TouchableOpacity onPress={resetDefaults} style={{ padding: 8 }}>
@@ -165,7 +165,7 @@ export default function RestTimerSettingsScreen() {
             <View style={{ flexDirection: "row", alignItems: "center", gap: 10, marginBottom: 8 }}>
               <Text style={{ fontSize: 22 }}>{config.icon}</Text>
               <View style={{ flex: 1 }}>
-                <Text style={{ color: SF.fg, fontFamily: "Outfit_700Bold", fontSize: 15 }}>{config.label}</Text>
+                <Text style={{ color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 15 }}>{config.label}</Text>
                 <Text style={{ color: SF.muted, fontSize: 11, marginTop: 1 }}>{config.description}</Text>
               </View>
             </View>
@@ -190,7 +190,7 @@ export default function RestTimerSettingsScreen() {
               </TouchableOpacity>
 
               <View style={{ alignItems: "center", minWidth: 90 }}>
-                <Text style={{ color: SF.gold, fontFamily: "Outfit_800ExtraBold", fontSize: 32 }}>
+                <Text style={{ color: SF.gold, fontFamily: "BebasNeue_400Regular", fontSize: 32 }}>
                   {formatSeconds(settings[config.key])}
                 </Text>
                 {settings[config.key] !== DEFAULT_REST_TIMERS[config.key] && (
@@ -236,7 +236,7 @@ export default function RestTimerSettingsScreen() {
         }}>
           <Text style={{ color: SF.gold3, fontSize: 12, lineHeight: 18 }}>
             {"💡 "}
-            <Text style={{ fontFamily: "Outfit_700Bold" }}>Pro tip:</Text>
+            <Text style={{ fontFamily: "DMSans_700Bold" }}>Pro tip:</Text>
             {" Longer rest (2-3 min) for heavy compound lifts maximises strength gains. Shorter rest (30-60s) for isolation work keeps intensity high and improves muscular endurance."}
           </Text>
         </View>

@@ -22,8 +22,8 @@ import {
 } from "@/lib/notification-service";
 
 const SF = {
-  bg: "#0A0500", surface: "#150A00", border: "rgba(245,158,11,0.15)",
-  fg: "#FFF7ED", muted: "#B45309", gold: "#F59E0B", gold2: "#FBBF24", gold3: "#FDE68A",
+  bg: "#0A0E14", surface: "#141A22", border: "rgba(245,158,11,0.15)",
+  fg: "#F1F5F9", muted: "#B45309", gold: "#F59E0B", gold2: "#FBBF24", gold3: "#FDE68A",
 };
 
 const FONT_SIZE_KEY = "@peakpulse_font_size";
@@ -243,7 +243,7 @@ export default function SettingsScreen() {
             <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
               <MaterialIcons name="smart-toy" size={20} color={SF.gold} />
               <View>
-                <Text style={{ color: SF.fg, fontFamily: "Outfit_700Bold", fontSize: 14 }}>AI Reminder Settings</Text>
+                <Text style={{ color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 14 }}>AI Reminder Settings</Text>
                 <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 11 }}>Customise meal, workout, and motivation notifications</Text>
               </View>
             </View>
@@ -287,10 +287,10 @@ const styles = StyleSheet.create({
     alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: SF.border,
   },
   headerTitle: {
-    color: SF.fg, fontFamily: "Outfit_700Bold", fontSize: 18,
+    color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 18,
   },
   sectionLabel: {
-    color: SF.muted, fontSize: 11, fontFamily: "Outfit_700Bold", letterSpacing: 1.5,
+    color: SF.muted, fontSize: 11, fontFamily: "DMSans_700Bold", letterSpacing: 1.5,
     marginTop: 24, marginBottom: 10,
   },
   card: {
@@ -311,7 +311,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(245,158,11,0.12)", borderColor: "rgba(245,158,11,0.25)",
   },
   optionLabel: {
-    color: SF.fg, fontFamily: "Outfit_600SemiBold", fontSize: 14,
+    color: SF.fg, fontFamily: "DMSans_600SemiBold", fontSize: 14,
   },
   optionDesc: {
     color: SF.muted, fontSize: 11, marginTop: 1, fontFamily: "DMSans_400Regular",
@@ -331,7 +331,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(245,158,11,0.12)", borderColor: "rgba(245,158,11,0.30)",
   },
   fontSizePreview: {
-    color: SF.fg, fontFamily: "Outfit_700Bold", marginBottom: 4,
+    color: SF.fg, fontFamily: "DMSans_700Bold", marginBottom: 4,
   },
   fontSizeLabel: {
     color: SF.muted, fontSize: 10, fontFamily: "DMSans_600SemiBold",
@@ -365,7 +365,7 @@ const styles = StyleSheet.create({
     flex: 1, color: SF.fg, fontSize: 12, fontFamily: "DMSans_400Regular",
   },
   reminderTime: {
-    color: SF.gold, fontSize: 12, fontFamily: "Outfit_700Bold",
+    color: SF.gold, fontSize: 12, fontFamily: "DMSans_700Bold",
   },
   webNote: {
     flexDirection: "row", alignItems: "center", gap: 8, marginTop: 12,

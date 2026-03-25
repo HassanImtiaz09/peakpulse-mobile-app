@@ -19,17 +19,18 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 const HERO_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/PZcnawJwIZkQHTEM.jpg";
 
+// NanoBanana design tokens — AI Coach uses mint/teal accent
 const SF = {
-  bg:      "#0A0500",
-  surface: "#150A00",
-  surface2:"#1F0D00",
-  border:  "rgba(245,158,11,0.12)",
-  border2: "rgba(245,158,11,0.22)",
-  fg:      "#FFF7ED",
-  muted: "#B45309",
-  gold:    "#F59E0B",
-  gold2:   "#FBBF24",
-  gold3:   "#FDE68A",
+  bg:      "#0A0E14",
+  surface: "#111827",
+  surface2:"#1E293B",
+  border:  "rgba(30,41,59,0.6)",
+  border2: "rgba(20,184,166,0.25)",
+  fg:      "#F1F5F9",
+  muted:   "#64748B",
+  gold:    "#14B8A6",   // teal accent for coach
+  gold2:   "#2DD4BF",
+  gold3:   "#5EEAD4",
 };
 
 type ChatMessage = { role: "user" | "assistant"; content: string };
@@ -47,11 +48,11 @@ function ScoreRing({ score }: { score: number }) {
   const label = score >= 80 ? "Elite" : score >= 60 ? "Strong" : score >= 40 ? "Building" : "Starting";
   return (
     <View style={{ alignItems: "center" }}>
-      <View style={{ width: 100, height: 100, borderRadius: 50, borderWidth: 4, borderColor: color, backgroundColor: "rgba(245,158,11,0.08)", alignItems: "center", justifyContent: "center" }}>
-        <Text style={{ color, fontFamily: "Outfit_800ExtraBold", fontSize: 30 }}>{score}</Text>
+      <View style={{ width: 100, height: 100, borderRadius: 50, borderWidth: 4, borderColor: color, backgroundColor: "rgba(20,184,166,0.08)", alignItems: "center", justifyContent: "center" }}>
+        <Text style={{ color, fontFamily: "SpaceMono_700Bold", fontSize: 30 }}>{score}</Text>
         <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 10 }}>/ 100</Text>
       </View>
-      <Text style={{ color, fontFamily: "Outfit_700Bold", fontSize: 13, marginTop: 6 }}>{label}</Text>
+      <Text style={{ color, fontFamily: "DMSans_700Bold", fontSize: 13, marginTop: 6 }}>{label}</Text>
     </View>
   );
 }
@@ -210,9 +211,9 @@ export default function AICoachScreen() {
         <View style={{ flex: 1, backgroundColor: "rgba(8,5,0,0.78)", justifyContent: "flex-end", padding: 20, paddingTop: 52 }}>
           <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
             <Image source={{ uri: "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/ai-coach-icon_c7090906.png" }} style={{ width: 28, height: 28, borderRadius: 6 }} />
-            <Text style={{ color: SF.gold, fontFamily: "Outfit_700Bold", fontSize: 11, letterSpacing: 1.5 }}>PEAKPULSE</Text>
+            <Text style={{ color: SF.gold, fontFamily: "DMSans_700Bold", fontSize: 11, letterSpacing: 1.5 }}>PEAKPULSE</Text>
           </View>
-          <Text style={{ color: SF.fg, fontFamily: "Outfit_800ExtraBold", fontSize: 28, letterSpacing: -0.5 }}>AI Coach</Text>
+          <Text style={{ color: SF.fg, fontFamily: "BebasNeue_400Regular", fontSize: 28, letterSpacing: -0.5 }}>AI Coach</Text>
           <Text style={{ color: SF.gold3, fontFamily: "DMSans_400Regular", fontSize: 12, marginTop: 2 }}>
             Form analysis · Progress insights · Personalised tips
           </Text>
@@ -227,7 +228,7 @@ export default function AICoachScreen() {
             style={{ flex: 1, paddingVertical: 10, borderRadius: 12, alignItems: "center", backgroundColor: activeTab === tab ? SF.gold : SF.surface, borderWidth: 1, borderColor: activeTab === tab ? SF.gold : SF.border }}
             onPress={() => setActiveTab(tab)}
           >
-            <Text style={{ color: activeTab === tab ? SF.bg : SF.muted, fontFamily: "Outfit_700Bold", fontSize: 13 }}>
+            <Text style={{ color: activeTab === tab ? SF.bg : SF.muted, fontFamily: "DMSans_700Bold", fontSize: 13 }}>
               {tab === "insights" ? "📊 Insights" : "💬 Chat"}
             </Text>
           </TouchableOpacity>
@@ -240,7 +241,7 @@ export default function AICoachScreen() {
           {!insights ? (
             <View style={{ alignItems: "center", paddingVertical: 40 }}>
               <Text style={{ fontSize: 64, marginBottom: 20 }}>🤖</Text>
-              <Text style={{ color: SF.fg, fontFamily: "Outfit_800ExtraBold", fontSize: 22, textAlign: "center", marginBottom: 10 }}>
+              <Text style={{ color: SF.fg, fontFamily: "BebasNeue_400Regular", fontSize: 22, textAlign: "center", marginBottom: 10 }}>
                 Ready for Your Coaching Report?
               </Text>
               <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 14, textAlign: "center", lineHeight: 22, marginBottom: 32, paddingHorizontal: 20 }}>
@@ -254,10 +255,10 @@ export default function AICoachScreen() {
                 {loadingInsights ? (
                   <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
                     <ActivityIndicator color={SF.bg} size="small" />
-                    <Text style={{ color: SF.bg, fontFamily: "Outfit_800ExtraBold", fontSize: 16 }}>Analysing your data...</Text>
+                    <Text style={{ color: SF.bg, fontFamily: "BebasNeue_400Regular", fontSize: 16 }}>Analysing your data...</Text>
                   </View>
                 ) : (
-                  <Text style={{ color: SF.bg, fontFamily: "Outfit_800ExtraBold", fontSize: 16 }}>⚡ Generate My Coaching Report</Text>
+                  <Text style={{ color: SF.bg, fontFamily: "BebasNeue_400Regular", fontSize: 16 }}>⚡ Generate My Coaching Report</Text>
                 )}
               </TouchableOpacity>
               <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 12, marginTop: 16, textAlign: "center" }}>
@@ -268,13 +269,13 @@ export default function AICoachScreen() {
             <View style={{ gap: 16 }}>
               {/* Overall Score */}
               <View style={{ backgroundColor: SF.surface, borderRadius: 20, padding: 20, borderWidth: 1, borderColor: SF.border2, alignItems: "center" }}>
-                <Text style={{ color: SF.gold, fontFamily: "Outfit_700Bold", fontSize: 11, letterSpacing: 1.5, marginBottom: 16 }}>OVERALL COACHING SCORE</Text>
+                <Text style={{ color: SF.gold, fontFamily: "DMSans_700Bold", fontSize: 11, letterSpacing: 1.5, marginBottom: 16 }}>OVERALL COACHING SCORE</Text>
                 <ScoreRing score={insights.overallScore ?? 70} />
-                <Text style={{ color: SF.fg, fontFamily: "Outfit_700Bold", fontSize: 16, textAlign: "center", marginTop: 16, lineHeight: 22 }}>
+                <Text style={{ color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 16, textAlign: "center", marginTop: 16, lineHeight: 22 }}>
                   {insights.headline ?? "Keep pushing — you're making progress"}
                 </Text>
                 <TouchableOpacity
-                  style={{ marginTop: 16, backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 12, paddingVertical: 10, paddingHorizontal: 20, borderWidth: 1, borderColor: SF.border2 }}
+                  style={{ marginTop: 16, backgroundColor: "rgba(20,184,166,0.10)", borderRadius: 12, paddingVertical: 10, paddingHorizontal: 20, borderWidth: 1, borderColor: SF.border2 }}
                   onPress={generateInsights}
                   disabled={loadingInsights}
                 >
@@ -289,13 +290,13 @@ export default function AICoachScreen() {
               {/* Form Analysis */}
               {insights.formAnalysis && (
                 <View style={{ backgroundColor: SF.surface, borderRadius: 20, padding: 18, borderWidth: 1, borderColor: SF.border }}>
-                  <Text style={{ color: SF.gold, fontFamily: "Outfit_700Bold", fontSize: 11, letterSpacing: 1.5, marginBottom: 12 }}>🎯 FORM ANALYSIS</Text>
+                  <Text style={{ color: SF.gold, fontFamily: "DMSans_700Bold", fontSize: 11, letterSpacing: 1.5, marginBottom: 12 }}>🎯 FORM ANALYSIS</Text>
                   <Text style={{ color: SF.fg, fontFamily: "DMSans_400Regular", fontSize: 14, lineHeight: 22, marginBottom: 14 }}>
                     {insights.formAnalysis.summary}
                   </Text>
                   {insights.formAnalysis.strengths?.length > 0 && (
                     <View style={{ marginBottom: 12 }}>
-                      <Text style={{ color: SF.gold3, fontFamily: "Outfit_700Bold", fontSize: 12, marginBottom: 8 }}>✅ Strengths</Text>
+                      <Text style={{ color: SF.gold3, fontFamily: "DMSans_700Bold", fontSize: 12, marginBottom: 8 }}>✅ Strengths</Text>
                       {insights.formAnalysis.strengths.map((s: string, i: number) => (
                         <View key={i} style={{ flexDirection: "row", gap: 8, marginBottom: 4 }}>
                           <Text style={{ color: SF.gold3, fontSize: 13 }}>•</Text>
@@ -306,7 +307,7 @@ export default function AICoachScreen() {
                   )}
                   {insights.formAnalysis.topIssues?.length > 0 && (
                     <View style={{ marginBottom: 12 }}>
-                      <Text style={{ color: "#EF4444", fontFamily: "Outfit_700Bold", fontSize: 12, marginBottom: 8 }}>⚠️ Priority Fixes</Text>
+                      <Text style={{ color: "#EF4444", fontFamily: "DMSans_700Bold", fontSize: 12, marginBottom: 8 }}>⚠️ Priority Fixes</Text>
                       {insights.formAnalysis.topIssues.map((issue: string, i: number) => (
                         <View key={i} style={{ flexDirection: "row", gap: 8, marginBottom: 4 }}>
                           <Text style={{ color: "#EF4444", fontSize: 13 }}>•</Text>
@@ -316,8 +317,8 @@ export default function AICoachScreen() {
                     </View>
                   )}
                   {insights.formAnalysis.priorityExercise && (
-                    <View style={{ backgroundColor: "rgba(245,158,11,0.08)", borderRadius: 12, padding: 12, borderWidth: 1, borderColor: SF.border2 }}>
-                      <Text style={{ color: SF.gold2, fontFamily: "Outfit_700Bold", fontSize: 13 }}>
+                    <View style={{ backgroundColor: "rgba(20,184,166,0.08)", borderRadius: 12, padding: 12, borderWidth: 1, borderColor: SF.border2 }}>
+                      <Text style={{ color: SF.gold2, fontFamily: "DMSans_700Bold", fontSize: 13 }}>
                         🏋️ Focus Exercise: {insights.formAnalysis.priorityExercise}
                       </Text>
                       <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 12, marginTop: 4, lineHeight: 18 }}>
@@ -327,7 +328,7 @@ export default function AICoachScreen() {
                         style={{ marginTop: 10, backgroundColor: SF.gold, borderRadius: 10, paddingVertical: 8, alignItems: "center" }}
                         onPress={() => router.push({ pathname: "/form-checker", params: { exercise: insights.formAnalysis.priorityExercise } } as any)}
                       >
-                        <Text style={{ color: SF.bg, fontFamily: "Outfit_700Bold", fontSize: 12 }}>Check My {insights.formAnalysis.priorityExercise} Form →</Text>
+                        <Text style={{ color: SF.bg, fontFamily: "DMSans_700Bold", fontSize: 12 }}>Check My {insights.formAnalysis.priorityExercise} Form →</Text>
                       </TouchableOpacity>
                     </View>
                   )}
@@ -337,7 +338,7 @@ export default function AICoachScreen() {
               {/* Progress Analysis */}
               {insights.progressAnalysis && (
                 <View style={{ backgroundColor: SF.surface, borderRadius: 20, padding: 18, borderWidth: 1, borderColor: SF.border }}>
-                  <Text style={{ color: SF.gold, fontFamily: "Outfit_700Bold", fontSize: 11, letterSpacing: 1.5, marginBottom: 12 }}>📈 PROGRESS ANALYSIS</Text>
+                  <Text style={{ color: SF.gold, fontFamily: "DMSans_700Bold", fontSize: 11, letterSpacing: 1.5, marginBottom: 12 }}>📈 PROGRESS ANALYSIS</Text>
                   <Text style={{ color: SF.fg, fontFamily: "DMSans_400Regular", fontSize: 14, lineHeight: 22, marginBottom: 14 }}>
                     {insights.progressAnalysis.summary}
                   </Text>
@@ -349,7 +350,7 @@ export default function AICoachScreen() {
                     ].map((stat, i) => (
                       <View key={i} style={{ flex: 1, backgroundColor: SF.surface2, borderRadius: 12, padding: 12, alignItems: "center", borderWidth: 1, borderColor: SF.border }}>
                         <Text style={{ fontSize: 18, marginBottom: 4 }}>{stat.icon}</Text>
-                        <Text style={{ color: SF.gold2, fontFamily: "Outfit_800ExtraBold", fontSize: 14 }}>{stat.value}</Text>
+                        <Text style={{ color: SF.gold2, fontFamily: "BebasNeue_400Regular", fontSize: 14 }}>{stat.value}</Text>
                         <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 10, marginTop: 2, textAlign: "center" }}>{stat.label}</Text>
                       </View>
                     ))}
@@ -360,14 +361,14 @@ export default function AICoachScreen() {
               {/* Personalised Tips */}
               {insights.personalizedTips?.length > 0 && (
                 <View style={{ backgroundColor: SF.surface, borderRadius: 20, padding: 18, borderWidth: 1, borderColor: SF.border }}>
-                  <Text style={{ color: SF.gold, fontFamily: "Outfit_700Bold", fontSize: 11, letterSpacing: 1.5, marginBottom: 12 }}>💡 PERSONALISED TIPS</Text>
+                  <Text style={{ color: SF.gold, fontFamily: "DMSans_700Bold", fontSize: 11, letterSpacing: 1.5, marginBottom: 12 }}>💡 PERSONALISED TIPS</Text>
                   {insights.personalizedTips.map((tip: any, i: number) => (
                     <View key={i} style={{ flexDirection: "row", gap: 12, marginBottom: 14, alignItems: "flex-start" }}>
-                      <View style={{ width: 40, height: 40, borderRadius: 10, backgroundColor: "rgba(245,158,11,0.10)", alignItems: "center", justifyContent: "center" }}>
+                      <View style={{ width: 40, height: 40, borderRadius: 10, backgroundColor: "rgba(20,184,166,0.10)", alignItems: "center", justifyContent: "center" }}>
                         <Text style={{ fontSize: 20 }}>{tip.icon ?? "💡"}</Text>
                       </View>
                       <View style={{ flex: 1 }}>
-                        <Text style={{ color: SF.gold2, fontFamily: "Outfit_700Bold", fontSize: 12, marginBottom: 3 }}>{tip.category}</Text>
+                        <Text style={{ color: SF.gold2, fontFamily: "DMSans_700Bold", fontSize: 12, marginBottom: 3 }}>{tip.category}</Text>
                         <Text style={{ color: SF.fg, fontFamily: "DMSans_400Regular", fontSize: 13, lineHeight: 19 }}>{tip.tip}</Text>
                       </View>
                     </View>
@@ -378,14 +379,14 @@ export default function AICoachScreen() {
               {/* Weekly Focus Plan */}
               {insights.weeklyPlan?.length > 0 && (
                 <View style={{ backgroundColor: SF.surface, borderRadius: 20, padding: 18, borderWidth: 1, borderColor: SF.border }}>
-                  <Text style={{ color: SF.gold, fontFamily: "Outfit_700Bold", fontSize: 11, letterSpacing: 1.5, marginBottom: 12 }}>📅 THIS WEEK'S FOCUS</Text>
+                  <Text style={{ color: SF.gold, fontFamily: "DMSans_700Bold", fontSize: 11, letterSpacing: 1.5, marginBottom: 12 }}>📅 THIS WEEK'S FOCUS</Text>
                   {insights.weeklyPlan.map((day: any, i: number) => (
                     <View key={i} style={{ flexDirection: "row", gap: 12, marginBottom: 12, alignItems: "flex-start" }}>
-                      <View style={{ width: 56, height: 56, borderRadius: 12, backgroundColor: "rgba(245,158,11,0.10)", alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: SF.border2 }}>
-                        <Text style={{ color: SF.gold, fontFamily: "Outfit_700Bold", fontSize: 10, textAlign: "center" }}>{day.day?.slice(0, 3)?.toUpperCase()}</Text>
+                      <View style={{ width: 56, height: 56, borderRadius: 12, backgroundColor: "rgba(20,184,166,0.10)", alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: SF.border2 }}>
+                        <Text style={{ color: SF.gold, fontFamily: "DMSans_700Bold", fontSize: 10, textAlign: "center" }}>{day.day?.slice(0, 3)?.toUpperCase()}</Text>
                       </View>
                       <View style={{ flex: 1 }}>
-                        <Text style={{ color: SF.fg, fontFamily: "Outfit_700Bold", fontSize: 14 }}>{day.focus}</Text>
+                        <Text style={{ color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 14 }}>{day.focus}</Text>
                         <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 12, marginTop: 3, lineHeight: 17 }}>{day.tip}</Text>
                       </View>
                     </View>
@@ -395,9 +396,9 @@ export default function AICoachScreen() {
 
               {/* Next Milestone */}
               {insights.nextMilestone && (
-                <View style={{ backgroundColor: "rgba(245,158,11,0.08)", borderRadius: 20, padding: 18, borderWidth: 1, borderColor: SF.border2 }}>
-                  <Text style={{ color: SF.gold, fontFamily: "Outfit_700Bold", fontSize: 11, letterSpacing: 1.5, marginBottom: 12 }}>🏆 NEXT MILESTONE</Text>
-                  <Text style={{ color: SF.fg, fontFamily: "Outfit_800ExtraBold", fontSize: 18, marginBottom: 6 }}>{insights.nextMilestone.title}</Text>
+                <View style={{ backgroundColor: "rgba(20,184,166,0.08)", borderRadius: 20, padding: 18, borderWidth: 1, borderColor: SF.border2 }}>
+                  <Text style={{ color: SF.gold, fontFamily: "DMSans_700Bold", fontSize: 11, letterSpacing: 1.5, marginBottom: 12 }}>🏆 NEXT MILESTONE</Text>
+                  <Text style={{ color: SF.fg, fontFamily: "BebasNeue_400Regular", fontSize: 18, marginBottom: 6 }}>{insights.nextMilestone.title}</Text>
                   <Text style={{ color: SF.gold3, fontFamily: "DMSans_400Regular", fontSize: 13, lineHeight: 19, marginBottom: 10 }}>{insights.nextMilestone.description}</Text>
                   <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
                     <MaterialIcons name="schedule" size={14} color={SF.gold2} />
@@ -411,7 +412,7 @@ export default function AICoachScreen() {
                 style={{ backgroundColor: SF.gold, borderRadius: 18, paddingVertical: 16, alignItems: "center", shadowColor: SF.gold, shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.4, shadowRadius: 12 }}
                 onPress={() => setActiveTab("chat")}
               >
-                <Text style={{ color: SF.bg, fontFamily: "Outfit_800ExtraBold", fontSize: 16 }}>💬 Ask Your AI Coach</Text>
+                <Text style={{ color: SF.bg, fontFamily: "BebasNeue_400Regular", fontSize: 16 }}>💬 Ask Your AI Coach</Text>
               </TouchableOpacity>
             </View>
           )}
@@ -425,14 +426,14 @@ export default function AICoachScreen() {
             <ScrollView contentContainerStyle={{ padding: 20, paddingBottom: 20 }}>
               <View style={{ alignItems: "center", marginBottom: 24 }}>
                 <Text style={{ fontSize: 56, marginBottom: 12 }}>🤖</Text>
-                <Text style={{ color: SF.fg, fontFamily: "Outfit_800ExtraBold", fontSize: 20, textAlign: "center", marginBottom: 8 }}>
+                <Text style={{ color: SF.fg, fontFamily: "BebasNeue_400Regular", fontSize: 20, textAlign: "center", marginBottom: 8 }}>
                   Ask Me Anything
                 </Text>
                 <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 13, textAlign: "center", lineHeight: 20 }}>
                   I know your goals, your form history, and your progress. Ask me anything about training, nutrition, or recovery.
                 </Text>
               </View>
-              <Text style={{ color: SF.gold, fontFamily: "Outfit_700Bold", fontSize: 11, letterSpacing: 1.5, marginBottom: 12 }}>SUGGESTED QUESTIONS</Text>
+              <Text style={{ color: SF.gold, fontFamily: "DMSans_700Bold", fontSize: 11, letterSpacing: 1.5, marginBottom: 12 }}>SUGGESTED QUESTIONS</Text>
               {SUGGESTED_QUESTIONS.map((q, i) => (
                 <TouchableOpacity
                   key={i}

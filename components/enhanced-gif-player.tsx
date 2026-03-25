@@ -32,12 +32,12 @@ interface EnhancedGifPlayerProps {
 }
 
 const C = {
-  bg: "#0A0500",
-  surface: "#150A00",
+  bg: "#0A0E14",
+  surface: "#141A22",
   surface2: "#1A0F00",
   border: "rgba(245,158,11,0.15)",
   border2: "rgba(245,158,11,0.25)",
-  fg: "#FFF7ED",
+  fg: "#F1F5F9",
   muted: "#B45309",
   gold: "#F59E0B",
   gold2: "#FBBF24",

@@ -313,11 +313,11 @@ export function generateReportHTML(
       color: #1F2937; background: #FFFFFF; font-size: 11px; line-height: 1.5;
     }
     .header {
-      background: linear-gradient(135deg, #0A0500 0%, #1A0F00 50%, #2D1800 100%);
+      background: linear-gradient(135deg, #0A0E14 0%, #141A22 50%, #1A2030 100%);
       color: white; padding: 28px 24px; border-radius: 12px; margin-bottom: 20px;
     }
     .header-brand { color: #F59E0B; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; font-weight: 700; }
-    .header-title { font-size: 24px; font-weight: 800; margin: 4px 0; color: #FFF7ED; }
+    .header-title { font-size: 24px; font-weight: 800; margin: 4px 0; color: #F1F5F9; }
     .header-sub { color: #B45309; font-size: 11px; }
     .header-meta { display: flex; justify-content: space-between; margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(245,158,11,0.2); }
     .header-meta-item { color: #FDE68A; font-size: 10px; }
@@ -339,7 +339,7 @@ export function generateReportHTML(
 
     table { width: 100%; border-collapse: collapse; margin-bottom: 16px; font-size: 10px; }
     th {
-      background: #0A0500; color: #FDE68A; padding: 8px 6px; text-align: center;
+      background: #0A0E14; color: #FDE68A; padding: 8px 6px; text-align: center;
       font-weight: 700; font-size: 9px; text-transform: uppercase; letter-spacing: 0.5px;
     }
     th:first-child { text-align: left; border-radius: 6px 0 0 0; }

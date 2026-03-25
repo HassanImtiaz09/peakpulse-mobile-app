@@ -184,8 +184,8 @@ describe("Milestone Sharing Card (lib/social-card-generator.ts)", () => {
   });
 
   it("milestone card has dark theme background", () => {
-    expect(src).toContain("#0A0500");
-    expect(src).toContain("#1C0E02");
+    expect(src).toContain("#0A0E14");
+    expect(src).toContain("#1A2030");
   });
 
   it("milestone card uses Inter font", () => {
@@ -466,9 +466,9 @@ describe("Integration and Navigation", () => {
   });
 
   it("streak-details uses Aurora Titan dark theme", () => {
-    expect(streakDetails).toContain("#0A0500");
+    expect(streakDetails).toContain("#0A0E14");
     expect(streakDetails).toContain("#F59E0B");
-    expect(streakDetails).toContain("#FFF7ED");
+    expect(streakDetails).toContain("#F1F5F9");
     expect(streakDetails).toContain("#B45309");
     expect(streakDetails).toContain("#FBBF24");
   });

@@ -16,9 +16,9 @@ import * as FileSystem from "expo-file-system/legacy";
 
 // Solar Forge colour tokens
 const SF = {
-  bg: "#0A0500", surface: "#150A00", surface2: "#1F0D00",
+  bg: "#0A0E14", surface: "#141A22", surface2: "#1F0D00",
   border: "rgba(245,158,11,0.12)", border2: "rgba(245,158,11,0.20)",
-  fg: "#FFF7ED", muted: "#B45309",
+  fg: "#F1F5F9", muted: "#B45309",
   gold: "#F59E0B", gold2: "#FBBF24", gold3: "#FDE68A",
 };
 
@@ -217,7 +217,7 @@ export default function WorkoutCalendarScreen() {
             <TouchableOpacity onPress={() => router.back()} style={{ padding: 4 }}>
               <MaterialIcons name="arrow-back" size={24} color={SF.gold} />
             </TouchableOpacity>
-            <Text style={{ color: SF.fg, fontFamily: "Outfit_700Bold", fontSize: 24 }}>Workout Calendar</Text>
+            <Text style={{ color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 24 }}>Workout Calendar</Text>
             <View style={{ flex: 1 }} />
             <TouchableOpacity
               onPress={handleShare}
@@ -240,7 +240,7 @@ export default function WorkoutCalendarScreen() {
               ) : (
                 <MaterialIcons name="share" size={16} color={SF.gold} />
               )}
-              <Text style={{ color: SF.gold, fontFamily: "Outfit_700Bold", fontSize: 12 }}>
+              <Text style={{ color: SF.gold, fontFamily: "DMSans_700Bold", fontSize: 12 }}>
                 {isSharing ? "..." : "Share"}
               </Text>
             </TouchableOpacity>
@@ -264,7 +264,7 @@ export default function WorkoutCalendarScreen() {
         >
           <Text style={{ fontSize: 20 }}>📱</Text>
           <View style={{ flex: 1 }}>
-            <Text style={{ color: SF.fg, fontFamily: "Outfit_700Bold", fontSize: 14 }}>Share Your Streak</Text>
+            <Text style={{ color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 14 }}>Share Your Streak</Text>
             <Text style={{ color: SF.muted, fontSize: 11 }}>Branded templates for Instagram, TikTok, WhatsApp & more</Text>
           </View>
           <Text style={{ color: SF.gold, fontSize: 16 }}>→</Text>
@@ -275,7 +275,7 @@ export default function WorkoutCalendarScreen() {
           <TouchableOpacity onPress={() => navigateMonth(-1)} style={{ padding: 8 }}>
             <MaterialIcons name="chevron-left" size={28} color={SF.gold} />
           </TouchableOpacity>
-          <Text style={{ color: SF.fg, fontFamily: "Outfit_700Bold", fontSize: 18 }}>
+          <Text style={{ color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 18 }}>
             {MONTHS[currentMonth.month]} {currentMonth.year}
           </Text>
           <TouchableOpacity onPress={() => navigateMonth(1)} style={{ padding: 8 }}>
@@ -319,8 +319,8 @@ export default function WorkoutCalendarScreen() {
                   borderColor: cell.isToday ? SF.gold : "transparent",
                 }}>
                   <Text style={{
-                    color: cell.hasWorkout ? "#0A0500" : cell.isToday ? SF.gold : SF.fg,
-                    fontFamily: cell.hasWorkout ? "Outfit_700Bold" : "DMSans_400Regular",
+                    color: cell.hasWorkout ? "#0A0E14" : cell.isToday ? SF.gold : SF.fg,
+                    fontFamily: cell.hasWorkout ? "DMSans_700Bold" : "DMSans_400Regular",
                     fontSize: 14,
                   }}>
                     {cell.day}
@@ -328,7 +328,7 @@ export default function WorkoutCalendarScreen() {
                   {cell.workoutCount > 1 && (
                     <View style={{ position: "absolute", bottom: 2, flexDirection: "row", gap: 2 }}>
                       {Array.from({ length: Math.min(cell.workoutCount, 3) }).map((_, i) => (
-                        <View key={i} style={{ width: 3, height: 3, borderRadius: 1.5, backgroundColor: "#0A0500" }} />
+                        <View key={i} style={{ width: 3, height: 3, borderRadius: 1.5, backgroundColor: "#0A0E14" }} />
                       ))}
                     </View>
                   )}
@@ -351,25 +351,25 @@ export default function WorkoutCalendarScreen() {
             borderWidth: 1,
             borderColor: SF.border2,
           }}>
-            <Text style={{ color: SF.gold, fontFamily: "Outfit_700Bold", fontSize: 10, letterSpacing: 1.5, marginBottom: 8 }}>PEAKPULSE AI</Text>
-            <Text style={{ color: SF.fg, fontFamily: "Outfit_700Bold", fontSize: 18, marginBottom: 4 }}>
+            <Text style={{ color: SF.gold, fontFamily: "DMSans_700Bold", fontSize: 10, letterSpacing: 1.5, marginBottom: 8 }}>PEAKPULSE AI</Text>
+            <Text style={{ color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 18, marginBottom: 4 }}>
               {MONTHS[currentMonth.month]} {currentMonth.year} Summary
             </Text>
             <View style={{ flexDirection: "row", gap: 16, marginTop: 12 }}>
               <View style={{ alignItems: "center" }}>
-                <Text style={{ color: SF.gold, fontFamily: "Outfit_700Bold", fontSize: 28 }}>{thisMonthCount}</Text>
+                <Text style={{ color: SF.gold, fontFamily: "DMSans_700Bold", fontSize: 28 }}>{thisMonthCount}</Text>
                 <Text style={{ color: SF.muted, fontSize: 10 }}>Workouts</Text>
               </View>
               <View style={{ alignItems: "center" }}>
-                <Text style={{ color: SF.gold2, fontFamily: "Outfit_700Bold", fontSize: 28 }}>{currentStreak}</Text>
+                <Text style={{ color: SF.gold2, fontFamily: "DMSans_700Bold", fontSize: 28 }}>{currentStreak}</Text>
                 <Text style={{ color: SF.muted, fontSize: 10 }}>Day Streak</Text>
               </View>
               <View style={{ alignItems: "center" }}>
-                <Text style={{ color: SF.gold3, fontFamily: "Outfit_700Bold", fontSize: 28 }}>{longestStreak}</Text>
+                <Text style={{ color: SF.gold3, fontFamily: "DMSans_700Bold", fontSize: 28 }}>{longestStreak}</Text>
                 <Text style={{ color: SF.muted, fontSize: 10 }}>Best Streak</Text>
               </View>
               <View style={{ alignItems: "center" }}>
-                <Text style={{ color: SF.fg, fontFamily: "Outfit_700Bold", fontSize: 28 }}>{totalWorkouts}</Text>
+                <Text style={{ color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 28 }}>{totalWorkouts}</Text>
                 <Text style={{ color: SF.muted, fontSize: 10 }}>All Time</Text>
               </View>
             </View>
@@ -393,9 +393,9 @@ export default function WorkoutCalendarScreen() {
                         backgroundColor: cell.hasWorkout ? SF.gold : "transparent",
                       }}>
                         <Text style={{
-                          color: cell.hasWorkout ? "#0A0500" : SF.muted,
+                          color: cell.hasWorkout ? "#0A0E14" : SF.muted,
                           fontSize: 10,
-                          fontFamily: cell.hasWorkout ? "Outfit_700Bold" : "DMSans_400Regular",
+                          fontFamily: cell.hasWorkout ? "DMSans_700Bold" : "DMSans_400Regular",
                         }}>{cell.day}</Text>
                       </View>
                     ) : <View style={{ width: 24, height: 24 }} />}
@@ -420,11 +420,11 @@ export default function WorkoutCalendarScreen() {
 
         {/* Recent Workouts List */}
         <View style={{ paddingHorizontal: 20, marginTop: 24 }}>
-          <Text style={{ color: SF.fg, fontFamily: "Outfit_700Bold", fontSize: 16, marginBottom: 12 }}>Recent Workouts</Text>
+          <Text style={{ color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 16, marginBottom: 12 }}>Recent Workouts</Text>
           {allSessions.length === 0 && (
             <View style={{ backgroundColor: SF.surface, borderRadius: 14, padding: 20, alignItems: "center", borderWidth: 1, borderColor: SF.border }}>
               <Text style={{ fontSize: 32, marginBottom: 8 }}>🏋️</Text>
-              <Text style={{ color: SF.fg, fontFamily: "Outfit_700Bold", fontSize: 14, marginBottom: 4 }}>No Workouts Yet</Text>
+              <Text style={{ color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 14, marginBottom: 4 }}>No Workouts Yet</Text>
               <Text style={{ color: SF.muted, fontSize: 12, textAlign: "center" }}>Complete your first workout to start building your streak!</Text>
             </View>
           )}
@@ -445,7 +445,7 @@ export default function WorkoutCalendarScreen() {
         <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.85)", justifyContent: "flex-end" }}>
           <View style={{ backgroundColor: SF.surface, borderTopLeftRadius: 24, borderTopRightRadius: 24, maxHeight: "70%", paddingBottom: Platform.OS === "ios" ? 34 : 20 }}>
             <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", padding: 20, borderBottomWidth: 1, borderBottomColor: SF.border }}>
-              <Text style={{ color: SF.fg, fontFamily: "Outfit_700Bold", fontSize: 18 }}>
+              <Text style={{ color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 18 }}>
                 {selectedDay ? formatDisplayDate(selectedDay) : ""}
               </Text>
               <TouchableOpacity onPress={() => setDetailModalVisible(false)} style={{ padding: 4 }}>
@@ -477,7 +477,7 @@ function StatCard({ icon, label, value }: { icon: string; label: string; value: 
       alignItems: "center",
     }}>
       <Text style={{ fontSize: 22, marginBottom: 4 }}>{icon}</Text>
-      <Text style={{ color: SF.fg, fontFamily: "Outfit_700Bold", fontSize: 18 }}>{value}</Text>
+      <Text style={{ color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 18 }}>{value}</Text>
       <Text style={{ color: SF.muted, fontSize: 11, marginTop: 2 }}>{label}</Text>
     </View>
   );
@@ -501,7 +501,7 @@ function SessionCard({ session, expanded = false }: { session: WorkoutSession; e
     }}>
       <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
         <View style={{ flex: 1 }}>
-          <Text style={{ color: SF.fg, fontFamily: "Outfit_700Bold", fontSize: 14 }}>
+          <Text style={{ color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 14 }}>
             {session.dayName ?? "Workout"}
           </Text>
           {session.focus ? (
@@ -521,7 +521,7 @@ function SessionCard({ session, expanded = false }: { session: WorkoutSession; e
       </View>
       {expanded && exercises.length > 0 && (
         <View style={{ marginTop: 10, gap: 4 }}>
-          <Text style={{ color: SF.muted, fontSize: 10, fontFamily: "Outfit_700Bold", letterSpacing: 1, marginBottom: 4 }}>EXERCISES COMPLETED</Text>
+          <Text style={{ color: SF.muted, fontSize: 10, fontFamily: "DMSans_700Bold", letterSpacing: 1, marginBottom: 4 }}>EXERCISES COMPLETED</Text>
           {exercises.map((ex, i) => (
             <View key={i} style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
               <View style={{ width: 5, height: 5, borderRadius: 2.5, backgroundColor: SF.gold }} />

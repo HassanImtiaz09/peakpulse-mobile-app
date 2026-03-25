@@ -17,9 +17,9 @@ import {
 import { requestNotificationPermissions } from "@/lib/notifications";
 
 const SF = {
-  bg: "#0A0500",
-  surface: "#150A00",
-  fg: "#FFF7ED",
+  bg: "#0A0E14",
+  surface: "#141A22",
+  fg: "#F1F5F9",
   muted: "#B45309",
   mutedBright: "#B45309",
   gold: "#F59E0B",
@@ -115,20 +115,20 @@ function TimePickerModal({ visible, title, hour, minute, onConfirm, onCancel }: 
 const tpStyles = StyleSheet.create({
   overlay: { flex: 1, backgroundColor: "rgba(0,0,0,0.7)", justifyContent: "center", padding: 24 },
   card: { backgroundColor: "#1A0F00", borderRadius: 20, padding: 24, borderWidth: 1, borderColor: "rgba(245,158,11,0.20)" },
-  title: { color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 18, textAlign: "center" },
-  preview: { color: "#F59E0B", fontFamily: "Outfit_800ExtraBold", fontSize: 32, textAlign: "center", marginTop: 8, marginBottom: 16 },
+  title: { color: "#F1F5F9", fontFamily: "DMSans_700Bold", fontSize: 18, textAlign: "center" },
+  preview: { color: "#F59E0B", fontFamily: "BebasNeue_400Regular", fontSize: 32, textAlign: "center", marginTop: 8, marginBottom: 16 },
   label: { color: "#FBBF24", fontFamily: "DMSans_600SemiBold", fontSize: 12, textTransform: "uppercase", letterSpacing: 1, marginBottom: 8, marginTop: 4 },
   scroll: { maxHeight: 44, marginBottom: 12 },
   scrollContent: { gap: 6, paddingRight: 8 },
   chip: { height: 36, minWidth: 44, borderRadius: 18, backgroundColor: "rgba(245,158,11,0.08)", alignItems: "center", justifyContent: "center", paddingHorizontal: 12, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" },
   chipActive: { backgroundColor: "#F59E0B", borderColor: "#F59E0B" },
   chipText: { color: "#B45309", fontFamily: "DMSans_600SemiBold", fontSize: 14 },
-  chipTextActive: { color: "#0A0500" },
+  chipTextActive: { color: "#0A0E14" },
   actions: { flexDirection: "row", gap: 12, marginTop: 8 },
   cancelBtn: { flex: 1, alignItems: "center", paddingVertical: 14, borderRadius: 14, backgroundColor: "rgba(245,158,11,0.06)", borderWidth: 1, borderColor: "rgba(245,158,11,0.12)" },
   cancelText: { color: "#B45309", fontFamily: "DMSans_600SemiBold", fontSize: 15 },
   confirmBtn: { flex: 1, alignItems: "center", paddingVertical: 14, borderRadius: 14, backgroundColor: "#F59E0B" },
-  confirmText: { color: "#0A0500", fontFamily: "Outfit_700Bold", fontSize: 15 },
+  confirmText: { color: "#0A0E14", fontFamily: "DMSans_700Bold", fontSize: 15 },
 });
 
 // ── Toggle Row with optional time picker ──
@@ -493,15 +493,15 @@ const styles = StyleSheet.create({
     width: 40, height: 40, borderRadius: 20,
     backgroundColor: "rgba(245,158,11,0.10)", alignItems: "center", justifyContent: "center",
   },
-  headerTitle: { color: SF.fg, fontFamily: "Outfit_700Bold", fontSize: 20 },
+  headerTitle: { color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 20 },
   statusCard: {
     backgroundColor: SF.surface, borderRadius: 16, padding: 14, marginBottom: 20,
     borderWidth: 1, borderColor: SF.border,
   },
-  statusTitle: { color: SF.fg, fontFamily: "Outfit_700Bold", fontSize: 15 },
+  statusTitle: { color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 15 },
   statusDesc: { color: SF.mutedBright, fontFamily: "DMSans_500Medium", fontSize: 12, marginTop: 1 },
   sectionTitle: {
-    color: SF.gold3, fontFamily: "Outfit_700Bold", fontSize: 12,
+    color: SF.gold3, fontFamily: "DMSans_700Bold", fontSize: 12,
     textTransform: "uppercase", letterSpacing: 1, marginBottom: 8, marginTop: 4,
   },
   section: {
@@ -510,7 +510,7 @@ const styles = StyleSheet.create({
   },
   row: { flexDirection: "row", alignItems: "center", gap: 12, padding: 12 },
   iconCircle: { width: 34, height: 34, borderRadius: 17, alignItems: "center", justifyContent: "center" },
-  rowLabel: { color: SF.fg, fontFamily: "Outfit_700Bold", fontSize: 15 },
+  rowLabel: { color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 15 },
   rowDesc: { color: SF.mutedBright, fontFamily: "DMSans_400Regular", fontSize: 12, marginTop: 1 },
   timePill: {
     flexDirection: "row", alignItems: "center", gap: 5, marginTop: 5,
@@ -524,7 +524,7 @@ const styles = StyleSheet.create({
     flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 10,
     backgroundColor: SF.gold, borderRadius: 16, paddingVertical: 16, marginTop: 8,
   },
-  saveBtnText: { color: SF.bg, fontFamily: "Outfit_700Bold", fontSize: 16 },
+  saveBtnText: { color: SF.bg, fontFamily: "DMSans_700Bold", fontSize: 16 },
   disableBtn: {
     flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8,
     backgroundColor: "rgba(239,68,68,0.08)", borderRadius: 14, paddingVertical: 14, marginTop: 12,

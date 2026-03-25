@@ -7,7 +7,7 @@ import Svg, { Rect, Line, Text as SvgText, Path } from "react-native-svg";
 import { ScreenContainer } from "@/components/screen-container";
 import { getHistoricalMeals, type MealEntry } from "@/lib/calorie-context";
 
-const SF = { bg: "#0A0500", card: "#150A00", orange: "#F59E0B", gold: "#FBBF24", cream: "#FDE68A", muted: "#B45309", text: "#FFF7ED", border: "rgba(245,158,11,0.10)", green: "#22C55E", blue: "#60A5FA", red: "#EF4444" };
+const SF = { bg: "#0A0E14", card: "#141A22", orange: "#F59E0B", gold: "#FBBF24", cream: "#FDE68A", muted: "#B45309", text: "#F1F5F9", border: "rgba(245,158,11,0.10)", green: "#22C55E", blue: "#60A5FA", red: "#EF4444" };
 
 const MEAL_TYPE_ICONS: Record<string, keyof typeof MaterialIcons.glyphMap> = {
   breakfast: "free-breakfast", lunch: "restaurant", dinner: "dinner-dining", snack: "cookie",
@@ -350,50 +350,50 @@ export default function MealTimelineScreen() {
 const styles = StyleSheet.create({
   header: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingHorizontal: 16, paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: SF.border },
   backBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: SF.card, alignItems: "center", justifyContent: "center" },
-  headerTitle: { color: SF.text, fontFamily: "Outfit_700Bold", fontSize: 18 },
+  headerTitle: { color: SF.text, fontFamily: "DMSans_700Bold", fontSize: 18 },
   center: { flex: 1, alignItems: "center", justifyContent: "center", gap: 12 },
   loadingText: { color: SF.muted, fontSize: 13 },
-  emptyTitle: { color: SF.text, fontFamily: "Outfit_700Bold", fontSize: 18 },
+  emptyTitle: { color: SF.text, fontFamily: "DMSans_700Bold", fontSize: 18 },
   emptyDesc: { color: SF.muted, fontSize: 13, textAlign: "center", paddingHorizontal: 40 },
   logBtn: { backgroundColor: SF.orange, borderRadius: 12, paddingHorizontal: 20, paddingVertical: 10, marginTop: 8 },
-  logBtnText: { color: "#0A0500", fontFamily: "Outfit_700Bold", fontSize: 14 },
+  logBtnText: { color: "#0A0E14", fontFamily: "DMSans_700Bold", fontSize: 14 },
 
   // Chart
   chartContainer: { backgroundColor: SF.card, borderRadius: 14, padding: 12, marginTop: 12, marginBottom: 8, borderWidth: 1, borderColor: SF.border },
   chartHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 8 },
-  chartTitle: { color: SF.text, fontFamily: "Outfit_700Bold", fontSize: 14 },
+  chartTitle: { color: SF.text, fontFamily: "DMSans_700Bold", fontSize: 14 },
   metricTabs: { flexDirection: "row", gap: 6, marginBottom: 10 },
   metricTab: { paddingHorizontal: 10, paddingVertical: 5, borderRadius: 8, borderWidth: 1, borderColor: SF.border },
-  metricTabText: { color: SF.muted, fontSize: 11, fontFamily: "Outfit_700Bold" },
+  metricTabText: { color: SF.muted, fontSize: 11, fontFamily: "DMSans_700Bold" },
   statRow: { flexDirection: "row", justifyContent: "space-around", marginTop: 8, paddingTop: 8, borderTopWidth: 1, borderTopColor: SF.border },
   statItem: { alignItems: "center" },
-  statVal: { fontFamily: "Outfit_700Bold", fontSize: 14 },
+  statVal: { fontFamily: "DMSans_700Bold", fontSize: 14 },
   statLabel: { color: SF.muted, fontSize: 9, marginTop: 2 },
 
   // Timeline
   dateSection: { marginBottom: 20 },
   dateHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 8, marginTop: 8 },
-  dateTitle: { color: SF.text, fontFamily: "Outfit_700Bold", fontSize: 16 },
+  dateTitle: { color: SF.text, fontFamily: "DMSans_700Bold", fontSize: 16 },
   dateSub: { color: SF.muted, fontSize: 11, marginTop: 2 },
   daySummaryPill: { backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 8, paddingHorizontal: 10, paddingVertical: 4 },
-  daySummaryCal: { color: SF.cream, fontSize: 12, fontFamily: "Outfit_700Bold" },
+  daySummaryCal: { color: SF.cream, fontSize: 12, fontFamily: "DMSans_700Bold" },
   photoStrip: { flexDirection: "row", gap: 8, marginBottom: 10, flexWrap: "wrap" },
   stripThumb: { width: 56, height: 56, borderRadius: 10, borderWidth: 1, borderColor: SF.border },
   mealCard: { backgroundColor: SF.card, borderRadius: 12, padding: 12, marginBottom: 6, borderWidth: 1, borderColor: SF.border },
   mealRow: { flexDirection: "row", alignItems: "center" },
   thumbnail: { width: 44, height: 44, borderRadius: 10 },
   placeholderThumb: { backgroundColor: "rgba(245,158,11,0.06)", alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: SF.border },
-  mealName: { color: SF.text, fontFamily: "Outfit_700Bold", fontSize: 14, flex: 1 },
+  mealName: { color: SF.text, fontFamily: "DMSans_700Bold", fontSize: 14, flex: 1 },
   typePill: { backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 6, paddingHorizontal: 6, paddingVertical: 2 },
-  typeText: { color: SF.cream, fontSize: 9, fontFamily: "Outfit_700Bold", textTransform: "capitalize" },
+  typeText: { color: SF.cream, fontSize: 9, fontFamily: "DMSans_700Bold", textTransform: "capitalize" },
   calText: { color: SF.gold, fontSize: 12, fontFamily: "DMSans_600SemiBold" },
   timeText: { color: SF.muted, fontSize: 11 },
   expandedSection: { marginTop: 10, borderTopWidth: 1, borderTopColor: SF.border, paddingTop: 10 },
   expandedPhoto: { width: "100%", height: 180, borderRadius: 10, marginBottom: 10 },
   macroRow: { flexDirection: "row", justifyContent: "space-around" },
   macroItem: { alignItems: "center" },
-  macroVal: { color: SF.text, fontFamily: "Outfit_700Bold", fontSize: 16 },
+  macroVal: { color: SF.text, fontFamily: "DMSans_700Bold", fontSize: 16 },
   macroLabel: { color: SF.muted, fontSize: 10, marginTop: 2 },
   loadMoreBtn: { flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6, paddingVertical: 14, marginTop: 8 },
-  loadMoreText: { color: SF.orange, fontSize: 13, fontFamily: "Outfit_700Bold" },
+  loadMoreText: { color: SF.orange, fontSize: 13, fontFamily: "DMSans_700Bold" },
 });

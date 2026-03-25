@@ -15,8 +15,8 @@ import {
 const DASHBOARD_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/PZcnawJwIZkQHTEM.jpg";
 
 const SF = {
-  bg: "#0A0500", surface: "#1C0E02", border: "rgba(245,158,11,0.12)",
-  border2: "rgba(245,158,11,0.20)", fg: "#FFF7ED", muted: "#B45309",
+  bg: "#0A0E14", surface: "#1A2030", border: "rgba(245,158,11,0.12)",
+  border2: "rgba(245,158,11,0.20)", fg: "#F1F5F9", muted: "#B45309",
   gold: "#F59E0B", gold2: "#FBBF24", gold3: "#FDE68A",
 };
 
@@ -84,7 +84,7 @@ export default function WorkoutTemplatesScreen() {
           <MaterialIcons name={item.icon as any} size={24} color={item.color} />
         </View>
         <View style={{ flex: 1 }}>
-          <Text style={{ color: SF.fg, fontFamily: "Outfit_700Bold", fontSize: 15 }}>{item.name}</Text>
+          <Text style={{ color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 15 }}>{item.name}</Text>
           <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 11, marginTop: 2 }}>
             {item.durationMinutes} min · {item.estimatedCalories} kcal
             {item.distanceKm ? ` · ${item.distanceKm} km` : ""}
@@ -106,7 +106,7 @@ export default function WorkoutTemplatesScreen() {
           }}
         >
           <MaterialIcons name="play-arrow" size={18} color={SF.bg} />
-          <Text style={{ color: SF.bg, fontFamily: "Outfit_700Bold", fontSize: 13 }}>Use Template</Text>
+          <Text style={{ color: SF.bg, fontFamily: "DMSans_700Bold", fontSize: 13 }}>Use Template</Text>
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => handleDelete(item)}
@@ -141,7 +141,7 @@ export default function WorkoutTemplatesScreen() {
               <MaterialIcons name="arrow-back" size={22} color={SF.gold3} />
             </TouchableOpacity>
             <View style={{ flex: 1 }}>
-              <Text style={{ color: SF.fg, fontFamily: "Outfit_700Bold", fontSize: 20 }}>Workout Templates</Text>
+              <Text style={{ color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 20 }}>Workout Templates</Text>
               <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 11 }}>
                 {templates.length} template{templates.length !== 1 ? "s" : ""} saved
               </Text>
@@ -172,7 +172,7 @@ export default function WorkoutTemplatesScreen() {
               ListHeaderComponent={
                 suggestedTemplates.length > 0 ? (
                   <View style={{ marginBottom: 20 }}>
-                    <Text style={{ color: SF.gold, fontFamily: "Outfit_700Bold", fontSize: 12, letterSpacing: 1, marginBottom: 10 }}>
+                    <Text style={{ color: SF.gold, fontFamily: "DMSans_700Bold", fontSize: 12, letterSpacing: 1, marginBottom: 10 }}>
                       SUGGESTED TEMPLATES
                     </Text>
                     <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
@@ -193,13 +193,13 @@ export default function WorkoutTemplatesScreen() {
                       ))}
                     </View>
                     {templates.length > 0 && (
-                      <Text style={{ color: SF.gold, fontFamily: "Outfit_700Bold", fontSize: 12, letterSpacing: 1, marginTop: 20, marginBottom: 4 }}>
+                      <Text style={{ color: SF.gold, fontFamily: "DMSans_700Bold", fontSize: 12, letterSpacing: 1, marginTop: 20, marginBottom: 4 }}>
                         YOUR TEMPLATES
                       </Text>
                     )}
                   </View>
                 ) : templates.length > 0 ? (
-                  <Text style={{ color: SF.gold, fontFamily: "Outfit_700Bold", fontSize: 12, letterSpacing: 1, marginBottom: 10 }}>
+                  <Text style={{ color: SF.gold, fontFamily: "DMSans_700Bold", fontSize: 12, letterSpacing: 1, marginBottom: 10 }}>
                     YOUR TEMPLATES
                   </Text>
                 ) : null
@@ -208,7 +208,7 @@ export default function WorkoutTemplatesScreen() {
                 suggestedTemplates.length === 0 ? (
                   <View style={{ alignItems: "center", paddingVertical: 40 }}>
                     <MaterialIcons name="bookmark-border" size={48} color="#B45309" />
-                    <Text style={{ color: SF.fg, fontFamily: "Outfit_700Bold", fontSize: 16, marginTop: 12 }}>No Templates Yet</Text>
+                    <Text style={{ color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 16, marginTop: 12 }}>No Templates Yet</Text>
                     <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 13, textAlign: "center", marginTop: 4 }}>
                       Log a workout and save it as a template for quick access
                     </Text>

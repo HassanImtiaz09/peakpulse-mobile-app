@@ -1661,3 +1661,67 @@
 ### Testing
 - [x] 0 TypeScript errors
 - [x] All tests pass (35 new tests + all existing)
+
+## Round 77 — NanoBanana UI Redesign (Typography + Per-Screen Accents)
+
+### Typography & Theme System
+- [x] Install Bebas Neue, DM Sans, Space Mono fonts
+- [x] Configure font loading in _layout.tsx
+- [x] Update theme.config.js with per-screen accent colors (gold, ice-blue, mint, rose)
+- [x] Create typography utility for consistent font usage across screens
+
+### Screen 1 — Onboarding Welcome
+- [x] Atmospheric radial glow background (replace cinematic gym photo)
+- [x] Glassmorphism feature badges (AI Workout Plans, AI Body Scan)
+- [x] Progress dots at top, golden Next CTA at bottom
+- [x] Bebas Neue heading, DM Sans body text
+
+### Screen 2 — Auth / Login
+- [x] Dominant Google button, email as ghost button, guest as text link
+- [x] Social proof stats at bottom (4.9 stars, 77 exercises, 7 wearables)
+- [x] PeakPulse logo with radial golden glow
+- [x] Clean minimal centered layout
+
+### Screen 3 — Dashboard
+- [x] Today's workout as hero card (first full-width element)
+- [x] 4 compact progress rings in horizontal row (gold, blue, teal, rose)
+- [x] Clean 3x2 quick action grid
+- [x] Single focused AI insight card
+- [x] Streak badge with fire icon
+- [x] Personalized greeting with Bebas Neue
+
+### Screen 4 — AI Body Scan
+- [x] CSS scanline animation on camera zone
+- [x] Ice-blue accent color throughout
+- [x] Neon border frame around scan area
+- [x] Transformation target cards before CTA
+- [x] Body Fat % and Weight stats with Space Mono numbers
+
+### Screen 5 — Workout Plans
+- [x] Week day selector with gold-highlighted current day
+- [x] Exercise cards with GIF thumbnails in horizontal scroll
+- [x] Muscle balance heatmap as inline SVG body silhouette
+- [x] Color-coded zones: red (over-exercised), teal (optimal), dark (under)
+
+### Screen 6 — Meals & Nutrition
+- [x] Halal Mode badge at top of screen (not buried in settings)
+- [x] Calorie tracker with mint/teal progress bar
+- [x] Meal photo cards in 2-column grid
+- [x] Snap/Barcode/Receipt as three equal quick-action buttons
+- [x] Prayer schedule as dedicated Halal card
+
+### Screen 7 — AI Coach
+- [x] Opens on Insights tab (not blank chat)
+- [x] Three contextual insight cards (Progress, Form Alert, Nutrition Tip)
+- [x] Chat conversation below insights
+- [x] Teal/mint accent color
+
+### Screen 8 — Profile
+- [x] Three plan tiers with color coding (white Free, ice-blue Basic, gold Advanced)
+- [x] Condensed layout: stats, plans, settings in one view
+- [x] Halal toggle as settings row item
+- [x] User avatar and name prominent at top
+
+### Testing
+- [x] 0 TypeScript errors
+- [x] All tests pass

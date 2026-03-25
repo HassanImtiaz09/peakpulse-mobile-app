@@ -234,9 +234,9 @@ describe("Social Card Generator (lib/social-card-generator.ts)", () => {
   });
 
   it("uses Aurora Titan dark theme colors", () => {
-    expect(src).toContain("#0A0500");
-    expect(src).toContain("#1C0E02");
-    expect(src).toContain("#FFF7ED");
+    expect(src).toContain("#0A0E14");
+    expect(src).toContain("#1A2030");
+    expect(src).toContain("#F1F5F9");
   });
 });
 
@@ -265,7 +265,7 @@ describe("Weekly Goals Screen (app/weekly-goals.tsx)", () => {
   });
 
   it("uses Aurora Titan dark theme", () => {
-    expect(src).toContain("#0A0500");
+    expect(src).toContain("#0A0E14");
     expect(src).toContain("#F59E0B");
   });
 

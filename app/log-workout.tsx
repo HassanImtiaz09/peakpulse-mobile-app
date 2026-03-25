@@ -261,7 +261,7 @@ export default function LogWorkoutScreen() {
   }, [canSave, selectedType, dateStr, timeStr, totalDurationMin, effectiveCalories, distance, heartRate, title, syncToHealth, isHealthPlatformAvailable, permissionStatus, logWorkoutToHealthPlatform, healthSourceName, selectedConfig, router]);
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#0A0500" }}>
+    <View style={{ flex: 1, backgroundColor: "#0A0E14" }}>
       {/* Hero Header */}
       <ImageBackground source={{ uri: DASHBOARD_BG }} style={{ height: 140 }} resizeMode="cover">
         <View style={{ flex: 1, backgroundColor: "rgba(8,8,16,0.72)", justifyContent: "flex-end", padding: 20, paddingTop: 52 }}>
@@ -272,10 +272,10 @@ export default function LogWorkoutScreen() {
             }}
             onPress={() => router.back()}
           >
-            <Text style={{ color: "#FFF7ED", fontSize: 18 }}>←</Text>
+            <Text style={{ color: "#F1F5F9", fontSize: 18 }}>←</Text>
           </TouchableOpacity>
-          <Text style={{ color: "#FBBF24", fontFamily: "Outfit_700Bold", fontSize: 12, letterSpacing: 1 }}>MANUAL ENTRY</Text>
-          <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_800ExtraBold", fontSize: 26, letterSpacing: -0.5 }}>Log Workout</Text>
+          <Text style={{ color: "#FBBF24", fontFamily: "DMSans_700Bold", fontSize: 12, letterSpacing: 1 }}>MANUAL ENTRY</Text>
+          <Text style={{ color: "#F1F5F9", fontFamily: "BebasNeue_400Regular", fontSize: 26, letterSpacing: -0.5 }}>Log Workout</Text>
         </View>
       </ImageBackground>
 
@@ -311,9 +311,9 @@ export default function LogWorkoutScreen() {
           <View style={{ marginBottom: 20 }}>
             <View style={{ flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 12 }}>
               <View style={{ width: 24, height: 24, borderRadius: 12, backgroundColor: "#F59E0B", alignItems: "center", justifyContent: "center" }}>
-                <Text style={{ color: "#0A0500", fontFamily: "Outfit_700Bold", fontSize: 12 }}>1</Text>
+                <Text style={{ color: "#0A0E14", fontFamily: "DMSans_700Bold", fontSize: 12 }}>1</Text>
               </View>
-              <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 16 }}>Workout Type</Text>
+              <Text style={{ color: "#F1F5F9", fontFamily: "DMSans_700Bold", fontSize: 16 }}>Workout Type</Text>
             </View>
             <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
               {WORKOUT_TYPES.map((wt) => {
@@ -323,7 +323,7 @@ export default function LogWorkoutScreen() {
                     key={wt.type}
                     style={{
                       width: "31%",
-                      backgroundColor: isSelected ? wt.color + "20" : "#150A00",
+                      backgroundColor: isSelected ? wt.color + "20" : "#141A22",
                       borderRadius: 14,
                       padding: 12,
                       alignItems: "center",
@@ -339,7 +339,7 @@ export default function LogWorkoutScreen() {
                     <MaterialIcons name={wt.icon as any} size={24} color={isSelected ? wt.color : "#B45309"} />
                     <Text style={{
                       color: isSelected ? wt.color : "#B45309",
-                      fontFamily: isSelected ? "Outfit_700Bold" : "DMSans_500Medium",
+                      fontFamily: isSelected ? "DMSans_700Bold" : "DMSans_500Medium",
                       fontSize: 11,
                     }}>
                       {wt.label}
@@ -354,20 +354,20 @@ export default function LogWorkoutScreen() {
           <View style={{ marginBottom: 20 }}>
             <View style={{ flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 12 }}>
               <View style={{ width: 24, height: 24, borderRadius: 12, backgroundColor: "#F59E0B", alignItems: "center", justifyContent: "center" }}>
-                <Text style={{ color: "#0A0500", fontFamily: "Outfit_700Bold", fontSize: 12 }}>2</Text>
+                <Text style={{ color: "#0A0E14", fontFamily: "DMSans_700Bold", fontSize: 12 }}>2</Text>
               </View>
-              <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 16 }}>Duration</Text>
+              <Text style={{ color: "#F1F5F9", fontFamily: "DMSans_700Bold", fontSize: 16 }}>Duration</Text>
             </View>
             <View style={{
-              flexDirection: "row", gap: 12, backgroundColor: "#150A00", borderRadius: 16,
+              flexDirection: "row", gap: 12, backgroundColor: "#141A22", borderRadius: 16,
               padding: 16, borderWidth: 1, borderColor: "rgba(245,158,11,0.15)",
             }}>
               <View style={{ flex: 1 }}>
                 <Text style={{ color: "#B45309", fontFamily: "DMSans_500Medium", fontSize: 11, marginBottom: 6 }}>Hours</Text>
                 <TextInput
                   style={{
-                    backgroundColor: "#0A0500", borderRadius: 12, padding: 12,
-                    color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 20, textAlign: "center",
+                    backgroundColor: "#0A0E14", borderRadius: 12, padding: 12,
+                    color: "#F1F5F9", fontFamily: "DMSans_700Bold", fontSize: 20, textAlign: "center",
                     borderWidth: 1, borderColor: "rgba(245,158,11,0.15)",
                   }}
                   value={hours}
@@ -379,14 +379,14 @@ export default function LogWorkoutScreen() {
                 />
               </View>
               <View style={{ justifyContent: "flex-end", paddingBottom: 14 }}>
-                <Text style={{ color: "#B45309", fontFamily: "Outfit_700Bold", fontSize: 20 }}>:</Text>
+                <Text style={{ color: "#B45309", fontFamily: "DMSans_700Bold", fontSize: 20 }}>:</Text>
               </View>
               <View style={{ flex: 1 }}>
                 <Text style={{ color: "#B45309", fontFamily: "DMSans_500Medium", fontSize: 11, marginBottom: 6 }}>Minutes</Text>
                 <TextInput
                   style={{
-                    backgroundColor: "#0A0500", borderRadius: 12, padding: 12,
-                    color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 20, textAlign: "center",
+                    backgroundColor: "#0A0E14", borderRadius: 12, padding: 12,
+                    color: "#F1F5F9", fontFamily: "DMSans_700Bold", fontSize: 20, textAlign: "center",
                     borderWidth: 1, borderColor: "rgba(245,158,11,0.15)",
                   }}
                   value={minutes}
@@ -411,12 +411,12 @@ export default function LogWorkoutScreen() {
           <View style={{ marginBottom: 20 }}>
             <View style={{ flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 12 }}>
               <View style={{ width: 24, height: 24, borderRadius: 12, backgroundColor: "#F59E0B", alignItems: "center", justifyContent: "center" }}>
-                <Text style={{ color: "#0A0500", fontFamily: "Outfit_700Bold", fontSize: 12 }}>3</Text>
+                <Text style={{ color: "#0A0E14", fontFamily: "DMSans_700Bold", fontSize: 12 }}>3</Text>
               </View>
-              <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 16 }}>Calories Burned</Text>
+              <Text style={{ color: "#F1F5F9", fontFamily: "DMSans_700Bold", fontSize: 16 }}>Calories Burned</Text>
             </View>
             <View style={{
-              backgroundColor: "#150A00", borderRadius: 16, padding: 16,
+              backgroundColor: "#141A22", borderRadius: 16, padding: 16,
               borderWidth: 1, borderColor: "rgba(245,158,11,0.15)",
             }}>
               {/* Auto/Manual Toggle */}
@@ -429,7 +429,7 @@ export default function LogWorkoutScreen() {
                   }}
                   onPress={() => setAutoCalories(true)}
                 >
-                  <Text style={{ color: autoCalories ? "#0A0500" : "#B45309", fontFamily: "Outfit_700Bold", fontSize: 12 }}>
+                  <Text style={{ color: autoCalories ? "#0A0E14" : "#B45309", fontFamily: "DMSans_700Bold", fontSize: 12 }}>
                     Auto-Estimate
                   </Text>
                 </TouchableOpacity>
@@ -441,7 +441,7 @@ export default function LogWorkoutScreen() {
                   }}
                   onPress={() => setAutoCalories(false)}
                 >
-                  <Text style={{ color: !autoCalories ? "#0A0500" : "#B45309", fontFamily: "Outfit_700Bold", fontSize: 12 }}>
+                  <Text style={{ color: !autoCalories ? "#0A0E14" : "#B45309", fontFamily: "DMSans_700Bold", fontSize: 12 }}>
                     Manual Entry
                   </Text>
                 </TouchableOpacity>
@@ -449,7 +449,7 @@ export default function LogWorkoutScreen() {
 
               {autoCalories ? (
                 <View style={{ alignItems: "center", paddingVertical: 8 }}>
-                  <Text style={{ color: "#F59E0B", fontFamily: "Outfit_700Bold", fontSize: 36 }}>
+                  <Text style={{ color: "#F59E0B", fontFamily: "DMSans_700Bold", fontSize: 36 }}>
                     {estimatedCalories}
                   </Text>
                   <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 12 }}>
@@ -464,8 +464,8 @@ export default function LogWorkoutScreen() {
               ) : (
                 <TextInput
                   style={{
-                    backgroundColor: "#0A0500", borderRadius: 12, padding: 12,
-                    color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 20, textAlign: "center",
+                    backgroundColor: "#0A0E14", borderRadius: 12, padding: 12,
+                    color: "#F1F5F9", fontFamily: "DMSans_700Bold", fontSize: 20, textAlign: "center",
                     borderWidth: 1, borderColor: "rgba(245,158,11,0.15)",
                   }}
                   value={calories}
@@ -482,13 +482,13 @@ export default function LogWorkoutScreen() {
           <View style={{ marginBottom: 20 }}>
             <View style={{ flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 12 }}>
               <View style={{ width: 24, height: 24, borderRadius: 12, backgroundColor: "rgba(245,158,11,0.20)", alignItems: "center", justifyContent: "center" }}>
-                <Text style={{ color: "#F59E0B", fontFamily: "Outfit_700Bold", fontSize: 12 }}>4</Text>
+                <Text style={{ color: "#F59E0B", fontFamily: "DMSans_700Bold", fontSize: 12 }}>4</Text>
               </View>
-              <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 16 }}>Details</Text>
+              <Text style={{ color: "#F1F5F9", fontFamily: "DMSans_700Bold", fontSize: 16 }}>Details</Text>
               <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 11 }}>(optional)</Text>
             </View>
             <View style={{
-              backgroundColor: "#150A00", borderRadius: 16, padding: 16, gap: 12,
+              backgroundColor: "#141A22", borderRadius: 16, padding: 16, gap: 12,
               borderWidth: 1, borderColor: "rgba(245,158,11,0.15)",
             }}>
               {/* Distance (only for applicable types) */}
@@ -499,8 +499,8 @@ export default function LogWorkoutScreen() {
                   </Text>
                   <TextInput
                     style={{
-                      backgroundColor: "#0A0500", borderRadius: 12, padding: 12,
-                      color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 16,
+                      backgroundColor: "#0A0E14", borderRadius: 12, padding: 12,
+                      color: "#F1F5F9", fontFamily: "DMSans_700Bold", fontSize: 16,
                       borderWidth: 1, borderColor: "rgba(245,158,11,0.15)",
                     }}
                     value={distance}
@@ -519,8 +519,8 @@ export default function LogWorkoutScreen() {
                 </Text>
                 <TextInput
                   style={{
-                    backgroundColor: "#0A0500", borderRadius: 12, padding: 12,
-                    color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 16,
+                    backgroundColor: "#0A0E14", borderRadius: 12, padding: 12,
+                    color: "#F1F5F9", fontFamily: "DMSans_700Bold", fontSize: 16,
                     borderWidth: 1, borderColor: "rgba(245,158,11,0.15)",
                   }}
                   value={heartRate}
@@ -538,8 +538,8 @@ export default function LogWorkoutScreen() {
                 </Text>
                 <TextInput
                   style={{
-                    backgroundColor: "#0A0500", borderRadius: 12, padding: 12,
-                    color: "#FFF7ED", fontFamily: "DMSans_500Medium", fontSize: 14,
+                    backgroundColor: "#0A0E14", borderRadius: 12, padding: 12,
+                    color: "#F1F5F9", fontFamily: "DMSans_500Medium", fontSize: 14,
                     borderWidth: 1, borderColor: "rgba(245,158,11,0.15)",
                   }}
                   value={title}
@@ -558,8 +558,8 @@ export default function LogWorkoutScreen() {
                   </Text>
                   <TextInput
                     style={{
-                      backgroundColor: "#0A0500", borderRadius: 12, padding: 12,
-                      color: "#FFF7ED", fontFamily: "DMSans_500Medium", fontSize: 14,
+                      backgroundColor: "#0A0E14", borderRadius: 12, padding: 12,
+                      color: "#F1F5F9", fontFamily: "DMSans_500Medium", fontSize: 14,
                       borderWidth: 1, borderColor: "rgba(245,158,11,0.15)",
                     }}
                     value={dateStr}
@@ -574,8 +574,8 @@ export default function LogWorkoutScreen() {
                   </Text>
                   <TextInput
                     style={{
-                      backgroundColor: "#0A0500", borderRadius: 12, padding: 12,
-                      color: "#FFF7ED", fontFamily: "DMSans_500Medium", fontSize: 14,
+                      backgroundColor: "#0A0E14", borderRadius: 12, padding: 12,
+                      color: "#F1F5F9", fontFamily: "DMSans_500Medium", fontSize: 14,
                       borderWidth: 1, borderColor: "rgba(245,158,11,0.15)",
                     }}
                     value={timeStr}
@@ -593,7 +593,7 @@ export default function LogWorkoutScreen() {
             <TouchableOpacity
               style={{
                 flexDirection: "row", alignItems: "center", gap: 12,
-                backgroundColor: "#150A00", borderRadius: 16, padding: 16, marginBottom: 20,
+                backgroundColor: "#141A22", borderRadius: 16, padding: 16, marginBottom: 20,
                 borderWidth: 1, borderColor: syncToHealth ? "rgba(34,197,94,0.25)" : "rgba(245,158,11,0.15)",
               }}
               onPress={() => setSyncToHealth(!syncToHealth)}
@@ -611,7 +611,7 @@ export default function LogWorkoutScreen() {
                 />
               </View>
               <View style={{ flex: 1 }}>
-                <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 14 }}>
+                <Text style={{ color: "#F1F5F9", fontFamily: "DMSans_700Bold", fontSize: 14 }}>
                   Save to {healthSourceName}
                 </Text>
                 <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 11 }}>
@@ -628,7 +628,7 @@ export default function LogWorkoutScreen() {
               }}>
                 <View style={{
                   width: 22, height: 22, borderRadius: 11,
-                  backgroundColor: "#FFF7ED",
+                  backgroundColor: "#F1F5F9",
                   alignSelf: syncToHealth ? "flex-end" : "flex-start",
                 }} />
               </View>
@@ -638,30 +638,30 @@ export default function LogWorkoutScreen() {
           {/* ═══ Summary & Save Button ═══ */}
           {canSave && (
             <View style={{
-              backgroundColor: "#150A00", borderRadius: 16, padding: 16, marginBottom: 16,
+              backgroundColor: "#141A22", borderRadius: 16, padding: 16, marginBottom: 16,
               borderWidth: 1, borderColor: "rgba(245,158,11,0.20)",
             }}>
-              <Text style={{ color: "#FDE68A", fontFamily: "Outfit_700Bold", fontSize: 13, marginBottom: 10 }}>
+              <Text style={{ color: "#FDE68A", fontFamily: "DMSans_700Bold", fontSize: 13, marginBottom: 10 }}>
                 WORKOUT SUMMARY
               </Text>
               <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 12 }}>
                 <View style={{ alignItems: "center", flex: 1 }}>
                   <MaterialIcons name={selectedConfig?.icon as any ?? "fitness-center"} size={20} color={selectedConfig?.color ?? "#F59E0B"} />
-                  <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 14, marginTop: 2 }}>
+                  <Text style={{ color: "#F1F5F9", fontFamily: "DMSans_700Bold", fontSize: 14, marginTop: 2 }}>
                     {selectedConfig?.label}
                   </Text>
                   <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 9 }}>Type</Text>
                 </View>
                 <View style={{ alignItems: "center", flex: 1 }}>
                   <MaterialIcons name="timer" size={20} color="#3B82F6" />
-                  <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 14, marginTop: 2 }}>
+                  <Text style={{ color: "#F1F5F9", fontFamily: "DMSans_700Bold", fontSize: 14, marginTop: 2 }}>
                     {totalDurationMin} min
                   </Text>
                   <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 9 }}>Duration</Text>
                 </View>
                 <View style={{ alignItems: "center", flex: 1 }}>
                   <MaterialIcons name="local-fire-department" size={20} color="#F59E0B" />
-                  <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 14, marginTop: 2 }}>
+                  <Text style={{ color: "#F1F5F9", fontFamily: "DMSans_700Bold", fontSize: 14, marginTop: 2 }}>
                     {effectiveCalories}
                   </Text>
                   <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 9 }}>kcal</Text>
@@ -669,7 +669,7 @@ export default function LogWorkoutScreen() {
                 {distance ? (
                   <View style={{ alignItems: "center", flex: 1 }}>
                     <MaterialIcons name="straighten" size={20} color="#22C55E" />
-                    <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 14, marginTop: 2 }}>
+                    <Text style={{ color: "#F1F5F9", fontFamily: "DMSans_700Bold", fontSize: 14, marginTop: 2 }}>
                       {distance} km
                     </Text>
                     <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 9 }}>Distance</Text>
@@ -692,13 +692,13 @@ export default function LogWorkoutScreen() {
             disabled={!canSave || saving}
           >
             {saving ? (
-              <ActivityIndicator color="#0A0500" size="small" />
+              <ActivityIndicator color="#0A0E14" size="small" />
             ) : (
-              <MaterialIcons name="check-circle" size={20} color={canSave ? "#0A0500" : "#B45309"} />
+              <MaterialIcons name="check-circle" size={20} color={canSave ? "#0A0E14" : "#B45309"} />
             )}
             <Text style={{
-              color: canSave ? "#0A0500" : "#B45309",
-              fontFamily: "Outfit_700Bold", fontSize: 16,
+              color: canSave ? "#0A0E14" : "#B45309",
+              fontFamily: "DMSans_700Bold", fontSize: 16,
             }}>
               {saving ? "Saving..." : "Log Workout"}
             </Text>

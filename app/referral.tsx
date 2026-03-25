@@ -61,7 +61,7 @@ export default function ReferralScreen() {
   const rewards = REWARD_TIERS.map((t: typeof REWARD_TIERS[number]) => ({ ...t, achieved: referralCount >= t.referrals }));
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#0A0500" }}>
+    <View style={{ flex: 1, backgroundColor: "#0A0E14" }}>
       {/* Hero */}
       <ImageBackground source={{ uri: HERO_BG }} style={{ height: 200 }} resizeMode="cover">
         <View style={{ flex: 1, backgroundColor: "rgba(8,8,16,0.75)", justifyContent: "flex-end", padding: 20, paddingTop: 52 }}>
@@ -69,20 +69,20 @@ export default function ReferralScreen() {
             style={{ position: "absolute", top: 52, left: 20, backgroundColor: "#FFFFFF20", borderRadius: 20, width: 36, height: 36, alignItems: "center", justifyContent: "center" }}
             onPress={() => router.back()}
           >
-            <Text style={{ color: "#FFF7ED", fontSize: 18 }}>←</Text>
+            <Text style={{ color: "#F1F5F9", fontSize: 18 }}>←</Text>
           </TouchableOpacity>
-          <Text style={{ color: "#FDE68A", fontFamily: "Outfit_700Bold", fontSize: 12, letterSpacing: 1 }}>REFERRAL PROGRAMME</Text>
-          <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_800ExtraBold", fontSize: 26 }}>Earn Free Months</Text>
+          <Text style={{ color: "#FDE68A", fontFamily: "DMSans_700Bold", fontSize: 12, letterSpacing: 1 }}>REFERRAL PROGRAMME</Text>
+          <Text style={{ color: "#F1F5F9", fontFamily: "BebasNeue_400Regular", fontSize: 26 }}>Earn Free Months</Text>
           <Text style={{ color: "#FDE68A", fontFamily: "DMSans_400Regular", fontSize: 13, marginTop: 6, opacity: 0.9 }}>Friends get a FREE 14-day Advanced trial!</Text>
         </View>
       </ImageBackground>
 
       <ScrollView contentContainerStyle={{ padding: 20, paddingBottom: 40 }} showsVerticalScrollIndicator={false}>
         {/* Referral Code Card */}
-        <View style={{ backgroundColor: "#150A00", borderRadius: 24, padding: 24, borderWidth: 2, borderColor: "rgba(245,158,11,0.18)", marginBottom: 20, alignItems: "center" }}>
+        <View style={{ backgroundColor: "#141A22", borderRadius: 24, padding: 24, borderWidth: 2, borderColor: "rgba(245,158,11,0.18)", marginBottom: 20, alignItems: "center" }}>
           <Text style={{ color: "#B45309", fontSize: 13, marginBottom: 8 }}>Your Referral Code</Text>
           <View style={{ backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 16, paddingHorizontal: 32, paddingVertical: 16, borderWidth: 2, borderColor: "rgba(245,158,11,0.28)", marginBottom: 16 }}>
-            <Text style={{ color: "#FDE68A", fontFamily: "Outfit_800ExtraBold", fontSize: 32, letterSpacing: 4 }}>
+            <Text style={{ color: "#FDE68A", fontFamily: "BebasNeue_400Regular", fontSize: 32, letterSpacing: 4 }}>
               {referralData?.code ?? "..."}
             </Text>
           </View>
@@ -91,7 +91,7 @@ export default function ReferralScreen() {
               style={{ flex: 1, backgroundColor: copied ? "#FDE68A" : "rgba(245,158,11,0.10)", borderRadius: 14, paddingVertical: 12, alignItems: "center" }}
               onPress={handleCopy}
             >
-              <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 14 }}>
+              <Text style={{ color: "#F1F5F9", fontFamily: "DMSans_700Bold", fontSize: 14 }}>
                 {copied ? "✓ Copied!" : "📋 Copy Code"}
               </Text>
             </TouchableOpacity>
@@ -99,44 +99,44 @@ export default function ReferralScreen() {
               style={{ flex: 1, backgroundColor: "#F59E0B", borderRadius: 14, paddingVertical: 12, alignItems: "center" }}
               onPress={handleShare}
             >
-              <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 14 }}>📤 Share Link</Text>
+              <Text style={{ color: "#F1F5F9", fontFamily: "DMSans_700Bold", fontSize: 14 }}>📤 Share Link</Text>
             </TouchableOpacity>
           </View>
         </View>
 
         {/* Stats */}
         <View style={{ flexDirection: "row", gap: 12, marginBottom: 20 }}>
-          <View style={{ flex: 1, backgroundColor: "#150A00", borderRadius: 20, padding: 16, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)", alignItems: "center" }}>
-            <Text style={{ color: "#F59E0B", fontFamily: "Outfit_800ExtraBold", fontSize: 28 }}>{referralCount}</Text>
+          <View style={{ flex: 1, backgroundColor: "#141A22", borderRadius: 20, padding: 16, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)", alignItems: "center" }}>
+            <Text style={{ color: "#F59E0B", fontFamily: "BebasNeue_400Regular", fontSize: 28 }}>{referralCount}</Text>
             <Text style={{ color: "#B45309", fontSize: 12, marginTop: 4 }}>Friends Referred</Text>
           </View>
-          <View style={{ flex: 1, backgroundColor: "#150A00", borderRadius: 20, padding: 16, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)", alignItems: "center" }}>
-            <Text style={{ color: "#FDE68A", fontFamily: "Outfit_800ExtraBold", fontSize: 28 }}>{creditsEarned}</Text>
+          <View style={{ flex: 1, backgroundColor: "#141A22", borderRadius: 20, padding: 16, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)", alignItems: "center" }}>
+            <Text style={{ color: "#FDE68A", fontFamily: "BebasNeue_400Regular", fontSize: 28 }}>{creditsEarned}</Text>
             <Text style={{ color: "#B45309", fontSize: 12, marginTop: 4 }}>Months Earned</Text>
           </View>
         </View>
 
         {/* Reward Tiers */}
-        <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_800ExtraBold", fontSize: 18, marginBottom: 12 }}>Reward Tiers</Text>
+        <Text style={{ color: "#F1F5F9", fontFamily: "BebasNeue_400Regular", fontSize: 18, marginBottom: 12 }}>Reward Tiers</Text>
         {rewards.map((r, i) => (
           <View key={i} style={{
-            backgroundColor: r.achieved ? "#052e16" : "#150A00",
+            backgroundColor: r.achieved ? "#052e16" : "#141A22",
             borderRadius: 16, padding: 16, marginBottom: 10,
             borderWidth: 1, borderColor: r.achieved ? "rgba(245,158,11,0.18)" : "rgba(245,158,11,0.10)",
             flexDirection: "row", alignItems: "center", gap: 16,
           }}>
             <Text style={{ fontSize: 28 }}>{r.icon}</Text>
             <View style={{ flex: 1 }}>
-              <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_700Bold", fontSize: 15 }}>{r.reward}</Text>
+              <Text style={{ color: "#F1F5F9", fontFamily: "DMSans_700Bold", fontSize: 15 }}>{r.reward}</Text>
               <Text style={{ color: "#B45309", fontSize: 12, marginTop: 2 }}>Refer {r.referrals} friend{r.referrals > 1 ? "s" : ""}</Text>
             </View>
             {r.achieved ? (
               <View style={{ backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 10, paddingHorizontal: 10, paddingVertical: 5 }}>
-                <Text style={{ color: "#FDE68A", fontFamily: "Outfit_700Bold", fontSize: 12 }}>✓ Earned</Text>
+                <Text style={{ color: "#FDE68A", fontFamily: "DMSans_700Bold", fontSize: 12 }}>✓ Earned</Text>
               </View>
             ) : (
               <View style={{ backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 10, paddingHorizontal: 10, paddingVertical: 5 }}>
-                <Text style={{ color: "#B45309", fontFamily: "Outfit_700Bold", fontSize: 12 }}>
+                <Text style={{ color: "#B45309", fontFamily: "DMSans_700Bold", fontSize: 12 }}>
                   {r.referrals - referralCount} to go
                 </Text>
               </View>
@@ -145,8 +145,8 @@ export default function ReferralScreen() {
         ))}
 
         {/* How it works */}
-        <View style={{ marginTop: 12, backgroundColor: "#150A00", borderRadius: 20, padding: 20, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}>
-          <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_800ExtraBold", fontSize: 16, marginBottom: 12 }}>How It Works</Text>
+        <View style={{ marginTop: 12, backgroundColor: "#141A22", borderRadius: 20, padding: 20, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}>
+          <Text style={{ color: "#F1F5F9", fontFamily: "BebasNeue_400Regular", fontSize: 16, marginBottom: 12 }}>How It Works</Text>
           {[
             { step: "1", text: "Share your referral code with friends" },
             { step: "2", text: "Friend signs up and enters your code" },
@@ -155,7 +155,7 @@ export default function ReferralScreen() {
           ].map((s, i) => (
             <View key={i} style={{ flexDirection: "row", alignItems: "flex-start", gap: 12, marginBottom: 12 }}>
               <View style={{ width: 28, height: 28, borderRadius: 14, backgroundColor: "#F59E0B", alignItems: "center", justifyContent: "center" }}>
-                <Text style={{ color: "#FFF7ED", fontFamily: "Outfit_800ExtraBold", fontSize: 13 }}>{s.step}</Text>
+                <Text style={{ color: "#F1F5F9", fontFamily: "BebasNeue_400Regular", fontSize: 13 }}>{s.step}</Text>
               </View>
               <Text style={{ color: "#D1D5DB", fontSize: 14, flex: 1, lineHeight: 20, paddingTop: 4 }}>{s.text}</Text>
             </View>

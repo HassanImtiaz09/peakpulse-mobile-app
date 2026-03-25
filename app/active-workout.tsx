@@ -30,11 +30,11 @@ import { preloadExerciseVideos, clearPreloadCache } from "@/lib/video-preload";
 const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get("window");
 
 const SF = {
-  bg: "#0A0500",
-  surface: "#150A00",
+  bg: "#0A0E14",
+  surface: "#141A22",
   border: "rgba(245,158,11,0.15)",
   border2: "rgba(245,158,11,0.25)",
-  fg: "#FFF7ED",
+  fg: "#F1F5F9",
   muted: "#B45309",
   gold: "#F59E0B",
   gold2: "#FBBF24",
@@ -76,7 +76,7 @@ function ExerciseDemoVideo({ exerciseName, compact = false }: { exerciseName: st
             />
           )}
           <View>
-            <Text style={{ color: SF.gold, fontFamily: "Outfit_700Bold", fontSize: 11, letterSpacing: 1 }}>FORM GUIDE</Text>
+            <Text style={{ color: SF.gold, fontFamily: "DMSans_700Bold", fontSize: 11, letterSpacing: 1 }}>FORM GUIDE</Text>
             {exerciseInfo && (
               <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 4, marginTop: 3 }}>
                 {exerciseInfo.primaryMuscles.map((m) => (
@@ -166,11 +166,11 @@ function FullscreenTimerModal({
             <Text style={{ color: SF.fg, fontSize: 16 }}>✕</Text>
           </TouchableOpacity>
           <View style={{ alignItems: "center" }}>
-            <Text style={{ color: SF.gold, fontFamily: "Outfit_700Bold", fontSize: 11, letterSpacing: 1 }}>ACTIVE EXERCISE</Text>
-            <Text style={{ color: SF.fg, fontFamily: "Outfit_800ExtraBold", fontSize: 16 }} numberOfLines={1}>{exercise.name}</Text>
+            <Text style={{ color: SF.gold, fontFamily: "DMSans_700Bold", fontSize: 11, letterSpacing: 1 }}>ACTIVE EXERCISE</Text>
+            <Text style={{ color: SF.fg, fontFamily: "BebasNeue_400Regular", fontSize: 16 }} numberOfLines={1}>{exercise.name}</Text>
           </View>
           <View style={{ backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 10, paddingHorizontal: 10, paddingVertical: 5 }}>
-            <Text style={{ color: SF.gold2, fontFamily: "Outfit_700Bold", fontSize: 13 }}>⏱ {formatTime(elapsedSeconds)}</Text>
+            <Text style={{ color: SF.gold2, fontFamily: "DMSans_700Bold", fontSize: 13 }}>⏱ {formatTime(elapsedSeconds)}</Text>
           </View>
         </View>
 
@@ -178,19 +178,19 @@ function FullscreenTimerModal({
           {/* Large Timer / Rest Timer */}
           {restTimer !== null ? (
             <View style={{ alignItems: "center", paddingVertical: 24 }}>
-              <Text style={{ color: SF.muted, fontFamily: "Outfit_700Bold", fontSize: 13, letterSpacing: 1, marginBottom: 8 }}>REST TIMER</Text>
-              <Text style={{ color: SF.gold, fontFamily: "Outfit_800ExtraBold", fontSize: 80, lineHeight: 90 }}>{formatTime(restTimer)}</Text>
+              <Text style={{ color: SF.muted, fontFamily: "DMSans_700Bold", fontSize: 13, letterSpacing: 1, marginBottom: 8 }}>REST TIMER</Text>
+              <Text style={{ color: SF.gold, fontFamily: "BebasNeue_400Regular", fontSize: 80, lineHeight: 90 }}>{formatTime(restTimer)}</Text>
               <TouchableOpacity
                 style={{ marginTop: 12, backgroundColor: SF.surface, borderRadius: 12, paddingHorizontal: 24, paddingVertical: 10, borderWidth: 1, borderColor: SF.border }}
                 onPress={onSkipRest}
               >
-                <Text style={{ color: SF.muted, fontFamily: "Outfit_700Bold" }}>Skip Rest</Text>
+                <Text style={{ color: SF.muted, fontFamily: "DMSans_700Bold" }}>Skip Rest</Text>
               </TouchableOpacity>
             </View>
           ) : (
             <View style={{ alignItems: "center", paddingVertical: 20 }}>
-              <Text style={{ color: SF.muted, fontFamily: "Outfit_700Bold", fontSize: 13, letterSpacing: 1, marginBottom: 4 }}>WORKOUT TIME</Text>
-              <Text style={{ color: SF.gold, fontFamily: "Outfit_800ExtraBold", fontSize: 72, lineHeight: 82 }}>{formatTime(elapsedSeconds)}</Text>
+              <Text style={{ color: SF.muted, fontFamily: "DMSans_700Bold", fontSize: 13, letterSpacing: 1, marginBottom: 4 }}>WORKOUT TIME</Text>
+              <Text style={{ color: SF.gold, fontFamily: "BebasNeue_400Regular", fontSize: 72, lineHeight: 82 }}>{formatTime(elapsedSeconds)}</Text>
               {/* Set progress */}
               <View style={{ flexDirection: "row", gap: 6, marginTop: 12 }}>
                 {Array.from({ length: totalSets }).map((_, i) => (
@@ -203,7 +203,7 @@ function FullscreenTimerModal({
                       alignItems: "center", justifyContent: "center",
                     }}
                   >
-                    <Text style={{ color: i < completedSets ? SF.bg : SF.muted, fontFamily: "Outfit_700Bold", fontSize: 12 }}>
+                    <Text style={{ color: i < completedSets ? SF.bg : SF.muted, fontFamily: "DMSans_700Bold", fontSize: 12 }}>
                       {i < completedSets ? "✓" : i + 1}
                     </Text>
                   </View>
@@ -222,7 +222,7 @@ function FullscreenTimerModal({
               onPress={onCompleteSet}
               disabled={completedSets >= totalSets}
             >
-              <Text style={{ color: SF.bg, fontFamily: "Outfit_700Bold", fontSize: 16 }}>
+              <Text style={{ color: SF.bg, fontFamily: "DMSans_700Bold", fontSize: 16 }}>
                 {completedSets >= totalSets ? "✓ All Sets Done" : `Complete Set ${completedSets + 1}`}
               </Text>
             </TouchableOpacity>
@@ -230,7 +230,7 @@ function FullscreenTimerModal({
 
           {/* Demo Video */}
           <View style={{ backgroundColor: SF.surface, borderRadius: 16, padding: 14, borderWidth: 1, borderColor: SF.border }}>
-            <Text style={{ color: SF.gold, fontFamily: "Outfit_700Bold", fontSize: 13, marginBottom: 10 }}>EXERCISE DEMO</Text>
+            <Text style={{ color: SF.gold, fontFamily: "DMSans_700Bold", fontSize: 13, marginBottom: 10 }}>EXERCISE DEMO</Text>
             <ExerciseDemoPlayer gifUrl={demo.gifUrl} cue={demo.cue} height={180} exerciseName={exercise.name} />
             {exercise.notes && (
               <View style={{ marginTop: 10, backgroundColor: "rgba(245,158,11,0.06)", borderRadius: 10, padding: 10 }}>
@@ -244,7 +244,7 @@ function FullscreenTimerModal({
             style={{ marginTop: 20, backgroundColor: SF.surface, borderRadius: 14, paddingVertical: 14, alignItems: "center", borderWidth: 1, borderColor: SF.border }}
             onPress={onClose}
           >
-            <Text style={{ color: SF.muted, fontFamily: "Outfit_700Bold" }}>← Back to Full Workout</Text>
+            <Text style={{ color: SF.muted, fontFamily: "DMSans_700Bold" }}>← Back to Full Workout</Text>
           </TouchableOpacity>
         </ScrollView>
       </View>
@@ -523,7 +523,7 @@ export default function ActiveWorkoutScreen() {
       <ScreenContainer className="flex-1 items-center justify-center p-6">
         <Text className="text-foreground text-lg text-center">No workout data found</Text>
         <TouchableOpacity onPress={() => router.back()} style={{ marginTop: 16 }}>
-          <Text style={{ color: SF.gold, fontFamily: "Outfit_700Bold" }}>← Go Back</Text>
+          <Text style={{ color: SF.gold, fontFamily: "DMSans_700Bold" }}>← Go Back</Text>
         </TouchableOpacity>
       </ScreenContainer>
     );
@@ -537,11 +537,11 @@ export default function ActiveWorkoutScreen() {
           <Text style={{ color: SF.fg, fontSize: 16 }}>←</Text>
         </TouchableOpacity>
         <View style={{ flex: 1 }}>
-          <Text style={{ color: SF.fg, fontSize: 18, fontFamily: "Outfit_800ExtraBold" }}>{dayData.day} — {dayData.focus}</Text>
+          <Text style={{ color: SF.fg, fontSize: 18, fontFamily: "BebasNeue_400Regular" }}>{dayData.day} — {dayData.focus}</Text>
           <Text style={{ color: SF.muted, fontSize: 12 }}>{exercises.length} exercises</Text>
         </View>
         <View style={{ backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 12, paddingHorizontal: 12, paddingVertical: 6 }}>
-          <Text style={{ color: SF.gold2, fontFamily: "Outfit_700Bold", fontSize: 14 }}>⏱ {formatTime(elapsedSeconds)}</Text>
+          <Text style={{ color: SF.gold2, fontFamily: "DMSans_700Bold", fontSize: 14 }}>⏱ {formatTime(elapsedSeconds)}</Text>
         </View>
       </View>
 
@@ -551,15 +551,15 @@ export default function ActiveWorkoutScreen() {
           style={{ marginHorizontal: 20, marginBottom: 12, backgroundColor: SF.gold, borderRadius: 16, paddingVertical: 14, alignItems: "center" }}
           onPress={() => setWorkoutStarted(true)}
         >
-          <Text style={{ color: SF.fg, fontFamily: "Outfit_700Bold", fontSize: 16 }}>▶ Start Workout</Text>
+          <Text style={{ color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 16 }}>▶ Start Workout</Text>
         </TouchableOpacity>
       )}
 
       {/* Rest Timer */}
       {restTimer !== null && (
         <View style={{ marginHorizontal: 20, marginBottom: 12, backgroundColor: "#F9731620", borderRadius: 16, padding: 12, borderWidth: 1, borderColor: "#F9731640", flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
-          <Text style={{ color: "#FED7AA", fontFamily: "Outfit_700Bold", fontSize: 14 }}>🔄 Rest Timer</Text>
-          <Text style={{ color: SF.gold2, fontFamily: "Outfit_800ExtraBold", fontSize: 24 }}>{formatTime(restTimer)}</Text>
+          <Text style={{ color: "#FED7AA", fontFamily: "DMSans_700Bold", fontSize: 14 }}>🔄 Rest Timer</Text>
+          <Text style={{ color: SF.gold2, fontFamily: "BebasNeue_400Regular", fontSize: 24 }}>{formatTime(restTimer)}</Text>
           <TouchableOpacity onPress={() => { setRestTimer(null); if (restRef.current) clearInterval(restRef.current); }}>
             <Text style={{ color: SF.muted, fontSize: 12 }}>Skip</Text>
           </TouchableOpacity>
@@ -609,8 +609,8 @@ export default function ActiveWorkoutScreen() {
                     return null;
                   })()}
                   <View style={{ flex: 1 }}>
-                    <Text style={{ color: SF.gold2, fontSize: 11, fontFamily: "Outfit_700Bold", marginBottom: 4 }}>{exercise.muscleGroup?.toUpperCase()}</Text>
-                    <Text style={{ color: SF.fg, fontFamily: "Outfit_800ExtraBold", fontSize: 20 }}>{exercise.name}</Text>
+                    <Text style={{ color: SF.gold2, fontSize: 11, fontFamily: "DMSans_700Bold", marginBottom: 4 }}>{exercise.muscleGroup?.toUpperCase()}</Text>
+                    <Text style={{ color: SF.fg, fontFamily: "BebasNeue_400Regular", fontSize: 20 }}>{exercise.name}</Text>
                   </View>
                 </View>
                 <View style={{ alignItems: "flex-end" }}>
@@ -640,7 +640,7 @@ export default function ActiveWorkoutScreen() {
                 style={{ marginTop: 12, backgroundColor: SF.gold, borderRadius: 12, paddingVertical: 10, alignItems: "center", flexDirection: "row", justifyContent: "center", gap: 6 }}
                 onPress={() => setFullscreenVisible(true)}
               >
-                <Text style={{ color: SF.bg, fontFamily: "Outfit_700Bold", fontSize: 14 }}>⏱ Open Fullscreen Timer + Demo</Text>
+                <Text style={{ color: SF.bg, fontFamily: "DMSans_700Bold", fontSize: 14 }}>⏱ Open Fullscreen Timer + Demo</Text>
               </TouchableOpacity>
             </View>
 
@@ -657,7 +657,7 @@ export default function ActiveWorkoutScreen() {
                 <View style={{ backgroundColor: SF.surface, borderRadius: 16, padding: 14, marginBottom: 12, borderWidth: 1, borderColor: SF.border }}>
                   <View style={{ flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 8 }}>
                     <MaterialIcons name="swap-horiz" size={14} color={SF.gold} />
-                    <Text style={{ color: SF.muted, fontFamily: "Outfit_700Bold", fontSize: 10, letterSpacing: 1.2 }}>TRY INSTEAD</Text>
+                    <Text style={{ color: SF.muted, fontFamily: "DMSans_700Bold", fontSize: 10, letterSpacing: 1.2 }}>TRY INSTEAD</Text>
                   </View>
                   {alts.map((alt) => (
                     <TouchableOpacity
@@ -690,15 +690,15 @@ export default function ActiveWorkoutScreen() {
             {/* Set Tracker */}
             <View style={{ backgroundColor: SF.surface, borderRadius: 20, padding: 16, marginBottom: 16, borderWidth: 1, borderColor: SF.border }}>
               <View style={{ flexDirection: "row", marginBottom: 10 }}>
-                <Text style={{ color: SF.muted, fontSize: 11, fontFamily: "Outfit_700Bold", width: 40 }}>SET</Text>
-                <Text style={{ color: SF.muted, fontSize: 11, fontFamily: "Outfit_700Bold", flex: 1, textAlign: "center" }}>WEIGHT (kg)</Text>
-                <Text style={{ color: SF.muted, fontSize: 11, fontFamily: "Outfit_700Bold", flex: 1, textAlign: "center" }}>REPS</Text>
-                <Text style={{ color: SF.muted, fontSize: 11, fontFamily: "Outfit_700Bold", width: 60, textAlign: "center" }}>DONE</Text>
+                <Text style={{ color: SF.muted, fontSize: 11, fontFamily: "DMSans_700Bold", width: 40 }}>SET</Text>
+                <Text style={{ color: SF.muted, fontSize: 11, fontFamily: "DMSans_700Bold", flex: 1, textAlign: "center" }}>WEIGHT (kg)</Text>
+                <Text style={{ color: SF.muted, fontSize: 11, fontFamily: "DMSans_700Bold", flex: 1, textAlign: "center" }}>REPS</Text>
+                <Text style={{ color: SF.muted, fontSize: 11, fontFamily: "DMSans_700Bold", width: 60, textAlign: "center" }}>DONE</Text>
               </View>
               {logs.map((log, setIdx) => (
                 <View key={setIdx} style={{ flexDirection: "row", alignItems: "center", marginBottom: 8, opacity: log.completed ? 0.6 : 1 }}>
                   <View style={{ width: 40, height: 28, borderRadius: 8, backgroundColor: log.completed ? "rgba(245,158,11,0.10)" : SF.surface, alignItems: "center", justifyContent: "center" }}>
-                    <Text style={{ color: log.completed ? SF.gold3 : SF.muted, fontFamily: "Outfit_700Bold", fontSize: 12 }}>{setIdx + 1}</Text>
+                    <Text style={{ color: log.completed ? SF.gold3 : SF.muted, fontFamily: "DMSans_700Bold", fontSize: 12 }}>{setIdx + 1}</Text>
                   </View>
                   <TextInput
                     value={log.weight}
@@ -707,7 +707,7 @@ export default function ActiveWorkoutScreen() {
                     placeholderTextColor="#451A03"
                     keyboardType="numeric"
                     editable={!log.completed}
-                    style={{ flex: 1, backgroundColor: "#150A00", borderRadius: 8, paddingHorizontal: 10, paddingVertical: 6, color: SF.fg, fontSize: 14, textAlign: "center", marginHorizontal: 6 }}
+                    style={{ flex: 1, backgroundColor: "#141A22", borderRadius: 8, paddingHorizontal: 10, paddingVertical: 6, color: SF.fg, fontSize: 14, textAlign: "center", marginHorizontal: 6 }}
                     returnKeyType="done"
                   />
                   <TextInput
@@ -717,7 +717,7 @@ export default function ActiveWorkoutScreen() {
                     placeholderTextColor="#451A03"
                     keyboardType="numeric"
                     editable={!log.completed}
-                    style={{ flex: 1, backgroundColor: "#150A00", borderRadius: 8, paddingHorizontal: 10, paddingVertical: 6, color: SF.fg, fontSize: 14, textAlign: "center", marginHorizontal: 6 }}
+                    style={{ flex: 1, backgroundColor: "#141A22", borderRadius: 8, paddingHorizontal: 10, paddingVertical: 6, color: SF.fg, fontSize: 14, textAlign: "center", marginHorizontal: 6 }}
                     returnKeyType="done"
                   />
                   <TouchableOpacity
@@ -725,7 +725,7 @@ export default function ActiveWorkoutScreen() {
                     onPress={() => !log.completed && completeSet(currentExercise, setIdx)}
                     disabled={log.completed}
                   >
-                    <Text style={{ color: log.completed ? SF.bg : SF.gold2, fontFamily: "Outfit_700Bold", fontSize: 12 }}>
+                    <Text style={{ color: log.completed ? SF.bg : SF.gold2, fontFamily: "DMSans_700Bold", fontSize: 12 }}>
                       {log.completed ? "✓" : "Done"}
                     </Text>
                   </TouchableOpacity>
@@ -742,7 +742,7 @@ export default function ActiveWorkoutScreen() {
                 style={{ flex: 1, backgroundColor: isAdvancedOrTrial ? "rgba(245,158,11,0.12)" : SF.surface, borderRadius: 14, paddingVertical: 12, alignItems: "center", borderWidth: 1, borderColor: isAdvancedOrTrial ? SF.gold : SF.border }}
                 onPress={() => handleAIFeatureTap("form_check")}
               >
-                <Text style={{ color: isAdvancedOrTrial ? SF.gold : SF.muted, fontFamily: "Outfit_700Bold", fontSize: 13 }}>🎯 Form Check</Text>
+                <Text style={{ color: isAdvancedOrTrial ? SF.gold : SF.muted, fontFamily: "DMSans_700Bold", fontSize: 13 }}>🎯 Form Check</Text>
                 {!isAdvancedOrTrial && (
                   <Text style={{ color: SF.muted, fontSize: 10, marginTop: 2 }}>Advanced · 3-day trial</Text>
                 )}
@@ -754,7 +754,7 @@ export default function ActiveWorkoutScreen() {
                 style={{ flex: 1, backgroundColor: isAdvancedOrTrial ? "rgba(245,158,11,0.12)" : SF.surface, borderRadius: 14, paddingVertical: 12, alignItems: "center", borderWidth: 1, borderColor: isAdvancedOrTrial ? SF.gold : SF.border }}
                 onPress={() => handleAIFeatureTap("coach")}
               >
-                <Text style={{ color: isAdvancedOrTrial ? SF.gold : SF.muted, fontFamily: "Outfit_700Bold", fontSize: 13 }}>🤖 AI Coach</Text>
+                <Text style={{ color: isAdvancedOrTrial ? SF.gold : SF.muted, fontFamily: "DMSans_700Bold", fontSize: 13 }}>🤖 AI Coach</Text>
                 {!isAdvancedOrTrial && (
                   <Text style={{ color: SF.muted, fontSize: 10, marginTop: 2 }}>Advanced · 3-day trial</Text>
                 )}
@@ -771,7 +771,7 @@ export default function ActiveWorkoutScreen() {
                   style={{ flex: 1, backgroundColor: SF.surface, borderRadius: 14, paddingVertical: 12, alignItems: "center", borderWidth: 1, borderColor: SF.border }}
                   onPress={() => setCurrentExercise(currentExercise - 1)}
                 >
-                  <Text style={{ color: SF.muted, fontFamily: "Outfit_700Bold" }}>← Previous</Text>
+                  <Text style={{ color: SF.muted, fontFamily: "DMSans_700Bold" }}>← Previous</Text>
                 </TouchableOpacity>
               )}
               {currentExercise < exercises.length - 1 ? (
@@ -779,14 +779,14 @@ export default function ActiveWorkoutScreen() {
                   style={{ flex: 1, backgroundColor: SF.gold, borderRadius: 14, paddingVertical: 12, alignItems: "center" }}
                   onPress={() => setCurrentExercise(currentExercise + 1)}
                 >
-                  <Text style={{ color: SF.fg, fontFamily: "Outfit_700Bold" }}>Next →</Text>
+                  <Text style={{ color: SF.fg, fontFamily: "DMSans_700Bold" }}>Next →</Text>
                 </TouchableOpacity>
               ) : (
                 <TouchableOpacity
                   style={{ flex: 1, backgroundColor: SF.gold3, borderRadius: 14, paddingVertical: 12, alignItems: "center" }}
                   onPress={finishWorkout}
                 >
-                  <Text style={{ color: SF.bg, fontFamily: "Outfit_700Bold" }}>🏁 Finish Workout</Text>
+                  <Text style={{ color: SF.bg, fontFamily: "DMSans_700Bold" }}>🏁 Finish Workout</Text>
                 </TouchableOpacity>
               )}
             </View>

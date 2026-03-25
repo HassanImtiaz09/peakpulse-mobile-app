@@ -145,7 +145,7 @@ describe("Challenge Screen (app/challenge.tsx)", () => {
   });
 
   it("uses Aurora Titan dark theme colors", () => {
-    expect(src).toContain("#0A0500");
+    expect(src).toContain("#0A0E14");
     expect(src).toContain("#FDE68A");
     expect(src).toContain("#F59E0B");
   });
@@ -388,7 +388,7 @@ describe("Group Goals Screen (app/group-goals.tsx)", () => {
   });
 
   it("uses Aurora Titan dark theme colors", () => {
-    expect(src).toContain("#0A0500");
+    expect(src).toContain("#0A0E14");
     expect(src).toContain("#FDE68A");
     expect(src).toContain("#F59E0B");
   });

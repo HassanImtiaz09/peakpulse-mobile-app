@@ -472,7 +472,7 @@ describe("Report HTML Quality", () => {
 
   it("uses professional color scheme matching PeakPulse brand", () => {
     expect(report).toContain("#F59E0B"); // amber primary
-    expect(report).toContain("#0A0500"); // dark background
+    expect(report).toContain("#0A0E14"); // dark background
     expect(report).toContain("#FFFBEB"); // amber light bg
     expect(report).toContain("#FDE68A"); // amber accent
   });
