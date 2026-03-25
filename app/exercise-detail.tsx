@@ -5,7 +5,7 @@
  * form cues, and favorite toggle.
  */
 import React, { useMemo } from "react";
-import { View, Text, ScrollView, Pressable, StyleSheet, Platform } from "react-native";
+import { View, Text, ScrollView, Pressable, StyleSheet, Platform, ImageBackground} from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
@@ -18,6 +18,7 @@ import { getExerciseInfo, getAlternativeExercises } from "@/lib/exercise-data";
 import { Image } from "expo-image";
 import { getExerciseDemo } from "@/lib/exercise-demos";
 
+import { GOLDEN_WORKOUT, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgrounds";
 const C = {
   bg: "#0A0E14",
   surface: "#141A22",
@@ -44,6 +45,7 @@ export default function ExerciseDetailScreen() {
 
   if (!exercise) {
     return (
+      <ImageBackground source={{ uri: GOLDEN_WORKOUT }} style={{ flex: 1 }} resizeMode="cover">
       <ScreenContainer className="flex-1 items-center justify-center bg-background">
         <Text style={styles.errorText}>Exercise not found</Text>
         <Pressable
@@ -53,6 +55,7 @@ export default function ExerciseDetailScreen() {
           <Text style={styles.backButtonText}>Go Back</Text>
         </Pressable>
       </ScreenContainer>
+      </ImageBackground>
     );
   }
 

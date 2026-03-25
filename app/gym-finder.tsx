@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
 import {
-  ScrollView, Text, View, TouchableOpacity, ActivityIndicator, Alert, Linking, Platform,
-} from "react-native";
+  ScrollView, Text, View, TouchableOpacity, ActivityIndicator, Alert, Linking, Platform, ImageBackground} from "react-native";
 import * as Location from "expo-location";
 import { useRouter } from "expo-router";
 import { ScreenContainer } from "@/components/screen-container";
 
+import { GOLDEN_PRIMARY, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgrounds";
 // Lazy-load react-native-maps only on native platforms to avoid web bundling errors
 let MapView: any = null;
 let Marker: any = null;
@@ -135,6 +135,7 @@ export default function GymFinderScreen() {
   } : undefined;
 
   return (
+    <ImageBackground source={{ uri: GOLDEN_PRIMARY }} style={{ flex: 1 }} resizeMode="cover">
     <ScreenContainer edges={["top", "left", "right"]}>
       {/* Header */}
       <View style={{ paddingHorizontal: 20, paddingTop: 16, paddingBottom: 8, flexDirection: "row", alignItems: "center", gap: 12 }}>
@@ -293,5 +294,6 @@ export default function GymFinderScreen() {
         )}
       </ScrollView>
     </ScreenContainer>
+    </ImageBackground>
   );
 }

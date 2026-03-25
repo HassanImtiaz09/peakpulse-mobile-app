@@ -8,8 +8,7 @@ import {
   Alert,
   StyleSheet,
   Platform,
-  Modal,
-} from "react-native";
+  Modal, ImageBackground} from "react-native";
 import * as Notifications from "expo-notifications";
 import { ScreenContainer } from "@/components/screen-container";
 import { useRouter } from "expo-router";
@@ -31,6 +30,7 @@ import {
   cancelProgressPhotoReminder,
   getProgressPhotoReminderSettings,
 } from "@/lib/notifications";
+import { GOLDEN_PRIMARY, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgrounds";
 
 const PREF_KEY = "@notif_preferences";
 
@@ -347,6 +347,7 @@ export default function NotificationPreferencesScreen() {
   };
 
   return (
+    <ImageBackground source={{ uri: GOLDEN_PRIMARY }} style={{ flex: 1 }} resizeMode="cover">
     <FeatureGate feature="notification_preferences" message="Customize your workout and meal reminder times. Available on Basic plan and above.">
     <ScreenContainer edges={["top", "left", "right"]} containerClassName="bg-black">
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 40 }}>
@@ -801,6 +802,7 @@ export default function NotificationPreferencesScreen() {
       />
     </ScreenContainer>
     </FeatureGate>
+    </ImageBackground>
   );
 }
 

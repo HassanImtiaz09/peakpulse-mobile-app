@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import {
   ScrollView, Text, View, TouchableOpacity, Alert, Image,
-  Platform, Dimensions, ActivityIndicator,
-} from "react-native";
+  Platform, Dimensions, ActivityIndicator, ImageBackground} from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { ScreenContainer } from "@/components/screen-container";
 import { captureRef } from "react-native-view-shot";
@@ -11,6 +10,7 @@ import * as Haptics from "expo-haptics";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
+import { GOLDEN_WORKOUT, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgrounds";
 const { width: SCREEN_W } = Dimensions.get("window");
 const CARD_W = SCREEN_W - 40;
 const CARD_H = Math.round(CARD_W * (16 / 9));
@@ -345,6 +345,7 @@ export default function ShareWorkoutScreen() {
   ];
 
   return (
+    <ImageBackground source={{ uri: GOLDEN_WORKOUT }} style={{ flex: 1 }} resizeMode="cover">
     <ScreenContainer edges={["top", "left", "right"]} containerClassName="bg-background">
       <ScrollView style={{ flex: 1, backgroundColor: SF.bg }} contentContainerStyle={{ paddingBottom: 100 }}>
         {/* Header */}
@@ -460,6 +461,7 @@ export default function ShareWorkoutScreen() {
         {selectedTemplate !== "milestone" && milestone && <MilestoneCard ref={milestoneRef} data={shareData} milestone={milestone} />}
       </View>
     </ScreenContainer>
+    </ImageBackground>
   );
 }
 

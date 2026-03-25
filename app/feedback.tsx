@@ -1,8 +1,7 @@
 import React, { useState, useCallback } from "react";
 import {
   Text, View, TouchableOpacity, ScrollView, TextInput,
-  Alert, ActivityIndicator, Platform, KeyboardAvoidingView,
-} from "react-native";
+  Alert, ActivityIndicator, Platform, KeyboardAvoidingView, ImageBackground} from "react-native";
 import { useRouter } from "expo-router";
 import { ScreenContainer } from "@/components/screen-container";
 import { useAuth } from "@/hooks/use-auth";
@@ -11,6 +10,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Haptics from "expo-haptics";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
+import { GOLDEN_PRIMARY, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgrounds";
 // NanoBanana design tokens
 const BG = "#0A0E14";
 const SURFACE = "#111827";
@@ -131,6 +131,7 @@ export default function FeedbackScreen() {
   const typeColor = FEEDBACK_TYPES.find(t => t.key === feedbackType)?.color ?? GOLD;
 
   return (
+    <ImageBackground source={{ uri: GOLDEN_PRIMARY }} style={{ flex: 1 }} resizeMode="cover">
     <ScreenContainer edges={["top", "left", "right"]} containerClassName="bg-background">
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : undefined}>
         {/* Header */}
@@ -381,5 +382,6 @@ export default function FeedbackScreen() {
         </ScrollView>
       </KeyboardAvoidingView>
     </ScreenContainer>
+    </ImageBackground>
   );
 }

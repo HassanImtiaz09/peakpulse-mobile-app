@@ -10,8 +10,7 @@ import {
   ScrollView,
   StyleSheet,
   ActivityIndicator,
-  Platform,
-} from "react-native";
+  Platform, ImageBackground} from "react-native";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
@@ -19,6 +18,7 @@ import Svg, { Rect, Circle, Text as SvgText, Line, G, Path } from "react-native-
 import { getHistoricalMeals, type MealEntry } from "@/lib/calorie-context";
 import { useCalories } from "@/lib/calorie-context";
 
+import { GOLDEN_PANTRY, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgrounds";
 type ViewMode = "daily" | "weekly";
 
 interface DaySummary {
@@ -308,6 +308,7 @@ export default function NutritionChartsScreen() {
                         ];
 
                         return (
+                          <ImageBackground source={{ uri: GOLDEN_PANTRY }} style={{ flex: 1 }} resizeMode="cover">
                           <>
                             {slices.map((s, idx) => {
                               if (s.angle < 0.5) { start += s.angle; return null; }
@@ -325,6 +326,7 @@ export default function NutritionChartsScreen() {
                               kcal
                             </SvgText>
                           </>
+                          </ImageBackground>
                         );
                       })()
                     ) : (

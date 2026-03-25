@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useCallback } from "react";
 import {
   View, Text, TouchableOpacity, ScrollView, Alert, FlatList,
-  ActivityIndicator, ImageBackground, StyleSheet, Modal, TextInput,
+  ActivityIndicator, ImageBackground, StyleSheet, Modal, TextInput, Platform,
 } from "react-native";
+import * as Haptics from "expo-haptics";
 import { useRouter } from "expo-router";
 import { useGuestAuth } from "@/lib/guest-auth";
 import { useWearable } from "@/lib/wearable-context";
@@ -35,7 +36,7 @@ import { getActiveGroupGoals, type GroupGoal } from "@/lib/group-goals";
 
 const HERO_BG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/golden-social-bg-6XESYMXaHwooBovbKXUgYi.webp";
 
-type TabId = "circle" | "activity" | "leaderboard" | "invite";
+type TabId = "circle" | "activity" | "leaderboard" | "chat" | "invite";
 
 const METRIC_OPTIONS: { id: LeaderboardMetric; label: string; emoji: string }[] = [
   { id: "streak", label: "Streak", emoji: "🔥" },
@@ -272,11 +273,12 @@ export default function SocialCircleScreen() {
 
       {/* Tab Bar */}
       <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.tabBar} contentContainerStyle={{ paddingHorizontal: 4 }}>
-        {(["circle", "activity", "leaderboard", "invite"] as TabId[]).map((tab) => {
+        {(["circle", "activity", "leaderboard", "chat", "invite"] as TabId[]).map((tab) => {
           const tabLabels: Record<TabId, string> = {
             circle: "👥 Circle",
             activity: "📣 Activity",
             leaderboard: "🏆 Board",
+            chat: "💬 Chat",
             invite: "📨 Invite",
           };
           return (
@@ -499,6 +501,38 @@ export default function SocialCircleScreen() {
                 </View>
               )}
             </>
+          )}
+
+          {/* ── Chat Tab ──────────────────────────────────────── */}
+          {activeTab === "chat" && (
+            <View style={{ alignItems: "center", paddingVertical: 30, gap: 16 }}>
+              <View style={{ width: 80, height: 80, borderRadius: 40, backgroundColor: "rgba(245,158,11,0.12)", alignItems: "center", justifyContent: "center" }}>
+                <Text style={{ fontSize: 36 }}>💬</Text>
+              </View>
+              <Text style={{ color: "#F1F5F9", fontSize: 20, fontWeight: "800" }}>Circle Chat</Text>
+              <Text style={{ color: "#B45309", fontSize: 13, textAlign: "center", paddingHorizontal: 30, lineHeight: 19 }}>
+                Chat with your circle members, share progress updates, and motivate each other in real time.
+              </Text>
+              <TouchableOpacity
+                style={{ backgroundColor: "#F59E0B", borderRadius: 14, paddingHorizontal: 28, paddingVertical: 14, marginTop: 8 }}
+                onPress={() => {
+                  if (Platform.OS !== "web") Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                  router.push({ pathname: "/chat" as any, params: { roomId: `circle_${circleData?.circleCode ?? "default"}`, roomName: `${circleData?.circleCode ?? "My"} Circle Chat`, roomType: "circle" } });
+                }}
+              >
+                <Text style={{ color: "#000", fontSize: 15, fontWeight: "700" }}>Open Chat</Text>
+              </TouchableOpacity>
+
+              {/* Recent messages preview */}
+              <View style={{ width: "100%", marginTop: 16, gap: 8 }}>
+                <Text style={{ color: "#FBBF24", fontSize: 13, fontWeight: "700", paddingHorizontal: 4 }}>Recent Messages</Text>
+                {["Alex M. 💪: Great workout today!", "Sarah K. 🏃: Just hit my step goal!", "James T. 🎯: Who's up for a challenge?"].map((msg, i) => (
+                  <View key={i} style={{ backgroundColor: "rgba(20,26,34,0.85)", borderRadius: 12, padding: 12, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}>
+                    <Text style={{ color: "#F1F5F9", fontSize: 13 }}>{msg}</Text>
+                  </View>
+                ))}
+              </View>
+            </View>
           )}
 
           {/* ── Invite Tab ──────────────────────────────────────── */}

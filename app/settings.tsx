@@ -6,8 +6,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import {
   ScrollView, Text, View, TouchableOpacity, Switch, Platform, StyleSheet, Alert,
-  ActivityIndicator,
-} from "react-native";
+  ActivityIndicator, ImageBackground} from "react-native";
 import { useRouter } from "expo-router";
 import { ScreenContainer } from "@/components/screen-container";
 import { useThemeContext, type ThemePreference } from "@/lib/theme-provider";
@@ -20,6 +19,7 @@ import {
   getScheduledNotificationCount,
   requestNotificationPermissions,
 } from "@/lib/notification-service";
+import { GOLDEN_PRIMARY, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgrounds";
 
 const SF = {
   bg: "#0A0E14", surface: "#141A22", border: "rgba(245,158,11,0.15)",
@@ -115,6 +115,7 @@ export default function SettingsScreen() {
   }
 
   return (
+    <ImageBackground source={{ uri: GOLDEN_PRIMARY }} style={{ flex: 1 }} resizeMode="cover">
     <ScreenContainer edges={["top", "left", "right"]} containerClassName="bg-background">
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
@@ -274,6 +275,7 @@ export default function SettingsScreen() {
         </View>
       </ScrollView>
     </ScreenContainer>
+    </ImageBackground>
   );
 }
 

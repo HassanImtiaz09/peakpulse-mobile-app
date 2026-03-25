@@ -143,6 +143,7 @@ const QUICK_ACTION_GROUPS: ActionGroup[] = [
       { icon: "bar-chart", label: "Weekly Summary", route: "/weekly-summary", gated: false },
       { icon: "trending-up", label: "Progress Photos", route: "/progress-photos", gated: true, feature: "progress_photos", tier: "basic", desc: "Track your body transformation with progress photos — Basic plan and above." },
       { icon: "watch", label: "Wearables", route: "/wearable-sync", gated: true, feature: "wearable_sync", tier: "basic", desc: "Sync your fitness wearable with PeakPulse — Basic plan and above." },
+      { icon: "emoji-events", label: "Achievements", route: "/achievements", gated: false },
     ],
   },
   {

@@ -1,8 +1,7 @@
 import React, { useState, useMemo, useCallback, useEffect } from "react";
 import {
   Text, View, TouchableOpacity, ScrollView, TextInput, FlatList,
-  Alert, Platform, ActivityIndicator, Modal,
-} from "react-native";
+  Alert, Platform, ActivityIndicator, Modal, ImageBackground} from "react-native";
 import { useRouter } from "expo-router";
 import { ScreenContainer } from "@/components/screen-container";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
@@ -20,6 +19,7 @@ import {
   type FitnessGoal, type FitnessLevel, type WorkoutExerciseInput,
   type BalanceAnalysis, type CalorieEstimate, type BodyCompositionEstimate, type WorkoutCoachInsight,
 } from "@/lib/workout-insights";
+import { GOLDEN_WORKOUT, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgrounds";
 
 // ── Theme ────────────────────────────────────────────────────────────────────
 const SF = {
@@ -693,6 +693,7 @@ export default function CreateWorkoutScreen() {
 
   // ── Step: Insights & Save ──────────────────────────────────────────────
   return (
+    <ImageBackground source={{ uri: GOLDEN_WORKOUT }} style={{ flex: 1 }} resizeMode="cover">
     <ScreenContainer edges={["top", "left", "right"]} containerClassName="bg-background">
       <View style={{ flex: 1, backgroundColor: SF.bg }}>
         {/* Header */}
@@ -887,5 +888,6 @@ export default function CreateWorkoutScreen() {
         </View>
       </View>
     </ScreenContainer>
+    </ImageBackground>
   );
 }

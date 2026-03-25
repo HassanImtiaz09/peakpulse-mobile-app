@@ -158,6 +158,16 @@ export function WearableProvider({ children }: { children: React.ReactNode }) {
     return () => subscription.remove();
   }, [permissionStatus]);
 
+  // Auto-sync every 15 minutes when permission is granted
+  useEffect(() => {
+    if (permissionStatus !== "granted") return;
+    const SYNC_INTERVAL_MS = 15 * 60 * 1000; // 15 minutes
+    const intervalId = setInterval(() => {
+      syncFromHealthPlatformInternal().catch(() => {});
+    }, SYNC_INTERVAL_MS);
+    return () => clearInterval(intervalId);
+  }, [permissionStatus]);
+
   const loadData = async () => {
     try {
       const [statsRaw, historyRaw, permRaw] = await Promise.all([

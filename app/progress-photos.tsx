@@ -2,8 +2,7 @@ import React, { useState, useRef, useCallback, useMemo } from "react";
 import {
   ScrollView, Text, View, TouchableOpacity, ActivityIndicator, Alert, Image,
   TextInput, Platform, PanResponder, Animated, Dimensions, LayoutChangeEvent,
-  Modal, KeyboardAvoidingView, FlatList,
-} from "react-native";
+  Modal, KeyboardAvoidingView, FlatList, ImageBackground} from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import * as FileSystem from "expo-file-system/legacy";
 import * as MediaLibrary from "expo-media-library";
@@ -16,6 +15,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { trpc } from "@/lib/trpc";
 import { FeatureGate } from "@/components/feature-gate";
 
+import { GOLDEN_SCAN, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgrounds";
 const { width: SCREEN_W } = Dimensions.get("window");
 const CARD_PADDING = 40;
 const CARD_W = SCREEN_W - CARD_PADDING;
@@ -571,6 +571,7 @@ export default function ProgressPhotosScreen() {
   }
 
   return (
+    <ImageBackground source={{ uri: GOLDEN_SCAN }} style={{ flex: 1 }} resizeMode="cover">
     <FeatureGate feature="progress_photos" message="Track your body transformation with side-by-side photo comparisons. Available on Basic plan and above.">
     <ScreenContainer>
       <ScrollView contentContainerStyle={{ paddingBottom: 40 }} showsVerticalScrollIndicator={false}>
@@ -734,5 +735,6 @@ export default function ProgressPhotosScreen() {
       </ScrollView>
     </ScreenContainer>
     </FeatureGate>
+    </ImageBackground>
   );
 }

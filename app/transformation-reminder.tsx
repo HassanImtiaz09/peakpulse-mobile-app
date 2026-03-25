@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import {
   View, Text, Image, TouchableOpacity, ScrollView,
-  Dimensions, ActivityIndicator,
-} from "react-native";
+  Dimensions, ActivityIndicator, ImageBackground} from "react-native";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ScreenContainer } from "@/components/screen-container";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
+import { GOLDEN_SCAN, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgrounds";
 const { width: SCREEN_W } = Dimensions.get("window");
 
 const SF = {
@@ -57,6 +57,7 @@ export default function TransformationReminderScreen() {
   const imgH = imgW * 1.4;
 
   return (
+    <ImageBackground source={{ uri: GOLDEN_SCAN }} style={{ flex: 1 }} resizeMode="cover">
     <ScreenContainer containerClassName="bg-[#0A0500]" edges={["top", "left", "right"]}>
       <ScrollView contentContainerStyle={{ padding: 24, paddingBottom: 48 }} showsVerticalScrollIndicator={false}>
         {/* Header */}
@@ -164,5 +165,6 @@ export default function TransformationReminderScreen() {
         </TouchableOpacity>
       </ScrollView>
     </ScreenContainer>
+    </ImageBackground>
   );
 }

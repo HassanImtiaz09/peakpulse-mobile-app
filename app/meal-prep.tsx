@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator, ScrollView, Alert, Platform, TextInput } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator, ScrollView, Alert, Platform, TextInput, ImageBackground} from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
@@ -10,6 +10,7 @@ import { trpc } from "@/lib/trpc";
 
 import * as Haptics from "expo-haptics";
 
+import { GOLDEN_MEALS, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgrounds";
 const SF = { bg: "#0A0E14", card: "#141A22", orange: "#F59E0B", gold: "#FBBF24", cream: "#FDE68A", muted: "#B45309", text: "#F1F5F9", border: "rgba(245,158,11,0.10)", green: "#22C55E", red: "#EF4444", blue: "#60A5FA" };
 
 // ── Ingredient Matching ──────────────────────────────────────────
@@ -653,11 +654,13 @@ export default function MealPrepScreen() {
                   {expiringItems.slice(0, 12).map(item => {
                     const days = getDaysUntilExpiry(item.expiresAt!);
                     return (
+                      <ImageBackground source={{ uri: GOLDEN_MEALS }} style={{ flex: 1 }} resizeMode="cover">
                       <View key={item.id} style={[styles.chip, { borderColor: getUrgencyColor(days) + "40" }]}>
                         <View style={[styles.chipDot, { backgroundColor: getUrgencyColor(days) }]} />
                         <Text style={styles.chipText} numberOfLines={1}>{item.name}</Text>
                         <Text style={[styles.chipDays, { color: getUrgencyColor(days) }]}>{days}d</Text>
                       </View>
+                      </ImageBackground>
                     );
                   })}
                   {expiringItems.length > 12 && <Text style={styles.moreText}>+{expiringItems.length - 12} more</Text>}

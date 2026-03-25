@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from "react";
-import { View, Text, FlatList, TouchableOpacity, StyleSheet, Alert, ActivityIndicator, Platform, TextInput, Modal, ScrollView } from "react-native";
+import { View, Text, FlatList, TouchableOpacity, StyleSheet, Alert, ActivityIndicator, Platform, TextInput, Modal, ScrollView, ImageBackground} from "react-native";
 import { Image } from "expo-image";
 import * as ImagePicker from "expo-image-picker";
 import * as FileSystem from "expo-file-system/legacy";
@@ -9,6 +9,7 @@ import { ScreenContainer } from "@/components/screen-container";
 import { usePantry, type PantryCategory } from "@/lib/pantry-context";
 import { trpc } from "@/lib/trpc";
 
+import { GOLDEN_PANTRY, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgrounds";
 const SF = { bg: "#0A0E14", card: "#141A22", orange: "#F59E0B", gold: "#FBBF24", cream: "#FDE68A", muted: "#B45309", text: "#F1F5F9", border: "rgba(245,158,11,0.10)", green: "#22C55E", blue: "#60A5FA" };
 
 interface ReceiptItem {
@@ -232,6 +233,7 @@ export default function ScanReceiptScreen() {
   }, [editingIndex, editName, items]);
 
   return (
+    <ImageBackground source={{ uri: GOLDEN_PANTRY }} style={{ flex: 1 }} resizeMode="cover">
     <ScreenContainer edges={["top", "left", "right"]} containerClassName="bg-background">
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
@@ -362,6 +364,7 @@ export default function ScanReceiptScreen() {
         </TouchableOpacity>
       </Modal>
     </ScreenContainer>
+    </ImageBackground>
   );
 }
 

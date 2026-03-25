@@ -16,8 +16,7 @@ import {
   FlatList,
   Pressable,
   StyleSheet,
-  Platform,
-} from "react-native";
+  Platform, ImageBackground} from "react-native";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
@@ -33,6 +32,7 @@ import {
 } from "@/lib/exercise-data";
 import type { MuscleGroup } from "@/components/body-diagram";
 
+import { GOLDEN_WORKOUT, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgrounds";
 const C = {
   bg: "#0A0E14",
   surface: "#141A22",
@@ -190,6 +190,7 @@ export default function ExerciseLibraryScreen() {
   const keyExtractor = useCallback((item: ExerciseInfo) => item.key, []);
 
   return (
+    <ImageBackground source={{ uri: GOLDEN_WORKOUT }} style={{ flex: 1 }} resizeMode="cover">
     <View style={[styles.container, { paddingTop: insets.top }]}>
       {/* Header */}
       <View style={styles.header}>
@@ -294,6 +295,7 @@ export default function ExerciseLibraryScreen() {
         }
       />
     </View>
+    </ImageBackground>
   );
 }
 

@@ -2020,3 +2020,52 @@
 - [x] 1 test for AI notification scheduler preferences
 - [x] 22 tests for wearable metrics panel
 - [x] 4 tests for dashboard integration
+
+## Round 85 — Backgrounds, Chat, Wearable Sync, Achievement Gallery
+
+### Golden HD Backgrounds on All Screens
+- [x] Audited all 47 screens for golden-themed backgrounds
+- [x] Applied ImageBackground with golden theme to all 25+ screens that were missing them
+- [x] Created shared constants/golden-backgrounds.ts with CDN URLs and overlay styles
+- [x] Translucent tiles over backgrounds for visual depth on all screens
+
+### Real-Time Chat for Challenges & Circles
+- [x] Chat service (lib/chat-service.ts) with AsyncStorage persistence
+- [x] Full chat screen (app/chat.tsx) with golden-themed UI
+- [x] Chat tab added to Social Circle screen with Open Chat button
+- [x] Challenge Chat button on each active challenge card
+- [x] Polling-based real-time updates (3-second interval)
+- [x] Message reactions, reply-to, deletion, system messages
+- [x] Seed demo messages for new chat rooms
+
+### Wearable Integration (renamed from Wearable Metrics)
+- [x] Renamed dashboard section to "Wearable Integration"
+- [x] Added dropdown with 7 platforms: Apple Health, Google Fit/Health Connect, Fitbit, Garmin, Samsung Health, WHOOP, Oura Ring
+- [x] Each platform shows device descriptions (e.g., "Forerunner, Venu, Fenix, Vivoactive")
+- [x] Implemented 15-minute background auto-sync interval in wearable-context
+- [x] Auto-sync cleans up on unmount, only runs when permission granted
+- [x] Info text mentions all platforms sync via HealthKit/Health Connect
+
+### Achievement Badges Gallery
+- [x] Created achievements.tsx with full gallery UI
+- [x] 29 badges across 4 categories (fitness, nutrition, social, challenges)
+- [x] 5 rarity tiers (common, uncommon, rare, epic, legendary) with distinct colors
+- [x] 5 challenge trophies in trophy case section
+- [x] Locked/unlocked states with progress bars and lock overlays
+- [x] Badge detail modal with rarity, description, progress
+- [x] Overall progress card with rarity breakdown
+- [x] Share achievements via system share sheet
+- [x] Navigation from dashboard quick actions
+
+### Testing
+- [x] 0 TypeScript errors
+- [x] All 59 tests pass (round85-features.test.ts)
+- [x] 13 tests for golden backgrounds across screens
+- [x] 8 tests for chat service
+- [x] 8 tests for chat screen
+- [x] 3 tests for chat in social circle
+- [x] 3 tests for chat in challenges
+- [x] 6 tests for wearable integration dropdown
+- [x] 4 tests for background auto-sync
+- [x] 12 tests for achievements gallery
+- [x] 2 tests for dashboard integration

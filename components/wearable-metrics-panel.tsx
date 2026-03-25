@@ -162,7 +162,7 @@ export function WearableMetricsPanel() {
         <View style={s.header}>
           <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
             <MaterialIcons name="watch" size={20} color={C.gold} />
-            <Text style={s.headerTitle}>Wearable Metrics</Text>
+            <Text style={s.headerTitle}>Wearable Integration</Text>
           </View>
         </View>
 
@@ -172,38 +172,101 @@ export function WearableMetricsPanel() {
           </View>
           <Text style={s.emptyTitle}>Connect Your Wearable</Text>
           <Text style={s.emptySubtitle}>
-            Sync with Apple Health or Google Fit to see real-time metrics, trends, and insights right on your dashboard.
+            Sync with your health platform to see real-time metrics, trends, and insights right on your dashboard.
           </Text>
 
-          <View style={{ gap: 10, width: "100%", marginTop: 20 }}>
-            {Platform.OS === "ios" || Platform.OS === "web" ? (
-              <TouchableOpacity
-                style={s.connectBtn}
-                onPress={() => router.push("/wearable-sync" as any)}
-              >
-                <MaterialIcons name="favorite" size={18} color="#FF2D55" />
-                <Text style={s.connectBtnText}>Connect Apple Health</Text>
-                <MaterialIcons name="chevron-right" size={16} color={C.muted} />
-              </TouchableOpacity>
-            ) : null}
+          {/* Wearable Integration Dropdown */}
+          <View style={{ width: "100%", marginTop: 20, gap: 6 }}>
+            <Text style={{ color: C.gold2, fontSize: 12, fontWeight: "700", marginBottom: 4 }}>SELECT YOUR PLATFORM</Text>
 
-            {Platform.OS === "android" || Platform.OS === "web" ? (
-              <TouchableOpacity
-                style={s.connectBtn}
-                onPress={() => router.push("/wearable-sync" as any)}
-              >
-                <MaterialIcons name="fitness-center" size={18} color={C.green} />
-                <Text style={s.connectBtnText}>Connect Google Fit</Text>
-                <MaterialIcons name="chevron-right" size={16} color={C.muted} />
-              </TouchableOpacity>
-            ) : null}
+            {/* Apple Health */}
+            <TouchableOpacity
+              style={s.connectBtn}
+              onPress={() => router.push("/wearable-sync" as any)}
+            >
+              <MaterialIcons name="favorite" size={18} color="#FF2D55" />
+              <View style={{ flex: 1 }}>
+                <Text style={s.connectBtnText}>Apple Health</Text>
+                <Text style={{ color: C.muted, fontSize: 10, marginTop: 1 }}>Apple Watch, iPhone sensors</Text>
+              </View>
+              <MaterialIcons name="chevron-right" size={16} color={C.muted} />
+            </TouchableOpacity>
 
+            {/* Google Fit / Health Connect */}
+            <TouchableOpacity
+              style={s.connectBtn}
+              onPress={() => router.push("/wearable-sync" as any)}
+            >
+              <MaterialIcons name="fitness-center" size={18} color={C.green} />
+              <View style={{ flex: 1 }}>
+                <Text style={s.connectBtnText}>Google Fit / Health Connect</Text>
+                <Text style={{ color: C.muted, fontSize: 10, marginTop: 1 }}>Pixel Watch, Samsung, Wear OS</Text>
+              </View>
+              <MaterialIcons name="chevron-right" size={16} color={C.muted} />
+            </TouchableOpacity>
+
+            {/* Fitbit */}
+            <TouchableOpacity
+              style={s.connectBtn}
+              onPress={() => router.push("/wearable-sync" as any)}
+            >
+              <MaterialIcons name="watch" size={18} color="#00B0B9" />
+              <View style={{ flex: 1 }}>
+                <Text style={s.connectBtnText}>Fitbit</Text>
+                <Text style={{ color: C.muted, fontSize: 10, marginTop: 1 }}>Charge, Versa, Sense, Inspire</Text>
+              </View>
+              <MaterialIcons name="chevron-right" size={16} color={C.muted} />
+            </TouchableOpacity>
+
+            {/* Garmin */}
+            <TouchableOpacity
+              style={s.connectBtn}
+              onPress={() => router.push("/wearable-sync" as any)}
+            >
+              <MaterialIcons name="explore" size={18} color="#007CC3" />
+              <View style={{ flex: 1 }}>
+                <Text style={s.connectBtnText}>Garmin Connect</Text>
+                <Text style={{ color: C.muted, fontSize: 10, marginTop: 1 }}>Forerunner, Venu, Fenix, Vivoactive</Text>
+              </View>
+              <MaterialIcons name="chevron-right" size={16} color={C.muted} />
+            </TouchableOpacity>
+
+            {/* Samsung Health */}
+            <TouchableOpacity
+              style={s.connectBtn}
+              onPress={() => router.push("/wearable-sync" as any)}
+            >
+              <MaterialIcons name="phone-android" size={18} color="#1428A0" />
+              <View style={{ flex: 1 }}>
+                <Text style={s.connectBtnText}>Samsung Health</Text>
+                <Text style={{ color: C.muted, fontSize: 10, marginTop: 1 }}>Galaxy Watch, Galaxy Ring</Text>
+              </View>
+              <MaterialIcons name="chevron-right" size={16} color={C.muted} />
+            </TouchableOpacity>
+
+            {/* WHOOP */}
+            <TouchableOpacity
+              style={s.connectBtn}
+              onPress={() => router.push("/wearable-sync" as any)}
+            >
+              <MaterialIcons name="speed" size={18} color="#F59E0B" />
+              <View style={{ flex: 1 }}>
+                <Text style={s.connectBtnText}>WHOOP</Text>
+                <Text style={{ color: C.muted, fontSize: 10, marginTop: 1 }}>WHOOP 4.0, recovery & strain</Text>
+              </View>
+              <MaterialIcons name="chevron-right" size={16} color={C.muted} />
+            </TouchableOpacity>
+
+            {/* Oura */}
             <TouchableOpacity
               style={[s.connectBtn, { borderColor: C.gold + "30" }]}
               onPress={() => router.push("/wearable-sync" as any)}
             >
-              <MaterialIcons name="devices-other" size={18} color={C.gold} />
-              <Text style={s.connectBtnText}>Other Wearables</Text>
+              <MaterialIcons name="circle" size={18} color="#C0C0C0" />
+              <View style={{ flex: 1 }}>
+                <Text style={s.connectBtnText}>Oura Ring</Text>
+                <Text style={{ color: C.muted, fontSize: 10, marginTop: 1 }}>Sleep, readiness, activity</Text>
+              </View>
               <MaterialIcons name="chevron-right" size={16} color={C.muted} />
             </TouchableOpacity>
           </View>
@@ -211,7 +274,7 @@ export function WearableMetricsPanel() {
           <View style={s.infoRow}>
             <MaterialIcons name="info-outline" size={12} color={C.muted} />
             <Text style={s.infoText}>
-              Supports Apple Watch, Fitbit, Garmin, WHOOP, Samsung, Oura, and more via HealthKit/Health Connect.
+              All platforms sync via Apple HealthKit (iOS) or Google Health Connect (Android). Data refreshes automatically every 15 minutes.
             </Text>
           </View>
         </View>
@@ -233,7 +296,7 @@ export function WearableMetricsPanel() {
       <View style={s.header}>
         <View style={{ flexDirection: "row", alignItems: "center", gap: 8, flex: 1 }}>
           <MaterialIcons name="watch" size={20} color={C.gold} />
-          <Text style={s.headerTitle}>Wearable Metrics</Text>
+          <Text style={s.headerTitle}>Wearable Integration</Text>
           <View style={s.sourceBadge}>
             <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: C.green }} />
             <Text style={s.sourceText}>{healthSourceName}</Text>

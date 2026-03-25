@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import {
   ScrollView, Text, View, TouchableOpacity, Image, Dimensions,
-  Platform, Modal, FlatList, Animated, PanResponder,
-} from "react-native";
+  Platform, Modal, FlatList, Animated, PanResponder, ImageBackground} from "react-native";
 import { useRouter } from "expo-router";
 import { ScreenContainer } from "@/components/screen-container";
 import { useAuth } from "@/hooks/use-auth";
@@ -10,6 +9,7 @@ import { trpc } from "@/lib/trpc";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
+import { GOLDEN_SCAN, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgrounds";
 const { width: SCREEN_W } = Dimensions.get("window");
 const PHOTO_W = SCREEN_W - 40;
 const PHOTO_H = Math.round(PHOTO_W * (4 / 3));
@@ -149,6 +149,7 @@ export default function BodyScanCompareScreen() {
 
   if (allScans.length < 2) {
     return (
+      <ImageBackground source={{ uri: GOLDEN_SCAN }} style={{ flex: 1 }} resizeMode="cover">
       <ScreenContainer edges={["top", "left", "right"]} containerClassName="bg-background">
         <View style={{ flex: 1, backgroundColor: SF.bg, alignItems: "center", justifyContent: "center", padding: 40 }}>
           <TouchableOpacity onPress={() => router.back()} style={{ position: "absolute", top: 16, left: 20, padding: 4 }}>
@@ -169,6 +170,7 @@ export default function BodyScanCompareScreen() {
           </TouchableOpacity>
         </View>
       </ScreenContainer>
+      </ImageBackground>
     );
   }
 

@@ -9,14 +9,14 @@
 import React, { useState } from "react";
 import {
   View, Text, ScrollView, TouchableOpacity,
-  StyleSheet, Dimensions, ActivityIndicator,
-} from "react-native";
+  StyleSheet, Dimensions, ActivityIndicator, ImageBackground} from "react-native";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ScreenContainer } from "@/components/screen-container";
 import { useSubscription } from "@/hooks/use-subscription";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
+import { GOLDEN_PRIMARY, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgrounds";
 const { width: W } = Dimensions.get("window");
 
 const SF = {
@@ -107,6 +107,7 @@ export default function SubscriptionPlansScreen() {
     : 0;
 
   return (
+    <ImageBackground source={{ uri: GOLDEN_PRIMARY }} style={{ flex: 1 }} resizeMode="cover">
     <ScreenContainer containerClassName="bg-[#0A0500]" edges={["top", "left", "right"]}>
       <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
         {/* Header */}
@@ -266,6 +267,7 @@ export default function SubscriptionPlansScreen() {
         </View>
       </ScrollView>
     </ScreenContainer>
+    </ImageBackground>
   );
 }
 

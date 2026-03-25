@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import {
   View, Text, TouchableOpacity, ScrollView, StyleSheet,
-  Platform, Switch, Alert, ActivityIndicator, Modal,
-} from "react-native";
+  Platform, Switch, Alert, ActivityIndicator, Modal, ImageBackground} from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useRouter } from "expo-router";
 import * as Notifications from "expo-notifications";
@@ -16,6 +15,7 @@ import {
 } from "@/lib/ai-notification-scheduler";
 import { requestNotificationPermissions } from "@/lib/notifications";
 
+import { GOLDEN_PRIMARY, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgrounds";
 const SF = {
   bg: "#0A0E14",
   surface: "#141A22",
@@ -284,6 +284,7 @@ export default function NotificationSettingsScreen() {
   }
 
   return (
+    <ImageBackground source={{ uri: GOLDEN_PRIMARY }} style={{ flex: 1 }} resizeMode="cover">
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
@@ -519,6 +520,7 @@ export default function NotificationSettingsScreen() {
         onCancel={() => setPickerVisible(false)}
       />
     </View>
+    </ImageBackground>
   );
 }
 

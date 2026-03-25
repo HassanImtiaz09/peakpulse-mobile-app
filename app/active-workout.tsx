@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import {
   ScrollView, Text, View, TouchableOpacity, Alert, TextInput,
-  Modal, Dimensions, Platform,
-} from "react-native";
+  Modal, Dimensions, Platform, ImageBackground} from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { ScreenContainer } from "@/components/screen-container";
 import { useAuth } from "@/hooks/use-auth";
@@ -27,6 +26,7 @@ import {
 } from "@/lib/rest-timer-settings";
 import { preloadExerciseVideos, clearPreloadCache } from "@/lib/video-preload";
 
+import { GOLDEN_WORKOUT, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgrounds";
 const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get("window");
 
 const SF = {
@@ -654,6 +654,7 @@ export default function ActiveWorkoutScreen() {
               const alts = getAlternativeExercises(exercise.name, 3);
               if (alts.length === 0) return null;
               return (
+                <ImageBackground source={{ uri: GOLDEN_WORKOUT }} style={{ flex: 1 }} resizeMode="cover">
                 <View style={{ backgroundColor: SF.surface, borderRadius: 16, padding: 14, marginBottom: 12, borderWidth: 1, borderColor: SF.border }}>
                   <View style={{ flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 8 }}>
                     <MaterialIcons name="swap-horiz" size={14} color={SF.gold} />
@@ -684,6 +685,7 @@ export default function ActiveWorkoutScreen() {
                     </TouchableOpacity>
                   ))}
                 </View>
+                </ImageBackground>
               );
             })()}
 

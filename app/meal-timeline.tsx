@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback, useMemo } from "react";
-import { View, Text, FlatList, TouchableOpacity, StyleSheet, ActivityIndicator, Dimensions } from "react-native";
+import { View, Text, FlatList, TouchableOpacity, StyleSheet, ActivityIndicator, Dimensions, ImageBackground} from "react-native";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
@@ -7,6 +7,7 @@ import Svg, { Rect, Line, Text as SvgText, Path } from "react-native-svg";
 import { ScreenContainer } from "@/components/screen-container";
 import { getHistoricalMeals, type MealEntry } from "@/lib/calorie-context";
 
+import { GOLDEN_MEALS, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgrounds";
 const SF = { bg: "#0A0E14", card: "#141A22", orange: "#F59E0B", gold: "#FBBF24", cream: "#FDE68A", muted: "#B45309", text: "#F1F5F9", border: "rgba(245,158,11,0.10)", green: "#22C55E", blue: "#60A5FA", red: "#EF4444" };
 
 const MEAL_TYPE_ICONS: Record<string, keyof typeof MaterialIcons.glyphMap> = {
@@ -304,6 +305,7 @@ export default function MealTimelineScreen() {
   };
 
   return (
+    <ImageBackground source={{ uri: GOLDEN_MEALS }} style={{ flex: 1 }} resizeMode="cover">
     <ScreenContainer edges={["top", "left", "right"]} containerClassName="bg-background">
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
@@ -344,6 +346,7 @@ export default function MealTimelineScreen() {
         />
       )}
     </ScreenContainer>
+    </ImageBackground>
   );
 }
 

@@ -1,8 +1,7 @@
 import { useState, useCallback, useMemo, useRef } from "react";
 import {
   ScrollView, Text, View, TouchableOpacity, ActivityIndicator,
-  Platform, Modal, FlatList, Alert,
-} from "react-native";
+  Platform, Modal, FlatList, Alert, ImageBackground} from "react-native";
 import { useRouter } from "expo-router";
 import { ScreenContainer } from "@/components/screen-container";
 import { useAuth } from "@/hooks/use-auth";
@@ -14,6 +13,7 @@ import ViewShot, { captureRef } from "react-native-view-shot";
 import * as Sharing from "expo-sharing";
 import * as FileSystem from "expo-file-system/legacy";
 
+import { GOLDEN_WORKOUT, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgrounds";
 // Solar Forge colour tokens
 const SF = {
   bg: "#0A0E14", surface: "#141A22", surface2: "#1F0D00",
@@ -209,6 +209,7 @@ export default function WorkoutCalendarScreen() {
   }
 
   return (
+    <ImageBackground source={{ uri: GOLDEN_WORKOUT }} style={{ flex: 1 }} resizeMode="cover">
     <ScreenContainer edges={["top", "left", "right"]} containerClassName="bg-background">
       <ScrollView style={{ flex: 1, backgroundColor: SF.bg }} contentContainerStyle={{ paddingBottom: 100 }}>
         {/* Header */}
@@ -462,6 +463,7 @@ export default function WorkoutCalendarScreen() {
         </View>
       </Modal>
     </ScreenContainer>
+    </ImageBackground>
   );
 }
 

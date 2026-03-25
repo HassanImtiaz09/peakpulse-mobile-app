@@ -9,12 +9,12 @@
 import React, { useEffect, useState } from "react";
 import {
   View, Text, ScrollView, TouchableOpacity, Image,
-  StyleSheet, Dimensions, ActivityIndicator,
-} from "react-native";
+  StyleSheet, Dimensions, ActivityIndicator, ImageBackground} from "react-native";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ScreenContainer } from "@/components/screen-container";
 
+import { GOLDEN_PRIMARY, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgrounds";
 const { width: W } = Dimensions.get("window");
 
 const SF = {
@@ -149,9 +149,11 @@ export default function OnboardingSummaryScreen() {
                 const match = schedule[i];
                 const isRest = match?.isRest ?? true;
                 return (
+                  <ImageBackground source={{ uri: GOLDEN_PRIMARY }} style={{ flex: 1 }} resizeMode="cover">
                   <View key={day} style={[styles.dayDot, isRest ? styles.dayDotRest : styles.dayDotActive]}>
                     <Text style={[styles.dayDotText, !isRest && { color: SF.bg }]}>{day[0]}</Text>
                   </View>
+                  </ImageBackground>
                 );
               })}
             </View>

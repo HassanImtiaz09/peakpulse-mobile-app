@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import {
-  ScrollView, Text, View, TouchableOpacity, Alert, Platform,
-} from "react-native";
+  ScrollView, Text, View, TouchableOpacity, Alert, Platform, ImageBackground} from "react-native";
 import { useRouter } from "expo-router";
 import { ScreenContainer } from "@/components/screen-container";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
@@ -13,6 +12,7 @@ import {
   loadRestTimerSettings,
   saveRestTimerSettings,
 } from "@/lib/rest-timer-settings";
+import { GOLDEN_WORKOUT, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgrounds";
 
 const SF = {
   bg: "#0A0E14", surface: "#141A22", surface2: "#1F0D00",
@@ -123,6 +123,7 @@ export default function RestTimerSettingsScreen() {
   }
 
   return (
+    <ImageBackground source={{ uri: GOLDEN_WORKOUT }} style={{ flex: 1 }} resizeMode="cover">
     <ScreenContainer edges={["top", "left", "right"]} containerClassName="bg-background">
       <ScrollView style={{ flex: 1, backgroundColor: SF.bg }} contentContainerStyle={{ paddingBottom: 100 }}>
         {/* Header */}
@@ -242,5 +243,6 @@ export default function RestTimerSettingsScreen() {
         </View>
       </ScrollView>
     </ScreenContainer>
+    </ImageBackground>
   );
 }

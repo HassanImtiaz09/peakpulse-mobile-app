@@ -7,8 +7,9 @@
 import React, { useState, useEffect, useCallback } from "react";
 import {
   View, Text, TouchableOpacity, ScrollView, Alert, FlatList,
-  ActivityIndicator, ImageBackground, StyleSheet, Modal,
+  ActivityIndicator, ImageBackground, StyleSheet, Modal, Platform,
 } from "react-native";
+import * as Haptics from "expo-haptics";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { useGuestAuth } from "@/lib/guest-auth";
 import {
@@ -210,6 +211,20 @@ export default function ChallengeScreen() {
             );
           })}
         </View>
+
+        {/* Chat Button */}
+        {!isCompleted && (
+          <TouchableOpacity
+            style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6, backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 10, paddingVertical: 10, marginTop: 10, borderWidth: 1, borderColor: "rgba(245,158,11,0.15)" }}
+            onPress={() => {
+              if (Platform.OS !== "web") Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              router.push({ pathname: "/chat" as any, params: { roomId: `challenge_${challenge.id}`, roomName: `${getChallengeTypeLabel(challenge.type)} vs ${challenge.opponent.name}`, roomType: "challenge" } });
+            }}
+          >
+            <MaterialIcons name="chat" size={16} color="#FBBF24" />
+            <Text style={{ color: "#FBBF24", fontSize: 13, fontWeight: "600" }}>Challenge Chat</Text>
+          </TouchableOpacity>
+        )}
       </View>
     );
   };

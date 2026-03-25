@@ -6,8 +6,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import {
   View, Text, TouchableOpacity, FlatList, Image, Modal,
-  StyleSheet, ActivityIndicator, Dimensions, Platform, Alert, TextInput,
-} from "react-native";
+  StyleSheet, ActivityIndicator, Dimensions, Platform, Alert, TextInput, ImageBackground} from "react-native";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
@@ -17,6 +16,7 @@ import {
   getFavouriteMeals, addFavouriteMeal, removeFavouriteMeal,
   type FavouriteMeal, purgeArchivedMealPhotos,
 } from "@/lib/calorie-context";
+import { GOLDEN_MEALS, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgrounds";
 
 type PhotoEntry = MealEntry & { date: string; isArchived: boolean; isFavourited: boolean };
 
@@ -216,6 +216,7 @@ export default function MealPhotoGalleryScreen() {
   );
 
   return (
+    <ImageBackground source={{ uri: GOLDEN_MEALS }} style={{ flex: 1 }} resizeMode="cover">
     <View style={[styles.container, { paddingTop: insets.top }]}>
       {/* Header */}
       <View style={styles.header}>
@@ -399,6 +400,7 @@ export default function MealPhotoGalleryScreen() {
         </View>
       </Modal>
     </View>
+    </ImageBackground>
   );
 }
 
