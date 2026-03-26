@@ -2200,3 +2200,31 @@
 - [x] 16 tests for form compare screen
 - [x] 2 tests for navigation integration
 - [x] 3 tests for annotation legend
+
+## Round 90 — Workout Timer with Voice Coaching
+
+### Workout Timer
+- [x] Countdown timer component with start/pause/reset controls
+- [x] Rest timer between sets with configurable duration
+- [x] Set tracking (current set / total sets) with auto-advance
+- [x] Visual progress ring/bar showing time remaining
+- [x] Keep screen awake during active timer (expo-keep-awake)
+- [x] Haptic feedback on timer events (set complete, rest over)
+
+### Voice Coaching Integration
+- [x] Auto-play audio form cues at the start of each exercise set
+- [x] Voice countdown for rest periods (10, 5, 4, 3, 2, 1, Go!)
+- [x] Voice announcements for set completion and exercise transitions
+- [x] 4-mode voice toggle (Full Coach, Cues Only, Countdown Only, Muted)
+- [x] Phase-aware cue playback (setup on first set, execution on subsequent)
+
+### Integration
+- [x] Wire timer into active-workout screen (Voice Coach Timer button)
+- [x] Timer accessible from exercise cards during workout
+- [x] Voice Coach Settings screen with persistence (AsyncStorage)
+
+### Testing
+- [x] 0 TypeScript errors
+- [x] 90 new tests all passing (round90-workout-timer-voice-coach.test.ts)
+- [x] New tests for workout timer component, settings, and logic
+- [x] New tests for voice coaching integration and audio cues

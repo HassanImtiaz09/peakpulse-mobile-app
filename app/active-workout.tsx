@@ -13,6 +13,7 @@ import { ExerciseDemoPlayer } from "@/components/exercise-demo-player";
 import { BodyDiagramInline } from "@/components/body-diagram";
 import { EnhancedGifPlayer } from "@/components/enhanced-gif-player";
 import { getExerciseInfo, getAlternativeExercises } from "@/lib/exercise-data";
+import { WorkoutTimerCoach, type TimerExercise } from "@/components/workout-timer-coach";
 import { Image } from "expo-image";
 import { useFavorites } from "@/lib/favorites-context";
 import { logWorkoutPRs } from "@/lib/personal-records";
@@ -273,6 +274,7 @@ export default function ActiveWorkoutScreen() {
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [workoutStarted, setWorkoutStarted] = useState(false);
   const [fullscreenVisible, setFullscreenVisible] = useState(false);
+  const [voiceCoachVisible, setVoiceCoachVisible] = useState(false);
   const [subscription, setSubscription] = useState<string>("free");
   const [trialDaysLeft, setTrialDaysLeft] = useState<number | null>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -635,13 +637,22 @@ export default function ActiveWorkoutScreen() {
                 </View>
               )}
 
-              {/* Fullscreen Timer Button */}
-              <TouchableOpacity
-                style={{ marginTop: 12, backgroundColor: SF.gold, borderRadius: 12, paddingVertical: 10, alignItems: "center", flexDirection: "row", justifyContent: "center", gap: 6 }}
-                onPress={() => setFullscreenVisible(true)}
-              >
-                <Text style={{ color: SF.bg, fontFamily: "DMSans_700Bold", fontSize: 14 }}>⏱ Open Fullscreen Timer + Demo</Text>
-              </TouchableOpacity>
+              {/* Timer Buttons */}
+              <View style={{ flexDirection: "row", gap: 8, marginTop: 12 }}>
+                <TouchableOpacity
+                  style={{ flex: 1, backgroundColor: SF.gold, borderRadius: 12, paddingVertical: 10, alignItems: "center", flexDirection: "row", justifyContent: "center", gap: 6 }}
+                  onPress={() => setVoiceCoachVisible(true)}
+                >
+                  <MaterialIcons name="record-voice-over" size={14} color={SF.bg} />
+                  <Text style={{ color: SF.bg, fontFamily: "DMSans_700Bold", fontSize: 13 }}>Voice Coach Timer</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={{ flex: 1, backgroundColor: SF.surface, borderRadius: 12, paddingVertical: 10, alignItems: "center", flexDirection: "row", justifyContent: "center", gap: 6, borderWidth: 1, borderColor: SF.border }}
+                  onPress={() => setFullscreenVisible(true)}
+                >
+                  <Text style={{ color: SF.muted, fontFamily: "DMSans_700Bold", fontSize: 13 }}>⏱ Timer</Text>
+                </TouchableOpacity>
+              </View>
             </View>
 
             {/* Demo Video (inline, compact) */}
@@ -809,6 +820,40 @@ export default function ActiveWorkoutScreen() {
           currentSetIndex={completedSets}
           totalSets={exercise.sets}
           completedSets={completedSets}
+        />
+      )}
+
+      {/* Voice Coach Timer Modal */}
+      {exercise && (
+        <WorkoutTimerCoach
+          visible={voiceCoachVisible}
+          exercise={{
+            name: exercise.name,
+            sets: exercise.sets,
+            reps: exercise.reps,
+            rest: exercise.rest,
+            notes: exercise.notes,
+          }}
+          exercises={exercises.map((e) => ({
+            name: e.name,
+            sets: e.sets,
+            reps: e.reps,
+            rest: e.rest,
+            notes: e.notes,
+          }))}
+          currentExerciseIndex={currentExercise}
+          completedSets={completedSets}
+          totalElapsed={elapsedSeconds}
+          onClose={() => setVoiceCoachVisible(false)}
+          onCompleteSet={completeCurrentSet}
+          onSkipRest={() => { setRestTimer(null); if (restRef.current) clearInterval(restRef.current); }}
+          onNextExercise={() => {
+            if (currentExercise < exercises.length - 1) setCurrentExercise(currentExercise + 1);
+          }}
+          onPrevExercise={() => {
+            if (currentExercise > 0) setCurrentExercise(currentExercise - 1);
+          }}
+          restTimerValue={restTimer}
         />
       )}
     </ScreenContainer>
