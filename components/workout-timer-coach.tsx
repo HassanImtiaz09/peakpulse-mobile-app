@@ -20,6 +20,10 @@ import {
 } from "@/lib/audio-form-cues";
 import { ExerciseDemoPlayer } from "@/components/exercise-demo-player";
 import { getExerciseDemo } from "@/lib/exercise-demos";
+import {
+  loadSoundSettings, playCompletionSound, playCountdownSound, playHalfwaySound,
+  type RestTimerSoundSettings,
+} from "@/lib/rest-timer-sounds";
 
 const { width: SCREEN_W } = Dimensions.get("window");
 
@@ -118,6 +122,13 @@ export function WorkoutTimerCoach({
 
   const audioCues = getAudioCues(exercise.name);
   const demo = getExerciseDemo(exercise.name);
+  const [soundSettings, setSoundSettings] = useState<RestTimerSoundSettings | null>(null);
+  const halfwayFiredRef = useRef(false);
+
+  // Load sound settings on mount
+  useEffect(() => {
+    loadSoundSettings().then(setSoundSettings);
+  }, []);
   const totalSets = exercise.sets;
   const isResting = restTimerValue !== null;
 
@@ -159,19 +170,43 @@ export function WorkoutTimerCoach({
     }
   }, [isResting]);
 
-  // ── Voice countdown during rest ───────────────────────────────────────
+  // ── Voice countdown during rest (with sound effects) ──────────────────
   useEffect(() => {
-    if (!isResting || voiceMode === "off" || voiceMode === "cues_only") return;
-    if (restTimerValue === null) return;
+    if (!isResting || restTimerValue === null) return;
 
-    const text = getRestCountdownText(restTimerValue);
-    if (text) {
-      speakAnnouncement(text);
-      if (restTimerValue <= 3 && Platform.OS !== "web") {
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
+    const restDuration = parseInt(exercise.rest) || 60;
+
+    // Halfway warning
+    if (soundSettings && restTimerValue === Math.round(restDuration / 2) && !halfwayFiredRef.current) {
+      halfwayFiredRef.current = true;
+      playHalfwaySound(soundSettings).catch(() => {});
+    }
+
+    // Countdown sound effects at milestones
+    if (soundSettings && (restTimerValue === 10 || restTimerValue === 5)) {
+      playCountdownSound(soundSettings, restTimerValue).catch(() => {});
+    }
+
+    // Rest complete sound
+    if (soundSettings && restTimerValue === 0) {
+      const nextExName = currentExerciseIndex < exercises.length - 1
+        ? exercises[currentExerciseIndex + 1]?.name
+        : undefined;
+      playCompletionSound(soundSettings, nextExName).catch(() => {});
+      halfwayFiredRef.current = false;
+    }
+
+    // Voice countdown (existing)
+    if (voiceMode !== "off" && voiceMode !== "cues_only") {
+      const text = getRestCountdownText(restTimerValue);
+      if (text) {
+        speakAnnouncement(text);
+        if (restTimerValue <= 3 && Platform.OS !== "web") {
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
+        }
       }
     }
-  }, [restTimerValue, isResting, voiceMode]);
+  }, [restTimerValue, isResting, voiceMode, soundSettings]);
 
   // ── Auto-play form cues when set starts ───────────────────────────────
   useEffect(() => {
@@ -554,31 +589,92 @@ export function WorkoutTimerCoach({
             />
           </View>
 
-          {/* ── Exercise Navigation ─────────────────────────────────── */}
+          {/* ── Current & Next Exercise Indicator ─────────────────── */}
+          <View style={styles.exerciseIndicator}>
+            <Text style={styles.exerciseIndicatorTitle}>EXERCISE SEQUENCE</Text>
+            <View style={styles.exerciseIndicatorRow}>
+              {/* Current Exercise */}
+              <View style={[styles.exerciseIndicatorCard, styles.exerciseIndicatorCurrent]}>
+                <View style={styles.exerciseIndicatorBadge}>
+                  <Text style={styles.exerciseIndicatorBadgeText}>NOW</Text>
+                </View>
+                <MaterialIcons name="fitness-center" size={20} color={C.gold} />
+                <Text style={styles.exerciseIndicatorName} numberOfLines={1}>{exercise.name}</Text>
+                <Text style={styles.exerciseIndicatorMeta}>
+                  {exercise.sets} sets · {exercise.reps} reps
+                </Text>
+                <View style={styles.exerciseIndicatorProgress}>
+                  <Text style={styles.exerciseIndicatorProgressText}>
+                    Set {Math.min(completedSets + 1, totalSets)}/{totalSets}
+                  </Text>
+                </View>
+              </View>
+
+              {/* Arrow */}
+              {currentExerciseIndex < exercises.length - 1 && (
+                <View style={styles.exerciseIndicatorArrow}>
+                  <MaterialIcons name="arrow-forward" size={16} color={C.muted} />
+                </View>
+              )}
+
+              {/* Next Exercise */}
+              {currentExerciseIndex < exercises.length - 1 ? (
+                <View style={[styles.exerciseIndicatorCard, styles.exerciseIndicatorNext]}>
+                  <View style={[styles.exerciseIndicatorBadge, styles.exerciseIndicatorBadgeNext]}>
+                    <Text style={[styles.exerciseIndicatorBadgeText, { color: C.muted }]}>NEXT</Text>
+                  </View>
+                  <MaterialIcons name="navigate-next" size={20} color={C.muted} />
+                  <Text style={[styles.exerciseIndicatorName, { color: C.muted }]} numberOfLines={1}>
+                    {exercises[currentExerciseIndex + 1].name}
+                  </Text>
+                  <Text style={styles.exerciseIndicatorMeta}>
+                    {exercises[currentExerciseIndex + 1].sets} sets · {exercises[currentExerciseIndex + 1].reps} reps
+                  </Text>
+                </View>
+              ) : (
+                <View style={[styles.exerciseIndicatorCard, styles.exerciseIndicatorDone]}>
+                  <MaterialIcons name="emoji-events" size={20} color={C.green} />
+                  <Text style={[styles.exerciseIndicatorName, { color: C.green }]}>Finish!</Text>
+                  <Text style={styles.exerciseIndicatorMeta}>Last exercise</Text>
+                </View>
+              )}
+            </View>
+          </View>
+
+          {/* ── Exercise Navigation (chips) ────────────────────────────── */}
           <View style={styles.exerciseNav}>
             <Text style={styles.exerciseNavLabel}>
               Exercise {currentExerciseIndex + 1} of {exercises.length}
             </Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
-              {exercises.map((ex, i) => (
-                <View
-                  key={i}
-                  style={[
-                    styles.exerciseChip,
-                    i === currentExerciseIndex && styles.exerciseChipActive,
-                  ]}
-                >
-                  <Text
+              {exercises.map((ex, i) => {
+                const isDone = i < currentExerciseIndex;
+                const isCurrent = i === currentExerciseIndex;
+                const isNext = i === currentExerciseIndex + 1;
+                return (
+                  <View
+                    key={i}
                     style={[
-                      styles.exerciseChipText,
-                      i === currentExerciseIndex && styles.exerciseChipTextActive,
+                      styles.exerciseChip,
+                      isCurrent && styles.exerciseChipActive,
+                      isNext && styles.exerciseChipNext,
+                      isDone && styles.exerciseChipDone,
                     ]}
-                    numberOfLines={1}
                   >
-                    {ex.name}
-                  </Text>
-                </View>
-              ))}
+                    {isDone && <MaterialIcons name="check" size={12} color={C.green} style={{ marginRight: 4 }} />}
+                    <Text
+                      style={[
+                        styles.exerciseChipText,
+                        isCurrent && styles.exerciseChipTextActive,
+                        isDone && { color: C.green },
+                      ]}
+                      numberOfLines={1}
+                    >
+                      {ex.name}
+                    </Text>
+                  </View>
+                );
+              })}
             </ScrollView>
           </View>
 
@@ -1049,6 +1145,96 @@ const styles = StyleSheet.create({
   },
   exerciseChipTextActive: {
     color: C.bg,
+  },
+  exerciseChipNext: {
+    borderColor: "rgba(245,158,11,0.35)",
+    backgroundColor: "rgba(245,158,11,0.06)",
+  },
+  exerciseChipDone: {
+    borderColor: "rgba(34,197,94,0.25)",
+    backgroundColor: "rgba(34,197,94,0.06)",
+    flexDirection: "row",
+    alignItems: "center",
+  },
+
+  // Exercise Indicator (current + next)
+  exerciseIndicator: {
+    marginBottom: 16,
+  },
+  exerciseIndicatorTitle: {
+    color: C.gold,
+    fontFamily: "DMSans_700Bold",
+    fontSize: 11,
+    letterSpacing: 1.5,
+    marginBottom: 10,
+  },
+  exerciseIndicatorRow: {
+    flexDirection: "row",
+    alignItems: "stretch",
+    gap: 8,
+  },
+  exerciseIndicatorCard: {
+    flex: 1,
+    backgroundColor: C.surface,
+    borderRadius: 14,
+    padding: 12,
+    borderWidth: 1,
+    borderColor: C.border,
+    alignItems: "center",
+    gap: 6,
+  },
+  exerciseIndicatorCurrent: {
+    borderColor: C.gold,
+    backgroundColor: "rgba(245,158,11,0.06)",
+  },
+  exerciseIndicatorNext: {
+    borderColor: "rgba(245,158,11,0.10)",
+    opacity: 0.7,
+  },
+  exerciseIndicatorDone: {
+    borderColor: "rgba(34,197,94,0.25)",
+    backgroundColor: "rgba(34,197,94,0.06)",
+  },
+  exerciseIndicatorBadge: {
+    backgroundColor: "rgba(245,158,11,0.20)",
+    borderRadius: 6,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+  },
+  exerciseIndicatorBadgeNext: {
+    backgroundColor: "rgba(245,158,11,0.08)",
+  },
+  exerciseIndicatorBadgeText: {
+    color: C.gold,
+    fontFamily: "DMSans_700Bold",
+    fontSize: 9,
+    letterSpacing: 1,
+  },
+  exerciseIndicatorName: {
+    color: C.fg,
+    fontFamily: "DMSans_700Bold",
+    fontSize: 13,
+    textAlign: "center",
+  },
+  exerciseIndicatorMeta: {
+    color: C.muted,
+    fontFamily: "DMSans_400Regular",
+    fontSize: 10,
+  },
+  exerciseIndicatorProgress: {
+    backgroundColor: "rgba(245,158,11,0.15)",
+    borderRadius: 6,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+  },
+  exerciseIndicatorProgressText: {
+    color: C.gold2,
+    fontFamily: "DMSans_700Bold",
+    fontSize: 10,
+  },
+  exerciseIndicatorArrow: {
+    justifyContent: "center",
+    alignItems: "center",
   },
 
   // Nav buttons

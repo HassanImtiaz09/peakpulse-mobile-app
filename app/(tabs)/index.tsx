@@ -108,6 +108,7 @@ const QUICK_ACTION_GROUPS: ActionGroup[] = [
       { icon: "edit-note", label: "Log Workout", route: "/log-workout", gated: false },
       { icon: "history", label: "Workout Log", route: "/workout-history", gated: false },
       { icon: "calendar-today", label: "Workout History", route: "/workout-calendar", gated: false },
+      { icon: "bar-chart", label: "Analytics", route: "/workout-analytics", gated: false },
       { icon: "bookmark", label: "Templates", route: "/workout-templates", gated: false },
       { icon: "center-focus-strong", label: "Form Check", route: "/form-checker", gated: true, feature: "form_checker", tier: "advanced", desc: "AI Form Checker analyzes your exercise technique in real-time — Advanced plan only." },
     ],

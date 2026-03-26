@@ -26,6 +26,7 @@ import {
   getRestTimeForExercise,
 } from "@/lib/rest-timer-settings";
 import { preloadExerciseVideos, clearPreloadCache } from "@/lib/video-preload";
+import { autoCacheCurrentWorkout } from "@/lib/offline-workout-cache";
 
 import { GOLDEN_WORKOUT, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgrounds";
 const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get("window");
@@ -304,13 +305,18 @@ export default function ActiveWorkoutScreen() {
     }
   }, [currentExercise, restTimer]);
 
-  // Preload first 2 exercises at workout start
+  // Preload first 2 exercises at workout start + auto-cache for offline
   useEffect(() => {
     if (workoutStarted && exercises.length > 0) {
       preloadExerciseVideos(exercises[0].name).catch(() => {});
       if (exercises.length > 1) {
         preloadExerciseVideos(exercises[1].name).catch(() => {});
       }
+      // Auto-cache workout for offline use
+      autoCacheCurrentWorkout(
+        dayData?.focus ?? "Workout",
+        exercises.map((e: Exercise) => ({ name: e.name, sets: e.sets, reps: e.reps, rest: e.rest, notes: e.notes ?? "" }))
+      ).catch(() => {});
     }
     return () => clearPreloadCache();
   }, [workoutStarted]);

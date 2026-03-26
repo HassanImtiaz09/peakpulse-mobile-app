@@ -492,7 +492,10 @@ export default function ProfileScreen() {
             <FeatureLink icon="check-circle" label="Daily Check-In" onPress={() => router.push("/daily-checkin" as any)} />
             <FeatureLink icon="center-focus-strong" label="Form Checker" onPress={() => gatedNav("/form-checker", "form_checker", "center-focus-strong", "advanced", "AI-powered real-time exercise form analysis is an Advanced plan exclusive feature.")} />
             <FeatureLink icon="calendar-today" label="Workout History" onPress={() => router.push("/workout-calendar" as any)} />
+            <FeatureLink icon="bar-chart" label="Workout Analytics" onPress={() => router.push("/workout-analytics" as any)} />
             <FeatureLink icon="timer" label="Rest Timer Settings" onPress={() => router.push("/rest-timer-settings" as any)} />
+            <FeatureLink icon="music-note" label="Timer Sounds" onPress={() => router.push("/rest-timer-sounds" as any)} />
+            <FeatureLink icon="cloud-off" label="Offline Mode" onPress={() => router.push("/offline-cache" as any)} />
             <FeatureLink icon="record-voice-over" label="Voice Coach Settings" onPress={() => router.push("/voice-coach-settings" as any)} />
           </CollapsibleSection>
 

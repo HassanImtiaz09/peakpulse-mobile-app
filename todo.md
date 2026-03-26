@@ -2228,3 +2228,41 @@
 - [x] 90 new tests all passing (round90-workout-timer-voice-coach.test.ts)
 - [x] New tests for workout timer component, settings, and logic
 - [x] New tests for voice coaching integration and audio cues
+
+## Round 91 — Analytics, Sounds, Offline Mode, Timer Enhancements
+
+### Workout History Analytics
+- [x] Workout analytics data service (lib/workout-analytics.ts) — aggregate volume, frequency, strength from history
+- [x] Analytics chart components (volume over time, frequency by week, strength progression, muscle distribution)
+- [x] Workout Analytics screen (app/workout-analytics.tsx) with tab-based chart views
+- [x] Navigation links from profile screen and home screen quick actions
+- [x] 1w/1m/3m/6m/all time period selectors
+
+### Custom Rest Timer Sounds
+- [x] Rest timer sound service (lib/rest-timer-sounds.ts) with 7 sound types (none/beep/double_beep/chime/triple_chime/bell/voice)
+- [x] Timer Sounds settings screen (app/rest-timer-sounds.tsx) with preview and selection UI
+- [x] Completion sound, countdown sound, and halfway warning support
+- [x] Integrated sound playback into WorkoutTimerCoach rest countdown
+- [x] Persist sound preferences to AsyncStorage
+
+### Offline Workout Mode
+- [x] Offline cache service (lib/offline-workout-cache.ts) for workout plans with audio cues and demos
+- [x] Auto-cache current workout plan to AsyncStorage on workout start
+- [x] Load cached workout plan and audio cues when offline
+- [x] Offline Cache settings screen (app/offline-cache.tsx) with status, pre-cache, and clear actions
+- [x] Network status detection using expo-network
+
+### Enhanced Timer Exercise Indicators
+- [x] Current exercise highlight card with "NOW" badge, set progress, and gold border
+- [x] Next exercise preview card with "NEXT" badge, name, sets, reps
+- [x] "Finish!" indicator with trophy icon when on last exercise
+- [x] Enhanced exercise chips with done (green check), current (gold), and next (subtle gold) states
+- [x] Arrow connector between current and next exercise cards
+
+### Testing
+- [x] 0 TypeScript errors
+- [x] 51 new tests all passing (round91-features.test.ts)
+- [x] Tests for analytics data aggregation (volume, frequency, strength, summary)
+- [x] Tests for rest timer sound service (all 7 types, settings persistence, playback)
+- [x] Tests for offline cache service (cache/load/clear, auto-cache, status, multi-day)
+- [x] Tests for exercise indicator logic (current/next/done states, boundaries, metadata)
