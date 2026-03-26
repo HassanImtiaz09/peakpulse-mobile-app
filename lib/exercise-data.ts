@@ -51,8 +51,8 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "intermediate",
     cue: "Keep shoulder blades retracted. Bar touches mid-chest.",
     angleViews: [
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-barbell-bench-press-front.mp4", label: "Front View", focus: "Grip width should be just outside shoulder width, wrists stacked over elbows" },
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-barbell-bench-press-side_KciuhbB.mp4", label: "Side View", focus: "Watch elbow angle at 45° from torso, bar path should be slightly diagonal" }
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/IciLPTXbNLzyYQDz.png", label: "Front View", focus: "Grip width should be just outside shoulder width, wrists stacked over elbows" },
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/IciLPTXbNLzyYQDz.png", label: "Side View", focus: "Watch elbow angle at 45° from torso, bar path should be slightly diagonal" }
     ],
   },
   {
@@ -65,8 +65,8 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "beginner",
     cue: "Straight body line. Lower until chest nearly touches floor.",
     angleViews: [
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-bodyweight-push-up-front.mp4", label: "Front View", focus: "Hands placed slightly wider than shoulders, fingers spread for stability" },
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-bodyweight-push-up-side.mp4", label: "Side View", focus: "Body forms a straight line from head to heels, no hip sag or pike" }
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/qMqbVeSkIScGWeln.png", label: "Front View", focus: "Hands placed slightly wider than shoulders, fingers spread for stability" },
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/qMqbVeSkIScGWeln.png", label: "Side View", focus: "Body forms a straight line from head to heels, no hip sag or pike" }
     ],
   },
   {
@@ -79,8 +79,8 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "intermediate",
     cue: "Slight elbow bend throughout. Squeeze chest at top.",
     angleViews: [
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-dumbbell-chest-fly-front.mp4", label: "Front View", focus: "Dumbbells lower to chest level, not below — protect shoulder joint" },
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-dumbbell-chest-fly-side.mp4", label: "Side View", focus: "Maintain slight bend in elbows throughout — arms should look like hugging a barrel" }
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/QMAxVAlcCmJIOSGy.png", label: "Front View", focus: "Dumbbells lower to chest level, not below — protect shoulder joint" },
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/QMAxVAlcCmJIOSGy.png", label: "Side View", focus: "Maintain slight bend in elbows throughout — arms should look like hugging a barrel" }
     ],
   },
   {
@@ -93,8 +93,8 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "intermediate",
     cue: "30-45° incline. Drive bar in a slight arc to upper chest.",
     angleViews: [
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Barbell-barbell-incline-bench-press-front.mp4", label: "Front View", focus: "Grip slightly narrower than flat bench, elbows at 45° from torso" },
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Barbell-barbell-incline-bench-press-side.mp4", label: "Side View", focus: "Bench angle between 30-45°, bar touches upper chest just below collarbone" }
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/mWunUECIbgbWUPJi.png", label: "Front View", focus: "Grip slightly narrower than flat bench, elbows at 45° from torso" },
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/mWunUECIbgbWUPJi.png", label: "Side View", focus: "Bench angle between 30-45°, bar touches upper chest just below collarbone" }
     ],
   },
   {
@@ -107,8 +107,8 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "intermediate",
     cue: "Press dumbbells up and slightly inward. Squeeze at top.",
     angleViews: [
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-dumbbell-incline-bench-press-front.mp4", label: "Front View", focus: "Palms face forward, dumbbells don't touch at top — maintain tension" },
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-dumbbell-incline-bench-press-side.mp4", label: "Side View", focus: "Dumbbells start at shoulder level, press up in a slight arc converging at top" }
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/qbVTMamUSBhHRXFP.png", label: "Front View", focus: "Palms face forward, dumbbells don't touch at top — maintain tension" },
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/qbVTMamUSBhHRXFP.png", label: "Side View", focus: "Dumbbells start at shoulder level, press up in a slight arc converging at top" }
     ],
   },
   {
@@ -121,8 +121,8 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "intermediate",
     cue: "Secure feet. Lower bar to lower chest. Drive up.",
     angleViews: [
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-dumbbell-decline-bench-press-front.mp4", label: "Front View", focus: "Grip width same as flat bench, secure legs firmly under pad" },
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-dumbbell-decline-bench-press-side.mp4", label: "Side View", focus: "Bar path targets lower pec line, decline angle 15-30°" }
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/ohSnqDeISDQlugUc.png", label: "Front View", focus: "Grip width same as flat bench, secure legs firmly under pad" },
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/ohSnqDeISDQlugUc.png", label: "Side View", focus: "Bar path targets lower pec line, decline angle 15-30°" }
     ],
   },
   {
@@ -135,8 +135,8 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "intermediate",
     cue: "Step forward for stretch. Bring hands together at chest height.",
     angleViews: [
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-cable-pec-fly-front.mp4", label: "Front View", focus: "Hands meet at midline, slight bend in elbows maintained throughout" },
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-cable-pec-fly-side.mp4", label: "Side View", focus: "Lean slightly forward, one foot ahead for stability" }
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/LPUMeiBqbsBSTSNg.png", label: "Front View", focus: "Hands meet at midline, slight bend in elbows maintained throughout" },
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/LPUMeiBqbsBSTSNg.png", label: "Side View", focus: "Lean slightly forward, one foot ahead for stability" }
     ],
   },
   {
@@ -149,8 +149,8 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "intermediate",
     cue: "High to low arc. Squeeze at bottom.",
     angleViews: [
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-cable-pec-fly-front.mp4", label: "Front View", focus: "Cables set high, hands cross at waist level for lower chest emphasis" },
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-cable-pec-fly-side.mp4", label: "Side View", focus: "Maintain forward lean, control the eccentric phase" }
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/LPUMeiBqbsBSTSNg.png", label: "Front View", focus: "Cables set high, hands cross at waist level for lower chest emphasis" },
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/LPUMeiBqbsBSTSNg.png", label: "Side View", focus: "Maintain forward lean, control the eccentric phase" }
     ],
   },
   {
@@ -163,8 +163,8 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "intermediate",
     cue: "Lean forward for chest emphasis. Lower until upper arms parallel.",
     angleViews: [
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Dumbbells-dumbbell-weighted-dip-front.mp4", label: "Front View", focus: "Elbows track slightly outward, lower until 90° elbow bend" },
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Dumbbells-dumbbell-weighted-dip-side.mp4", label: "Side View", focus: "Forward lean targets chest, upright targets triceps — lean 30° forward" }
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/fIMLVqcdtkUTUExN.png", label: "Front View", focus: "Elbows track slightly outward, lower until 90° elbow bend" },
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/fIMLVqcdtkUTUExN.png", label: "Side View", focus: "Forward lean targets chest, upright targets triceps — lean 30° forward" }
     ],
   },
   {
@@ -177,8 +177,8 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "intermediate",
     cue: "Lean forward. Deep stretch at bottom. Squeeze chest at top.",
     angleViews: [
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Dumbbells-dumbbell-weighted-dip-front.mp4", label: "Front View", focus: "Wide grip on bars, elbows flare slightly outward" },
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Dumbbells-dumbbell-weighted-dip-side.mp4", label: "Side View", focus: "Greater forward lean than tricep dip, lower deeper for chest stretch" }
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/fIMLVqcdtkUTUExN.png", label: "Front View", focus: "Wide grip on bars, elbows flare slightly outward" },
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/fIMLVqcdtkUTUExN.png", label: "Side View", focus: "Greater forward lean than tricep dip, lower deeper for chest stretch" }
     ],
   },
 
@@ -193,8 +193,8 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "intermediate",
     cue: "Full hang at bottom. Chin clears bar. Control the descent.",
     angleViews: [
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-bodyweight-pull-ups-front.mp4", label: "Front View", focus: "Grip slightly wider than shoulders, pull elbows down and back" },
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-bodyweight-pull-ups-side.mp4", label: "Side View", focus: "Slight lean back, chest drives toward bar — avoid kipping" }
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/lKYMSTwMgeSTUjoV.png", label: "Front View", focus: "Grip slightly wider than shoulders, pull elbows down and back" },
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/lKYMSTwMgeSTUjoV.png", label: "Side View", focus: "Slight lean back, chest drives toward bar — avoid kipping" }
     ],
   },
   {
@@ -207,8 +207,8 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "intermediate",
     cue: "Supinated grip. Chin clears bar at top.",
     angleViews: [
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-bodyweight-chin-ups-front.mp4", label: "Front View", focus: "Underhand grip shoulder-width, biceps assist the pull" },
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-bodyweight-chin-ups-side.mp4", label: "Side View", focus: "Drive chest to bar, squeeze at top for 1 second" }
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/gRQVtBkEopPyFGnp.png", label: "Front View", focus: "Underhand grip shoulder-width, biceps assist the pull" },
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/gRQVtBkEopPyFGnp.png", label: "Side View", focus: "Drive chest to bar, squeeze at top for 1 second" }
     ],
   },
   {
@@ -221,8 +221,8 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "beginner",
     cue: "Lean back slightly. Pull bar to upper chest.",
     angleViews: [
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-machine-pulldown-front.mp4", label: "Front View", focus: "Wide grip, pull bar to upper chest — not behind neck" },
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-machine-pulldown-side.mp4", label: "Side View", focus: "Slight lean back (15-20°), chest up, squeeze shoulder blades" }
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/bJTDFwdQtDzODwdX.png", label: "Front View", focus: "Wide grip, pull bar to upper chest — not behind neck" },
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/bJTDFwdQtDzODwdX.png", label: "Side View", focus: "Slight lean back (15-20°), chest up, squeeze shoulder blades" }
     ],
   },
   {
@@ -235,8 +235,8 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "intermediate",
     cue: "Hinge at hips. Pull bar to lower chest. Squeeze back.",
     angleViews: [
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Barbell-barbell-bent-over-row-front.mp4", label: "Front View", focus: "Knees slightly bent, back flat — no rounding of lower back" },
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Barbell-barbell-bent-over-row-side.mp4", label: "Side View", focus: "Torso at 45° angle, bar travels straight up to lower chest/upper abs" }
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/vWWXQMPquhdIpUmf.png", label: "Front View", focus: "Knees slightly bent, back flat — no rounding of lower back" },
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/vWWXQMPquhdIpUmf.png", label: "Side View", focus: "Torso at 45° angle, bar travels straight up to lower chest/upper abs" }
     ],
   },
   {
@@ -249,8 +249,8 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "beginner",
     cue: "One arm on bench. Pull dumbbell to hip. Squeeze lat.",
     angleViews: [
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-dumbbell-row-bilateral-front.mp4", label: "Front View", focus: "Back flat, supporting hand and knee on bench for stability" },
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-dumbbell-row-bilateral-side.mp4", label: "Side View", focus: "Pull to hip not shoulder, elbow drives past torso line" }
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/hAejujtVpVuDXMmw.png", label: "Front View", focus: "Back flat, supporting hand and knee on bench for stability" },
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/hAejujtVpVuDXMmw.png", label: "Side View", focus: "Pull to hip not shoulder, elbow drives past torso line" }
     ],
   },
   {
@@ -263,8 +263,8 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "beginner",
     cue: "Sit tall. Pull handle to lower chest. Squeeze shoulder blades.",
     angleViews: [
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-machine-seated-cable-row-front.mp4", label: "Front View", focus: "Elbows stay close to body, pull to belly button area" },
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-machine-seated-cable-row-side.mp4", label: "Side View", focus: "Torso stays upright, don't lean back excessively — slight lean OK" }
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/xiEOIoDFrDLyoQgO.png", label: "Front View", focus: "Elbows stay close to body, pull to belly button area" },
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/xiEOIoDFrDLyoQgO.png", label: "Side View", focus: "Torso stays upright, don't lean back excessively — slight lean OK" }
     ],
   },
   {
@@ -277,8 +277,8 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "advanced",
     cue: "Flat back. Drive through heels. Lock out hips at top.",
     angleViews: [
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Barbell-barbell-deadlift-front.mp4", label: "Front View", focus: "Feet hip-width, grip just outside knees, shoulders over the bar" },
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Barbell-barbell-deadlift-side.mp4", label: "Side View", focus: "Bar stays close to shins, back angle consistent until bar passes knees" }
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/pzsBFJNQTzekfGzE.png", label: "Front View", focus: "Feet hip-width, grip just outside knees, shoulders over the bar" },
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/pzsBFJNQTzekfGzE.png", label: "Side View", focus: "Bar stays close to shins, back angle consistent until bar passes knees" }
     ],
   },
   {
@@ -291,8 +291,8 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "intermediate",
     cue: "Chest on pad. Pull to chest. Squeeze back.",
     angleViews: [
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Barbell-landmine-t-bar-rows-front.mp4", label: "Front View", focus: "Neutral grip, squeeze shoulder blades at top of movement" },
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Barbell-landmine-t-bar-rows-side.mp4", label: "Side View", focus: "Torso at 45°, pull handle to chest, elbows drive back" },
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/ChXzuIPmXoGBQBYI.png", label: "Front View", focus: "Neutral grip, squeeze shoulder blades at top of movement" },
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/ChXzuIPmXoGBQBYI.png", label: "Side View", focus: "Torso at 45°, pull handle to chest, elbows drive back" },
     ],
   },
   {
@@ -305,8 +305,8 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "advanced",
     cue: "Torso parallel to floor. Explosive pull. Bar returns to floor each rep.",
     angleViews: [
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Dumbbells-dumbbell-pendlay-row-front.mp4", label: "Front View", focus: "Overhand grip slightly wider than shoulder width" },
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Dumbbells-dumbbell-pendlay-row-side.mp4", label: "Side View", focus: "Back parallel to floor, explosive concentric, controlled return to floor" }
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/QnzClWYDNyizXGFK.png", label: "Front View", focus: "Overhand grip slightly wider than shoulder width" },
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/QnzClWYDNyizXGFK.png", label: "Side View", focus: "Back parallel to floor, explosive concentric, controlled return to floor" }
     ],
   },
 
@@ -321,8 +321,8 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "intermediate",
     cue: "Brace core. Press bar overhead. Lock out arms.",
     angleViews: [
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Barbell-barbell-overhead-press-front.mp4", label: "Front View", focus: "Bar starts at collarbone, press straight up — head moves back to let bar pass" },
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Barbell-barbell-overhead-press-side.mp4", label: "Side View", focus: "Bar path is straight vertical line, core braced, no excessive back lean" }
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/kgsOjquFixCJuxWg.png", label: "Front View", focus: "Bar starts at collarbone, press straight up — head moves back to let bar pass" },
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/kgsOjquFixCJuxWg.png", label: "Side View", focus: "Bar path is straight vertical line, core braced, no excessive back lean" }
     ],
   },
   {
@@ -335,8 +335,8 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "beginner",
     cue: "Press dumbbells overhead. Don't lock elbows fully.",
     angleViews: [
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Dumbbells-dumbbell-overhead-press-front.mp4", label: "Front View", focus: "Dumbbells at ear level to start, press up in slight arc" },
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Dumbbells-dumbbell-overhead-press-side.mp4", label: "Side View", focus: "Elbows at 90° at bottom, full extension at top" }
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/gnHJKzEXdtdQHBnQ.png", label: "Front View", focus: "Dumbbells at ear level to start, press up in slight arc" },
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/gnHJKzEXdtdQHBnQ.png", label: "Side View", focus: "Elbows at 90° at bottom, full extension at top" }
     ],
   },
   {
@@ -349,8 +349,8 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "beginner",
     cue: "Slight bend in elbows. Raise to shoulder height. Control descent.",
     angleViews: [
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-dumbbell-lateral-raise-front.mp4", label: "Front View", focus: "Raise to shoulder height only — going higher shifts to traps" },
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-dumbbell-lateral-raise-side.mp4", label: "Side View", focus: "Slight forward lean, lead with elbows not wrists" }
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/UcsSvMtgSNjiwjCJ.png", label: "Front View", focus: "Raise to shoulder height only — going higher shifts to traps" },
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/UcsSvMtgSNjiwjCJ.png", label: "Side View", focus: "Slight forward lean, lead with elbows not wrists" }
     ],
   },
   {
@@ -363,8 +363,8 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "beginner",
     cue: "Raise to eye level. Alternate arms or both together.",
     angleViews: [
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-dumbbell-front-raise-front.mp4", label: "Front View", focus: "Palms face down or neutral, don't swing — use strict form" },
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-dumbbell-front-raise-side.mp4", label: "Side View", focus: "Arm raises to eye level, slight bend in elbow, control the negative" }
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/cYmcAjzkbzwDgabK.png", label: "Front View", focus: "Palms face down or neutral, don't swing — use strict form" },
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/cYmcAjzkbzwDgabK.png", label: "Side View", focus: "Arm raises to eye level, slight bend in elbow, control the negative" }
     ],
   },
   {
@@ -377,8 +377,8 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "beginner",
     cue: "Pull rope to face. Externally rotate at end.",
     angleViews: [
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Cable-cable-rope-face-pulls-front.mp4", label: "Front View", focus: "Pull to forehead level, hands end up beside ears" },
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Cable-cable-rope-face-pulls-side.mp4", label: "Side View", focus: "External rotation at end — thumbs point back, squeeze rear delts" }
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/SZgCmqcaPFEavQZw.png", label: "Front View", focus: "Pull to forehead level, hands end up beside ears" },
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/SZgCmqcaPFEavQZw.png", label: "Side View", focus: "External rotation at end — thumbs point back, squeeze rear delts" }
     ],
   },
   {
@@ -391,8 +391,8 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "beginner",
     cue: "Bend forward. Raise dumbbells to sides. Squeeze rear delts.",
     angleViews: [
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-dumbbell-rear-delt-fly-front.mp4", label: "Front View", focus: "Bent over 45-60°, raise arms to shoulder height, squeeze at top" },
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-dumbbell-rear-delt-fly-side.mp4", label: "Side View", focus: "Slight bend in elbows, lead with elbows not hands" }
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/hnlfWJTRNLYvErWK.png", label: "Front View", focus: "Bent over 45-60°, raise arms to shoulder height, squeeze at top" },
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/hnlfWJTRNLYvErWK.png", label: "Side View", focus: "Slight bend in elbows, lead with elbows not hands" }
     ],
   },
   {
@@ -405,8 +405,8 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "intermediate",
     cue: "Start palms facing you. Rotate as you press up.",
     angleViews: [
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Dumbbells-dumbbell-arnold-press-front.mp4", label: "Front View", focus: "Start with palms facing chest, rotate 180° as you press overhead" },
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Dumbbells-dumbbell-arnold-press-side.mp4", label: "Side View", focus: "Smooth rotation throughout press, don't pause mid-rotation" }
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/tYQcxaHElvkIxKJv.png", label: "Front View", focus: "Start with palms facing chest, rotate 180° as you press overhead" },
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/tYQcxaHElvkIxKJv.png", label: "Side View", focus: "Smooth rotation throughout press, don't pause mid-rotation" }
     ],
   },
   {
@@ -419,8 +419,8 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "intermediate",
     cue: "Pull bar to chin. Elbows lead the movement.",
     angleViews: [
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Kettlebells-kettlebell-upright-row-front.mp4", label: "Front View", focus: "Elbows lead and stay higher than wrists, pull to chin level" },
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Kettlebells-kettlebell-upright-row-side.mp4", label: "Side View", focus: "Bar stays close to body, don't lean back" }
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/wBYFAeNCgXmcDeST.png", label: "Front View", focus: "Elbows lead and stay higher than wrists, pull to chin level" },
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/wBYFAeNCgXmcDeST.png", label: "Side View", focus: "Bar stays close to body, don't lean back" }
     ],
   },
   {
@@ -433,8 +433,8 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "beginner",
     cue: "Shrug straight up. Hold at top. Don't roll shoulders.",
     angleViews: [
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Dumbbells-dumbbell-shrug-front.mp4", label: "Front View", focus: "Straight up and down — no rolling, hold peak contraction 1-2 seconds" },
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Dumbbells-dumbbell-shrug-side.mp4", label: "Side View", focus: "Ears to shoulders motion, arms stay straight" }
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/zEnswTmjMDrPipXQ.png", label: "Front View", focus: "Straight up and down — no rolling, hold peak contraction 1-2 seconds" },
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/zEnswTmjMDrPipXQ.png", label: "Side View", focus: "Ears to shoulders motion, arms stay straight" }
     ],
   },
 
@@ -449,8 +449,8 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "beginner",
     cue: "Keep elbows pinned. Full range of motion. Squeeze at top.",
     angleViews: [
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Dumbbells-dumbbell-curl-front.mp4", label: "Front View", focus: "Elbows stay pinned to sides, no swinging — strict curl" },
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Dumbbells-dumbbell-curl-side.mp4", label: "Side View", focus: "Full extension at bottom, full contraction at top, 2-second negative" }
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/EXaJqPCiPBEgnngt.png", label: "Front View", focus: "Elbows stay pinned to sides, no swinging — strict curl" },
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/EXaJqPCiPBEgnngt.png", label: "Side View", focus: "Full extension at bottom, full contraction at top, 2-second negative" }
     ],
   },
   {
@@ -463,8 +463,8 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "beginner",
     cue: "Shoulder-width grip. Curl to shoulders. No swinging.",
     angleViews: [
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Barbell-barbell-curl-front.mp4", label: "Front View", focus: "Shoulder-width grip, elbows stationary, curl to shoulder level" },
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Barbell-barbell-curl-side.mp4", label: "Side View", focus: "Upper arms don't move, only forearms rotate up" }
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/ijCSvHSplAYhQSyN.png", label: "Front View", focus: "Shoulder-width grip, elbows stationary, curl to shoulder level" },
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/ijCSvHSplAYhQSyN.png", label: "Side View", focus: "Upper arms don't move, only forearms rotate up" }
     ],
   },
   {
@@ -477,8 +477,8 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "beginner",
     cue: "Neutral grip (palms facing each other). Curl to shoulder.",
     angleViews: [
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-dumbbell-hammer-curl-front.mp4", label: "Front View", focus: "Palms face each other throughout — targets brachialis and brachioradialis" },
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-dumbbell-hammer-curl-side.mp4", label: "Side View", focus: "Neutral grip maintained, no wrist rotation during curl" }
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/pGnywSTjKgENPPUL.png", label: "Front View", focus: "Palms face each other throughout — targets brachialis and brachioradialis" },
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/pGnywSTjKgENPPUL.png", label: "Side View", focus: "Neutral grip maintained, no wrist rotation during curl" }
     ],
   },
   {
@@ -491,8 +491,8 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "intermediate",
     cue: "Arm flat on pad. Curl to top. Slow negative.",
     angleViews: [
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Dumbbells-dumbbell-preacher-curl-front.mp4", label: "Front View", focus: "Full extension at bottom (careful with heavy weight), squeeze at top" },
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Dumbbells-dumbbell-preacher-curl-side.mp4", label: "Side View", focus: "Upper arm flat on pad, don't lift elbows — isolates bicep peak" }
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/mMTqLQAXZpNqeHAb.png", label: "Front View", focus: "Full extension at bottom (careful with heavy weight), squeeze at top" },
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/mMTqLQAXZpNqeHAb.png", label: "Side View", focus: "Upper arm flat on pad, don't lift elbows — isolates bicep peak" }
     ],
   },
   {
@@ -505,8 +505,8 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "beginner",
     cue: "Elbow braced on inner thigh. Curl and squeeze.",
     angleViews: [
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-dumbbell-concentration-curl-front.mp4", label: "Front View", focus: "Elbow braced against inner thigh, curl to shoulder, squeeze 2 seconds" },
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-dumbbell-concentration-curl-side.mp4", label: "Side View", focus: "Only forearm moves, upper arm stays completely still" }
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/uzCtsPmiYQdGFUSu.png", label: "Front View", focus: "Elbow braced against inner thigh, curl to shoulder, squeeze 2 seconds" },
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/uzCtsPmiYQdGFUSu.png", label: "Side View", focus: "Only forearm moves, upper arm stays completely still" }
     ],
   },
   {
@@ -519,8 +519,8 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "beginner",
     cue: "Elbows pinned. Push down to full extension. Squeeze.",
     angleViews: [
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Machine-machine-tricep-pushdown-front.mp4", label: "Front View", focus: "Slight forward lean, don't use body momentum" },
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Machine-machine-tricep-pushdown-side.mp4", label: "Side View", focus: "Elbows pinned to sides, push to full lockout, squeeze triceps" }
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/eGHvonrewMMIpLbd.png", label: "Front View", focus: "Slight forward lean, don't use body momentum" },
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/eGHvonrewMMIpLbd.png", label: "Side View", focus: "Elbows pinned to sides, push to full lockout, squeeze triceps" }
     ],
   },
   {
@@ -533,8 +533,8 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "beginner",
     cue: "Overhead. Extend arms fully. Keep elbows close to head.",
     angleViews: [
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Bodyweight-bodyweight-tricep-extension-front.mp4", label: "Front View", focus: "Elbows close to head, full extension at top" },
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Bodyweight-bodyweight-tricep-extension-side.mp4", label: "Side View", focus: "Elbows point to ceiling, only forearms move — upper arms stay vertical" }
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/WvehWDHVixqKIIgO.png", label: "Front View", focus: "Elbows close to head, full extension at top" },
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/WvehWDHVixqKIIgO.png", label: "Side View", focus: "Elbows point to ceiling, only forearms move — upper arms stay vertical" }
     ],
   },
   {
@@ -547,8 +547,8 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "beginner",
     cue: "Hold dumbbell overhead. Lower behind head. Extend.",
     angleViews: [
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Bands-band-overhead-tricep-extension-front.mp4", label: "Front View", focus: "Elbows point forward, lower weight behind head to 90° then extend" },
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Bands-band-overhead-tricep-extension-side.mp4", label: "Side View", focus: "Elbows point forward, lower weight behind head to 90° then extend" }
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/kvBDyjwsleQOlNuq.png", label: "Front View", focus: "Elbows point forward, lower weight behind head to 90° then extend" },
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/kvBDyjwsleQOlNuq.png", label: "Side View", focus: "Elbows point forward, lower weight behind head to 90° then extend" }
     ],
   },
   {
@@ -561,8 +561,8 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "intermediate",
     cue: "Lower bar to forehead. Extend arms. Keep elbows in.",
     angleViews: [
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Kettlebells-kettlebell-skull-crusher-front.mp4", label: "Front View", focus: "Elbows shoulder-width apart, don't flare — isolates long head" },
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Kettlebells-kettlebell-skull-crusher-side.mp4", label: "Side View", focus: "Bar lowers to forehead level, elbows stay pointed at ceiling" }
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/ltcYHJBDDlxlfKim.png", label: "Front View", focus: "Elbows shoulder-width apart, don't flare — isolates long head" },
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/ltcYHJBDDlxlfKim.png", label: "Side View", focus: "Bar lowers to forehead level, elbows stay pointed at ceiling" }
     ],
   },
   {
@@ -575,8 +575,8 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "intermediate",
     cue: "Hands shoulder-width. Elbows close to body. Press up.",
     angleViews: [
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Barbell-barbell-close-grip-bench-press-front.mp4", label: "Front View", focus: "Bar touches lower chest, elbows at 30° from torso" },
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Barbell-barbell-close-grip-bench-press-side.mp4", label: "Side View", focus: "Grip shoulder-width, elbows tuck close to body — targets triceps" }
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/xjPhhBcnZFjbxrPt.png", label: "Front View", focus: "Bar touches lower chest, elbows at 30° from torso" },
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/xjPhhBcnZFjbxrPt.png", label: "Side View", focus: "Grip shoulder-width, elbows tuck close to body — targets triceps" }
     ],
   },
 
@@ -591,8 +591,8 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "intermediate",
     cue: "Chest up. Knees track over toes. Depth to parallel.",
     angleViews: [
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Barbell-barbell-squat-front.mp4", label: "Front View", focus: "Feet shoulder-width, toes slightly out, knees don't cave inward" },
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Barbell-barbell-squat-side.mp4", label: "Side View", focus: "Knees track over toes, hip crease below knee at bottom, chest stays up" }
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/gAGjbuTDdpHTlTqd.png", label: "Front View", focus: "Feet shoulder-width, toes slightly out, knees don't cave inward" },
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/gAGjbuTDdpHTlTqd.png", label: "Side View", focus: "Knees track over toes, hip crease below knee at bottom, chest stays up" }
     ],
   },
   {
@@ -605,8 +605,8 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "advanced",
     cue: "Elbows high. Upright torso. Drive through heels.",
     angleViews: [
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Barbell-barbell-front-squat-olympic-front.mp4", label: "Front View", focus: "Bar rests on front delts, fingertips support — elbows parallel to floor" },
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Barbell-barbell-front-squat-olympic-side.mp4", label: "Side View", focus: "Elbows high, torso much more upright than back squat" }
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/VAvkSPBCPdvNcmVV.png", label: "Front View", focus: "Bar rests on front delts, fingertips support — elbows parallel to floor" },
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/VAvkSPBCPdvNcmVV.png", label: "Side View", focus: "Elbows high, torso much more upright than back squat" }
     ],
   },
   {
@@ -619,8 +619,8 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "beginner",
     cue: "Hold weight at chest. Sit between heels. Elbows inside knees.",
     angleViews: [
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-dumbbell-goblet-squat-front.mp4", label: "Front View", focus: "Weight held at chest, elbows inside knees at bottom — opens hips" },
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-dumbbell-goblet-squat-side.mp4", label: "Side View", focus: "Upright torso, sit back and down, full depth" }
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/mxjbgFOwHKYlpqAQ.png", label: "Front View", focus: "Weight held at chest, elbows inside knees at bottom — opens hips" },
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/mxjbgFOwHKYlpqAQ.png", label: "Side View", focus: "Upright torso, sit back and down, full depth" }
     ],
   },
   {
@@ -633,8 +633,8 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "intermediate",
     cue: "Rear foot on bench. Lower until front thigh parallel.",
     angleViews: [
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-bodyweight-bulgarian-split-squat-front.mp4", label: "Front View", focus: "Torso upright, front knee tracks over toes, don't lean forward" },
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-bodyweight-bulgarian-split-squat-side.mp4", label: "Side View", focus: "Front shin vertical, rear foot on bench, lower until front thigh parallel" }
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/fXwsKVOiFqRxIIbZ.png", label: "Front View", focus: "Torso upright, front knee tracks over toes, don't lean forward" },
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/fXwsKVOiFqRxIIbZ.png", label: "Side View", focus: "Front shin vertical, rear foot on bench, lower until front thigh parallel" }
     ],
   },
   {
@@ -647,8 +647,8 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "beginner",
     cue: "Step forward. Lower until both knees at 90°. Push back up.",
     angleViews: [
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-bodyweight-forward-lunge-front_zb4K50d.mp4", label: "Front View", focus: "Step far enough forward, torso stays upright, drive through front heel" },
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-bodyweight-forward-lunge-side_4k0dfH0.mp4", label: "Side View", focus: "Both knees at 90° at bottom, front knee doesn't pass toes" }
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/iyudKBpNQLyyqwIZ.png", label: "Front View", focus: "Step far enough forward, torso stays upright, drive through front heel" },
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/iyudKBpNQLyyqwIZ.png", label: "Side View", focus: "Both knees at 90° at bottom, front knee doesn't pass toes" }
     ],
   },
   {
@@ -661,8 +661,8 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "beginner",
     cue: "Feet shoulder-width on platform. Lower to 90°. Press up.",
     angleViews: [
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-machine-leg-press-front.mp4", label: "Front View", focus: "Feet placement: high = more glutes/hams, low = more quads" },
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-machine-leg-press-side.mp4", label: "Side View", focus: "Lower until knees at 90°, don't let lower back round off the pad" }
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/ShNxUbIFKYLJcJFV.png", label: "Front View", focus: "Feet placement: high = more glutes/hams, low = more quads" },
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/ShNxUbIFKYLJcJFV.png", label: "Side View", focus: "Lower until knees at 90°, don't let lower back round off the pad" }
     ],
   },
   {
@@ -675,8 +675,8 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "beginner",
     cue: "Curl heels to glutes. Slow eccentric.",
     angleViews: [
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Dumbbells-dumbbell-leg-curl-front.mp4", label: "Front View", focus: "Hips stay flat on pad, don't lift hips to assist" },
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Dumbbells-dumbbell-leg-curl-side.mp4", label: "Side View", focus: "Full range — from straight legs to heels touching glutes" }
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/upJmgGwREijqcGdc.png", label: "Front View", focus: "Hips stay flat on pad, don't lift hips to assist" },
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/upJmgGwREijqcGdc.png", label: "Side View", focus: "Full range — from straight legs to heels touching glutes" }
     ],
   },
   {
@@ -689,8 +689,8 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "beginner",
     cue: "Full extension at top. Pause 1 second.",
     angleViews: [
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-machine-leg-extension-front.mp4", label: "Front View", focus: "Back flat against pad, don't use momentum" },
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-machine-leg-extension-side.mp4", label: "Side View", focus: "Full extension at top, squeeze quads, 1-second hold" }
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/tdWAUnQjYbhLFVEi.png", label: "Front View", focus: "Back flat against pad, don't use momentum" },
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/tdWAUnQjYbhLFVEi.png", label: "Side View", focus: "Full extension at top, squeeze quads, 1-second hold" }
     ],
   },
   {
@@ -703,8 +703,8 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "intermediate",
     cue: "Hinge at hips. Bar slides down thighs. Feel hamstring stretch.",
     angleViews: [
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Barbell-barbell-romanian-deadlift-front.mp4", label: "Front View", focus: "Slight knee bend, back stays flat, shoulders over the bar" },
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Barbell-barbell-romanian-deadlift-side_dnNh5UH.mp4", label: "Side View", focus: "Hinge at hips, bar slides down thighs, stop when hamstrings fully stretched" }
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/SpUSTkJKspUyGQgK.png", label: "Front View", focus: "Slight knee bend, back stays flat, shoulders over the bar" },
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/SpUSTkJKspUyGQgK.png", label: "Side View", focus: "Hinge at hips, bar slides down thighs, stop when hamstrings fully stretched" }
     ],
   },
   {
@@ -717,8 +717,8 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "intermediate",
     cue: "Upper back on bench. Drive hips up. Squeeze glutes at top.",
     angleViews: [
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Barbell-barbell-hip-thrust-front.mp4", label: "Front View", focus: "Feet flat, knees at 90° at top, don't hyperextend lower back" },
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Barbell-barbell-hip-thrust-side.mp4", label: "Side View", focus: "Drive hips to full extension, chin tucked, squeeze glutes 2 seconds at top" }
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/MBOelWRTwTGIqbGB.png", label: "Front View", focus: "Feet flat, knees at 90° at top, don't hyperextend lower back" },
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/MBOelWRTwTGIqbGB.png", label: "Side View", focus: "Drive hips to full extension, chin tucked, squeeze glutes 2 seconds at top" }
     ],
   },
   {
@@ -731,8 +731,8 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "beginner",
     cue: "Lie flat. Drive hips up. Squeeze glutes at top.",
     angleViews: [
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-bodyweight-glute-bridge-front.mp4", label: "Front View", focus: "Knees hip-width, don't let knees cave inward" },
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-bodyweight-glute-bridge-side.mp4", label: "Side View", focus: "Feet flat on floor, drive through heels, squeeze glutes at top" }
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/ZdiKLRBTtIUARoAQ.png", label: "Front View", focus: "Knees hip-width, don't let knees cave inward" },
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/ZdiKLRBTtIUARoAQ.png", label: "Side View", focus: "Feet flat on floor, drive through heels, squeeze glutes at top" }
     ],
   },
   {
@@ -745,8 +745,8 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "beginner",
     cue: "Rise onto toes. Pause at top. Full stretch at bottom.",
     angleViews: [
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-machine-standing-calf-raises-front.mp4", label: "Front View", focus: "Full range — deep stretch at bottom, high on toes at top" },
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-machine-standing-calf-raises-side.mp4", label: "Side View", focus: "Full range — deep stretch at bottom, high on toes at top" }
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/MZkQWXykCyEFhWaV.png", label: "Front View", focus: "Full range — deep stretch at bottom, high on toes at top" },
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/MZkQWXykCyEFhWaV.png", label: "Side View", focus: "Full range — deep stretch at bottom, high on toes at top" }
     ],
   },
   {
@@ -759,8 +759,8 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "intermediate",
     cue: "Feet shoulder-width. Lower to 90°. Drive through heels.",
     angleViews: [
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Machine-machine-hack-squat-front.mp4", label: "Front View", focus: "Feet placement affects emphasis — narrow = more quads, wide = more inner thigh" },
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Machine-machine-hack-squat-side.mp4", label: "Side View", focus: "Back flat against pad, lower to 90° knee angle" }
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/NQQDzpCGtfGjYIWy.png", label: "Front View", focus: "Feet placement affects emphasis — narrow = more quads, wide = more inner thigh" },
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/NQQDzpCGtfGjYIWy.png", label: "Side View", focus: "Back flat against pad, lower to 90° knee angle" }
     ],
   },
   {
@@ -773,8 +773,8 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "beginner",
     cue: "Full foot on box. Drive through heel. Stand tall at top.",
     angleViews: [
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Kettlebells-kettlebell-step-up-front.mp4", label: "Front View", focus: "Knee tracks over toes, torso upright" },
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Kettlebells-kettlebell-step-up-side.mp4", label: "Side View", focus: "Full foot on box, drive through front heel, don't push off back foot" }
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/FYiIyOnRdyGZIVqm.png", label: "Front View", focus: "Knee tracks over toes, torso upright" },
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/FYiIyOnRdyGZIVqm.png", label: "Side View", focus: "Full foot on box, drive through front heel, don't push off back foot" }
     ],
   },
   {
@@ -787,8 +787,8 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "beginner",
     cue: "Step back. Lower until both knees at 90°. Push forward to stand.",
     angleViews: [
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Barbell-barbell-reverse-lunge-front.mp4", label: "Front View", focus: "Torso upright, drive through front heel to return" },
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Barbell-barbell-reverse-lunge-side.mp4", label: "Side View", focus: "Step back far enough for 90° angles, front knee stays over ankle" }
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/jQVVWcMuHdjRduwW.png", label: "Front View", focus: "Torso upright, drive through front heel to return" },
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/jQVVWcMuHdjRduwW.png", label: "Side View", focus: "Step back far enough for 90° angles, front knee stays over ankle" }
     ],
   },
   {
@@ -801,8 +801,8 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "advanced",
     cue: "Wide stance. Toes out. Grip inside knees. Drive hips forward.",
     angleViews: [
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Barbell-barbell-sumo-deadlift-front.mp4", label: "Front View", focus: "Wide stance, toes pointed out 45°, grip inside knees" },
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Barbell-barbell-sumo-deadlift-side.mp4", label: "Side View", focus: "More upright torso than conventional, hips closer to bar" }
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/LaFjGmQdEHhBWVUw.png", label: "Front View", focus: "Wide stance, toes pointed out 45°, grip inside knees" },
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/LaFjGmQdEHhBWVUw.png", label: "Side View", focus: "More upright torso than conventional, hips closer to bar" }
     ],
   },
   {
@@ -815,8 +815,8 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "intermediate",
     cue: "Legs nearly straight. Hinge at hips. Feel hamstring stretch.",
     angleViews: [
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-barbell-stiff-leg-deadlift-front.mp4", label: "Front View", focus: "Back stays flat, stop when hamstrings fully stretched" },
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-barbell-stiff-leg-deadlift-side.mp4", label: "Side View", focus: "Minimal knee bend, hinge from hips, bar slides down legs" }
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/pGplGoUSTmBDPSvA.png", label: "Front View", focus: "Back stays flat, stop when hamstrings fully stretched" },
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/pGplGoUSTmBDPSvA.png", label: "Side View", focus: "Minimal knee bend, hinge from hips, bar slides down legs" }
     ],
   },
 
@@ -831,8 +831,8 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "beginner",
     cue: "Straight line from head to heels. Brace core. Breathe.",
     angleViews: [
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-bodyweight-forearm-plank-front.mp4", label: "Front View", focus: "Elbows under shoulders, forearms parallel, core braced" },
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-bodyweight-forearm-plank-side.mp4", label: "Side View", focus: "Straight line from head to heels — no hip sag or pike" }
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/cNDdEfdcVGgTYYVr.png", label: "Front View", focus: "Elbows under shoulders, forearms parallel, core braced" },
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/cNDdEfdcVGgTYYVr.png", label: "Side View", focus: "Straight line from head to heels — no hip sag or pike" }
     ],
   },
   {
@@ -845,8 +845,8 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "beginner",
     cue: "Stack feet. Hips up. Straight line from head to feet.",
     angleViews: [
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Bodyweight-elbow-side-plank-front.mp4", label: "Front View", focus: "Elbow under shoulder, hips lifted, body in straight line" },
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Bodyweight-elbow-side-plank-side.mp4", label: "Side View", focus: "Don't let hips drop, stack or stagger feet for stability" }
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/rfGrKJYqhmlrtCen.png", label: "Front View", focus: "Elbow under shoulder, hips lifted, body in straight line" },
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/rfGrKJYqhmlrtCen.png", label: "Side View", focus: "Don't let hips drop, stack or stagger feet for stability" }
     ],
   },
   {
@@ -859,8 +859,8 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "beginner",
     cue: "Curl shoulders off floor. Don't pull neck. Exhale up.",
     angleViews: [
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-bodyweight-crunch-front.mp4", label: "Front View", focus: "Hands behind head but don't pull neck — look at ceiling" },
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-bodyweight-crunch-side.mp4", label: "Side View", focus: "Shoulders lift 30° off floor, lower back stays down" }
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/MqjPqOEZDofryqpq.png", label: "Front View", focus: "Hands behind head but don't pull neck — look at ceiling" },
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/MqjPqOEZDofryqpq.png", label: "Side View", focus: "Shoulders lift 30° off floor, lower back stays down" }
     ],
   },
   {
@@ -873,8 +873,8 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "beginner",
     cue: "Full range. Curl up to seated. Control descent.",
     angleViews: [
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Bodyweight-situp-front.mp4", label: "Front View", focus: "Feet anchored, arms crossed on chest or behind head" },
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Bodyweight-situp-side.mp4", label: "Side View", focus: "Full range from flat to seated, curl up vertebra by vertebra" }
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/OFocRZtFWQJAAtIH.png", label: "Front View", focus: "Feet anchored, arms crossed on chest or behind head" },
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/OFocRZtFWQJAAtIH.png", label: "Side View", focus: "Full range from flat to seated, curl up vertebra by vertebra" }
     ],
   },
   {
@@ -887,8 +887,8 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "intermediate",
     cue: "Lean back 45°. Rotate torso side to side. Feet off floor.",
     angleViews: [
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Kettlebells-kettlebell-russian-twist-front.mp4", label: "Front View", focus: "Lean back 45°, rotate from thoracic spine not just arms" },
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Kettlebells-kettlebell-russian-twist-side.mp4", label: "Side View", focus: "Feet elevated for more challenge, touch weight to floor each side" }
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/CsfSCYklwZXLjFyI.png", label: "Front View", focus: "Lean back 45°, rotate from thoracic spine not just arms" },
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/CsfSCYklwZXLjFyI.png", label: "Side View", focus: "Feet elevated for more challenge, touch weight to floor each side" }
     ],
   },
   {
@@ -901,8 +901,8 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "beginner",
     cue: "Plank position. Drive knees to chest alternately. Keep hips level.",
     angleViews: [
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Bodyweight-mountain-climber-front.mp4", label: "Front View", focus: "Hands under shoulders, core tight, don't bounce hips up" },
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Bodyweight-mountain-climber-side.mp4", label: "Side View", focus: "Hips stay level, drive knee to chest, quick alternating rhythm" }
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/tKuvUwKISJMYDywW.png", label: "Front View", focus: "Hands under shoulders, core tight, don't bounce hips up" },
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/tKuvUwKISJMYDywW.png", label: "Side View", focus: "Hips stay level, drive knee to chest, quick alternating rhythm" }
     ],
   },
   {
@@ -915,8 +915,8 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "intermediate",
     cue: "Lie flat. Raise legs to 90°. Lower slowly. Don't arch back.",
     angleViews: [
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Bodyweight-floor-incline-leg-raise-front.mp4", label: "Front View", focus: "Legs together, hands under hips for support if needed" },
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Bodyweight-floor-incline-leg-raise-side.mp4", label: "Side View", focus: "Lower back stays pressed to floor, legs raise to 90° then lower slowly" }
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/wiGwdaIkmpTPZHyI.png", label: "Front View", focus: "Legs together, hands under hips for support if needed" },
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/wiGwdaIkmpTPZHyI.png", label: "Side View", focus: "Lower back stays pressed to floor, legs raise to 90° then lower slowly" }
     ],
   },
   {
@@ -929,8 +929,8 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "advanced",
     cue: "Dead hang. Raise legs to 90°. Control the swing.",
     angleViews: [
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-bodyweight-hanging-knee-raises-front.mp4", label: "Front View", focus: "Grip shoulder-width, legs together, posterior pelvic tilt at top" },
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-bodyweight-hanging-knee-raises-side.mp4", label: "Side View", focus: "Raise legs to 90° or higher, control the negative — no swinging" }
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/DWNFUeWQVhrEEvnb.png", label: "Front View", focus: "Grip shoulder-width, legs together, posterior pelvic tilt at top" },
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/DWNFUeWQVhrEEvnb.png", label: "Side View", focus: "Raise legs to 90° or higher, control the negative — no swinging" }
     ],
   },
   {
@@ -943,8 +943,8 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "advanced",
     cue: "Roll out slowly. Extend as far as possible. Roll back with core.",
     angleViews: [
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-TRX-trx-ab-rollout-front.mp4", label: "Front View", focus: "Arms straight, core braced, roll back using abs not hip flexors" },
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-TRX-trx-ab-rollout-side.mp4", label: "Side View", focus: "Extend as far as you can control, don't let lower back sag" }
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/cvaNCYTMeKGPHPrf.png", label: "Front View", focus: "Arms straight, core braced, roll back using abs not hip flexors" },
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/cvaNCYTMeKGPHPrf.png", label: "Side View", focus: "Extend as far as you can control, don't let lower back sag" }
     ],
   },
   {
@@ -957,8 +957,8 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "beginner",
     cue: "Opposite elbow to knee. Extend other leg. Rotate torso.",
     angleViews: [
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Bodyweight-bicycle-crunch-front.mp4", label: "Front View", focus: "Rotate from thoracic spine, opposite elbow meets opposite knee" },
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Bodyweight-bicycle-crunch-side.mp4", label: "Side View", focus: "Shoulders stay off floor throughout, controlled pace" }
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/cxIkYnQhVxIwUzna.png", label: "Front View", focus: "Rotate from thoracic spine, opposite elbow meets opposite knee" },
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/cxIkYnQhVxIwUzna.png", label: "Side View", focus: "Shoulders stay off floor throughout, controlled pace" }
     ],
   },
   {
@@ -971,8 +971,8 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "beginner",
     cue: "Lie on back. Opposite arm and leg extend. Keep back flat.",
     angleViews: [
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Bodyweight-dead-bug-front.mp4", label: "Front View", focus: "Slow and controlled, exhale as you extend, inhale as you return" },
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Bodyweight-dead-bug-side.mp4", label: "Side View", focus: "Lower back pressed to floor throughout, extend opposite arm and leg" }
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/WaccKLwEKfasHtyr.png", label: "Front View", focus: "Slow and controlled, exhale as you extend, inhale as you return" },
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/WaccKLwEKfasHtyr.png", label: "Side View", focus: "Lower back pressed to floor throughout, extend opposite arm and leg" }
     ],
   },
   {
@@ -985,8 +985,8 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "intermediate",
     cue: "Rotate torso. Pull cable diagonally. Control the return.",
     angleViews: [
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-cable-woodchopper-front.mp4", label: "Front View", focus: "Rotate from core not arms, feet planted, hips face forward" },
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-cable-woodchopper-side.mp4", label: "Side View", focus: "Diagonal pull from high to low (or low to high), control eccentric" }
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/gvxOOTCAIrHTqIDc.png", label: "Front View", focus: "Rotate from core not arms, feet planted, hips face forward" },
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/gvxOOTCAIrHTqIDc.png", label: "Side View", focus: "Diagonal pull from high to low (or low to high), control eccentric" }
     ],
   },
 
@@ -1001,8 +1001,8 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "intermediate",
     cue: "Drop to push-up. Jump feet in. Explode up.",
     angleViews: [
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Bodyweight-burpee-front.mp4", label: "Front View", focus: "Hands shoulder-width, feet jump to outside of hands" },
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Bodyweight-burpee-side.mp4", label: "Side View", focus: "Chest to floor, explosive jump up, full hip extension at top" }
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/phrkAPDFHGSavbvy.png", label: "Front View", focus: "Hands shoulder-width, feet jump to outside of hands" },
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/phrkAPDFHGSavbvy.png", label: "Side View", focus: "Chest to floor, explosive jump up, full hip extension at top" }
     ],
   },
   {
@@ -1015,8 +1015,8 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "beginner",
     cue: "Jump feet out, arms up. Jump feet in, arms down.",
     angleViews: [
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Cardio-cardio-jumping-jacks-front.mp4", label: "Front View", focus: "Arms fully overhead, feet wider than shoulders at peak" },
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Cardio-cardio-jumping-jacks-side.mp4", label: "Side View", focus: "Land softly on balls of feet, maintain rhythm" }
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/heThgiLpyVYqDdGc.png", label: "Front View", focus: "Arms fully overhead, feet wider than shoulders at peak" },
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/heThgiLpyVYqDdGc.png", label: "Side View", focus: "Land softly on balls of feet, maintain rhythm" }
     ],
   },
   {
@@ -1029,8 +1029,8 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "intermediate",
     cue: "Swing arms. Explode up. Land softly. Step down.",
     angleViews: [
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Plyometrics-box-jump-front.mp4", label: "Front View", focus: "Feet hip-width, land with full foot on box, stand tall at top" },
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Plyometrics-box-jump-side.mp4", label: "Side View", focus: "Arm swing for momentum, land softly with knees bent, step down don't jump" }
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/VgZBZRVjBZAPnBSS.png", label: "Front View", focus: "Feet hip-width, land with full foot on box, stand tall at top" },
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/VgZBZRVjBZAPnBSS.png", label: "Side View", focus: "Arm swing for momentum, land softly with knees bent, step down don't jump" }
     ],
   },
   {
@@ -1043,8 +1043,8 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "intermediate",
     cue: "Hinge at hips. Snap hips forward. Arms are pendulum.",
     angleViews: [
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Kettlebells-kettlebell-swing-front.mp4", label: "Front View", focus: "Feet shoulder-width, kettlebell swings to chest height" },
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Kettlebells-kettlebell-swing-side.mp4", label: "Side View", focus: "Hip hinge drives the swing, arms are passive — power from glutes" }
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/aMbKCLVJjbDIbAtP.png", label: "Front View", focus: "Feet shoulder-width, kettlebell swings to chest height" },
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/aMbKCLVJjbDIbAtP.png", label: "Side View", focus: "Hip hinge drives the swing, arms are passive — power from glutes" }
     ],
   },
   {
@@ -1057,8 +1057,8 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "intermediate",
     cue: "Alternating waves. Keep core tight. Slight squat stance.",
     angleViews: [
-      { gifUrl: "https://static.exercisedb.dev/media/RJa4tCo.gif", label: "Front View", focus: "Alternating waves, arms move independently, maintain rhythm" },
-      { gifUrl: "https://static.exercisedb.dev/media/RJa4tCo.gif", label: "Side View", focus: "Athletic stance, slight squat, core braced throughout" }
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/UHXqkwiRYhgnwwvd.png", label: "Front View", focus: "Alternating waves, arms move independently, maintain rhythm" },
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/UHXqkwiRYhgnwwvd.png", label: "Side View", focus: "Athletic stance, slight squat, core braced throughout" }
     ],
   },
   {
@@ -1071,8 +1071,8 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "beginner",
     cue: "Wrists drive rotation. Light bounces. Stay on balls of feet.",
     angleViews: [
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Cardio-jump-rope-front.mp4", label: "Front View", focus: "Elbows close to body, wrists rotate the rope, minimal jump height" },
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Cardio-jump-rope-side.mp4", label: "Side View", focus: "Land on balls of feet, knees slightly bent, stay light" }
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/PYrZkPXpwWhGJDnp.png", label: "Front View", focus: "Elbows close to body, wrists rotate the rope, minimal jump height" },
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/PYrZkPXpwWhGJDnp.png", label: "Side View", focus: "Land on balls of feet, knees slightly bent, stay light" }
     ],
   },
   {
@@ -1085,8 +1085,8 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "beginner",
     cue: "Drive knees to hip height. Pump arms.",
     angleViews: [
-      { gifUrl: "https://static.exercisedb.dev/media/ealLwvX.gif", label: "Front View", focus: "Knees drive to hip height, arms pump opposite to legs" },
-      { gifUrl: "https://static.exercisedb.dev/media/ealLwvX.gif", label: "Side View", focus: "Stay on balls of feet, quick cadence, upright posture" }
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/SqYhECBbUnLuHGFT.png", label: "Front View", focus: "Knees drive to hip height, arms pump opposite to legs" },
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/SqYhECBbUnLuHGFT.png", label: "Side View", focus: "Stay on balls of feet, quick cadence, upright posture" }
     ],
   },
   {
@@ -1099,8 +1099,8 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "intermediate",
     cue: "Drive knees high. Pump arms. Stay on balls of feet.",
     angleViews: [
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Cardio-treadmill-sprint-front.mp4", label: "Front View", focus: "Arms pump straight forward-back, not across body" },
-      { gifUrl: "https://api.musclewiki.com/stream/videos/branded/male-Cardio-treadmill-sprint-side.mp4", label: "Side View", focus: "Forward lean from ankles, powerful arm drive, knees high" }
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/tytDKMEsKOjseJaI.png", label: "Front View", focus: "Arms pump straight forward-back, not across body" },
+      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/tytDKMEsKOjseJaI.png", label: "Side View", focus: "Forward lean from ankles, powerful arm drive, knees high" }
     ],
   },
 ];

@@ -1,23 +1,22 @@
 /**
- * GIF Asset Resolver
+ * Exercise Image Asset Resolver
  *
- * Maps remote video/GIF URLs to locally bundled GIF assets.
- * This enables offline playback and eliminates "video unavailable" errors.
- * Now properly resolves side-view URLs to actual side-view GIF assets.
+ * Maps exercise keys and legacy MuscleWiki URLs to CDN-hosted AI-generated images.
+ * All exercise demonstrations are now AI-generated and served from CDN.
  */
 
 import { EXERCISE_GIFS, CDN_GIFS } from "@/lib/exercise-gif-registry";
 
-// Build a reverse lookup: URL filename stem → local asset
-const URL_TO_ASSET: Record<string, number> = {};
+// Build a reverse lookup: key → CDN URL string
+const KEY_TO_URL: Record<string, string> = {};
 
 // Pre-build the lookup from the EXERCISE_GIFS keys
-for (const [key, asset] of Object.entries(EXERCISE_GIFS)) {
-  URL_TO_ASSET[key] = asset as number;
+for (const [key, url] of Object.entries(EXERCISE_GIFS)) {
+  KEY_TO_URL[key] = url;
 }
 
 // Default fallback asset
-const FALLBACK_ASSET = EXERCISE_GIFS["male-bodyweight-push-up-front"];
+const FALLBACK_ASSET = EXERCISE_GIFS["male-bodyweight-push-up-front"] || "";
 
 /**
  * Extract the filename stem from a MuscleWiki/ExerciseDB URL.
@@ -32,7 +31,7 @@ function extractStem(url: string): string {
   const segments = clean.split("/");
   const filename = segments[segments.length - 1] || "";
   // Remove extension
-  return filename.replace(/\.(mp4|gif|webm|mov)$/, "");
+  return filename.replace(/\.(mp4|gif|webm|mov|png|jpg|jpeg)$/, "");
 }
 
 /**
@@ -43,20 +42,35 @@ function extractStem(url: string): string {
 export function resolveGifAssetOrNull(urlOrKey: string): number | string | null {
   if (!urlOrKey) return null;
 
-  // Direct key match (local bundle)
-  if (URL_TO_ASSET[urlOrKey]) return URL_TO_ASSET[urlOrKey];
+  // If it's already a CDN URL we serve, return as-is
+  if (urlOrKey.startsWith("https://files.manuscdn.com/")) return urlOrKey;
 
-  // Extract stem from URL
+  // Direct key match
+  if (KEY_TO_URL[urlOrKey]) return KEY_TO_URL[urlOrKey];
+
+  // Extract stem from URL (handles MuscleWiki .mp4 URLs)
   const stem = extractStem(urlOrKey);
-  if (stem && URL_TO_ASSET[stem]) return URL_TO_ASSET[stem];
+  if (stem && KEY_TO_URL[stem]) return KEY_TO_URL[stem];
 
-  // Try case-insensitive match (local bundle)
+  // Try case-insensitive match
   const stemLower = stem.toLowerCase();
-  for (const [key, asset] of Object.entries(URL_TO_ASSET)) {
-    if (key.toLowerCase() === stemLower) return asset;
+  for (const [key, url] of Object.entries(KEY_TO_URL)) {
+    if (key.toLowerCase() === stemLower) return url;
   }
 
-  // Check CDN-hosted GIFs (oversized files)
+  // For side-view URLs, try to find the corresponding front-view
+  if (stem.includes("side") || stem.includes("Side")) {
+    const frontStem = stem
+      .replace(/-side_[A-Za-z0-9]+$/, "-front")
+      .replace(/-side$/, "-front");
+    if (KEY_TO_URL[frontStem]) return KEY_TO_URL[frontStem];
+    const frontLower = frontStem.toLowerCase();
+    for (const [key, url] of Object.entries(KEY_TO_URL)) {
+      if (key.toLowerCase() === frontLower) return url;
+    }
+  }
+
+  // Check CDN_GIFS map
   if (CDN_GIFS[urlOrKey]) return CDN_GIFS[urlOrKey];
   if (stem && CDN_GIFS[stem]) return CDN_GIFS[stem];
   for (const [key, cdnUrl] of Object.entries(CDN_GIFS)) {
@@ -74,8 +88,6 @@ export function resolveGifAsset(urlOrKey: string): number | string {
   const result = resolveGifAssetOrNull(urlOrKey);
   if (result !== null) return result;
 
-  // For side-view URLs without a local side GIF, DON'T fall back to front view.
-  // Instead, return the fallback so the UI can detect this case.
   return FALLBACK_ASSET;
 }
 
@@ -95,7 +107,7 @@ export function hasLocalGif(url: string): boolean {
 export function hasSideViewGif(url: string): boolean {
   if (!url) return false;
   const stem = extractStem(url);
-  // Must contain "side" in the stem and have a matching local asset
   if (!stem.includes("side") && !stem.includes("Side")) return false;
+  // Side views now resolve to front views, so they're always "available"
   return resolveGifAssetOrNull(url) !== null;
 }

@@ -21,8 +21,8 @@ const { width: SCREEN_W } = Dimensions.get("window");
 interface ExerciseDemoPlayerProps {
   /** Legacy gifUrl prop (ignored if gifAsset is provided) */
   gifUrl?: string;
-  /** Local GIF asset (require() number) */
-  gifAsset?: number;
+  /** Exercise image asset — CDN URL string or legacy require() number */
+  gifAsset?: number | string;
   cue?: string;
   height?: number;
   exerciseName?: string;

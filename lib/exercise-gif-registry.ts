@@ -1,190 +1,106 @@
 /**
- * Exercise GIF Asset Registry
+ * Exercise Image Asset Registry
  *
- * Maps exercise GIF filenames to their local require() paths.
- * These GIFs are bundled with the app for offline access and reliable playback.
- * Source: MuscleWiki (professionally filmed exercise demonstrations) + ExerciseDB fallbacks.
+ * Maps exercise keys to AI-generated exercise demonstration images hosted on CDN.
+ * These replace the previous MuscleWiki GIF assets with high-quality AI-generated images.
  */
 
-/* eslint-disable @typescript-eslint/no-require-imports */
+// CDN-hosted AI-generated exercise demonstration images
+export const EXERCISE_GIFS: Record<string, string> = {
+  // ── Chest ───────────────────────────────────────────────────────
+  "male-Barbell-barbell-close-grip-bench-press-front": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/xjPhhBcnZFjbxrPt.png",
+  "male-Barbell-barbell-incline-bench-press-front": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/mWunUECIbgbWUPJi.png",
+  "male-Dumbbells-dumbbell-weighted-dip-front": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/fIMLVqcdtkUTUExN.png",
+  "male-barbell-bench-press-front": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/IciLPTXbNLzyYQDz.png",
+  "male-bodyweight-bench-dips-front": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/lnUWBadaspJcsVCu.png",
+  "male-bodyweight-push-up-front": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/qMqbVeSkIScGWeln.png",
+  "male-cable-pec-fly-front": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/LPUMeiBqbsBSTSNg.png",
+  "male-dumbbell-chest-fly-front": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/QMAxVAlcCmJIOSGy.png",
+  "male-dumbbell-decline-bench-press-front": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/ohSnqDeISDQlugUc.png",
+  "male-dumbbell-incline-bench-press-front": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/qbVTMamUSBhHRXFP.png",
 
-export const EXERCISE_GIFS: Record<string, number> = {
-  // ══════════════════════════════════════════════════════════════════════════
-  // FRONT VIEWS
-  // ══════════════════════════════════════════════════════════════════════════
+  // ── Back ────────────────────────────────────────────────────────
+  "male-Barbell-barbell-bent-over-row-front": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/vWWXQMPquhdIpUmf.png",
+  "male-Barbell-barbell-deadlift-front": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/pzsBFJNQTzekfGzE.png",
+  "male-Barbell-barbell-romanian-deadlift-front": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/SpUSTkJKspUyGQgK.png",
+  "male-Barbell-barbell-sumo-deadlift-front": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/LaFjGmQdEHhBWVUw.png",
+  "male-Barbell-landmine-t-bar-rows-front": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/ChXzuIPmXoGBQBYI.png",
+  "male-Dumbbells-dumbbell-pendlay-row-front": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/QnzClWYDNyizXGFK.png",
+  "male-barbell-stiff-leg-deadlift-front": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/pGplGoUSTmBDPSvA.png",
+  "male-bodyweight-chin-ups-front": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/gRQVtBkEopPyFGnp.png",
+  "male-bodyweight-pull-ups-front": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/lKYMSTwMgeSTUjoV.png",
+  "male-dumbbell-row-bilateral-front": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/hAejujtVpVuDXMmw.png",
+  "male-machine-pulldown-front": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/bJTDFwdQtDzODwdX.png",
+  "male-machine-seated-cable-row-front": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/xiEOIoDFrDLyoQgO.png",
 
-  // ── Chest ───────────────────────────────────────────────────────────────
-  "male-barbell-bench-press-front": require("@/assets/exercise-gifs/male-barbell-bench-press-front.gif"),
-  "male-bodyweight-push-up-front": require("@/assets/exercise-gifs/male-bodyweight-push-up-front.gif"),
-  "male-dumbbell-chest-fly-front": require("@/assets/exercise-gifs/male-dumbbell-chest-fly-front.gif"),
-  "male-Barbell-barbell-incline-bench-press-front": require("@/assets/exercise-gifs/male-Barbell-barbell-incline-bench-press-front.gif"),
-  "male-dumbbell-incline-bench-press-front": require("@/assets/exercise-gifs/male-dumbbell-incline-bench-press-front.gif"),
-  "male-dumbbell-decline-bench-press-front": require("@/assets/exercise-gifs/male-dumbbell-decline-bench-press-front.gif"),
-  "male-cable-pec-fly-front": require("@/assets/exercise-gifs/male-cable-pec-fly-front.gif"),
-  "male-Dumbbells-dumbbell-weighted-dip-front": require("@/assets/exercise-gifs/male-Dumbbells-dumbbell-weighted-dip-front.gif"),
+  // ── Shoulders ───────────────────────────────────────────────────
+  "male-Barbell-barbell-overhead-press-front": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/kgsOjquFixCJuxWg.png",
+  "male-Cable-cable-rope-face-pulls-front": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/SZgCmqcaPFEavQZw.png",
+  "male-Dumbbells-dumbbell-arnold-press-front": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/tYQcxaHElvkIxKJv.png",
+  "male-Dumbbells-dumbbell-overhead-press-front": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/gnHJKzEXdtdQHBnQ.png",
+  "male-Dumbbells-dumbbell-shrug-front": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/zEnswTmjMDrPipXQ.png",
+  "male-Kettlebells-kettlebell-upright-row-front": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/wBYFAeNCgXmcDeST.png",
+  "male-dumbbell-front-raise-front": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/cYmcAjzkbzwDgabK.png",
+  "male-dumbbell-lateral-raise-front": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/UcsSvMtgSNjiwjCJ.png",
+  "male-dumbbell-rear-delt-fly-front": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/hnlfWJTRNLYvErWK.png",
 
-  // ── Back ────────────────────────────────────────────────────────────────
-  "male-bodyweight-pull-ups-front": require("@/assets/exercise-gifs/male-bodyweight-pull-ups-front.gif"),
-  "male-bodyweight-chin-ups-front": require("@/assets/exercise-gifs/male-bodyweight-chin-ups-front.gif"),
-  "male-machine-pulldown-front": require("@/assets/exercise-gifs/male-machine-pulldown-front.gif"),
-  "male-Barbell-barbell-bent-over-row-front": require("@/assets/exercise-gifs/male-Barbell-barbell-bent-over-row-front.gif"),
-  "male-dumbbell-row-bilateral-front": require("@/assets/exercise-gifs/male-dumbbell-row-bilateral-front.gif"),
-  "male-machine-seated-cable-row-front": require("@/assets/exercise-gifs/male-machine-seated-cable-row-front.gif"),
-  "male-Barbell-barbell-deadlift-front": require("@/assets/exercise-gifs/male-Barbell-barbell-deadlift-front.gif"),
-  "male-Barbell-landmine-t-bar-rows-front": require("@/assets/exercise-gifs/male-Barbell-landmine-t-bar-rows-front.gif"),
-  "male-Dumbbells-dumbbell-pendlay-row-front": require("@/assets/exercise-gifs/male-Dumbbells-dumbbell-pendlay-row-front.gif"),
+  // ── Biceps ──────────────────────────────────────────────────────
+  "male-Barbell-barbell-curl-front": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/ijCSvHSplAYhQSyN.png",
+  "male-Dumbbells-dumbbell-curl-front": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/EXaJqPCiPBEgnngt.png",
+  "male-Dumbbells-dumbbell-leg-curl-front": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/upJmgGwREijqcGdc.png",
+  "male-Dumbbells-dumbbell-preacher-curl-front": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/mMTqLQAXZpNqeHAb.png",
+  "male-dumbbell-concentration-curl-front": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/uzCtsPmiYQdGFUSu.png",
+  "male-dumbbell-hammer-curl-front": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/pGnywSTjKgENPPUL.png",
 
-  // ── Shoulders ───────────────────────────────────────────────────────────
-  "male-Barbell-barbell-overhead-press-front": require("@/assets/exercise-gifs/male-Barbell-barbell-overhead-press-front.gif"),
-  "male-Dumbbells-dumbbell-overhead-press-front": require("@/assets/exercise-gifs/male-Dumbbells-dumbbell-overhead-press-front.gif"),
-  "male-dumbbell-lateral-raise-front": require("@/assets/exercise-gifs/male-dumbbell-lateral-raise-front.gif"),
-  "male-dumbbell-front-raise-front": require("@/assets/exercise-gifs/male-dumbbell-front-raise-front.gif"),
-  "male-Cable-cable-rope-face-pulls-front": require("@/assets/exercise-gifs/male-Cable-cable-rope-face-pulls-front.gif"),
-  "male-dumbbell-rear-delt-fly-front": require("@/assets/exercise-gifs/male-dumbbell-rear-delt-fly-front.gif"),
-  "male-Dumbbells-dumbbell-arnold-press-front": require("@/assets/exercise-gifs/male-Dumbbells-dumbbell-arnold-press-front.gif"),
-  "male-Kettlebells-kettlebell-upright-row-front": require("@/assets/exercise-gifs/male-Kettlebells-kettlebell-upright-row-front.gif"),
-  "male-Dumbbells-dumbbell-shrug-front": require("@/assets/exercise-gifs/male-Dumbbells-dumbbell-shrug-front.gif"),
+  // ── Triceps ─────────────────────────────────────────────────────
+  "male-Bands-band-overhead-tricep-extension-front": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/kvBDyjwsleQOlNuq.png",
+  "male-Bodyweight-bodyweight-tricep-extension-front": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/WvehWDHVixqKIIgO.png",
+  "male-Kettlebells-kettlebell-skull-crusher-front": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/ltcYHJBDDlxlfKim.png",
+  "male-Machine-machine-tricep-pushdown-front": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/eGHvonrewMMIpLbd.png",
 
-  // ── Arms ────────────────────────────────────────────────────────────────
-  "male-Dumbbells-dumbbell-curl-front": require("@/assets/exercise-gifs/male-Dumbbells-dumbbell-curl-front.gif"),
-  "male-Barbell-barbell-curl-front": require("@/assets/exercise-gifs/male-Barbell-barbell-curl-front.gif"),
-  "male-dumbbell-hammer-curl-front": require("@/assets/exercise-gifs/male-dumbbell-hammer-curl-front.gif"),
-  "male-Dumbbells-dumbbell-preacher-curl-front": require("@/assets/exercise-gifs/male-Dumbbells-dumbbell-preacher-curl-front.gif"),
-  "male-dumbbell-concentration-curl-front": require("@/assets/exercise-gifs/male-dumbbell-concentration-curl-front.gif"),
-  "male-Machine-machine-tricep-pushdown-front": require("@/assets/exercise-gifs/male-Machine-machine-tricep-pushdown-front.gif"),
-  "male-Bodyweight-bodyweight-tricep-extension-front": require("@/assets/exercise-gifs/male-Bodyweight-bodyweight-tricep-extension-front.gif"),
-  "male-Bands-band-overhead-tricep-extension-front": require("@/assets/exercise-gifs/male-Bands-band-overhead-tricep-extension-front.gif"),
-  "male-bodyweight-bench-dips-front": require("@/assets/exercise-gifs/male-bodyweight-bench-dips-front.gif"),
-  "male-Kettlebells-kettlebell-skull-crusher-front": require("@/assets/exercise-gifs/male-Kettlebells-kettlebell-skull-crusher-front.gif"),
-  "male-Barbell-barbell-close-grip-bench-press-front": require("@/assets/exercise-gifs/male-Barbell-barbell-close-grip-bench-press-front.gif"),
+  // ── Legs ────────────────────────────────────────────────────────
+  "male-Barbell-barbell-front-squat-olympic-front": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/VAvkSPBCPdvNcmVV.png",
+  "male-Barbell-barbell-hip-thrust-front": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/MBOelWRTwTGIqbGB.png",
+  "male-Barbell-barbell-reverse-lunge-front": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/jQVVWcMuHdjRduwW.png",
+  "male-Barbell-barbell-squat-front": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/gAGjbuTDdpHTlTqd.png",
+  "male-Bodyweight-walking-lunge-front": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/gcyQAjHHyKhTbdOX.png",
+  "male-Kettlebells-kettlebell-seated-calf-raise-front": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/zLgyXhOYUCbUWpiD.png",
+  "male-Kettlebells-kettlebell-step-up-front": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/FYiIyOnRdyGZIVqm.png",
+  "male-Machine-machine-hack-squat-front": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/NQQDzpCGtfGjYIWy.png",
+  "male-bodyweight-bulgarian-split-squat-front": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/fXwsKVOiFqRxIIbZ.png",
+  "male-bodyweight-forward-lunge-front_zb4K50d": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/iyudKBpNQLyyqwIZ.png",
+  "male-bodyweight-glute-bridge-front": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/ZdiKLRBTtIUARoAQ.png",
+  "male-dumbbell-goblet-squat-front": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/mxjbgFOwHKYlpqAQ.png",
+  "male-machine-leg-extension-front": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/tdWAUnQjYbhLFVEi.png",
+  "male-machine-leg-press-front": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/ShNxUbIFKYLJcJFV.png",
+  "male-machine-standing-calf-raises-front": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/MZkQWXykCyEFhWaV.png",
 
-  // ── Legs ────────────────────────────────────────────────────────────────
-  "male-Barbell-barbell-squat-front": require("@/assets/exercise-gifs/male-Barbell-barbell-squat-front.gif"),
-  "male-Barbell-barbell-front-squat-olympic-front": require("@/assets/exercise-gifs/male-Barbell-barbell-front-squat-olympic-front.gif"),
-  "male-dumbbell-goblet-squat-front": require("@/assets/exercise-gifs/male-dumbbell-goblet-squat-front.gif"),
-  "male-bodyweight-bulgarian-split-squat-front": require("@/assets/exercise-gifs/male-bodyweight-bulgarian-split-squat-front.gif"),
-  "male-bodyweight-forward-lunge-front_zb4K50d": require("@/assets/exercise-gifs/male-bodyweight-forward-lunge-front_zb4K50d.gif"),
-  "male-Bodyweight-walking-lunge-front": require("@/assets/exercise-gifs/male-Bodyweight-walking-lunge-front.gif"),
-  "male-Barbell-barbell-reverse-lunge-front": require("@/assets/exercise-gifs/male-Barbell-barbell-reverse-lunge-front.gif"),
-  "male-machine-leg-press-front": require("@/assets/exercise-gifs/male-machine-leg-press-front.gif"),
-  "male-Dumbbells-dumbbell-leg-curl-front": require("@/assets/exercise-gifs/male-Dumbbells-dumbbell-leg-curl-front.gif"),
-  "male-machine-leg-extension-front": require("@/assets/exercise-gifs/male-machine-leg-extension-front.gif"),
-  "male-Barbell-barbell-romanian-deadlift-front": require("@/assets/exercise-gifs/male-Barbell-barbell-romanian-deadlift-front.gif"),
-  "male-barbell-stiff-leg-deadlift-front": require("@/assets/exercise-gifs/male-barbell-stiff-leg-deadlift-front.gif"),
-  "male-Barbell-barbell-sumo-deadlift-front": require("@/assets/exercise-gifs/male-Barbell-barbell-sumo-deadlift-front.gif"),
-  "male-Barbell-barbell-hip-thrust-front": require("@/assets/exercise-gifs/male-Barbell-barbell-hip-thrust-front.gif"),
-  "male-bodyweight-glute-bridge-front": require("@/assets/exercise-gifs/male-bodyweight-glute-bridge-front.gif"),
-  "male-machine-standing-calf-raises-front": require("@/assets/exercise-gifs/male-machine-standing-calf-raises-front.gif"),
-  "male-Kettlebells-kettlebell-seated-calf-raise-front": require("@/assets/exercise-gifs/male-Kettlebells-kettlebell-seated-calf-raise-front.gif"),
-  "male-Machine-machine-hack-squat-front": require("@/assets/exercise-gifs/male-Machine-machine-hack-squat-front.gif"),
-  "male-Kettlebells-kettlebell-step-up-front": require("@/assets/exercise-gifs/male-Kettlebells-kettlebell-step-up-front.gif"),
+  // ── Core ────────────────────────────────────────────────────────
+  "male-Bodyweight-bicycle-crunch-front": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/cxIkYnQhVxIwUzna.png",
+  "male-Bodyweight-dead-bug-front": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/WaccKLwEKfasHtyr.png",
+  "male-Bodyweight-elbow-side-plank-front": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/rfGrKJYqhmlrtCen.png",
+  "male-Bodyweight-floor-incline-leg-raise-front": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/wiGwdaIkmpTPZHyI.png",
+  "male-Bodyweight-mountain-climber-front": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/tKuvUwKISJMYDywW.png",
+  "male-Bodyweight-situp-front": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/OFocRZtFWQJAAtIH.png",
+  "male-Kettlebells-kettlebell-russian-twist-front": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/CsfSCYklwZXLjFyI.png",
+  "male-TRX-trx-ab-rollout-front": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/cvaNCYTMeKGPHPrf.png",
+  "male-bodyweight-crunch-front": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/MqjPqOEZDofryqpq.png",
+  "male-bodyweight-forearm-plank-front": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/cNDdEfdcVGgTYYVr.png",
+  "male-bodyweight-hanging-knee-raises-front": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/DWNFUeWQVhrEEvnb.png",
+  "male-cable-woodchopper-front": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/gvxOOTCAIrHTqIDc.png",
 
-  // ── Core ────────────────────────────────────────────────────────────────
-  "male-bodyweight-forearm-plank-front": require("@/assets/exercise-gifs/male-bodyweight-forearm-plank-front.gif"),
-  "male-Bodyweight-elbow-side-plank-front": require("@/assets/exercise-gifs/male-Bodyweight-elbow-side-plank-front.gif"),
-  "male-bodyweight-crunch-front": require("@/assets/exercise-gifs/male-bodyweight-crunch-front.gif"),
-  "male-Bodyweight-situp-front": require("@/assets/exercise-gifs/male-Bodyweight-situp-front.gif"),
-  "male-Kettlebells-kettlebell-russian-twist-front": require("@/assets/exercise-gifs/male-Kettlebells-kettlebell-russian-twist-front.gif"),
-  "male-Bodyweight-mountain-climber-front": require("@/assets/exercise-gifs/male-Bodyweight-mountain-climber-front.gif"),
-  "male-Bodyweight-floor-incline-leg-raise-front": require("@/assets/exercise-gifs/male-Bodyweight-floor-incline-leg-raise-front.gif"),
-  "male-bodyweight-hanging-knee-raises-front": require("@/assets/exercise-gifs/male-bodyweight-hanging-knee-raises-front.gif"),
-  "male-TRX-trx-ab-rollout-front": require("@/assets/exercise-gifs/male-TRX-trx-ab-rollout-front.gif"),
-  "male-Bodyweight-bicycle-crunch-front": require("@/assets/exercise-gifs/male-Bodyweight-bicycle-crunch-front.gif"),
-  "male-Bodyweight-dead-bug-front": require("@/assets/exercise-gifs/male-Bodyweight-dead-bug-front.gif"),
-  "male-cable-woodchopper-front": require("@/assets/exercise-gifs/male-cable-woodchopper-front.gif"),
+  // ── Cardio ──────────────────────────────────────────────────────
+  "battle-rope": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/UHXqkwiRYhgnwwvd.png",
+  "high-knees": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/SqYhECBbUnLuHGFT.png",
+  "male-Bodyweight-burpee-front": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/phrkAPDFHGSavbvy.png",
+  "male-Cardio-cardio-jumping-jacks-front": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/heThgiLpyVYqDdGc.png",
+  "male-Cardio-jump-rope-front": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/PYrZkPXpwWhGJDnp.png",
+  "male-Cardio-treadmill-sprint-front": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/tytDKMEsKOjseJaI.png",
+  "male-Kettlebells-kettlebell-swing-front": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/aMbKCLVJjbDIbAtP.png",
+  "male-Plyometrics-box-jump-front": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/VgZBZRVjBZAPnBSS.png",
 
-  // ── Cardio / HIIT ──────────────────────────────────────────────────────
-  "male-Bodyweight-burpee-front": require("@/assets/exercise-gifs/male-Bodyweight-burpee-front.gif"),
-  "male-Cardio-cardio-jumping-jacks-front": require("@/assets/exercise-gifs/male-Cardio-cardio-jumping-jacks-front.gif"),
-  "male-Plyometrics-box-jump-front": require("@/assets/exercise-gifs/male-Plyometrics-box-jump-front.gif"),
-  "male-Kettlebells-kettlebell-swing-front": require("@/assets/exercise-gifs/male-Kettlebells-kettlebell-swing-front.gif"),
-  "battle-rope": require("@/assets/exercise-gifs/battle-rope.gif"),
-  "male-Cardio-jump-rope-front": require("@/assets/exercise-gifs/male-Cardio-jump-rope-front.gif"),
-  "high-knees": require("@/assets/exercise-gifs/high-knees.gif"),
-  "male-Cardio-treadmill-sprint-front": require("@/assets/exercise-gifs/male-Cardio-treadmill-sprint-front.gif"),
-
-  // ══════════════════════════════════════════════════════════════════════════
-  // SIDE VIEWS (52 exercises with actual side-angle footage)
-  // ══════════════════════════════════════════════════════════════════════════
-
-  // ── Chest (side) ────────────────────────────────────────────────────────
-  "male-barbell-bench-press-side_KciuhbB": require("@/assets/exercise-gifs/male-barbell-bench-press-side_KciuhbB.gif"),
-  "male-dumbbell-chest-fly-side": require("@/assets/exercise-gifs/male-dumbbell-chest-fly-side.gif"),
-  "male-Barbell-barbell-incline-bench-press-side": require("@/assets/exercise-gifs/male-Barbell-barbell-incline-bench-press-side.gif"),
-  "male-dumbbell-incline-bench-press-side": require("@/assets/exercise-gifs/male-dumbbell-incline-bench-press-side.gif"),
-  "male-dumbbell-decline-bench-press-side": require("@/assets/exercise-gifs/male-dumbbell-decline-bench-press-side.gif"),
-  "male-cable-pec-fly-side": require("@/assets/exercise-gifs/male-cable-pec-fly-side.gif"),
-  "male-Dumbbells-dumbbell-weighted-dip-side": require("@/assets/exercise-gifs/male-Dumbbells-dumbbell-weighted-dip-side.gif"),
-
-  // ── Back (side) ─────────────────────────────────────────────────────────
-  "male-machine-pulldown-side": require("@/assets/exercise-gifs/male-machine-pulldown-side.gif"),
-  "male-machine-seated-cable-row-side": require("@/assets/exercise-gifs/male-machine-seated-cable-row-side.gif"),
-  "male-Barbell-barbell-deadlift-side": require("@/assets/exercise-gifs/male-Barbell-barbell-deadlift-side.gif"),
-  "male-Barbell-landmine-t-bar-rows-side": require("@/assets/exercise-gifs/male-Barbell-landmine-t-bar-rows-side.gif"),
-
-  // ── Shoulders (side) ────────────────────────────────────────────────────
-  "male-Barbell-barbell-overhead-press-side": require("@/assets/exercise-gifs/male-Barbell-barbell-overhead-press-side.gif"),
-  "male-Dumbbells-dumbbell-overhead-press-side": require("@/assets/exercise-gifs/male-Dumbbells-dumbbell-overhead-press-side.gif"),
-  "male-Dumbbells-dumbbell-arnold-press-side": require("@/assets/exercise-gifs/male-Dumbbells-dumbbell-arnold-press-side.gif"),
-  "male-Kettlebells-kettlebell-upright-row-side": require("@/assets/exercise-gifs/male-Kettlebells-kettlebell-upright-row-side.gif"),
-  "male-Dumbbells-dumbbell-shrug-side": require("@/assets/exercise-gifs/male-Dumbbells-dumbbell-shrug-side.gif"),
-
-  // ── Arms (side) ─────────────────────────────────────────────────────────
-  "male-Dumbbells-dumbbell-curl-side": require("@/assets/exercise-gifs/male-Dumbbells-dumbbell-curl-side.gif"),
-  "male-Barbell-barbell-curl-side": require("@/assets/exercise-gifs/male-Barbell-barbell-curl-side.gif"),
-  "male-Dumbbells-dumbbell-preacher-curl-side": require("@/assets/exercise-gifs/male-Dumbbells-dumbbell-preacher-curl-side.gif"),
-  "male-dumbbell-concentration-curl-side": require("@/assets/exercise-gifs/male-dumbbell-concentration-curl-side.gif"),
-  "male-Machine-machine-tricep-pushdown-side": require("@/assets/exercise-gifs/male-Machine-machine-tricep-pushdown-side.gif"),
-  "male-Bodyweight-bodyweight-tricep-extension-side": require("@/assets/exercise-gifs/male-Bodyweight-bodyweight-tricep-extension-side.gif"),
-  "male-Kettlebells-kettlebell-skull-crusher-side": require("@/assets/exercise-gifs/male-Kettlebells-kettlebell-skull-crusher-side.gif"),
-  "male-Barbell-barbell-close-grip-bench-press-side": require("@/assets/exercise-gifs/male-Barbell-barbell-close-grip-bench-press-side.gif"),
-
-  // ── Legs (side) ─────────────────────────────────────────────────────────
-  "male-Barbell-barbell-squat-side": require("@/assets/exercise-gifs/male-Barbell-barbell-squat-side.gif"),
-  "male-Barbell-barbell-front-squat-olympic-side": require("@/assets/exercise-gifs/male-Barbell-barbell-front-squat-olympic-side.gif"),
-  "male-dumbbell-goblet-squat-side": require("@/assets/exercise-gifs/male-dumbbell-goblet-squat-side.gif"),
-  "male-bodyweight-forward-lunge-side_4k0dfH0": require("@/assets/exercise-gifs/male-bodyweight-forward-lunge-side_4k0dfH0.gif"),
-  "male-machine-leg-extension-side": require("@/assets/exercise-gifs/male-machine-leg-extension-side.gif"),
-  "male-Barbell-barbell-romanian-deadlift-side_dnNh5UH": require("@/assets/exercise-gifs/male-Barbell-barbell-romanian-deadlift-side_dnNh5UH.gif"),
-  "male-barbell-stiff-leg-deadlift-side": require("@/assets/exercise-gifs/male-barbell-stiff-leg-deadlift-side.gif"),
-  "male-Barbell-barbell-sumo-deadlift-side": require("@/assets/exercise-gifs/male-Barbell-barbell-sumo-deadlift-side.gif"),
-  "male-Barbell-barbell-hip-thrust-side": require("@/assets/exercise-gifs/male-Barbell-barbell-hip-thrust-side.gif"),
-  "male-machine-standing-calf-raises-side": require("@/assets/exercise-gifs/male-machine-standing-calf-raises-side.gif"),
-  // male-Machine-machine-hack-squat-side: hosted on CDN (too large for bundle)
-  "male-Kettlebells-kettlebell-step-up-side": require("@/assets/exercise-gifs/male-Kettlebells-kettlebell-step-up-side.gif"),
-
-  // ── Core (side) ─────────────────────────────────────────────────────────
-  "male-bodyweight-forearm-plank-side": require("@/assets/exercise-gifs/male-bodyweight-forearm-plank-side.gif"),
-  "male-Bodyweight-elbow-side-plank-side": require("@/assets/exercise-gifs/male-Bodyweight-elbow-side-plank-side.gif"),
-  "male-bodyweight-crunch-side": require("@/assets/exercise-gifs/male-bodyweight-crunch-side.gif"),
-  "male-Bodyweight-situp-side": require("@/assets/exercise-gifs/male-Bodyweight-situp-side.gif"),
-  "male-Kettlebells-kettlebell-russian-twist-side": require("@/assets/exercise-gifs/male-Kettlebells-kettlebell-russian-twist-side.gif"),
-  "male-Bodyweight-mountain-climber-side": require("@/assets/exercise-gifs/male-Bodyweight-mountain-climber-side.gif"),
-  "male-bodyweight-hanging-knee-raises-side": require("@/assets/exercise-gifs/male-bodyweight-hanging-knee-raises-side.gif"),
-  "male-Bodyweight-bicycle-crunch-side": require("@/assets/exercise-gifs/male-Bodyweight-bicycle-crunch-side.gif"),
-  "male-Bodyweight-dead-bug-side": require("@/assets/exercise-gifs/male-Bodyweight-dead-bug-side.gif"),
-  "male-cable-woodchopper-side": require("@/assets/exercise-gifs/male-cable-woodchopper-side.gif"),
-
-  // ── Cardio / HIIT (side) ───────────────────────────────────────────────
-  "male-Bodyweight-burpee-side": require("@/assets/exercise-gifs/male-Bodyweight-burpee-side.gif"),
-  "male-Cardio-cardio-jumping-jacks-side": require("@/assets/exercise-gifs/male-Cardio-cardio-jumping-jacks-side.gif"),
-  "male-Kettlebells-kettlebell-swing-side": require("@/assets/exercise-gifs/male-Kettlebells-kettlebell-swing-side.gif"),
-  "male-Cardio-jump-rope-side": require("@/assets/exercise-gifs/male-Cardio-jump-rope-side.gif"),
-  "male-Cardio-treadmill-sprint-side": require("@/assets/exercise-gifs/male-Cardio-treadmill-sprint-side.gif"),
 };
 
-/**
- * GIFs too large for the app bundle, hosted on CDN instead.
- * The resolver falls back to these when no local asset is found.
- */
-export const CDN_GIFS: Record<string, string> = {
-  "male-Machine-machine-hack-squat-side": "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/male-Machine-machine-hack-squat-side_0dcc3ea3.gif",
-};
+// CDN GIFs map (for oversized assets that were already on CDN)
+export const CDN_GIFS: Record<string, string> = {};
 
-/**
- * Get a local GIF asset by its filename key.
- * Returns the require() number for use with expo-image or Image source.
- */
-export function getExerciseGif(key: string): number | undefined {
-  return EXERCISE_GIFS[key];
-}

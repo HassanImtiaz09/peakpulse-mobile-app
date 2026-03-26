@@ -2,7 +2,7 @@
  * Exercise Demo Library
  *
  * Maps common exercise names to local GIF assets for accurate exercise demos.
- * GIFs are sourced from MuscleWiki (professionally filmed) and bundled locally
+ * Exercise images are AI-generated and hosted on CDN
  * for reliable offline playback.
  */
 
@@ -11,9 +11,9 @@ import { EXERCISE_GIFS } from "@/lib/exercise-gif-registry";
 export interface ExerciseDemo {
   /** Short cue text shown below the demo */
   cue: string;
-  /** Local GIF asset (require() number) for exercise guidance */
-  gifAsset: number;
-  /** Legacy URL field for backward compatibility (empty string for local assets) */
+  /** Exercise image asset — CDN URL string or legacy require() number */
+  gifAsset: number | string;
+  /** Legacy URL field for backward compatibility (empty string for CDN assets) */
   gifUrl: string;
 }
 
@@ -22,8 +22,8 @@ export function normaliseExerciseName(name: string): string {
   return name.toLowerCase().replace(/[^a-z0-9 ]/g, "").trim();
 }
 
-// Helper to get a GIF asset with a fallback
-function gif(key: string): number {
+// Helper to get an exercise image asset with a fallback
+function gif(key: string): number | string {
   return EXERCISE_GIFS[key] ?? EXERCISE_GIFS["male-bodyweight-push-up-front"];
 }
 

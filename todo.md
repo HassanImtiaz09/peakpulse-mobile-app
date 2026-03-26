@@ -2135,3 +2135,31 @@
 - [x] 7 tests for Social Circle unread badge
 - [x] 6 tests for Challenge unread badge
 - [x] 7 tests for existing features preserved
+
+## Round 88 — Replace MuscleWiki Videos with AI-Generated GIFs
+
+### Exercise Demo Replacement
+- [x] Audited all MuscleWiki video URLs — 146 URLs in exercise-data.ts, 126 GIF assets in exercise-gif-registry.ts
+- [x] Identified 76 unique exercises needing AI-generated images
+- [x] Generated 76 AI exercise images in parallel (proper form, gym setting)
+- [x] Uploaded all images to CDN (manuscdn.com)
+- [x] Replaced all 146 MuscleWiki URLs in exercise-data.ts with CDN URLs
+- [x] Replaced all 126 require() GIF assets in exercise-gif-registry.ts with CDN URL strings
+- [x] Also replaced 4 exercisedb.dev URLs (battle rope, high knees)
+- [x] Updated gif-resolver.ts to handle CDN string URLs
+- [x] Updated ExerciseDemo.gifAsset type to accept string | number
+- [x] Updated ExerciseDemoPlayer gifAsset prop to accept string | number
+- [x] Removed 126 old .gif files (37MB) from assets/exercise-gifs
+- [x] Verified exercise-demo matches: bench press, squat, deadlift, pull up, lateral raise, bicep curl all correct
+
+### Testing
+- [x] 0 TypeScript errors, 0 LSP errors
+- [x] All 32 tests pass (round88-exercise-images.test.ts)
+- [x] 6 tests for CDN migration in exercise-gif-registry
+- [x] 8 tests for gif-resolver CDN URL handling
+- [x] 3 tests for exercise-demos updated types
+- [x] 4 tests for exercise-data no MuscleWiki URLs
+- [x] 2 tests for exercise-demo-player string URL support
+- [x] 1 test for enhanced-gif-player string URL support
+- [x] 2 tests for old GIF assets removed
+- [x] 6 tests for exercise-demo mismatch verification
