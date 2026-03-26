@@ -16,7 +16,7 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import * as Haptics from "expo-haptics";
 import type { ExerciseAngleView } from "@/lib/exercise-data";
 import { useFavorites } from "@/lib/favorites-context";
-import { resolveGifAssetOrNull } from "@/lib/gif-resolver";
+import { resolveGifAssetOrNull, hasSideViewGif } from "@/lib/gif-resolver";
 
 const { width: SCREEN_W } = Dimensions.get("window");
 
@@ -70,8 +70,12 @@ export function EnhancedGifPlayer({
     [currentView.gifUrl]
   );
 
-  // Check if this is a side view with no local GIF
-  const isMissingSideView = currentAsset === null && (currentView.label.includes("Side") || currentView.gifUrl.includes("side"));
+  // Check if this is a side view with no distinct side-view image
+  const isSideView = currentView.label.includes("Side") || currentView.gifUrl.includes("side");
+  const hasDistinctSide = isSideView ? hasSideViewGif(currentView.gifUrl) : false;
+  // Show "missing" only if it's a side view AND we have no asset at all
+  // If we have an asset (even if it's the front view), show it with a label
+  const isMissingSideView = isSideView && currentAsset === null;
 
   // Slow-motion pulse animation
   useEffect(() => {
@@ -162,6 +166,9 @@ export function EnhancedGifPlayer({
         {/* Angle label overlay */}
         <View style={styles.angleLabelOverlay}>
           <Text style={styles.angleLabelText}>{currentView.label}</Text>
+          {isSideView && !hasDistinctSide && currentAsset !== null && (
+            <Text style={styles.angleFallbackText}>Front angle shown</Text>
+          )}
         </View>
 
         {/* Fullscreen expand button */}
@@ -413,6 +420,12 @@ const styles = StyleSheet.create({
     fontSize: 10,
     fontWeight: "500",
     letterSpacing: 0.3,
+  },
+  angleFallbackText: {
+    color: "rgba(245,158,11,0.5)",
+    fontSize: 8,
+    fontWeight: "400",
+    marginTop: 1,
   },
   focusBox: {
     flexDirection: "row",

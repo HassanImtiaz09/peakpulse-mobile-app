@@ -52,7 +52,7 @@ const EXERCISE_DB: ExerciseInfo[] = [
     cue: "Keep shoulder blades retracted. Bar touches mid-chest.",
     angleViews: [
       { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/IciLPTXbNLzyYQDz.png", label: "Front View", focus: "Grip width should be just outside shoulder width, wrists stacked over elbows" },
-      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/IciLPTXbNLzyYQDz.png", label: "Side View", focus: "Watch elbow angle at 45° from torso, bar path should be slightly diagonal" }
+      { gifUrl: "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/side-barbell-bench-press-7VJGMpqMVBNhKxPbTUMnM5.png", label: "Side View", focus: "Watch elbow angle at 45° from torso, bar path should be slightly diagonal" }
     ],
   },
   {
@@ -65,7 +65,7 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "beginner",
     cue: "Straight body line. Lower until chest nearly touches floor.",
     angleViews: [
-      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/qMqbVeSkIScGWeln.png", label: "Front View", focus: "Hands placed slightly wider than shoulders, fingers spread for stability" },
+      { gifUrl: "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/side-bodyweight-push-up-9agjrdHsJ7fNa3UcgJ5iz8.png", label: "Front View", focus: "Hands placed slightly wider than shoulders, fingers spread for stability" },
       { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/qMqbVeSkIScGWeln.png", label: "Side View", focus: "Body forms a straight line from head to heels, no hip sag or pike" }
     ],
   },
@@ -94,7 +94,7 @@ const EXERCISE_DB: ExerciseInfo[] = [
     cue: "30-45° incline. Drive bar in a slight arc to upper chest.",
     angleViews: [
       { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/mWunUECIbgbWUPJi.png", label: "Front View", focus: "Grip slightly narrower than flat bench, elbows at 45° from torso" },
-      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/mWunUECIbgbWUPJi.png", label: "Side View", focus: "Bench angle between 30-45°, bar touches upper chest just below collarbone" }
+      { gifUrl: "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/side-dumbbell-incline-bench-press-D93Vg9axNmgjjk3xpsQghq.png", label: "Side View", focus: "Bench angle between 30-45°, bar touches upper chest just below collarbone" }
     ],
   },
   {
@@ -193,7 +193,7 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "intermediate",
     cue: "Full hang at bottom. Chin clears bar. Control the descent.",
     angleViews: [
-      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/lKYMSTwMgeSTUjoV.png", label: "Front View", focus: "Grip slightly wider than shoulders, pull elbows down and back" },
+      { gifUrl: "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/side-bodyweight-pull-ups-8WS7ED3gLnJYx6tPSR6b56.png", label: "Front View", focus: "Grip slightly wider than shoulders, pull elbows down and back" },
       { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/lKYMSTwMgeSTUjoV.png", label: "Side View", focus: "Slight lean back, chest drives toward bar — avoid kipping" }
     ],
   },
@@ -222,7 +222,7 @@ const EXERCISE_DB: ExerciseInfo[] = [
     cue: "Lean back slightly. Pull bar to upper chest.",
     angleViews: [
       { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/bJTDFwdQtDzODwdX.png", label: "Front View", focus: "Wide grip, pull bar to upper chest — not behind neck" },
-      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/bJTDFwdQtDzODwdX.png", label: "Side View", focus: "Slight lean back (15-20°), chest up, squeeze shoulder blades" }
+      { gifUrl: "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/side-machine-pulldown-nL2vzyh6GyCwgAMJ46MyyG.png", label: "Side View", focus: "Slight lean back (15-20°), chest up, squeeze shoulder blades" }
     ],
   },
   {
@@ -236,7 +236,7 @@ const EXERCISE_DB: ExerciseInfo[] = [
     cue: "Hinge at hips. Pull bar to lower chest. Squeeze back.",
     angleViews: [
       { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/vWWXQMPquhdIpUmf.png", label: "Front View", focus: "Knees slightly bent, back flat — no rounding of lower back" },
-      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/vWWXQMPquhdIpUmf.png", label: "Side View", focus: "Torso at 45° angle, bar travels straight up to lower chest/upper abs" }
+      { gifUrl: "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/side-barbell-bent-over-row-7VJGMpqMVBNhKxPbTUMnM5.png", label: "Side View", focus: "Torso at 45° angle, bar travels straight up to lower chest/upper abs" }
     ],
   },
   {
@@ -278,7 +278,7 @@ const EXERCISE_DB: ExerciseInfo[] = [
     cue: "Flat back. Drive through heels. Lock out hips at top.",
     angleViews: [
       { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/pzsBFJNQTzekfGzE.png", label: "Front View", focus: "Feet hip-width, grip just outside knees, shoulders over the bar" },
-      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/pzsBFJNQTzekfGzE.png", label: "Side View", focus: "Bar stays close to shins, back angle consistent until bar passes knees" }
+      { gifUrl: "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/side-barbell-deadlift-7VJGMpqMVBNhKxPbTUMnM5.png", label: "Side View", focus: "Bar stays close to shins, back angle consistent until bar passes knees" }
     ],
   },
   {
@@ -322,7 +322,7 @@ const EXERCISE_DB: ExerciseInfo[] = [
     cue: "Brace core. Press bar overhead. Lock out arms.",
     angleViews: [
       { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/kgsOjquFixCJuxWg.png", label: "Front View", focus: "Bar starts at collarbone, press straight up — head moves back to let bar pass" },
-      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/kgsOjquFixCJuxWg.png", label: "Side View", focus: "Bar path is straight vertical line, core braced, no excessive back lean" }
+      { gifUrl: "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/side-barbell-overhead-press-7VJGMpqMVBNhKxPbTUMnM5.png", label: "Side View", focus: "Bar path is straight vertical line, core braced, no excessive back lean" }
     ],
   },
   {
@@ -350,7 +350,7 @@ const EXERCISE_DB: ExerciseInfo[] = [
     cue: "Slight bend in elbows. Raise to shoulder height. Control descent.",
     angleViews: [
       { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/UcsSvMtgSNjiwjCJ.png", label: "Front View", focus: "Raise to shoulder height only — going higher shifts to traps" },
-      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/UcsSvMtgSNjiwjCJ.png", label: "Side View", focus: "Slight forward lean, lead with elbows not wrists" }
+      { gifUrl: "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/side-dumbbell-lateral-raise-dURoxRuLhNqxcAPa9juqnj.png", label: "Side View", focus: "Slight forward lean, lead with elbows not wrists" }
     ],
   },
   {
@@ -450,7 +450,7 @@ const EXERCISE_DB: ExerciseInfo[] = [
     cue: "Keep elbows pinned. Full range of motion. Squeeze at top.",
     angleViews: [
       { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/EXaJqPCiPBEgnngt.png", label: "Front View", focus: "Elbows stay pinned to sides, no swinging — strict curl" },
-      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/EXaJqPCiPBEgnngt.png", label: "Side View", focus: "Full extension at bottom, full contraction at top, 2-second negative" }
+      { gifUrl: "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/side-dumbbell-curl-gUeeCiuExpiLbuzwvS7vjo.png", label: "Side View", focus: "Full extension at bottom, full contraction at top, 2-second negative" }
     ],
   },
   {
@@ -592,7 +592,7 @@ const EXERCISE_DB: ExerciseInfo[] = [
     cue: "Chest up. Knees track over toes. Depth to parallel.",
     angleViews: [
       { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/gAGjbuTDdpHTlTqd.png", label: "Front View", focus: "Feet shoulder-width, toes slightly out, knees don't cave inward" },
-      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/gAGjbuTDdpHTlTqd.png", label: "Side View", focus: "Knees track over toes, hip crease below knee at bottom, chest stays up" }
+      { gifUrl: "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/side-barbell-squat-7VJGMpqMVBNhKxPbTUMnM5.png", label: "Side View", focus: "Knees track over toes, hip crease below knee at bottom, chest stays up" }
     ],
   },
   {
@@ -606,7 +606,7 @@ const EXERCISE_DB: ExerciseInfo[] = [
     cue: "Elbows high. Upright torso. Drive through heels.",
     angleViews: [
       { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/VAvkSPBCPdvNcmVV.png", label: "Front View", focus: "Bar rests on front delts, fingertips support — elbows parallel to floor" },
-      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/VAvkSPBCPdvNcmVV.png", label: "Side View", focus: "Elbows high, torso much more upright than back squat" }
+      { gifUrl: "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/side-barbell-front-squat-VKRiEPoa9RCEsnZrCB7PzX.png", label: "Side View", focus: "Elbows high, torso much more upright than back squat" }
     ],
   },
   {
@@ -662,7 +662,7 @@ const EXERCISE_DB: ExerciseInfo[] = [
     cue: "Feet shoulder-width on platform. Lower to 90°. Press up.",
     angleViews: [
       { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/ShNxUbIFKYLJcJFV.png", label: "Front View", focus: "Feet placement: high = more glutes/hams, low = more quads" },
-      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/ShNxUbIFKYLJcJFV.png", label: "Side View", focus: "Lower until knees at 90°, don't let lower back round off the pad" }
+      { gifUrl: "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/side-machine-leg-press-NZfsSzg4b3SSiKvPWweit7.png", label: "Side View", focus: "Lower until knees at 90°, don't let lower back round off the pad" }
     ],
   },
   {
@@ -704,7 +704,7 @@ const EXERCISE_DB: ExerciseInfo[] = [
     cue: "Hinge at hips. Bar slides down thighs. Feel hamstring stretch.",
     angleViews: [
       { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/SpUSTkJKspUyGQgK.png", label: "Front View", focus: "Slight knee bend, back stays flat, shoulders over the bar" },
-      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/SpUSTkJKspUyGQgK.png", label: "Side View", focus: "Hinge at hips, bar slides down thighs, stop when hamstrings fully stretched" }
+      { gifUrl: "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/side-barbell-romanian-deadlift-PdaKckR5iPBEtgPTBftRay.png", label: "Side View", focus: "Hinge at hips, bar slides down thighs, stop when hamstrings fully stretched" }
     ],
   },
   {
@@ -718,7 +718,7 @@ const EXERCISE_DB: ExerciseInfo[] = [
     cue: "Upper back on bench. Drive hips up. Squeeze glutes at top.",
     angleViews: [
       { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/MBOelWRTwTGIqbGB.png", label: "Front View", focus: "Feet flat, knees at 90° at top, don't hyperextend lower back" },
-      { gifUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/MBOelWRTwTGIqbGB.png", label: "Side View", focus: "Drive hips to full extension, chin tucked, squeeze glutes 2 seconds at top" }
+      { gifUrl: "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/side-barbell-hip-thrust-Std9bPpLJW6wjXH72ph8J6.png", label: "Side View", focus: "Drive hips to full extension, chin tucked, squeeze glutes 2 seconds at top" }
     ],
   },
   {

@@ -2374,3 +2374,27 @@
 - [x] Tests for workout context calculation (streak, days since, weekly count)
 - [x] Tests for scheduling integration (evaluate, cancel, last evaluation time)
 - [x] Tests for file existence and wiring verification
+
+## Round 94 — Fix GIFs, Restore Missing Dashboard Features
+
+### Exercise Demo GIFs
+- [ ] Fix GIFs not being animated (static images instead of animated GIFs — these are AI-generated static images, not GIFs)
+- [x] Add side view angles for exercises — 15 key compound exercises now have distinct side-view images
+- [x] Enhanced gif-resolver with SIDE_VIEW_GIFS registry and proper side-view lookup
+
+### Missing Dashboard Features
+- [x] Restore My Pantry feature/tab visibility on dashboard (Section 12: My Pantry Quick Access with item count, expiring alerts, barcode/receipt scan, meal prep)
+- [x] Restore Wearable integrations section on dashboard (Section 7: Wearable Health)
+- [x] Restore Social challenges/circles features on dashboard (Section 13: Social & Challenges with friend count, active duels, community, 7-day challenge, invite CTA)
+- [x] Audit all features from pre-overhaul version and restore missing dashboard sections
+- [x] Show premium features on dashboard (Section 11: AI Body Transformation, Smart Meal Plans, Wearable Integration banners)
+
+### Layout Optimisation
+- [x] Optimise restored features layout in current 4-tab interface
+- [x] Added 7 missing dashboard sections: Wearable Health, Muscle Balance Heatmap, Personal Records, Tips & Tricks, Premium Feature Promotions, My Pantry, Social & Challenges
+- [x] Balance feature visibility with clean dashboard design
+
+### Testing
+- [x] 0 TypeScript errors
+- [x] 15 new gif-resolver side-view tests passing
+- [ ] Pre-existing test failures (90 tests, down from 108 before our changes)

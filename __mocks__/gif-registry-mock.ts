@@ -90,6 +90,27 @@ exerciseKeys.forEach((key, i) => {
 
 export const EXERCISE_GIFS = mockGifs;
 
+// Mock side-view entries (use string URLs like the real registry)
+export const SIDE_VIEW_GIFS: Record<string, string> = {
+  "side-barbell-bench-press": "https://d2xsxph8kpxj0f.cloudfront.net/mock/side-barbell-bench-press.png",
+  "side-bodyweight-push-up": "https://d2xsxph8kpxj0f.cloudfront.net/mock/side-bodyweight-push-up.png",
+  "side-dumbbell-incline-bench-press": "https://d2xsxph8kpxj0f.cloudfront.net/mock/side-dumbbell-incline-bench-press.png",
+  "side-bodyweight-pull-ups": "https://d2xsxph8kpxj0f.cloudfront.net/mock/side-bodyweight-pull-ups.png",
+  "side-machine-pulldown": "https://d2xsxph8kpxj0f.cloudfront.net/mock/side-machine-pulldown.png",
+  "side-barbell-bent-over-row": "https://d2xsxph8kpxj0f.cloudfront.net/mock/side-barbell-bent-over-row.png",
+  "side-barbell-deadlift": "https://d2xsxph8kpxj0f.cloudfront.net/mock/side-barbell-deadlift.png",
+  "side-barbell-overhead-press": "https://d2xsxph8kpxj0f.cloudfront.net/mock/side-barbell-overhead-press.png",
+  "side-dumbbell-lateral-raise": "https://d2xsxph8kpxj0f.cloudfront.net/mock/side-dumbbell-lateral-raise.png",
+  "side-dumbbell-curl": "https://d2xsxph8kpxj0f.cloudfront.net/mock/side-dumbbell-curl.png",
+  "side-barbell-squat": "https://d2xsxph8kpxj0f.cloudfront.net/mock/side-barbell-squat.png",
+  "side-barbell-front-squat": "https://d2xsxph8kpxj0f.cloudfront.net/mock/side-barbell-front-squat.png",
+  "side-machine-leg-press": "https://d2xsxph8kpxj0f.cloudfront.net/mock/side-machine-leg-press.png",
+  "side-barbell-romanian-deadlift": "https://d2xsxph8kpxj0f.cloudfront.net/mock/side-barbell-romanian-deadlift.png",
+  "side-barbell-hip-thrust": "https://d2xsxph8kpxj0f.cloudfront.net/mock/side-barbell-hip-thrust.png",
+};
+
+export const CDN_GIFS: Record<string, string> = {};
+
 export function getGifAsset(key: string): number | undefined {
   return EXERCISE_GIFS[key];
 }

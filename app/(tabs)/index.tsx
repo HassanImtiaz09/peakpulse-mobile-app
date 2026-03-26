@@ -35,9 +35,34 @@ import { QuickInsightsCarousel } from "@/components/quick-insights-carousel";
 import { ExploreGrid } from "@/components/explore-grid";
 import { FloatingStartWorkout } from "@/components/floating-start-workout";
 import { DiscoveryBanner } from "@/components/discovery-banner";
-import { analyzeMuscleBalance, type MuscleBalanceReport } from "@/lib/muscle-balance";
+import { analyzeMuscleBalance, generateSuggestions, generatePlanChanges, type MuscleBalanceReport, type ExerciseSuggestion, type PlanChange } from "@/lib/muscle-balance";
+import { BodyHeatmap } from "@/components/body-heatmap";
+import { TrendChart, type TrendDataPoint } from "@/components/trend-chart";
+import { WearableMetricsPanel } from "@/components/wearable-metrics-panel";
+import { PremiumFeatureBanner, PremiumFeatureTeaser } from "@/components/premium-feature-banner";
+import { usePantry } from "@/lib/pantry-context";
+import { getActiveChallenges, type Challenge } from "@/lib/challenge-service";
+import { loadOrCreateSocialCircle, getActiveFriendsCount, type SocialCircleData } from "@/lib/social-circle";
 
 const AT_DASHBOARD_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/PZcnawJwIZkQHTEM.jpg";
+
+const TIPS_AND_TRICKS = [
+  { icon: "water-drop" as const, tip: "Drink 500ml of water first thing in the morning to kickstart your metabolism and hydration." },
+  { icon: "fitness-center" as const, tip: "Compound lifts (squat, deadlift, bench) give you the most muscle-building bang for your time \u2014 prioritise them." },
+  { icon: "bedtime" as const, tip: "Sleep is when your muscles grow. Aim for 7-9 hours \u2014 it\u2019s the most underrated recovery tool." },
+  { icon: "restaurant" as const, tip: "Aim for 1.6-2.2g of protein per kg of bodyweight daily to maximise muscle retention and growth." },
+  { icon: "local-fire-department" as const, tip: "Progressive overload is the key to results \u2014 add 1 rep or 2.5kg each week to keep your muscles adapting." },
+  { icon: "psychology" as const, tip: "Mind-muscle connection matters. Slow down your reps and focus on feeling the target muscle contract." },
+  { icon: "photo-camera" as const, tip: "Take progress photos every 2 weeks in the same lighting \u2014 the scale lies, photos don\u2019t." },
+  { icon: "kitchen" as const, tip: "Meal prepping on Sunday saves 45+ minutes per day and makes it 3x easier to hit your calorie targets." },
+  { icon: "timer" as const, tip: "Rest 60-90 seconds between hypertrophy sets, 2-3 minutes for strength work. Timer matters." },
+  { icon: "directions-walk" as const, tip: "10,000 steps a day burns an extra 300-500 calories without touching your workout recovery." },
+  { icon: "eco" as const, tip: "Don\u2019t fear fats \u2014 avocado, nuts and olive oil support hormone production including testosterone." },
+  { icon: "trending-up" as const, tip: "Track your workouts. People who log their sessions progress 40% faster than those who don\u2019t." },
+  { icon: "self-improvement" as const, tip: "Stress raises cortisol which promotes fat storage. Even 5 minutes of deep breathing post-workout helps." },
+  { icon: "bolt" as const, tip: "Eat fast-digesting carbs (banana, white rice) within 30 min post-workout to replenish glycogen." },
+  { icon: "science" as const, tip: "Creatine monohydrate is the most researched supplement in sports science \u2014 3-5g daily is proven to work." },
+];
 const APP_LOGO = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/PZcnawJwIZkQHTEM.jpg";
 
 const SF = {
@@ -124,6 +149,10 @@ export default function HomeScreen() {
   const [prSummary, setPrSummary] = useState<PRSummary | null>(null);
   const [muscleReport, setMuscleReport] = useState<MuscleBalanceReport | null>(null);
   const [discoveryPrompt, setDiscoveryPrompt] = useState<DiscoveryPrompt | null>(null);
+  const [tipIndex, setTipIndex] = useState(() => Math.floor(Math.random() * TIPS_AND_TRICKS.length));
+  const { items: pantryItems, getExpiringItems } = usePantry();
+  const [activeChallenges, setActiveChallenges] = useState<Challenge[]>([]);
+  const [socialCircle, setSocialCircle] = useState<SocialCircleData | null>(null);
 
   const exerciseCompletion = useExerciseCompletion();
   const { displayName: savedDisplayName, profilePhotoUri } = useUserProfile();
@@ -187,6 +216,14 @@ export default function HomeScreen() {
         setPrSummary(summary);
         const report = await analyzeMuscleBalance(7);
         setMuscleReport(report);
+        // Social & challenges
+        try {
+          const challenges = await getActiveChallenges();
+          setActiveChallenges(challenges);
+          const userName = savedDisplayName ?? user?.name ?? guestProfile?.name ?? "Athlete";
+          const circle = await loadOrCreateSocialCircle(userName);
+          setSocialCircle(circle);
+        } catch {}
       } catch {}
     })();
   }, [canUse, wearableData.stats.steps, wearableData.stats.totalCaloriesBurnt]);
@@ -524,6 +561,369 @@ export default function HomeScreen() {
             />
           </StaggeredCard>
 
+          {/* ═══════════════════════════════════════════════════════════
+              SECTION 7: Wearable Metrics Panel (compact)
+              ═══════════════════════════════════════════════════════════ */}
+          <StaggeredCard index={6}>
+            <View style={styles.section}>
+              <SectionTitle
+                title="Wearable Health"
+                rightElement={
+                  <TouchableOpacity onPress={() => router.push("/wearable-settings" as any)} style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
+                    <Text style={{ color: SF.orange, fontFamily: "DMSans_600SemiBold", fontSize: 12 }}>Details</Text>
+                    <MaterialIcons name="chevron-right" size={14} color={SF.orange} />
+                  </TouchableOpacity>
+                }
+              />
+              {wearableData.isConnected ? (
+                <View style={styles.wearableRow}>
+                  <View style={styles.wearableMetric}>
+                    <MaterialIcons name="directions-walk" size={18} color="#22C55E" />
+                    <Text style={[styles.wearableValue, { color: "#22C55E" }]}>{wearableData.stats.steps.toLocaleString()}</Text>
+                    <Text style={styles.wearableLabel}>Steps</Text>
+                  </View>
+                  <View style={styles.wearableMetric}>
+                    <MaterialIcons name="favorite" size={18} color="#EF4444" />
+                    <Text style={[styles.wearableValue, { color: "#EF4444" }]}>{wearableData.stats.heartRate}</Text>
+                    <Text style={styles.wearableLabel}>BPM</Text>
+                  </View>
+                  <View style={styles.wearableMetric}>
+                    <MaterialIcons name="local-fire-department" size={18} color="#F59E0B" />
+                    <Text style={[styles.wearableValue, { color: "#F59E0B" }]}>{wearableData.stats.totalCaloriesBurnt}</Text>
+                    <Text style={styles.wearableLabel}>Cal</Text>
+                  </View>
+                  <View style={styles.wearableMetric}>
+                    <MaterialIcons name="bedtime" size={18} color="#8B5CF6" />
+                    <Text style={[styles.wearableValue, { color: "#8B5CF6" }]}>{wearableData.stats.sleepHours.toFixed(1)}h</Text>
+                    <Text style={styles.wearableLabel}>Sleep</Text>
+                  </View>
+                </View>
+              ) : (
+                <TouchableOpacity
+                  style={styles.wearableConnectCard}
+                  onPress={() => router.push("/wearable-settings" as any)}
+                  activeOpacity={0.85}
+                >
+                  <MaterialIcons name="watch" size={28} color={SF.gold} />
+                  <View style={{ flex: 1, marginLeft: 14 }}>
+                    <Text style={{ color: SF.fg, fontFamily: "DMSans_600SemiBold", fontSize: 14 }}>Connect Your Wearable</Text>
+                    <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 12, marginTop: 2 }}>Sync Apple Health, Google Fit, Fitbit & more</Text>
+                  </View>
+                  <MaterialIcons name="chevron-right" size={20} color={SF.gold} />
+                </TouchableOpacity>
+              )}
+            </View>
+          </StaggeredCard>
+
+          {/* ═══════════════════════════════════════════════════════════
+              SECTION 8: Muscle Balance Heatmap
+              ═══════════════════════════════════════════════════════════ */}
+          {muscleReport && muscleReport.entries.length > 0 && (
+            <StaggeredCard index={7}>
+              <View style={styles.section}>
+                <SectionTitle
+                  title="Muscle Balance"
+                  rightElement={
+                    <TouchableOpacity onPress={() => router.push("/muscle-balance" as any)} style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
+                      <Text style={{ color: SF.orange, fontFamily: "DMSans_600SemiBold", fontSize: 12 }}>Full Report</Text>
+                      <MaterialIcons name="chevron-right" size={14} color={SF.orange} />
+                    </TouchableOpacity>
+                  }
+                />
+                <View style={styles.heatmapCard}>
+                  <BodyHeatmap
+                    mode="balance"
+                    balanceEntries={muscleReport.entries}
+                    width={130}
+                    height={200}
+                    showLegend
+                  />
+                  {/* Summary chips */}
+                  <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 6, marginTop: 12, justifyContent: "center" }}>
+                    {muscleReport.overExercised.length > 0 && (
+                      <View style={[styles.balanceChip, { backgroundColor: "rgba(239,68,68,0.12)", borderColor: "rgba(239,68,68,0.25)" }]}>
+                        <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: "#EF4444" }} />
+                        <Text style={[styles.balanceChipText, { color: "#EF4444" }]}>{muscleReport.overExercised.length} over</Text>
+                      </View>
+                    )}
+                    {muscleReport.optimal.length > 0 && (
+                      <View style={[styles.balanceChip, { backgroundColor: "rgba(34,197,94,0.12)", borderColor: "rgba(34,197,94,0.25)" }]}>
+                        <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: "#22C55E" }} />
+                        <Text style={[styles.balanceChipText, { color: "#22C55E" }]}>{muscleReport.optimal.length} optimal</Text>
+                      </View>
+                    )}
+                    {muscleReport.underExercised.length > 0 && (
+                      <View style={[styles.balanceChip, { backgroundColor: "rgba(59,130,246,0.12)", borderColor: "rgba(59,130,246,0.25)" }]}>
+                        <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: "#3B82F6" }} />
+                        <Text style={[styles.balanceChipText, { color: "#3B82F6" }]}>{muscleReport.underExercised.length} under</Text>
+                      </View>
+                    )}
+                  </View>
+                </View>
+              </View>
+            </StaggeredCard>
+          )}
+
+          {/* ═══════════════════════════════════════════════════════════
+              SECTION 9: Personal Records
+              ═══════════════════════════════════════════════════════════ */}
+          {prSummary && prSummary.topLifts.length > 0 && (
+            <StaggeredCard index={8}>
+              <View style={styles.section}>
+                <SectionTitle
+                  title="Personal Records"
+                  rightElement={
+                    <TouchableOpacity onPress={() => router.push("/personal-records" as any)} style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
+                      <Text style={{ color: SF.orange, fontFamily: "DMSans_600SemiBold", fontSize: 12 }}>All PRs</Text>
+                      <MaterialIcons name="chevron-right" size={14} color={SF.orange} />
+                    </TouchableOpacity>
+                  }
+                />
+                <View style={styles.prCard}>
+                  {prSummary.topLifts.slice(0, 4).map((lift, i) => (
+                    <View key={lift.exercise + i} style={[styles.prRow, i < Math.min(prSummary.topLifts.length, 4) - 1 && { borderBottomWidth: 1, borderBottomColor: SF.border }]}>
+                      <View style={styles.prRank}>
+                        <Text style={styles.prRankText}>{i + 1}</Text>
+                      </View>
+                      <View style={{ flex: 1 }}>
+                        <Text style={styles.prExercise}>{lift.exercise.replace(/\b\w/g, c => c.toUpperCase())}</Text>
+                        <Text style={styles.prDate}>{new Date(lift.date).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</Text>
+                      </View>
+                      <View style={{ alignItems: "flex-end" }}>
+                        <Text style={styles.prWeight}>{lift.weight} kg</Text>
+                        {prSummary.recentPRs.find(r => r.exercise === lift.exercise) && (
+                          <View style={styles.prNewBadge}>
+                            <Text style={styles.prNewBadgeText}>NEW</Text>
+                          </View>
+                        )}
+                      </View>
+                    </View>
+                  ))}
+                  {prSummary.totalExercisesTracked > 4 && (
+                    <TouchableOpacity
+                      onPress={() => router.push("/personal-records" as any)}
+                      style={styles.prSeeAll}
+                    >
+                      <Text style={styles.prSeeAllText}>See all {prSummary.totalExercisesTracked} exercises</Text>
+                      <MaterialIcons name="arrow-forward" size={14} color={SF.gold} />
+                    </TouchableOpacity>
+                  )}
+                </View>
+              </View>
+            </StaggeredCard>
+          )}
+
+          {/* ═══════════════════════════════════════════════════════════
+              SECTION 10: Tips & Tricks
+              ═══════════════════════════════════════════════════════════ */}
+          <StaggeredCard index={9}>
+            <View style={styles.section}>
+              <SectionTitle title="Tip of the Day" />
+              <View style={styles.tipCard}>
+                <View style={styles.tipIconBox}>
+                  <MaterialIcons name={TIPS_AND_TRICKS[tipIndex].icon as any} size={22} color={SF.gold} />
+                </View>
+                <Text style={styles.tipText}>{TIPS_AND_TRICKS[tipIndex].tip}</Text>
+                <TouchableOpacity
+                  onPress={() => {
+                    const next = (tipIndex + 1) % TIPS_AND_TRICKS.length;
+                    setTipIndex(next);
+                    if (Platform.OS !== "web") Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                  }}
+                  style={styles.tipNextBtn}
+                >
+                  <MaterialIcons name="refresh" size={16} color={SF.gold} />
+                  <Text style={{ color: SF.gold, fontFamily: "DMSans_600SemiBold", fontSize: 12, marginLeft: 4 }}>Next Tip</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </StaggeredCard>
+
+          {/* ═══════════════════════════════════════════════════════════
+              SECTION 11: Premium Feature Promotions
+              ═══════════════════════════════════════════════════════════ */}
+          <StaggeredCard index={10}>
+            <View style={styles.section}>
+              <PremiumFeatureBanner
+                feature="ai_body_scan"
+                title="AI Body Transformation"
+                description="See your future physique with AI-powered body visualisation. Upload a photo and watch yourself transform."
+                icon="auto-awesome"
+                accentColor="#8B5CF6"
+                requiredTier="pro"
+              />
+              <View style={{ height: 10 }} />
+              <PremiumFeatureBanner
+                feature="ai_meal_plan"
+                title="Smart Meal Plans"
+                description="Get personalised meal plans based on your goals, dietary preferences, and calorie targets."
+                icon="restaurant-menu"
+                accentColor="#22C55E"
+                requiredTier="basic"
+                compact
+              />
+              <View style={{ height: 10 }} />
+              <PremiumFeatureBanner
+                feature="wearable_sync"
+                title="Wearable Integration"
+                description="Sync with Apple Health, Google Fit, Fitbit, Garmin and more for complete health tracking."
+                icon="watch"
+                accentColor="#3B82F6"
+                requiredTier="basic"
+                compact
+              />
+            </View>
+          </StaggeredCard>
+
+          {/* ═══════════════════════════════════════════════════════════
+              SECTION 12: My Pantry Quick Access
+              ═══════════════════════════════════════════════════════════ */}
+          <StaggeredCard index={11}>
+            <View style={styles.section}>
+              <SectionTitle
+                title="My Pantry"
+                rightElement={
+                  <TouchableOpacity onPress={() => router.push("/pantry" as any)} style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
+                    <Text style={{ color: SF.orange, fontFamily: "DMSans_600SemiBold", fontSize: 12 }}>Open</Text>
+                    <MaterialIcons name="chevron-right" size={14} color={SF.orange} />
+                  </TouchableOpacity>
+                }
+              />
+              <TouchableOpacity
+                style={styles.pantryCard}
+                onPress={() => router.push("/pantry" as any)}
+                activeOpacity={0.85}
+              >
+                <View style={{ flexDirection: "row", alignItems: "center", gap: 14 }}>
+                  <View style={[styles.pantryIconBox, { backgroundColor: "rgba(249,115,22,0.12)" }]}>
+                    <MaterialIcons name="kitchen" size={26} color="#F97316" />
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <Text style={{ color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 16 }}>
+                      {pantryItems.length} Items
+                    </Text>
+                    <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 12, marginTop: 2 }}>
+                      {(() => {
+                        const expiring = getExpiringItems(3);
+                        if (expiring.length > 0) return `${expiring.length} expiring soon`;
+                        if (pantryItems.length === 0) return "Add items to get AI meal suggestions";
+                        return "Tap for AI meal suggestions";
+                      })()}
+                    </Text>
+                  </View>
+                  <MaterialIcons name="chevron-right" size={22} color={SF.muted} />
+                </View>
+                {/* Quick action row */}
+                <View style={{ flexDirection: "row", gap: 8, marginTop: 14 }}>
+                  <TouchableOpacity
+                    style={styles.pantryQuickBtn}
+                    onPress={() => router.push("/barcode-scanner" as any)}
+                  >
+                    <MaterialIcons name="qr-code-scanner" size={14} color={SF.gold} />
+                    <Text style={styles.pantryQuickBtnText}>Scan Barcode</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.pantryQuickBtn}
+                    onPress={() => router.push("/scan-receipt" as any)}
+                  >
+                    <MaterialIcons name="receipt-long" size={14} color={SF.gold} />
+                    <Text style={styles.pantryQuickBtnText}>Scan Receipt</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.pantryQuickBtn}
+                    onPress={() => router.push("/meal-prep" as any)}
+                  >
+                    <MaterialIcons name="auto-awesome" size={14} color={SF.gold} />
+                    <Text style={styles.pantryQuickBtnText}>Meal Prep</Text>
+                  </TouchableOpacity>
+                </View>
+              </TouchableOpacity>
+            </View>
+          </StaggeredCard>
+
+          {/* ═══════════════════════════════════════════════════════════
+              SECTION 13: Social & Challenges
+              ═══════════════════════════════════════════════════════════ */}
+          <StaggeredCard index={12}>
+            <View style={styles.section}>
+              <SectionTitle
+                title="Social & Challenges"
+                rightElement={
+                  <TouchableOpacity onPress={() => router.push("/social-circle" as any)} style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
+                    <Text style={{ color: SF.orange, fontFamily: "DMSans_600SemiBold", fontSize: 12 }}>My Circle</Text>
+                    <MaterialIcons name="chevron-right" size={14} color={SF.orange} />
+                  </TouchableOpacity>
+                }
+              />
+              <View style={styles.socialCard}>
+                {/* Circle stats row */}
+                <View style={{ flexDirection: "row", gap: 10, marginBottom: 14 }}>
+                  <TouchableOpacity
+                    style={styles.socialStatBox}
+                    onPress={() => router.push("/social-circle" as any)}
+                    activeOpacity={0.8}
+                  >
+                    <MaterialIcons name="people" size={20} color="#3B82F6" />
+                    <Text style={[styles.socialStatValue, { color: "#3B82F6" }]}>
+                      {socialCircle ? socialCircle.friends.length : 0}
+                    </Text>
+                    <Text style={styles.socialStatLabel}>Friends</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.socialStatBox}
+                    onPress={() => router.push("/challenge" as any)}
+                    activeOpacity={0.8}
+                  >
+                    <MaterialIcons name="bolt" size={20} color="#F59E0B" />
+                    <Text style={[styles.socialStatValue, { color: "#F59E0B" }]}>
+                      {activeChallenges.length}
+                    </Text>
+                    <Text style={styles.socialStatLabel}>Active Duels</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.socialStatBox}
+                    onPress={() => router.push("/group-goals" as any)}
+                    activeOpacity={0.8}
+                  >
+                    <MaterialIcons name="groups" size={20} color="#14B8A6" />
+                    <Text style={[styles.socialStatValue, { color: "#14B8A6" }]}>
+                      {socialCircle ? getActiveFriendsCount(socialCircle.friends) : 0}
+                    </Text>
+                    <Text style={styles.socialStatLabel}>Active</Text>
+                  </TouchableOpacity>
+                </View>
+                {/* Quick action buttons */}
+                <View style={{ flexDirection: "row", gap: 8 }}>
+                  <TouchableOpacity
+                    style={[styles.socialActionBtn, { flex: 1 }]}
+                    onPress={() => gatedNav("/social-feed", "social_feed", "group", "pro", "Join the PeakPulse community, share progress, and compete in challenges.")}
+                  >
+                    <MaterialIcons name="group" size={16} color="#8B5CF6" />
+                    <Text style={[styles.socialActionBtnText, { color: "#8B5CF6" }]}>Community</Text>
+                    <View style={styles.proBadge}><Text style={styles.proBadgeText}>PRO</Text></View>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[styles.socialActionBtn, { flex: 1 }]}
+                    onPress={() => gatedNav("/challenge-onboarding", "challenges", "bolt", "pro", "Unlock 7-day fitness challenges and leaderboards.")}
+                  >
+                    <MaterialIcons name="emoji-events" size={16} color="#F59E0B" />
+                    <Text style={[styles.socialActionBtnText, { color: "#F59E0B" }]}>7-Day Challenge</Text>
+                    <View style={styles.proBadge}><Text style={styles.proBadgeText}>PRO</Text></View>
+                  </TouchableOpacity>
+                </View>
+                {/* Invite CTA */}
+                <TouchableOpacity
+                  style={styles.socialInviteBtn}
+                  onPress={() => router.push("/social-circle" as any)}
+                  activeOpacity={0.85}
+                >
+                  <MaterialIcons name="person-add" size={16} color={SF.gold} />
+                  <Text style={{ color: SF.gold, fontFamily: "DMSans_600SemiBold", fontSize: 13, marginLeft: 8 }}>Invite Friends to Your Circle</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </StaggeredCard>
+
           {/* ── No plans CTA ── */}
           {!workoutPlan && !mealPlan && (
             <StaggeredCard index={6}>
@@ -665,4 +1065,119 @@ const styles = StyleSheet.create({
   trialBannerSub: { color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 11, lineHeight: 16 },
   trialBannerBtn: { backgroundColor: "#F59E0B", borderRadius: 10, paddingHorizontal: 12, paddingVertical: 7 },
   trialBannerBtnText: { color: SF.bg, fontFamily: "DMSans_700Bold", fontSize: 12 },
+  // Wearable Metrics
+  wearableRow: {
+    flexDirection: "row", justifyContent: "space-between",
+    backgroundColor: SF.surfacePrimary, borderRadius: 18, padding: 16,
+    borderWidth: 1, borderColor: SF.border,
+  },
+  wearableMetric: { alignItems: "center", flex: 1, gap: 4 },
+  wearableValue: { fontFamily: "SpaceMono_700Bold", fontSize: 16 },
+  wearableLabel: { color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 10 },
+  wearableConnectCard: {
+    flexDirection: "row", alignItems: "center",
+    backgroundColor: SF.surfacePrimary, borderRadius: 18, padding: 16,
+    borderWidth: 1, borderColor: "rgba(245,158,11,0.15)",
+  },
+  // Muscle Balance Heatmap
+  heatmapCard: {
+    backgroundColor: SF.surfacePrimary, borderRadius: 20, padding: 16,
+    borderWidth: 1, borderColor: SF.border, alignItems: "center",
+  },
+  balanceChip: {
+    flexDirection: "row", alignItems: "center", gap: 5,
+    paddingHorizontal: 10, paddingVertical: 5, borderRadius: 10,
+    borderWidth: 1,
+  },
+  balanceChipText: { fontFamily: "DMSans_600SemiBold", fontSize: 11 },
+  // Personal Records
+  prCard: {
+    backgroundColor: SF.surfacePrimary, borderRadius: 20, padding: 4,
+    borderWidth: 1, borderColor: SF.border, overflow: "hidden",
+  },
+  prRow: {
+    flexDirection: "row", alignItems: "center", padding: 12, gap: 12,
+  },
+  prRank: {
+    width: 28, height: 28, borderRadius: 14,
+    backgroundColor: "rgba(245,158,11,0.12)", alignItems: "center", justifyContent: "center",
+  },
+  prRankText: { color: SF.gold, fontFamily: "SpaceMono_700Bold", fontSize: 12 },
+  prExercise: { color: SF.fg, fontFamily: "DMSans_600SemiBold", fontSize: 14 },
+  prDate: { color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 11, marginTop: 2 },
+  prWeight: { color: SF.gold, fontFamily: "SpaceMono_700Bold", fontSize: 16 },
+  prNewBadge: {
+    backgroundColor: "rgba(34,197,94,0.15)", borderRadius: 4,
+    paddingHorizontal: 6, paddingVertical: 2, marginTop: 3,
+  },
+  prNewBadgeText: { color: "#22C55E", fontFamily: "DMSans_700Bold", fontSize: 8, letterSpacing: 1 },
+  prSeeAll: {
+    flexDirection: "row", alignItems: "center", justifyContent: "center",
+    paddingVertical: 10, gap: 6,
+    borderTopWidth: 1, borderTopColor: SF.border,
+  },
+  prSeeAllText: { color: SF.gold, fontFamily: "DMSans_600SemiBold", fontSize: 12 },
+  // Tips & Tricks
+  tipCard: {
+    backgroundColor: SF.surfacePrimary, borderRadius: 20, padding: 18,
+    borderWidth: 1, borderColor: SF.border,
+  },
+  tipIconBox: {
+    width: 44, height: 44, borderRadius: 14,
+    backgroundColor: "rgba(245,158,11,0.10)", alignItems: "center", justifyContent: "center",
+    marginBottom: 12,
+  },
+  tipText: { color: SF.fg, fontFamily: "DMSans_400Regular", fontSize: 14, lineHeight: 21 },
+  tipNextBtn: {
+    flexDirection: "row", alignItems: "center", alignSelf: "flex-end",
+    marginTop: 14, paddingVertical: 6, paddingHorizontal: 12,
+    borderRadius: 10, backgroundColor: "rgba(245,158,11,0.10)",
+  },
+  // My Pantry
+  pantryCard: {
+    backgroundColor: SF.surfacePrimary, borderRadius: 20, padding: 18,
+    borderWidth: 1, borderColor: SF.border,
+  },
+  pantryIconBox: {
+    width: 50, height: 50, borderRadius: 16,
+    alignItems: "center", justifyContent: "center",
+    borderWidth: 1, borderColor: "rgba(249,115,22,0.25)",
+  },
+  pantryQuickBtn: {
+    flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center",
+    gap: 4, paddingVertical: 8, borderRadius: 10,
+    backgroundColor: "rgba(245,158,11,0.08)",
+    borderWidth: 1, borderColor: "rgba(245,158,11,0.15)",
+  },
+  pantryQuickBtnText: { color: SF.gold, fontFamily: "DMSans_600SemiBold", fontSize: 10 },
+  // Social & Challenges
+  socialCard: {
+    backgroundColor: SF.surfacePrimary, borderRadius: 20, padding: 18,
+    borderWidth: 1, borderColor: SF.border,
+  },
+  socialStatBox: {
+    flex: 1, alignItems: "center", paddingVertical: 12,
+    backgroundColor: "rgba(255,255,255,0.03)", borderRadius: 14,
+    borderWidth: 1, borderColor: SF.border, gap: 4,
+  },
+  socialStatValue: { fontFamily: "SpaceMono_700Bold", fontSize: 20 },
+  socialStatLabel: { color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 10 },
+  socialActionBtn: {
+    flexDirection: "row", alignItems: "center", justifyContent: "center",
+    gap: 6, paddingVertical: 10, borderRadius: 12,
+    backgroundColor: "rgba(255,255,255,0.03)",
+    borderWidth: 1, borderColor: SF.border,
+  },
+  socialActionBtnText: { fontFamily: "DMSans_600SemiBold", fontSize: 12 },
+  proBadge: {
+    backgroundColor: "rgba(168,85,247,0.15)", borderRadius: 4,
+    paddingHorizontal: 5, paddingVertical: 1,
+  },
+  proBadgeText: { color: "#A855F7", fontFamily: "DMSans_700Bold", fontSize: 8, letterSpacing: 0.5 },
+  socialInviteBtn: {
+    flexDirection: "row", alignItems: "center", justifyContent: "center",
+    marginTop: 12, paddingVertical: 10, borderRadius: 12,
+    backgroundColor: "rgba(245,158,11,0.08)",
+    borderWidth: 1, borderColor: "rgba(245,158,11,0.20)",
+  },
 });

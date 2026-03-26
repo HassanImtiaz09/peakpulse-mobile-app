@@ -101,6 +101,30 @@ export const EXERCISE_GIFS: Record<string, string> = {
 
 };
 
+// ── Side-view images (distinct AI-generated side perspectives) ──────────────
+export const SIDE_VIEW_GIFS: Record<string, string> = {
+  // Chest
+  "side-barbell-bench-press": "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/side-barbell-bench-press-7VJGMpqMVBNhKxPbTUMnM5.png",
+  "side-bodyweight-push-up": "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/side-bodyweight-push-up-9agjrdHsJ7fNa3UcgJ5iz8.png",
+  "side-dumbbell-incline-bench-press": "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/side-dumbbell-incline-bench-press-D93Vg9axNmgjjk3xpsQghq.png",
+  // Back
+  "side-bodyweight-pull-ups": "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/side-bodyweight-pull-ups-8WS7ED3gLnJYx6tPSR6b56.png",
+  "side-machine-pulldown": "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/side-machine-pulldown-nL2vzyh6GyCwgAMJ46MyyG.png",
+  "side-barbell-bent-over-row": "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/side-barbell-bent-over-row-7VJGMpqMVBNhKxPbTUMnM5.png",
+  "side-barbell-deadlift": "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/side-barbell-deadlift-7VJGMpqMVBNhKxPbTUMnM5.png",
+  // Shoulders
+  "side-barbell-overhead-press": "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/side-barbell-overhead-press-7VJGMpqMVBNhKxPbTUMnM5.png",
+  "side-dumbbell-lateral-raise": "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/side-dumbbell-lateral-raise-dURoxRuLhNqxcAPa9juqnj.png",
+  // Biceps
+  "side-dumbbell-curl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/side-dumbbell-curl-gUeeCiuExpiLbuzwvS7vjo.png",
+  // Legs
+  "side-barbell-squat": "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/side-barbell-squat-7VJGMpqMVBNhKxPbTUMnM5.png",
+  "side-barbell-front-squat": "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/side-barbell-front-squat-VKRiEPoa9RCEsnZrCB7PzX.png",
+  "side-machine-leg-press": "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/side-machine-leg-press-NZfsSzg4b3SSiKvPWweit7.png",
+  "side-barbell-romanian-deadlift": "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/side-barbell-romanian-deadlift-PdaKckR5iPBEtgPTBftRay.png",
+  "side-barbell-hip-thrust": "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/side-barbell-hip-thrust-Std9bPpLJW6wjXH72ph8J6.png",
+};
+
 // CDN GIFs map (for oversized assets that were already on CDN)
 export const CDN_GIFS: Record<string, string> = {};
 
