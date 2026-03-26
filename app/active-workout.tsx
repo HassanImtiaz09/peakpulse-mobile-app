@@ -28,6 +28,7 @@ import {
 import { preloadExerciseVideos, clearPreloadCache } from "@/lib/video-preload";
 import { autoCacheCurrentWorkout } from "@/lib/offline-workout-cache";
 import { recordWorkoutCompleted, recordTimerUsed } from "@/lib/feature-discovery";
+import { evaluateAndScheduleSmartReminders } from "@/lib/smart-reminders";
 
 import { GOLDEN_WORKOUT, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgrounds";
 const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get("window");
@@ -436,6 +437,7 @@ export default function ActiveWorkoutScreen() {
             };
             // Record workout completion for feature discovery
             recordWorkoutCompleted().catch(() => {});
+            evaluateAndScheduleSmartReminders().catch(() => {});
             // Auto-log personal records
             try {
               const prResults = await logWorkoutPRs(completedExercises);

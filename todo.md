@@ -2338,3 +2338,39 @@
 - [x] Tests for subscription tier changes (Free/Basic/Pro, feature gating)
 - [x] Tests for analytics, sounds, offline cache, voice coach settings
 - [x] Tests for component file existence verification
+
+## Round 93 — First-Launch Walkthrough & Smart Reminders
+
+### First-Launch Onboarding Walkthrough
+- [x] Rewrote tutorial-overlay.tsx for new 4-tab layout (Home, Train, Nutrition, Profile)
+- [x] 7 walkthrough slides: Welcome, Home Dashboard, Train Tab, Nutrition Tab, Profile & Settings, AI Features, Get Started
+- [x] Each slide introduces tab purpose, key features, and what to expect
+- [x] Animated transitions with fade-in and slide-up effects
+- [x] Progress dots and Skip/Next/Get Started navigation
+- [x] Persisted tutorial completion state in AsyncStorage (shows only on first launch)
+- [x] Integrated into home screen via useTutorial hook
+
+### Intelligent Smart Reminders
+- [x] Smart reminders service (lib/smart-reminders.ts) with 6 reminder types
+- [x] Streak Protection — nudge when streak is at risk (no workout on training day)
+- [x] Comeback Nudges — encouraging message after 2+ days without workout
+- [x] Milestone Celebrations — celebrate streak milestones (3, 7, 14, 30, 50, 100 days)
+- [x] Rest Day Reminders — recovery-focused messages on off days
+- [x] Morning Boost — daily morning motivation with today's plan
+- [x] Evening Push — last-chance reminder on workout days
+- [x] Progressive urgency — reminders adapt based on time of day and streak status
+- [x] Personalised messages using user name and streak count
+- [x] Configurable workout days (Mon-Fri default), preferred workout hour, quiet hours
+- [x] Smart Reminders settings screen (app/smart-reminders.tsx) with all toggles
+- [x] Wired into app launch (_layout.tsx) and workout completion (active-workout.tsx)
+- [x] Added Smart Reminders link to Profile > Settings & Preferences
+- [x] All settings persisted to AsyncStorage
+
+### Testing
+- [x] 0 TypeScript errors
+- [x] 39 new tests all passing (round93-onboarding-reminders.test.ts)
+- [x] Tests for settings persistence (defaults, save, merge, corruption handling)
+- [x] Tests for reminder type determination (all 6 types + priority + edge cases)
+- [x] Tests for workout context calculation (streak, days since, weekly count)
+- [x] Tests for scheduling integration (evaluate, cancel, last evaluation time)
+- [x] Tests for file existence and wiring verification

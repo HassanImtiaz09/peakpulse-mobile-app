@@ -30,6 +30,7 @@ import { useRouter } from "expo-router";
 import { extractReferralCodeFromUrl, storePendingReferralCode } from "@/lib/referral";
 import { FloatingAssistant } from "@/components/floating-assistant";
 import { scheduleAllAINotifications } from "@/lib/ai-notification-scheduler";
+import { evaluateAndScheduleSmartReminders } from "@/lib/smart-reminders";
 import { defineBackgroundHealthSyncTask, registerBackgroundHealthSync } from "@/lib/background-health-sync";
 import { initWeeklyDigest } from "@/lib/weekly-health-digest";
 
@@ -211,6 +212,7 @@ export default function RootLayout() {
     // Delay slightly to avoid blocking initial render
     const timer = setTimeout(() => {
       scheduleAllAINotifications().catch(() => {});
+      evaluateAndScheduleSmartReminders().catch(() => {});
     }, 3000);
     return () => clearTimeout(timer);
   }, [fontsLoaded]);

@@ -510,8 +510,9 @@ export default function ProfileScreen() {
             <FeatureLink icon="watch" label="Wearable Sync" onPress={() => gatedNav("/wearable-sync", "wearable_sync", "watch", "basic", "Sync your fitness wearable (Apple Watch, Fitbit, Garmin) with PeakPulse — Basic plan and above.")} />
           </CollapsibleSection>
 
-          <CollapsibleSection title="Settings & Preferences" count={4}>
+          <CollapsibleSection title="Settings & Preferences" count={5}>
             <FeatureLink icon="notifications" label="Notifications" onPress={() => gatedNav("/notification-preferences", "notification_preferences", "notifications", "basic", "Customise your workout and meal reminder times — available on Basic and Pro plans.")} />
+            <FeatureLink icon="auto-awesome" label="Smart Reminders" onPress={() => router.push("/smart-reminders" as any)} />
             <FeatureLink icon="settings" label="App Settings" onPress={() => router.push("/settings" as any)} />
             <FeatureLink icon="feedback" label="Send Feedback" onPress={() => router.push("/feedback" as any)} />
             <FeatureLink icon="help-outline" label="User Guide" onPress={() => router.push("/user-guide" as any)} />

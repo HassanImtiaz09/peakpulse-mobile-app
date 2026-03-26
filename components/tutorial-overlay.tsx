@@ -1,7 +1,8 @@
 /**
  * TutorialOverlay
  * A full-screen walkthrough shown once to first-time users after they land on the dashboard.
- * Walks through 6 slides covering each tab and key features, with plan tier callouts.
+ * Updated for the 4-tab layout: Home, Train, Nutrition, Profile.
+ * Walks through 5 slides covering each tab, key features, and tips.
  * Dismissed permanently via AsyncStorage flag "@tutorial_complete".
  */
 import React, { useEffect, useRef, useState } from "react";
@@ -19,7 +20,7 @@ const SF = {
   surface: "#141A22",
   border:  "rgba(245,158,11,0.18)",
   fg:      "#F1F5F9",
-  muted: "#B45309",
+  muted:   "#64748B",
   gold:    "#F59E0B",
   gold2:   "#FBBF24",
   gold3:   "#FDE68A",
@@ -33,103 +34,93 @@ interface TutorialSlide {
   tab: string;
   title: string;
   body: string;
-  features: { label: string; tier: "free" | "basic" | "basic+" | "pro" }[];
+  features: { label: string; tier: "free" | "basic" | "pro" }[];
   tip?: string;
 }
 
 const SLIDES: TutorialSlide[] = [
   {
     iconName: "dashboard",
-    tab: "Dashboard",
-    title: "Your Command Centre",
-    body: "The dashboard gives you a live snapshot of your day — calories consumed, workouts logged, streak, and your latest body fat estimate from your progress photos.",
+    tab: "Home",
+    title: "Your Daily Dashboard",
+    body: "The Home tab is your command centre. See today's workout, daily calorie progress, weekly goals, and quick insights — all at a glance. Tap the floating button to start your workout instantly.",
     features: [
-      { label: "Daily calorie & macro tracking", tier: "free" },
-      { label: "Workout & streak stats", tier: "free" },
-      { label: "BF% estimate from photos", tier: "basic+" },
-      { label: "AI Coach quick access", tier: "basic+" },
+      { label: "Today's workout card with one-tap start", tier: "free" },
+      { label: "Daily calorie & macro progress", tier: "free" },
+      { label: "Weekly goal rings", tier: "free" },
+      { label: "Quick Insights carousel (streaks, PRs, tips)", tier: "free" },
+      { label: "Explore grid for all features", tier: "free" },
     ],
-    tip: "Check the dashboard every morning to set your intention for the day.",
+    tip: "Check the Home tab every morning to see your plan for the day.",
   },
   {
     iconName: "fitness-center",
-    tab: "Plans",
-    title: "Your AI Workout & Meal Plans",
-    body: "The Plans tab holds your personalised AI workout schedule and 7-day meal plan. Tap any exercise to see instructions, or swap any meal for an AI-generated alternative.",
+    tab: "Train",
+    title: "Your AI Workout Plans",
+    body: "The Train tab holds your personalised AI workout schedule. Tap any exercise for instructions, start the Voice Coach Timer for guided sets, and track your progress with analytics and personal records.",
     features: [
-      { label: "AI Workout Plan", tier: "free" },
-      { label: "AI Meal Plan with macros", tier: "free" },
-      { label: "Meal Swap AI", tier: "basic+" },
-      { label: "Unlimited plan regeneration", tier: "basic+" },
+      { label: "AI-generated workout plans", tier: "basic" },
+      { label: "Voice Coach Timer with audio cues", tier: "basic" },
+      { label: "Exercise form demonstrations", tier: "free" },
+      { label: "Workout analytics & strength charts", tier: "basic" },
+      { label: "Personal records tracking", tier: "free" },
     ],
-    tip: "Tap 'AI Form Check' in the workout section to analyse your exercise form with your camera.",
+    tip: "Use the Voice Coach Timer during your workout — it calls out form cues and counts down rest periods for you.",
   },
   {
-    iconName: "photo-camera",
-    tab: "Progress",
-    title: "Track Your Transformation",
-    body: "Upload progress photos regularly. The AI analyses each photo and estimates your body fat percentage. Use the drag-to-reveal slider to compare any two months side by side.",
+    iconName: "restaurant",
+    tab: "Nutrition",
+    title: "Smart Meal Planning",
+    body: "The Nutrition tab manages your meals, calories, and pantry. Log meals with the AI calorie scanner, follow your AI meal plan, and use the Smart Pantry to track what's in your kitchen.",
     features: [
-      { label: "Progress photo upload", tier: "free" },
-      { label: "AI BF% estimation", tier: "basic+" },
-      { label: "Before/after comparison slider", tier: "basic+" },
-      { label: "Unlimited photos + collage export", tier: "pro" },
+      { label: "AI calorie estimation from photos", tier: "free" },
+      { label: "AI-generated 7-day meal plans", tier: "basic" },
+      { label: "Smart Pantry with expiry alerts", tier: "free" },
+      { label: "Macro tracking & daily targets", tier: "free" },
+      { label: "Cook Again shortcuts", tier: "free" },
     ],
-    tip: "Take photos in the same spot, same lighting, every 2 weeks for the most accurate comparison.",
+    tip: "Snap a photo of any meal to instantly estimate calories and macros — no manual entry needed.",
   },
   {
-    iconName: "smart-toy",
-    tab: "AI Coach",
-    title: "Your Personal AI Coach",
-    body: "The AI Coach analyses your form history, progress trend, and workout data to give you weekly insights, personalised tips, and a focused training plan. Chat with it anytime.",
+    iconName: "person",
+    tab: "Profile",
+    title: "Settings & Progress",
+    body: "The Profile tab is where you manage your account, view your workout calendar, check body scan history, adjust timer and notification settings, and explore community features.",
     features: [
-      { label: "Weekly progress insights", tier: "basic+" },
-      { label: "Form score trend analysis", tier: "basic+" },
-      { label: "Personalised tips & weekly focus", tier: "basic+" },
-      { label: "Conversational AI coaching chat", tier: "basic+" },
+      { label: "Workout calendar & streak history", tier: "free" },
+      { label: "Body scan & progress photos", tier: "basic" },
+      { label: "Timer, voice coach & sound settings", tier: "basic" },
+      { label: "Notification preferences", tier: "free" },
+      { label: "Subscription management", tier: "free" },
     ],
-    tip: "Access AI Coach from the dedicated tab at the bottom of the screen.",
-  },
-  {
-    iconName: "videocam",
-    tab: "Form Check",
-    title: "Real-Time Form Analysis",
-    body: "Upload a video or photo of any exercise and the AI scores your form, identifies corrections, and tells you exactly what to fix. Available in the Plans tab and Body Scan section.",
-    features: [
-      { label: "Form score (0–100)", tier: "basic+" },
-      { label: "Exercise-specific corrections", tier: "basic+" },
-      { label: "Form history timeline", tier: "pro" },
-      { label: "AI Coach form integration", tier: "pro" },
-    ],
-    tip: "Start with your main compound lifts — squat, deadlift, bench press.",
+    tip: "Take a progress photo every 2 weeks for the most accurate body composition tracking.",
   },
   {
     iconName: "bolt",
-    tab: "Get the Most",
+    tab: "Get Started",
     title: "Maximise Your Results",
-    body: "Consistency is everything. Log meals daily, take a progress photo every 2 weeks, complete your workouts, and check in with your AI Coach weekly for the fastest transformation.",
+    body: "Consistency is everything. Complete your daily workout, log your meals, and check in with the AI Coach weekly. Users who log consistently for 4+ weeks see significantly better results.",
     features: [
-      { label: "Daily calorie logging", tier: "free" },
+      { label: "Complete today's workout", tier: "free" },
+      { label: "Log all meals daily", tier: "free" },
+      { label: "Weekly AI Coach check-in", tier: "basic" },
       { label: "Bi-weekly progress photos", tier: "free" },
-      { label: "Weekly AI Coach check-in", tier: "basic+" },
-      { label: "Form check every session", tier: "basic+" },
+      { label: "Enable smart reminders", tier: "free" },
     ],
-    tip: "Users who log consistently for 4+ weeks see 3× better results than those who don't.",
+    tip: "Enable Smart Reminders in Settings to get intelligent nudges based on your schedule and streak.",
   },
 ];
 
 const TIER_COLORS: Record<string, string> = {
-  free:       SF.muted,
-  basic:      SF.teal,
-  "basic+":   SF.emerald,
-  pro:        SF.gold,
+  free:  SF.emerald,
+  basic: SF.teal,
+  pro:   SF.gold,
 };
 
 const TIER_LABELS: Record<string, string> = {
-  free:       "FREE",
-  basic:      "BASIC",
-  "basic+":   "BASIC & PRO",
-  pro:        "PRO",
+  free:  "FREE",
+  basic: "BASIC",
+  pro:   "PRO",
 };
 
 interface Props {
@@ -181,7 +172,7 @@ export function TutorialOverlay({ visible, onDismiss }: Props) {
             <Animated.View style={{ opacity: fadeAnim }}>
               {/* Icon + tab */}
               <View style={styles.iconRow}>
-                <View style={{ width: 48, height: 48, borderRadius: 14, backgroundColor: "rgba(245,158,11,0.12)", alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: SF.border }}>
+                <View style={styles.iconCircle}>
                   <MaterialIcons name={slide.iconName} size={26} color={SF.gold} />
                 </View>
                 <View style={styles.tabBadge}>
@@ -211,7 +202,7 @@ export function TutorialOverlay({ visible, onDismiss }: Props) {
               {/* Tip */}
               {slide.tip && (
                 <View style={styles.tipBox}>
-                  <Text style={styles.tipIcon}>💡</Text>
+                  <MaterialIcons name="lightbulb" size={16} color={SF.gold2} style={{ marginTop: 1 }} />
                   <Text style={styles.tipText}>{slide.tip}</Text>
                 </View>
               )}
@@ -225,13 +216,13 @@ export function TutorialOverlay({ visible, onDismiss }: Props) {
               onPress={handlePrev}
               disabled={slideIndex === 0}
             >
-              <Text style={[styles.navBtnText, slideIndex === 0 && { color: SF.muted }]}>← Back</Text>
+              <Text style={[styles.navBtnText, slideIndex === 0 && { color: SF.muted }]}>Back</Text>
             </TouchableOpacity>
 
             <Text style={styles.counter}>{slideIndex + 1} / {SLIDES.length}</Text>
 
             <TouchableOpacity style={[styles.navBtn, styles.navBtnPrimary]} onPress={handleNext}>
-              <Text style={styles.navBtnPrimaryText}>{isLast ? "Let's Go! ⚡" : "Next →"}</Text>
+              <Text style={styles.navBtnPrimaryText}>{isLast ? "Let's Go!" : "Next"}</Text>
             </TouchableOpacity>
           </View>
 
@@ -274,7 +265,7 @@ const styles = StyleSheet.create({
   dotActive: { width: 24, backgroundColor: SF.gold },
   content: { paddingHorizontal: 24, paddingBottom: 8 },
   iconRow: { flexDirection: "row", alignItems: "center", gap: 12, marginBottom: 12 },
-  slideIcon: { fontSize: 40 }, // kept for compat
+  iconCircle: { width: 48, height: 48, borderRadius: 14, backgroundColor: "rgba(245,158,11,0.12)", alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: SF.border },
   tabBadge: { backgroundColor: "rgba(245,158,11,0.15)", borderRadius: 8, paddingHorizontal: 10, paddingVertical: 4, borderWidth: 1, borderColor: SF.border },
   tabBadgeText: { color: SF.gold, fontFamily: "DMSans_700Bold", fontSize: 11, letterSpacing: 1.5 },
   slideTitle: { color: SF.fg, fontFamily: "BebasNeue_400Regular", fontSize: 24, lineHeight: 30, marginBottom: 10 },
@@ -285,7 +276,6 @@ const styles = StyleSheet.create({
   tierBadge: { borderRadius: 6, paddingHorizontal: 6, paddingVertical: 2, borderWidth: 1 },
   tierBadgeText: { fontFamily: "DMSans_700Bold", fontSize: 9, letterSpacing: 0.8 },
   tipBox: { flexDirection: "row", backgroundColor: "rgba(245,158,11,0.08)", borderRadius: 12, padding: 12, gap: 8, borderWidth: 1, borderColor: "rgba(245,158,11,0.2)" },
-  tipIcon: { fontSize: 16, marginTop: 1 },
   tipText: { color: SF.gold3, fontFamily: "DMSans_400Regular", fontSize: 13, lineHeight: 19, flex: 1 },
   navRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingHorizontal: 24, marginTop: 16 },
   navBtn: { paddingVertical: 10, paddingHorizontal: 16, borderRadius: 12, borderWidth: 1, borderColor: SF.border },
