@@ -196,7 +196,7 @@ export async function getUserSubscription(userId: number) {
 export const AI_CALL_LIMITS: Record<string, number> = {
   free: 5,
   basic: 30,
-  advanced: Infinity,
+  pro: Infinity,
 };
 
 function currentMonth(): string {

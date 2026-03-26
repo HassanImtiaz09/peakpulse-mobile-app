@@ -2266,3 +2266,75 @@
 - [x] Tests for rest timer sound service (all 7 types, settings persistence, playback)
 - [x] Tests for offline cache service (cache/load/clear, auto-cache, status, multi-day)
 - [x] Tests for exercise indicator logic (current/next/done states, boundaries, metadata)
+
+## Round 92 — UX Overhaul (All 8 Recommendations from Analysis Report)
+
+### R4: Simplify Tab Navigation (6 tabs → 4 tabs)
+- [x] Reduced tabs to 4: Home, Train, Nutrition, Profile
+- [x] Moved Body Scan to Home "Explore" grid + Profile
+- [x] Moved AI Coach to Home "Explore" grid + accessible from Train
+- [x] Renamed Plans tab to "Train", Meals tab to "Nutrition"
+- [x] Updated icon-symbol.tsx with new tab icons
+
+### R5: Floating "Start Workout" Button
+- [x] Created FloatingStartWorkout component with persistent FAB
+- [x] Shows today's workout focus (e.g., "Start: Upper Body")
+- [x] Navigates to active workout with today's plan pre-loaded
+- [x] Positioned above tab bar with proper safe area handling
+
+### R1: Restructure Dashboard (20+ sections → 6 focused sections)
+- [x] Hero greeting + today's date (section 1)
+- [x] Today's Workout card with prominent Start CTA (section 2)
+- [x] Daily Progress compact row (calories + macros + workout completion) (section 3)
+- [x] Weekly Goals rings compact (section 4)
+- [x] Quick Insights carousel (section 5)
+- [x] "Explore More" grid with 6 tiles (section 6)
+- [x] Removed/relocated: detailed nutrition, wearable metrics, muscle balance, PRs, tips, premium banners
+
+### R6: Quick Insights Carousel
+- [x] Horizontally swipeable carousel component (QuickInsightsCarousel)
+- [x] Streak card, PR Alert card, Muscle Tip card, AI Coach card, Analytics card, Voice Coach card
+- [x] Each card links to relevant detail screen
+- [x] Contextual cards based on user data
+
+### R3: Restructure Subscription Tiers
+- [x] Renamed Advanced to "Pro" across entire codebase (hooks, components, server, screens)
+- [x] Gated AI workout plans to Basic tier
+- [x] Gated AI meal plans to Basic tier
+- [x] Moved Voice Coaching, Analytics, Offline Mode, PR tracking to Basic tier
+- [x] Updated pricing: Basic £5.99/mo (£3.99 annual), Pro £11.99/mo (£7.99 annual)
+- [x] Updated feature lists in subscription screen with 3-tier comparison
+
+### R7: Redesign Paywall Experience
+- [x] Made annual plan default selection with "Best Value" badge
+- [x] Show monthly price as anchor, annual as per-month equivalent
+- [x] Added explicit savings messaging ("Save 33%")
+- [x] Added "Cancel anytime" assurance text
+- [x] Updated paywall modal with 3-tier design (Free/Basic/Pro)
+
+### R2: Progressive Feature Disclosure
+- [x] Feature discovery service (lib/feature-discovery.ts) with 6 milestone triggers
+- [x] Contextual prompt after first workout → Analytics
+- [x] Contextual prompt on first timer use → Voice Coaching
+- [x] Contextual prompt after 3 workouts → Personal Records
+- [x] Contextual prompt after first progress photo → Body Scan
+- [x] Contextual prompt after 5 meals → Meal Prep
+- [x] Contextual prompt after first week → Weekly Summary
+- [x] Dismissible DiscoveryBanner component integrated in dashboard
+- [x] Wired recording hooks into active-workout, calorie-context, scan screens
+- [x] Track shown prompts in AsyncStorage (show each only once)
+
+### R8: Consolidate Profile Settings
+- [x] Reorganized into 4 categories: Training, Nutrition & Body, Social & Community, Settings & Preferences
+- [x] Each category as clearly labelled section with icons
+- [x] Kept collapsible sections for clean organization
+- [x] Grouped Analytics, PR, Calendar, Workout History under Training
+- [x] Grouped Rest Timer, Voice Coach, Timer Sounds, Offline Cache under Settings & Preferences
+
+### Testing
+- [x] 0 TypeScript errors
+- [x] 35 new tests all passing (round92-ux-overhaul.test.ts)
+- [x] Tests for feature discovery service (prompts, milestones, dismissal, priority)
+- [x] Tests for subscription tier changes (Free/Basic/Pro, feature gating)
+- [x] Tests for analytics, sounds, offline cache, voice coach settings
+- [x] Tests for component file existence verification

@@ -9,16 +9,16 @@ interface PaywallModalProps {
   onClose: () => void;
   featureName: string;
   featureIcon?: string;
-  requiredTier: "basic" | "advanced";
+  requiredTier: "basic" | "pro";
   description?: string;
 }
 
 const TIER_PRICES = {
-  basic: { monthly: "£4.99", annual: "£3.49" },
-  advanced: { monthly: "£9.99", annual: "£6.99" },
+  basic: { monthly: "£5.99", annual: "£4.19" },
+  pro: { monthly: "£11.99", annual: "£8.49" },
 };
-const TIER_LABELS = { basic: "Basic", advanced: "Advanced" };
-const TIER_COLORS = { basic: "#F59E0B", advanced: "#EA580C" };
+const TIER_LABELS = { basic: "Basic", pro: "Pro" };
+const TIER_COLORS = { basic: "#F59E0B", pro: "#EA580C" };
 
 export function PaywallModal({
   visible,
@@ -40,9 +40,9 @@ export function PaywallModal({
   const label = TIER_LABELS[requiredTier];
   const color = TIER_COLORS[requiredTier];
 
-  // Show free trial CTA only for Advanced features when trial not yet used and user not paid
+  // Show free trial CTA only for Pro features when trial not yet used and user not paid
   const showTrialCTA =
-    requiredTier === "advanced" &&
+    requiredTier === "pro" &&
     !subscription.hasUsedTrial &&
     !subscription.isPaid;
 
@@ -98,7 +98,7 @@ export function PaywallModal({
                 7-Day Free Trial
               </Text>
               <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 12, textAlign: "center", lineHeight: 18 }}>
-                Try all Advanced features free for 7 days.{"\n"}No credit card required.
+                Try all Pro features free for 7 days.{"\n"}No credit card required.
               </Text>
             </View>
           ) : (

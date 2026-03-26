@@ -125,7 +125,7 @@ export default function ChallengeOnboardingScreen() {
   const totalXP = getTotalXP();
 
   return (
-    <FeatureGate feature="challenges" message="Unlock 7-day fitness challenges and leaderboards. Available on Advanced plan.">
+    <FeatureGate feature="challenges" message="Unlock 7-day fitness challenges and leaderboards. Available on Pro plan.">
     <View style={{ flex: 1, backgroundColor: "#0A0E14" }}>
       {/* Hero */}
       <ImageBackground source={{ uri: HERO_BG }} style={{ height: 200 }} resizeMode="cover">
@@ -266,7 +266,7 @@ export default function ChallengeOnboardingScreen() {
         <View style={{ marginHorizontal: 20, marginTop: 8, backgroundColor: "#F59E0B10", borderRadius: 16, padding: 16, borderWidth: 1, borderColor: "#F59E0B30" }}>
           <Text style={{ color: "#FDE68A", fontFamily: "BebasNeue_400Regular", fontSize: 14, textAlign: "center" }}>🏆 Complete All 7 Days</Text>
           <Text style={{ color: "#B45309", fontSize: 13, textAlign: "center", marginTop: 6, lineHeight: 18 }}>
-            Finish the challenge to unlock <Text style={{ color: "#F1F5F9", fontFamily: "DMSans_700Bold" }}>Advanced Plan free for 30 days</Text> + earn the "Week 1 Warrior" badge
+            Finish the challenge to unlock <Text style={{ color: "#F1F5F9", fontFamily: "DMSans_700Bold" }}>Pro Plan free for 30 days</Text> + earn the "Week 1 Warrior" badge
           </Text>
         </View>
       </ScrollView>

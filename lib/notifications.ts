@@ -176,7 +176,7 @@ export async function scheduleTrialReminders(trialStartDate: string): Promise<vo
     const day5Id = await Notifications.scheduleNotificationAsync({
       content: {
         title: "⚡ 2 Days Left on Your Free Trial!",
-        body: "You've unlocked all Advanced features. Don't lose access — subscribe now and keep your momentum going.",
+        body: "You've unlocked all Pro features. Don't lose access — subscribe now and keep your momentum going.",
         data: { url: "/subscription", type: "trial_day5_reminder" },
         categoryIdentifier: "peakpulse",
       },
@@ -197,7 +197,7 @@ export async function scheduleTrialReminders(trialStartDate: string): Promise<vo
     const day7Id = await Notifications.scheduleNotificationAsync({
       content: {
         title: "🔥 Last Day of Your Free Trial!",
-        body: "Your Advanced access expires today. Subscribe now to keep your AI workout plans, Form Checker, and more.",
+        body: "Your Pro access expires today. Subscribe now to keep your AI workout plans, Form Checker, and more.",
         data: { url: "/subscription", type: "trial_day7_reminder" },
         categoryIdentifier: "peakpulse",
       },

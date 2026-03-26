@@ -48,7 +48,7 @@ const C = {
 const TIER_INFO: Record<SubscriptionTier, { label: string; color: string; price: string }> = {
   free: { label: "Free", color: C.muted, price: "$0" },
   basic: { label: "Basic", color: C.ice, price: "$139" },
-  advanced: { label: "Advanced", color: C.gold, price: "$299" },
+  pro: { label: "Pro", color: C.gold, price: "$299" },
 };
 
 interface FeatureGateProps {
@@ -205,7 +205,7 @@ export function useFeatureAccess() {
     tier: sub.tier,
     isPaid: sub.isPaid,
     isTrialActive: sub.isTrialActive,
-    hasAdvancedAccess: sub.hasAdvancedAccess,
+    hasProAccess: sub.hasProAccess,
     showUpgradePrompt,
   };
 }

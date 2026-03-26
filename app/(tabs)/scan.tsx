@@ -23,6 +23,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { FeatureGate } from "@/components/feature-gate";
 import { useSubscription } from "@/hooks/use-subscription";
 import { PremiumFeatureBanner, PremiumFeatureTeaser } from "@/components/premium-feature-banner";
+import { recordProgressPhotoTaken } from "@/lib/feature-discovery";
 
 const SCAN_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/OdDCyHFnLhvyAyWV.jpg";
 
@@ -128,6 +129,7 @@ export default function ScanScreen() {
           Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
         }
         Alert.alert("Progress Photo Saved", "Your progress photo has been added to your timeline.");
+        recordProgressPhotoTaken().catch(() => {});
       }
     } catch (e: any) {
       Alert.alert("Error", e.message);
@@ -149,6 +151,7 @@ export default function ScanScreen() {
         setProgressPhotos(updated);
         await AsyncStorage.setItem("@progress_photos", JSON.stringify(updated));
         Alert.alert("Progress Photo Saved", "Your progress photo has been added to your timeline.");
+        recordProgressPhotoTaken().catch(() => {});
       }
     } catch (e: any) {
       Alert.alert("Error", e.message);

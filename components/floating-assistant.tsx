@@ -306,7 +306,7 @@ export function FloatingAssistant() {
 
     try {
       // Build context based on subscription tier
-      const isPremium = subscription.hasAdvancedAccess;
+      const isPremium = subscription.hasProAccess;
       const contextProfile: any = {
         goal: profile.goal,
         workoutsCompleted: profile.workoutsCompleted,
@@ -382,7 +382,7 @@ export function FloatingAssistant() {
   // Hide on certain screens
   if (HIDDEN_SCREENS.some(s => pathname.startsWith(s))) return null;
 
-  const isPremium = subscription.hasAdvancedAccess;
+  const isPremium = subscription.hasProAccess;
 
   return (
     <>

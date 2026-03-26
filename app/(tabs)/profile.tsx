@@ -75,7 +75,7 @@ export default function ProfileScreen() {
   const canUse = isAuthenticated || isGuest;
   const subscription = useSubscription();
   const { canAccess } = subscription;
-  const [paywallFeature, setPaywallFeature] = useState<{ name: string; icon: string; tier: "basic" | "advanced"; desc?: string } | null>(null);
+  const [paywallFeature, setPaywallFeature] = useState<{ name: string; icon: string; tier: "basic" | "pro"; desc?: string } | null>(null);
   const [editing, setEditing] = useState(false);
   const { profilePhotoUri, displayName: savedDisplayName, setProfilePhoto, setDisplayName: saveDisplayName } = useUserProfile();
   const [editingName, setEditingName] = useState(false);
@@ -198,7 +198,7 @@ export default function ProfileScreen() {
     setEditingName(false);
   };
 
-  const gatedNav = (path: string, feature: string, icon: string, tier: "basic" | "advanced", desc?: string) => {
+  const gatedNav = (path: string, feature: string, icon: string, tier: "basic" | "pro", desc?: string) => {
     if (canAccess(feature)) {
       router.push(path as any);
     } else {
@@ -342,7 +342,7 @@ export default function ProfileScreen() {
             description="Your AI fitness coach provides real-time guidance, exercise form tips, and workout adjustments tailored to your goals."
             icon="smart-toy"
             accentColor="#F59E0B"
-            requiredTier="advanced"
+            requiredTier="pro"
             compact
           />
           <PremiumFeatureTeaser
@@ -486,47 +486,39 @@ export default function ProfileScreen() {
             ))}
           </View>
 
-          {/* Quick Links — Collapsible Sections (2C) */}
-          <CollapsibleSection title="Training Tools" count={5}>
-            <FeatureLink icon="trending-up" label="Progress Photos" onPress={() => gatedNav("/progress-photos", "progress_photos", "trending-up", "basic", "Track your body transformation with up to 5 progress photos per month on Basic, unlimited on Advanced.")} />
-            <FeatureLink icon="check-circle" label="Daily Check-In" onPress={() => router.push("/daily-checkin" as any)} />
-            <FeatureLink icon="center-focus-strong" label="Form Checker" onPress={() => gatedNav("/form-checker", "form_checker", "center-focus-strong", "advanced", "AI-powered real-time exercise form analysis is an Advanced plan exclusive feature.")} />
+          {/* R8: Consolidated Settings in 4 Clear Categories */}
+          <CollapsibleSection title="Training" count={7}>
             <FeatureLink icon="calendar-today" label="Workout History" onPress={() => router.push("/workout-calendar" as any)} />
             <FeatureLink icon="bar-chart" label="Workout Analytics" onPress={() => router.push("/workout-analytics" as any)} />
-            <FeatureLink icon="timer" label="Rest Timer Settings" onPress={() => router.push("/rest-timer-settings" as any)} />
+            <FeatureLink icon="center-focus-strong" label="Form Checker" onPress={() => gatedNav("/form-checker", "form_checker", "center-focus-strong", "pro", "AI-powered real-time exercise form analysis is a Pro plan exclusive feature.")} />
+            <FeatureLink icon="timer" label="Rest Timer" onPress={() => router.push("/rest-timer-settings" as any)} />
             <FeatureLink icon="music-note" label="Timer Sounds" onPress={() => router.push("/rest-timer-sounds" as any)} />
+            <FeatureLink icon="record-voice-over" label="Voice Coach" onPress={() => router.push("/voice-coach-settings" as any)} />
             <FeatureLink icon="cloud-off" label="Offline Mode" onPress={() => router.push("/offline-cache" as any)} />
-            <FeatureLink icon="record-voice-over" label="Voice Coach Settings" onPress={() => router.push("/voice-coach-settings" as any)} />
           </CollapsibleSection>
 
-          <CollapsibleSection title="Social & Extras" count={5}>
-            <FeatureLink icon="group" label="Social Feed" onPress={() => gatedNav("/social-feed", "social_feed", "group", "advanced", "Join the PeakPulse community, share progress, and compete in challenges — Advanced plan only.")} />
-            <FeatureLink icon="bolt" label="7-Day Challenge" onPress={() => gatedNav("/challenge-onboarding", "challenges", "bolt", "advanced", "Unlock 7-day fitness challenges and leaderboards with an Advanced plan.")} />
-            <FeatureLink icon="card-giftcard" label="Refer a Friend" onPress={() => gatedNav("/referral", "referral", "card-giftcard", "basic", "Refer friends and earn rewards — available on Basic and Advanced plans.")} />
-            <FeatureLink icon="watch" label="Wearable Sync" onPress={() => gatedNav("/wearable-sync", "wearable_sync", "watch", "basic", "Sync your fitness wearable (Apple Watch, Fitbit, Garmin) with PeakPulse — Basic plan and above.")} />
+          <CollapsibleSection title="Body & Nutrition" count={3}>
+            <FeatureLink icon="trending-up" label="Progress Photos" onPress={() => gatedNav("/progress-photos", "progress_photos", "trending-up", "basic", "Track your body transformation with up to 5 progress photos per month on Basic, unlimited on Pro.")} />
+            <FeatureLink icon="check-circle" label="Daily Check-In" onPress={() => router.push("/daily-checkin" as any)} />
             <FeatureLink icon="location-on" label="Find Nearby Gyms" onPress={() => router.push("/gym-finder" as any)} />
           </CollapsibleSection>
 
-          {/* Notifications */}
-          <View style={{ gap: 8, marginBottom: 16 }}>
-            <FeatureLink icon="notifications" label="Notification Preferences" onPress={() => gatedNav("/notification-preferences", "notification_preferences", "notifications", "basic", "Customise your workout and meal reminder times — available on Basic and Advanced plans.")} />
-          </View>
+          <CollapsibleSection title="Social & Community" count={4}>
+            <FeatureLink icon="group" label="Social Feed" onPress={() => gatedNav("/social-feed", "social_feed", "group", "pro", "Join the PeakPulse community, share progress, and compete in challenges — Pro plan only.")} />
+            <FeatureLink icon="bolt" label="7-Day Challenge" onPress={() => gatedNav("/challenge-onboarding", "challenges", "bolt", "pro", "Unlock 7-day fitness challenges and leaderboards with a Pro plan.")} />
+            <FeatureLink icon="card-giftcard" label="Refer a Friend" onPress={() => gatedNav("/referral", "referral", "card-giftcard", "basic", "Refer friends and earn rewards — available on Basic and Pro plans.")} />
+            <FeatureLink icon="watch" label="Wearable Sync" onPress={() => gatedNav("/wearable-sync", "wearable_sync", "watch", "basic", "Sync your fitness wearable (Apple Watch, Fitbit, Garmin) with PeakPulse — Basic plan and above.")} />
+          </CollapsibleSection>
 
-          {/* App Settings */}
-          <SectionHeader>App Settings</SectionHeader>
-          <View style={{ gap: 8, marginBottom: 16 }}>
-            <FeatureLink icon="settings" label="Settings" onPress={() => router.push("/settings" as any)} />
-          </View>
-
-          {/* Feedback */}
-          <SectionHeader>Help & Feedback</SectionHeader>
-          <View style={{ gap: 8, marginBottom: 16 }}>
+          <CollapsibleSection title="Settings & Preferences" count={4}>
+            <FeatureLink icon="notifications" label="Notifications" onPress={() => gatedNav("/notification-preferences", "notification_preferences", "notifications", "basic", "Customise your workout and meal reminder times — available on Basic and Pro plans.")} />
+            <FeatureLink icon="settings" label="App Settings" onPress={() => router.push("/settings" as any)} />
             <FeatureLink icon="feedback" label="Send Feedback" onPress={() => router.push("/feedback" as any)} />
             <FeatureLink icon="help-outline" label="User Guide" onPress={() => router.push("/user-guide" as any)} />
-          </View>
+          </CollapsibleSection>
 
           {/* Subscription */}
-          {!subscription.isAdvanced && (
+          {!subscription.isPro && (
             <>
               <SectionHeader>Subscription</SectionHeader>
               <TouchableOpacity
@@ -536,8 +528,8 @@ export default function ProfileScreen() {
                 <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
                   <MaterialIcons name="workspace-premium" size={20} color={FG} />
                   <View>
-                    <Text style={{ color: FG, fontFamily: "DMSans_700Bold", fontSize: 14 }}>Upgrade to Advanced</Text>
-                    <Text style={{ color: CREAM, fontSize: 12, marginTop: 2 }}>Unlock all AI features from $4.99/mo</Text>
+                    <Text style={{ color: FG, fontFamily: "DMSans_700Bold", fontSize: 14 }}>Upgrade to Pro</Text>
+                    <Text style={{ color: CREAM, fontSize: 12, marginTop: 2 }}>Unlock all AI features from £5.99/mo</Text>
                   </View>
                 </View>
                 <MaterialIcons name="chevron-right" size={20} color={FG} />
@@ -652,9 +644,9 @@ function SubscriptionStatusCard({
   daysLeftInTrial: number;
   onUpgrade: () => void;
 }) {
-  const tierLabel = tier === "advanced" ? "Advanced" : tier === "basic" ? "Basic" : "Free";
-  const tierColor = tier === "advanced" ? GOLD : tier === "basic" ? ICE : MUTED;
-  const tierIcon = tier === "advanced" ? "workspace-premium" : tier === "basic" ? "star" : "person";
+  const tierLabel = tier === "pro" ? "Pro" : tier === "basic" ? "Basic" : "Free";
+  const tierColor = tier === "pro" ? GOLD : tier === "basic" ? ICE : MUTED;
+  const tierIcon = tier === "pro" ? "workspace-premium" : tier === "basic" ? "star" : "person";
   const billingLabel = billingCycle === "annual" ? "Annual" : billingCycle === "monthly" ? "Monthly" : null;
   const expiryDate = expiresAt ? new Date(expiresAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : null;
 
@@ -708,7 +700,7 @@ function SubscriptionStatusCard({
         <View style={{ flex: 1, backgroundColor: SURFACE2, borderRadius: 10, padding: 10, alignItems: "center" }}>
           <Text style={{ color: MUTED, fontSize: 10, marginBottom: 2 }}>Features</Text>
           <Text style={{ color: tierColor, fontFamily: "SpaceMono_400Regular", fontSize: 12 }}>
-            {tier === "advanced" ? "All" : tier === "basic" ? "Core" : isTrialActive ? "All" : "Limited"}
+            {tier === "pro" ? "All" : tier === "basic" ? "Core" : isTrialActive ? "All" : "Limited"}
           </Text>
         </View>
       </View>

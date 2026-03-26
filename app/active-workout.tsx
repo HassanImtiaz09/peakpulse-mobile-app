@@ -27,6 +27,7 @@ import {
 } from "@/lib/rest-timer-settings";
 import { preloadExerciseVideos, clearPreloadCache } from "@/lib/video-preload";
 import { autoCacheCurrentWorkout } from "@/lib/offline-workout-cache";
+import { recordWorkoutCompleted, recordTimerUsed } from "@/lib/feature-discovery";
 
 import { GOLDEN_WORKOUT, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgrounds";
 const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get("window");
@@ -326,7 +327,7 @@ export default function ActiveWorkoutScreen() {
     AsyncStorage.multiGet(["@subscription_plan", "@ai_coach_trial_start"]).then(([planEntry, trialEntry]) => {
       const plan = planEntry[1] ?? "free";
       setSubscription(plan);
-      if (plan !== "advanced") {
+      if (plan !== "pro") {
         const trialStart = trialEntry[1] ? parseInt(trialEntry[1]) : null;
         if (trialStart) {
           const daysPassed = Math.floor((Date.now() - trialStart) / (1000 * 60 * 60 * 24));
@@ -433,6 +434,8 @@ export default function ActiveWorkoutScreen() {
               durationMinutes: Math.floor(elapsedSeconds / 60),
               completedAt: new Date().toISOString(),
             };
+            // Record workout completion for feature discovery
+            recordWorkoutCompleted().catch(() => {});
             // Auto-log personal records
             try {
               const prResults = await logWorkoutPRs(completedExercises);
@@ -478,13 +481,13 @@ export default function ActiveWorkoutScreen() {
   }
 
   async function handleAIFeatureTap(feature: "coach" | "form_check") {
-    const hasAccess = subscription === "advanced" || (trialDaysLeft !== null && trialDaysLeft > 0);
+    const hasAccess = subscription === "pro" || (trialDaysLeft !== null && trialDaysLeft > 0);
     if (!hasAccess) {
       // Offer to start trial if not started
       if (trialDaysLeft === null) {
         Alert.alert(
           "🌟 Advanced Feature",
-          "AI Coach and Form Check are Advanced plan features. Start your 3-day free trial now?",
+          "AI Coach and Form Check are Pro plan features. Start your 3-day free trial now?",
           [
             { text: "Not Now", style: "cancel" },
             {
@@ -524,7 +527,7 @@ export default function ActiveWorkoutScreen() {
   const logs = exercise ? getSetLogs(currentExercise) : [];
   const completedSets = logs.filter(s => s.completed).length;
   const totalCompleted = Object.values(setLogs).reduce((sum, ls) => sum + ls.filter(s => s.completed).length, 0);
-  const isAdvancedOrTrial = subscription === "advanced" || (trialDaysLeft !== null && trialDaysLeft > 0);
+  const isAdvancedOrTrial = subscription === "pro" || (trialDaysLeft !== null && trialDaysLeft > 0);
 
   if (!dayData) {
     return (
@@ -647,7 +650,7 @@ export default function ActiveWorkoutScreen() {
               <View style={{ flexDirection: "row", gap: 8, marginTop: 12 }}>
                 <TouchableOpacity
                   style={{ flex: 1, backgroundColor: SF.gold, borderRadius: 12, paddingVertical: 10, alignItems: "center", flexDirection: "row", justifyContent: "center", gap: 6 }}
-                  onPress={() => setVoiceCoachVisible(true)}
+                  onPress={() => { setVoiceCoachVisible(true); recordTimerUsed().catch(() => {}); }}
                 >
                   <MaterialIcons name="record-voice-over" size={14} color={SF.bg} />
                   <Text style={{ color: SF.bg, fontFamily: "DMSans_700Bold", fontSize: 13 }}>Voice Coach Timer</Text>
@@ -765,7 +768,7 @@ export default function ActiveWorkoutScreen() {
                 {!isAdvancedOrTrial && (
                   <Text style={{ color: SF.muted, fontSize: 10, marginTop: 2 }}>Advanced · 3-day trial</Text>
                 )}
-                {trialDaysLeft !== null && trialDaysLeft > 0 && subscription !== "advanced" && (
+                {trialDaysLeft !== null && trialDaysLeft > 0 && subscription !== "pro" && (
                   <Text style={{ color: SF.gold3, fontSize: 10, marginTop: 2 }}>{trialDaysLeft}d trial left</Text>
                 )}
               </TouchableOpacity>
@@ -777,7 +780,7 @@ export default function ActiveWorkoutScreen() {
                 {!isAdvancedOrTrial && (
                   <Text style={{ color: SF.muted, fontSize: 10, marginTop: 2 }}>Advanced · 3-day trial</Text>
                 )}
-                {trialDaysLeft !== null && trialDaysLeft > 0 && subscription !== "advanced" && (
+                {trialDaysLeft !== null && trialDaysLeft > 0 && subscription !== "pro" && (
                   <Text style={{ color: SF.gold3, fontSize: 10, marginTop: 2 }}>{trialDaysLeft}d trial left</Text>
                 )}
               </TouchableOpacity>

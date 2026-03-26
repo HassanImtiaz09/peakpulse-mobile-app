@@ -33,7 +33,7 @@ interface TutorialSlide {
   tab: string;
   title: string;
   body: string;
-  features: { label: string; tier: "free" | "basic" | "basic+" | "advanced" }[];
+  features: { label: string; tier: "free" | "basic" | "basic+" | "pro" }[];
   tip?: string;
 }
 
@@ -73,7 +73,7 @@ const SLIDES: TutorialSlide[] = [
       { label: "Progress photo upload", tier: "free" },
       { label: "AI BF% estimation", tier: "basic+" },
       { label: "Before/after comparison slider", tier: "basic+" },
-      { label: "Unlimited photos + collage export", tier: "advanced" },
+      { label: "Unlimited photos + collage export", tier: "pro" },
     ],
     tip: "Take photos in the same spot, same lighting, every 2 weeks for the most accurate comparison.",
   },
@@ -98,8 +98,8 @@ const SLIDES: TutorialSlide[] = [
     features: [
       { label: "Form score (0–100)", tier: "basic+" },
       { label: "Exercise-specific corrections", tier: "basic+" },
-      { label: "Form history timeline", tier: "advanced" },
-      { label: "AI Coach form integration", tier: "advanced" },
+      { label: "Form history timeline", tier: "pro" },
+      { label: "AI Coach form integration", tier: "pro" },
     ],
     tip: "Start with your main compound lifts — squat, deadlift, bench press.",
   },
@@ -122,14 +122,14 @@ const TIER_COLORS: Record<string, string> = {
   free:       SF.muted,
   basic:      SF.teal,
   "basic+":   SF.emerald,
-  advanced:   SF.gold,
+  pro:        SF.gold,
 };
 
 const TIER_LABELS: Record<string, string> = {
   free:       "FREE",
   basic:      "BASIC",
-  "basic+":   "BASIC & ADVANCED",
-  advanced:   "ADVANCED",
+  "basic+":   "BASIC & PRO",
+  pro:        "PRO",
 };
 
 interface Props {

@@ -1,39 +1,23 @@
 import { Tabs, useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { HapticTab } from "@/components/haptic-tab";
-import { Platform, View, StyleSheet, Image } from "react-native";
+import { Platform, View, StyleSheet } from "react-native";
 import { BlurView } from "expo-blur";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useEffect } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { useGuestAuth } from "@/lib/guest-auth";
 
-// Aurora Titan tab icon definitions (3B: uniform MaterialIcons)
-const TAB_ICONS: Record<string, { icon: keyof typeof MaterialIcons.glyphMap; label: string; accent?: boolean }> = {
-  index: { icon: "dashboard", label: "Dashboard" },
-  scan: { icon: "camera-alt", label: "Body Scan" },
-  plans: { icon: "fitness-center", label: "Plans" },
-  "ai-coach": { icon: "smart-toy", label: "AI Coach", accent: true },
-  meals: { icon: "restaurant", label: "Meals" },
+// R4: Simplified 4-tab navigation — Home, Train, Nutrition, Profile
+const TAB_ICONS: Record<string, { icon: keyof typeof MaterialIcons.glyphMap; label: string }> = {
+  index: { icon: "dashboard", label: "Home" },
+  plans: { icon: "fitness-center", label: "Train" },
+  meals: { icon: "restaurant", label: "Nutrition" },
   profile: { icon: "person", label: "Profile" },
 };
 
-function AuroraTabIcon({ route, focused }: { route: string; focused: boolean }) {
+function TabIcon({ route, focused }: { route: string; focused: boolean }) {
   const def = TAB_ICONS[route] ?? { icon: "help-outline" as keyof typeof MaterialIcons.glyphMap, label: route };
-  const isAccent = def.accent === true;
-
-  if (isAccent) {
-    return (
-      <View style={[styles.aiCoachIcon, focused && styles.aiCoachIconActive]}>
-        <Image
-          source={{ uri: "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/ai-coach-icon_c7090906.png" }}
-          style={{ width: 26, height: 26, borderRadius: 6 }}
-          resizeMode="contain"
-        />
-      </View>
-    );
-  }
-
   return (
     <View style={[styles.tabIconWrapper, focused && styles.tabIconWrapperActive]}>
       <MaterialIcons name={def.icon} size={22} color={focused ? "#F59E0B" : "#64748B"} />
@@ -42,10 +26,6 @@ function AuroraTabIcon({ route, focused }: { route: string; focused: boolean }) 
   );
 }
 
-/**
- * 6A: Frosted glass tab bar background — uses BlurView on iOS/Android,
- * falls back to a semi-transparent background on web.
- */
 function TabBarBackground() {
   if (Platform.OS === "web") {
     return <View style={[StyleSheet.absoluteFill, { backgroundColor: "rgba(10,14,20,0.95)" }]} />;
@@ -59,11 +39,6 @@ function TabBarBackground() {
   );
 }
 
-/**
- * Auth guard: if a previously-authenticated session has expired (user is no longer
- * authenticated and is not in guest mode) redirect to /login so the user is never
- * stuck on a blank or broken tab screen.
- */
 function useAuthGuard() {
   const router = useRouter();
   const { isAuthenticated, loading: authLoading } = useAuth();
@@ -91,13 +66,12 @@ export default function TabLayout() {
         tabBarInactiveTintColor: "#64748B",
         headerShown: false,
         tabBarButton: HapticTab,
-        tabBarIcon: ({ focused }) => <AuroraTabIcon route={route.name} focused={focused} />,
+        tabBarIcon: ({ focused }) => <TabIcon route={route.name} focused={focused} />,
         tabBarBackground: () => <TabBarBackground />,
         tabBarStyle: {
           paddingTop: 6,
           paddingBottom: bottomPadding,
           height: tabBarHeight,
-          // 6A: transparent background so BlurView shows through
           backgroundColor: "transparent",
           borderTopColor: "rgba(30,41,59,0.6)",
           borderTopWidth: 1,
@@ -111,24 +85,13 @@ export default function TabLayout() {
         },
       })}
     >
-      <Tabs.Screen name="index" options={{ title: "Dashboard" }} />
-      <Tabs.Screen name="scan" options={{ title: "Body Scan" }} />
-      <Tabs.Screen name="plans" options={{ title: "Plans" }} />
-      <Tabs.Screen
-        name="ai-coach"
-        options={{
-          title: "AI Coach",
-          tabBarLabelStyle: {
-            fontFamily: "DMSans_700Bold",
-            fontSize: 10,
-            letterSpacing: 0.3,
-            marginTop: 0,
-            color: "#F59E0B",
-          },
-        }}
-      />
-      <Tabs.Screen name="meals" options={{ title: "Meals" }} />
+      <Tabs.Screen name="index" options={{ title: "Home" }} />
+      <Tabs.Screen name="plans" options={{ title: "Train" }} />
+      <Tabs.Screen name="meals" options={{ title: "Nutrition" }} />
       <Tabs.Screen name="profile" options={{ title: "Profile" }} />
+      {/* Hidden tabs — still routable but not shown in tab bar */}
+      <Tabs.Screen name="scan" options={{ href: null }} />
+      <Tabs.Screen name="ai-coach" options={{ href: null }} />
     </Tabs>
   );
 }
@@ -137,11 +100,4 @@ const styles = StyleSheet.create({
   tabIconWrapper: { width: 40, height: 32, alignItems: "center", justifyContent: "center", borderRadius: 10 },
   tabIconWrapperActive: { backgroundColor: "rgba(245,158,11,0.10)", borderWidth: 1, borderColor: "rgba(245,158,11,0.20)" },
   activeGlow: { position: "absolute", bottom: -2, width: 16, height: 2, borderRadius: 1, backgroundColor: "#F59E0B", opacity: 0.8 },
-  aiCoachIcon: {
-    width: 42, height: 34, alignItems: "center", justifyContent: "center", borderRadius: 12,
-    backgroundColor: "rgba(245,158,11,0.18)", borderWidth: 1.5, borderColor: "rgba(245,158,11,0.35)",
-  },
-  aiCoachIconActive: {
-    backgroundColor: "#F59E0B", borderColor: "#FBBF24",
-  },
 });

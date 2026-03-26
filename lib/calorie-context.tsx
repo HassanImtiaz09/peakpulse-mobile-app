@@ -4,6 +4,7 @@
  */
 import React, { createContext, useContext, useEffect, useState, useCallback } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { recordMealLogged } from "@/lib/feature-discovery";
 
 export interface MealEntry {
   id: string;
@@ -158,6 +159,8 @@ export function CalorieProvider({ children }: { children: React.ReactNode }) {
     };
     const updated = [...meals, entry];
     await saveMeals(updated);
+    // Track for progressive feature disclosure
+    recordMealLogged().catch(() => {});
   }
 
   async function removeMeal(id: string) {

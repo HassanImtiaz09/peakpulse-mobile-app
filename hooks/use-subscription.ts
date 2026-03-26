@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { scheduleTrialReminders, cancelTrialReminders } from "@/lib/notifications";
 
-export type SubscriptionTier = "free" | "basic" | "advanced";
+export type SubscriptionTier = "free" | "basic" | "pro";
 
 const SUBSCRIPTION_KEY = "@peakpulse_subscription";
 const TRIAL_KEY = "@peakpulse_trial";
@@ -26,10 +26,10 @@ export interface SubscriptionState {
   billingCycle: "monthly" | "annual" | null;
   expiresAt: string | null;
   isBasic: boolean;
-  isAdvanced: boolean;
+  isPro: boolean;
   isPaid: boolean;
-  /** Effective Advanced access — true if tier is advanced OR trial is active */
-  hasAdvancedAccess: boolean;
+  /** Effective Pro access — true if tier is pro OR trial is active */
+  hasProAccess: boolean;
 }
 
 export type FullSubscriptionState = SubscriptionState & TrialState;
@@ -39,9 +39,9 @@ const DEFAULT_STATE: FullSubscriptionState = {
   billingCycle: null,
   expiresAt: null,
   isBasic: false,
-  isAdvanced: false,
+  isPro: false,
   isPaid: false,
-  hasAdvancedAccess: false,
+  hasProAccess: false,
   hasUsedTrial: false,
   isTrialActive: false,
   trialStartDate: null,
@@ -51,34 +51,40 @@ const DEFAULT_STATE: FullSubscriptionState = {
 
 /**
  * Feature tier matrix — defines which tier each feature requires.
- * "free"     = available to all users (including guests)
- * "basic"    = requires Basic or Advanced subscription (or active trial)
- * "advanced" = requires Advanced subscription only (or active trial)
+ * "free"  = available to all users (manual logging, exercise library, basic calorie, timer, 1 free AI plan, 3 calorie scans/day)
+ * "basic" = requires Basic or Pro subscription (unlimited AI plans, analytics, voice coaching, progress photos, basic body scan, offline mode, PR tracking)
+ * "pro"   = requires Pro subscription only (wearable sync, AI coach chat, form checker, social, challenges, meal prep, unlimited photos, priority AI)
  */
 export const FEATURE_TIERS: Record<string, SubscriptionTier> = {
-  // Free features
-  ai_meal_plans: "free",
-  ai_workout_plans: "free",
+  // Free features — available to all users
   calorie_estimator: "free",
   gym_finder: "free",
   daily_checkin: "free",
   tips_tricks: "free",
   onboarding: "free",
-  meal_swap_ai: "free",
-  // Basic features
+  // Basic features — unlocked with Basic or Pro
+  ai_meal_plans: "basic",
+  ai_workout_plans: "basic",
+  meal_swap_ai: "basic",
   body_scan: "basic",
   progress_photos: "basic",
   referral: "basic",
   notification_preferences: "basic",
-  wearable_sync: "basic",
-  // Advanced features
-  form_checker: "advanced",
-  social_feed: "advanced",
-  challenges: "advanced",
-  ai_coaching: "advanced",
-  unlimited_body_scans: "advanced",
-  unlimited_progress_photos: "advanced",
-  unlimited_meal_swaps: "advanced",
+  workout_analytics: "basic",
+  voice_coaching: "basic",
+  offline_mode: "basic",
+  pr_tracking: "basic",
+  // Pro features — unlocked with Pro only
+  wearable_sync: "pro",
+  form_checker: "pro",
+  social_feed: "pro",
+  challenges: "pro",
+  ai_coaching: "pro",
+  unlimited_body_scans: "pro",
+  unlimited_progress_photos: "pro",
+  unlimited_meal_swaps: "pro",
+  meal_prep: "pro",
+  priority_ai: "pro",
 };
 
 function computeTrialState(trialData: { startDate: string; durationDays?: number } | null): TrialState {
@@ -146,17 +152,17 @@ export function useSubscription(): FullSubscriptionState & {
         }
       }
 
-      // Effective Advanced access: paid Advanced OR active trial
-      const hasAdvancedAccess = tier === "advanced" || trialState.isTrialActive;
+      // Effective Pro access: paid Pro OR active trial
+      const hasProAccess = tier === "pro" || trialState.isTrialActive;
 
       setState({
         tier,
         billingCycle,
         expiresAt,
-        isBasic: tier === "basic" || tier === "advanced",
-        isAdvanced: tier === "advanced",
+        isBasic: tier === "basic" || tier === "pro",
+        isPro: tier === "pro",
         isPaid: tier !== "free",
-        hasAdvancedAccess,
+        hasProAccess,
         ...trialState,
       });
     } catch {
@@ -198,10 +204,10 @@ export function useSubscription(): FullSubscriptionState & {
   const canAccess = useCallback((feature: string): boolean => {
     const required = FEATURE_TIERS[feature] ?? "free";
     if (required === "free") return true;
-    // Active trial grants full Advanced access
+    // Active trial grants full Pro access
     if (state.isTrialActive) return true;
-    if (required === "basic") return state.tier === "basic" || state.tier === "advanced";
-    if (required === "advanced") return state.tier === "advanced";
+    if (required === "basic") return state.tier === "basic" || state.tier === "pro";
+    if (required === "pro") return state.tier === "pro";
     return false;
   }, [state.tier, state.isTrialActive]);
 

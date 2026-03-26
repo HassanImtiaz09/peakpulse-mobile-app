@@ -653,12 +653,12 @@ export default function PlansScreen() {
                   <PremiumFeatureTeaser
                     feature="ai_coaching"
                     text="Get personalised AI Coach guidance for your workout plan"
-                    requiredTier="advanced"
+                    requiredTier="pro"
                   />
                   <PremiumFeatureTeaser
                     feature="form_checker"
                     text="Unlock AI Form Check to perfect your exercise technique"
-                    requiredTier="advanced"
+                    requiredTier="pro"
                   />
                 </View>
 

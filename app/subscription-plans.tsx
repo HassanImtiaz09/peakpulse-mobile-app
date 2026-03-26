@@ -1,9 +1,9 @@
 /**
  * Subscription Plans Screen (post-onboarding)
  * Shown once after the onboarding summary. Lets the user choose:
- *  - Free Trial (14 days of Advanced access, no card required)
+ *  - Free Trial (14 days of Pro access, no card required)
  *  - Basic plan
- *  - Advanced plan
+ *  - Pro plan
  * After selection, navigates to the main dashboard.
  */
 import React, { useState } from "react";
@@ -66,14 +66,14 @@ const ADVANCED_FEATURES = [
 ];
 
 const PRICES = {
-  basic:    { monthly: 4.99,  annual: 3.49 },
-  advanced: { monthly: 9.99,  annual: 6.99 },
+  basic: { monthly: 5.99, annual: 4.19 },
+  pro:   { monthly: 11.99, annual: 8.49 },
 };
 
 export default function SubscriptionPlansScreen() {
   const router = useRouter();
   const { startTrial, setSubscription, hasUsedTrial } = useSubscription();
-  const [selectedPlan, setSelectedPlan] = useState<"free" | "basic" | "advanced">("advanced");
+  const [selectedPlan, setSelectedPlan] = useState<"free" | "basic" | "pro">("pro");
   const [billing, setBilling] = useState<"monthly" | "annual">("monthly");
   const [loading, setLoading] = useState(false);
 
@@ -145,7 +145,7 @@ export default function SubscriptionPlansScreen() {
               <View>
                 <Text style={styles.planName}>🎁 Free Trial</Text>
                 <Text style={styles.planPrice}>14 days free</Text>
-                <Text style={styles.planPriceSub}>Full Advanced access, no card needed</Text>
+                <Text style={styles.planPriceSub}>Full Pro access, no card needed</Text>
               </View>
               <View style={[styles.radio, selectedPlan === "free" && styles.radioSelected]}>
                 {selectedPlan === "free" && <View style={styles.radioDot} />}
@@ -158,7 +158,7 @@ export default function SubscriptionPlansScreen() {
                   <Text style={styles.featureText}>{f}</Text>
                 </View>
               ))}
-              <Text style={styles.featureMore}>+ all Advanced features</Text>
+              <Text style={styles.featureMore}>+ all Pro features</Text>
             </View>
             {selectedPlan === "free" && (
               <View style={styles.selectedBanner}>
@@ -206,8 +206,8 @@ export default function SubscriptionPlansScreen() {
 
         {/* Advanced card */}
         <TouchableOpacity
-          style={[styles.planCard, selectedPlan === "advanced" && styles.planCardSelected, styles.planCardAdvanced]}
-          onPress={() => setSelectedPlan("advanced")}
+          style={[styles.planCard, selectedPlan === "pro" && styles.planCardSelected, styles.planCardAdvanced]}
+          onPress={() => setSelectedPlan("pro")}
           activeOpacity={0.85}
         >
           <View style={styles.popularBadge}>
@@ -217,15 +217,15 @@ export default function SubscriptionPlansScreen() {
             <View>
               <Text style={[styles.planName, { color: SF.gold }]}>⚡ Advanced</Text>
               <Text style={[styles.planPrice, { color: SF.gold }]}>
-                £{billing === "monthly" ? PRICES.advanced.monthly : PRICES.advanced.annual}
+                £{billing === "monthly" ? PRICES.pro.monthly : PRICES.pro.annual}
                 <Text style={[styles.planPricePer, { color: SF.gold2 }]}>/mo</Text>
               </Text>
               {billing === "annual" && (
-                <Text style={styles.planPriceSub}>Billed £{(PRICES.advanced.annual * 12).toFixed(2)}/year</Text>
+                <Text style={styles.planPriceSub}>Billed £{(PRICES.pro.annual * 12).toFixed(2)}/year</Text>
               )}
             </View>
-            <View style={[styles.radio, selectedPlan === "advanced" && styles.radioSelectedGold]}>
-              {selectedPlan === "advanced" && <View style={[styles.radioDot, { backgroundColor: SF.gold }]} />}
+            <View style={[styles.radio, selectedPlan === "pro" && styles.radioSelectedGold]}>
+              {selectedPlan === "pro" && <View style={[styles.radioDot, { backgroundColor: SF.gold }]} />}
             </View>
           </View>
           <View style={styles.featureList}>
@@ -236,7 +236,7 @@ export default function SubscriptionPlansScreen() {
               </View>
             ))}
           </View>
-          {selectedPlan === "advanced" && (
+          {selectedPlan === "pro" && (
             <View style={styles.selectedBanner}>
               <Text style={styles.selectedBannerText}>✓ Selected — Best Value</Text>
             </View>

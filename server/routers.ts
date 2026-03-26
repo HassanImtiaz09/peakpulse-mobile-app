@@ -471,8 +471,8 @@ export const appRouter = router({
   subscription: router({
     getPlans: publicProcedure.query(() => ({
       plans: [
-        { id: "basic", name: "Basic", price: 4.99, currency: "GBP", interval: "month", features: ["AI Meal Plans", "AI Workout Plans", "Calorie Estimator", "Progress Photos (5/month)", "Gym Finder", "Basic Body Scan"], notIncluded: ["Exercise Form Checker", "Social Feed", "Advanced AI Coaching", "Unlimited Progress Photos", "Priority AI"] },
-        { id: "advanced", name: "Advanced", price: 9.99, currency: "GBP", interval: "month", popular: true, features: ["Everything in Basic", "Exercise Form Checker", "Social Feed & Challenges", "Unlimited Progress Photos", "Advanced AI Body Scan", "Real-time Form Analysis", "Priority AI Processing", "Wearable Sync", "Personalised AI Coaching", "Meal Prep Plans"], notIncluded: [] },
+        { id: "basic", name: "Basic", price: 5.99, currency: "GBP", interval: "month", features: ["Unlimited AI Workout Plans", "Unlimited AI Meal Plans", "Unlimited Calorie Scans", "Voice Coaching & Audio Cues", "Workout Analytics & Charts", "Progress Photos (5/month)", "Basic Body Scan", "Offline Workout Mode", "PR Tracking", "Custom Timer Sounds"], notIncluded: ["Wearable Sync", "AI Coach Chat", "Form Checker", "Social Feed", "Meal Prep Plans"] },
+        { id: "pro", name: "Pro", price: 11.99, currency: "GBP", interval: "month", popular: true, features: ["Everything in Basic", "Wearable Device Sync", "AI Coach Chat", "Exercise Form Checker", "Social Feed & Challenges", "Meal Prep Plans", "Unlimited Progress Photos", "Priority AI Processing", "Advanced AI Body Scan", "Real-time Form Analysis"], notIncluded: [] },
       ],
     })),
     getCurrentPlan: guestOrUserProcedure.query(async ({ ctx }) => {

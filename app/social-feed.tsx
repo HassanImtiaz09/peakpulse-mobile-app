@@ -197,7 +197,7 @@ export default function SocialFeedScreen() {
   );
 
   return (
-    <FeatureGate feature="social_feed" message="Join the PeakPulse community, share progress, and compete in challenges. Available on Advanced plan.">
+    <FeatureGate feature="social_feed" message="Join the PeakPulse community, share progress, and compete in challenges. Available on Pro plan.">
     <ScreenContainer edges={["top", "left", "right"]} containerClassName="bg-black">
       {/* Hero */}
       <ImageBackground source={{ uri: HERO_BG }} style={styles.hero}>
@@ -291,7 +291,7 @@ export default function SocialFeedScreen() {
           <View style={styles.createChallengeCard}>
             <Text style={styles.createChallengeTitle}>🏆 Create a Challenge</Text>
             <Text style={styles.createChallengeText}>
-              Challenge your friends or the whole community to a fitness goal. Coming soon in the Advanced plan.
+              Challenge your friends or the whole community to a fitness goal. Coming soon in the Pro plan.
             </Text>
             <TouchableOpacity
               style={styles.createChallengeBtn}

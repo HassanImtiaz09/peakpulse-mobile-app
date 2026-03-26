@@ -30,7 +30,7 @@ interface PremiumFeatureBannerProps {
   /** Accent color for the banner */
   accentColor?: string;
   /** Required tier for the feature */
-  requiredTier?: "basic" | "advanced";
+  requiredTier?: "basic" | "pro";
   /** Compact mode for inline banners */
   compact?: boolean;
   /** Optional CTA text override */
@@ -47,7 +47,7 @@ export function PremiumFeatureBanner({
   compact = false,
   ctaText,
 }: PremiumFeatureBannerProps) {
-  const { canAccess, isPaid, hasAdvancedAccess } = useSubscription();
+  const { canAccess, isPaid, hasProAccess } = useSubscription();
   const [showPaywall, setShowPaywall] = useState(false);
 
   // Don't show banner if user already has access
@@ -113,7 +113,7 @@ export function PremiumFeatureBanner({
           <Text style={styles.description}>{description}</Text>
           <View style={[styles.ctaButton, { backgroundColor: accentColor }]}>
             <MaterialIcons name="lock-open" size={14} color={BG} />
-            <Text style={styles.ctaButtonText}>{ctaText ?? `Unlock with ${requiredTier === "advanced" ? "Advanced" : "Basic"}`}</Text>
+            <Text style={styles.ctaButtonText}>{ctaText ?? `Unlock with ${requiredTier === "pro" ? "Advanced" : "Basic"}`}</Text>
           </View>
         </View>
       </TouchableOpacity>
@@ -139,7 +139,7 @@ export function PremiumFeatureTeaser({
 }: {
   text: string;
   feature: string;
-  requiredTier?: "basic" | "advanced";
+  requiredTier?: "basic" | "pro";
 }) {
   const { canAccess } = useSubscription();
   const [showPaywall, setShowPaywall] = useState(false);
