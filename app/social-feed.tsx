@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import {
   View,
   Text,
@@ -19,6 +19,7 @@ import * as ImagePicker from "expo-image-picker";
 import { trpc } from "@/lib/trpc";
 import { useGuestAuth } from "@/lib/guest-auth";
 import { FeatureGate } from "@/components/feature-gate";
+import { getSeedPosts, getCurrentWeeklyChallenge, WEEKLY_CHALLENGE_TEMPLATES, type SeedPost } from "@/lib/social-feed-seeds";
 
 const HERO_BG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/golden-social-bg-6XESYMXaHwooBovbKXUgYi.webp";
 
@@ -130,7 +131,15 @@ export default function SocialFeedScreen() {
     });
   };
 
-  const posts: Post[] = (feedQuery.data?.posts ?? []).map((p: any) => ({ ...p, type: (p.type ?? "progress") as PostType }));
+  const serverPosts: Post[] = (feedQuery.data?.posts ?? []).map((p: any) => ({ ...p, type: (p.type ?? "progress") as PostType }));
+
+  // Use seed posts when the real feed is empty to make the community feel populated
+  const seedPosts = useMemo(() => getSeedPosts(), []);
+  const posts: Post[] = serverPosts.length > 0 ? serverPosts : (seedPosts as unknown as Post[]);
+  const showingSeedData = serverPosts.length === 0;
+
+  // Get current week's challenge
+  const currentWeeklyChallenge = useMemo(() => getCurrentWeeklyChallenge(), []);
 
   const renderPost = ({ item: post }: { item: Post }) => (
     <View style={styles.postCard}>
@@ -250,6 +259,17 @@ export default function SocialFeedScreen() {
               keyExtractor={(item) => String(item.id)}
               contentContainerStyle={{ padding: 16, paddingBottom: 100 }}
               showsVerticalScrollIndicator={false}
+              ListHeaderComponent={
+                showingSeedData ? (
+                  <View style={styles.seedBanner}>
+                    <Text style={styles.seedBannerEmoji}>✨</Text>
+                    <View style={{ flex: 1 }}>
+                      <Text style={styles.seedBannerTitle}>Community Highlights</Text>
+                      <Text style={styles.seedBannerText}>Example posts from the PeakPulse community. Share your own progress to join the conversation!</Text>
+                    </View>
+                  </View>
+                ) : null
+              }
               ListEmptyComponent={
                 <View style={styles.emptyState}>
                   <Text style={styles.emptyEmoji}>🌟</Text>
@@ -262,6 +282,39 @@ export default function SocialFeedScreen() {
         </>
       ) : (
         <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 100 }}>
+          {/* This Week's Featured Challenge */}
+          <View style={[styles.featuredChallengeCard, { borderColor: currentWeeklyChallenge.color }]}>
+            <View style={styles.featuredBadge}>
+              <Text style={styles.featuredBadgeText}>THIS WEEK</Text>
+            </View>
+            <Text style={styles.featuredEmoji}>{currentWeeklyChallenge.emoji}</Text>
+            <Text style={styles.featuredTitle}>{currentWeeklyChallenge.title}</Text>
+            <Text style={styles.featuredDesc}>{currentWeeklyChallenge.description}</Text>
+            <View style={styles.featuredMeta}>
+              <Text style={styles.featuredMetaText}>👥 {currentWeeklyChallenge.participantCount.toLocaleString()} joined</Text>
+              <Text style={styles.featuredMetaText}>🎯 {currentWeeklyChallenge.dailyGoal}</Text>
+              <Text style={styles.featuredMetaText}>⭐ {currentWeeklyChallenge.difficulty}</Text>
+            </View>
+            <View style={styles.featuredTips}>
+              {currentWeeklyChallenge.tips.map((tip, i) => (
+                <Text key={i} style={styles.featuredTipText}>💡 {tip}</Text>
+              ))}
+            </View>
+            <View style={styles.featuredRewards}>
+              {currentWeeklyChallenge.rewards.map((r, i) => (
+                <View key={i} style={[styles.rewardChip, { backgroundColor: currentWeeklyChallenge.color + "20" }]}>
+                  <Text style={[styles.rewardChipText, { color: currentWeeklyChallenge.color }]}>{r}</Text>
+                </View>
+              ))}
+            </View>
+            <TouchableOpacity
+              style={[styles.joinFeaturedBtn, { backgroundColor: currentWeeklyChallenge.color }]}
+              onPress={() => Alert.alert("Challenge Joined! 🎉", `You've joined the "${currentWeeklyChallenge.title}" challenge. Check back daily to log your progress.`)}
+            >
+              <Text style={styles.joinFeaturedBtnText}>Join This Week's Challenge</Text>
+            </TouchableOpacity>
+          </View>
+
           <Text style={styles.challengesTitle}>Active Challenges</Text>
           <Text style={styles.challengesSub}>Join a challenge and stay accountable with the community</Text>
           {CHALLENGES.map((challenge) => (
@@ -502,4 +555,25 @@ const styles = StyleSheet.create({
   selectedPhoto: { width: "100%", height: "100%" },
   signInNote: { backgroundColor: "#1c0a00", borderRadius: 10, padding: 12, marginTop: 16, borderWidth: 1, borderColor: "#92400e" },
   signInNoteText: { color: "#fbbf24", fontSize: 12, lineHeight: 18 },
+  // Seed data banner
+  seedBanner: { flexDirection: "row", alignItems: "center", gap: 12, backgroundColor: "rgba(124,58,237,0.1)", borderRadius: 12, padding: 14, marginBottom: 16, borderWidth: 1, borderColor: "rgba(124,58,237,0.25)" },
+  seedBannerEmoji: { fontSize: 24 },
+  seedBannerTitle: { color: "#c4b5fd", fontSize: 14, fontWeight: "700", marginBottom: 2 },
+  seedBannerText: { color: "#9ca3af", fontSize: 12, lineHeight: 17 },
+  // Featured weekly challenge
+  featuredChallengeCard: { backgroundColor: "#111", borderRadius: 16, padding: 20, marginBottom: 20, borderWidth: 2, alignItems: "center" },
+  featuredBadge: { backgroundColor: "rgba(245,158,11,0.15)", paddingHorizontal: 12, paddingVertical: 4, borderRadius: 20, marginBottom: 12 },
+  featuredBadgeText: { color: "#fbbf24", fontSize: 10, fontWeight: "800", letterSpacing: 2 },
+  featuredEmoji: { fontSize: 48, marginBottom: 8 },
+  featuredTitle: { color: "#fff", fontSize: 22, fontWeight: "800", textAlign: "center", marginBottom: 6 },
+  featuredDesc: { color: "#9ca3af", fontSize: 13, textAlign: "center", lineHeight: 19, marginBottom: 14 },
+  featuredMeta: { flexDirection: "row", flexWrap: "wrap", gap: 12, justifyContent: "center", marginBottom: 14 },
+  featuredMetaText: { color: "#d1d5db", fontSize: 12 },
+  featuredTips: { alignSelf: "stretch", gap: 6, marginBottom: 14 },
+  featuredTipText: { color: "#9ca3af", fontSize: 12, lineHeight: 17 },
+  featuredRewards: { flexDirection: "row", gap: 8, marginBottom: 16 },
+  rewardChip: { paddingHorizontal: 12, paddingVertical: 6, borderRadius: 20 },
+  rewardChipText: { fontSize: 12, fontWeight: "700" },
+  joinFeaturedBtn: { paddingHorizontal: 32, paddingVertical: 14, borderRadius: 12 },
+  joinFeaturedBtnText: { color: "#fff", fontSize: 15, fontWeight: "700" },
 });

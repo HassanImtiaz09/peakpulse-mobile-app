@@ -2398,3 +2398,26 @@
 - [x] 0 TypeScript errors
 - [x] 15 new gif-resolver side-view tests passing
 - [ ] Pre-existing test failures (90 tests, down from 108 before our changes)
+
+## Feature Additions (Round 18)
+
+### Animated Exercise Demonstrations
+- [x] Replace static AI-generated exercise images with looping video clips from MuscleWiki
+- [x] Build ExerciseVideoPlayer component (expo-video) with loop, mute, play/pause, and angle label
+- [x] Map 16 exercises to MuscleWiki video URLs (front + side) in exercise-video-registry.ts
+- [x] Integrated video toggle into EnhancedGifPlayer — falls back to static images when video unavailable
+- [x] 20 unit tests passing for video registry, social seeds, and barcode API
+
+### Social Feed Content Seeding
+- [x] Add 12 AI-generated example posts to social feed (clearly labelled with "Community Highlights" banner)
+- [x] Add 8 weekly challenge templates rotating by week number (steps, strength, cardio, nutrition, mindfulness)
+- [x] Seed community feed with diverse post types (progress, achievement, challenge)
+- [x] Add "This Week's Featured Challenge" card with tips, rewards, participant count, and join button
+
+### Pantry Barcode Scanning (already implemented)
+- [x] Open Food Facts API integrated for barcode lookup (EAN, UPC, QR, etc.)
+- [x] Auto-populate scanned items with name, brand, calories, protein, carbs, fat
+- [x] Handle API errors and unknown barcodes gracefully ("Product not found" card)
+- [x] Barcode scan result preview with nutrition grid before adding to pantry
+- [x] Add to Meal Log, Add to Pantry (with expiry), Save to Favourites actions
+- [x] Scan history (up to 50 items) for quick re-logging

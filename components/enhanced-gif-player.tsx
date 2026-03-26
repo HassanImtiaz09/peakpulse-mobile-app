@@ -17,6 +17,8 @@ import * as Haptics from "expo-haptics";
 import type { ExerciseAngleView } from "@/lib/exercise-data";
 import { useFavorites } from "@/lib/favorites-context";
 import { resolveGifAssetOrNull, hasSideViewGif } from "@/lib/gif-resolver";
+import { getExerciseVideoUrl, hasExerciseVideo } from "@/lib/exercise-video-registry";
+import { ExerciseVideoPlayer } from "@/components/exercise-video-player";
 
 const { width: SCREEN_W } = Dimensions.get("window");
 
@@ -57,9 +59,13 @@ export function EnhancedGifPlayer({
   const [showFocus, setShowFocus] = useState(false);
   const [imageKey, setImageKey] = useState(0);
   const [fullscreen, setFullscreen] = useState(false);
+  const [useVideo, setUseVideo] = useState(true); // prefer video when available
   const pulseAnim = useRef(new Animated.Value(1)).current;
   const { isFavorite, toggleFavorite } = useFavorites();
   const favorited = isFavorite(exerciseName);
+
+  // Check if this exercise has a video available
+  const videoAvailable = hasExerciseVideo(exerciseName);
 
   const currentView = angleViews[activeAngle] || angleViews[0];
   if (!currentView) return null;
@@ -76,6 +82,15 @@ export function EnhancedGifPlayer({
   // Show "missing" only if it's a side view AND we have no asset at all
   // If we have an asset (even if it's the front view), show it with a label
   const isMissingSideView = isSideView && currentAsset === null;
+
+  // Resolve video URL for current angle
+  const currentVideoUrl = useMemo(() => {
+    if (!videoAvailable || !useVideo) return null;
+    const angle = isSideView ? "side" : "front";
+    return getExerciseVideoUrl(exerciseName, angle);
+  }, [videoAvailable, useVideo, isSideView, exerciseName]);
+
+  const showVideo = useVideo && currentVideoUrl !== null;
 
   // Slow-motion pulse animation
   useEffect(() => {
@@ -131,53 +146,73 @@ export function EnhancedGifPlayer({
     }
   }, [exerciseName, toggleFavorite]);
 
+  const toggleVideoMode = useCallback(() => {
+    setUseVideo((v) => !v);
+    if (Platform.OS !== "web") {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
+    }
+  }, []);
+
   return (
     <View style={styles.container}>
       {/* Media Display */}
       <View style={[styles.gifContainer, { height }]}>
-        <Animated.View style={[styles.gifWrapper, { opacity: isSlowMotion ? pulseAnim : 1 }]}>
-          {isMissingSideView ? (
-            <View style={styles.missingViewContainer}>
-              <MaterialIcons name="videocam-off" size={40} color="rgba(245,158,11,0.4)" />
-              <Text style={styles.missingViewTitle}>Side View Not Available</Text>
-              <Text style={styles.missingViewSubtitle}>Switch to Front view for the demo</Text>
-            </View>
-          ) : (
-            <Image
-              key={`${activeAngle}-${imageKey}`}
-              source={typeof currentAsset === "string" ? { uri: currentAsset } : currentAsset}
-              style={styles.gif}
-              contentFit="contain"
-              cachePolicy="memory-disk"
-              recyclingKey={`${exerciseName}-${activeAngle}`}
-              transition={200}
-            />
-          )}
-        </Animated.View>
+        {showVideo ? (
+          <ExerciseVideoPlayer
+            videoUrl={currentVideoUrl}
+            height={height}
+            angleLabel={currentView.label}
+            autoPlay
+          />
+        ) : (
+          <Animated.View style={[styles.gifWrapper, { opacity: isSlowMotion ? pulseAnim : 1 }]}>
+            {isMissingSideView ? (
+              <View style={styles.missingViewContainer}>
+                <MaterialIcons name="videocam-off" size={40} color="rgba(245,158,11,0.4)" />
+                <Text style={styles.missingViewTitle}>Side View Not Available</Text>
+                <Text style={styles.missingViewSubtitle}>Switch to Front view for the demo</Text>
+              </View>
+            ) : (
+              <Image
+                key={`${activeAngle}-${imageKey}`}
+                source={typeof currentAsset === "string" ? { uri: currentAsset } : currentAsset}
+                style={styles.gif}
+                contentFit="contain"
+                cachePolicy="memory-disk"
+                recyclingKey={`${exerciseName}-${activeAngle}`}
+                transition={200}
+              />
+            )}
+          </Animated.View>
+        )}
 
-        {/* Slow-motion overlay indicator */}
-        {isSlowMotion && (
+        {/* Slow-motion overlay indicator (image mode only) */}
+        {!showVideo && isSlowMotion && (
           <View style={styles.slowMotionBadge}>
             <MaterialIcons name="slow-motion-video" size={12} color={C.gold} />
             <Text style={styles.slowMotionText}>SLOW-MO</Text>
           </View>
         )}
 
-        {/* Angle label overlay */}
-        <View style={styles.angleLabelOverlay}>
-          <Text style={styles.angleLabelText}>{currentView.label}</Text>
-          {isSideView && !hasDistinctSide && currentAsset !== null && (
-            <Text style={styles.angleFallbackText}>Front angle shown</Text>
-          )}
-        </View>
+        {/* Angle label overlay (image mode only) */}
+        {!showVideo && (
+          <View style={styles.angleLabelOverlay}>
+            <Text style={styles.angleLabelText}>{currentView.label}</Text>
+            {isSideView && !hasDistinctSide && currentAsset !== null && (
+              <Text style={styles.angleFallbackText}>Front angle shown</Text>
+            )}
+          </View>
+        )}
 
-        {/* Fullscreen expand button */}
-        <Pressable
-          onPress={() => setFullscreen(true)}
-          style={({ pressed }) => [styles.expandBtn, pressed && { opacity: 0.7 }]}
-        >
-          <MaterialIcons name="fullscreen" size={22} color="#fff" />
-        </Pressable>
+        {/* Fullscreen expand button (image mode only) */}
+        {!showVideo && (
+          <Pressable
+            onPress={() => setFullscreen(true)}
+            style={({ pressed }) => [styles.expandBtn, pressed && { opacity: 0.7 }]}
+          >
+            <MaterialIcons name="fullscreen" size={22} color="#fff" />
+          </Pressable>
+        )}
       </View>
 
       {/* Focus Annotation */}
@@ -214,6 +249,24 @@ export function EnhancedGifPlayer({
 
         {/* Playback Controls */}
         <View style={styles.playbackControls}>
+          {/* Video/Image toggle (only when video available) */}
+          {videoAvailable && (
+            <Pressable
+              onPress={toggleVideoMode}
+              style={({ pressed }) => [
+                styles.controlButton,
+                useVideo && styles.controlButtonActive,
+                pressed && { opacity: 0.7 },
+              ]}
+            >
+              <MaterialIcons
+                name={useVideo ? "videocam" : "image"}
+                size={16}
+                color={useVideo ? C.bg : C.gold}
+              />
+            </Pressable>
+          )}
+
           {/* Focus toggle */}
           <Pressable
             onPress={toggleFocus}
