@@ -116,7 +116,7 @@ function ExerciseDemoVideo({ exerciseName, compact = false }: { exerciseName: st
           height={compact ? 160 : 220}
         />
       ) : (
-        <ExerciseDemoPlayer gifUrl={demo.gifUrl} cue={demo.cue} height={compact ? 140 : 200} exerciseName={exerciseName} />
+        <ExerciseDemoPlayer gifUrl={demo.gifUrl} cue={demo.cue} height={compact ? 140 : 200} exerciseName={exerciseName} onComparePhoto={() => { const r = require("expo-router"); r.router.push({ pathname: "/form-compare", params: { exerciseName } }); }} />
       )}
     </View>
   );
@@ -231,7 +231,7 @@ function FullscreenTimerModal({
           {/* Demo Video */}
           <View style={{ backgroundColor: SF.surface, borderRadius: 16, padding: 14, borderWidth: 1, borderColor: SF.border }}>
             <Text style={{ color: SF.gold, fontFamily: "DMSans_700Bold", fontSize: 13, marginBottom: 10 }}>EXERCISE DEMO</Text>
-            <ExerciseDemoPlayer gifUrl={demo.gifUrl} cue={demo.cue} height={180} exerciseName={exercise.name} />
+            <ExerciseDemoPlayer gifUrl={demo.gifUrl} cue={demo.cue} height={180} exerciseName={exercise.name} onComparePhoto={() => { const r = require("expo-router"); r.router.push({ pathname: "/form-compare", params: { exerciseName: exercise.name } }); }} />
             {exercise.notes && (
               <View style={{ marginTop: 10, backgroundColor: "rgba(245,158,11,0.06)", borderRadius: 10, padding: 10 }}>
                 <Text style={{ color: SF.muted, fontSize: 12 }}>📋 {exercise.notes}</Text>

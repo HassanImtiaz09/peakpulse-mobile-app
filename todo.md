@@ -2163,3 +2163,40 @@
 - [x] 1 test for enhanced-gif-player string URL support
 - [x] 2 tests for old GIF assets removed
 - [x] 6 tests for exercise-demo mismatch verification
+
+## Round 89 — Form Annotations, Audio Cues, Photo Comparison
+
+### Exercise Form Annotations
+- [x] Created form-annotations.ts with 20 exercises: joint angles, alignment lines, checkpoints
+- [x] Built FormAnnotationOverlay SVG component with arc rendering, line drawing, checkpoint markers
+- [x] Toggle button in ExerciseDemoPlayer to show/hide annotations
+- [x] Color-coded: correct (green lines), warning checkpoints (amber), joint angles (blue/gold)
+- [x] AnnotationLegend component explains color coding
+- [x] Simplified mode for smaller views
+
+### AI-Narrated Audio Form Cues
+- [x] Created audio-form-cues.ts with 13 exercises, 5 phases per exercise (setup, execution, peak, return, breathing)
+- [x] Text-to-speech via expo-speech with speakCue(), stopSpeaking(), isSpeaking()
+- [x] Play/pause audio button in ExerciseDemoPlayer with phase-colored indicator
+- [x] Sequential cue playback with auto-advance between phases
+- [x] Phase color coding and icons (setup=blue, execution=gold, peak=green, return=purple, breathing=amber)
+
+### Custom Exercise Photo Upload
+- [x] Full form-compare.tsx screen with camera and gallery photo picker (expo-image-picker)
+- [x] Side-by-side view mode: reference image + user photo with form annotations
+- [x] Overlay mode: both images at 50% opacity superimposed for form comparison
+- [x] Save photos to AsyncStorage for progress tracking with date history
+- [x] Form history horizontal scroll showing past photos
+- [x] Form comparison tips section
+- [x] Navigation from ExerciseDemoPlayer in plans.tsx and active-workout.tsx
+
+### Testing
+- [x] 0 TypeScript errors, 0 LSP errors
+- [x] All 54 tests pass (round89-features.test.ts)
+- [x] 9 tests for form annotations data
+- [x] 8 tests for FormAnnotationOverlay component
+- [x] 8 tests for audio form cues
+- [x] 8 tests for ExerciseDemoPlayer integration
+- [x] 16 tests for form compare screen
+- [x] 2 tests for navigation integration
+- [x] 3 tests for annotation legend

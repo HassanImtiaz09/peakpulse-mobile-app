@@ -1250,6 +1250,10 @@ function ExercisePreviewCard({ exercise, onSwap, isToday }: { exercise: any; onS
             cue={demo.cue}
             height={160}
             exerciseName={exercise.name ?? ""}
+            onComparePhoto={() => {
+              const r = require("expo-router");
+              r.router.push({ pathname: "/form-compare", params: { exerciseName: exercise.name ?? "" } });
+            }}
           />
         </View>
       )}
