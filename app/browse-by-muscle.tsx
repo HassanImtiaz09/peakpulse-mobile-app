@@ -217,6 +217,7 @@ function ExerciseCard({
               source={{ uri: gifUrl }}
               style={styles.exerciseGif}
               contentFit="contain"
+              autoplay={true}
               onLoad={() => setImgLoading(false)}
               onError={() => setImgError(true)}
             />

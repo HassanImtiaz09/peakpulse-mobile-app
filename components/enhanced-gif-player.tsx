@@ -179,6 +179,7 @@ export function EnhancedGifPlayer({
                 style={styles.gif}
                 contentFit="contain"
                 cachePolicy="memory-disk"
+                autoplay={true}
                 recyclingKey={`${exerciseName}-${activeAngle}`}
                 transition={200}
               />
@@ -376,6 +377,7 @@ export function EnhancedGifPlayer({
                 style={{ width: SCREEN_W, height: SCREEN_W }}
                 contentFit="contain"
                 cachePolicy="memory-disk"
+                autoplay={true}
                 transition={200}
               />
             )}

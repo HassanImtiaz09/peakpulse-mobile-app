@@ -226,6 +226,7 @@ export function ExerciseDemoPlayer({
               style={StyleSheet.absoluteFill}
               contentFit="contain"
               cachePolicy="memory-disk"
+              autoplay={true}
               transition={200}
             />
             {/* Form Annotation Overlay */}
@@ -523,6 +524,7 @@ export function ExerciseDemoPlayer({
                   ? { uri: currentAsset }
                   : currentAsset
               }
+              autoplay={true}
               style={{ width: SCREEN_W, height: SCREEN_W }}
               contentFit="contain"
               cachePolicy="memory-disk"

@@ -11,90 +11,88 @@
  * Coverage: 75 unique animated GIFs covering 104+ exercise name variants.
  */
 
-const CDN = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618";
-
 /**
  * CDN-hosted animated GIF mapping.
- * Key = ExerciseDB exercise ID, Value = CDN filename.
- * Every GIF is verified animated (12+ frames, 180×180).
+ * Key = ExerciseDB exercise ID, Value = full CDN URL.
+ * Every GIF is verified animated (12 frames, 100ms/frame, 180×180).
  */
 const CDN_GIFS: Record<string, string> = {
-  "0CXGHya": `${CDN}/aZmyFWofRbTdtSmP.gif`,  // cable cross-over
-  "17lJ1kr": `${CDN}/UgfEuqvcZOgLAlaX.gif`,  // lever lying leg curl
-  "3TZduzM": `${CDN}/BqHEGYgRcxAFJQfJ.gif`,  // barbell incline bench press
-  "3eGE2JC": `${CDN}/MxCLkJgqLmGFnCaQ.gif`,  // dumbbell front raise
-  "5VXmnV5": `${CDN}/zQBSLWlLTectSLEV.gif`,  // bodyweight incline side plank
-  "5eLRITT": `${CDN}/FzxvkjWDoAMRRDxs.gif`,  // dumbbell stiff leg deadlift
-  "6ZCiYWQ": `${CDN}/RvCrZHqHVyoNKLPt.gif`,  // sit-up with arms on chest
-  "7zdxRTl": `${CDN}/UjdKTtEjqyXqgknJ.gif`,  // smith leg press
-  "8DiFDVA": `${CDN}/HUGhHohYIGkVgCWh.gif`,  // dumbbell rear fly
-  "9E25EOx": `${CDN}/VXVUbBuIExmiiytw.gif`,  // split squats
-  "9WTm7dq": `${CDN}/qhfjBeMdrJwBtjFg.gif`,  // chest dip
-  "BJ0Hz5L": `${CDN}/HkHzBZWDkGwDMTkz.gif`,  // dumbbell bent over row
-  "BgljGjd": `${CDN}/XyJwFiQjypVagHKQ.gif`,  // lever reverse t-bar row
-  "C0MA9bC": `${CDN}/ZbYXACDVmhoAQouD.gif`,  // dumbbell one arm bent-over row
-  "DOoWcnA": `${CDN}/ykFpJrzRENpTjcGi.gif`,  // lever chest press
-  "EIeI8Vf": `${CDN}/CRLGQlwBjgkrxbBs.gif`,  // barbell bench press
-  "GrO65fd": `${CDN}/qKLirvCMHPNXcviw.gif`,  // barbell decline bench press
-  "I3tsCnC": `${CDN}/zVCpSTRScHDzZNPm.gif`,  // hanging leg raise
-  "I4hDWkc": `${CDN}/DHxEbkLEzIJYEMwK.gif`,  // push-up
-  "KgI0tqW": `${CDN}/xASEvHUrAWuyLszd.gif`,  // barbell sumo deadlift
-  "Kxquu2E": `${CDN}/qNmZMUHIdmFuIodE.gif`,  // barbell step-up
-  "LEprlgG": `${CDN}/SiwnrjyjIMZflOds.gif`,  // cable lat pulldown full ROM
-  "LIlE5Tn": `${CDN}/wQJCbvAAgeRkfZiM.gif`,  // jump squat
-  "NbVPDMW": `${CDN}/fezBDMvPviloKaes.gif`,  // dumbbell biceps curl
-  "NN8nSNT": `${CDN}/sXeyGgXAUFbzfDdS.gif`,  // cable rope overhead tricep extension
-  "Pjbc0Kt": `${CDN}/NyddVoXdzoSiqdac.gif`,  // resistance band hip thrusts
-  "PzQanLE": `${CDN}/KzEmsuZVBkBdMujJ.gif`,  // cable shoulder press
-  "QTXKWPh": `${CDN}/RkBUEvtRtqoJRqIb.gif`,  // cable pulldown bicep curl
-  "Qa55kX1": `${CDN}/RijnKgJOuTLdkDKS.gif`,  // sled hack squat
-  "SGY8Zui": `${CDN}/COCUjATxOugYJKcm.gif`,  // barbell clean and press
-  "SSsBDwB": `${CDN}/cjoEblSzJOPKKbhL.gif`,  // dumbbell rear lunge
-  "SpYC0Kp": `${CDN}/viHbTgWvIETBgUUm.gif`,  // dumbbell bench press
-  "SpsOSXk": `${CDN}/LdHjQkDNztMUkWSi.gif`,  // cable rear pulldown
-  "T2mxWqc": `${CDN}/QLxDrahmFhSrCarb.gif`,  // chin-up
-  "UHJlbu3": `${CDN}/BqLHXMdzEKucqlwx.gif`,  // kettlebell swing
-  "VBAWRPG": `${CDN}/mDPjdrtIjeWaTZye.gif`,  // weighted front plank
-  "W6PxUkg": `${CDN}/ZnQCrERGPiZrSzAm.gif`,  // dumbbell kickback
-  "WcHl7ru": `${CDN}/hOPeHauGXZkwrsfe.gif`,  // smith close-grip bench press
-  "WhuFnR7": `${CDN}/yRDXTlwpJgCAcsGl.gif`,  // lying leg raise flat bench
-  "XVDdcoj": `${CDN}/jKddHXogOiCXOxwp.gif`,  // russian twist
-  "Y7YcmIJ": `${CDN}/RpKcmPyxLYQNxEEe.gif`,  // barbell bench front squat
-  "aXtJhlg": `${CDN}/eWfzHWzQHtXDIHoO.gif`,  // dumbbell step-up
-  "b6hQYMb": `${CDN}/xYIyTOOMULLmxElG.gif`,  // lever preacher curl
-  "cALKspW": `${CDN}/VglFKavYTPLkZvFU.gif`,  // cable upright row
-  "dG7tG5y": `${CDN}/AiPqHbAiwCRqMBbe.gif`,  // barbell shrug
-  "e1e76I2": `${CDN}/wTejyiDHNHgVXvwy.gif`,  // jump rope
-  "eZyBC3j": `${CDN}/wdsqisloOnYYAJrx.gif`,  // barbell bent over row
-  "ealLwvX": `${CDN}/wNhiYncWSOAFlfbp.gif`,  // high knee against wall
-  "fUBheHs": `${CDN}/nscUqmEleSThcXmD.gif`,  // cable seated row
-  "fhZQPlV": `${CDN}/MfbVmxYSssAuOvFL.gif`,  // cable twist
-  "h8LFzo9": `${CDN}/GwglDUfdBNNgMEGM.gif`,  // barbell lying triceps extension skull crusher
-  "hrVQWvE": `${CDN}/wScOQOdQmBoVVUKu.gif`,  // barbell straight leg deadlift
-  "hxyTtWj": `${CDN}/vrvHkMybRHzOoXRS.gif`,  // dumbbell seated lateral raise
-  "iPm26QU": `${CDN}/UfEZHGIumYrIQuad.gif`,  // box jump down with stabilization
-  "ipvgBnC": `${CDN}/ZeOmCXvtmBhcqusm.gif`,  // barbell seated calf raise
-  "jK2hZ6n": `${CDN}/RmCWzvDFvqAcvZBf.gif`,  // dumbbell one arm seated hammer curl
-  "km2Ljzj": `${CDN}/NShAoPxoyFPXlbEZ.gif`,  // wheel run
-  "lBDjFxJ": `${CDN}/bLCOjooWhmSSaJFc.gif`,  // pull-up
-  "mpKZGWz": `${CDN}/dtXzwFNZWmyNTqZt.gif`,  // dumbbell lying triceps extension
-  "my33uHU": `${CDN}/ogpsXirVETUhgwJE.gif`,  // lever leg extension
-  "ns0SIbU": `${CDN}/JjQAQorAIjrOxVtT.gif`,  // dumbbell incline bench press
-  "oLrKqDH": `${CDN}/SNOAvnksfdQQWoYf.gif`,  // run
-  "qPEzJjA": `${CDN}/CjAfYbqALvlcfjSl.gif`,  // farmers walk
-  "qRZ5S1N": `${CDN}/MsquyEXNlJqtSXWH.gif`,  // cable one arm tricep pushdown
-  "r0z6xzQ": `${CDN}/UUtWowKolMXWVxhq.gif`,  // barbell pendlay row
-  "s8nrDXF": `${CDN}/CgITzoOftDwYzxdP.gif`,  // weighted crunch
-  "tZkGYZ9": `${CDN}/EnVwndMvZyzAFNgv.gif`,  // band bicycle crunch
-  "u0cNiij": `${CDN}/sxRHYhWkwmhNtRBE.gif`,  // low glute bridge on floor
-  "u4bAmKp": `${CDN}/TfvOkveZxSnNJmKs.gif`,  // mountain climber
-  "vpQaQkH": `${CDN}/zIJYRXNIKomVvTBy.gif`,  // ski ergometer
-  "wQ2c4XD": `${CDN}/ZlvlzIzXWKqgzMof.gif`,  // barbell romanian deadlift
-  "xLYSdtg": `${CDN}/KRNaQgKdcsHHZrwe.gif`,  // cable middle fly
-  "yl2IYyy": `${CDN}/ZbeyASYhupapteSf.gif`,  // cable standing calf raise
-  "yn8yg1r": `${CDN}/fkGSyjkAgphWAEGI.gif`,  // dumbbell goblet squat
-  "yz9nUhF": `${CDN}/uhukQEmEnmErstRP.gif`,  // dumbbell fly
-  "znQUdHY": `${CDN}/FiXKuPzpxHYcvNwF.gif`,  // dumbbell seated shoulder press
+  "0CXGHya": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/hiqAQxyzuxjdjHwV.gif",  // cable cross-over
+  "17lJ1kr": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/aRgqTVkWImNrBZpq.gif",  // lever lying leg curl
+  "3TZduzM": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/mVndbUvMDlikmjSn.gif",  // barbell incline bench press
+  "3eGE2JC": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/zBzsGNfxPsFinvVW.gif",  // dumbbell front raise
+  "5VXmnV5": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/YXxRFQXWhVEUaFWb.gif",  // bodyweight incline side plank
+  "5eLRITT": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/PiNoiQKRPxgrSQCn.gif",  // dumbbell stiff leg deadlift
+  "6ZCiYWQ": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/pQxzGhlJVabtDdtM.gif",  // sit-up with arms on chest
+  "7zdxRTl": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/DvMkiwmUIbdUeiYk.gif",  // smith leg press
+  "8DiFDVA": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/BNqSkKAOiZxnEDxl.gif",  // dumbbell rear fly
+  "9E25EOx": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/PKdXTHDfCeMjiFwR.gif",  // split squats
+  "9WTm7dq": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/yEZzuYvViRZbPRuO.gif",  // chest dip
+  "BJ0Hz5L": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/gCXtsTksoOYTyiKH.gif",  // dumbbell bent over row
+  "BgljGjd": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/mIbxOeyfYKgHeSkW.gif",  // lever reverse t-bar row
+  "C0MA9bC": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/YbRihdwSzIlzmMrB.gif",  // dumbbell one arm bent-over row
+  "DOoWcnA": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/JrbsMviXtmKNuDAL.gif",  // lever chest press
+  "EIeI8Vf": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/ysyIjRBskoWkddtG.gif",  // barbell bench press
+  "GrO65fd": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/NMPUyFAdwyAEAtIQ.gif",  // barbell decline bench press
+  "I3tsCnC": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/OtvqMWULoPUMGkvp.gif",  // hanging leg raise
+  "I4hDWkc": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/wEAwFhuisBPCaqOu.gif",  // push-up
+  "KgI0tqW": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/faWheLMzlyeNYJvG.gif",  // barbell sumo deadlift
+  "Kxquu2E": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/YMzBCfMYdWdAXuct.gif",  // barbell step-up
+  "LEprlgG": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/cmIkNvnQAViCenio.gif",  // cable lat pulldown full ROM
+  "LIlE5Tn": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/xWOCHLkLAwfIhqmE.gif",  // jump squat
+  "NN8nSNT": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/VtrqsqjlHxCfbeBL.gif",  // cable rope overhead tricep extension
+  "NbVPDMW": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/upAXDIOEwUnNKJYt.gif",  // dumbbell biceps curl
+  "Pjbc0Kt": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/LeTFXxeeVZmLRjrG.gif",  // resistance band hip thrusts
+  "PzQanLE": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/HRklYJnBIdygFfty.gif",  // cable shoulder press
+  "QTXKWPh": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/JvIqkwmzMlbWwMgi.gif",  // cable pulldown bicep curl
+  "Qa55kX1": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/ckLbDYGvzkXuePcv.gif",  // sled hack squat
+  "SGY8Zui": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/etoNtaTGpjyrMbUo.gif",  // barbell clean and press
+  "SSsBDwB": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/zFTUolVLpbzEOoIo.gif",  // dumbbell rear lunge
+  "SpYC0Kp": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/kZtUHaGutaQshUbs.gif",  // dumbbell bench press
+  "SpsOSXk": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/gWSMHVEAcsQJuFNq.gif",  // cable rear pulldown
+  "T2mxWqc": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/NEqWuEPfjDONoafq.gif",  // chin-up
+  "UHJlbu3": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/WfUMmehqjfksdHLs.gif",  // kettlebell swing
+  "VBAWRPG": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/kgDPuCivYtXLHGDL.gif",  // weighted front plank
+  "W6PxUkg": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/goMyRQAyIkRaUprX.gif",  // dumbbell kickback
+  "WcHl7ru": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/JQcWgAdxltoAgoin.gif",  // smith close-grip bench press
+  "WhuFnR7": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/xWlysNQJFjSInTIf.gif",  // lying leg raise flat bench
+  "XVDdcoj": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/YOlZwXJQQRIWlSnr.gif",  // russian twist
+  "Y7YcmIJ": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/IlVwXddCLeTSDeWM.gif",  // barbell bench front squat
+  "aXtJhlg": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/neClMXrPoruwRtxU.gif",  // dumbbell step-up
+  "b6hQYMb": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/KVadvvYgScpCSRsA.gif",  // lever preacher curl
+  "cALKspW": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/yKosDXZEhgFebCiO.gif",  // cable upright row
+  "dG7tG5y": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/rUFYcuNDSuqINyLf.gif",  // barbell shrug
+  "e1e76I2": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/bRczqAllOBySBZzt.gif",  // jump rope
+  "eZyBC3j": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/HShYxvOkKbruISzW.gif",  // barbell bent over row
+  "ealLwvX": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/tOBMWsNKAqxxXsnR.gif",  // high knee against wall
+  "fUBheHs": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/zNopVihArQzkiozx.gif",  // cable seated row
+  "fhZQPlV": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/rrzlKnARduOcLZYL.gif",  // cable twist
+  "h8LFzo9": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/PTfvRjHxrhnpYViF.gif",  // barbell lying triceps extension skull crusher
+  "hrVQWvE": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/vTOIDiEewfQjzUhC.gif",  // barbell straight leg deadlift
+  "hxyTtWj": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/byNqNIiImuefVCVZ.gif",  // dumbbell seated lateral raise
+  "iPm26QU": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/HuDPBXlBVWDYlRGc.gif",  // box jump down with stabilization
+  "ipvgBnC": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/DBfxPSNztmkVPiiq.gif",  // barbell seated calf raise
+  "jK2hZ6n": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/wbQIEfQcziAQubkL.gif",  // dumbbell one arm seated hammer curl
+  "km2Ljzj": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/QgUCfnXOOHroIKkp.gif",  // wheel run
+  "lBDjFxJ": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/OiFjOjhNsIPIYFRl.gif",  // pull-up
+  "mpKZGWz": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/mpECDQeQngoUmDNw.gif",  // dumbbell lying triceps extension
+  "my33uHU": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/CAoLtfQyWkDZddgq.gif",  // lever leg extension
+  "ns0SIbU": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/GKOeqxEBNmcvQFap.gif",  // dumbbell incline bench press
+  "oLrKqDH": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/YPzhlXbbrrlFKNgk.gif",  // run
+  "qPEzJjA": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/JGzXICHKajTDFkTg.gif",  // farmers walk
+  "qRZ5S1N": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/yLZzgmLZUFLnLjqX.gif",  // cable one arm tricep pushdown
+  "r0z6xzQ": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/fdnfZXmEDVjSXeIG.gif",  // barbell pendlay row
+  "s8nrDXF": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/YqsKXiYbgNzXoPqm.gif",  // weighted crunch
+  "tZkGYZ9": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/pNxFfCFAMGVzHZCZ.gif",  // band bicycle crunch
+  "u0cNiij": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/AWvYMoIOHRshSYvs.gif",  // low glute bridge on floor
+  "u4bAmKp": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/bPxjzTvLaJTaZBHM.gif",  // mountain climber
+  "vpQaQkH": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/UkIcCCJmuUlLzfAd.gif",  // ski ergometer
+  "wQ2c4XD": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/OGmfTDKxTitEanth.gif",  // barbell romanian deadlift
+  "xLYSdtg": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/alrflGyUZvwLgyBX.gif",  // cable middle fly
+  "yl2IYyy": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/EiRTjSwEksihJYwH.gif",  // cable standing calf raise
+  "yn8yg1r": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/nMPrmPRlEPykXFra.gif",  // dumbbell goblet squat
+  "yz9nUhF": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/olTkZYISjQRFGYpS.gif",  // dumbbell fly
+  "znQUdHY": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/alDxZGzgZDzudzHk.gif",  // dumbbell seated shoulder press
 };
 
 /**

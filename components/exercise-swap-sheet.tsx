@@ -96,6 +96,7 @@ function SubstitutionCard({
               source={{ uri: gifUrl }}
               style={styles.gif}
               contentFit="contain"
+              autoplay={true}
               onLoad={() => setImgLoading(false)}
               onError={() => setImgError(true)}
             />

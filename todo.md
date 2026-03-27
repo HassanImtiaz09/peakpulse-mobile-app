@@ -2483,3 +2483,13 @@
 - [x] All 53 tests passing across 3 test files
 - [x] 0 TypeScript errors
 - Note: Gender-specific GIFs not needed — ExerciseDB uses anatomical illustrations that are gender-neutral
+
+## Bug Fix (Round 22) — Exercise GIFs Not Animating
+
+- [x] Diagnosed root cause: frame duration was 1000ms/frame (12s per cycle) — GIFs appeared static
+- [x] Re-processed all 76 GIFs with 100ms/frame (1.2s cycle, smooth animation) using Pillow
+- [x] Uploaded all 76 fast GIFs to CDN (new URLs)
+- [x] Updated CDN_GIFS registry in exercisedb-api.ts with new fast-animated URLs
+- [x] Removed template literal CDN pattern, using direct URLs for reliability
+- [x] Verified autoplay={true} present on all 6 Image components in 4 exercise files
+- [x] All 53 tests passing, 0 TypeScript errors
