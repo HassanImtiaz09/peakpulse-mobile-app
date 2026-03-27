@@ -49,6 +49,7 @@ const CATEGORIES: TileCategory[] = [
       { icon: "view-list", label: "Templates", route: "/workout-templates", color: "#8B5CF6", bgColor: "rgba(139,92,246,0.12)" },
       { icon: "center-focus-strong", label: "Form Check", route: "/form-checker", color: "#EC4899", bgColor: "rgba(236,72,153,0.12)", feature: "form_checker", tier: "pro", badge: "PRO" },
       { icon: "check-circle", label: "Check-In", route: "/daily-checkin", color: "#14B8A6", bgColor: "rgba(20,184,166,0.12)" },
+      { icon: "accessibility-new", label: "By Muscle", route: "/browse-by-muscle", color: "#F59E0B", bgColor: "rgba(245,158,11,0.12)" },
     ],
   },
   {

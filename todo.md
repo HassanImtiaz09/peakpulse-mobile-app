@@ -2443,3 +2443,25 @@
 - [x] Real animated GIFs from https://static.exercisedb.dev/media/{id}.gif
 - [x] Fallback to static images when ExerciseDB GIF unavailable
 - [x] 16 unit tests passing for ExerciseDB API service
+
+## Feature Additions (Round 20)
+
+### Expand ExerciseDB Coverage
+- [x] Identified 19 exercises in exercise-data.ts not yet mapped in exercisedb-api.ts
+- [x] Searched ExerciseDB database for isolation exercises (cable crossovers, leg extensions, etc.)
+- [x] Added 33 new mappings — now 104 total keys covering 100% of exercise-data exercises
+- [x] 17 unit tests passing for coverage, substitution, and browse-by-muscle
+
+### Tappable Muscle Diagram Interaction
+- [x] Made muscle groups in MuscleSvgDiagram tappable (onPress per muscle region)
+- [x] Created browse-by-muscle discovery screen (app/browse-by-muscle.tsx) with tappable body diagram
+- [x] Shows ExerciseDB animated GIF preview for each exercise in the list
+- [x] Navigation to exercise detail and "Add to Workout" flow
+- [x] Added "By Muscle" tile to Explore Grid Training category
+
+### Exercise Substitution by Muscle Group
+- [x] Built exercise-substitution.ts with getSubstitutions() scoring by muscle overlap, equipment, difficulty
+- [x] getFilteredSubstitutions() supports equipment, difficulty, and muscle filters
+- [x] Created ExerciseSwapSheet component with filter chips (Best Match, Same Equipment, Beginner, Has Demo)
+- [x] Integrated "Browse by Muscle Match" button into existing AI Exercise Swap modal
+- [x] Shows match percentage and ExerciseDB GIF preview for each alternative

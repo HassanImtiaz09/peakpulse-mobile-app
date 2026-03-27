@@ -30,6 +30,7 @@ const EXERCISE_ID_MAP: Record<string, string> = {
   "pushup":                   "I4hDWkc",
   "dumbbell fly":             "Gt7NXHF",   // dumbbell fly
   "cable crossover":          "0CXGHya",   // cable cross-over variation
+  "cable fly":                "xLYSdtg",   // cable middle fly
   "chest press machine":      "DOoWcnA",   // lever chest press
   "pec deck":                 "0CXGHya",   // cable cross-over (closest match)
   "dip":                      "9WTm7dq",   // chest dip
@@ -47,6 +48,10 @@ const EXERCISE_ID_MAP: Record<string, string> = {
   "lat pulldown":             "LEprlgG",   // cable lat pulldown full ROM
   "seated cable row":         "fUBheHs",   // cable seated row
   "t-bar row":                "YdGOK7H",   // lever reverse t-bar row
+  "bent over row":            "eZyBC3j",   // barbell bent over row
+  "dumbbell row":             "C0MA9bC",   // dumbbell one arm bent-over row
+  "pendlay row":              "r0z6xzQ",   // barbell pendlay row
+  "tbar row":                 "BgljGjd",   // lever reverse t-bar row
   "single arm dumbbell row":  "BJ0Hz5L",   // dumbbell bent over row (closest)
 
   // ── Shoulders ──────────────────────────────────────────────────────────────
@@ -56,6 +61,8 @@ const EXERCISE_ID_MAP: Record<string, string> = {
   "arnold press":             "PzQanLE",   // closest match
   "lateral raise":            "PxQwqVi",   // dumbbell lateral raise
   "cable lateral raise":      "PxQwqVi",
+  "dumbbell shoulder press":  "znQUdHY",   // dumbbell seated shoulder press
+  "front raise":              "3eGE2JC",   // dumbbell front raise
   "face pull":                "SpsOSXk",   // cable rear pulldown (closest)
   "rear delt fly":            "8DiFDVA",   // dumbbell rear fly
   "upright row":              "3XGGCwB",   // barbell upright row
@@ -72,7 +79,9 @@ const EXERCISE_ID_MAP: Record<string, string> = {
   "tricep pushdown":          "qRZ5S1N",   // cable one arm tricep pushdown
   "skull crusher":            "h8LFzo9",   // barbell lying triceps extension skull crusher
   "overhead tricep extension":"mLXkPrQ",   // cable high pulley overhead tricep extension
+  "tricep extension":         "mpKZGWz",   // dumbbell lying triceps extension
   "tricep dip":               "9WTm7dq",   // chest dip (same movement)
+  "dumbbell kickback":        "W6PxUkg",   // dumbbell kickback
 
   // ── Legs ───────────────────────────────────────────────────────────────────
   "squat":                    "LIlE5Tn",   // jump squat (dynamic, good demo)
@@ -89,7 +98,11 @@ const EXERCISE_ID_MAP: Record<string, string> = {
   "hip thrust":               "Pjbc0Kt",   // resistance band hip thrusts
   "lunge":                    "Kxquu2E",   // barbell step-up (similar)
   "bulgarian split squat":    "9E25EOx",   // split squats
+  "reverse lunge":            "SSsBDwB",   // dumbbell rear lunge
   "step up":                  "aXtJhlg",   // dumbbell step-up
+  "glute bridge":             "u0cNiij",   // low glute bridge on floor
+  "sumo deadlift":            "KgI0tqW",   // barbell sumo deadlift
+  "stiff leg deadlift":       "5eLRITT",   // dumbbell stiff leg deadlift
 
   // ── Core ───────────────────────────────────────────────────────────────────
   "plank":                    "VBAWRPG",   // weighted front plank
@@ -99,6 +112,11 @@ const EXERCISE_ID_MAP: Record<string, string> = {
   "mountain climber":         "u4bAmKp",   // mountain climber
   "bicycle crunch":           "tZkGYZ9",   // band bicycle crunch
   "ab wheel rollout":         "km2Ljzj",   // wheel run (closest)
+  "crunch":                   "s8nrDXF",   // weighted crunch
+  "sit up":                   "6ZCiYWQ",   // sit-up with arms on chest
+  "leg raise":                "WhuFnR7",   // lying leg raise flat bench
+  "side plank":               "5VXmnV5",   // bodyweight incline side plank
+  "cable woodchop":           "fhZQPlV",   // cable twist (up-down)
   "dead bug":                 "VBAWRPG",   // weighted front plank (closest)
 
   // ── Full Body / Cardio ─────────────────────────────────────────────────────
@@ -113,6 +131,9 @@ const EXERCISE_ID_MAP: Record<string, string> = {
   "rowing machine":           "vpQaQkH",   // ski ergometer (closest)
   "jump rope":                "e1e76I2",   // jump rope
   "jumping jack":             "e1e76I2",   // jump rope (closest)
+  "high knees":               "ealLwvX",   // high knee against wall
+  "sprint":                   "oLrKqDH",   // run
+  "run":                      "oLrKqDH",   // run
 };
 
 /**

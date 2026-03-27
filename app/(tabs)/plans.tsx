@@ -19,7 +19,8 @@ import { exportWorkoutPlanPdf } from "@/lib/workout-pdf";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { BodyHeatmap } from "@/components/body-heatmap";
 import { MuscleSvgDiagram, MuscleSvgMini } from "@/components/muscle-svg-diagram";
-import { getExerciseInfo } from "@/lib/exercise-data";
+import { getExerciseInfo, type ExerciseInfo } from "@/lib/exercise-data";
+import { ExerciseSwapSheet } from "@/components/exercise-swap-sheet";
 import { getTodayTargetMuscles } from "@/lib/muscle-balance";
 import { usePantry } from "@/lib/pantry-context";
 import { useCalories } from "@/lib/calorie-context";
@@ -130,6 +131,10 @@ export default function PlansScreen() {
   const [swapExAlts, setSwapExAlts] = useState<any[]>([]);
   const [swapExLoading, setSwapExLoading] = useState(false);
   const exerciseSwap = trpc.exerciseSwap.generate.useMutation();
+
+  // Local muscle-based substitution sheet
+  const [localSwapVisible, setLocalSwapVisible] = useState(false);
+  const [localSwapExName, setLocalSwapExName] = useState("");
 
   // Meal swap state
   const [swapMealModal, setSwapMealModal] = useState<{ meal: any; dayIndex: number; mealIndex: number } | null>(null);
@@ -941,6 +946,18 @@ export default function PlansScreen() {
                 <MaterialIcons name="close" size={22} color={MUTED} />
               </TouchableOpacity>
             </View>
+            {/* Quick local swap button */}
+            <TouchableOpacity
+              style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6, paddingVertical: 10, marginHorizontal: 20, marginTop: 8, backgroundColor: GOLD_DIM, borderRadius: 10, borderWidth: 1, borderColor: GOLD_BORDER }}
+              onPress={() => {
+                setSwapExModal(null);
+                setLocalSwapExName(swapExModal?.exercise?.name ?? "");
+                setLocalSwapVisible(true);
+              }}
+            >
+              <MaterialIcons name="accessibility-new" size={16} color={GOLD} />
+              <Text style={{ color: GOLD, fontSize: 12, fontWeight: "700" }}>Browse by Muscle Match</Text>
+            </TouchableOpacity>
             {swapExLoading ? (
               <View style={{ padding: 40, alignItems: "center" }}>
                 <ActivityIndicator size="large" color="#22D3EE" />
@@ -980,6 +997,24 @@ export default function PlansScreen() {
           </View>
         </View>
       </Modal>
+
+      {/* ── Local Muscle-Based Swap Sheet ── */}
+      <ExerciseSwapSheet
+        visible={localSwapVisible}
+        exerciseName={localSwapExName}
+        onClose={() => setLocalSwapVisible(false)}
+        onSwap={(newEx: ExerciseInfo) => {
+          setLocalSwapVisible(false);
+          applyExerciseSwap({
+            name: newEx.name,
+            sets: undefined,
+            reps: undefined,
+            rest: undefined,
+            equipment: newEx.equipment,
+            muscleGroup: newEx.primaryMuscles[0] ?? "",
+          });
+        }}
+      />
 
       {/* ── Meal Swap Modal ── */}
       <Modal visible={!!swapMealModal} transparent animationType="slide" onRequestClose={() => setSwapMealModal(null)} statusBarTranslucent>
