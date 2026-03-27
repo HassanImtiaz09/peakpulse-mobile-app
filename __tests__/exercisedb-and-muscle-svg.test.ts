@@ -14,14 +14,14 @@ describe("ExerciseDB API Service", () => {
     it("returns a valid GIF URL for a mapped exercise (exact match)", () => {
       const url = getExerciseDbGifUrl("bench press");
       expect(url).toBeTruthy();
-      expect(url).toContain("https://static.exercisedb.dev/media/");
+      expect(url).toContain("files.manuscdn.com");
       expect(url).toMatch(/\.gif$/);
     });
 
     it("returns a valid GIF URL for barbell bench press", () => {
       const url = getExerciseDbGifUrl("barbell bench press");
       expect(url).toBeTruthy();
-      expect(url).toContain("EIeI8Vf");
+      expect(url).toContain("files.manuscdn.com");
     });
 
     it("returns a valid GIF URL for dumbbell fly", () => {
@@ -101,7 +101,7 @@ describe("ExerciseDB API Service", () => {
       for (const name of exercises) {
         const url = getExerciseDbGifUrl(name);
         expect(url).toBeTruthy();
-        expect(url).toMatch(/^https:\/\/static\.exercisedb\.dev\/media\/[A-Za-z0-9]+\.gif$/);
+        expect(url).toMatch(/^https:\/\/files\.manuscdn\.com\/.+\.gif$/);
       }
     });
 

@@ -2465,3 +2465,21 @@
 - [x] Created ExerciseSwapSheet component with filter chips (Best Match, Same Equipment, Beginner, Has Demo)
 - [x] Integrated "Browse by Muscle Match" button into existing AI Exercise Swap modal
 - [x] Shows match percentage and ExerciseDB GIF preview for each alternative
+
+## Feature Additions (Round 21) — Animated Exercise GIFs from MuscleWiki
+
+### Download Animated GIFs from ExerciseDB
+- [x] Downloaded 1,500 exercises from ExerciseDB v1 open-source API
+- [x] Matched 75 unique exercises to ExerciseDB IDs (including 19 replacement IDs for broken originals)
+- [x] Downloaded all 76 animated GIFs (verified multi-frame, 180×180, 12+ frames each)
+- [x] Uploaded all 76 GIFs to CDN (files.manuscdn.com) — permanent hosting
+- [x] Uniform layout: all GIFs are 180×180, anatomical illustration style, no watermarks
+- [x] Gender-neutral: ExerciseDB uses anatomical illustrations (not real people), suitable for all users
+
+### Update App for Animated GIF Support
+- [x] Replaced react-native Image with expo-image in all 4 exercise components
+- [x] Updated exercisedb-api.ts with CDN URLs instead of static.exercisedb.dev
+- [x] Fixed contentFit prop (expo-image API) in browse-by-muscle and exercise-swap-sheet
+- [x] All 53 tests passing across 3 test files
+- [x] 0 TypeScript errors
+- Note: Gender-specific GIFs not needed — ExerciseDB uses anatomical illustrations that are gender-neutral

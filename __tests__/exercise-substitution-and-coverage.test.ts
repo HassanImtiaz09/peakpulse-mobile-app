@@ -56,7 +56,7 @@ describe("ExerciseDB Coverage", () => {
     for (const name of newExercises) {
       const url = getExerciseDbGifUrl(name);
       expect(url).not.toBeNull();
-      expect(url).toContain("static.exercisedb.dev/media/");
+      expect(url).toContain("files.manuscdn.com");
       expect(url).toContain(".gif");
     }
   });

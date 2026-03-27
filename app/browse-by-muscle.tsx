@@ -14,9 +14,9 @@ import {
   FlatList,
   Platform,
   Modal,
-  Image,
   ActivityIndicator,
 } from "react-native";
+import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import * as Haptics from "expo-haptics";
 import Svg, { Path, Rect } from "react-native-svg";
@@ -216,7 +216,7 @@ function ExerciseCard({
             <Image
               source={{ uri: gifUrl }}
               style={styles.exerciseGif}
-              resizeMode="contain"
+              contentFit="contain"
               onLoad={() => setImgLoading(false)}
               onError={() => setImgError(true)}
             />

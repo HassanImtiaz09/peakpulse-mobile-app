@@ -13,10 +13,10 @@ import {
   Modal,
   Pressable,
   FlatList,
-  Image,
   ActivityIndicator,
   Platform,
 } from "react-native";
+import { Image } from "expo-image";
 import * as Haptics from "expo-haptics";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { getExerciseDbGifUrl } from "@/lib/exercisedb-api";
@@ -95,7 +95,7 @@ function SubstitutionCard({
             <Image
               source={{ uri: gifUrl }}
               style={styles.gif}
-              resizeMode="contain"
+              contentFit="contain"
               onLoad={() => setImgLoading(false)}
               onError={() => setImgError(true)}
             />
