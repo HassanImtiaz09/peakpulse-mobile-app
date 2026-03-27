@@ -16,6 +16,8 @@ import { useColors } from "@/hooks/use-colors";
 import { useFavorites } from "@/lib/favorites-context";
 import { getExerciseInfo } from "@/lib/exercise-data";
 import { resolveGifAsset } from "@/lib/gif-resolver";
+import { getExerciseDbGifUrl, hasExerciseDbGif } from "@/lib/exercisedb-api";
+import { MuscleSvgMini } from "@/components/muscle-svg-diagram";
 import { getFormAnnotations, hasFormAnnotations } from "@/lib/form-annotations";
 import {
   getAudioCues,
@@ -102,15 +104,31 @@ export function ExerciseDemoPlayer({
   const hasMultipleAngles = angleViews.length > 1;
   const [activeAngle, setActiveAngle] = useState(0);
 
-  // Resolve the image asset
+  // ExerciseDB animated GIF source
+  const exerciseDbGifUrl = useMemo(
+    () => (exerciseName ? getExerciseDbGifUrl(exerciseName) : null),
+    [exerciseName]
+  );
+  const [useExerciseDb, setUseExerciseDb] = useState(!!exerciseDbGifUrl);
+
+  // Muscle info for mini diagram
+  const exerciseInfo = useMemo(
+    () => (exerciseName ? getExerciseInfo(exerciseName) : undefined),
+    [exerciseName]
+  );
+
+  // Resolve the image asset — prefer ExerciseDB animated GIF when toggled on
   const currentAsset = useMemo(() => {
+    if (useExerciseDb && exerciseDbGifUrl) {
+      return exerciseDbGifUrl; // Direct URL to animated GIF from ExerciseDB
+    }
     if (hasMultipleAngles && angleViews[activeAngle]) {
       return resolveGifAsset(angleViews[activeAngle].gifUrl);
     }
     if (gifAsset) return gifAsset;
     if (gifUrl) return resolveGifAsset(gifUrl);
     return resolveGifAsset("");
-  }, [hasMultipleAngles, angleViews, activeAngle, gifAsset, gifUrl]);
+  }, [useExerciseDb, exerciseDbGifUrl, hasMultipleAngles, angleViews, activeAngle, gifAsset, gifUrl]);
 
   // Cleanup speech on unmount
   useEffect(() => {
@@ -222,9 +240,15 @@ export function ExerciseDemoPlayer({
           </View>
           {/* Badge */}
           <View style={styles.gifBadge}>
-            <MaterialIcons name="gif" size={16} color="#fff" />
-            <Text style={styles.gifBadgeText}>Exercise Guide</Text>
+            <MaterialIcons name={useExerciseDb ? "gif" : "image"} size={16} color="#fff" />
+            <Text style={styles.gifBadgeText}>{useExerciseDb ? "Animated Demo" : "Exercise Guide"}</Text>
           </View>
+          {/* Muscle mini diagram overlay (bottom-left) */}
+          {exerciseInfo && (
+            <View style={styles.muscleMiniOverlay}>
+              <MuscleSvgMini primary={exerciseInfo.primaryMuscles} secondary={exerciseInfo.secondaryMuscles} />
+            </View>
+          )}
           {/* Angle label overlay */}
           {hasMultipleAngles && angleViews[activeAngle] && (
             <View style={styles.angleLabelOverlay}>
@@ -276,6 +300,34 @@ export function ExerciseDemoPlayer({
               </Text>
             </Pressable>
           ))}
+        </View>
+      )}
+
+      {/* GIF Source Toggle: ExerciseDB animated vs static images */}
+      {exerciseDbGifUrl && (
+        <View style={styles.sourceToggleRow}>
+          <Pressable
+            onPress={() => { setUseExerciseDb(true); if (Platform.OS !== "web") Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {}); }}
+            style={({ pressed }) => [
+              styles.sourceToggleBtn,
+              useExerciseDb && styles.sourceToggleBtnActive,
+              pressed && { opacity: 0.7 },
+            ]}
+          >
+            <MaterialIcons name="gif" size={14} color={useExerciseDb ? "#0A0E14" : "#B45309"} />
+            <Text style={[styles.sourceToggleTxt, useExerciseDb && styles.sourceToggleTxtActive]}>Animated GIF</Text>
+          </Pressable>
+          <Pressable
+            onPress={() => { setUseExerciseDb(false); if (Platform.OS !== "web") Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {}); }}
+            style={({ pressed }) => [
+              styles.sourceToggleBtn,
+              !useExerciseDb && styles.sourceToggleBtnActive,
+              pressed && { opacity: 0.7 },
+            ]}
+          >
+            <MaterialIcons name="image" size={14} color={!useExerciseDb ? "#0A0E14" : "#B45309"} />
+            <Text style={[styles.sourceToggleTxt, !useExerciseDb && styles.sourceToggleTxtActive]}>Multi-Angle</Text>
+          </Pressable>
         </View>
       )}
 
@@ -621,6 +673,43 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 10,
     fontWeight: "600",
+  },
+  muscleMiniOverlay: {
+    position: "absolute",
+    bottom: 6,
+    left: 6,
+    backgroundColor: "rgba(0,0,0,0.55)",
+    borderRadius: 8,
+    padding: 3,
+  },
+  sourceToggleRow: {
+    flexDirection: "row" as const,
+    gap: 6,
+    marginTop: 6,
+    marginBottom: 2,
+  },
+  sourceToggleBtn: {
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
+    gap: 4,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 8,
+    backgroundColor: "rgba(180,83,9,0.12)",
+    borderWidth: 1,
+    borderColor: "rgba(180,83,9,0.25)",
+  },
+  sourceToggleBtnActive: {
+    backgroundColor: "#F59E0B",
+    borderColor: "#F59E0B",
+  },
+  sourceToggleTxt: {
+    color: "#B45309",
+    fontSize: 11,
+    fontWeight: "700" as const,
+  },
+  sourceToggleTxtActive: {
+    color: "#0A0E14",
   },
   angleLabelOverlay: {
     position: "absolute",

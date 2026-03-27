@@ -2421,3 +2421,25 @@
 - [x] Barcode scan result preview with nutrition grid before adding to pantry
 - [x] Add to Meal Log, Add to Pantry (with expiry), Save to Favourites actions
 - [x] Scan history (up to 50 items) for quick re-logging
+
+## Feature Additions (Round 19)
+
+### SVG Anatomical Muscle Diagrams
+- [x] Create front-view SVG anatomical body diagram component (MuscleSvgDiagram) with 14 major muscle groups
+- [x] Create back-view SVG anatomical body diagram component with trapezius, lats, glutes, hamstrings, calves
+- [x] Support dynamic muscle highlighting (gold for primary, dim gold for secondary)
+- [x] Create MuscleSvgMini (28x40) for inline exercise cards
+- [x] Create MuscleSvgDual for side-by-side front/back view
+- [x] Add front/back toggle and muscle group label chips
+- [x] Integrate into WorkoutDayCard — shows "TARGETED MUSCLES" diagram per workout day
+- [x] Integrate into ExercisePreviewCard — inline mini muscle diagram per exercise
+- [x] Integrate into ExerciseDemoPlayer — muscle mini overlay on exercise demo image
+
+### Real Exercise GIFs from ExerciseDB API
+- [x] Downloaded 1,500 exercises from ExerciseDB v1 open-source API
+- [x] Built exercisedb-api.ts service with hardcoded ID mapping (71+ exercises, 49 exact + 22 fuzzy matches)
+- [x] Exports: getExerciseDbGifUrl, hasExerciseDbGif, getExerciseDbId, getAllMappedExercises
+- [x] Integrated "Animated GIF" / "Multi-Angle" source toggle into ExerciseDemoPlayer
+- [x] Real animated GIFs from https://static.exercisedb.dev/media/{id}.gif
+- [x] Fallback to static images when ExerciseDB GIF unavailable
+- [x] 16 unit tests passing for ExerciseDB API service

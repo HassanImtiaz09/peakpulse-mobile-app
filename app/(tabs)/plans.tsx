@@ -18,6 +18,8 @@ import * as Haptics from "expo-haptics";
 import { exportWorkoutPlanPdf } from "@/lib/workout-pdf";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { BodyHeatmap } from "@/components/body-heatmap";
+import { MuscleSvgDiagram, MuscleSvgMini } from "@/components/muscle-svg-diagram";
+import { getExerciseInfo } from "@/lib/exercise-data";
 import { getTodayTargetMuscles } from "@/lib/muscle-balance";
 import { usePantry } from "@/lib/pantry-context";
 import { useCalories } from "@/lib/calorie-context";
@@ -1164,6 +1166,27 @@ function WorkoutDayCard({ day, onPress, isCompleted, onToggleComplete, isToday, 
 
       {expanded && !day.isRest && (
         <View style={{ paddingHorizontal: 14, paddingBottom: 14, gap: 10 }}>
+          {/* Muscle Diagram for this day's exercises */}
+          {(() => {
+            const allPrimary = new Set<string>();
+            const allSecondary = new Set<string>();
+            (day.exercises ?? []).forEach((ex: any) => {
+              const info = getExerciseInfo(ex.name ?? "");
+              if (info) {
+                info.primaryMuscles.forEach((m: string) => allPrimary.add(m));
+                info.secondaryMuscles.forEach((m: string) => allSecondary.add(m));
+              }
+            });
+            const pArr = Array.from(allPrimary) as any[];
+            const sArr = Array.from(allSecondary).filter((m) => !allPrimary.has(m)) as any[];
+            if (pArr.length === 0) return null;
+            return (
+              <View style={{ alignItems: "center", backgroundColor: "rgba(245,158,11,0.04)", borderRadius: 12, paddingVertical: 10, borderWidth: 1, borderColor: "rgba(245,158,11,0.1)" }}>
+                <Text style={{ color: GOLD, fontSize: 10, fontWeight: "700", letterSpacing: 1.2, marginBottom: 6 }}>TARGETED MUSCLES</Text>
+                <MuscleSvgDiagram primary={pArr} secondary={sArr} width={100} height={150} showLabels showToggle />
+              </View>
+            );
+          })()}
           <TouchableOpacity
             style={{ backgroundColor: GOLD, borderRadius: 12, paddingVertical: 10, alignItems: "center", marginBottom: 4 }}
             onPress={onPress}
@@ -1193,6 +1216,7 @@ function ExercisePreviewCard({ exercise, onSwap, isToday }: { exercise: any; onS
   const { isCompleted, toggleExercise } = useExerciseCompletion();
   const today = new Date().toISOString().split("T")[0];
   const done = isToday ? isCompleted(today, exercise.name ?? "") : false;
+  const exInfo = useMemo(() => getExerciseInfo(exercise.name ?? ""), [exercise.name]);
 
   return (
     <View style={{ backgroundColor: done ? "rgba(16,185,129,0.08)" : SURFACE, borderRadius: 14, borderWidth: 1, borderColor: done ? "rgba(16,185,129,0.3)" : "rgba(30,41,59,0.6)", overflow: "hidden" }}>
@@ -1206,6 +1230,11 @@ function ExercisePreviewCard({ exercise, onSwap, isToday }: { exercise: any; onS
               >
                 {done && <MaterialIcons name="check" size={16} color="#fff" />}
               </TouchableOpacity>
+            )}
+            {exInfo && (
+              <View style={{ marginTop: 2 }}>
+                <MuscleSvgMini primary={exInfo.primaryMuscles} secondary={exInfo.secondaryMuscles} />
+              </View>
             )}
             <View style={{ flex: 1 }}>
               <Text style={{ color: done ? "#10B981" : FG, fontFamily: "DMSans_700Bold", fontSize: 14, textDecorationLine: done ? "line-through" : "none" }}>{exercise.name}</Text>
