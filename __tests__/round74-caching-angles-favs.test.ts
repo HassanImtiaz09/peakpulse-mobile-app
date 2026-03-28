@@ -43,14 +43,14 @@ describe("Round 74: Video Caching, Angle Toggle, Favorites Filter", () => {
 
     it("active-workout.tsx preloads first 2 exercises at workout start", () => {
       const content = fs.readFileSync(path.join(ROOT, "app/active-workout.tsx"), "utf-8");
-      expect(content).toContain("Preload first 2 exercises at workout start");
+      expect(content).toContain("preloadExerciseVideos(exercises[0].name)");
       expect(content).toContain("exercises[0].name");
       expect(content).toContain("exercises[1].name");
     });
 
     it("active-workout.tsx preloads next exercise when rest timer starts or exercise changes", () => {
       const content = fs.readFileSync(path.join(ROOT, "app/active-workout.tsx"), "utf-8");
-      expect(content).toContain("Preload next exercise videos");
+      expect(content).toContain("preloadExerciseVideos");
       expect(content).toContain("currentExercise + 1");
     });
 

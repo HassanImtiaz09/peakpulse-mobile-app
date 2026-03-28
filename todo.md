@@ -2510,3 +2510,12 @@
 - [x] Cache management in settings (view cache size, clear cache, pre-cache all)
 - [x] Resolve GIFs from local cache first, fall back to CDN URL
 - [x] Write tests for both features
+
+## Test Updates (Round 25)
+- [x] Identify all 96 failing tests across 32 test files
+- [x] Fix dashboard-related assertions (features removed from streamlined dashboard)
+- [x] Fix GIF asset tests (GIFs served from CDN, not local files)
+- [x] Fix subscription tier assertions (basic/advanced → basic/pro)
+- [x] Fix CDN URL pattern assertions (manuscdn.com + cloudfront.net)
+- [x] Fix exercise data and form annotation assertions
+- [x] All 2,169 tests passing across 63 test files — zero failures

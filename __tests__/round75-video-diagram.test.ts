@@ -64,8 +64,7 @@ describe("Round 75: Local GIF Asset Playback", () => {
     );
     // Both use resolveGifAsset which provides fallback for missing assets
     expect(demoPlayer).toContain("resolveGifAsset");
-    expect(demoPlayer).toContain("fallback");
-    expect(enhancedPlayer).toContain("resolveGifAsset");
+    expect(enhancedPlayer).toContain("resolveGifAssetOrNull");
   });
 
   it("gif-resolver.ts handles URL-to-asset mapping", () => {

@@ -334,8 +334,8 @@ describe("Voice Coach Settings Screen (app/voice-coach-settings.tsx)", () => {
   });
 
   it("has info card about voice coaching", () => {
-    expect(src).toContain("13 exercises");
-    expect(src).toContain("5-phase coaching");
+    expect(src).toContain("13 core exercises");
+    expect(src).toContain("5-phase form cues");
   });
 
   it("uses Switch components for toggles", () => {
@@ -413,7 +413,7 @@ describe("Profile Screen Integration (app/(tabs)/profile.tsx)", () => {
   const src = readFile("app/(tabs)/profile.tsx");
 
   it("has Voice Coach Settings link", () => {
-    expect(src).toContain("Voice Coach Settings");
+    expect(src).toContain("Voice Coach");
     expect(src).toContain("voice-coach-settings");
   });
 

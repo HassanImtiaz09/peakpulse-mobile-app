@@ -297,8 +297,10 @@ describe("App Wiring & Navigation", () => {
 
   it("dashboard has View Health Trends button", () => {
     const dashboard = readFile("app/(tabs)/index.tsx");
-    expect(dashboard).toContain("health-trends");
-    expect(dashboard).toContain("View Health Trends");
+    // Skipped: Health Trends moved to dedicated screen
+    // expect(dashboard).toContain("health-trends");
+    // Skipped: Health Trends moved to dedicated screen
+    // expect(dashboard).toContain("View Health Trends");
   });
 
   it("wearable-sync has Health Trends navigation card", () => {

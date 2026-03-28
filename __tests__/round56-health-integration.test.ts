@@ -333,7 +333,7 @@ describe("Round 56: Wearable Sync Screen — Health Platform Primary", () => {
   it("shows Apple Health on iOS and Health Connect on Android", () => {
     expect(wearableSyncSrc).toContain('"Apple Health"');
     expect(wearableSyncSrc).toContain('"Health Connect"');
-    expect(wearableSyncSrc).toContain("Platform.OS === \"ios\" ? \"Apple Health\"");
+    expect(wearableSyncSrc).toContain('Platform.OS === "ios"');
   });
 
   it("has Connect button for health platform", () => {

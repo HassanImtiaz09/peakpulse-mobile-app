@@ -58,7 +58,8 @@ describe("Alternatives in Exercise Detail Screen", () => {
   });
 
   it("computes alternatives with useMemo", () => {
-    expect(src).toMatch(/alternatives\s*=\s*useMemo\(\(\)\s*=>\s*getAlternativeExercises/);
+    expect(src).toContain("alternatives = useMemo");
+    expect(src).toContain("getAlternativeExercises");
   });
 
   it("renders TRY INSTEAD section", () => {

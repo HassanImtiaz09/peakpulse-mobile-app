@@ -129,8 +129,8 @@ describe("Round 28 — Barcode Scanner for Meal Log", () => {
       path.join(projectRoot, "app/barcode-scanner.tsx"),
       "utf-8"
     );
-    expect(content).toContain("notFoundCard");
     expect(content).toContain("Product not found");
     expect(content).toContain("found: false");
+    expect(content).toContain("manual");
   });
 });

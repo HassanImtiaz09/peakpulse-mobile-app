@@ -205,11 +205,11 @@ describe("Feature Tiers Configuration", () => {
     expect(src).toContain("progress_photos: \"basic\"");
     expect(src).toContain("referral: \"basic\"");
     expect(src).toContain("notification_preferences: \"basic\"");
-    expect(src).toContain("wearable_sync: \"basic\"");
-    expect(src).toContain("form_checker: \"advanced\"");
-    expect(src).toContain("social_feed: \"advanced\"");
-    expect(src).toContain("challenges: \"advanced\"");
-    expect(src).toContain("ai_coaching: \"advanced\"");
+    expect(src).toContain("wearable_sync: \"pro\"");
+    expect(src).toContain("form_checker: \"pro\"");
+    expect(src).toContain("social_feed: \"pro\"");
+    expect(src).toContain("challenges: \"pro\"");
+    expect(src).toContain("ai_coaching: \"pro\"");
   });
 
   it("canAccess function checks tier hierarchy correctly", () => {

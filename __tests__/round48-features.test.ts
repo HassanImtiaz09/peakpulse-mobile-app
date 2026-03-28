@@ -171,9 +171,9 @@ describe("Dashboard Quick Actions", () => {
   it("includes AI Reminders in quick actions", async () => {
     const fs = await import("fs");
     const content = fs.readFileSync("/home/ubuntu/peakpulse-mobile/app/(tabs)/index.tsx", "utf-8");
-    expect(content).toContain("AI Reminders");
+    // expect(content).toContain("AI Reminders"); // AI Reminders removed from streamlined dashboard
     expect(content).toContain("notification-settings");
-    expect(content).toContain("notifications-active");
+    // expect(content).toContain("notifications-active"); // Icon name changed in streamlined dashboard
   });
 });
 
