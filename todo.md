@@ -2493,3 +2493,20 @@
 - [x] Removed template literal CDN pattern, using direct URLs for reliability
 - [x] Verified autoplay={true} present on all 6 Image components in 4 exercise files
 - [x] All 53 tests passing, 0 TypeScript errors
+
+## Feature Additions (Round 23) — Form Cue Overlays & Offline GIF Caching
+
+### Exercise Form Cue Overlays
+- [x] Create comprehensive form cues data for all exercises (key tips, common mistakes, breathing cues)
+- [x] Build tap-to-show overlay component on animated GIFs with form tips
+- [x] Show cues as translucent overlay cards with step-by-step tips
+- [x] Integrate form cue overlay into ExerciseDemoPlayer, EnhancedGifPlayer, and browse-by-muscle
+- [x] Add dismiss gesture (tap again or swipe) to hide overlay
+
+### Offline GIF Caching
+- [x] Create offline GIF cache service using expo-file-system
+- [x] Auto-download GIFs for exercises in user's active workout plan on plan generation
+- [x] Show cache status indicator (cached/downloading/not cached) per exercise
+- [x] Cache management in settings (view cache size, clear cache, pre-cache all)
+- [x] Resolve GIFs from local cache first, fall back to CDN URL
+- [x] Write tests for both features

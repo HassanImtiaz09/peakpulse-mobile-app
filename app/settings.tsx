@@ -19,6 +19,13 @@ import {
   getScheduledNotificationCount,
   requestNotificationPermissions,
 } from "@/lib/notification-service";
+import {
+  getGifCacheStatus,
+  clearGifCache,
+  getGifCacheSizeBytes,
+  formatCacheSize,
+  type GifCacheStatus,
+} from "@/lib/gif-cache";
 import { GOLDEN_PRIMARY, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgrounds";
 
 const SF = {
@@ -49,6 +56,10 @@ export default function SettingsScreen() {
   const [pushLoading, setPushLoading] = useState(false);
   const [scheduledCount, setScheduledCount] = useState(0);
 
+  const [gifCacheStatus, setGifCacheStatus] = useState<GifCacheStatus | null>(null);
+  const [gifCacheSize, setGifCacheSize] = useState("0 KB");
+  const [clearingCache, setClearingCache] = useState(false);
+
   const loadSettings = useCallback(async () => {
     const fontVal = await AsyncStorage.getItem(FONT_SIZE_KEY);
     if (fontVal) setFontSizeState(fontVal);
@@ -60,6 +71,14 @@ export default function SettingsScreen() {
       const count = await getScheduledNotificationCount();
       setScheduledCount(count);
     }
+
+    // Load GIF cache status
+    try {
+      const status = await getGifCacheStatus();
+      setGifCacheStatus(status);
+      const sizeBytes = await getGifCacheSizeBytes();
+      setGifCacheSize(formatCacheSize(sizeBytes));
+    } catch {}
   }, []);
 
   useEffect(() => { loadSettings(); }, [loadSettings]);
@@ -260,6 +279,72 @@ export default function SettingsScreen() {
             </Text>
           </View>
         )}
+
+        {/* ── Offline GIF Cache ── */}
+        <Text style={styles.sectionLabel}>OFFLINE CACHE</Text>
+        <View style={styles.card}>
+          <View style={{ padding: 14 }}>
+            <View style={{ flexDirection: "row", alignItems: "center", gap: 12, marginBottom: 12 }}>
+              <View style={[styles.optionIcon, styles.optionIconActive]}>
+                <MaterialIcons name="download-for-offline" size={20} color={SF.gold} />
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.optionLabel}>Exercise GIF Cache</Text>
+                <Text style={styles.optionDesc}>
+                  GIFs are automatically downloaded for your workout plan exercises
+                </Text>
+              </View>
+            </View>
+
+            {/* Cache stats */}
+            <View style={{ backgroundColor: "rgba(245,158,11,0.06)", borderRadius: 10, padding: 12, gap: 6 }}>
+              <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 12 }}>Cached GIFs</Text>
+                <Text style={{ color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 12 }}>
+                  {gifCacheStatus?.cachedGifs ?? 0} / {gifCacheStatus?.totalGifs ?? 0}
+                </Text>
+              </View>
+              <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 12 }}>Cache Size</Text>
+                <Text style={{ color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 12 }}>{gifCacheSize}</Text>
+              </View>
+              {gifCacheStatus?.lastCachedAt && (
+                <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                  <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 12 }}>Last Updated</Text>
+                  <Text style={{ color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 12 }}>
+                    {new Date(gifCacheStatus.lastCachedAt).toLocaleDateString()}
+                  </Text>
+                </View>
+              )}
+            </View>
+
+            {/* Clear cache button */}
+            <TouchableOpacity
+              style={{ marginTop: 12, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8, backgroundColor: "rgba(239,68,68,0.08)", borderRadius: 10, paddingVertical: 10, borderWidth: 1, borderColor: "rgba(239,68,68,0.15)" }}
+              onPress={() => {
+                Alert.alert("Clear GIF Cache?", "Downloaded exercise GIFs will be removed. They will be re-downloaded when you view your workout plan.", [
+                  { text: "Cancel", style: "cancel" },
+                  { text: "Clear", style: "destructive", onPress: async () => {
+                    setClearingCache(true);
+                    await clearGifCache();
+                    setGifCacheStatus({ totalExercises: 0, totalGifs: 0, cachedGifs: 0, isCaching: false, lastCachedAt: null, cacheSize: "0 KB" });
+                    setGifCacheSize("0 KB");
+                    setClearingCache(false);
+                    if (Platform.OS !== "web") Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+                  }},
+                ]);
+              }}
+              disabled={clearingCache}
+            >
+              {clearingCache ? (
+                <ActivityIndicator color="#EF4444" size="small" />
+              ) : (
+                <MaterialIcons name="delete-outline" size={18} color="#EF4444" />
+              )}
+              <Text style={{ color: "#EF4444", fontFamily: "DMSans_700Bold", fontSize: 13 }}>Clear Cache</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
 
         {/* ── About ── */}
         <Text style={styles.sectionLabel}>ABOUT</Text>

@@ -32,6 +32,8 @@ import {
   FormAnnotationOverlay,
   AnnotationLegend,
 } from "@/components/form-annotation-overlay";
+import { FormCueOverlay, FormCueBadge } from "@/components/form-cue-overlay";
+import { hasFormTips } from "@/lib/form-cue-tips";
 
 const { width: SCREEN_W } = Dimensions.get("window");
 
@@ -75,6 +77,10 @@ export function ExerciseDemoPlayer({
   const [fullscreen, setFullscreen] = useState(false);
   const { isFavorite, toggleFavorite } = useFavorites();
   const favorited = exerciseName ? isFavorite(exerciseName) : false;
+
+  // Form cue overlay state
+  const [showFormCues, setShowFormCues] = useState(false);
+  const canShowFormCues = exerciseName ? hasFormTips(exerciseName) : false;
 
   // Annotations state
   const [showAnnotations, setShowAnnotations] = useState(false);
@@ -157,6 +163,13 @@ export function ExerciseDemoPlayer({
   const openFullscreen = useCallback(() => setFullscreen(true), []);
   const closeFullscreen = useCallback(() => setFullscreen(false), []);
 
+  const toggleFormCues = useCallback(() => {
+    setShowFormCues((prev) => !prev);
+    if (Platform.OS !== "web") {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+    }
+  }, []);
+
   const toggleAnnotations = useCallback(() => {
     setShowAnnotations((prev) => !prev);
     if (Platform.OS !== "web") {
@@ -200,7 +213,8 @@ export function ExerciseDemoPlayer({
   return (
     <View>
       <Pressable
-        onPress={openFullscreen}
+        onPress={showFormCues ? toggleFormCues : openFullscreen}
+        onLongPress={canShowFormCues ? toggleFormCues : undefined}
         style={({ pressed }) => [
           pressed && { opacity: 0.9, transform: [{ scale: 0.99 }] },
         ]}
@@ -236,6 +250,14 @@ export function ExerciseDemoPlayer({
                 width={imageWidth}
                 height={height}
                 simplified={false}
+              />
+            )}
+            {/* Form Cue Tips Overlay */}
+            {exerciseName && (
+              <FormCueOverlay
+                exerciseName={exerciseName}
+                visible={showFormCues}
+                onDismiss={() => setShowFormCues(false)}
               />
             )}
           </View>
@@ -332,8 +354,15 @@ export function ExerciseDemoPlayer({
         </View>
       )}
 
-      {/* Action Bar: Annotations, Audio, Compare */}
+      {/* Action Bar: Form Tips, Annotations, Audio, Compare */}
       <View style={styles.actionBar}>
+        {canShowFormCues && (
+          <FormCueBadge
+            exerciseName={exerciseName!}
+            onPress={toggleFormCues}
+            active={showFormCues}
+          />
+        )}
         {canAnnotate && (
           <Pressable
             onPress={toggleAnnotations}
@@ -516,7 +545,10 @@ export function ExerciseDemoPlayer({
           </View>
 
           {/* Full-size media */}
-          <View style={styles.fullscreenImageContainer}>
+          <Pressable
+            onPress={canShowFormCues ? toggleFormCues : undefined}
+            style={styles.fullscreenImageContainer}
+          >
             <Image
               key={`fs-${activeAngle}-${currentAsset}`}
               source={
@@ -537,7 +569,16 @@ export function ExerciseDemoPlayer({
                 height={SCREEN_W}
               />
             )}
-          </View>
+            {/* Form Cue Tips Overlay (fullscreen) */}
+            {exerciseName && (
+              <FormCueOverlay
+                exerciseName={exerciseName}
+                visible={showFormCues}
+                onDismiss={() => setShowFormCues(false)}
+                fullscreen
+              />
+            )}
+          </Pressable>
 
           {/* Fullscreen angle toggle */}
           {hasMultipleAngles && (

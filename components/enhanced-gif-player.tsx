@@ -19,6 +19,8 @@ import { useFavorites } from "@/lib/favorites-context";
 import { resolveGifAssetOrNull, hasSideViewGif } from "@/lib/gif-resolver";
 import { getExerciseVideoUrl, hasExerciseVideo } from "@/lib/exercise-video-registry";
 import { ExerciseVideoPlayer } from "@/components/exercise-video-player";
+import { FormCueOverlay, FormCueBadge } from "@/components/form-cue-overlay";
+import { hasFormTips } from "@/lib/form-cue-tips";
 
 const { width: SCREEN_W } = Dimensions.get("window");
 
@@ -60,9 +62,11 @@ export function EnhancedGifPlayer({
   const [imageKey, setImageKey] = useState(0);
   const [fullscreen, setFullscreen] = useState(false);
   const [useVideo, setUseVideo] = useState(true); // prefer video when available
+  const [showFormCues, setShowFormCues] = useState(false);
   const pulseAnim = useRef(new Animated.Value(1)).current;
   const { isFavorite, toggleFavorite } = useFavorites();
   const favorited = isFavorite(exerciseName);
+  const canShowFormCues = hasFormTips(exerciseName);
 
   // Check if this exercise has a video available
   const videoAvailable = hasExerciseVideo(exerciseName);
@@ -153,10 +157,21 @@ export function EnhancedGifPlayer({
     }
   }, []);
 
+  const toggleFormCues = useCallback(() => {
+    setShowFormCues((v) => !v);
+    if (Platform.OS !== "web") {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+    }
+  }, []);
+
   return (
     <View style={styles.container}>
       {/* Media Display */}
-      <View style={[styles.gifContainer, { height }]}>
+      <Pressable
+        onPress={showFormCues ? toggleFormCues : (canShowFormCues ? toggleFormCues : undefined)}
+        onLongPress={canShowFormCues ? toggleFormCues : undefined}
+        style={[styles.gifContainer, { height }]}
+      >
         {showVideo ? (
           <ExerciseVideoPlayer
             videoUrl={currentVideoUrl}
@@ -186,6 +201,14 @@ export function EnhancedGifPlayer({
             )}
           </Animated.View>
         )}
+        {/* Form Cue Tips Overlay */}
+        {!showVideo && (
+          <FormCueOverlay
+            exerciseName={exerciseName}
+            visible={showFormCues}
+            onDismiss={() => setShowFormCues(false)}
+          />
+        )}
 
         {/* Slow-motion overlay indicator (image mode only) */}
         {!showVideo && isSlowMotion && (
@@ -214,7 +237,7 @@ export function EnhancedGifPlayer({
             <MaterialIcons name="fullscreen" size={22} color="#fff" />
           </Pressable>
         )}
-      </View>
+      </Pressable>
 
       {/* Focus Annotation */}
       {showFocus && (

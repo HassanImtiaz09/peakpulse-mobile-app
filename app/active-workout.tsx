@@ -27,6 +27,7 @@ import {
 } from "@/lib/rest-timer-settings";
 import { preloadExerciseVideos, clearPreloadCache } from "@/lib/video-preload";
 import { autoCacheCurrentWorkout } from "@/lib/offline-workout-cache";
+import { preCacheWorkoutGifs, refreshManifestCache } from "@/lib/gif-cache";
 import { recordWorkoutCompleted, recordTimerUsed } from "@/lib/feature-discovery";
 import { evaluateAndScheduleSmartReminders } from "@/lib/smart-reminders";
 
@@ -319,6 +320,10 @@ export default function ActiveWorkoutScreen() {
         dayData?.focus ?? "Workout",
         exercises.map((e: Exercise) => ({ name: e.name, sets: e.sets, reps: e.reps, rest: e.rest, notes: e.notes ?? "" }))
       ).catch(() => {});
+      // Pre-cache GIFs for offline playback
+      preCacheWorkoutGifs(exercises.map((e: Exercise) => e.name)).then(() => {
+        refreshManifestCache();
+      }).catch(() => {});
     }
     return () => clearPreloadCache();
   }, [workoutStarted]);
