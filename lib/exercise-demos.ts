@@ -1,9 +1,15 @@
 /**
  * Exercise Demo Library
  *
- * Maps common exercise names to local GIF assets for accurate exercise demos.
- * Exercise images are AI-generated and hosted on CDN
- * for reliable offline playback.
+ * Maps common exercise names to CDN-hosted AI-generated exercise images.
+ * Assets are served from manuscdn.com and cloudfront CDN — NOT local files.
+ *
+ * Architecture:
+ * - `gifAsset` field: resolved via EXERCISE_GIFS registry → CDN URL string
+ * - `gifUrl` field: legacy, kept as empty string for backward compatibility
+ * - Resolution chain: gif() → EXERCISE_GIFS[key] → CDN URL
+ * - No local require() needed — Metro does not bundle these assets.
+ *   The CDN URLs are fetched at runtime by expo-image / Image component.
  */
 
 import { EXERCISE_GIFS } from "@/lib/exercise-gif-registry";

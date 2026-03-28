@@ -2519,3 +2519,13 @@
 - [x] Fix CDN URL pattern assertions (manuscdn.com + cloudfront.net)
 - [x] Fix exercise data and form annotation assertions
 - [x] All 2,169 tests passing across 63 test files — zero failures
+
+## Patches (Round 26) — Pantry Scan Review & Exercise Demo GIF Fix
+- [x] app/pantry.tsx: Add pendingScanItems + showScanReview state
+- [x] app/pantry.tsx: Intercept AI scan result — show review modal instead of auto-adding
+- [x] app/pantry.tsx: Add scan review modal JSX with checkbox list, confirm, cancel
+- [x] app/pantry.tsx: Add MaterialIcons import if missing (already present)
+- [x] lib/exercise-demos.ts: N/A — no local GIF files exist; assets already use CDN URLs via EXERCISE_GIFS registry. Added architecture docs.
+- [x] Verify assetBundlePatterns: N/A — no local GIF assets to bundle; CDN URLs fetched at runtime
+- [x] TypeScript compiles with 0 errors
+- [x] All tests pass (63 files, 2169 tests)

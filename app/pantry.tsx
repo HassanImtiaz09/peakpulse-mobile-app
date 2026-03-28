@@ -52,6 +52,11 @@ export default function PantryScreen() {
   const [expandedMealIdx, setExpandedMealIdx] = useState<number | null>(null);
   // Edit item modal
   const [editingItem, setEditingItem] = useState<PantryItem | null>(null);
+  // FIX: Pending items from AI scan — shown in review modal before committing
+  const [pendingScanItems, setPendingScanItems] = useState<
+    { name: string; category: PantryCategory; checked: boolean }[]
+  >([]);
+  const [showScanReview, setShowScanReview] = useState(false);
 
   const uploadPhoto = trpc.upload.photo.useMutation();
 
@@ -106,9 +111,13 @@ export default function PantryScreen() {
       }).catch(() => null);
       if (aiResponse?.ok) {
         const data = await aiResponse.json();
-        const items = data?.result?.data?.json?.items ?? [];
-        setScannedItems(items);
-        setShowScanResults(true);
+        // AFTER (fixed — shows review modal first):
+        const rawItems = data?.result?.data?.json?.items ?? [];
+        setPendingScanItems(
+          rawItems.map((item: { name: string; category: PantryCategory }) => ({ ...item, checked: true }))
+        );
+        setShowScanReview(true);
+        // Do NOT call addItem here — wait for user confirmation
       } else {
         Alert.alert("Scan Failed", "Could not identify items. Try adding them manually.");
       }
@@ -1070,6 +1079,161 @@ export default function PantryScreen() {
           </View>
         )}
       </ScrollView>
+
+      {/* FIX: AI Scan Review Modal — user confirms before items are saved */}
+      <Modal
+        visible={showScanReview}
+        animationType="slide"
+        transparent
+        onRequestClose={() => setShowScanReview(false)}
+      >
+        <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.7)", justifyContent: "flex-end" }}>
+          <View
+            style={{
+              backgroundColor: "#141A22",
+              borderTopLeftRadius: 24,
+              borderTopRightRadius: 24,
+              maxHeight: "80%",
+              padding: 20,
+            }}
+          >
+            <Text
+              style={{
+                color: "#F59E0B",
+                fontFamily: "DMSans_700Bold",
+                fontSize: 16,
+                marginBottom: 4,
+              }}
+            >
+              Review Detected Items
+            </Text>
+            <Text
+              style={{
+                color: "#B45309",
+                fontFamily: "DMSans_400Regular",
+                fontSize: 12,
+                marginBottom: 16,
+              }}
+            >
+              Uncheck any items you don't want to add, then tap Confirm.
+            </Text>
+
+            <ScrollView style={{ maxHeight: 360 }}>
+              {pendingScanItems.map((item, idx) => (
+                <TouchableOpacity
+                  key={idx}
+                  onPress={() => {
+                    setPendingScanItems((prev) =>
+                      prev.map((p, i) =>
+                        i === idx ? { ...p, checked: !p.checked } : p
+                      )
+                    );
+                  }}
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    gap: 12,
+                    paddingVertical: 10,
+                    borderBottomWidth: 1,
+                    borderBottomColor: "rgba(245,158,11,0.08)",
+                  }}
+                >
+                  <View
+                    style={{
+                      width: 22,
+                      height: 22,
+                      borderRadius: 6,
+                      borderWidth: 2,
+                      borderColor: item.checked ? "#F59E0B" : "#374151",
+                      backgroundColor: item.checked
+                        ? "rgba(245,158,11,0.15)"
+                        : "transparent",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    {item.checked && (
+                      <MaterialIcons name="check" size={14} color="#F59E0B" />
+                    )}
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <Text
+                      style={{
+                        color: item.checked ? "#F1F5F9" : "#64748B",
+                        fontFamily: "DMSans_600SemiBold",
+                        fontSize: 14,
+                        textDecorationLine: item.checked ? "none" : "line-through",
+                      }}
+                    >
+                      {item.name}
+                    </Text>
+                    <Text
+                      style={{
+                        color: "#B45309",
+                        fontFamily: "DMSans_400Regular",
+                        fontSize: 11,
+                        marginTop: 1,
+                      }}
+                    >
+                      {item.category}
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+
+            <TouchableOpacity
+              style={{
+                backgroundColor: "#F59E0B",
+                borderRadius: 14,
+                paddingVertical: 14,
+                alignItems: "center",
+                marginTop: 16,
+              }}
+              onPress={async () => {
+                const toAdd = pendingScanItems.filter((i) => i.checked);
+                for (const item of toAdd) {
+                  await addItem({ name: item.name, category: item.category, source: "scan" as any });
+                }
+                setShowScanReview(false);
+                setPendingScanItems([]);
+                Alert.alert(
+                  "✅ Added to Pantry",
+                  `${toAdd.length} item${toAdd.length !== 1 ? "s" : ""} added successfully.`
+                );
+              }}
+            >
+              <Text
+                style={{
+                  color: "#0A0E14",
+                  fontFamily: "DMSans_700Bold",
+                  fontSize: 16,
+                }}
+              >
+                Confirm — Add {pendingScanItems.filter((i) => i.checked).length} Items
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={{ alignItems: "center", marginTop: 12 }}
+              onPress={() => {
+                setShowScanReview(false);
+                setPendingScanItems([]);
+              }}
+            >
+              <Text
+                style={{
+                  color: "#B45309",
+                  fontFamily: "DMSans_600SemiBold",
+                  fontSize: 14,
+                }}
+              >
+                Cancel — Discard Scan
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
 
       {/* Scan Results Modal */}
       <Modal visible={showScanResults} transparent animationType="slide">
