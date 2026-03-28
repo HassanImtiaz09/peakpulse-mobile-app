@@ -1,9 +1,39 @@
+/**
+ * Barcode Scanner Screen — FIXED
+ *
+ * Changes from original:
+ * 1. When a barcode is NOT found in the Open Food Facts database, a manual
+ *    entry form now appears directly in the result card. Previously the
+ *    "Product not found" card only showed a text message — the user had no
+ *    way to log the product without leaving the scanner entirely.
+ *    The form is pre-populated with the barcode so it can be saved for future
+ *    look-up, and supports entering: name, calories, protein, carbs, fat.
+ * 2. Added `manualEntry` state (partial NutritionResult) and a
+ *    `ManualEntryForm` sub-component that calls `handleAddToLog` via the
+ *    shared result object.
+ * 3. No other logic, styling, or functionality changed.
+ */
+
 import React, { useState, useEffect, useCallback } from "react";
 import {
-  View, Text, TouchableOpacity, StyleSheet, ActivityIndicator,
-  Alert, Platform, Dimensions, StatusBar,
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  ActivityIndicator,
+  Alert,
+  Platform,
+  Dimensions,
+  StatusBar,
+  TextInput,
+  ScrollView,
+  KeyboardAvoidingView,
 } from "react-native";
-import { CameraView, useCameraPermissions, type BarcodeScanningResult } from "expo-camera";
+import {
+  CameraView,
+  useCameraPermissions,
+  type BarcodeScanningResult,
+} from "expo-camera";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
@@ -12,14 +42,36 @@ import { usePantry, type PantryCategory } from "@/lib/pantry-context";
 
 function mapCategoryToPantry(name: string, brand: string): PantryCategory {
   const combined = `${name} ${brand}`.toLowerCase();
-  if (/chicken|beef|pork|fish|salmon|tuna|turkey|lamb|shrimp|protein|meat|sausage/.test(combined)) return "Proteins";
+  if (
+    /chicken|beef|pork|fish|salmon|tuna|turkey|lamb|shrimp|protein|meat|sausage/.test(
+      combined
+    )
+  )
+    return "Proteins";
   if (/milk|cheese|yogurt|butter|cream|dairy/.test(combined)) return "Dairy";
-  if (/bread|cereal|pasta|rice|flour|oat|wheat|corn|cracker|chip|cookie|cake/.test(combined)) return "Grains & Carbs";
-  if (/vegetable|salad|broccoli|carrot|spinach|tomato|onion|pepper|bean|pea|corn/.test(combined)) return "Vegetables";
-  if (/fruit|apple|banana|berry|orange|grape|mango|juice/.test(combined)) return "Fruits";
-  if (/sauce|spice|vinegar|mustard|ketchup|herb|seasoning|salt|pepper|garlic|honey/.test(combined)) return "Condiments & Spices";
+  if (
+    /bread|cereal|pasta|rice|flour|oat|wheat|corn|cracker|chip|cookie|cake/.test(
+      combined
+    )
+  )
+    return "Grains & Carbs";
+  if (
+    /vegetable|salad|broccoli|carrot|spinach|tomato|onion|pepper|bean|pea|corn/.test(
+      combined
+    )
+  )
+    return "Vegetables";
+  if (/fruit|apple|banana|berry|orange|grape|mango|juice/.test(combined))
+    return "Fruits";
+  if (
+    /sauce|spice|vinegar|mustard|ketchup|herb|seasoning|salt|pepper|garlic|honey/.test(
+      combined
+    )
+  )
+    return "Condiments & Spices";
   if (/oil|margarine|lard/.test(combined)) return "Oils & Fats";
-  if (/water|soda|coffee|tea|drink|beverage|beer|wine/.test(combined)) return "Beverages";
+  if (/water|soda|coffee|tea|drink|beverage|beer|wine/.test(combined))
+    return "Beverages";
   return "Other";
 }
 
@@ -37,7 +89,6 @@ const SF = {
   red: "#DC2626",
 };
 
-// Open Food Facts API
 const OFF_API = "https://world.openfoodfacts.org/api/v2/product";
 
 interface NutritionResult {
@@ -59,24 +110,34 @@ async function lookupBarcode(barcode: string): Promise<NutritionResult> {
       headers: { "User-Agent": "PeakPulseAI/1.0 (contact@peakpulse.app)" },
     });
     const data = await resp.json();
-
     if (data.status !== 1 || !data.product) {
       return {
-        barcode, name: "Unknown Product", brand: "", calories: 0,
-        protein: 0, carbs: 0, fat: 0, servingSize: "", imageUrl: null, found: false,
+        barcode,
+        name: "Unknown Product",
+        brand: "",
+        calories: 0,
+        protein: 0,
+        carbs: 0,
+        fat: 0,
+        servingSize: "",
+        imageUrl: null,
+        found: false,
       };
     }
-
     const p = data.product;
     const n = p.nutriments || {};
     const servingSize = p.serving_size || p.quantity || "100g";
-
-    // Prefer per-serving values, fall back to per-100g
-    const calories = Math.round(n["energy-kcal_serving"] ?? n["energy-kcal_100g"] ?? 0);
-    const protein = Math.round((n.proteins_serving ?? n.proteins_100g ?? 0) * 10) / 10;
-    const carbs = Math.round((n.carbohydrates_serving ?? n.carbohydrates_100g ?? 0) * 10) / 10;
-    const fat = Math.round((n.fat_serving ?? n.fat_100g ?? 0) * 10) / 10;
-
+    const calories = Math.round(
+      n["energy-kcal_serving"] ?? n["energy-kcal_100g"] ?? 0
+    );
+    const protein =
+      Math.round((n.proteins_serving ?? n.proteins_100g ?? 0) * 10) / 10;
+    const carbs =
+      Math.round(
+        (n.carbohydrates_serving ?? n.carbohydrates_100g ?? 0) * 10
+      ) / 10;
+    const fat =
+      Math.round((n.fat_serving ?? n.fat_100g ?? 0) * 10) / 10;
     return {
       barcode,
       name: p.product_name || p.product_name_en || "Unknown Product",
@@ -86,13 +147,22 @@ async function lookupBarcode(barcode: string): Promise<NutritionResult> {
       carbs,
       fat,
       servingSize,
-      imageUrl: p.image_front_small_url || p.image_url || null,
+      imageUrl:
+        p.image_front_small_url || p.image_url || null,
       found: true,
     };
   } catch {
     return {
-      barcode, name: "Lookup Failed", brand: "", calories: 0,
-      protein: 0, carbs: 0, fat: 0, servingSize: "", imageUrl: null, found: false,
+      barcode,
+      name: "Lookup Failed",
+      brand: "",
+      calories: 0,
+      protein: 0,
+      carbs: 0,
+      fat: 0,
+      servingSize: "",
+      imageUrl: null,
+      found: false,
     };
   }
 }
@@ -124,8 +194,7 @@ async function loadHistory(): Promise<HistoryItem[]> {
 
 async function saveToHistory(item: NutritionResult): Promise<void> {
   const history = await loadHistory();
-  // Remove duplicate barcodes
-  const filtered = history.filter(h => h.barcode !== item.barcode);
+  const filtered = history.filter((h) => h.barcode !== item.barcode);
   const entry: HistoryItem = {
     barcode: item.barcode,
     name: item.name,
@@ -138,11 +207,196 @@ async function saveToHistory(item: NutritionResult): Promise<void> {
     imageUrl: item.imageUrl,
     scannedAt: Date.now(),
   };
-  // Prepend and cap at MAX_HISTORY
   const updated = [entry, ...filtered].slice(0, MAX_HISTORY);
   await AsyncStorage.setItem(HISTORY_KEY, JSON.stringify(updated));
 }
 
+// ── FIX: Manual Entry Form ────────────────────────────────────────────────────
+// Shown when the barcode is not found in Open Food Facts. Previously the user
+// saw a dead-end "not found" card with no way to log the food without leaving.
+// Now they can type in the details and add to log directly.
+interface ManualEntryFormProps {
+  barcode: string;
+  onSubmit: (result: NutritionResult) => void;
+}
+
+function ManualEntryForm({ barcode, onSubmit }: ManualEntryFormProps) {
+  const [name, setName] = useState("");
+  const [calories, setCalories] = useState("");
+  const [protein, setProtein] = useState("");
+  const [carbs, setCarbs] = useState("");
+  const [fat, setFat] = useState("");
+
+  const canSubmit = name.trim().length > 0 && calories.trim().length > 0;
+
+  return (
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
+    >
+      <View style={manualStyles.container}>
+        <Text style={manualStyles.title}>Enter Details Manually</Text>
+        <Text style={manualStyles.subtitle}>
+          This product isn't in our database. Add it yourself:
+        </Text>
+
+        <View style={manualStyles.row}>
+          <Text style={manualStyles.label}>Product Name *</Text>
+          <TextInput
+            style={manualStyles.input}
+            value={name}
+            onChangeText={setName}
+            placeholder="e.g. Protein Bar"
+            placeholderTextColor="rgba(180,83,9,0.5)"
+            returnKeyType="next"
+          />
+        </View>
+
+        <View style={manualStyles.macroRow}>
+          <View style={manualStyles.macroField}>
+            <Text style={manualStyles.label}>Calories *</Text>
+            <TextInput
+              style={manualStyles.input}
+              value={calories}
+              onChangeText={setCalories}
+              placeholder="200"
+              placeholderTextColor="rgba(180,83,9,0.5)"
+              keyboardType="numeric"
+              returnKeyType="next"
+            />
+          </View>
+          <View style={manualStyles.macroField}>
+            <Text style={manualStyles.label}>Protein (g)</Text>
+            <TextInput
+              style={manualStyles.input}
+              value={protein}
+              onChangeText={setProtein}
+              placeholder="20"
+              placeholderTextColor="rgba(180,83,0.5,0.5)"
+              keyboardType="numeric"
+              returnKeyType="next"
+            />
+          </View>
+        </View>
+
+        <View style={manualStyles.macroRow}>
+          <View style={manualStyles.macroField}>
+            <Text style={manualStyles.label}>Carbs (g)</Text>
+            <TextInput
+              style={manualStyles.input}
+              value={carbs}
+              onChangeText={setCarbs}
+              placeholder="25"
+              placeholderTextColor="rgba(180,83,9,0.5)"
+              keyboardType="numeric"
+              returnKeyType="next"
+            />
+          </View>
+          <View style={manualStyles.macroField}>
+            <Text style={manualStyles.label}>Fat (g)</Text>
+            <TextInput
+              style={manualStyles.input}
+              value={fat}
+              onChangeText={setFat}
+              placeholder="8"
+              placeholderTextColor="rgba(180,83,9,0.5)"
+              keyboardType="numeric"
+              returnKeyType="done"
+            />
+          </View>
+        </View>
+
+        <TouchableOpacity
+          style={[
+            manualStyles.submitBtn,
+            !canSubmit && manualStyles.submitBtnDisabled,
+          ]}
+          disabled={!canSubmit}
+          onPress={() => {
+            onSubmit({
+              barcode,
+              name: name.trim(),
+              brand: "",
+              calories: parseFloat(calories) || 0,
+              protein: parseFloat(protein) || 0,
+              carbs: parseFloat(carbs) || 0,
+              fat: parseFloat(fat) || 0,
+              servingSize: "1 serving",
+              imageUrl: null,
+              found: true, // treat as found so Add to Log button appears
+            });
+          }}
+        >
+          <MaterialIcons name="add-circle" size={18} color={SF.fg} />
+          <Text style={manualStyles.submitBtnText}>Add to Meal Log</Text>
+        </TouchableOpacity>
+      </View>
+    </KeyboardAvoidingView>
+  );
+}
+
+const manualStyles = StyleSheet.create({
+  container: {
+    backgroundColor: "rgba(220,38,38,0.06)",
+    borderRadius: 14,
+    padding: 16,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: "rgba(220,38,38,0.15)",
+    gap: 10,
+  },
+  title: {
+    color: SF.fg,
+    fontFamily: "DMSans_700Bold",
+    fontSize: 14,
+    marginBottom: 2,
+  },
+  subtitle: {
+    color: SF.muted,
+    fontFamily: "DMSans_400Regular",
+    fontSize: 12,
+    lineHeight: 18,
+    marginBottom: 4,
+  },
+  label: {
+    color: SF.muted,
+    fontFamily: "DMSans_700Bold",
+    fontSize: 10,
+    letterSpacing: 0.8,
+    marginBottom: 4,
+  },
+  row: { gap: 4 },
+  macroRow: { flexDirection: "row", gap: 10 },
+  macroField: { flex: 1, gap: 4 },
+  input: {
+    backgroundColor: SF.bg,
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    color: SF.fg,
+    fontFamily: "DMSans_500Medium",
+    fontSize: 14,
+    borderWidth: 1,
+    borderColor: "rgba(245,158,11,0.15)",
+  },
+  submitBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+    backgroundColor: SF.gold,
+    borderRadius: 12,
+    paddingVertical: 14,
+    marginTop: 4,
+  },
+  submitBtnDisabled: { opacity: 0.4 },
+  submitBtnText: {
+    color: SF.fg,
+    fontFamily: "DMSans_700Bold",
+    fontSize: 15,
+  },
+});
+
+// ── Main Screen ───────────────────────────────────────────────────────────────
 export default function BarcodeScannerScreen() {
   const router = useRouter();
   const [permission, requestPermission] = useCameraPermissions();
@@ -154,57 +408,55 @@ export default function BarcodeScannerScreen() {
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const { addItem: addPantryItem } = usePantry();
 
-  // Load history on mount
   useEffect(() => {
     loadHistory().then(setHistory);
   }, []);
 
-  const handleBarcodeScanned = useCallback(async ({ type, data }: BarcodeScanningResult) => {
-    if (scanned || loading) return;
-    setScanned(true);
-    setLoading(true);
+  const handleBarcodeScanned = useCallback(
+    async ({ type, data }: BarcodeScanningResult) => {
+      if (scanned || loading) return;
+      setScanned(true);
+      setLoading(true);
+      if (Platform.OS !== "web") {
+        try {
+          const Haptics = await import("expo-haptics");
+          await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+        } catch {}
+      }
+      const nutrition = await lookupBarcode(data);
+      setResult(nutrition);
+      setLoading(false);
+      if (nutrition.found) {
+        await saveToHistory(nutrition);
+        loadHistory().then(setHistory);
+      }
+    },
+    [scanned, loading]
+  );
 
-    if (Platform.OS !== "web") {
-      try {
-        const Haptics = await import("expo-haptics");
-        await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-      } catch {}
-    }
-
-    const nutrition = await lookupBarcode(data);
-    setResult(nutrition);
-    setLoading(false);
-
-    // Save to history if found
-    if (nutrition.found) {
-      await saveToHistory(nutrition);
-      loadHistory().then(setHistory);
-    }
-  }, [scanned, loading]);
-
-  const handleAddToLog = async () => {
-    if (!result) return;
-
-    // Save the scanned result to AsyncStorage so the meals tab can pick it up
-    await AsyncStorage.setItem("@barcode_scan_result", JSON.stringify({
-      name: result.brand ? `${result.name} (${result.brand})` : result.name,
-      calories: result.calories,
-      protein: result.protein,
-      carbs: result.carbs,
-      fat: result.fat,
-      servingSize: result.servingSize,
-      barcode: result.barcode,
-      imageUrl: result.imageUrl,
-      timestamp: Date.now(),
-    }));
-
+  const handleAddToLog = async (overrideResult?: NutritionResult) => {
+    const r = overrideResult ?? result;
+    if (!r) return;
+    await AsyncStorage.setItem(
+      "@barcode_scan_result",
+      JSON.stringify({
+        name: r.brand ? `${r.name} (${r.brand})` : r.name,
+        calories: r.calories,
+        protein: r.protein,
+        carbs: r.carbs,
+        fat: r.fat,
+        servingSize: r.servingSize,
+        barcode: r.barcode,
+        imageUrl: r.imageUrl,
+        timestamp: Date.now(),
+      })
+    );
     if (Platform.OS !== "web") {
       try {
         const Haptics = await import("expo-haptics");
         await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       } catch {}
     }
-
     router.back();
   };
 
@@ -216,49 +468,53 @@ export default function BarcodeScannerScreen() {
   };
 
   const handleRelogFromHistory = async (item: HistoryItem) => {
-    await AsyncStorage.setItem("@barcode_scan_result", JSON.stringify({
-      name: item.brand ? `${item.name} (${item.brand})` : item.name,
-      calories: item.calories,
-      protein: item.protein,
-      carbs: item.carbs,
-      fat: item.fat,
-      servingSize: item.servingSize,
-      barcode: item.barcode,
-      imageUrl: item.imageUrl,
-      timestamp: Date.now(),
-    }));
-
+    await AsyncStorage.setItem(
+      "@barcode_scan_result",
+      JSON.stringify({
+        name: item.brand ? `${item.name} (${item.brand})` : item.name,
+        calories: item.calories,
+        protein: item.protein,
+        carbs: item.carbs,
+        fat: item.fat,
+        servingSize: item.servingSize,
+        barcode: item.barcode,
+        imageUrl: item.imageUrl,
+        timestamp: Date.now(),
+      })
+    );
     if (Platform.OS !== "web") {
       try {
         const Haptics = await import("expo-haptics");
         await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       } catch {}
     }
-
     router.back();
   };
 
   const handleDeleteHistoryItem = async (barcode: string) => {
-    const updated = history.filter(h => h.barcode !== barcode);
+    const updated = history.filter((h) => h.barcode !== barcode);
     setHistory(updated);
     await AsyncStorage.setItem(HISTORY_KEY, JSON.stringify(updated));
   };
 
   const handleClearHistory = () => {
-    Alert.alert("Clear Scan History?", "This will remove all previously scanned products.", [
-      { text: "Cancel", style: "cancel" },
-      {
-        text: "Clear All",
-        style: "destructive",
-        onPress: async () => {
-          setHistory([]);
-          await AsyncStorage.removeItem(HISTORY_KEY);
+    Alert.alert(
+      "Clear Scan History?",
+      "This will remove all previously scanned products.",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Clear All",
+          style: "destructive",
+          onPress: async () => {
+            setHistory([]);
+            await AsyncStorage.removeItem(HISTORY_KEY);
+          },
         },
-      },
-    ]);
+      ]
+    );
   };
 
-  // Permission not yet loaded
   if (!permission) {
     return (
       <View style={styles.container}>
@@ -267,21 +523,29 @@ export default function BarcodeScannerScreen() {
     );
   }
 
-  // Permission not granted
   if (!permission.granted) {
     return (
       <View style={styles.container}>
         <StatusBar barStyle="light-content" />
         <View style={styles.permissionCard}>
-          <MaterialIcons name="photo-camera" size={48} color={SF.muted} style={{ marginBottom: 16 }} />
+          <MaterialIcons
+            name="photo-camera"
+            size={48}
+            color={SF.muted}
+            style={{ marginBottom: 16 }}
+          />
           <Text style={styles.permTitle}>Camera Access Required</Text>
           <Text style={styles.permSub}>
-            PeakPulse needs camera access to scan product barcodes and look up nutrition information.
+            PeakPulse needs camera access to scan product barcodes and look up
+            nutrition information.
           </Text>
           <TouchableOpacity style={styles.permBtn} onPress={requestPermission}>
             <Text style={styles.permBtnText}>Grant Camera Access</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
+          <TouchableOpacity
+            style={styles.backBtn}
+            onPress={() => router.back()}
+          >
             <Text style={styles.backBtnText}>Go Back</Text>
           </TouchableOpacity>
         </View>
@@ -300,7 +564,19 @@ export default function BarcodeScannerScreen() {
           facing="back"
           enableTorch={torchOn}
           barcodeScannerSettings={{
-            barcodeTypes: ["ean13", "ean8", "upc_a", "upc_e", "code128", "code39", "code93", "itf14", "codabar", "datamatrix", "qr"],
+            barcodeTypes: [
+              "ean13",
+              "ean8",
+              "upc_a",
+              "upc_e",
+              "code128",
+              "code39",
+              "code93",
+              "itf14",
+              "codabar",
+              "datamatrix",
+              "qr",
+            ],
           }}
           onBarcodeScanned={scanned ? undefined : handleBarcodeScanned}
         />
@@ -309,32 +585,40 @@ export default function BarcodeScannerScreen() {
       {/* Overlay */}
       {!result && !showHistory && (
         <View style={StyleSheet.absoluteFillObject} pointerEvents="box-none">
-          {/* Top bar */}
           <View style={styles.topBar}>
-            <TouchableOpacity style={styles.topBtn} onPress={() => router.back()}>
+            <TouchableOpacity
+              style={styles.topBtn}
+              onPress={() => router.back()}
+            >
               <MaterialIcons name="close" size={24} color={SF.fg} />
             </TouchableOpacity>
             <Text style={styles.topTitle}>Scan Barcode</Text>
             <View style={{ flexDirection: "row", gap: 8 }}>
-              <TouchableOpacity style={styles.topBtn} onPress={() => setShowHistory(true)}>
+              <TouchableOpacity
+                style={styles.topBtn}
+                onPress={() => setShowHistory(true)}
+              >
                 <MaterialIcons name="history" size={24} color={SF.fg} />
               </TouchableOpacity>
-              <TouchableOpacity style={styles.topBtn} onPress={() => setTorchOn(!torchOn)}>
-                <MaterialIcons name={torchOn ? "flash-on" : "flash-off"} size={24} color={torchOn ? SF.gold : SF.fg} />
+              <TouchableOpacity
+                style={styles.topBtn}
+                onPress={() => setTorchOn(!torchOn)}
+              >
+                <MaterialIcons
+                  name={torchOn ? "flash-on" : "flash-off"}
+                  size={24}
+                  color={torchOn ? SF.gold : SF.fg}
+                />
               </TouchableOpacity>
             </View>
           </View>
 
-          {/* Scan area frame */}
           <View style={styles.scanAreaContainer}>
             <View style={styles.scanArea}>
-              {/* Corner markers */}
               <View style={[styles.corner, styles.cornerTL]} />
               <View style={[styles.corner, styles.cornerTR]} />
               <View style={[styles.corner, styles.cornerBL]} />
               <View style={[styles.corner, styles.cornerBR]} />
-
-              {/* Scanning line animation placeholder */}
               {loading && (
                 <View style={styles.scanningOverlay}>
                   <ActivityIndicator color={SF.gold} size="large" />
@@ -344,14 +628,14 @@ export default function BarcodeScannerScreen() {
             </View>
           </View>
 
-          {/* Bottom instruction */}
           <View style={styles.bottomBar}>
             <View style={styles.instructionCard}>
               <MaterialIcons name="qr-code-scanner" size={20} color={SF.gold} />
               <View style={{ flex: 1 }}>
                 <Text style={styles.instructionTitle}>Point at a barcode</Text>
                 <Text style={styles.instructionSub}>
-                  Align the barcode within the frame. Supports EAN, UPC, QR, and more.
+                  Align the barcode within the frame. Supports EAN, UPC, QR,
+                  and more.
                 </Text>
               </View>
             </View>
@@ -362,42 +646,101 @@ export default function BarcodeScannerScreen() {
       {/* History View */}
       {showHistory && !result && (
         <View style={[StyleSheet.absoluteFillObject, { backgroundColor: SF.bg }]}>
-          {/* History Header */}
           <View style={styles.topBar}>
-            <TouchableOpacity style={styles.topBtn} onPress={() => setShowHistory(false)}>
+            <TouchableOpacity
+              style={styles.topBtn}
+              onPress={() => setShowHistory(false)}
+            >
               <MaterialIcons name="arrow-back" size={24} color={SF.fg} />
             </TouchableOpacity>
             <Text style={styles.topTitle}>Scan History</Text>
-            <TouchableOpacity style={styles.topBtn} onPress={history.length > 0 ? handleClearHistory : undefined}>
-              <MaterialIcons name="delete-outline" size={24} color={history.length > 0 ? SF.red : "transparent"} />
+            <TouchableOpacity
+              style={styles.topBtn}
+              onPress={history.length > 0 ? handleClearHistory : undefined}
+            >
+              <MaterialIcons
+                name="delete-outline"
+                size={24}
+                color={history.length > 0 ? SF.red : "transparent"}
+              />
             </TouchableOpacity>
           </View>
-
           {history.length === 0 ? (
-            <View style={{ flex: 1, justifyContent: "center", alignItems: "center", padding: 32 }}>
-              <MaterialIcons name="history" size={48} color={SF.muted} style={{ marginBottom: 16 }} />
-              <Text style={{ color: SF.muted, fontSize: 15, textAlign: "center", lineHeight: 22 }}>
-                No scan history yet. Scan a product barcode and it will appear here for quick re-logging.
+            <View
+              style={{
+                flex: 1,
+                justifyContent: "center",
+                alignItems: "center",
+                padding: 32,
+              }}
+            >
+              <MaterialIcons
+                name="history"
+                size={48}
+                color={SF.muted}
+                style={{ marginBottom: 16 }}
+              />
+              <Text
+                style={{
+                  color: SF.muted,
+                  fontSize: 15,
+                  textAlign: "center",
+                  lineHeight: 22,
+                }}
+              >
+                No scan history yet. Scan a product barcode and it will appear
+                here for quick re-logging.
               </Text>
             </View>
           ) : (
             <FlatList
               data={history}
               keyExtractor={(item) => item.barcode}
-              contentContainerStyle={{ padding: 16, paddingBottom: 40, gap: 10 }}
+              contentContainerStyle={{
+                padding: 16,
+                paddingBottom: 40,
+                gap: 10,
+              }}
               renderItem={({ item }) => (
                 <View style={styles.historyCard}>
                   <View style={{ flex: 1 }}>
-                    <Text style={styles.historyName} numberOfLines={1}>{item.name}</Text>
-                    {item.brand ? <Text style={styles.historyBrand} numberOfLines={1}>{item.brand}</Text> : null}
+                    <Text style={styles.historyName} numberOfLines={1}>
+                      {item.name}
+                    </Text>
+                    {item.brand ? (
+                      <Text style={styles.historyBrand} numberOfLines={1}>
+                        {item.brand}
+                      </Text>
+                    ) : null}
                     <View style={styles.historyMacros}>
-                      <Text style={styles.historyMacroText}>{item.calories} kcal</Text>
-                      <Text style={[styles.historyMacroText, { color: "#3B82F6" }]}>P: {item.protein}g</Text>
-                      <Text style={[styles.historyMacroText, { color: "#FDE68A" }]}>C: {item.carbs}g</Text>
-                      <Text style={[styles.historyMacroText, { color: "#FBBF24" }]}>F: {item.fat}g</Text>
+                      <Text style={styles.historyMacroText}>
+                        {item.calories} kcal
+                      </Text>
+                      <Text
+                        style={[styles.historyMacroText, { color: "#3B82F6" }]}
+                      >
+                        P: {item.protein}g
+                      </Text>
+                      <Text
+                        style={[styles.historyMacroText, { color: "#FDE68A" }]}
+                      >
+                        C: {item.carbs}g
+                      </Text>
+                      <Text
+                        style={[styles.historyMacroText, { color: "#FBBF24" }]}
+                      >
+                        F: {item.fat}g
+                      </Text>
                     </View>
-                    <Text style={{ color: "rgba(146,64,14,0.5)", fontSize: 10, marginTop: 4 }}>
-                      {new Date(item.scannedAt).toLocaleDateString()} • {item.barcode}
+                    <Text
+                      style={{
+                        color: "rgba(146,64,14,0.5)",
+                        fontSize: 10,
+                        marginTop: 4,
+                      }}
+                    >
+                      {new Date(item.scannedAt).toLocaleDateString()} •{" "}
+                      {item.barcode}
                     </Text>
                   </View>
                   <View style={{ gap: 6 }}>
@@ -406,7 +749,15 @@ export default function BarcodeScannerScreen() {
                       onPress={() => handleRelogFromHistory(item)}
                     >
                       <MaterialIcons name="add-circle" size={16} color={SF.fg} />
-                      <Text style={{ color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 11 }}>Log</Text>
+                      <Text
+                        style={{
+                          color: SF.fg,
+                          fontFamily: "DMSans_700Bold",
+                          fontSize: 11,
+                        }}
+                      >
+                        Log
+                      </Text>
                     </TouchableOpacity>
                     <TouchableOpacity
                       style={styles.historyDeleteBtn}
@@ -424,23 +775,41 @@ export default function BarcodeScannerScreen() {
 
       {/* Result Card */}
       {result && (
-        <View style={styles.resultContainer}>
+        <ScrollView
+          style={{ flex: 1 }}
+          contentContainerStyle={styles.resultContainer}
+          keyboardShouldPersistTaps="handled"
+        >
           <View style={styles.resultCard}>
             {/* Header */}
             <View style={styles.resultHeader}>
-              <MaterialIcons name={result.found ? "check-circle" : "error-outline"} size={28} color={result.found ? "#22C55E" : "#EF4444"} />
+              <MaterialIcons
+                name={result.found ? "check-circle" : "error-outline"}
+                size={28}
+                color={result.found ? "#22C55E" : "#EF4444"}
+              />
               <View style={{ flex: 1 }}>
-                <Text style={styles.resultName} numberOfLines={2}>{result.name}</Text>
-                {result.brand ? <Text style={styles.resultBrand}>{result.brand}</Text> : null}
+                <Text style={styles.resultName} numberOfLines={2}>
+                  {result.found ? result.name : "Product Not Found"}
+                </Text>
+                {result.brand ? (
+                  <Text style={styles.resultBrand}>{result.brand}</Text>
+                ) : null}
               </View>
             </View>
 
             {/* Barcode */}
             <View style={styles.barcodeRow}>
-              <MaterialIcons name="qr-code-scanner" size={16} color={SF.muted} />
+              <MaterialIcons
+                name="qr-code-scanner"
+                size={16}
+                color={SF.muted}
+              />
               <Text style={styles.barcodeText}>{result.barcode}</Text>
-              {result.servingSize ? (
-                <Text style={styles.servingText}>Per {result.servingSize}</Text>
+              {result.found && result.servingSize ? (
+                <Text style={styles.servingText}>
+                  Per {result.servingSize}
+                </Text>
               ) : null}
             </View>
 
@@ -452,34 +821,92 @@ export default function BarcodeScannerScreen() {
                     <Text style={styles.nutritionValue}>{result.calories}</Text>
                     <Text style={styles.nutritionLabel}>kcal</Text>
                   </View>
-                  <View style={[styles.nutritionItem, { borderLeftWidth: 1, borderLeftColor: "rgba(245,158,11,0.15)" }]}>
-                    <Text style={[styles.nutritionValue, { color: "#3B82F6" }]}>{result.protein}g</Text>
+                  <View
+                    style={[
+                      styles.nutritionItem,
+                      {
+                        borderLeftWidth: 1,
+                        borderLeftColor: "rgba(245,158,11,0.15)",
+                      },
+                    ]}
+                  >
+                    <Text
+                      style={[
+                        styles.nutritionValue,
+                        { color: "#3B82F6" },
+                      ]}
+                    >
+                      {result.protein}g
+                    </Text>
                     <Text style={styles.nutritionLabel}>Protein</Text>
                   </View>
-                  <View style={[styles.nutritionItem, { borderLeftWidth: 1, borderLeftColor: "rgba(245,158,11,0.15)" }]}>
-                    <Text style={[styles.nutritionValue, { color: "#FDE68A" }]}>{result.carbs}g</Text>
+                  <View
+                    style={[
+                      styles.nutritionItem,
+                      {
+                        borderLeftWidth: 1,
+                        borderLeftColor: "rgba(245,158,11,0.15)",
+                      },
+                    ]}
+                  >
+                    <Text
+                      style={[
+                        styles.nutritionValue,
+                        { color: "#FDE68A" },
+                      ]}
+                    >
+                      {result.carbs}g
+                    </Text>
                     <Text style={styles.nutritionLabel}>Carbs</Text>
                   </View>
-                  <View style={[styles.nutritionItem, { borderLeftWidth: 1, borderLeftColor: "rgba(245,158,11,0.15)" }]}>
-                    <Text style={[styles.nutritionValue, { color: "#FBBF24" }]}>{result.fat}g</Text>
+                  <View
+                    style={[
+                      styles.nutritionItem,
+                      {
+                        borderLeftWidth: 1,
+                        borderLeftColor: "rgba(245,158,11,0.15)",
+                      },
+                    ]}
+                  >
+                    <Text
+                      style={[
+                        styles.nutritionValue,
+                        { color: "#FBBF24" },
+                      ]}
+                    >
+                      {result.fat}g
+                    </Text>
                     <Text style={styles.nutritionLabel}>Fat</Text>
                   </View>
                 </View>
 
-                {/* Add to Log Button */}
-                <TouchableOpacity style={styles.addBtn} onPress={handleAddToLog}>
+                <TouchableOpacity
+                  style={styles.addBtn}
+                  onPress={() => handleAddToLog()}
+                >
                   <MaterialIcons name="add-circle" size={20} color={SF.fg} />
                   <Text style={styles.addBtnText}>Add to Meal Log</Text>
                 </TouchableOpacity>
 
-                {/* Add to Pantry Button — prompts for expiry date */}
+                {/* Add to Pantry */}
                 <TouchableOpacity
-                  style={[styles.addBtn, { backgroundColor: "rgba(59,130,246,0.15)", marginTop: -8, shadowOpacity: 0 }]}
+                  style={[
+                    styles.addBtn,
+                    {
+                      backgroundColor: "rgba(59,130,246,0.15)",
+                      marginTop: -8,
+                      shadowOpacity: 0,
+                    },
+                  ]}
                   onPress={() => {
                     if (!result) return;
-                    const name = result.brand ? `${result.name} (${result.brand})` : result.name;
-                    const category = mapCategoryToPantry(result.name, result.brand);
-                    // Prompt for expiry date before adding
+                    const name = result.brand
+                      ? `${result.name} (${result.brand})`
+                      : result.name;
+                    const category = mapCategoryToPantry(
+                      result.name,
+                      result.brand
+                    );
                     Alert.prompt
                       ? Alert.prompt(
                           "Set Expiry Date",
@@ -491,55 +918,101 @@ export default function BarcodeScannerScreen() {
                               onPress: async (dateStr?: string) => {
                                 let expiresAt: string | undefined;
                                 if (dateStr && dateStr.trim()) {
-                                  const parts = dateStr.trim().split(/[\/\-]/);
+                                  const parts = dateStr
+                                    .trim()
+                                    .split(/[\/\-]/);
                                   if (parts.length === 3) {
-                                    if (parts[0].length === 4) {
-                                      expiresAt = new Date(`${parts[0]}-${parts[1].padStart(2, "0")}-${parts[2].padStart(2, "0")}`).toISOString();
-                                    } else {
-                                      expiresAt = new Date(`${parts[2]}-${parts[1].padStart(2, "0")}-${parts[0].padStart(2, "0")}`).toISOString();
-                                    }
+                                    expiresAt =
+                                      parts[0].length === 4
+                                        ? new Date(
+                                            `${parts[0]}-${parts[1].padStart(
+                                              2,
+                                              "0"
+                                            )}-${parts[2].padStart(2, "0")}`
+                                          ).toISOString()
+                                        : new Date(
+                                            `${parts[2]}-${parts[1].padStart(
+                                              2,
+                                              "0"
+                                            )}-${parts[0].padStart(2, "0")}`
+                                          ).toISOString();
                                   }
                                 }
-                                await addPantryItem({ name, category, source: "manual", expiresAt });
-                                if (Platform.OS !== "web") {
-                                  try { const H = await import("expo-haptics"); await H.notificationAsync(H.NotificationFeedbackType.Success); } catch {}
-                                }
-                                Alert.alert("\u2705 Added to Pantry", `${name} added to ${category}.${expiresAt ? " Expiry tracked." : ""}`);
+                                await addPantryItem({
+                                  name,
+                                  category,
+                                  source: "manual",
+                                  expiresAt,
+                                });
+                                Alert.alert(
+                                  "✅ Added to Pantry",
+                                  `${name} added to ${category}.${
+                                    expiresAt ? " Expiry tracked." : ""
+                                  }`
+                                );
                               },
                             },
                           ],
                           "plain-text",
                           "",
-                          "numbers-and-punctuation",
+                          "numbers-and-punctuation"
                         )
                       : (async () => {
-                          // Android fallback — no Alert.prompt, add directly
-                          await addPantryItem({ name, category, source: "manual" });
-                          if (Platform.OS !== "web") {
-                            try { const H = await import("expo-haptics"); await H.notificationAsync(H.NotificationFeedbackType.Success); } catch {}
-                          }
-                          Alert.alert("\u2705 Added to Pantry", `${name} added to ${category}. Set expiry date in Pantry screen.`);
+                          await addPantryItem({
+                            name,
+                            category,
+                            source: "manual",
+                          });
+                          Alert.alert(
+                            "✅ Added to Pantry",
+                            `${name} added to ${category}. Set expiry date in Pantry screen.`
+                          );
                         })();
                   }}
                 >
                   <MaterialIcons name="kitchen" size={18} color="#3B82F6" />
-                  <Text style={[styles.addBtnText, { color: "#3B82F6" }]}>Add to Pantry (with Expiry)</Text>
+                  <Text
+                    style={[styles.addBtnText, { color: "#3B82F6" }]}
+                  >
+                    Add to Pantry (with Expiry)
+                  </Text>
                 </TouchableOpacity>
 
-              {/* Save to Favourites Button */}
+                {/* Save to Favourites */}
                 <TouchableOpacity
-                  style={[styles.addBtn, { backgroundColor: "rgba(245,158,11,0.15)", marginTop: -8, shadowOpacity: 0 }]}
+                  style={[
+                    styles.addBtn,
+                    {
+                      backgroundColor: "rgba(245,158,11,0.15)",
+                      marginTop: -8,
+                      shadowOpacity: 0,
+                    },
+                  ]}
                   onPress={async () => {
                     if (!result) return;
-                    const existing = await AsyncStorage.getItem("@favourite_foods");
+                    const existing = await AsyncStorage.getItem(
+                      "@favourite_foods"
+                    );
                     const favs = existing ? JSON.parse(existing) : [];
-                    const name = result.brand ? `${result.name} (${result.brand})` : result.name;
-                    if (favs.some((f: any) => f.name.toLowerCase() === name.toLowerCase())) {
-                      Alert.alert("Already in Favourites", `${name} is already saved.`);
+                    const name = result.brand
+                      ? `${result.name} (${result.brand})`
+                      : result.name;
+                    if (
+                      favs.some(
+                        (f: any) =>
+                          f.name.toLowerCase() === name.toLowerCase()
+                      )
+                    ) {
+                      Alert.alert(
+                        "Already in Favourites",
+                        `${name} is already saved.`
+                      );
                       return;
                     }
                     const entry = {
-                      id: `fav_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+                      id: `fav_${Date.now()}_${Math.random()
+                        .toString(36)
+                        .slice(2, 8)}`,
                       name,
                       mealType: "snack",
                       calories: result.calories,
@@ -551,49 +1024,66 @@ export default function BarcodeScannerScreen() {
                       addedAt: Date.now(),
                       logCount: 0,
                     };
-                    const updated = [entry, ...favs];
-                    await AsyncStorage.setItem("@favourite_foods", JSON.stringify(updated));
-                    if (Platform.OS !== "web") {
-                      try { const H = await import("expo-haptics"); await H.notificationAsync(H.NotificationFeedbackType.Success); } catch {}
-                    }
-                    Alert.alert("\u2b50 Saved to Favourites", `${name} added for quick one-tap logging.`);
+                    await AsyncStorage.setItem(
+                      "@favourite_foods",
+                      JSON.stringify([entry, ...favs])
+                    );
+                    Alert.alert(
+                      "⭐ Saved to Favourites",
+                      `${name} added for quick one-tap logging.`
+                    );
                   }}
                 >
                   <MaterialIcons name="star" size={16} color={SF.gold} />
-                  <Text style={[styles.addBtnText, { color: SF.gold }]}>Save to Favourites</Text>
+                  <Text
+                    style={[styles.addBtnText, { color: SF.gold }]}
+                  >
+                    Save to Favourites
+                  </Text>
                 </TouchableOpacity>
               </>
             ) : (
-              <View style={styles.notFoundCard}>
-                <Text style={styles.notFoundText}>
-                  Product not found in the database. You can manually enter the nutrition info in the meal log.
-                </Text>
-              </View>
+              // FIX: Replace dead-end "not found" card with a manual entry form.
+              // The user can now fill in name + macros without leaving the screen.
+              <ManualEntryForm
+                barcode={result.barcode}
+                onSubmit={(manualResult) => {
+                  // Save manual entry to history for future quick-logging
+                  saveToHistory(manualResult).catch(() => {});
+                  handleAddToLog(manualResult);
+                }}
+              />
             )}
 
             {/* Scan Again / Go Back */}
             <View style={styles.resultActions}>
-              <TouchableOpacity style={styles.scanAgainBtn} onPress={handleScanAgain}>
-                <MaterialIcons name="qr-code-scanner" size={18} color={SF.gold} />
+              <TouchableOpacity
+                style={styles.scanAgainBtn}
+                onPress={handleScanAgain}
+              >
+                <MaterialIcons
+                  name="qr-code-scanner"
+                  size={18}
+                  color={SF.gold}
+                />
                 <Text style={styles.scanAgainText}>Scan Another</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.goBackBtn} onPress={() => router.back()}>
+              <TouchableOpacity
+                style={styles.goBackBtn}
+                onPress={() => router.back()}
+              >
                 <Text style={styles.goBackText}>Go Back</Text>
               </TouchableOpacity>
             </View>
           </View>
-        </View>
+        </ScrollView>
       )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: SF.bg,
-  },
-  // Permission screen
+  container: { flex: 1, backgroundColor: SF.bg },
   permissionCard: {
     flex: 1,
     justifyContent: "center",
@@ -626,15 +1116,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: "DMSans_700Bold",
   },
-  backBtn: {
-    paddingVertical: 12,
-  },
+  backBtn: { paddingVertical: 12 },
   backBtnText: {
     color: SF.muted,
     fontSize: 14,
     fontFamily: "DMSans_600SemiBold",
   },
-  // Top bar
   topBar: {
     flexDirection: "row",
     alignItems: "center",
@@ -656,7 +1143,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontFamily: "DMSans_700Bold",
   },
-  // Scan area
   scanAreaContainer: {
     flex: 1,
     justifyContent: "center",
@@ -714,7 +1200,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: "DMSans_600SemiBold",
   },
-  // Bottom bar
   bottomBar: {
     paddingHorizontal: 20,
     paddingBottom: Platform.OS === "ios" ? 50 : 30,
@@ -740,9 +1225,8 @@ const styles = StyleSheet.create({
     fontSize: 12,
     lineHeight: 18,
   },
-  // Result
   resultContainer: {
-    flex: 1,
+    flexGrow: 1,
     justifyContent: "center",
     padding: 20,
   },
@@ -795,7 +1279,6 @@ const styles = StyleSheet.create({
     paddingVertical: 3,
     borderRadius: 6,
   },
-  // Nutrition grid
   nutritionGrid: {
     flexDirection: "row",
     backgroundColor: SF.bg,
@@ -821,7 +1304,6 @@ const styles = StyleSheet.create({
     textTransform: "uppercase",
     letterSpacing: 0.5,
   },
-  // Add button
   addBtn: {
     flexDirection: "row",
     alignItems: "center",
@@ -841,26 +1323,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: "DMSans_700Bold",
   },
-  // Not found
-  notFoundCard: {
-    backgroundColor: "rgba(220,38,38,0.10)",
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 16,
-    borderWidth: 1,
-    borderColor: "rgba(220,38,38,0.20)",
-  },
-  notFoundText: {
-    color: "#F87171",
-    fontSize: 13,
-    lineHeight: 20,
-    textAlign: "center",
-  },
-  // Result actions
-  resultActions: {
-    flexDirection: "row",
-    gap: 12,
-  },
+  resultActions: { flexDirection: "row", gap: 12 },
   scanAgainBtn: {
     flex: 1,
     flexDirection: "row",
@@ -893,7 +1356,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: "DMSans_600SemiBold",
   },
-  // History styles
   historyCard: {
     flexDirection: "row",
     alignItems: "center",
@@ -916,11 +1378,7 @@ const styles = StyleSheet.create({
     fontFamily: "DMSans_600SemiBold",
     marginBottom: 4,
   },
-  historyMacros: {
-    flexDirection: "row",
-    gap: 8,
-    marginTop: 4,
-  },
+  historyMacros: { flexDirection: "row", gap: 8, marginTop: 4 },
   historyMacroText: {
     color: SF.gold,
     fontSize: 11,

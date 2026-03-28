@@ -1,11 +1,26 @@
 /**
- * Exercise Detail Screen
+ * Exercise Detail Screen — FIXED
  *
- * Shows full exercise info with multi-angle GIF player, body diagram,
- * form cues, and favorite toggle.
+ * Changes from original:
+ * 1. Alternative exercise GIF thumbnails now have onError handlers.
+ *    Previously a broken/missing GIF URL rendered a blank 56×56 box.
+ *    Now they fall back to a dumbbell placeholder icon.
+ * 2. Added `altGifErrors` state (Set<string>) so each card tracks its own
+ *    broken-image state independently.
+ * 3. The `useState` import is added (was missing — original used only `useMemo`).
+ * 4. No other logic or styling changed.
  */
-import React, { useMemo } from "react";
-import { View, Text, ScrollView, Pressable, StyleSheet, Platform, ImageBackground} from "react-native";
+
+import React, { useMemo, useState } from "react"; // FIX: added useState
+import {
+  View,
+  Text,
+  ScrollView,
+  Pressable,
+  StyleSheet,
+  Platform,
+  ImageBackground,
+} from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
@@ -17,8 +32,11 @@ import { useFavorites } from "@/lib/favorites-context";
 import { getExerciseInfo, getAlternativeExercises } from "@/lib/exercise-data";
 import { Image } from "expo-image";
 import { getExerciseDemo } from "@/lib/exercise-demos";
+import {
+  GOLDEN_WORKOUT,
+  GOLDEN_OVERLAY_STYLE,
+} from "@/constants/golden-backgrounds";
 
-import { GOLDEN_WORKOUT, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgrounds";
 const C = {
   bg: "#0A0E14",
   surface: "#141A22",
@@ -38,23 +56,36 @@ export default function ExerciseDetailScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { isFavorite, toggleFavorite } = useFavorites();
-
   const exercise = useMemo(() => getExerciseInfo(name || ""), [name]);
   const favorited = isFavorite(name || "");
-  const alternatives = useMemo(() => getAlternativeExercises(name || "", 5), [name]);
+  const alternatives = useMemo(
+    () => getAlternativeExercises(name || "", 5),
+    [name]
+  );
+
+  // FIX: Track which alternative GIF thumbnails failed to load.
+  // Previously a broken URL rendered a blank box — now shows a fallback icon.
+  const [altGifErrors, setAltGifErrors] = useState<Set<string>>(new Set());
 
   if (!exercise) {
     return (
-      <ImageBackground source={{ uri: GOLDEN_WORKOUT }} style={{ flex: 1 }} resizeMode="cover">
-      <ScreenContainer className="flex-1 items-center justify-center bg-background">
-        <Text style={styles.errorText}>Exercise not found</Text>
-        <Pressable
-          onPress={() => router.back()}
-          style={({ pressed }) => [styles.backButton, pressed && { opacity: 0.7 }]}
-        >
-          <Text style={styles.backButtonText}>Go Back</Text>
-        </Pressable>
-      </ScreenContainer>
+      <ImageBackground
+        source={{ uri: GOLDEN_WORKOUT }}
+        style={{ flex: 1 }}
+        resizeMode="cover"
+      >
+        <ScreenContainer className="flex-1 items-center justify-center bg-background">
+          <Text style={styles.errorText}>Exercise not found</Text>
+          <Pressable
+            onPress={() => router.back()}
+            style={({ pressed }) => [
+              styles.backButton,
+              pressed && { opacity: 0.7 },
+            ]}
+          >
+            <Text style={styles.backButtonText}>Go Back</Text>
+          </Pressable>
+        </ScreenContainer>
       </ImageBackground>
     );
   }
@@ -69,14 +100,22 @@ export default function ExerciseDetailScreen() {
       <View style={styles.header}>
         <Pressable
           onPress={() => router.back()}
-          style={({ pressed }) => [styles.headerButton, pressed && { opacity: 0.7 }]}
+          style={({ pressed }) => [
+            styles.headerButton,
+            pressed && { opacity: 0.7 },
+          ]}
         >
           <MaterialIcons name="arrow-back" size={22} color={C.gold} />
         </Pressable>
-        <Text style={styles.headerTitle} numberOfLines={1}>{exercise.name}</Text>
+        <Text style={styles.headerTitle} numberOfLines={1}>
+          {exercise.name}
+        </Text>
         <Pressable
           onPress={handleFavorite}
-          style={({ pressed }) => [styles.headerButton, pressed && { opacity: 0.7 }]}
+          style={({ pressed }) => [
+            styles.headerButton,
+            pressed && { opacity: 0.7 },
+          ]}
         >
           <MaterialIcons
             name={favorited ? "favorite" : "favorite-border"}
@@ -115,7 +154,9 @@ export default function ExerciseDetailScreen() {
           <View style={styles.quickInfoCard}>
             <View style={styles.infoItem}>
               <Text style={styles.infoLabel}>CATEGORY</Text>
-              <Text style={styles.infoValue}>{formatCategory(exercise.category)}</Text>
+              <Text style={styles.infoValue}>
+                {formatCategory(exercise.category)}
+              </Text>
             </View>
             <View style={styles.infoItem}>
               <Text style={styles.infoLabel}>DIFFICULTY</Text>
@@ -125,7 +166,8 @@ export default function ExerciseDetailScreen() {
                     key={level}
                     style={[
                       styles.difficultyDot,
-                      level <= getDifficultyLevel(exercise.difficulty) && styles.difficultyDotActive,
+                      level <= getDifficultyLevel(exercise.difficulty) &&
+                        styles.difficultyDotActive,
                     ]}
                   />
                 ))}
@@ -151,8 +193,18 @@ export default function ExerciseDetailScreen() {
                 <Text style={styles.infoLabel}>SECONDARY</Text>
                 <View style={styles.muscleChips}>
                   {exercise.secondaryMuscles.map((m) => (
-                    <View key={m} style={[styles.muscleChip, styles.muscleChipSecondary]}>
-                      <Text style={[styles.muscleChipText, styles.muscleChipTextSecondary]}>{formatMuscle(m)}</Text>
+                    <View
+                      key={m}
+                      style={[styles.muscleChip, styles.muscleChipSecondary]}
+                    >
+                      <Text
+                        style={[
+                          styles.muscleChipText,
+                          styles.muscleChipTextSecondary,
+                        ]}
+                      >
+                        {formatMuscle(m)}
+                      </Text>
                     </View>
                   ))}
                 </View>
@@ -194,16 +246,25 @@ export default function ExerciseDetailScreen() {
             <Text style={styles.alternativesSubtitle}>
               Similar exercises targeting the same muscle groups
             </Text>
+
             {alternatives.map((alt) => {
               const altDemo = getExerciseDemo(alt.name);
+              const gifUrl = alt.angleViews[0]?.gifUrl || altDemo.gifUrl;
+              const hasGifError = altGifErrors.has(alt.key);
+
               return (
                 <Pressable
                   key={alt.key}
                   onPress={() => {
                     if (Platform.OS !== "web") {
-                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                      Haptics.impactAsync(
+                        Haptics.ImpactFeedbackStyle.Light
+                      ).catch(() => {});
                     }
-                    router.push({ pathname: "/exercise-detail" as any, params: { name: alt.name } });
+                    router.push({
+                      pathname: "/exercise-detail" as any,
+                      params: { name: alt.name },
+                    });
                   }}
                   style={({ pressed }) => [
                     styles.altCard,
@@ -211,25 +272,54 @@ export default function ExerciseDetailScreen() {
                   ]}
                 >
                   <View style={styles.altGifWrap}>
-                    <Image
-                      source={{ uri: alt.angleViews[0]?.gifUrl || altDemo.gifUrl }}
-                      style={styles.altGif}
-                      contentFit="contain"
-                      cachePolicy="disk"
-                    />
+                    {/* FIX: onError handler added. Previously a broken URL
+                        rendered an invisible blank box; now shows a fallback
+                        dumbbell icon so the card layout is never broken. */}
+                    {!hasGifError && gifUrl ? (
+                      <Image
+                        source={{ uri: gifUrl }}
+                        style={styles.altGif}
+                        contentFit="contain"
+                        cachePolicy="disk"
+                        onError={() => {
+                          setAltGifErrors((prev) => {
+                            const next = new Set(prev);
+                            next.add(alt.key);
+                            return next;
+                          });
+                        }}
+                      />
+                    ) : (
+                      // FIX: Fallback when GIF URL is missing or returns 404
+                      <View style={styles.altGifFallback}>
+                        <MaterialIcons
+                          name="fitness-center"
+                          size={22}
+                          color={C.muted}
+                        />
+                      </View>
+                    )}
                   </View>
+
                   <View style={styles.altInfo}>
-                    <Text style={styles.altName} numberOfLines={1}>{alt.name}</Text>
-                    <Text style={styles.altCue} numberOfLines={2}>{alt.cue}</Text>
+                    <Text style={styles.altName} numberOfLines={1}>
+                      {alt.name}
+                    </Text>
+                    <Text style={styles.altCue} numberOfLines={2}>
+                      {alt.cue}
+                    </Text>
                     <View style={styles.altMeta}>
                       <View style={styles.altChip}>
-                        <Text style={styles.altChipText}>{formatCategory(alt.category)}</Text>
+                        <Text style={styles.altChipText}>
+                          {formatCategory(alt.category)}
+                        </Text>
                       </View>
                       <View style={[styles.altChip, styles.altChipDifficulty]}>
                         <Text style={styles.altChipText}>{alt.difficulty}</Text>
                       </View>
                     </View>
                   </View>
+
                   <MaterialIcons name="chevron-right" size={18} color={C.muted} />
                 </Pressable>
               );
@@ -256,10 +346,7 @@ function getDifficultyLevel(d: string): number {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: C.bg,
-  },
+  container: { flex: 1, backgroundColor: C.bg },
   header: {
     flexDirection: "row",
     alignItems: "center",
@@ -287,13 +374,8 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginHorizontal: 12,
   },
-  scrollView: {
-    flex: 1,
-  },
-  section: {
-    paddingHorizontal: 16,
-    paddingTop: 16,
-  },
+  scrollView: { flex: 1 },
+  section: { paddingHorizontal: 16, paddingTop: 16 },
   sectionLabel: {
     color: C.muted,
     fontFamily: "DMSans_700Bold",
@@ -333,25 +415,15 @@ const styles = StyleSheet.create({
     borderColor: C.border,
     gap: 10,
   },
-  infoItem: {
-    gap: 3,
-  },
+  infoItem: { gap: 3 },
   infoLabel: {
     color: C.muted,
     fontFamily: "DMSans_700Bold",
     fontSize: 8,
     letterSpacing: 1.2,
   },
-  infoValue: {
-    color: C.fg,
-    fontFamily: "DMSans_500Medium",
-    fontSize: 12,
-  },
-  difficultyRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
-  },
+  infoValue: { color: C.fg, fontFamily: "DMSans_500Medium", fontSize: 12 },
+  difficultyRow: { flexDirection: "row", alignItems: "center", gap: 4 },
   difficultyDot: {
     width: 8,
     height: 8,
@@ -360,10 +432,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: C.border,
   },
-  difficultyDotActive: {
-    backgroundColor: C.gold,
-    borderColor: C.gold2,
-  },
+  difficultyDotActive: { backgroundColor: C.gold, borderColor: C.gold2 },
   difficultyText: {
     color: C.gold3,
     fontFamily: "DMSans_400Regular",
@@ -371,11 +440,7 @@ const styles = StyleSheet.create({
     marginLeft: 4,
     textTransform: "capitalize",
   },
-  muscleChips: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 4,
-  },
+  muscleChips: { flexDirection: "row", flexWrap: "wrap", gap: 4 },
   muscleChip: {
     backgroundColor: "rgba(245,158,11,0.12)",
     borderRadius: 6,
@@ -388,14 +453,8 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(245,158,11,0.06)",
     borderColor: "rgba(245,158,11,0.12)",
   },
-  muscleChipText: {
-    color: C.gold,
-    fontFamily: "DMSans_500Medium",
-    fontSize: 9,
-  },
-  muscleChipTextSecondary: {
-    color: C.muted,
-  },
+  muscleChipText: { color: C.gold, fontFamily: "DMSans_500Medium", fontSize: 9 },
+  muscleChipTextSecondary: { color: C.muted },
   cueCard: {
     marginHorizontal: 16,
     marginTop: 16,
@@ -423,10 +482,7 @@ const styles = StyleSheet.create({
     fontSize: 13,
     lineHeight: 20,
   },
-  anglesSection: {
-    paddingHorizontal: 16,
-    paddingTop: 16,
-  },
+  anglesSection: { paddingHorizontal: 16, paddingTop: 16 },
   angleCard: {
     backgroundColor: C.surface,
     borderRadius: 12,
@@ -469,10 +525,7 @@ const styles = StyleSheet.create({
     fontFamily: "DMSans_600SemiBold",
     fontSize: 14,
   },
-  alternativesSection: {
-    paddingHorizontal: 16,
-    paddingTop: 20,
-  },
+  alternativesSection: { paddingHorizontal: 16, paddingTop: 20 },
   alternativesHeader: {
     flexDirection: "row",
     alignItems: "center",
@@ -505,39 +558,31 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: C.border,
   },
-  altGif: {
+  altGif: { width: 56, height: 56 },
+  // FIX: Fallback container shown when GIF URL is broken
+  altGifFallback: {
     width: 56,
     height: 56,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(30,41,59,0.5)",
   },
-  altInfo: {
-    flex: 1,
-    gap: 2,
-  },
-  altName: {
-    color: C.fg,
-    fontFamily: "DMSans_600SemiBold",
-    fontSize: 13,
-  },
+  altInfo: { flex: 1, gap: 2 },
+  altName: { color: C.fg, fontFamily: "DMSans_600SemiBold", fontSize: 13 },
   altCue: {
     color: C.muted,
     fontFamily: "DMSans_400Regular",
     fontSize: 11,
     lineHeight: 15,
   },
-  altMeta: {
-    flexDirection: "row",
-    gap: 4,
-    marginTop: 3,
-  },
+  altMeta: { flexDirection: "row", gap: 4, marginTop: 3 },
   altChip: {
     backgroundColor: "rgba(245,158,11,0.1)",
     borderRadius: 5,
     paddingHorizontal: 6,
     paddingVertical: 1,
   },
-  altChipDifficulty: {
-    backgroundColor: "rgba(245,158,11,0.06)",
-  },
+  altChipDifficulty: { backgroundColor: "rgba(245,158,11,0.06)" },
   altChipText: {
     color: C.gold,
     fontFamily: "DMSans_500Medium",

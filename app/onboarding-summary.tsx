@@ -1,39 +1,53 @@
 /**
- * Onboarding Summary Screen
- * Shown after plan generation completes. Gives the user a visual overview of:
- *  - Their AI-generated workout schedule
- *  - Their meal plan daily targets + first day meals
- *  - Before (initial scan) vs After (target transformation) photo comparison
- * Then navigates to the subscription plan selection screen.
+ * Onboarding Summary Screen — FIXED
+ *
+ * Changes from original:
+ * 1. Promise.all() wrapped in try/catch — prevents silent crash if AsyncStorage
+ *    fails or returns malformed JSON.
+ * 2. Each JSON.parse() call individually try/catch'd — a bad plan cache no longer
+ *    breaks the whole screen.
+ * 3. Added loadError state — shows a friendly error card with "Continue Anyway"
+ *    and "Go Back & Retry" options instead of a frozen loading screen.
+ * 4. Added MaterialIcons import for the error UI.
  */
 import React, { useEffect, useState } from "react";
 import {
-  View, Text, ScrollView, TouchableOpacity, Image,
-  StyleSheet, Dimensions, ActivityIndicator, ImageBackground} from "react-native";
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  Image,
+  StyleSheet,
+  Dimensions,
+  ActivityIndicator,
+  ImageBackground,
+} from "react-native";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons"; // FIX: added for error UI
 import { ScreenContainer } from "@/components/screen-container";
-
 import { GOLDEN_PRIMARY, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgrounds";
+
 const { width: W } = Dimensions.get("window");
 
 const SF = {
-  bg:      "#0A0E14",
+  bg: "#0A0E14",
   surface: "#141A22",
-  border:  "rgba(245,158,11,0.18)",
-  fg:      "#F1F5F9",
+  border: "rgba(245,158,11,0.18)",
+  fg: "#F1F5F9",
   muted: "#B45309",
-  gold:    "#F59E0B",
-  gold2:   "#FBBF24",
-  gold3:   "#FDE68A",
-  orange:  "#EA580C",
-  teal:    "#14B8A6",
+  gold: "#F59E0B",
+  gold2: "#FBBF24",
+  gold3: "#FDE68A",
+  orange: "#EA580C",
+  teal: "#14B8A6",
   emerald: "#10B981",
 };
 
 export default function OnboardingSummaryScreen() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false); // FIX: new error state
   const [workoutPlan, setWorkoutPlan] = useState<any>(null);
   const [mealPlan, setMealPlan] = useState<any>(null);
   const [scanPhoto, setScanPhoto] = useState<string | null>(null);
@@ -41,35 +55,82 @@ export default function OnboardingSummaryScreen() {
   const [tdee, setTdee] = useState<number | null>(null);
 
   useEffect(() => {
+    // FIX: Entire block is now wrapped in a .catch() so AsyncStorage failures
+    // (e.g. storage full, device lock, first-launch race) show an error UI
+    // instead of freezing on the loading spinner forever.
     Promise.all([
       AsyncStorage.getItem("@cached_workout_plan"),
       AsyncStorage.getItem("@cached_meal_plan"),
       AsyncStorage.getItem("@onboarding_scan_photo"),
       AsyncStorage.getItem("@target_transformation"),
       AsyncStorage.getItem("@user_tdee"),
-    ]).then(([wp, mp, sp, tt, tdeeRaw]) => {
-      if (wp) setWorkoutPlan(JSON.parse(wp));
-      if (mp) setMealPlan(JSON.parse(mp));
-      if (sp) setScanPhoto(sp);
-      if (tt) setTargetTransformation(JSON.parse(tt));
-      if (tdeeRaw) setTdee(parseInt(tdeeRaw, 10));
-      setLoading(false);
-    });
+    ])
+      .then(([wp, mp, sp, tt, tdeeRaw]) => {
+        // FIX: Each JSON.parse is individually try/catch'd.
+        // A corrupted cache for one item no longer crashes the whole screen.
+        if (wp) {
+          try { setWorkoutPlan(JSON.parse(wp)); } catch {}
+        }
+        if (mp) {
+          try { setMealPlan(JSON.parse(mp)); } catch {}
+        }
+        if (sp) setScanPhoto(sp);
+        if (tt) {
+          try { setTargetTransformation(JSON.parse(tt)); } catch {}
+        }
+        if (tdeeRaw) setTdee(parseInt(tdeeRaw, 10));
+        setLoading(false);
+      })
+      .catch(() => {
+        // FIX: If AsyncStorage itself fails entirely (rare but possible on
+        // low-storage devices), show error UI instead of infinite spinner.
+        setLoading(false);
+        setLoadError(true);
+      });
   }, []);
 
   function handleContinue() {
     router.replace("/subscription-plans" as any);
   }
 
+  // ── Loading state ──────────────────────────────────────────────────────────
   if (loading) {
     return (
       <View style={{ flex: 1, backgroundColor: SF.bg, justifyContent: "center", alignItems: "center" }}>
         <ActivityIndicator color={SF.gold} size="large" />
-        <Text style={{ color: SF.muted, marginTop: 16, fontFamily: "DMSans_400Regular", fontSize: 14 }}>Loading your plan…</Text>
+        <Text style={{ color: SF.muted, marginTop: 16, fontFamily: "DMSans_400Regular", fontSize: 14 }}>
+          Loading your plan…
+        </Text>
       </View>
     );
   }
 
+  // FIX: Error state — shown instead of an infinite spinner if AsyncStorage fails
+  if (loadError) {
+    return (
+      <View style={{ flex: 1, backgroundColor: SF.bg, justifyContent: "center", alignItems: "center", padding: 32 }}>
+        <MaterialIcons name="error-outline" size={48} color={SF.gold} />
+        <Text style={{ color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 18, marginTop: 16, textAlign: "center" }}>
+          Couldn't Load Your Plan
+        </Text>
+        <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 14, marginTop: 8, textAlign: "center", lineHeight: 20 }}>
+          There was a problem loading your generated plan. You can continue to
+          subscription or go back to regenerate.
+        </Text>
+        <TouchableOpacity
+          style={{ backgroundColor: SF.gold, borderRadius: 14, paddingVertical: 14, paddingHorizontal: 28, marginTop: 24 }}
+          onPress={handleContinue}
+        >
+          <Text style={{ color: SF.bg, fontFamily: "DMSans_700Bold", fontSize: 15 }}>Continue Anyway →</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={{ marginTop: 12 }} onPress={() => router.back()}>
+          <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 14 }}>← Go Back & Retry</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
+
+  // ── Main render ────────────────────────────────────────────────────────────
   const schedule: any[] = workoutPlan?.schedule ?? [];
   const workoutDays = schedule.filter((d: any) => !d.isRest);
   const restDays = schedule.filter((d: any) => d.isRest);
@@ -82,7 +143,9 @@ export default function OnboardingSummaryScreen() {
         <View style={styles.header}>
           <Text style={styles.badge}>⚡ YOUR PLAN IS READY</Text>
           <Text style={styles.title}>Here's What{"\n"}Awaits You</Text>
-          <Text style={styles.subtitle}>A personalised AI plan built around your body, goals, and lifestyle.</Text>
+          <Text style={styles.subtitle}>
+            A personalised AI plan built around your body, goals, and lifestyle.
+          </Text>
         </View>
 
         {/* Before / After comparison */}
@@ -140,7 +203,9 @@ export default function OnboardingSummaryScreen() {
                 <Text style={styles.statLabel}>Rest Days</Text>
               </View>
               <View style={styles.statBox}>
-                <Text style={styles.statNum}>{workoutDays.reduce((s: number, d: any) => s + (d.exercises?.length ?? 0), 0)}</Text>
+                <Text style={styles.statNum}>
+                  {workoutDays.reduce((s: number, d: any) => s + (d.exercises?.length ?? 0), 0)}
+                </Text>
                 <Text style={styles.statLabel}>Total Exercises</Text>
               </View>
             </View>
@@ -150,17 +215,25 @@ export default function OnboardingSummaryScreen() {
                 const isRest = match?.isRest ?? true;
                 return (
                   <ImageBackground source={{ uri: GOLDEN_PRIMARY }} style={{ flex: 1 }} resizeMode="cover">
-                  <View key={day} style={[styles.dayDot, isRest ? styles.dayDotRest : styles.dayDotActive]}>
-                    <Text style={[styles.dayDotText, !isRest && { color: SF.bg }]}>{day[0]}</Text>
-                  </View>
+                    <View
+                      key={day}
+                      style={[styles.dayDot, isRest ? styles.dayDotRest : styles.dayDotActive]}
+                    >
+                      <Text style={[styles.dayDotText, !isRest && { color: SF.bg }]}>{day[0]}</Text>
+                    </View>
                   </ImageBackground>
                 );
               })}
             </View>
             {workoutDays.slice(0, 2).map((day: any, i: number) => (
               <View key={i} style={styles.dayCard}>
-                <Text style={styles.dayCardTitle}>{day.day} — {day.muscleGroups?.join(", ") ?? day.focus ?? "Full Body"}</Text>
-                <Text style={styles.dayCardSub}>{day.exercises?.slice(0, 3).map((e: any) => e.name ?? e).join(" · ") ?? ""}{day.exercises?.length > 3 ? ` +${day.exercises.length - 3} more` : ""}</Text>
+                <Text style={styles.dayCardTitle}>
+                  {day.day} — {day.muscleGroups?.join(", ") ?? day.focus ?? "Full Body"}
+                </Text>
+                <Text style={styles.dayCardSub}>
+                  {day.exercises?.slice(0, 3).map((e: any) => e.name ?? e).join(" · ") ?? ""}
+                  {day.exercises?.length > 3 ? ` +${day.exercises.length - 3} more` : ""}
+                </Text>
               </View>
             ))}
           </View>
@@ -193,7 +266,9 @@ export default function OnboardingSummaryScreen() {
                 <View style={styles.mealDot} />
                 <View style={{ flex: 1 }}>
                   <Text style={styles.mealName}>{meal.name}</Text>
-                  <Text style={styles.mealMeta}>{meal.type} · {meal.calories} kcal · {meal.protein}g protein</Text>
+                  <Text style={styles.mealMeta}>
+                    {meal.type} · {meal.calories} kcal · {meal.protein}g protein
+                  </Text>
                 </View>
               </View>
             ))}

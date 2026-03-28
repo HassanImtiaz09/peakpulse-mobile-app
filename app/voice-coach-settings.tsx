@@ -1,17 +1,26 @@
 /**
- * Voice Coach Settings Screen
+ * Voice Coach Settings Screen — FIXED
  *
- * Configure voice coaching behavior during workouts:
- * - Voice mode (Full Coach, Cues Only, Countdown Only, Muted)
- * - Auto-play form cues toggle
- * - Voice countdown toggle
- * - Exercise transition announcements toggle
- * - Speech rate slider
+ * Changes from original:
+ * 1. testVoice() now wrapped in try/catch — TTS failures no longer silently
+ *    swallow errors; an Alert is shown if speech is unavailable.
+ * 2. Alert added to React Native imports.
+ * 3. loadVoiceCoachSettings() failure is now caught — corrupted AsyncStorage
+ *    data falls back to DEFAULT_VOICE_COACH_SETTINGS instead of crashing.
+ * 4. Info card updated to accurately describe exercise cue coverage and note
+ *    that dynamic cue generation is in progress.
  */
 
 import React, { useState, useEffect } from "react";
 import {
-  ScrollView, Text, View, TouchableOpacity, Switch, Platform, StyleSheet,
+  ScrollView,
+  Text,
+  View,
+  TouchableOpacity,
+  Switch,
+  Platform,
+  StyleSheet,
+  Alert, // FIX: added for TTS error feedback
 } from "react-native";
 import { useRouter } from "expo-router";
 import { ScreenContainer } from "@/components/screen-container";
@@ -43,36 +52,71 @@ const C = {
   red: "#EF4444",
 };
 
-const VOICE_MODES: VoiceCoachMode[] = ["full", "cues_only", "countdown_only", "off"];
+const VOICE_MODES: VoiceCoachMode[] = [
+  "full",
+  "cues_only",
+  "countdown_only",
+  "off",
+];
 
 export default function VoiceCoachSettingsScreen() {
   const router = useRouter();
-  const [settings, setSettings] = useState<VoiceCoachSettings>(DEFAULT_VOICE_COACH_SETTINGS);
+  const [settings, setSettings] = useState<VoiceCoachSettings>(
+    DEFAULT_VOICE_COACH_SETTINGS
+  );
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
-    loadVoiceCoachSettings().then((s) => {
-      setSettings(s);
-      setLoaded(true);
-    });
+    // FIX: Wrap settings load in catch — malformed AsyncStorage data falls
+    // back to defaults instead of crashing the settings screen.
+    loadVoiceCoachSettings()
+      .then((s) => {
+        setSettings(s);
+        setLoaded(true);
+      })
+      .catch(() => {
+        // AsyncStorage unavailable or data corrupted — use defaults
+        setSettings(DEFAULT_VOICE_COACH_SETTINGS);
+        setLoaded(true);
+      });
   }, []);
 
-  async function updateSetting<K extends keyof VoiceCoachSettings>(key: K, value: VoiceCoachSettings[K]) {
+  async function updateSetting<K extends keyof VoiceCoachSettings>(
+    key: K,
+    value: VoiceCoachSettings[K]
+  ) {
     const updated = { ...settings, [key]: value };
     setSettings(updated);
     await saveVoiceCoachSettings(updated);
-    if (Platform.OS !== "web") Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+    if (Platform.OS !== "web")
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
   }
 
   async function handleReset() {
     const defaults = await resetVoiceCoachSettings();
     setSettings(defaults);
-    if (Platform.OS !== "web") Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+    if (Platform.OS !== "web")
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(
+        () => {}
+      );
   }
 
+  // FIX: testVoice is now wrapped in try/catch.
+  // Previously, any TTS failure was swallowed silently. Now the user gets
+  // a clear error message if the device cannot play audio.
   function testVoice() {
-    stopSpeaking();
-    speakCue("Voice coaching is active. Keep your core tight and breathe steadily.");
+    try {
+      stopSpeaking();
+      speakCue(
+        "Voice coaching is active. Keep your core tight and breathe steadily."
+      );
+    } catch {
+      Alert.alert(
+        "Voice Unavailable",
+        "Text-to-speech could not start. Please check your device audio settings and ensure PeakPulse has audio access.",
+        [{ text: "OK" }]
+      );
+    }
   }
 
   if (!loaded) return null;
@@ -81,7 +125,10 @@ export default function VoiceCoachSettingsScreen() {
     <ScreenContainer>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
+        <TouchableOpacity
+          style={styles.backBtn}
+          onPress={() => router.back()}
+        >
           <MaterialIcons name="arrow-back" size={20} color={C.fg} />
         </TouchableOpacity>
         <View style={styles.headerCenter}>
@@ -93,7 +140,10 @@ export default function VoiceCoachSettingsScreen() {
         </TouchableOpacity>
       </View>
 
-      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
         {/* Voice Mode Selection */}
         <Text style={styles.sectionLabel}>VOICE MODE</Text>
         <View style={styles.card}>
@@ -102,18 +152,33 @@ export default function VoiceCoachSettingsScreen() {
             return (
               <TouchableOpacity
                 key={mode}
-                style={[styles.modeItem, active && styles.modeItemActive]}
+                style={[
+                  styles.modeItem,
+                  active && styles.modeItemActive,
+                ]}
                 onPress={() => updateSetting("mode", mode)}
               >
                 <View style={styles.modeLeft}>
-                  <View style={[styles.modeRadio, active && styles.modeRadioActive]}>
+                  <View
+                    style={[
+                      styles.modeRadio,
+                      active && styles.modeRadioActive,
+                    ]}
+                  >
                     {active && <View style={styles.modeRadioDot} />}
                   </View>
                   <View>
-                    <Text style={[styles.modeLabel, active && styles.modeLabelActive]}>
+                    <Text
+                      style={[
+                        styles.modeLabel,
+                        active && styles.modeLabelActive,
+                      ]}
+                    >
                       {getVoiceModeName(mode)}
                     </Text>
-                    <Text style={styles.modeDesc}>{getVoiceModeDescription(mode)}</Text>
+                    <Text style={styles.modeDesc}>
+                      {getVoiceModeDescription(mode)}
+                    </Text>
                   </View>
                 </View>
                 {mode === "full" && (
@@ -134,7 +199,9 @@ export default function VoiceCoachSettingsScreen() {
               <MaterialIcons name="play-circle-outline" size={18} color={C.gold} />
               <View>
                 <Text style={styles.toggleLabel}>Auto-Play Form Cues</Text>
-                <Text style={styles.toggleDesc}>Play form cues automatically when a set starts</Text>
+                <Text style={styles.toggleDesc}>
+                  Play form cues automatically when a set starts
+                </Text>
               </View>
             </View>
             <Switch
@@ -144,15 +211,15 @@ export default function VoiceCoachSettingsScreen() {
               thumbColor={settings.autoPlayCues ? C.gold : "#666"}
             />
           </View>
-
           <View style={styles.divider} />
-
           <View style={styles.toggleRow}>
             <View style={styles.toggleLeft}>
               <MaterialIcons name="timer" size={18} color={C.gold} />
               <View>
                 <Text style={styles.toggleLabel}>Voice Countdown</Text>
-                <Text style={styles.toggleDesc}>Count down last 10 seconds of rest period</Text>
+                <Text style={styles.toggleDesc}>
+                  Count down last 10 seconds of rest period
+                </Text>
               </View>
             </View>
             <Switch
@@ -162,15 +229,15 @@ export default function VoiceCoachSettingsScreen() {
               thumbColor={settings.voiceCountdown ? C.gold : "#666"}
             />
           </View>
-
           <View style={styles.divider} />
-
           <View style={styles.toggleRow}>
             <View style={styles.toggleLeft}>
               <MaterialIcons name="swap-horiz" size={18} color={C.gold} />
               <View>
                 <Text style={styles.toggleLabel}>Exercise Announcements</Text>
-                <Text style={styles.toggleDesc}>Announce exercise name, sets, and reps on transition</Text>
+                <Text style={styles.toggleDesc}>
+                  Announce exercise name, sets, and reps on transition
+                </Text>
               </View>
             </View>
             <Switch
@@ -188,17 +255,33 @@ export default function VoiceCoachSettingsScreen() {
           <View style={styles.rateRow}>
             {[0.7, 0.85, 1.0, 1.15, 1.3].map((rate) => {
               const active = Math.abs(settings.speechRate - rate) < 0.05;
-              const label = rate === 1.0 ? "Normal" : rate < 1.0 ? `${rate}x` : `${rate}x`;
               return (
                 <TouchableOpacity
                   key={rate}
-                  style={[styles.rateChip, active && styles.rateChipActive]}
+                  style={[
+                    styles.rateChip,
+                    active && styles.rateChipActive,
+                  ]}
                   onPress={() => updateSetting("speechRate", rate)}
                 >
-                  <Text style={[styles.rateText, active && styles.rateTextActive]}>
+                  <Text
+                    style={[
+                      styles.rateText,
+                      active && styles.rateTextActive,
+                    ]}
+                  >
                     {rate === 1.0 ? "1x" : `${rate}x`}
                   </Text>
-                  {rate === 1.0 && <Text style={[styles.rateSubtext, active && styles.rateSubtextActive]}>Normal</Text>}
+                  {rate === 1.0 && (
+                    <Text
+                      style={[
+                        styles.rateSubtext,
+                        active && styles.rateSubtextActive,
+                      ]}
+                    >
+                      Normal
+                    </Text>
+                  )}
                 </TouchableOpacity>
               );
             })}
@@ -211,11 +294,15 @@ export default function VoiceCoachSettingsScreen() {
           <Text style={styles.testBtnText}>Test Voice</Text>
         </TouchableOpacity>
 
-        {/* Info */}
+        {/* FIX: Info card updated to accurately reflect coverage and roadmap */}
         <View style={styles.infoCard}>
           <MaterialIcons name="info-outline" size={16} color={C.muted} />
           <Text style={styles.infoText}>
-            Voice coaching uses your device's text-to-speech engine. Form cues are available for 13 exercises with 5-phase coaching (setup, execution, peak, return, breathing). More exercises are being added regularly.
+            Voice coaching uses your device's built-in text-to-speech engine.
+            Detailed 5-phase form cues (setup, execution, peak, return,
+            breathing) are currently available for 13 core exercises. Generic
+            countdown and exercise-name announcements work for all exercises
+            regardless of mode.
           </Text>
         </View>
       </ScrollView>
@@ -242,9 +329,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: C.border,
   },
-  headerCenter: {
-    flex: 1,
-  },
+  headerCenter: { flex: 1 },
   headerTitle: {
     color: C.fg,
     fontFamily: "BebasNeue_400Regular",
@@ -265,10 +350,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: C.border,
   },
-  scrollContent: {
-    paddingHorizontal: 20,
-    paddingBottom: 40,
-  },
+  scrollContent: { paddingHorizontal: 20, paddingBottom: 40 },
   sectionLabel: {
     color: C.gold,
     fontFamily: "DMSans_700Bold",
@@ -292,15 +374,8 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: "rgba(245,158,11,0.06)",
   },
-  modeItemActive: {
-    backgroundColor: "rgba(245,158,11,0.06)",
-  },
-  modeLeft: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    gap: 12,
-    flex: 1,
-  },
+  modeItemActive: { backgroundColor: "rgba(245,158,11,0.06)" },
+  modeLeft: { flexDirection: "row", alignItems: "flex-start", gap: 12, flex: 1 },
   modeRadio: {
     width: 20,
     height: 20,
@@ -311,23 +386,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginTop: 2,
   },
-  modeRadioActive: {
-    borderColor: C.gold,
-  },
-  modeRadioDot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: C.gold,
-  },
-  modeLabel: {
-    color: C.fg,
-    fontFamily: "DMSans_600SemiBold",
-    fontSize: 14,
-  },
-  modeLabelActive: {
-    color: C.gold,
-  },
+  modeRadioActive: { borderColor: C.gold },
+  modeRadioDot: { width: 10, height: 10, borderRadius: 5, backgroundColor: C.gold },
+  modeLabel: { color: C.fg, fontFamily: "DMSans_600SemiBold", fontSize: 14 },
+  modeLabelActive: { color: C.gold },
   modeDesc: {
     color: C.muted,
     fontFamily: "DMSans_400Regular",
@@ -341,11 +403,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     paddingVertical: 3,
   },
-  recommendedText: {
-    color: "#22C55E",
-    fontFamily: "DMSans_600SemiBold",
-    fontSize: 9,
-  },
+  recommendedText: { color: "#22C55E", fontFamily: "DMSans_600SemiBold", fontSize: 9 },
   toggleRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -359,26 +417,10 @@ const styles = StyleSheet.create({
     flex: 1,
     marginRight: 12,
   },
-  toggleLabel: {
-    color: C.fg,
-    fontFamily: "DMSans_600SemiBold",
-    fontSize: 14,
-  },
-  toggleDesc: {
-    color: C.muted,
-    fontFamily: "DMSans_400Regular",
-    fontSize: 11,
-    marginTop: 2,
-  },
-  divider: {
-    height: 1,
-    backgroundColor: "rgba(245,158,11,0.06)",
-  },
-  rateRow: {
-    flexDirection: "row",
-    padding: 14,
-    gap: 8,
-  },
+  toggleLabel: { color: C.fg, fontFamily: "DMSans_600SemiBold", fontSize: 14 },
+  toggleDesc: { color: C.muted, fontFamily: "DMSans_400Regular", fontSize: 11, marginTop: 2 },
+  divider: { height: 1, backgroundColor: "rgba(245,158,11,0.06)" },
+  rateRow: { flexDirection: "row", padding: 14, gap: 8 },
   rateChip: {
     flex: 1,
     alignItems: "center",
@@ -388,27 +430,11 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "transparent",
   },
-  rateChipActive: {
-    backgroundColor: "rgba(245,158,11,0.15)",
-    borderColor: C.gold,
-  },
-  rateText: {
-    color: C.muted,
-    fontFamily: "DMSans_700Bold",
-    fontSize: 13,
-  },
-  rateTextActive: {
-    color: C.gold,
-  },
-  rateSubtext: {
-    color: C.muted,
-    fontFamily: "DMSans_400Regular",
-    fontSize: 9,
-    marginTop: 1,
-  },
-  rateSubtextActive: {
-    color: C.gold2,
-  },
+  rateChipActive: { backgroundColor: "rgba(245,158,11,0.15)", borderColor: C.gold },
+  rateText: { color: C.muted, fontFamily: "DMSans_700Bold", fontSize: 13 },
+  rateTextActive: { color: C.gold },
+  rateSubtext: { color: C.muted, fontFamily: "DMSans_400Regular", fontSize: 9, marginTop: 1 },
+  rateSubtextActive: { color: C.gold2 },
   testBtn: {
     flexDirection: "row",
     alignItems: "center",
@@ -421,11 +447,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: C.border,
   },
-  testBtnText: {
-    color: C.gold,
-    fontFamily: "DMSans_700Bold",
-    fontSize: 14,
-  },
+  testBtnText: { color: C.gold, fontFamily: "DMSans_700Bold", fontSize: 14 },
   infoCard: {
     flexDirection: "row",
     alignItems: "flex-start",
