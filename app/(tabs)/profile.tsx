@@ -224,7 +224,7 @@ export default function ProfileScreen() {
       description={paywallFeature?.desc}
     />
     <View style={{ flex: 1, backgroundColor: BG }}>
-      <ScrollView contentContainerStyle={{ paddingBottom: 32 }} showsVerticalScrollIndicator={false} style={{ flex: 1 }}>
+      <ScrollView contentContainerStyle={{ paddingBottom: 120 }} showsVerticalScrollIndicator={false} style={{ flex: 1 }}>
         {/* Hero Header */}
         <ImageBackground source={{ uri: HERO_BG }} style={{ height: 200 }} resizeMode="cover">
           <View style={{ flex: 1, backgroundColor: "rgba(8,8,16,0.65)", justifyContent: "flex-end", padding: 20, paddingTop: 52 }}>

@@ -2589,3 +2589,9 @@
 - [x] Add Recalculate TDEE section to Settings screen with editable weight/activity/goal
 - [x] Add 7-day rolling calorie average to dashboard
 - [x] Run tests and verify TypeScript compiles (2088 tests pass, 0 TS errors)
+
+## Bug Fix (Round 35) — Tab Bar Overlapping Bottom Content
+- [x] Fix Profile tab: "Sign In to Sync" and "Exit Guest Mode" buttons hidden behind tab bar (paddingBottom 32→120)
+- [x] Audit all tab screens (Home, Train/Plans, Nutrition/Meals, Profile) for bottom padding
+- [x] Add consistent bottom padding (≥120) to all scrollable tab screens (profile, scan, ai-coach fixed; index, plans, meals already adequate)
+- [x] Run tests and verify TypeScript compiles (2088 tests pass, 0 TS errors)

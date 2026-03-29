@@ -261,7 +261,7 @@ export default function AICoachScreen() {
 
       {/* ── Insights Tab ── */}
       {activeTab === "insights" && (
-        <ScrollView contentContainerStyle={{ padding: 20, paddingBottom: 48 }} showsVerticalScrollIndicator={false}>
+        <ScrollView contentContainerStyle={{ padding: 20, paddingBottom: 120 }} showsVerticalScrollIndicator={false}>
           {!insights ? (
             <View style={{ alignItems: "center", paddingVertical: 40 }}>
               <Text style={{ fontSize: 64, marginBottom: 20 }}>🤖</Text>
@@ -447,7 +447,7 @@ export default function AICoachScreen() {
       {activeTab === "chat" && (
         <View style={{ flex: 1 }}>
           {chatMessages.length === 0 ? (
-            <ScrollView contentContainerStyle={{ padding: 20, paddingBottom: 20 }}>
+            <ScrollView contentContainerStyle={{ padding: 20, paddingBottom: 120 }}>
               <View style={{ alignItems: "center", marginBottom: 24 }}>
                 <Text style={{ fontSize: 56, marginBottom: 12 }}>🤖</Text>
                 <Text style={{ color: SF.fg, fontFamily: "BebasNeue_400Regular", fontSize: 20, textAlign: "center", marginBottom: 8 }}>
@@ -475,7 +475,7 @@ export default function AICoachScreen() {
               ref={chatListRef}
               data={chatMessages}
               keyExtractor={(_, i) => String(i)}
-              contentContainerStyle={{ padding: 16, paddingBottom: 16 }}
+              contentContainerStyle={{ padding: 16, paddingBottom: 120 }}
               renderItem={({ item }) => (
                 <View style={{ flexDirection: item.role === "user" ? "row-reverse" : "row", marginBottom: 12, alignItems: "flex-end", gap: 8 }}>
                   {item.role === "assistant" && (

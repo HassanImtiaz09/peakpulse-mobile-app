@@ -536,7 +536,7 @@ export default function ScanScreen() {
           </TouchableOpacity>
         </View>
       </View>
-      <ReAnimated.ScrollView contentContainerStyle={{ paddingBottom: 32 }} showsVerticalScrollIndicator={false} style={{ flex: 1 }} onScroll={onScroll} scrollEventThrottle={16}>
+      <ReAnimated.ScrollView contentContainerStyle={{ paddingBottom: 120 }} showsVerticalScrollIndicator={false} style={{ flex: 1 }} onScroll={onScroll} scrollEventThrottle={16}>
         {/* Progress Comparison link */}
         <TouchableOpacity
           style={{ marginHorizontal: 20, marginTop: 4, marginBottom: 8, backgroundColor: ICE_DIM, borderRadius: 14, padding: 14, flexDirection: "row", alignItems: "center", gap: 12, borderWidth: 1, borderColor: ICE_BORDER }}
