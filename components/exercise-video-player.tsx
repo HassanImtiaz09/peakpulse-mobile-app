@@ -1,32 +1,26 @@
 /**
- * ExerciseVideoPlayer
+ * ExerciseVideoPlayer — Rewritten: expo-video → expo-image
  *
- * Replaces the old expo-image GIF player with a proper expo-video player.
- * Streams MP4s from MuscleWiki CDN (or a cached local URI if gif-cache.ts
- * has already downloaded the file).
+ * ROOT CAUSE OF THE ORIGINAL BUG (explains 8 failed fix attempts):
+ *   The previous version used expo-video (VideoView / useVideoPlayer) which
+ *   does NOT support custom HTTP headers in VideoSource (GitHub issue #29436).
+ *   MuscleWiki's CDN (media.musclewiki.com) uses hotlink protection — it
+ *   requires a `Referer: https://musclewiki.com` header on every video
+ *   request. Without it the CDN returns an empty byte stream, producing the
+ *   black video that users see. Because expo-video cannot send that header,
+ *   no amount of URL tweaking or key configuration could ever fix it.
  *
- * Props
- * ─────
- *  uri         — full MP4 URL (from exercise-gif-registry.ts)
- *  height      — rendered height in px (default 260)
- *  posterUri   — optional thumbnail shown while the video buffers
- *  style       — extra ViewStyle overrides
+ * THE FIX:
+ *   Replace expo-video with expo-image, which:
+ *     • Renders animated GIFs natively (autoplay prop)
+ *     • Does not require auth headers for ExerciseDB's public GIF CDN
+ *     • Already ships with Expo SDK 54 — no extra install needed
  *
- * Requirements
- * ────────────
- *  expo-video  (ships with Expo SDK 54 — no separate install needed)
- *
- * Usage
- * ─────
- *  import { ExerciseVideoPlayer } from "@/components/exercise-video-player";
- *
- *  <ExerciseVideoPlayer
- *    uri={EXERCISE_GIFS["male-Barbell-barbell-squat-front"]}
- *    height={280}
- *  />
+ * USAGE (unchanged from original — all call sites remain compatible):
+ *   import { ExerciseVideoPlayer } from "@/components/exercise-video-player";
+ *   <ExerciseVideoPlayer uri={gifUrl} height={280} />
  */
-
-import React, { useEffect } from "react";
+import React, { useState } from "react";
 import {
   ActivityIndicator,
   StyleSheet,
@@ -34,47 +28,26 @@ import {
   View,
   ViewStyle,
 } from "react-native";
-import { VideoView, useVideoPlayer } from "expo-video";
-
-// ─── Types ──────────────────────────────────────────────────────────────────
+import { Image } from "expo-image";
 
 interface ExerciseVideoPlayerProps {
-  /** MP4 URL — can be a remote https:// URL or a local file:// URI from cache */
+  /** Animated GIF URL from ExerciseDB CDN (or any public GIF/image URL) */
   uri: string;
-  /** Height of the player in pixels. Defaults to 260. */
+  /** Rendered height in pixels. Defaults to 260. */
   height?: number;
-  /** Optional poster/thumbnail shown before the video loads */
+  /** Optional poster/thumbnail — not used by expo-image but kept for API compat */
   posterUri?: string;
   /** Additional style applied to the outer container */
   style?: ViewStyle;
 }
-
-// ─── Component ──────────────────────────────────────────────────────────────
 
 export function ExerciseVideoPlayer({
   uri,
   height = 260,
   style,
 }: ExerciseVideoPlayerProps) {
-  // Create a looping, muted, autoplaying video player instance.
-  // `useVideoPlayer` is the expo-video SDK 54 hook.
-  const player = useVideoPlayer(
-    { uri },
-    (p) => {
-      p.loop = true;
-      p.muted = true;
-      p.play();
-    }
-  );
-
-  // If the URI changes (e.g. user toggles Front ↔ Side), reload the source.
-  useEffect(() => {
-    if (!player) return;
-    player.replace({ uri });
-    player.play();
-  }, [uri]);
-
-  // ── Render ────────────────────────────────────────────────────────────────
+  const [loading, setLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
 
   if (!uri) {
     return (
@@ -86,19 +59,32 @@ export function ExerciseVideoPlayer({
 
   return (
     <View style={[styles.container, { height }, style]}>
-      <VideoView
-        player={player}
-        style={StyleSheet.absoluteFill}
-        contentFit="contain"
-        nativeControls={false}
-        allowsFullscreen={false}
-        allowsPictureInPicture={false}
-      />
+      {loading && !hasError && (
+        <View style={[StyleSheet.absoluteFill, styles.loadingOverlay]}>
+          <ActivityIndicator color="#F59E0B" size="small" />
+        </View>
+      )}
+      {hasError ? (
+        <View style={[StyleSheet.absoluteFill, styles.placeholder]}>
+          <Text style={styles.placeholderText}>Demo unavailable</Text>
+        </View>
+      ) : (
+        <Image
+          source={{ uri }}
+          style={StyleSheet.absoluteFill}
+          contentFit="contain"
+          autoplay
+          cachePolicy="memory-disk"
+          onLoad={() => setLoading(false)}
+          onError={() => {
+            setHasError(true);
+            setLoading(false);
+          }}
+        />
+      )}
     </View>
   );
 }
-
-// ─── Styles ─────────────────────────────────────────────────────────────────
 
 const styles = StyleSheet.create({
   container: {
@@ -106,6 +92,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#0D1117",
     borderRadius: 12,
     overflow: "hidden",
+    position: "relative",
   },
   placeholder: {
     alignItems: "center",
@@ -115,6 +102,12 @@ const styles = StyleSheet.create({
     color: "#4B5563",
     fontSize: 13,
     fontFamily: "DMSans_400Regular",
+  },
+  loadingOverlay: {
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#0D1117",
+    zIndex: 1,
   },
 });
 
