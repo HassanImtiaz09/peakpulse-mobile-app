@@ -1,21 +1,23 @@
 /**
- * Round 65 — Exercise Demo Tests (Updated: Local GIF asset integration)
+ * Round 65 — Exercise Demo Tests (Updated: MP4 Video Player Integration)
  *
  * Tests for the exercise demo system:
- * - Local GIF asset resolution
+ * - Video URL resolution
  * - Exercise demo lookup
  * - Workout type coverage
  */
 import { describe, it, expect } from "vitest";
 import { getExerciseDemo, normaliseExerciseName } from "../lib/exercise-demos";
+import { EXERCISE_GIFS, getExerciseVideoUrl } from "../lib/exercise-gif-registry";
+import * as fs from "fs";
 
 // ── Exercise Demo Lookup ──────────────────────────────────────────────────────
 
 describe("Exercise Demo Lookup", () => {
-  it("returns correct demo for exact match exercises with local GIF assets", () => {
+  it("returns correct demo for exact match exercises with video keys", () => {
     const benchPress = getExerciseDemo("bench press");
     expect(benchPress.gifAsset).toBeDefined();
-    expect(typeof benchPress.gifAsset).toBe("number");
+    expect(benchPress.gifAsset).not.toBe(undefined);
     expect(benchPress.cue).toContain("shoulder blades");
 
     const squat = getExerciseDemo("squat");
@@ -41,13 +43,13 @@ describe("Exercise Demo Lookup", () => {
     const demo3 = getExerciseDemo("pushup");
     expect(demo1.gifAsset).toBe(demo2.gifAsset);
     expect(demo2.gifAsset).toBe(demo3.gifAsset);
-    expect(typeof demo1.gifAsset).toBe("number");
+    expect(demo1.gifAsset).toBeDefined();
   });
 
   it("returns fallback demo for unknown exercises via keyword matching", () => {
     const demo = getExerciseDemo("barbell back squat variation");
     expect(demo.gifAsset).toBeDefined();
-    expect(typeof demo.gifAsset).toBe("number");
+    expect(demo.gifAsset).not.toBe(undefined);
   });
 
   it("returns generic fallback for completely unknown exercises", () => {
@@ -98,9 +100,9 @@ describe("Exercise Name Normalisation", () => {
   });
 });
 
-// ── Local GIF Asset Validity ────────────────────────────────────────────────────
+// ── MP4 Video Asset Validity ────────────────────────────────────────────────
 
-describe("Local GIF Asset Validity", () => {
+describe("MP4 Video Asset Validity", () => {
   const exerciseNames = [
     "bench press", "push up", "dumbbell fly", "incline bench press",
     "pull up", "lat pulldown", "barbell row", "dumbbell row", "deadlift",
@@ -112,11 +114,11 @@ describe("Local GIF Asset Validity", () => {
     "burpee", "jumping jack", "kettlebell swing", "jump rope",
   ];
 
-  it("all major exercises have local GIF assets", () => {
+  it("all major exercises have video keys", () => {
     for (const name of exerciseNames) {
       const demo = getExerciseDemo(name);
       expect(demo.gifAsset).toBeDefined();
-      expect(typeof demo.gifAsset).toBe("number");
+      expect(demo.gifAsset).not.toBe(undefined);
     }
   });
 
@@ -128,37 +130,36 @@ describe("Local GIF Asset Validity", () => {
   });
 });
 
-// ── GIF-based Demo System ────────────────────────────────────────────────────
+// ── Video-based Demo System ──────────────────────────────────────────────────
 
-describe("GIF-based Demo System", () => {
-  it("exercise-demo-player component uses local GIF assets via expo-image", async () => {
-    const fs = await import("fs");
-    const content = fs.readFileSync("/home/ubuntu/peakpulse-mobile/components/exercise-demo-player.tsx", "utf-8");
-    expect(content).toContain("ExerciseDemoPlayer");
-    expect(content).toContain("fullscreen");
-    expect(content).toContain("Modal");
-    expect(content).toContain("resolveGifAsset");
-    expect(content).toContain("expo-image");
-    expect(content).not.toContain("VideoView");
-  });
-
-  it("enhanced-gif-player component uses local GIF assets via expo-image", async () => {
-    const fs = await import("fs");
+describe("Video-based Demo System", () => {
+  it("enhanced-gif-player component uses ExerciseVideoPlayer", () => {
     const content = fs.readFileSync("/home/ubuntu/peakpulse-mobile/components/enhanced-gif-player.tsx", "utf-8");
-    expect(content).toContain("EnhancedGifPlayer");
-    expect(content).toContain("angleViews");
-    expect(content).toContain("fullscreen");
-    expect(content).toContain("Modal");
-    expect(content).toContain("resolveGifAsset");
-    expect(content).toContain("expo-image");
-    expect(content).not.toContain("VideoView");
+    expect(content).toContain("ExerciseVideoPlayer");
+    expect(content).toContain("getExerciseVideoUrl");
+    expect(content).toContain("exerciseKey");
+    expect(content).not.toContain("resolveGifAsset");
+    expect(content).not.toContain("angleViews");
   });
 
-  it("no YouTube player component exists", async () => {
-    const fs = await import("fs");
-    expect(() => {
-      fs.readFileSync("/home/ubuntu/peakpulse-mobile/components/youtube-player.tsx", "utf-8");
-    }).toThrow();
+  it("exercise-gif-registry provides MP4 URLs from musclewiki", () => {
+    const allUrls = Object.values(EXERCISE_GIFS).flat();
+    expect(allUrls.length).toBe(149);
+    for (const url of allUrls) {
+      expect(url).toContain("musclewiki.com");
+      expect(url).toContain(".mp4");
+    }
+    expect(getExerciseVideoUrl("male-barbell-bench-press-front", "front")).toContain("musclewiki.com");
+  });
+
+  it("gif-cache has been replaced with video-cache", () => {
+    const content = fs.readFileSync("/home/ubuntu/peakpulse-mobile/lib/gif-cache.ts", "utf-8");
+    expect(content).toContain("resolveVideoUri");
+    expect(content).toContain("prefetchExerciseVideos");
+    expect(content).toContain("clearVideoCache");
+    expect(content).toContain("EXERCISE_GIFS");
+    expect(content).not.toContain("preCacheWorkoutGifs");
+    expect(content).not.toContain("getCachedGifUri");
   });
 });
 
@@ -183,7 +184,7 @@ describe("Workout Type Coverage", () => {
     "step up", "kettlebell swing",
   ];
 
-  it("all gym exercises have working demos with local GIF assets", () => {
+  it("all gym exercises have working demos with video keys", () => {
     for (const name of gymExercises) {
       const demo = getExerciseDemo(name);
       expect(demo.gifAsset).toBeDefined();
@@ -191,7 +192,7 @@ describe("Workout Type Coverage", () => {
     }
   });
 
-  it("all home/bodyweight exercises have working demos with local GIF assets", () => {
+  it("all home/bodyweight exercises have working demos with video keys", () => {
     for (const name of homeExercises) {
       const demo = getExerciseDemo(name);
       expect(demo.gifAsset).toBeDefined();
@@ -199,7 +200,7 @@ describe("Workout Type Coverage", () => {
     }
   });
 
-  it("all mixed/calisthenics exercises have working demos with local GIF assets", () => {
+  it("all mixed/calisthenics exercises have working demos with video keys", () => {
     for (const name of mixedExercises) {
       const demo = getExerciseDemo(name);
       expect(demo.gifAsset).toBeDefined();

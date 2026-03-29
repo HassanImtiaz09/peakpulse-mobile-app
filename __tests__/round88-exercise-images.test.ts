@@ -7,7 +7,7 @@ import * as path from "path";
 
 const ROOT = path.resolve(__dirname, "..");
 
-describe("Exercise GIF Registry — CDN Migration", () => {
+describe("Exercise Video Registry — MuscleWiki Migration", () => {
   const registryContent = fs.readFileSync(
     path.join(ROOT, "lib/exercise-gif-registry.ts"),
     "utf-8"
@@ -21,9 +21,12 @@ describe("Exercise GIF Registry — CDN Migration", () => {
     expect(registryContent).not.toContain("require(");
   });
 
-  it("all values are CDN URLs (manuscdn.com)", () => {
-    const urls = registryContent.match(/https:\/\/files\.manuscdn\.com\/[^"]+/g) || [];
-    expect(urls.length).toBeGreaterThanOrEqual(70);
+  it("all values are MuscleWiki MP4 URLs (via mw() helper)", () => {
+    // URLs are constructed via mw() helper, not inline — count mw() calls
+    const mwCalls = registryContent.match(/mw\([^)]+\)/g) || [];
+    expect(mwCalls.length).toBeGreaterThanOrEqual(149);
+    // Verify MW base URL is defined
+    expect(registryContent).toContain("media.musclewiki.com/media/uploads/videos/branded");
   });
 
   it("has entries for all major muscle groups", () => {
@@ -35,54 +38,40 @@ describe("Exercise GIF Registry — CDN Migration", () => {
     expect(registryContent).toContain("// ── Cardio");
   });
 
-  it("has at least 76 exercise entries", () => {
-    const entries = registryContent.match(/"[^"]+": "https:\/\//g) || [];
-    expect(entries.length).toBeGreaterThanOrEqual(76);
+  it("has at least 149 exercise entries", () => {
+    const entries = registryContent.match(/mw\([^)]+\)/g) || [];
+    expect(entries.length).toBeGreaterThanOrEqual(149);
   });
 
-  it("exports CDN_GIFS map", () => {
-    expect(registryContent).toContain("export const CDN_GIFS");
+  it("exports getExerciseVideoUrl function", () => {
+    expect(registryContent).toContain("export function getExerciseVideoUrl(");
   });
 });
 
-describe("GIF Resolver — CDN URL Handling", () => {
-  const resolverContent = fs.readFileSync(
-    path.join(ROOT, "lib/gif-resolver.ts"),
+describe("Video URI Resolver — Cache Handling", () => {
+  const cacheContent = fs.readFileSync(
+    path.join(ROOT, "lib/gif-cache.ts"),
     "utf-8"
   );
 
-  it("builds KEY_TO_URL lookup from string entries", () => {
-    expect(resolverContent).toContain("KEY_TO_URL");
-    expect(resolverContent).not.toContain("URL_TO_ASSET");
+  it("exports resolveVideoUri function", () => {
+    expect(cacheContent).toContain("export async function resolveVideoUri(");
   });
 
-  it("handles CDN URLs as pass-through", () => {
-    expect(resolverContent).toContain('urlOrKey.startsWith("https://files.manuscdn.com/")');
+  it("imports EXERCISE_GIFS from the registry", () => {
+    expect(cacheContent).toContain('import { EXERCISE_GIFS } from "@/lib/exercise-gif-registry"');
   });
 
-  it("resolves side-view URLs to front-view equivalents", () => {
-    expect(resolverContent).toContain("stem.includes(\"side\")");
-    expect(resolverContent).toContain(".replace(/-side_[A-Za-z0-9]+$/, \"-front\")");
+  it("exports prefetchExerciseVideos function", () => {
+    expect(cacheContent).toContain("export async function prefetchExerciseVideos(");
   });
 
-  it("handles .png extension in stem extraction", () => {
-    expect(resolverContent).toContain("png|jpg|jpeg");
+  it("exports clearVideoCache function", () => {
+    expect(cacheContent).toContain("export async function clearVideoCache(");
   });
 
-  it("exports resolveGifAsset function", () => {
-    expect(resolverContent).toContain("export function resolveGifAsset(");
-  });
-
-  it("exports resolveGifAssetOrNull function", () => {
-    expect(resolverContent).toContain("export function resolveGifAssetOrNull(");
-  });
-
-  it("exports hasLocalGif function", () => {
-    expect(resolverContent).toContain("export function hasLocalGif(");
-  });
-
-  it("exports hasSideViewGif function", () => {
-    expect(resolverContent).toContain("export function hasSideViewGif(");
+  it("exports getVideoCacheSize function", () => {
+    expect(cacheContent).toContain("export async function getVideoCacheSize(");
   });
 });
 
@@ -96,11 +85,12 @@ describe("Exercise Demos — Updated Types", () => {
     expect(demosContent).toContain("gifAsset: number | string");
   });
 
-  it("gif() helper returns number | string", () => {
-    expect(demosContent).toContain("function gif(key: string): number | string");
+  it("getExerciseDemo() returns gifAsset", () => {
+    // Each demo entry uses gifAsset: gif("...") pattern
+    expect(demosContent).toContain("gifAsset: gif(");
   });
 
-  it("has no MuscleWiki references", () => {
+  it("does NOT have MuscleWiki references", () => {
     expect(demosContent.toLowerCase()).not.toContain("musclewiki");
   });
 });
@@ -116,10 +106,10 @@ describe("Exercise Data — No MuscleWiki URLs", () => {
   });
 
   it("all gifUrl values use CDN URLs", () => {
-    const gifUrls = dataContent.match(/gifUrl: "([^"]+)"/g) || [];
+    const gifUrls = dataContent.match(/gifUrl: "([^'"]+)"/g) || [];
     expect(gifUrls.length).toBeGreaterThan(100);
     for (const url of gifUrls) {
-      expect(url).toMatch(/cloudfront\.net|manuscdn\.com/); // CDN uses both domains // CDN uses CloudFront
+      expect(url).toMatch(/cloudfront\.net|manuscdn\.com/);
     }
   });
 
@@ -136,31 +126,26 @@ describe("Exercise Data — No MuscleWiki URLs", () => {
   });
 });
 
-describe("Exercise Demo Player — String URL Support", () => {
-  const playerContent = fs.readFileSync(
-    path.join(ROOT, "components/exercise-demo-player.tsx"),
-    "utf-8"
-  );
-
-  it("gifAsset prop accepts number | string", () => {
-    expect(playerContent).toContain("gifAsset?: number | string");
-  });
-
-  it("handles string URLs with uri wrapper", () => {
-    expect(playerContent).toContain('typeof currentAsset === "string"');
-    expect(playerContent).toContain("{ uri: currentAsset }");
-  });
-});
-
-describe("Enhanced GIF Player — String URL Support", () => {
+describe("Enhanced GIF Player — Video Player Integration", () => {
   const enhancedContent = fs.readFileSync(
     path.join(ROOT, "components/enhanced-gif-player.tsx"),
     "utf-8"
   );
 
-  it("handles string URLs with uri wrapper", () => {
-    expect(enhancedContent).toContain('typeof currentAsset === "string"');
-    expect(enhancedContent).toContain("{ uri: currentAsset }");
+  it("uses ExerciseVideoPlayer component", () => {
+    expect(enhancedContent).toContain("<ExerciseVideoPlayer");
+  });
+
+  it("accepts exerciseKey prop", () => {
+    expect(enhancedContent).toContain("exerciseKey: string;");
+  });
+
+  it("calls getExerciseVideoUrl", () => {
+    expect(enhancedContent).toContain("getExerciseVideoUrl(frontKey, angle)");
+  });
+
+  it("does not use resolveGifAsset", () => {
+    expect(enhancedContent).not.toContain("resolveGifAsset");
   });
 });
 
@@ -173,10 +158,10 @@ describe("Old GIF Assets Removed", () => {
     expect(gifFiles.length).toBe(0);
   });
 
-  it("PNG files exist as local copies", () => {
+  it("no .png files remain in assets/exercise-gifs", () => {
     const files = fs.readdirSync(gifDir);
     const pngFiles = files.filter((f) => f.endsWith(".png"));
-    expect(pngFiles.length).toBeGreaterThanOrEqual(0); // GIFs served from CDN, not local PNG copies
+    expect(pngFiles.length).toBe(0);
   });
 });
 
@@ -187,7 +172,6 @@ describe("Exercise-Demo Mismatch Check", () => {
   );
 
   it("bench press uses barbell-bench-press image", () => {
-    // Find the bench press entry and verify it references bench press image
     const benchSection = demosContent.match(/"bench press":\s*\{[^}]+\}/s);
     expect(benchSection).toBeTruthy();
     expect(benchSection![0]).toContain("barbell-bench-press");

@@ -36,11 +36,11 @@ import { ScreenContainer } from "@/components/screen-container";
 import { useAuth } from "@/hooks/use-auth";
 import { trpc } from "@/lib/trpc";
 import { useKeepAwake } from "expo-keep-awake";
-import { getExerciseDemo } from "@/lib/exercise-demos";
+import { getExerciseDemo, getRegistryKeyForExercise } from "@/lib/exercise-demos";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ExerciseDemoPlayer } from "@/components/exercise-demo-player";
 import { BodyDiagramInline } from "@/components/body-diagram";
-import { EnhancedGifPlayer } from "@/components/enhanced-gif-player";
+import EnhancedGifPlayer from "@/components/enhanced-gif-player";
 import { getExerciseInfo, getAlternativeExercises } from "@/lib/exercise-data";
 import {
   WorkoutTimerCoach,
@@ -59,7 +59,7 @@ import {
 } from "@/lib/rest-timer-settings";
 import { preloadExerciseVideos, clearPreloadCache } from "@/lib/video-preload";
 import { autoCacheCurrentWorkout } from "@/lib/offline-workout-cache";
-import { preCacheWorkoutGifs, refreshManifestCache } from "@/lib/gif-cache";
+import { prefetchExerciseVideos } from "@/lib/gif-cache";
 import { recordWorkoutCompleted, recordTimerUsed } from "@/lib/feature-discovery";
 import { evaluateAndScheduleSmartReminders } from "@/lib/smart-reminders";
 import { GOLDEN_WORKOUT, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgrounds";
@@ -213,8 +213,7 @@ function ExerciseDemoVideo({
       {/* Exercise GIF Demo */}
       {showEnhanced && exerciseInfo ? (
         <EnhancedGifPlayer
-          angleViews={exerciseInfo.angleViews}
-          exerciseName={exerciseName}
+          exerciseKey={getRegistryKeyForExercise(exerciseName)}
           height={compact ? 160 : 220}
         />
       ) : (
@@ -627,13 +626,9 @@ export default function ActiveWorkoutScreen() {
         console.warn("[ActiveWorkout] autoCacheCurrentWorkout failed:", err);
       });
 
-      preCacheWorkoutGifs(exercises.map((e: Exercise) => e.name))
-        .then(() => {
-          refreshManifestCache();
-        })
-        .catch((err) => {
-          console.warn("[ActiveWorkout] preCacheWorkoutGifs failed:", err);
-        });
+      prefetchExerciseVideos().catch((err: unknown) => {
+        console.warn("[ActiveWorkout] prefetchExerciseVideos failed:", err);
+      });
     }
     return () => clearPreloadCache();
   }, [workoutStarted]);

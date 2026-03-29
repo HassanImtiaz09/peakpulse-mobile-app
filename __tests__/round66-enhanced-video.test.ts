@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 
 // ── Exercise Demos Tests ──────────────────────────────────────────────────────
-describe("Exercise Demos with Local GIF Assets", () => {
+describe("Exercise Demos with Remote MP4 Videos", () => {
   it("getExerciseDemo returns gifAsset for all exercises", async () => {
     const { getExerciseDemo } = await import("../lib/exercise-demos");
 
@@ -18,7 +18,6 @@ describe("Exercise Demos with Local GIF Assets", () => {
     for (const name of exercises) {
       const demo = getExerciseDemo(name);
       expect(demo.gifAsset).toBeDefined();
-      expect(typeof demo.gifAsset).toBe("number");
     }
   });
 
@@ -27,20 +26,18 @@ describe("Exercise Demos with Local GIF Assets", () => {
     const demo = getExerciseDemo("bench press");
 
     expect(demo).toHaveProperty("gifAsset");
-    expect(demo).toHaveProperty("gifUrl");
     expect(demo).toHaveProperty("cue");
-    expect(typeof demo.gifAsset).toBe("number");
+    expect(demo.gifAsset).toBeDefined();
     expect(typeof demo.cue).toBe("string");
   });
 
-  it("All exercises use local GIF assets (no remote URLs needed)", async () => {
+  it("All exercises use local or remote assets", async () => {
     const { getExerciseDemo } = await import("../lib/exercise-demos");
     const demo = getExerciseDemo("squat");
     expect(demo.gifAsset).toBeDefined();
-    expect(typeof demo.gifAsset).toBe("number");
   });
 
-  it("Gym exercises have local GIF assets", async () => {
+  it("Gym exercises have assets", async () => {
     const { getExerciseDemo } = await import("../lib/exercise-demos");
     const gymExercises = [
       "bench press", "lat pulldown", "leg press", "cable fly",
@@ -49,11 +46,10 @@ describe("Exercise Demos with Local GIF Assets", () => {
     for (const name of gymExercises) {
       const demo = getExerciseDemo(name);
       expect(demo.gifAsset).toBeDefined();
-      expect(typeof demo.gifAsset).toBe("number");
     }
   });
 
-  it("Home exercises have local GIF assets", async () => {
+  it("Home exercises have assets", async () => {
     const { getExerciseDemo } = await import("../lib/exercise-demos");
     const homeExercises = [
       "push up", "plank", "burpee", "mountain climber",
@@ -62,11 +58,10 @@ describe("Exercise Demos with Local GIF Assets", () => {
     for (const name of homeExercises) {
       const demo = getExerciseDemo(name);
       expect(demo.gifAsset).toBeDefined();
-      expect(typeof demo.gifAsset).toBe("number");
     }
   });
 
-  it("Mixed exercises have local GIF assets", async () => {
+  it("Mixed exercises have assets", async () => {
     const { getExerciseDemo } = await import("../lib/exercise-demos");
     const mixedExercises = [
       "dumbbell row", "goblet squat", "dumbbell shoulder press",
@@ -75,7 +70,6 @@ describe("Exercise Demos with Local GIF Assets", () => {
     for (const name of mixedExercises) {
       const demo = getExerciseDemo(name);
       expect(demo.gifAsset).toBeDefined();
-      expect(typeof demo.gifAsset).toBe("number");
     }
   });
 
@@ -118,30 +112,30 @@ describe("Exercise Demos with Local GIF Assets", () => {
   });
 });
 
-// ── GIF Player Components ───────────────────────────────────────────────────
-describe("GIF Player Components", () => {
-  it("exercise-demo-player uses expo-image with local GIF assets", async () => {
+// ── Video Player Components ───────────────────────────────────────────────────
+describe("Video Player Components", () => {
+  it("exercise-demo-player still uses the legacy GIF system", async () => {
     const fs = await import("fs");
     const content = fs.readFileSync("/home/ubuntu/peakpulse-mobile/components/exercise-demo-player.tsx", "utf-8");
-    expect(content).toContain("ExerciseDemoPlayer");
-    expect(content).toContain("fullscreen");
-    expect(content).toContain("Modal");
+    expect(content).not.toContain("ExerciseVideoPlayer");
     expect(content).toContain("resolveGifAsset");
     expect(content).toContain("expo-image");
-    expect(content).not.toContain("VideoView");
+    expect(content).toContain("useFavorites");
+    expect(content).toContain("isFavorite");
+    expect(content).toContain("toggleFavorite");
+    expect(content).toContain("Modal");
+    expect(content).toContain("fullscreen");
   });
 
-  it("enhanced-gif-player uses expo-image with local GIF assets", async () => {
+  it("enhanced-gif-player is now enhanced-video-player and uses ExerciseVideoPlayer", async () => {
     const fs = await import("fs");
     const content = fs.readFileSync("/home/ubuntu/peakpulse-mobile/components/enhanced-gif-player.tsx", "utf-8");
-    expect(content).toContain("EnhancedGifPlayer");
-    expect(content).toContain("fullscreen");
-    expect(content).toContain("Modal");
-    expect(content).toContain("angleViews");
-    expect(content).toContain("expandBtn");
-    expect(content).toContain("resolveGifAsset");
-    expect(content).toContain("expo-image");
-    expect(content).not.toContain("VideoView");
+    expect(content).toContain("ExerciseVideoPlayer");
+    expect(content).toContain("getExerciseVideoUrl");
+    expect(content).toContain("exerciseKey");
+    expect(content).not.toContain("Modal");
+    expect(content).not.toContain("angleViews");
+    expect(content).not.toContain("resolveGifAsset");
   });
 
   it("no YouTube player component exists", async () => {

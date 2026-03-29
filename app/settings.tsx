@@ -20,12 +20,15 @@ import {
   requestNotificationPermissions,
 } from "@/lib/notification-service";
 import {
-  getGifCacheStatus,
-  clearGifCache,
-  getGifCacheSizeBytes,
-  formatCacheSize,
-  type GifCacheStatus,
+  clearVideoCache,
+  getVideoCacheSize,
 } from "@/lib/gif-cache";
+
+function formatBytes(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
 import { GOLDEN_PRIMARY, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgrounds";
 
 const SF = {
@@ -56,8 +59,7 @@ export default function SettingsScreen() {
   const [pushLoading, setPushLoading] = useState(false);
   const [scheduledCount, setScheduledCount] = useState(0);
 
-  const [gifCacheStatus, setGifCacheStatus] = useState<GifCacheStatus | null>(null);
-  const [gifCacheSize, setGifCacheSize] = useState("0 KB");
+  const [videoCacheSize, setVideoCacheSize] = useState("0 KB");
   const [clearingCache, setClearingCache] = useState(false);
 
   const loadSettings = useCallback(async () => {
@@ -72,12 +74,10 @@ export default function SettingsScreen() {
       setScheduledCount(count);
     }
 
-    // Load GIF cache status
+    // Load video cache size
     try {
-      const status = await getGifCacheStatus();
-      setGifCacheStatus(status);
-      const sizeBytes = await getGifCacheSizeBytes();
-      setGifCacheSize(formatCacheSize(sizeBytes));
+      const sizeBytes = await getVideoCacheSize();
+      setVideoCacheSize(formatBytes(sizeBytes));
     } catch {}
   }, []);
 
@@ -289,9 +289,9 @@ export default function SettingsScreen() {
                 <MaterialIcons name="download-for-offline" size={20} color={SF.gold} />
               </View>
               <View style={{ flex: 1 }}>
-                <Text style={styles.optionLabel}>Exercise GIF Cache</Text>
+                <Text style={styles.optionLabel}>Exercise Video Cache</Text>
                 <Text style={styles.optionDesc}>
-                  GIFs are automatically downloaded for your workout plan exercises
+                  Videos are automatically cached for your workout plan exercises
                 </Text>
               </View>
             </View>
@@ -299,36 +299,21 @@ export default function SettingsScreen() {
             {/* Cache stats */}
             <View style={{ backgroundColor: "rgba(245,158,11,0.06)", borderRadius: 10, padding: 12, gap: 6 }}>
               <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-                <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 12 }}>Cached GIFs</Text>
-                <Text style={{ color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 12 }}>
-                  {gifCacheStatus?.cachedGifs ?? 0} / {gifCacheStatus?.totalGifs ?? 0}
-                </Text>
-              </View>
-              <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
                 <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 12 }}>Cache Size</Text>
-                <Text style={{ color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 12 }}>{gifCacheSize}</Text>
+                <Text style={{ color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 12 }}>{videoCacheSize}</Text>
               </View>
-              {gifCacheStatus?.lastCachedAt && (
-                <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-                  <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 12 }}>Last Updated</Text>
-                  <Text style={{ color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 12 }}>
-                    {new Date(gifCacheStatus.lastCachedAt).toLocaleDateString()}
-                  </Text>
-                </View>
-              )}
             </View>
 
             {/* Clear cache button */}
             <TouchableOpacity
               style={{ marginTop: 12, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8, backgroundColor: "rgba(239,68,68,0.08)", borderRadius: 10, paddingVertical: 10, borderWidth: 1, borderColor: "rgba(239,68,68,0.15)" }}
               onPress={() => {
-                Alert.alert("Clear GIF Cache?", "Downloaded exercise GIFs will be removed. They will be re-downloaded when you view your workout plan.", [
+                Alert.alert("Clear Video Cache?", "Cached exercise videos will be removed. They will be re-downloaded when needed.", [
                   { text: "Cancel", style: "cancel" },
                   { text: "Clear", style: "destructive", onPress: async () => {
                     setClearingCache(true);
-                    await clearGifCache();
-                    setGifCacheStatus({ totalExercises: 0, totalGifs: 0, cachedGifs: 0, isCaching: false, lastCachedAt: null, cacheSize: "0 KB" });
-                    setGifCacheSize("0 KB");
+                    await clearVideoCache();
+                    setVideoCacheSize("0 KB");
                     setClearingCache(false);
                     if (Platform.OS !== "web") Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
                   }},

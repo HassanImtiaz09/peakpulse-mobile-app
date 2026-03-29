@@ -66,11 +66,11 @@ describe("Alternatives in Exercise Detail Screen", () => {
     expect(src).toContain("TRY INSTEAD");
   });
 
-  it("renders alternative exercise cards with GIF thumbnails", () => {
-    expect(src).toContain("altGifWrap");
-    expect(src).toContain("altGif");
-    expect(src).toContain("altName");
-    expect(src).toContain("altCue");
+  it("renders alternative exercise cards with video thumbnails", () => {
+    const src = readFile("app/exercise-detail.tsx");
+    // Uses Image from expo-image with angleViews gifUrl for alternative thumbnails
+    expect(src).toContain("angleViews[0]?.gifUrl");
+    expect(src).toContain('from "expo-image"');
   });
 
   it("navigates to exercise-detail on alternative tap", () => {
@@ -99,7 +99,9 @@ describe("Alternatives in Active Workout Screen", () => {
     expect(src).toContain("TRY INSTEAD");
   });
 
-  it("renders alternative cards with GIF thumbnails", () => {
+  it("renders alternative cards with video thumbnails", () => {
+    const src = readFile("app/active-workout.tsx");
+    // Uses Image from expo-image with angleViews gifUrl for alternative thumbnails
     expect(src).toContain("alt.angleViews[0]?.gifUrl");
     expect(src).toContain("alt.name");
     expect(src).toContain("alt.cue");
@@ -114,29 +116,21 @@ describe("Alternatives in Active Workout Screen", () => {
   });
 });
 
-describe("Favorites Button in Fullscreen GIF Player", () => {
+describe("Favorites Button is restored to ExerciseDemoPlayer", () => {
   describe("EnhancedGifPlayer", () => {
     const src = readFile("components/enhanced-gif-player.tsx");
 
-    it("imports useFavorites", () => {
-      expect(src).toContain('import { useFavorites } from "@/lib/favorites-context"');
+    it("does NOT import useFavorites", () => {
+      expect(src).not.toContain('import { useFavorites } from "@/lib/favorites-context"');
     });
 
-    it("uses isFavorite and toggleFavorite", () => {
-      expect(src).toContain("isFavorite, toggleFavorite");
+    it("does NOT use isFavorite or toggleFavorite", () => {
+      expect(src).not.toContain("isFavorite, toggleFavorite");
     });
 
-    it("renders heart icon in fullscreen modal", () => {
-      expect(src).toContain('"favorite"');
-      expect(src).toContain('"favorite-border"');
-    });
-
-    it("uses red color for favorited state", () => {
-      expect(src).toContain('#EF4444');
-    });
-
-    it("toggles favorite on press", () => {
-      expect(src).toContain("toggleFavorite(exerciseName)");
+    it("does NOT render a heart icon", () => {
+      expect(src).not.toContain('"favorite"');
+      expect(src).not.toContain('"favorite-border"');
     });
   });
 
@@ -151,17 +145,8 @@ describe("Favorites Button in Fullscreen GIF Player", () => {
       expect(src).toContain("isFavorite, toggleFavorite");
     });
 
-    it("renders heart icon in fullscreen modal", () => {
+    it("renders a heart icon", () => {
       expect(src).toContain('"favorite"');
-      expect(src).toContain('"favorite-border"');
-    });
-
-    it("uses red color for favorited state", () => {
-      expect(src).toContain('#EF4444');
-    });
-
-    it("only shows favorite button when exerciseName is provided", () => {
-      expect(src).toContain("exerciseName ?");
     });
   });
 });

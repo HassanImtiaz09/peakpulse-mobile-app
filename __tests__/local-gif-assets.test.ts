@@ -126,47 +126,24 @@ describe("Local GIF Asset System", () => {
   describe("Enhanced GIF Player (components/enhanced-gif-player.tsx)", () => {
     const playerContent = readFile("components/enhanced-gif-player.tsx");
 
-    it("should NOT import expo-video", () => {
-      expect(playerContent).not.toContain("expo-video");
-      expect(playerContent).not.toContain("VideoView");
-      expect(playerContent).not.toContain("useVideoPlayer");
+    it("should use ExerciseVideoPlayer for MP4 playback", () => {
+      expect(playerContent).toContain("ExerciseVideoPlayer");
+    });
+
+    it("should use getExerciseVideoUrl for angle-aware lookups", () => {
+      expect(playerContent).toContain("getExerciseVideoUrl");
+    });
+
+    it("should accept exerciseKey prop", () => {
+      expect(playerContent).toContain("exerciseKey");
     });
 
     it("should NOT use HTML video tag", () => {
       expect(playerContent).not.toContain("<video");
     });
 
-    it("should import resolveGifAsset", () => {
-      expect(playerContent).toContain("resolveGifAsset");
-    });
-
-    it("should use Image component from expo-image", () => {
-      expect(playerContent).toContain('from "expo-image"');
-      expect(playerContent).toContain("<Image");
-    });
-
     it("should NOT show 'Video unavailable' error", () => {
       expect(playerContent).not.toContain("Video unavailable");
-    });
-
-    it("should have multi-angle support", () => {
-      expect(playerContent).toContain("angleViews");
-      expect(playerContent).toContain("activeAngle");
-    });
-
-    it("should have fullscreen modal", () => {
-      expect(playerContent).toContain("Modal");
-      expect(playerContent).toContain("fullscreen");
-    });
-
-    it("should have slow-motion feature", () => {
-      expect(playerContent).toContain("isSlowMotion");
-      expect(playerContent).toContain("slow-motion-video");
-    });
-
-    it("should have focus annotations", () => {
-      expect(playerContent).toContain("showFocus");
-      expect(playerContent).toContain("focus");
     });
   });
 

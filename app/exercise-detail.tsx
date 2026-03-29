@@ -26,12 +26,12 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import * as Haptics from "expo-haptics";
 import { ScreenContainer } from "@/components/screen-container";
-import { EnhancedGifPlayer } from "@/components/enhanced-gif-player";
+import EnhancedGifPlayer from "@/components/enhanced-gif-player";
 import { BodyDiagramInteractive } from "@/components/body-diagram";
 import { useFavorites } from "@/lib/favorites-context";
 import { getExerciseInfo, getAlternativeExercises } from "@/lib/exercise-data";
 import { Image } from "expo-image";
-import { getExerciseDemo } from "@/lib/exercise-demos";
+import { getExerciseDemo, getRegistryKeyForExercise } from "@/lib/exercise-demos";
 import {
   GOLDEN_WORKOUT,
   GOLDEN_OVERLAY_STYLE,
@@ -133,8 +133,7 @@ export default function ExerciseDetailScreen() {
         {/* Multi-Angle GIF Player */}
         <View style={styles.section}>
           <EnhancedGifPlayer
-            angleViews={exercise.angleViews}
-            exerciseName={exercise.name}
+            exerciseKey={getRegistryKeyForExercise(exercise.name)}
             height={240}
           />
         </View>

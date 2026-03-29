@@ -16,7 +16,7 @@ import { ExerciseDemoPlayer } from "@/components/exercise-demo-player";
 import Svg, { Circle } from "react-native-svg";
 import * as Haptics from "expo-haptics";
 import { exportWorkoutPlanPdf } from "@/lib/workout-pdf";
-import { preCacheWorkoutGifs, refreshManifestCache } from "@/lib/gif-cache";
+import { prefetchExerciseVideos } from "@/lib/gif-cache";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { BodyHeatmap } from "@/components/body-heatmap";
 import { MuscleSvgDiagram, MuscleSvgMini } from "@/components/muscle-svg-diagram";
@@ -206,7 +206,7 @@ export default function PlansScreen() {
         (d.exercises ?? []).map((e: any) => e.name as string)
       );
       if (allExNames.length > 0) {
-        preCacheWorkoutGifs(allExNames).then(() => refreshManifestCache()).catch(() => {});
+        prefetchExerciseVideos().catch(() => {});
       }
     }
   }, [workoutPlan?.schedule]);
@@ -215,13 +215,8 @@ export default function PlansScreen() {
     onSuccess: (data) => {
       if (isAuthenticated) refetchWorkout();
       else setLocalWorkoutPlan(data);
-      // Pre-cache GIFs for the new workout plan
-      const allExNames = (data?.schedule ?? []).flatMap((d: any) =>
-        (d.exercises ?? []).map((e: any) => e.name as string)
-      );
-      if (allExNames.length > 0) {
-        preCacheWorkoutGifs(allExNames).then(() => refreshManifestCache()).catch(() => {});
-      }
+      // Pre-cache videos for the new workout plan
+      prefetchExerciseVideos().catch(() => {});
     },
     onError: (e) => Alert.alert("Error", e.message),
   });

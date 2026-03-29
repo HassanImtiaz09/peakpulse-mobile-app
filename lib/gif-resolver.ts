@@ -5,7 +5,7 @@
  * Supports distinct side-view images for 15 key compound exercises.
  */
 
-import { EXERCISE_GIFS, SIDE_VIEW_GIFS, CDN_GIFS } from "@/lib/exercise-gif-registry";
+import { EXERCISE_GIFS, SIDE_VIEW_GIFS } from "@/lib/exercise-gif-registry";
 
 // Build a reverse lookup: key → CDN URL string
 const KEY_TO_URL: Record<string, string> = {};
@@ -110,13 +110,6 @@ export function resolveGifAssetOrNull(urlOrKey: string): number | string | null 
     for (const [key, url] of Object.entries(KEY_TO_URL)) {
       if (key.toLowerCase() === frontLower) return url;
     }
-  }
-
-  // Check CDN_GIFS map
-  if (CDN_GIFS[urlOrKey]) return CDN_GIFS[urlOrKey];
-  if (stem && CDN_GIFS[stem]) return CDN_GIFS[stem];
-  for (const [key, cdnUrl] of Object.entries(CDN_GIFS)) {
-    if (key.toLowerCase() === stemLower) return cdnUrl;
   }
 
   return null;

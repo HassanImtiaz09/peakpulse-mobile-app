@@ -14,25 +14,24 @@ import * as path from "path";
 
 const ROOT = path.resolve(__dirname, "..");
 
-describe("Round 75: Local GIF Asset Playback", () => {
-  it("exercise-demo-player.tsx uses expo-image for GIF display", () => {
+describe("Round 75: MP4 Video Playback", () => {
+  it("exercise-demo-player.tsx uses resolveGifAsset, not ExerciseVideoPlayer", () => {
     const content = fs.readFileSync(
       path.join(ROOT, "components/exercise-demo-player.tsx"),
       "utf-8"
     );
-    expect(content).toContain("expo-image");
+    expect(content).not.toContain("ExerciseVideoPlayer");
+    expect(content).not.toContain("getExerciseVideoUrl");
     expect(content).toContain("resolveGifAsset");
-    expect(content).toContain("Image");
   });
 
-  it("enhanced-gif-player.tsx uses expo-image for GIF display", () => {
+  it("enhanced-gif-player.tsx uses ExerciseVideoPlayer for MP4 display", () => {
     const content = fs.readFileSync(
       path.join(ROOT, "components/enhanced-gif-player.tsx"),
       "utf-8"
     );
-    expect(content).toContain("expo-image");
-    expect(content).toContain("resolveGifAsset");
-    expect(content).toContain("Image");
+    expect(content).toContain("ExerciseVideoPlayer");
+    expect(content).toContain("getExerciseVideoUrl");
   });
 
   it("exercise-demo-player.tsx has fullscreen modal support", () => {
@@ -44,16 +43,16 @@ describe("Round 75: Local GIF Asset Playback", () => {
     expect(content).toContain("fullscreen");
   });
 
-  it("enhanced-gif-player.tsx has fullscreen modal support", () => {
+  it("enhanced-gif-player.tsx does not have fullscreen modal support", () => {
     const content = fs.readFileSync(
       path.join(ROOT, "components/enhanced-gif-player.tsx"),
       "utf-8"
     );
-    expect(content).toContain("Modal");
-    expect(content).toContain("fullscreen");
+    expect(content).not.toContain("Modal");
+    expect(content).not.toContain("fullscreen");
   });
 
-  it("GIF players have fallback handling for missing assets", () => {
+  it("Video players use correct URL/asset resolution", () => {
     const demoPlayer = fs.readFileSync(
       path.join(ROOT, "components/exercise-demo-player.tsx"),
       "utf-8"
@@ -62,18 +61,19 @@ describe("Round 75: Local GIF Asset Playback", () => {
       path.join(ROOT, "components/enhanced-gif-player.tsx"),
       "utf-8"
     );
-    // Both use resolveGifAsset which provides fallback for missing assets
-    expect(demoPlayer).toContain("resolveGifAsset");
-    expect(enhancedPlayer).toContain("resolveGifAssetOrNull");
+    expect(demoPlayer).not.toContain("getExerciseVideoUrl");
+    expect(enhancedPlayer).toContain("getExerciseVideoUrl");
   });
 
-  it("gif-resolver.ts handles URL-to-asset mapping", () => {
+  it("exercise-gif-registry.ts handles URL mapping and has 149 entries", () => {
     const content = fs.readFileSync(
-      path.join(ROOT, "lib/gif-resolver.ts"),
+      path.join(ROOT, "lib/exercise-gif-registry.ts"),
       "utf-8"
     );
-    expect(content).toContain("resolveGifAsset");
+    expect(content).toContain("getExerciseVideoUrl");
     expect(content).toContain("EXERCISE_GIFS");
+    const match = content.match(/mw\(/g);
+    expect(match!.length).toBeGreaterThanOrEqual(149);
   });
 });
 

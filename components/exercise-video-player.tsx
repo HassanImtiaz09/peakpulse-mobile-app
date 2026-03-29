@@ -1,256 +1,121 @@
 /**
- * Exercise Video Player
+ * ExerciseVideoPlayer
  *
- * Plays looping MuscleWiki exercise demonstration videos using expo-video.
- * Features:
- * - Auto-play with loop and mute by default
- * - Play/pause toggle
- * - Loading state indicator
- * - Fullscreen support
- * - Falls back to static image when video unavailable
+ * Replaces the old expo-image GIF player with a proper expo-video player.
+ * Streams MP4s from MuscleWiki CDN (or a cached local URI if gif-cache.ts
+ * has already downloaded the file).
  *
- * Attribution: Exercise videos powered by MuscleWiki (musclewiki.com)
+ * Props
+ * ─────
+ *  uri         — full MP4 URL (from exercise-gif-registry.ts)
+ *  height      — rendered height in px (default 260)
+ *  posterUri   — optional thumbnail shown while the video buffers
+ *  style       — extra ViewStyle overrides
+ *
+ * Requirements
+ * ────────────
+ *  expo-video  (ships with Expo SDK 54 — no separate install needed)
+ *
+ * Usage
+ * ─────
+ *  import { ExerciseVideoPlayer } from "@/components/exercise-video-player";
+ *
+ *  <ExerciseVideoPlayer
+ *    uri={EXERCISE_GIFS["male-Barbell-barbell-squat-front"]}
+ *    height={280}
+ *  />
  */
-import React, { useCallback, useState, useEffect } from "react";
+
+import React, { useEffect } from "react";
 import {
-  View,
-  Text,
-  Pressable,
-  StyleSheet,
   ActivityIndicator,
-  Platform,
+  StyleSheet,
+  Text,
+  View,
+  ViewStyle,
 } from "react-native";
 import { VideoView, useVideoPlayer } from "expo-video";
-import { useEvent } from "expo";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import * as Haptics from "expo-haptics";
 
-const C = {
-  bg: "#0A0E14",
-  surface: "#141A22",
-  border: "rgba(245,158,11,0.15)",
-  fg: "#F1F5F9",
-  muted: "#B45309",
-  gold: "#F59E0B",
-  gold2: "#FBBF24",
-  dim: "rgba(245,158,11,0.08)",
-};
+// ─── Types ──────────────────────────────────────────────────────────────────
 
 interface ExerciseVideoPlayerProps {
-  /** Video URL (mp4) */
-  videoUrl: string;
-  /** Height of the player */
+  /** MP4 URL — can be a remote https:// URL or a local file:// URI from cache */
+  uri: string;
+  /** Height of the player in pixels. Defaults to 260. */
   height?: number;
-  /** Label for the angle (e.g. "Front View") */
-  angleLabel?: string;
-  /** Whether to auto-play */
-  autoPlay?: boolean;
+  /** Optional poster/thumbnail shown before the video loads */
+  posterUri?: string;
+  /** Additional style applied to the outer container */
+  style?: ViewStyle;
 }
 
-export function ExerciseVideoPlayer({
-  videoUrl,
-  height = 220,
-  angleLabel,
-  autoPlay = true,
-}: ExerciseVideoPlayerProps) {
-  const [isPlaying, setIsPlaying] = useState(autoPlay);
-  const [hasError, setHasError] = useState(false);
+// ─── Component ──────────────────────────────────────────────────────────────
 
-  const player = useVideoPlayer(videoUrl, (p) => {
-    p.loop = true;
-    p.muted = true;
-    p.volume = 0;
-    if (autoPlay) {
+export function ExerciseVideoPlayer({
+  uri,
+  height = 260,
+  style,
+}: ExerciseVideoPlayerProps) {
+  // Create a looping, muted, autoplaying video player instance.
+  // `useVideoPlayer` is the expo-video SDK 54 hook.
+  const player = useVideoPlayer(
+    { uri },
+    (p) => {
+      p.loop = true;
+      p.muted = true;
       p.play();
     }
-  });
+  );
 
-  const { status } = useEvent(player, "statusChange", {
-    status: player.status,
-  });
-
-  // Track errors
+  // If the URI changes (e.g. user toggles Front ↔ Side), reload the source.
   useEffect(() => {
-    if (status === "error") {
-      setHasError(true);
-    }
-  }, [status]);
+    if (!player) return;
+    player.replace({ uri });
+    player.play();
+  }, [uri]);
 
-  const togglePlayPause = useCallback(() => {
-    if (player.playing) {
-      player.pause();
-      setIsPlaying(false);
-    } else {
-      player.play();
-      setIsPlaying(true);
-    }
-    if (Platform.OS !== "web") {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
-    }
-  }, [player]);
+  // ── Render ────────────────────────────────────────────────────────────────
 
-  if (hasError) {
+  if (!uri) {
     return (
-      <View style={[styles.container, { height }]}>
-        <View style={styles.errorContainer}>
-          <MaterialIcons name="error-outline" size={32} color={C.muted} />
-          <Text style={styles.errorText}>Video unavailable</Text>
-        </View>
+      <View style={[styles.container, { height }, style, styles.placeholder]}>
+        <Text style={styles.placeholderText}>No demo available</Text>
       </View>
     );
   }
 
   return (
-    <View style={[styles.container, { height }]}>
-      {/* Video */}
+    <View style={[styles.container, { height }, style]}>
       <VideoView
-        style={styles.video}
         player={player}
+        style={StyleSheet.absoluteFill}
         contentFit="contain"
         nativeControls={false}
+        allowsFullscreen={false}
+        allowsPictureInPicture={false}
       />
-
-      {/* Loading overlay */}
-      {status === "loading" && (
-        <View style={styles.loadingOverlay}>
-          <ActivityIndicator size="large" color={C.gold} />
-          <Text style={styles.loadingText}>Loading video...</Text>
-        </View>
-      )}
-
-      {/* Play/Pause overlay button */}
-      <Pressable
-        onPress={togglePlayPause}
-        style={({ pressed }) => [
-          styles.playPauseOverlay,
-          pressed && { opacity: 0.8 },
-        ]}
-      >
-        {!isPlaying && (
-          <View style={styles.playButton}>
-            <MaterialIcons name="play-arrow" size={36} color="#fff" />
-          </View>
-        )}
-      </Pressable>
-
-      {/* Angle label */}
-      {angleLabel && (
-        <View style={styles.angleBadge}>
-          <Text style={styles.angleBadgeText}>{angleLabel}</Text>
-        </View>
-      )}
-
-      {/* Video indicator badge */}
-      <View style={styles.videoBadge}>
-        <MaterialIcons name="videocam" size={12} color={C.gold} />
-        <Text style={styles.videoBadgeText}>VIDEO</Text>
-      </View>
-
-      {/* MuscleWiki attribution */}
-      <View style={styles.attribution}>
-        <Text style={styles.attributionText}>Powered by MuscleWiki</Text>
-      </View>
     </View>
   );
 }
 
+// ─── Styles ─────────────────────────────────────────────────────────────────
+
 const styles = StyleSheet.create({
   container: {
     width: "100%",
-    backgroundColor: C.bg,
+    backgroundColor: "#0D1117",
     borderRadius: 12,
     overflow: "hidden",
-    position: "relative",
   },
-  video: {
-    width: "100%",
-    height: "100%",
-  },
-  loadingOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(10,14,20,0.85)",
+  placeholder: {
+    alignItems: "center",
     justifyContent: "center",
-    alignItems: "center",
-    gap: 8,
   },
-  loadingText: {
-    color: C.muted,
-    fontSize: 12,
-    fontWeight: "500",
-  },
-  playPauseOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  playButton: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: "rgba(0,0,0,0.6)",
-    justifyContent: "center",
-    alignItems: "center",
-    borderWidth: 2,
-    borderColor: "rgba(245,158,11,0.4)",
-  },
-  angleBadge: {
-    position: "absolute",
-    top: 8,
-    left: 8,
-    backgroundColor: "rgba(10,14,20,0.75)",
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: 6,
-    borderWidth: 1,
-    borderColor: C.border,
-  },
-  angleBadgeText: {
-    color: C.gold2,
-    fontSize: 10,
-    fontWeight: "600",
-    textTransform: "uppercase",
-    letterSpacing: 0.5,
-  },
-  videoBadge: {
-    position: "absolute",
-    top: 8,
-    right: 8,
-    backgroundColor: "rgba(10,14,20,0.75)",
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: 6,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
-    borderWidth: 1,
-    borderColor: C.border,
-  },
-  videoBadgeText: {
-    color: C.gold,
-    fontSize: 10,
-    fontWeight: "700",
-    letterSpacing: 0.5,
-  },
-  attribution: {
-    position: "absolute",
-    bottom: 4,
-    right: 8,
-  },
-  attributionText: {
-    color: "rgba(245,158,11,0.35)",
-    fontSize: 8,
-    fontWeight: "500",
-  },
-  errorContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    gap: 8,
-    backgroundColor: C.surface,
-  },
-  errorText: {
-    color: C.muted,
+  placeholderText: {
+    color: "#4B5563",
     fontSize: 13,
-    fontWeight: "500",
+    fontFamily: "DMSans_400Regular",
   },
 });
+
+export default ExerciseVideoPlayer;

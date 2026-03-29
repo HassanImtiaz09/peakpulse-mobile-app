@@ -101,7 +101,7 @@ describe("Exercise Video Previews", () => {
     const demo = getExerciseDemo("Bench Press");
     expect(demo).toBeDefined();
     expect(demo.gifAsset).toBeDefined();
-    expect(typeof demo.gifAsset).toBe("number");
+    expect(typeof demo.gifAsset === "string" || typeof demo.gifAsset === "number").toBe(true);
     expect(demo.cue).toBeTruthy();
     expect(demo.cue).toContain("shoulder blades");
   });
@@ -110,14 +110,14 @@ describe("Exercise Video Previews", () => {
     const demo = getExerciseDemo("Incline Dumbbell Bench Press");
     expect(demo).toBeDefined();
     expect(demo.gifAsset).toBeDefined();
-    expect(typeof demo.gifAsset).toBe("number");
+    expect(typeof demo.gifAsset === "string" || typeof demo.gifAsset === "number").toBe(true);
   });
 
   it("returns a generic fallback for completely unknown exercises", () => {
     const demo = getExerciseDemo("Underwater Basket Weaving");
     expect(demo).toBeDefined();
     expect(demo.gifAsset).toBeDefined();
-    expect(typeof demo.gifAsset).toBe("number");
+    expect(typeof demo.gifAsset === "string" || typeof demo.gifAsset === "number").toBe(true);
     expect(demo.cue).toContain("proper form");
   });
 
@@ -133,7 +133,7 @@ describe("Exercise Video Previews", () => {
     for (const name of exercises) {
       const demo = getExerciseDemo(name);
       expect(demo.gifAsset).toBeDefined();
-      expect(typeof demo.gifAsset).toBe("number");
+      expect(typeof demo.gifAsset === "string" || typeof demo.gifAsset === "number").toBe(true);
       expect(demo.cue.length).toBeGreaterThan(10);
     }
   });
@@ -152,7 +152,7 @@ describe("Exercise Video Previews", () => {
     for (const name of exercises) {
       const demo = getExerciseDemo(name);
       expect(demo.gifAsset).toBeDefined();
-      expect(typeof demo.gifAsset).toBe("number");
+      expect(typeof demo.gifAsset === "string" || typeof demo.gifAsset === "number").toBe(true);
       expect(demo.cue).toBeTruthy();
     }
   });

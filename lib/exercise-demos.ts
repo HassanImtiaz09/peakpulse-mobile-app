@@ -577,3 +577,40 @@ export function getExerciseDemo(exerciseName: string): ExerciseDemo {
   // Fallback
   return GENERIC_DEMO;
 }
+
+/**
+ * Reverse-lookup: exercise name → EXERCISE_GIFS registry key.
+ * Returns the registry key (e.g. "male-barbell-bench-press-front") that
+ * the DEMO_MAP entry for this exercise uses via gif().
+ * Falls back to "male-bodyweight-push-up-front" if no match.
+ */
+const _NAME_TO_KEY: Record<string, string> = {};
+
+// Build the reverse map at module load time by inspecting gifAsset URLs
+(function buildReverseMap() {
+  const urlToKey: Record<string, string> = {};
+  for (const [key, url] of Object.entries(EXERCISE_GIFS)) {
+    urlToKey[typeof url === "string" ? url : String(url)] = key;
+  }
+  for (const [name, demo] of Object.entries(DEMO_MAP)) {
+    const asset = demo.gifAsset;
+    const assetStr = typeof asset === "string" ? asset : String(asset);
+    if (urlToKey[assetStr]) {
+      _NAME_TO_KEY[name] = urlToKey[assetStr];
+    }
+  }
+})();
+
+export function getRegistryKeyForExercise(exerciseName: string): string {
+  const norm = normaliseExerciseName(exerciseName);
+  if (_NAME_TO_KEY[norm]) return _NAME_TO_KEY[norm];
+
+  // Try partial keyword match
+  for (const { keywords } of KEYWORD_FALLBACKS) {
+    for (const kw of keywords) {
+      if (norm.includes(kw) && _NAME_TO_KEY[kw]) return _NAME_TO_KEY[kw];
+    }
+  }
+
+  return "male-bodyweight-push-up-front";
+}

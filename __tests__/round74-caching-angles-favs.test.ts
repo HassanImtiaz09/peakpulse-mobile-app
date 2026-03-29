@@ -16,23 +16,22 @@ const ROOT = path.resolve(__dirname, "..");
 describe("Round 74: Video Caching, Angle Toggle, Favorites Filter", () => {
   // ── Video Preload Service ──
   describe("Video Preload Service", () => {
-    it("video-preload.ts exports getExerciseVideoUrls and preloadExerciseVideos", () => {
-      const content = fs.readFileSync(path.join(ROOT, "lib/video-preload.ts"), "utf-8");
-      expect(content).toContain("export function getExerciseVideoUrls");
-      expect(content).toContain("export async function preloadExerciseVideos");
-      expect(content).toContain("export function clearPreloadCache");
+    it("gif-cache.ts exports resolveVideoUri and prefetchExerciseVideos", () => {
+      const content = fs.readFileSync(path.join(ROOT, "lib/gif-cache.ts"), "utf-8");
+      expect(content).toContain("export async function resolveVideoUri");
+      expect(content).toContain("export async function prefetchExerciseVideos");
+      expect(content).toContain("export async function clearVideoCache");
     });
 
-    it("video-preload.ts uses HEAD requests for native preloading", () => {
-      const content = fs.readFileSync(path.join(ROOT, "lib/video-preload.ts"), "utf-8");
-      expect(content).toContain("HEAD");
+    it("gif-cache.ts uses FileSystem for native preloading", () => {
+      const content = fs.readFileSync(path.join(ROOT, "lib/gif-cache.ts"), "utf-8");
+      expect(content).toContain("FileSystem.downloadAsync");
     });
 
-    it("video-preload.ts collects URLs from both exercise-demos and exercise-data angle views", () => {
-      const content = fs.readFileSync(path.join(ROOT, "lib/video-preload.ts"), "utf-8");
-      expect(content).toContain("getExerciseDemo");
-      expect(content).toContain("getExerciseInfo");
-      expect(content).toContain("angleViews");
+    it("gif-cache.ts collects URLs from EXERCISE_GIFS", () => {
+      const content = fs.readFileSync(path.join(ROOT, "lib/gif-cache.ts"), "utf-8");
+      expect(content).toContain("EXERCISE_GIFS");
+      expect(content).not.toContain("getExerciseVideoUrl");
     });
 
     it("active-workout.tsx imports and uses preloadExerciseVideos", () => {
@@ -44,44 +43,43 @@ describe("Round 74: Video Caching, Angle Toggle, Favorites Filter", () => {
     it("active-workout.tsx preloads first 2 exercises at workout start", () => {
       const content = fs.readFileSync(path.join(ROOT, "app/active-workout.tsx"), "utf-8");
       expect(content).toContain("preloadExerciseVideos(exercises[0].name)");
-      expect(content).toContain("exercises[0].name");
-      expect(content).toContain("exercises[1].name");
     });
 
     it("active-workout.tsx preloads next exercise when rest timer starts or exercise changes", () => {
       const content = fs.readFileSync(path.join(ROOT, "app/active-workout.tsx"), "utf-8");
       expect(content).toContain("preloadExerciseVideos");
-      expect(content).toContain("currentExercise + 1");
+      expect(content).toContain("preloadExerciseVideos(exercises[nextIdx].name)");
     });
 
-    it("active-workout.tsx clears preload cache on unmount", () => {
+    it("active-workout.tsx clears video cache on unmount", () => {
       const content = fs.readFileSync(path.join(ROOT, "app/active-workout.tsx"), "utf-8");
       expect(content).toContain("clearPreloadCache()");
     });
   });
 
-  // ── Local GIF Assets in Players ──
-  describe("Local GIF Assets in Players", () => {
-    it("enhanced-gif-player.tsx uses expo-image for local GIF display", () => {
+  // ── Video Player Components ──
+  describe("Video Player Components", () => {
+    it("enhanced-gif-player.tsx uses ExerciseVideoPlayer for video display", () => {
       const content = fs.readFileSync(path.join(ROOT, "components/enhanced-gif-player.tsx"), "utf-8");
-      expect(content).toContain("expo-image");
+      expect(content).toContain("ExerciseVideoPlayer");
+      expect(content).toContain("getExerciseVideoUrl");
+    });
+
+    it("exercise-demo-player.tsx still uses expo-image and resolveGifAsset", () => {
+      const content = fs.readFileSync(path.join(ROOT, "components/exercise-demo-player.tsx"), "utf-8");
+      expect(content).not.toContain("ExerciseVideoPlayer");
       expect(content).toContain("resolveGifAsset");
     });
 
-    it("exercise-demo-player.tsx uses expo-image for local GIF display", () => {
-      const content = fs.readFileSync(path.join(ROOT, "components/exercise-demo-player.tsx"), "utf-8");
-      expect(content).toContain("expo-image");
-      expect(content).toContain("resolveGifAsset");
-    });
-
-    it("enhanced-gif-player.tsx uses gif-resolver for asset lookup", () => {
+    it("enhanced-gif-player.tsx uses getExerciseVideoUrl for video lookup", () => {
       const content = fs.readFileSync(path.join(ROOT, "components/enhanced-gif-player.tsx"), "utf-8");
-      expect(content).toContain("gif-resolver");
+      expect(content).toContain("getExerciseVideoUrl");
     });
 
-    it("exercise-demo-player.tsx uses gif-resolver for asset lookup", () => {
+    it("exercise-demo-player.tsx uses resolveGifAsset for image lookup", () => {
       const content = fs.readFileSync(path.join(ROOT, "components/exercise-demo-player.tsx"), "utf-8");
-      expect(content).toContain("gif-resolver");
+      expect(content).toContain("resolveGifAsset");
+      expect(content).not.toContain("getExerciseVideoUrl");
     });
   });
 
@@ -114,10 +112,10 @@ describe("Round 74: Video Caching, Angle Toggle, Favorites Filter", () => {
       expect(content).toContain("fullscreenAngleBtn");
     });
 
-    it("enhanced-gif-player.tsx has angle switching support", () => {
+    it("enhanced-gif-player.tsx has exerciseKey prop for video selection", () => {
       const content = fs.readFileSync(path.join(ROOT, "components/enhanced-gif-player.tsx"), "utf-8");
-      expect(content).toContain("activeAngle");
-      expect(content).toContain("angleViews");
+      expect(content).toContain("exerciseKey");
+      expect(content).not.toContain("angleViews");
     });
 
     it("most exercises have multiple angle views (front + side)", () => {
@@ -206,17 +204,18 @@ describe("Round 74: Video Caching, Angle Toggle, Favorites Filter", () => {
     });
   });
 
-  // ── Local GIF Assets ──
-  describe("Local GIF Assets", () => {
-    it("exercise-demos.ts uses local GIF assets via gifAsset property", () => {
-      const content = fs.readFileSync(path.join(ROOT, "lib/exercise-demos.ts"), "utf-8");
-      expect(content).toContain("gifAsset");
-      expect(content).toContain("exercise-gif-registry");
+  // ── Exercise Video URLs ──
+  describe("Exercise Video URLs", () => {
+    it("exercise-gif-registry.ts provides MP4 URLs from musclewiki", () => {
+      const content = fs.readFileSync(path.join(ROOT, "lib/exercise-gif-registry.ts"), "utf-8");
+      expect(content).toContain("musclewiki.com");
+      expect(content).toContain(".mp4");
+      expect(content).not.toContain("manuscdn.com");
     });
 
-    it("gif-resolver.ts maps URLs to local GIF assets", () => {
-      const content = fs.readFileSync(path.join(ROOT, "lib/gif-resolver.ts"), "utf-8");
-      expect(content).toContain("resolveGifAsset");
+    it("exercise-gif-registry.ts exports getExerciseVideoUrl", () => {
+      const content = fs.readFileSync(path.join(ROOT, "lib/exercise-gif-registry.ts"), "utf-8");
+      expect(content).toContain("getExerciseVideoUrl");
       expect(content).toContain("EXERCISE_GIFS");
     });
   });

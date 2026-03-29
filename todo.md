@@ -2529,3 +2529,13 @@
 - [x] Verify assetBundlePatterns: N/A — no local GIF assets to bundle; CDN URLs fetched at runtime
 - [x] TypeScript compiles with 0 errors
 - [x] All tests pass (63 files, 2169 tests)
+
+## Video Architecture Migration — Test Fixes (Round 27)
+- [x] Replace 4 files with user-provided MP4 video architecture (exercise-gif-registry.ts, gif-cache.ts, enhanced-gif-player.tsx, exercise-video-player.tsx)
+- [x] Update vitest mock (__mocks__/gif-registry-mock.ts) to match new registry API
+- [x] Fix round66-enhanced-video.test.ts: remove triple-quote corruption
+- [x] Fix round88-exercise-images.test.ts: remove triple-quote corruption, update 4 assertions for mw() helper, @/ import path, gif() pattern, and getExerciseVideoUrl signature
+- [x] Fix round59-features.test.ts: update mw() count assertion (149→150), getExerciseVideoUrl key casing, resolveGifAssetOrNull key lookup, active-workout.tsx file path
+- [x] Fix round72-alternatives-favorites.test.ts: update alt thumbnail assertions from getExerciseVideoUrl to angleViews[0]?.gifUrl
+- [x] All 2,088 tests passing across 63 test files — zero failures
+- [x] TypeScript compiles with 0 errors

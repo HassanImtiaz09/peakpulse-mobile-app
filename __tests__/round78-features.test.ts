@@ -12,39 +12,44 @@ function fileExists(relPath: string): boolean {
   return fs.existsSync(path.join(ROOT, relPath));
 }
 
-// ── Side-View GIF Fix ──────────────────────────────────────────────────────
-describe("Side-View GIF Fix", () => {
-  it("gif-resolver exports resolveGifAssetOrNull function", () => {
-    const src = readFile("lib/gif-resolver.ts");
-    expect(src).toContain("resolveGifAssetOrNull");
+// ── MP4 Video Player Architecture ──────────────────────────────────────────────
+describe("MP4 Video Player Architecture", () => {
+  it("exercise-gif-registry.ts exports getExerciseVideoUrl function", () => {
+    const src = readFile("lib/exercise-gif-registry.ts");
+    expect(src).toContain("getExerciseVideoUrl");
     expect(src).toContain("export function");
   });
 
-  it("exercise-gif-registry contains side-view entries", () => {
+  it("exercise-gif-registry contains MP4 video URLs from musclewiki", () => {
     const src = readFile("lib/exercise-gif-registry.ts");
-    expect(src).toContain("side");
-    // Should have both front and side entries
-    expect(src).toContain("front");
+    expect(src).toContain("musclewiki.com");
+    expect(src).toContain(".mp4");
+    // Should not contain old CDN links
+    expect(src).not.toContain("manuscdn.com");
   });
 
-  it("enhanced-gif-player shows 'Side View Not Available' for missing side GIFs", () => {
+  it("enhanced-gif-player uses ExerciseVideoPlayer with exerciseKey", () => {
     const src = readFile("components/enhanced-gif-player.tsx");
-    expect(src).toContain("Side View Not Available");
-    expect(src).toContain("resolveGifAssetOrNull");
+    expect(src).toContain("ExerciseVideoPlayer");
+    expect(src).toContain("exerciseKey");
+    expect(src).not.toContain("angleViews");
+    expect(src).not.toContain("resolveGifAsset");
   });
 
-  it("has at least 50 side-view GIF files in assets", () => {
-    // Side-view GIFs served from CDN, not local files
-    expect(true).toBe(true);
+  it("exercise-gif-registry has approximately 149 video entries", () => {
+    const src = readFile("lib/exercise-gif-registry.ts");
+    const matches = src.match(/mw\(/g) || [];
+    expect(matches.length).toBeGreaterThanOrEqual(149);
   });
 
-  it("side-view GIF filenames follow naming convention", () => {
-    const gifDir = path.join(ROOT, "assets/exercise-gifs");
-    const sideFiles = fs.readdirSync(gifDir).filter(f => f.includes("-side") && f.endsWith(".gif"));
-    for (const f of sideFiles) {
-      // Side files may have extra suffixes like _dnNh5UH before .gif
-      expect(f).toMatch(/-side[^.]*\.gif$/);
-    }
+  it("gif-cache has been replaced by video-cache functions", () => {
+    const src = readFile("lib/gif-cache.ts");
+    expect(src).toContain("resolveVideoUri");
+    expect(src).toContain("prefetchExerciseVideos");
+    expect(src).toContain("clearVideoCache");
+    expect(src).toContain("EXERCISE_GIFS");
+    expect(src).not.toContain("preCacheWorkoutGifs");
+    expect(src).not.toContain("getCachedGifUri");
   });
 });
 
