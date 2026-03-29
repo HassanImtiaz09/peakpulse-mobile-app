@@ -271,6 +271,9 @@ export default function ScanScreen() {
   async function generatePlans() {
     setStep("generating");
     try {
+      // Set generating flag so dashboard shows spinner instead of "Get Started" CTA
+      await AsyncStorage.setItem("@plan_generating", "true");
+
       if (isAuthenticated) {
         await updateProfile.mutateAsync({ workoutStyle, dietaryPreference: dietaryPref, daysPerWeek });
         await generateWorkoutPlan.mutateAsync({ workoutStyle, daysPerWeek, goal: "lose_fat" });
@@ -291,10 +294,13 @@ export default function ScanScreen() {
         await AsyncStorage.setItem("@guest_workout_plan", JSON.stringify(workoutResult));
         await AsyncStorage.setItem("@guest_meal_plan", JSON.stringify(mealResult));
       }
+
+      // Clear generating flag now that plans are saved
+      await AsyncStorage.removeItem("@plan_generating");
+
       Alert.alert(
-        "Plans Created! 🎉",
-        "Your personalized workout and meal plans are ready. Head to the Plans tab to view them.",
-        [
+        "Plans Created! \uD83C\uDF89",
+        "Your personalized workout and meal plans are ready. Head to the Plans tab to view them.",     [
           { text: "View Plans", onPress: () => router.push("/(tabs)/plans" as any) },
           { text: "Stay Here" },
         ]

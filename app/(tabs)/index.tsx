@@ -154,6 +154,9 @@ export default function HomeScreen() {
   const [activeChallenges, setActiveChallenges] = useState<Challenge[]>([]);
   const [socialCircle, setSocialCircle] = useState<SocialCircleData | null>(null);
 
+  const [hasLocalWorkoutPlan, setHasLocalWorkoutPlan] = useState(false);
+  const [isPlanGenerating, setIsPlanGenerating] = useState(false);
+
   const exerciseCompletion = useExerciseCompletion();
   const { displayName: savedDisplayName, profilePhotoUri } = useUserProfile();
   const displayName = savedDisplayName?.split(" ")[0] ?? user?.name?.split(" ")[0] ?? guestProfile?.name?.split(" ")[0] ?? "Athlete";
@@ -173,6 +176,47 @@ export default function HomeScreen() {
       }
     });
   }, []);
+
+  // Check for locally cached workout plan (guest mode or async generation)
+  useEffect(() => {
+    const checkLocalPlan = async () => {
+      try {
+        const [cachedPlan, guestPlan, generatingFlag] = await Promise.all([
+          AsyncStorage.getItem("@cached_workout_plan"),
+          AsyncStorage.getItem("@guest_workout_plan"),
+          AsyncStorage.getItem("@plan_generating"),
+        ]);
+
+        if (cachedPlan || guestPlan) {
+          setHasLocalWorkoutPlan(true);
+          try {
+            const plan = JSON.parse(cachedPlan || guestPlan || "{}");
+            if (plan?.schedule?.[0] && !workoutPlan) {
+              // We have a local plan but server hasn't returned one yet
+            }
+          } catch {}
+        }
+
+        if (generatingFlag === "true") {
+          setIsPlanGenerating(true);
+          const startTime = Date.now();
+          const pollInterval = setInterval(async () => {
+            const flag = await AsyncStorage.getItem("@plan_generating");
+            const plan = await AsyncStorage.getItem("@cached_workout_plan");
+            if (flag !== "true" || plan || Date.now() - startTime > 60000) {
+              setIsPlanGenerating(false);
+              if (plan) setHasLocalWorkoutPlan(true);
+              clearInterval(pollInterval);
+            }
+          }, 5000);
+          return () => clearInterval(pollInterval);
+        }
+      } catch (err) {
+        console.warn("Error checking local workout plan:", err);
+      }
+    };
+    checkLocalPlan();
+  }, [workoutPlan]);
 
   // ── Onboarding guard ─────
   useEffect(() => {
@@ -408,6 +452,23 @@ export default function HomeScreen() {
                     );
                   })()}
                 </TouchableOpacity>
+              </View>
+            </StaggeredCard>
+          ) : (hasLocalWorkoutPlan || isPlanGenerating) ? (
+            <StaggeredCard index={1}>
+              <View style={styles.section}>
+                <SectionTitle title="Today's Workout" />
+                <View style={[styles.workoutCard, { alignItems: "center", justifyContent: "center", paddingVertical: 24 }]}>
+                  <ActivityIndicator color="#F59E0B" size="small" />
+                  <Text style={[styles.workoutCardTitle, { marginTop: 12 }]}>
+                    {isPlanGenerating ? "Generating Your Plan..." : "Loading Your Plan..."}
+                  </Text>
+                  <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 12, marginTop: 4 }}>
+                    {isPlanGenerating
+                      ? "Our AI is crafting a personalised workout plan for you"
+                      : "Your workout plan is ready \u2014 syncing now"}
+                  </Text>
+                </View>
               </View>
             </StaggeredCard>
           ) : (

@@ -356,6 +356,9 @@ export default function OnboardingScreen() {
         await AsyncStorage.setItem("@target_transformation", JSON.stringify(selectedTransformation));
       }
 
+      // Set generating flag so dashboard shows spinner instead of "Get Started" CTA
+      await AsyncStorage.setItem("@plan_generating", "true");
+
       const [workoutResult, mealResult] = await Promise.allSettled([
         generateWorkout.mutateAsync({ goal: effectiveGoal, workoutStyle, daysPerWeek, fitnessLevel: "intermediate" }),
         generateMeal.mutateAsync({ goal: effectiveGoal, dietaryPreference: dietaryPref, dailyCalories: tdee ?? undefined }),
@@ -371,6 +374,9 @@ export default function OnboardingScreen() {
         await AsyncStorage.setItem("@cached_meal_plan", mpJson);
         await AsyncStorage.setItem("@guest_meal_plan", mpJson);
       }
+
+      // Clear generating flag now that plans are saved
+      await AsyncStorage.removeItem("@plan_generating");
     } catch {
       // Plans generated on demand from tabs if this fails
     } finally {

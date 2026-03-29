@@ -2539,3 +2539,12 @@
 - [x] Fix round72-alternatives-favorites.test.ts: update alt thumbnail assertions from getExerciseVideoUrl to angleViews[0]?.gifUrl
 - [x] All 2,088 tests passing across 63 test files — zero failures
 - [x] TypeScript compiles with 0 errors
+
+## Bug Fix (Round 28) — Dashboard "Get Started" CTA Persists After Onboarding
+- [x] Add hasLocalWorkoutPlan + isPlanGenerating state to dashboard (index.tsx)
+- [x] Add useEffect to check AsyncStorage for cached/guest workout plan
+- [x] Update Section 2 ternary to show loading spinner when plan is generating/cached
+- [x] Set @plan_generating flag in onboarding.tsx and scan.tsx before plan generation
+- [x] Clear @plan_generating flag on plan generation success
+- [x] Import ActivityIndicator in dashboard (already imported)
+- [x] Run tests and verify TypeScript compiles (2088 tests pass, 0 TS errors)
