@@ -311,7 +311,7 @@ export function ExerciseDemoPlayer({
                   view.label.includes("Side") ? "switch-video" : "videocam"
                 }
                 size={14}
-                color={activeAngle === i ? "#0A0E14" : "#B45309"}
+                color={activeAngle === i ? "#0A0E14" : "#F59E0B"}
               />
               <Text
                 style={[
@@ -325,6 +325,25 @@ export function ExerciseDemoPlayer({
           ))}
         </View>
       )}
+
+      {/* Angle focus card — shows the per-view coaching focus from exercise-data */}
+      {hasMultipleAngles && angleViews[activeAngle]?.focus ? (
+        <View style={styles.angleFocusCard}>
+          {/* Section label row */}
+          <View style={styles.sectionLabelRow}>
+            <View style={styles.sectionAccentBar} />
+            <MaterialIcons
+              name={angleViews[activeAngle].label.includes("Side") ? "switch-video" : "videocam"}
+              size={12}
+              color="#F59E0B"
+            />
+            <Text style={styles.sectionLabelText}>
+              {angleViews[activeAngle].label.toUpperCase()} — WHAT TO CHECK
+            </Text>
+          </View>
+          <Text style={styles.angleFocusText}>{angleViews[activeAngle].focus}</Text>
+        </View>
+      ) : null}
 
       {/* GIF Source Toggle: ExerciseDB animated vs static images */}
       {exerciseDbGifUrl && (
@@ -472,11 +491,18 @@ export function ExerciseDemoPlayer({
       )}
 
       {cue ? (
-        <View
-          style={[styles.cueContainer, { backgroundColor: colors.surface }]}
-        >
-          <MaterialIcons name="info-outline" size={14} color={colors.muted} />
-          <Text style={[styles.cueText, { color: colors.muted }]}>{cue}</Text>
+        <View style={styles.cueSection}>
+          {/* Section label */}
+          <View style={styles.sectionLabelRow}>
+            <View style={styles.sectionAccentBar} />
+            <MaterialIcons name="chat-bubble-outline" size={12} color="#F59E0B" />
+            <Text style={styles.sectionLabelText}>COACHING CUE</Text>
+          </View>
+          {/* Quote card */}
+          <View style={[styles.cueContainer, { backgroundColor: colors.surface }]}>
+            <Text style={styles.cueQuoteMark}>"</Text>
+            <Text style={[styles.cueText, { color: colors.foreground }]}>{cue}</Text>
+          </View>
         </View>
       ) : null}
 
@@ -697,6 +723,58 @@ export function ExerciseDemoButton({
 }
 
 const styles = StyleSheet.create({
+  // ── Section label pattern ──────────────────────────────────────────────────
+  sectionLabelRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    marginBottom: 8,
+  },
+  sectionAccentBar: {
+    width: 3,
+    height: 14,
+    borderRadius: 2,
+    backgroundColor: "#F59E0B",
+  },
+  sectionLabelText: {
+    color: "#F59E0B",
+    fontSize: 10,
+    fontWeight: "700",
+    letterSpacing: 1.2,
+    fontFamily: "DMSans_700Bold",
+  },
+
+  // ── Angle focus card ───────────────────────────────────────────────────────
+  angleFocusCard: {
+    marginTop: 10,
+    backgroundColor: "#141A22",
+    borderRadius: 12,
+    padding: 12,
+    borderWidth: 1,
+    borderColor: "rgba(245,158,11,0.14)",
+  },
+  angleFocusText: {
+    color: "#CBD5E1",
+    fontSize: 13,
+    lineHeight: 20,
+    fontFamily: "DMSans_400Regular",
+  },
+
+  // ── Coaching cue section ───────────────────────────────────────────────────
+  cueSection: {
+    marginTop: 12,
+  },
+  cueQuoteMark: {
+    position: "absolute",
+    top: -2,
+    left: 6,
+    fontSize: 44,
+    color: "#F59E0B",
+    opacity: 0.10,
+    lineHeight: 44,
+    fontWeight: "900",
+  },
+
   playerContainer: {
     position: "relative",
   },
@@ -715,7 +793,8 @@ const styles = StyleSheet.create({
   gifBadgeText: {
     color: "#fff",
     fontSize: 10,
-    fontWeight: "600",
+    fontWeight: "700",
+    letterSpacing: 0.3,
   },
   muscleMiniOverlay: {
     position: "absolute",
@@ -779,28 +858,30 @@ const styles = StyleSheet.create({
   },
   angleToggleRow: {
     flexDirection: "row",
-    gap: 6,
-    marginTop: 8,
+    gap: 8,
+    marginTop: 10,
   },
   angleToggleBtn: {
+    flex: 1,
     flexDirection: "row",
     alignItems: "center",
-    gap: 4,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 8,
+    justifyContent: "center",
+    gap: 6,
+    paddingVertical: 10,
+    borderRadius: 11,
     backgroundColor: "rgba(245,158,11,0.08)",
-    borderWidth: 1,
-    borderColor: "rgba(245,158,11,0.15)",
+    borderWidth: 1.5,
+    borderColor: "rgba(245,158,11,0.18)",
   },
   angleToggleBtnActive: {
     backgroundColor: "#F59E0B",
-    borderColor: "#FBBF24",
+    borderColor: "#F59E0B",
   },
   angleToggleText: {
-    color: "#B45309",
-    fontSize: 12,
-    fontWeight: "600",
+    color: "#F59E0B",
+    fontSize: 13,
+    fontWeight: "700",
+    fontFamily: "DMSans_700Bold",
   },
   angleToggleTextActive: {
     color: "#0A0E14",
@@ -808,29 +889,31 @@ const styles = StyleSheet.create({
   // Action bar
   actionBar: {
     flexDirection: "row",
-    gap: 6,
-    marginTop: 8,
+    gap: 7,
+    marginTop: 10,
     flexWrap: "wrap",
   },
   actionBtn: {
     flexDirection: "row",
     alignItems: "center",
     gap: 5,
-    paddingHorizontal: 12,
-    paddingVertical: 7,
-    borderRadius: 8,
-    backgroundColor: "rgba(212,175,55,0.08)",
-    borderWidth: 1,
-    borderColor: "rgba(212,175,55,0.2)",
+    paddingHorizontal: 13,
+    paddingVertical: 8,
+    borderRadius: 10,
+    backgroundColor: "rgba(245,158,11,0.06)",
+    borderWidth: 1.5,
+    borderColor: "rgba(245,158,11,0.18)",
   },
   actionBtnActive: {
-    backgroundColor: "#D4AF37",
-    borderColor: "#FDE68A",
+    backgroundColor: "#F59E0B",
+    borderColor: "#F59E0B",
   },
   actionBtnText: {
-    color: "#D4AF37",
+    color: "#F59E0B",
     fontSize: 12,
-    fontWeight: "600",
+    fontWeight: "700",
+    fontFamily: "DMSans_700Bold",
+    letterSpacing: 0.2,
   },
   actionBtnTextActive: {
     color: "#0A0E14",
@@ -899,18 +982,17 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(212,175,55,0.5)",
   },
   cueContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-    marginTop: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 8,
+    borderRadius: 14,
+    paddingHorizontal: 14,
+    paddingVertical: 13,
+    borderWidth: 1,
+    borderColor: "rgba(245,158,11,0.16)",
+    overflow: "hidden",
   },
   cueText: {
     fontSize: 13,
-    lineHeight: 18,
-    flex: 1,
+    lineHeight: 20,
+    fontFamily: "DMSans_400Regular",
   },
   fullscreenOverlay: {
     flex: 1,
