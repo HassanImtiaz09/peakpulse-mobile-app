@@ -45,6 +45,8 @@ import { getActiveChallenges, type Challenge } from "@/lib/challenge-service";
 import { loadOrCreateSocialCircle, getActiveFriendsCount, type SocialCircleData } from "@/lib/social-circle";
 import { loadTDEEBreakdown, type TDEEBreakdown } from "@/lib/tdee-calculator";
 import { getHistoricalMeals } from "@/lib/calorie-context";
+import { UI as SF } from "@/constants/ui-colors";
+import { ErrorBoundary } from "@/components/error-boundary";
 
 const AT_DASHBOARD_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/PZcnawJwIZkQHTEM.jpg";
 
@@ -66,19 +68,6 @@ const TIPS_AND_TRICKS = [
   { icon: "science" as const, tip: "Creatine monohydrate is the most researched supplement in sports science \u2014 3-5g daily is proven to work." },
 ];
 const APP_LOGO = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/PZcnawJwIZkQHTEM.jpg";
-
-const SF = {
-  bg: "#0A0E14", surface: "#141A22", surface2: "#1A2030",
-  surfacePrimary: "#141A22",
-  border: "rgba(30,41,59,0.6)", border2: "rgba(30,41,59,0.8)",
-  borderPrimary: "rgba(30,41,59,0.9)",
-  fg: "#F1F5F9", muted: "#64748B", gold: "#F59E0B", orange: "#EA580C",
-  gold2: "#FBBF24", gold3: "#FDE68A", red: "#DC2626",
-  emerald: "#F59E0B", emerald2: "#FBBF24", emerald3: "#FDE68A",
-  teal: "#EA580C", teal2: "#F97316",
-  ice: "#22D3EE", mint: "#10B981", rose: "#F472B6",
-  macroProtein: "#60A5FA", macroCarbs: "#FBBF24", macroFat: "#FB923C",
-};
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 const AnimatedView = Animated.View;
@@ -135,7 +124,7 @@ function GoalRing({ value, label, percentage, color }: { value: string; label: s
   );
 }
 
-export default function HomeScreen() {
+function HomeScreenContent() {
   const router = useRouter();
   const { canAccess, isTrialActive, daysLeftInTrial, hasUsedTrial, isPaid } = useSubscription();
   const [paywallFeature, setPaywallFeature] = useState<{ name: string; icon: string; tier: "basic" | "pro"; desc?: string } | null>(null);
@@ -1332,3 +1321,11 @@ const styles = StyleSheet.create({
     borderWidth: 1, borderColor: "rgba(245,158,11,0.20)",
   },
 });
+
+export default function HomeScreen() {
+  return (
+    <ErrorBoundary fallbackScreen="Dashboard">
+      <HomeScreenContent />
+    </ErrorBoundary>
+  );
+}

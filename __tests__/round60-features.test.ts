@@ -265,8 +265,9 @@ describe("Weekly Goals Screen (app/weekly-goals.tsx)", () => {
   });
 
   it("uses Aurora Titan dark theme", () => {
-    expect(src).toContain("#0A0E14");
-    expect(src).toContain("#F59E0B");
+    // Colors are centralized in ui-colors.ts — screen imports from there or uses inline accent colors
+    expect(src).toMatch(/ui-colors|#0A0E14|SF\.bg/);
+    expect(src).toMatch(/#F59E0B|SF\.gold|UI\.gold/);
   });
 
   it("has back navigation", () => {

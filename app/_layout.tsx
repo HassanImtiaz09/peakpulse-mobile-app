@@ -29,6 +29,8 @@ import { useFonts } from "expo-font";
 import { useRouter } from "expo-router";
 import { extractReferralCodeFromUrl, storePendingReferralCode } from "@/lib/referral";
 import { FloatingAssistant } from "@/components/floating-assistant";
+import { AiLimitProvider } from "@/components/ai-limit-modal";
+import { ErrorBoundary } from "@/components/error-boundary";
 import { scheduleAllAINotifications } from "@/lib/ai-notification-scheduler";
 import { evaluateAndScheduleSmartReminders } from "@/lib/smart-reminders";
 import { defineBackgroundHealthSyncTask, registerBackgroundHealthSync } from "@/lib/background-health-sync";
@@ -254,6 +256,7 @@ export default function RootLayout() {
 
   const content = (
     <GestureHandlerRootView style={{ flex: 1 }}>
+      <ErrorBoundary fallbackScreen="app">
       <GuestAuthProvider>
       <UserProfileProvider>
       <FavoritesProvider>
@@ -263,6 +266,7 @@ export default function RootLayout() {
       <WearableProvider>
       <trpc.Provider client={trpcClient} queryClient={queryClient}>
         <QueryClientProvider client={queryClient}>
+          <AiLimitProvider>
           {/* Default to hiding native headers so raw route segments don't appear (e.g. "(tabs)", "products/[id]"). */}
           {/* If a screen needs the native header, explicitly enable it and set a human title via Stack.Screen options. */}
           {/* in order for ios apps tab switching to work properly, use presentation: "fullScreenModal" for login page, whenever you decide to use presentation: "modal*/}
@@ -272,6 +276,7 @@ export default function RootLayout() {
           </Stack>
           <FloatingAssistant />
           <StatusBar style="light" />
+          </AiLimitProvider>
         </QueryClientProvider>
       </trpc.Provider>
       </WearableProvider>
@@ -281,6 +286,7 @@ export default function RootLayout() {
       </FavoritesProvider>
       </UserProfileProvider>
       </GuestAuthProvider>
+      </ErrorBoundary>
     </GestureHandlerRootView>
   );
 

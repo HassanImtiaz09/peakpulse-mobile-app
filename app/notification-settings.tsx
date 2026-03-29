@@ -16,21 +16,7 @@ import {
 import { requestNotificationPermissions } from "@/lib/notifications";
 
 import { GOLDEN_PRIMARY, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgrounds";
-const SF = {
-  bg: "#0A0E14",
-  surface: "#141A22",
-  fg: "#F1F5F9",
-  muted: "#B45309",
-  mutedBright: "#B45309",
-  gold: "#F59E0B",
-  gold2: "#FBBF24",
-  gold3: "#FDE68A",
-  green: "#22C55E",
-  red: "#EF4444",
-  blue: "#3B82F6",
-  border: "rgba(245,158,11,0.12)",
-};
-
+import { UI as SF } from "@/constants/ui-colors";
 // ── Time Picker Modal ──
 
 const HOURS = Array.from({ length: 24 }, (_, i) => i);

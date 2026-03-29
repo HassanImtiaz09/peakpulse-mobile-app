@@ -36,20 +36,7 @@ import {
   GOLDEN_WORKOUT,
   GOLDEN_OVERLAY_STYLE,
 } from "@/constants/golden-backgrounds";
-
-const C = {
-  bg: "#0A0E14",
-  surface: "#141A22",
-  surface2: "#1A0F00",
-  border: "rgba(245,158,11,0.15)",
-  border2: "rgba(245,158,11,0.25)",
-  fg: "#F1F5F9",
-  muted: "#B45309",
-  gold: "#F59E0B",
-  gold2: "#FBBF24",
-  gold3: "#FDE68A",
-  dim: "rgba(245,158,11,0.08)",
-};
+import { C } from "@/constants/ui-colors";
 
 export default function ExerciseDetailScreen() {
   const { name } = useLocalSearchParams<{ name: string }>();

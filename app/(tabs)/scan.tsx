@@ -24,6 +24,8 @@ import { FeatureGate } from "@/components/feature-gate";
 import { useSubscription } from "@/hooks/use-subscription";
 import { PremiumFeatureBanner, PremiumFeatureTeaser } from "@/components/premium-feature-banner";
 import { recordProgressPhotoTaken } from "@/lib/feature-discovery";
+import { useAiLimit } from "@/components/ai-limit-modal";
+import { ErrorBoundary } from "@/components/error-boundary";
 
 const SCAN_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/OdDCyHFnLhvyAyWV.jpg";
 
@@ -74,8 +76,9 @@ interface ProgressPhoto {
   note?: string;
 }
 
-export default function ScanScreen() {
+function ScanScreenContent() {
   const router = useRouter();
+  const { showLimitModal } = useAiLimit();
   const { isAuthenticated } = useAuth();
   const { isGuest, guestProfile } = useGuestAuth();
   const canUse = isAuthenticated || isGuest;
@@ -1479,5 +1482,13 @@ function ShareProgressOverlay({
         </TouchableOpacity>
       </ScrollView>
     </View>
+  );
+}
+
+export default function ScanScreen() {
+  return (
+    <ErrorBoundary fallbackScreen="Scan">
+      <ScanScreenContent />
+    </ErrorBoundary>
   );
 }

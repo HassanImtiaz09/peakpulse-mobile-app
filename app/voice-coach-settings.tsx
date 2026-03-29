@@ -37,20 +37,7 @@ import {
   DEFAULT_VOICE_COACH_SETTINGS,
 } from "@/lib/voice-coach-settings";
 import { speakCue, stopSpeaking } from "@/lib/audio-form-cues";
-
-const C = {
-  bg: "#0A0E14",
-  surface: "#141A22",
-  border: "rgba(245,158,11,0.15)",
-  border2: "rgba(245,158,11,0.25)",
-  fg: "#F1F5F9",
-  muted: "#B45309",
-  gold: "#F59E0B",
-  gold2: "#FBBF24",
-  gold3: "#FDE68A",
-  green: "#22C55E",
-  red: "#EF4444",
-};
+import { C } from "@/constants/ui-colors";
 
 const VOICE_MODES: VoiceCoachMode[] = [
   "full",

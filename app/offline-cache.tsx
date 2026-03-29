@@ -17,19 +17,7 @@ import {
   getOfflineCacheStatus, clearOfflineCache, preCacheAllCuesAndDemos,
   type OfflineCacheStatus,
 } from "@/lib/offline-workout-cache";
-
-const C = {
-  bg: "#0A0E14",
-  surface: "#141A22",
-  border: "rgba(245,158,11,0.15)",
-  fg: "#F1F5F9",
-  muted: "#B45309",
-  gold: "#F59E0B",
-  gold2: "#FBBF24",
-  green: "#22C55E",
-  red: "#EF4444",
-  blue: "#60A5FA",
-};
+import { C } from "@/constants/ui-colors";
 
 export default function OfflineCacheScreen() {
   const router = useRouter();

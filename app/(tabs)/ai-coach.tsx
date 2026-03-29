@@ -18,23 +18,13 @@ import { useGuestAuth } from "@/lib/guest-auth";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { FeatureGate } from "@/components/feature-gate";
 import { useSubscription } from "@/hooks/use-subscription";
+import { UI as SF } from "@/constants/ui-colors";
+import { useAiLimit } from "@/components/ai-limit-modal";
+import { ErrorBoundary } from "@/components/error-boundary";
 
 const HERO_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/PZcnawJwIZkQHTEM.jpg";
 
 // NanoBanana design tokens — AI Coach uses mint/teal accent
-const SF = {
-  bg:      "#0A0E14",
-  surface: "#111827",
-  surface2:"#1E293B",
-  border:  "rgba(30,41,59,0.6)",
-  border2: "rgba(20,184,166,0.25)",
-  fg:      "#F1F5F9",
-  muted:   "#64748B",
-  gold:    "#14B8A6",   // teal accent for coach
-  gold2:   "#2DD4BF",
-  gold3:   "#5EEAD4",
-};
-
 type ChatMessage = { role: "user" | "assistant"; content: string };
 
 const SUGGESTED_QUESTIONS = [
@@ -59,8 +49,9 @@ function ScoreRing({ score }: { score: number }) {
   );
 }
 
-export default function AICoachScreen() {
+function AICoachScreenContent() {
   const router = useRouter();
+  const { showLimitModal } = useAiLimit();
   const { user, isAuthenticated } = useAuth();
   const { isGuest } = useGuestAuth();
   const [activeTab, setActiveTab] = useState<"insights" | "chat">("insights");
@@ -522,5 +513,13 @@ export default function AICoachScreen() {
         </View>
       )}
     </KeyboardAvoidingView>
+  );
+}
+
+export default function AICoachScreen() {
+  return (
+    <ErrorBoundary fallbackScreen="AI Coach">
+      <AICoachScreenContent />
+    </ErrorBoundary>
   );
 }

@@ -28,22 +28,11 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import * as Haptics from "expo-haptics";
 import { useRouter } from "expo-router";
 import { useSubscription, FEATURE_TIERS, type SubscriptionTier } from "@/hooks/use-subscription";
+import { C } from "@/constants/ui-colors";
 
 const { width: SCREEN_W } = Dimensions.get("window");
 
 // NanoBanana design tokens
-const C = {
-  bg: "#0A0E14",
-  surface: "#141A22",
-  border: "rgba(245,158,11,0.15)",
-  fg: "#F1F5F9",
-  muted: "#94A3B8",
-  gold: "#F59E0B",
-  gold2: "#FBBF24",
-  ice: "#38BDF8",
-  error: "#F87171",
-};
-
 // Tier display info
 const TIER_INFO: Record<SubscriptionTier, { label: string; color: string; price: string }> = {
   free: { label: "Free", color: C.muted, price: "$0" },

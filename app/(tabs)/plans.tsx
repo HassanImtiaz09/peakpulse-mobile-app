@@ -27,6 +27,9 @@ import { usePantry } from "@/lib/pantry-context";
 import { useCalories } from "@/lib/calorie-context";
 import { PremiumFeatureTeaser } from "@/components/premium-feature-banner";
 import { useExerciseCompletion } from "@/lib/exercise-completion-context";
+import { EmptyState, EMPTY_STATES } from "@/components/empty-state";
+import { useAiLimit } from "@/components/ai-limit-modal";
+import { ErrorBoundary } from "@/components/error-boundary";
 
 const WORKOUT_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/yauqLuTRvanJUzsJ.jpg";
 const MEAL_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/yauqLuTRvanJUzsJ.jpg";
@@ -103,8 +106,9 @@ function getTodayDayName(): string {
   return DAY_NAMES[new Date().getDay()];
 }
 
-export default function PlansScreen() {
+function PlansScreenContent() {
   const router = useRouter();
+  const { showLimitModal } = useAiLimit();
   const { isAuthenticated, user } = useAuth();
   const { isGuest } = useGuestAuth();
   const canUse = isAuthenticated || isGuest;
@@ -1475,5 +1479,13 @@ function MealCard({ meal, onSwap }: { meal: any; onSwap?: () => void }) {
         )}
       </View>
     </View>
+  );
+}
+
+export default function PlansScreen() {
+  return (
+    <ErrorBoundary fallbackScreen="Plans">
+      <PlansScreenContent />
+    </ErrorBoundary>
   );
 }

@@ -18,6 +18,7 @@ import * as ImagePicker from "expo-image-picker";
 import { useUserProfile } from "@/lib/user-profile-context";
 import { Modal } from "react-native";
 import { PremiumFeatureBanner, PremiumFeatureTeaser } from "@/components/premium-feature-banner";
+import { ErrorBoundary } from "@/components/error-boundary";
 
 // Enable LayoutAnimation on Android
 if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental) {
@@ -68,7 +69,7 @@ const GENDERS = [
   { key: "other", label: "Other" },
 ];
 
-export default function ProfileScreen() {
+function ProfileScreenContent() {
   const router = useRouter();
   const { user, isAuthenticated } = useAuth();
   const { isGuest, guestProfile, clearGuest } = useGuestAuth();
@@ -916,5 +917,13 @@ function ThemeToggle() {
         );
       })}
     </View>
+  );
+}
+
+export default function ProfileScreen() {
+  return (
+    <ErrorBoundary fallbackScreen="Profile">
+      <ProfileScreenContent />
+    </ErrorBoundary>
   );
 }

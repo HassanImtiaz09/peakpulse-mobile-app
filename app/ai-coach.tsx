@@ -16,21 +16,10 @@ import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/hooks/use-auth";
 import { useGuestAuth } from "@/lib/guest-auth";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { UI as SF } from "@/constants/ui-colors";
+import { useAiLimit } from "@/components/ai-limit-modal";
 
 const HERO_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/PZcnawJwIZkQHTEM.jpg";
-
-const SF = {
-  bg:      "#0A0E14",
-  surface: "#141A22",
-  surface2:"#1F0D00",
-  border:  "rgba(245,158,11,0.12)",
-  border2: "rgba(245,158,11,0.22)",
-  fg:      "#F1F5F9",
-  muted: "#B45309",
-  gold:    "#F59E0B",
-  gold2:   "#FBBF24",
-  gold3:   "#FDE68A",
-};
 
 type ChatMessage = { role: "user" | "assistant"; content: string };
 
@@ -58,6 +47,7 @@ function ScoreRing({ score }: { score: number }) {
 
 export default function AICoachScreen() {
   const router = useRouter();
+  const { showLimitModal } = useAiLimit();
   const { user, isAuthenticated } = useAuth();
   const { isGuest } = useGuestAuth();
   const [activeTab, setActiveTab] = useState<"insights" | "chat">("insights");

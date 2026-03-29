@@ -5,20 +5,7 @@ import {
 import { useRouter } from "expo-router";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { ScreenContainer } from "@/components/screen-container";
-
-const SF = {
-  bg:      "#0A0E14",
-  surface: "#141A22",
-  border:  "rgba(245,158,11,0.15)",
-  border2: "rgba(245,158,11,0.25)",
-  fg:      "#F1F5F9",
-  muted: "#B45309",
-  gold:    "#F59E0B",
-  gold2:   "#FBBF24",
-  gold3:   "#FDE68A",
-  orange:  "#EA580C",
-  red:     "#DC2626",
-};
+import { UI as SF } from "@/constants/ui-colors";
 
 const HERO_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/PZcnawJwIZkQHTEM.jpg";
 

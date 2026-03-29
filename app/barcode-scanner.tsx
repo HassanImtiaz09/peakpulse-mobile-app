@@ -39,6 +39,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { FlatList } from "react-native";
 import { usePantry, type PantryCategory } from "@/lib/pantry-context";
+import { UI as SF } from "@/constants/ui-colors";
 
 function mapCategoryToPantry(name: string, brand: string): PantryCategory {
   const combined = `${name} ${brand}`.toLowerCase();
@@ -77,17 +78,6 @@ function mapCategoryToPantry(name: string, brand: string): PantryCategory {
 
 const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get("window");
 const SCAN_AREA_SIZE = SCREEN_W * 0.7;
-
-const SF = {
-  bg: "#0A0E14",
-  surface: "#141A22",
-  fg: "#F1F5F9",
-  muted: "#B45309",
-  gold: "#F59E0B",
-  gold2: "#FBBF24",
-  gold3: "#FDE68A",
-  red: "#DC2626",
-};
 
 const OFF_API = "https://world.openfoodfacts.org/api/v2/product";
 

@@ -10,8 +10,8 @@ import { usePantry, type PantryCategory } from "@/lib/pantry-context";
 import { trpc } from "@/lib/trpc";
 
 import { GOLDEN_PANTRY, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgrounds";
-const SF = { bg: "#0A0E14", card: "#141A22", orange: "#F59E0B", gold: "#FBBF24", cream: "#FDE68A", muted: "#B45309", text: "#F1F5F9", border: "rgba(245,158,11,0.10)", green: "#22C55E", blue: "#60A5FA" };
-
+import { UI as SF } from "@/constants/ui-colors";
+import { useAiLimit } from "@/components/ai-limit-modal";
 interface ReceiptItem {
   name: string;
   quantity: number;
@@ -37,6 +37,7 @@ const CATEGORY_ICONS: Record<string, keyof typeof MaterialIcons.glyphMap> = {
 
 export default function ScanReceiptScreen() {
   const router = useRouter();
+  const { showLimitModal } = useAiLimit();
   const { addItems } = usePantry();
   const uploadPhoto = trpc.upload.photo.useMutation();
   const scanReceipt = trpc.receipt.scan.useMutation();

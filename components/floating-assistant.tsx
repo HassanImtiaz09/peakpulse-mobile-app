@@ -24,22 +24,9 @@ import { trpc } from "@/lib/trpc";
 import { useSubscription } from "@/hooks/use-subscription";
 import { getGreeting, type GreetingData } from "@/lib/assistant-greetings";
 import { classifyIntent, type NavigationIntent } from "@/lib/assistant-navigation";
+import { UI as SF } from "@/constants/ui-colors";
 
 const { width: W, height: H } = Dimensions.get("window");
-
-const SF = {
-  bg: "#0A0E14",
-  surface: "#141A22",
-  surface2: "#1F0D00",
-  border: "rgba(245,158,11,0.12)",
-  border2: "rgba(245,158,11,0.22)",
-  fg: "#F1F5F9",
-  muted: "#B45309",
-  gold: "#F59E0B",
-  gold2: "#FBBF24",
-  gold3: "#FDE68A",
-  goldDim: "rgba(245,158,11,0.10)",
-};
 
 type ChatMessage = { role: "user" | "assistant"; content: string; isNav?: boolean };
 

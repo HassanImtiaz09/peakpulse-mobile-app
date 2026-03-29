@@ -6,6 +6,10 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { hasGuestDataToMigrate } from "@/lib/guest-data-migration";
+import { GuestMigrationModal } from "@/components/guest-migration-modal";
+import { trpc } from "@/lib/trpc";
 
 export default function OAuthCallback() {
   const router = useRouter();
@@ -18,6 +22,8 @@ export default function OAuthCallback() {
   }>();
   const [status, setStatus] = useState<"processing" | "success" | "error">("processing");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [showMigration, setShowMigration] = useState(false);
+  const migrateMutation = trpc.migrateGuestData.useMutation();
 
   useEffect(() => {
     const handleCallback = async () => {
@@ -60,10 +66,13 @@ export default function OAuthCallback() {
           }
 
           setStatus("success");
-          console.log("[OAuth] Web authentication successful, redirecting to home...");
-          setTimeout(() => {
-            router.replace("/(tabs)");
-          }, 1000);
+          console.log("[OAuth] Web authentication successful, checking for guest data...");
+          const hasData1 = await hasGuestDataToMigrate();
+          if (hasData1) {
+            setShowMigration(true);
+          } else {
+            setTimeout(() => { router.replace("/(tabs)"); }, 1000);
+          }
           return;
         }
 
@@ -154,13 +163,13 @@ export default function OAuthCallback() {
           console.log("[OAuth] Session token found in URL, storing...");
           await Auth.setSessionToken(sessionToken);
           console.log("[OAuth] Session token stored successfully");
-          // User info is already in the OAuth callback response
-          // No need to fetch from API
           setStatus("success");
-          console.log("[OAuth] Redirecting to home...");
-          setTimeout(() => {
-            router.replace("/(tabs)");
-          }, 1000);
+          const hasData2 = await hasGuestDataToMigrate();
+          if (hasData2) {
+            setShowMigration(true);
+          } else {
+            setTimeout(() => { router.replace("/(tabs)"); }, 1000);
+          }
           return;
         }
 
@@ -210,13 +219,13 @@ export default function OAuthCallback() {
           }
 
           setStatus("success");
-          console.log("[OAuth] Authentication successful, redirecting to home...");
-
-          // Redirect to home after a short delay
-          setTimeout(() => {
-            console.log("[OAuth] Executing redirect...");
-            router.replace("/(tabs)");
-          }, 1000);
+          console.log("[OAuth] Authentication successful, checking for guest data...");
+          const hasData3 = await hasGuestDataToMigrate();
+          if (hasData3) {
+            setShowMigration(true);
+          } else {
+            setTimeout(() => { router.replace("/(tabs)"); }, 1000);
+          }
         } else {
           console.error("[OAuth] No session token in result:", result);
           setStatus("error");
@@ -266,6 +275,16 @@ export default function OAuthCallback() {
           </>
         )}
       </ThemedView>
+      <GuestMigrationModal
+        visible={showMigration}
+        onClose={() => {
+          setShowMigration(false);
+          router.replace("/(tabs)");
+        }}
+        uploadFn={async (key, data) => {
+          await migrateMutation.mutateAsync({ key, data });
+        }}
+      />
     </SafeAreaView>
   );
 }

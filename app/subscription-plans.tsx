@@ -17,23 +17,8 @@ import { useSubscription } from "@/hooks/use-subscription";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 import { GOLDEN_PRIMARY, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgrounds";
+import { UI as SF } from "@/constants/ui-colors";
 const { width: W } = Dimensions.get("window");
-
-const SF = {
-  bg:      "#0A0E14",
-  surface: "#141A22",
-  border:  "rgba(245,158,11,0.18)",
-  border2: "rgba(245,158,11,0.35)",
-  fg:      "#F1F5F9",
-  muted: "#B45309",
-  gold:    "#F59E0B",
-  gold2:   "#FBBF24",
-  gold3:   "#FDE68A",
-  orange:  "#EA580C",
-  teal:    "#14B8A6",
-  emerald: "#10B981",
-  red:     "#EF4444",
-};
 
 const FREE_FEATURES = [
   "AI Workout Plan (1 per month)",

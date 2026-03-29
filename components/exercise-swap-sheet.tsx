@@ -26,22 +26,9 @@ import {
   type SubstitutionResult,
 } from "@/lib/exercise-substitution";
 import { getExerciseInfo, type ExerciseInfo } from "@/lib/exercise-data";
+import { C } from "@/constants/ui-colors";
 
 // ── Theme ────────────────────────────────────────────────────────────────────
-const C = {
-  primary: "#F59E0B",
-  primaryGlow: "#FBBF24",
-  secondary: "#D97706",
-  secondaryDim: "#92400E",
-  bg: "#0A0E14",
-  surface: "#111827",
-  text: "#E2E8F0",
-  muted: "#64748B",
-  border: "#1E293B",
-  success: "#22C55E",
-  error: "#EF4444",
-};
-
 interface ExerciseSwapSheetProps {
   visible: boolean;
   exerciseName: string;

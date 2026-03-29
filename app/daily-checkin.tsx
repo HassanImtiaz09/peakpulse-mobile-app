@@ -18,6 +18,7 @@ import * as FileSystem from "expo-file-system/legacy";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { trpc } from "@/lib/trpc";
 import { useGuestAuth } from "@/lib/guest-auth";
+import { useAiLimit } from "@/components/ai-limit-modal";
 
 const HERO_BG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/golden-challenge-bg-2DXBpSZwN3LCroCHSRyD4K.webp";
 
@@ -58,6 +59,7 @@ function getStreakMessage(streak: number) {
 
 export default function DailyCheckInScreen() {
   const router = useRouter();
+  const { showLimitModal } = useAiLimit();
   const { isGuest, guestProfile } = useGuestAuth();
   const [checkIns, setCheckIns] = useState<CheckIn[]>([]);
   const [todayCheckIn, setTodayCheckIn] = useState<CheckIn | null>(null);

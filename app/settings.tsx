@@ -37,11 +37,7 @@ function formatBytes(bytes: number): string {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 import { GOLDEN_PRIMARY, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgrounds";
-
-const SF = {
-  bg: "#0A0E14", surface: "#141A22", border: "rgba(245,158,11,0.15)",
-  fg: "#F1F5F9", muted: "#B45309", gold: "#F59E0B", gold2: "#FBBF24", gold3: "#FDE68A",
-};
+import { UI as SF } from "@/constants/ui-colors";
 
 const FONT_SIZE_KEY = "@peakpulse_font_size";
 

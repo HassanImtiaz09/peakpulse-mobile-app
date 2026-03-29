@@ -24,15 +24,7 @@ import {
   QUICK_REACTIONS, type ChatMessage, type ChatRoom, type ReadReceipt,
 } from "@/lib/chat-service";
 import { GOLDEN_SOCIAL, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgrounds";
-
-const SF = {
-  bg: "#0A0E14", surface: "rgba(20,26,34,0.85)", surface2: "rgba(31,13,0,0.70)",
-  border: "rgba(245,158,11,0.12)", fg: "#F1F5F9", muted: "#B45309",
-  gold: "#F59E0B", gold2: "#FBBF24", gold3: "#FDE68A",
-  myBubble: "rgba(245,158,11,0.18)", otherBubble: "rgba(20,26,34,0.90)",
-  systemBg: "rgba(245,158,11,0.08)", searchHighlight: "rgba(245,158,11,0.40)",
-  searchActive: "rgba(245,158,11,0.70)",
-};
+import { UI as SF } from "@/constants/ui-colors";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 

@@ -8,8 +8,7 @@ import { ScreenContainer } from "@/components/screen-container";
 import { getHistoricalMeals, type MealEntry } from "@/lib/calorie-context";
 
 import { GOLDEN_MEALS, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgrounds";
-const SF = { bg: "#0A0E14", card: "#141A22", orange: "#F59E0B", gold: "#FBBF24", cream: "#FDE68A", muted: "#B45309", text: "#F1F5F9", border: "rgba(245,158,11,0.10)", green: "#22C55E", blue: "#60A5FA", red: "#EF4444" };
-
+import { UI as SF } from "@/constants/ui-colors";
 const MEAL_TYPE_ICONS: Record<string, keyof typeof MaterialIcons.glyphMap> = {
   breakfast: "free-breakfast", lunch: "restaurant", dinner: "dinner-dining", snack: "cookie",
 };

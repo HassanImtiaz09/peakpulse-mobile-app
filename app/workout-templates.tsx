@@ -11,14 +11,9 @@ import {
   getTemplates, deleteTemplate, saveTemplate, recordTemplateUsage,
   BUILT_IN_TEMPLATES, type WorkoutTemplate,
 } from "@/lib/workout-templates";
+import { UI as SF } from "@/constants/ui-colors";
 
 const DASHBOARD_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/PZcnawJwIZkQHTEM.jpg";
-
-const SF = {
-  bg: "#0A0E14", surface: "#1A2030", border: "rgba(245,158,11,0.12)",
-  border2: "rgba(245,158,11,0.20)", fg: "#F1F5F9", muted: "#B45309",
-  gold: "#F59E0B", gold2: "#FBBF24", gold3: "#FDE68A",
-};
 
 export default function WorkoutTemplatesScreen() {
   const router = useRouter();

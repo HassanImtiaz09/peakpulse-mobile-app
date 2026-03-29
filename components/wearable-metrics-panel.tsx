@@ -17,26 +17,9 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useRouter } from "expo-router";
 import { useWearable, type WearableStats, type DailyWearableEntry } from "@/lib/wearable-context";
 import * as Haptics from "expo-haptics";
+import { C } from "@/constants/ui-colors";
 
 // ── Colour Tokens ────────────────────────────────────────────────
-const C = {
-  bg: "#0A0E14",
-  surface: "#141A22",
-  border: "rgba(245,158,11,0.12)",
-  fg: "#F1F5F9",
-  muted: "#64748B",
-  gold: "#F59E0B",
-  gold2: "#FBBF24",
-  gold3: "#FDE68A",
-  green: "#22C55E",
-  red: "#EF4444",
-  blue: "#3B82F6",
-  purple: "#8B5CF6",
-  cyan: "#22D3EE",
-  orange: "#F97316",
-  teal: "#14B8A6",
-};
-
 type MetricTab = "overview" | "heart" | "activity" | "sleep";
 
 interface MetricCardProps {

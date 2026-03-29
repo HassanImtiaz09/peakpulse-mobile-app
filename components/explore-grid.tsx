@@ -9,17 +9,7 @@ import { useRouter } from "expo-router";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import * as Haptics from "expo-haptics";
 import { useSubscription } from "@/hooks/use-subscription";
-
-const SF = {
-  bg: "#0A0E14",
-  surface: "#111827",
-  surface2: "#1E293B",
-  fg: "#F1F5F9",
-  muted: "#64748B",
-  gold: "#F59E0B",
-  border: "rgba(30,41,59,0.6)",
-  border2: "rgba(30,41,59,0.8)",
-};
+import { UI as SF } from "@/constants/ui-colors";
 
 interface GridTile {
   icon: string;

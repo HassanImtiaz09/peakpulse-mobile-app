@@ -16,6 +16,7 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import * as Haptics from "expo-haptics";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { GOLDEN_SOCIAL, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgrounds";
+import { C } from "@/constants/ui-colors";
 
 // ── Types ────────────────────────────────────────────────────────────
 type BadgeCategory = "all" | "fitness" | "nutrition" | "social" | "challenges";
@@ -46,13 +47,6 @@ interface Trophy {
 }
 
 // ── Colour Tokens ────────────────────────────────────────────────────
-const C = {
-  bg: "#0A0E14", surface: "rgba(20,26,34,0.85)", surface2: "rgba(31,13,0,0.70)",
-  border: "rgba(245,158,11,0.12)", fg: "#F1F5F9", muted: "#64748B",
-  gold: "#F59E0B", gold2: "#FBBF24", gold3: "#FDE68A",
-  green: "#22C55E", red: "#EF4444", blue: "#3B82F6", purple: "#8B5CF6",
-};
-
 const RARITY_COLORS: Record<BadgeRarity, string> = {
   common: "#94A3B8",
   uncommon: "#22C55E",

@@ -7,19 +7,7 @@ import { useRouter } from "expo-router";
 import { startOAuthLogin } from "@/constants/oauth";
 import { useGuestAuth } from "@/lib/guest-auth";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-
-const C = {
-  bg: "#0A0E14",
-  surface: "#141A22",
-  border: "rgba(30,41,59,0.6)",
-  fg: "#F1F5F9",
-  muted: "#64748B",
-  gold: "#F59E0B",
-  gold2: "#FBBF24",
-  gold3: "#FDE68A",
-  ice: "#22D3EE",
-  mint: "#10B981",
-};
+import { C } from "@/constants/ui-colors";
 
 type AuthMode = "choose" | "email";
 

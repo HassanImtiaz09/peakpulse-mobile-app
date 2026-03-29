@@ -18,17 +18,7 @@ import {
   SOUND_OPTIONS, DEFAULT_SOUND_SETTINGS,
   type RestTimerSoundSettings, type SoundType,
 } from "@/lib/rest-timer-sounds";
-
-const C = {
-  bg: "#0A0E14",
-  surface: "#141A22",
-  border: "rgba(245,158,11,0.15)",
-  fg: "#F1F5F9",
-  muted: "#B45309",
-  gold: "#F59E0B",
-  gold2: "#FBBF24",
-  green: "#22C55E",
-};
+import { C } from "@/constants/ui-colors";
 
 export default function RestTimerSoundsScreen() {
   const router = useRouter();

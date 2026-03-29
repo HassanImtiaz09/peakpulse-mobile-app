@@ -10,17 +10,10 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 import { GOLDEN_SCAN, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgrounds";
+import { UI as SF } from "@/constants/ui-colors";
 const { width: SCREEN_W } = Dimensions.get("window");
 const PHOTO_W = SCREEN_W - 40;
 const PHOTO_H = Math.round(PHOTO_W * (4 / 3));
-
-const SF = {
-  bg: "#0A0E14", surface: "#141A22", surface2: "#1F0D00",
-  border: "rgba(245,158,11,0.12)", border2: "rgba(245,158,11,0.20)",
-  fg: "#F1F5F9", muted: "#B45309",
-  gold: "#F59E0B", gold2: "#FBBF24", gold3: "#FDE68A",
-  green: "#10B981", red: "#F87171",
-};
 
 interface ScanEntry {
   date: string;

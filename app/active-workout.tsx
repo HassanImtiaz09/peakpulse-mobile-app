@@ -63,20 +63,10 @@ import { prefetchExerciseVideos } from "@/lib/gif-cache";
 import { recordWorkoutCompleted, recordTimerUsed } from "@/lib/feature-discovery";
 import { evaluateAndScheduleSmartReminders } from "@/lib/smart-reminders";
 import { GOLDEN_WORKOUT, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgrounds";
+import { UI as SF } from "@/constants/ui-colors";
+import { useAiLimit } from "@/components/ai-limit-modal";
 
 const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get("window");
-
-const SF = {
-  bg: "#0A0E14",
-  surface: "#141A22",
-  border: "rgba(245,158,11,0.15)",
-  border2: "rgba(245,158,11,0.25)",
-  fg: "#F1F5F9",
-  muted: "#B45309",
-  gold: "#F59E0B",
-  gold2: "#FBBF24",
-  gold3: "#FDE68A",
-};
 
 interface Exercise {
   name: string;
@@ -531,6 +521,7 @@ function FullscreenTimerModal({
 export default function ActiveWorkoutScreen() {
   useKeepAwake();
   const router = useRouter();
+  const { showLimitModal } = useAiLimit();
   const { isAuthenticated } = useAuth();
   const params = useLocalSearchParams<{ dayData: string }>();
 

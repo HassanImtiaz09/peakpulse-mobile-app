@@ -19,6 +19,9 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import Svg, { Rect, Line, Text as SvgText, G } from "react-native-svg";
 import { exportMealLogPdf } from "@/lib/meal-pdf";
+import { EmptyState, EMPTY_STATES } from "@/components/empty-state";
+import { useAiLimit } from "@/components/ai-limit-modal";
+import { ErrorBoundary } from "@/components/error-boundary";
 
 
 // NanoBanana design tokens — Meals uses mint/teal accent
@@ -86,8 +89,9 @@ const MEAL_RECIPES: Record<string, { title: string; time: string; steps: string[
   snack: { title: "Protein Snack Board", time: "3 min", steps: ["Portion 30g mixed nuts", "Slice one apple into wedges", "Add 2 tbsp almond butter for dipping", "Optional: blend a protein shake"] },
 };
 
-export default function MealsScreen() {
+function MealsScreenContent() {
   const router = useRouter();
+  const { showLimitModal } = useAiLimit();
   const { isAuthenticated } = useAuth();
   const { isGuest } = useGuestAuth();
   const canUse = isAuthenticated || isGuest;
@@ -1366,11 +1370,7 @@ export default function MealsScreen() {
           Today's Log {meals.length > 0 ? `(${meals.length})` : ""}
         </Text>
         {meals.length === 0 ? (
-          <View style={{ backgroundColor: MSURFACE, borderRadius: 16, padding: 24, alignItems: "center", borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}>
-            <MaterialIcons name="restaurant" size={32} color={MMUTED} style={{ marginBottom: 8 }} />
-            <Text style={{ color: MMUTED, fontSize: 13, textAlign: "center", lineHeight: 20 }}>No meals logged today.</Text>
-            <Text style={{ color: MMUTED, fontSize: 11, textAlign: "center", marginTop: 4 }}>Tap above to log your first meal.</Text>
-          </View>
+          <EmptyState {...EMPTY_STATES.mealLog} compact onCta={() => setShowLogDropdown(true)} />
         ) : (
           meals.map((meal) => (
             <View key={meal.id} style={{ backgroundColor: MSURFACE, borderRadius: 14, padding: 12, marginBottom: 8, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)", flexDirection: "row", alignItems: "center", gap: 10 }}>
@@ -1691,5 +1691,13 @@ function MealSwapModal({ mealType, mealData, dietaryPreference, fitnessGoal, gen
         )}
       </View>
     </View>
+  );
+}
+
+export default function MealsScreen() {
+  return (
+    <ErrorBoundary fallbackScreen="Meals">
+      <MealsScreenContent />
+    </ErrorBoundary>
   );
 }

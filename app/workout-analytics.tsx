@@ -20,25 +20,12 @@ import {
   type TimePeriod, type VolumeDataPoint, type FrequencyDataPoint,
   type StrengthDataPoint, type MuscleDistribution, type AnalyticsSummary,
 } from "@/lib/workout-analytics";
+import { C } from "@/constants/ui-colors";
+import { EmptyState, EMPTY_STATES } from "@/components/empty-state";
 
 const { width: SCREEN_W } = Dimensions.get("window");
 const CHART_W = SCREEN_W - 48;
 const CHART_H = 180;
-
-const C = {
-  bg: "#0A0E14",
-  surface: "#141A22",
-  border: "rgba(245,158,11,0.15)",
-  fg: "#F1F5F9",
-  muted: "#B45309",
-  gold: "#F59E0B",
-  gold2: "#FBBF24",
-  gold3: "#FDE68A",
-  green: "#22C55E",
-  red: "#EF4444",
-  blue: "#60A5FA",
-  purple: "#A78BFA",
-};
 
 type Tab = "volume" | "frequency" | "strength" | "muscles";
 const TABS: { key: Tab; label: string; icon: string }[] = [
@@ -213,11 +200,7 @@ export default function WorkoutAnalyticsScreen() {
                 <Text style={s.chartTitle}>VOLUME OVER TIME</Text>
                 <Text style={s.chartSubtitle}>Total weight × reps per session</Text>
                 {volumeData.length === 0 ? (
-                  <View style={s.emptyState}>
-                    <MaterialIcons name="bar-chart" size={40} color={C.muted} />
-                    <Text style={s.emptyText}>No workout data yet</Text>
-                    <Text style={s.emptySubtext}>Complete workouts to see volume trends</Text>
-                  </View>
+                  <EmptyState {...EMPTY_STATES.analytics} compact />
                 ) : (
                   <>
                     <View style={s.barChart}>

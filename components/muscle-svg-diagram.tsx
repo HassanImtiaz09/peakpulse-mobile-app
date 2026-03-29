@@ -13,21 +13,9 @@ import { View, Text, StyleSheet, Pressable, Platform } from "react-native";
 import Svg, { Path, G, Rect, Ellipse, Circle } from "react-native-svg";
 import * as Haptics from "expo-haptics";
 import type { MuscleGroup } from "@/components/body-diagram";
+import { C } from "@/constants/ui-colors";
 
 // Theme colors matching the app's gold/dark aesthetic
-const C = {
-  primary: "#F59E0B",        // Gold — primary muscles
-  primaryGlow: "#FBBF24",    // Brighter gold for emphasis
-  secondary: "#D97706",      // Darker gold — secondary muscles
-  secondaryDim: "#92400E",   // Dim gold for secondary
-  inactive: "#1E293B",       // Dark blue-grey — inactive muscles
-  outline: "rgba(245,158,11,0.15)", // Faint gold outline
-  body: "#0F172A",           // Body base colour
-  bg: "#0A0E14",
-  label: "#FDE68A",
-  muted: "#64748B",
-};
-
 // ── SVG Path Data ────────────────────────────────────────────────────────────
 // Simplified anatomical paths for front and back views.
 // Each path represents a muscle group region.

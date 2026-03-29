@@ -9,6 +9,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Haptics from "expo-haptics";
 import { ScreenContainer } from "@/components/screen-container";
 import type { WorkoutType, WorkoutData } from "@/lib/health-service";
+import { EmptyState, EMPTY_STATES } from "@/components/empty-state";
 
 const DASHBOARD_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/PZcnawJwIZkQHTEM.jpg";
 
@@ -419,33 +420,12 @@ export default function WorkoutHistoryScreen() {
               <ActivityIndicator color="#F59E0B" size="large" />
             </View>
           ) : filteredEntries.length === 0 ? (
-            <View style={{ flex: 1, alignItems: "center", justifyContent: "center", paddingHorizontal: 32 }}>
-              <MaterialIcons name="fitness-center" size={48} color="#B45309" />
-              <Text style={{
-                color: "#F1F5F9", fontFamily: "DMSans_700Bold", fontSize: 16, marginTop: 16, textAlign: "center",
-              }}>
-                {hasActiveFilters ? "No Workouts Match Filters" : "No Workouts Logged Yet"}
-              </Text>
-              <Text style={{
-                color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 13, marginTop: 8, textAlign: "center", lineHeight: 20,
-              }}>
-                {hasActiveFilters
-                  ? "Try adjusting your filters or clearing them to see all workouts."
-                  : "Tap the + button above or use the Log Workout screen to record your first workout."}
-              </Text>
-              {!hasActiveFilters && (
-                <TouchableOpacity
-                  onPress={() => router.push("/log-workout" as any)}
-                  style={{
-                    marginTop: 20, backgroundColor: "#F59E0B", paddingHorizontal: 24, paddingVertical: 12,
-                    borderRadius: 12, flexDirection: "row", alignItems: "center", gap: 6,
-                  }}
-                >
-                  <MaterialIcons name="add" size={18} color="#0A0E14" />
-                  <Text style={{ color: "#0A0E14", fontFamily: "DMSans_700Bold", fontSize: 14 }}>Log Workout</Text>
-                </TouchableOpacity>
-              )}
-            </View>
+            <EmptyState
+              {...(hasActiveFilters
+                ? { icon: "filter-list" as any, title: "No Workouts Match Filters", description: "Try adjusting your filters or clearing them to see all workouts." }
+                : EMPTY_STATES.workoutHistory)}
+              onCta={hasActiveFilters ? undefined : () => router.push("/log-workout" as any)}
+            />
           ) : (
             <FlatList
               data={filteredEntries}

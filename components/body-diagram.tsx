@@ -11,6 +11,7 @@ import React, { useMemo, useState } from "react";
 import { View, Text, StyleSheet, Pressable, Platform } from "react-native";
 import Body, { type Slug, type ExtendedBodyPart } from "react-native-body-highlighter";
 import * as Haptics from "expo-haptics";
+import { C } from "@/constants/ui-colors";
 
 export type MuscleGroup =
   | "chest"
@@ -41,20 +42,6 @@ interface BodyDiagramProps {
 }
 
 // Theme colors
-const C = {
-  primary: "#F59E0B",
-  primaryLight: "#FBBF24",
-  secondary: "#D97706",
-  secondaryLight: "#B45309",
-  label: "#FDE68A",
-  muted: "#B45309",
-  bg: "#0A0E14",
-  surface: "#141A22",
-  border: "rgba(245,158,11,0.15)",
-  bodyDefault: "#1A1A2E",
-  bodyStroke: "rgba(245,158,11,0.08)",
-};
-
 /**
  * Map our MuscleGroup type to react-native-body-highlighter slug(s).
  *

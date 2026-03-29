@@ -12,22 +12,9 @@ import {
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { UI as SF } from "@/constants/ui-colors";
 
 const { width: W, height: H } = Dimensions.get("window");
-
-const SF = {
-  bg:      "#0A0E14",
-  surface: "#141A22",
-  border:  "rgba(245,158,11,0.18)",
-  fg:      "#F1F5F9",
-  muted:   "#64748B",
-  gold:    "#F59E0B",
-  gold2:   "#FBBF24",
-  gold3:   "#FDE68A",
-  teal:    "#14B8A6",
-  emerald: "#10B981",
-  orange:  "#EA580C",
-};
 
 interface TutorialSlide {
   iconName: React.ComponentProps<typeof MaterialIcons>["name"];

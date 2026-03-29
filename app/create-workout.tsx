@@ -20,15 +20,9 @@ import {
   type BalanceAnalysis, type CalorieEstimate, type BodyCompositionEstimate, type WorkoutCoachInsight,
 } from "@/lib/workout-insights";
 import { GOLDEN_WORKOUT, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgrounds";
+import { UI as SF } from "@/constants/ui-colors";
 
 // ── Theme ────────────────────────────────────────────────────────────────────
-const SF = {
-  bg: "#0A0E14", surface: "rgba(245,158,11,0.04)", surfaceBright: "rgba(245,158,11,0.08)",
-  gold1: "#FBBF24", gold2: "#F59E0B", gold3: "#D97706", gold4: "#B45309",
-  muted: "#B45309", border: "rgba(245,158,11,0.10)", borderBright: "rgba(245,158,11,0.18)",
-  red: "#EF4444", green: "#22C55E", blue: "#3B82F6", cream: "#F1F5F9",
-};
-
 interface SelectedExercise {
   name: string;
   sets: number;

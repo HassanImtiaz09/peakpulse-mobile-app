@@ -34,24 +34,9 @@ import { useColors } from "@/hooks/use-colors";
 import type { MuscleGroup } from "@/components/body-diagram";
 import { getExercisesByMuscle, type ExerciseInfo } from "@/lib/exercise-data";
 import { getExerciseDbGifUrl, hasExerciseDbGif } from "@/lib/exercisedb-api";
+import { C } from "@/constants/ui-colors";
 
 // ── Theme ──────────────────────────────────────────────────────────────────────
-const C = {
-  primary: "#F59E0B",
-  primaryGlow: "#FBBF24",
-  secondary: "#D97706",
-  secondaryDim: "#92400E",
-  inactive: "#1E293B",
-  outline: "rgba(245,158,11,0.15)",
-  body: "#0F172A",
-  bg: "#0A0E14",
-  surface: "#111827",
-  label: "#FDE68A",
-  muted: "#64748B",
-  text: "#E2E8F0",
-  border: "#1E293B",
-};
-
 // ── Tappable SVG Paths ────────────────────────────────────────────────────────
 interface MuscleRegion {
   muscle: MuscleGroup;

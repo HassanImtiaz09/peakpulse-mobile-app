@@ -2603,3 +2603,20 @@
 - [x] Allow re-onboarding as guest for testing purposes
 - [x] Add TODO comment reminder to disable guest re-onboarding before app store publish
 - [x] Run tests and verify TypeScript compiles (2088 tests pass, 0 TS errors)
+
+## Refactor (Round 37) — PeakPulse Non-Native Refactoring (6 Changes)
+- [x] Change 1: Create constants/ui-colors.ts with centralized UI color constants
+- [x] Change 1: Migrate ~55 files from local SF/C color objects to centralized import
+- [x] Change 2: Create components/empty-state.tsx with reusable empty state component and presets
+- [x] Change 2: Integrate empty states into 7 screens (plans, meals, progress-photos, workout-history, workout-analytics, social-feed, pantry)
+- [x] Change 3: Create lib/guest-data-migration.ts for AsyncStorage to server migration
+- [x] Change 3: Create components/guest-migration-modal.tsx for migration prompt UI
+- [x] Change 3: Add migrateGuestData tRPC endpoint to server/routers.ts
+- [x] Change 3: Integrate GuestMigrationModal into OAuth callback with migration check
+- [x] Change 4: Create components/ai-limit-modal.tsx with AiLimitProvider context
+- [x] Change 4: Integrate AiLimitProvider in _layout.tsx and add useAiLimit to 12 AI screens
+- [x] Change 5: Create lib/accessibility.ts with a11y helper functions and A11Y_LABELS
+- [x] Change 5: Contrast ratios already fixed (muted #94A3B8, mutedGold #D97706 in ui-colors.ts)
+- [x] Change 6: Create components/error-boundary.tsx with retry UI
+- [x] Change 6: Wrap all 6 tab screens and root layout with ErrorBoundary
+- [x] Run tests and verify TypeScript compiles (2088 tests pass, 0 TS errors)

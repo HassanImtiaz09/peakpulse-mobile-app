@@ -14,23 +14,6 @@ import { scheduleAllDefaultReminders } from "@/lib/notifications";
 
 const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get("window");
 
-const SF = {
-  bg:      "#0A0E14",
-  surface: "#141A22",
-  border:  "rgba(30,41,59,0.6)",
-  border2: "rgba(245,158,11,0.25)",
-  fg:      "#F1F5F9",
-  muted:   "#64748B",
-  gold:    "#F59E0B",
-  orange:  "#EA580C",
-  red:     "#EF4444",
-  gold2:   "#FBBF24",
-  gold3:   "#FDE68A",
-  ice:     "#22D3EE",
-  mint:    "#10B981",
-  rose:    "#F472B6",
-};
-
 const BG = {
   ob1:       "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/PDBtTuXlWnSZfekS.jpg",
   ob2:       "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/lquEenOvAGapUHhN.jpg",
@@ -97,6 +80,8 @@ const DIETARY_PREFS = [
 ];
 
 import { ACTIVITY_LEVELS, calculateTDEEBreakdown, calculateMacros, saveTDEEBreakdown } from "@/lib/tdee-calculator";
+import { UI as SF } from "@/constants/ui-colors";
+import { useAiLimit } from "@/components/ai-limit-modal";
 
 /** Wrapper to keep existing call sites working — returns just the adjusted TDEE number. */
 function calculateTDEE(
@@ -120,6 +105,7 @@ function calculateTDEE(
 
 export default function OnboardingScreen() {
   const router = useRouter();
+  const { showLimitModal } = useAiLimit();
   const { isAuthenticated } = useAuth();
   const { enterGuestMode } = useGuestAuth();
   const [step, setStep] = useState(0);

@@ -20,6 +20,7 @@ import { trpc } from "@/lib/trpc";
 import { useGuestAuth } from "@/lib/guest-auth";
 import { FeatureGate } from "@/components/feature-gate";
 import { getSeedPosts, getCurrentWeeklyChallenge, WEEKLY_CHALLENGE_TEMPLATES, type SeedPost } from "@/lib/social-feed-seeds";
+import { EmptyState, EMPTY_STATES } from "@/components/empty-state";
 
 const HERO_BG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/golden-social-bg-6XESYMXaHwooBovbKXUgYi.webp";
 
@@ -271,11 +272,7 @@ export default function SocialFeedScreen() {
                 ) : null
               }
               ListEmptyComponent={
-                <View style={styles.emptyState}>
-                  <Text style={styles.emptyEmoji}>🌟</Text>
-                  <Text style={styles.emptyTitle}>Be the first to share!</Text>
-                  <Text style={styles.emptyText}>Share your progress and inspire the community.</Text>
-                </View>
+                <EmptyState {...EMPTY_STATES.socialFeed} compact />
               }
             />
           )}

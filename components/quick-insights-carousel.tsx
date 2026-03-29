@@ -8,24 +8,11 @@ import { View, Text, FlatList, TouchableOpacity, StyleSheet, Dimensions } from "
 import { useRouter } from "expo-router";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { UI as SF } from "@/constants/ui-colors";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const CARD_WIDTH = SCREEN_WIDTH - 64;
 const CARD_GAP = 10;
-
-const SF = {
-  bg: "#0A0E14",
-  surface: "#111827",
-  surface2: "#1E293B",
-  fg: "#F1F5F9",
-  muted: "#64748B",
-  gold: "#F59E0B",
-  emerald: "#10B981",
-  blue: "#3B82F6",
-  purple: "#A855F7",
-  red: "#EF4444",
-  border: "rgba(30,41,59,0.6)",
-};
 
 interface InsightCard {
   id: string;

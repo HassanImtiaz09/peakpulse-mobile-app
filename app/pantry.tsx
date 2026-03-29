@@ -17,6 +17,7 @@ import { trpc } from "@/lib/trpc";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { schedulePantryExpiryNotifications } from "@/lib/notification-service";
 import { shareShoppingListAsText, exportShoppingListPdf, type ShoppingExportItem } from "@/lib/shopping-pdf";
+import { EmptyState, EMPTY_STATES } from "@/components/empty-state";
 
 const PANTRY_BG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/golden-pantry-bg-NX2jKAH9PuCVwSuoatLKxc.webp";
 
@@ -440,20 +441,7 @@ export default function PantryScreen() {
 
             {/* Empty state */}
             {items.length === 0 && (
-              <View style={{ alignItems: "center", paddingVertical: 40 }}>
-                <MaterialIcons name="kitchen" size={48} color="#B45309" />
-                <Text style={{ color: "#F1F5F9", fontFamily: "DMSans_700Bold", fontSize: 18, marginTop: 12 }}>Your Pantry is Empty</Text>
-                <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 13, textAlign: "center", marginTop: 6, maxWidth: 280 }}>
-                  Add items manually or scan your pantry/fridge with AI to get started. Then get personalised meal suggestions!
-                </Text>
-                <TouchableOpacity
-                  onPress={() => setViewMode("add")}
-                  style={{ marginTop: 16, flexDirection: "row", alignItems: "center", gap: 6, backgroundColor: "#F59E0B", borderRadius: 12, paddingHorizontal: 20, paddingVertical: 10 }}
-                >
-                  <MaterialIcons name="add" size={18} color="#0A0E14" />
-                  <Text style={{ color: "#0A0E14", fontFamily: "DMSans_700Bold", fontSize: 14 }}>Add Items</Text>
-                </TouchableOpacity>
-              </View>
+              <EmptyState {...EMPTY_STATES.pantry} onCta={() => setViewMode("add")} />
             )}
 
             {/* Grouped inventory */}

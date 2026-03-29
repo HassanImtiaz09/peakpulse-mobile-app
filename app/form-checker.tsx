@@ -16,6 +16,7 @@ import { useRouter, useLocalSearchParams } from "expo-router";
 import { trpc } from "@/lib/trpc";
 import { FeatureGate } from "@/components/feature-gate";
 import { useSubscription } from "@/hooks/use-subscription";
+import { useAiLimit } from "@/components/ai-limit-modal";
 
 const WORKOUT_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/PZcnawJwIZkQHTEM.jpg";
 
@@ -86,6 +87,7 @@ function getFormEmoji(score: number): string {
 
 export default function FormCheckerScreen() {
   const router = useRouter();
+  const { showLimitModal } = useAiLimit();
   const params = useLocalSearchParams<{ exercise?: string }>();
   const exerciseName = params.exercise ?? DEFAULT_EXERCISE;
 

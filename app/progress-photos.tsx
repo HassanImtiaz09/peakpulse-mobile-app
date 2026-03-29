@@ -16,6 +16,8 @@ import { trpc } from "@/lib/trpc";
 import { FeatureGate } from "@/components/feature-gate";
 
 import { GOLDEN_SCAN, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgrounds";
+import { EmptyState, EMPTY_STATES } from "@/components/empty-state";
+import { useAiLimit } from "@/components/ai-limit-modal";
 const { width: SCREEN_W } = Dimensions.get("window");
 const CARD_PADDING = 40;
 const CARD_W = SCREEN_W - CARD_PADDING;
@@ -181,6 +183,7 @@ function CaptionSheet({ visible, caption, onChangeCaption, onClose, onShare, sha
   onClose: () => void; onShare: () => void; sharing: boolean;
 }) {
   const [copied, setCopied] = useState(false);
+  const { showLimitModal } = useAiLimit();
   async function copyCaption() {
     await Clipboard.setStringAsync(caption);
     setCopied(true);
@@ -688,10 +691,7 @@ export default function ProgressPhotosScreen() {
         <View style={{ paddingHorizontal: 20 }}>
           <Text style={{ color: "#F1F5F9", fontWeight: "700", fontSize: 16, marginBottom: 12 }}>Your Photos ({photos?.length ?? 0})</Text>
           {!photos || photos.length === 0 ? (
-            <View style={{ backgroundColor: "#141A22", borderRadius: 16, padding: 32, alignItems: "center", borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}>
-              <Text style={{ fontSize: 40, marginBottom: 8 }}>📸</Text>
-              <Text style={{ color: "#B45309", fontSize: 13, textAlign: "center" }}>No photos yet. Add your first to start tracking.</Text>
-            </View>
+            <EmptyState {...EMPTY_STATES.progressPhotos} compact onCta={() => pickImage(false)} />
           ) : (
             <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 10 }}>
               {sortedPhotos.map((photo, i) => (
