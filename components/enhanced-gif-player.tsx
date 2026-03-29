@@ -1,28 +1,28 @@
 /**
- * EnhancedGifPlayer — Complete Rewrite for MP4 Videos
+ * EnhancedGifPlayer — Updated to use ExerciseDB animated GIFs
  *
- * WHAT CHANGED vs the original:
- *  - Uses <ExerciseVideoPlayer> (expo-video) instead of <Image> from expo-image.
- *  - Front / Side toggle now correctly swaps the video URL by deriving the
- *    side-view key from the front-view key via getExerciseVideoUrl().
- *  - Loading state is handled by the video player itself (no manual isLoading flag).
- *  - Falls back gracefully when a video URL is unavailable (shows "No demo" text).
+ * WHAT CHANGED vs the previous version:
+ *   - Uses ExerciseGifDisplay (expo-image based) instead of
+ *     ExerciseVideoPlayer (expo-video based)
+ *   - Derives a human-readable exercise name from the registry key and
+ *     uses it to look up an animated GIF from ExerciseDB
+ *   - Front / Side toggle is preserved in the UI; both angles show the
+ *     same ExerciseDB GIF because ExerciseDB does not split by angle
+ *     (the toggle is kept to avoid breaking existing UX)
+ *   - Accepts an optional `exerciseName` prop so callers can pass the
+ *     plain name directly instead of relying on key derivation
  *
- * Props
- * ─────
- *  exerciseKey   — registry key WITHOUT angle suffix, e.g. "male-Barbell-barbell-squat"
- *                  OR with "-front" suffix (both are normalised automatically)
- *  height        — rendered height in px (default 260)
- *  showControls  — show the Front / Side toggle bar (default true)
- *  style         — extra ViewStyle overrides on the outer container
+ * WHY THIS FIX WORKS:
+ *   expo-video cannot pass HTTP headers to video requests (issue #29436).
+ *   MuscleWiki CDN blocks requests without a Referer header — so every
+ *   MuscleWiki MP4 URL showed as a black frame in the app. ExerciseDB
+ *   GIF URLs are on a public CDN and require no auth headers at all.
+ *   expo-image renders them as smooth animated GIFs natively.
  *
- * Usage
- * ─────
- *  import EnhancedGifPlayer from "@/components/enhanced-gif-player";
- *
- *  <EnhancedGifPlayer exerciseKey="male-Barbell-barbell-squat-front" />
+ * USAGE (unchanged from original):
+ *   import EnhancedGifPlayer from "@/components/enhanced-gif-player";
+ *   <EnhancedGifPlayer exerciseKey="male-Barbell-barbell-squat-front" />
  */
-
 import React, { useState } from "react";
 import {
   StyleSheet,
@@ -31,71 +31,69 @@ import {
   View,
   ViewStyle,
 } from "react-native";
-import { ExerciseVideoPlayer } from "@/components/exercise-video-player";
-import { getExerciseVideoUrl } from "@/lib/exercise-gif-registry";
-
-// ─── Types ──────────────────────────────────────────────────────────────────
+import { ExerciseGifDisplay } from "@/components/exercise-gif-display";
 
 type Angle = "front" | "side";
 
 interface EnhancedGifPlayerProps {
   /**
-   * The exercise registry key.
-   * Accepts either form:
-   *   "male-Barbell-barbell-squat"        (no angle suffix)
-   *   "male-Barbell-barbell-squat-front"  (with angle suffix — stripped internally)
+   * Registry key with or without angle suffix.
+   * e.g. "male-Barbell-barbell-squat-front" or "male-Barbell-barbell-squat"
    */
   exerciseKey: string;
-  /** Rendered height of the video player. Defaults to 260. */
+  /**
+   * Optional human-readable exercise name.
+   * When provided, used directly for ExerciseDB lookup (more accurate).
+   * When omitted, derived from exerciseKey.
+   */
+  exerciseName?: string;
+  /** Rendered height of the player in pixels. Defaults to 260. */
   height?: number;
-  /** Show the Front / Side toggle. Defaults to true. */
+  /** Show the Front / Side toggle bar. Defaults to true. */
   showControls?: boolean;
   /** Additional style on the outer container. */
   style?: ViewStyle;
 }
 
-// ─── Helpers ─────────────────────────────────────────────────────────────────
-
-/** Normalise the key to always end with "-front" for front-angle lookups */
-function normaliseFrontKey(key: string): string {
-  if (key.endsWith("-side")) return key.replace(/-side$/, "-front");
-  if (key.endsWith("-front")) return key;
-  return `${key}-front`;
+/**
+ * Derive a plain exercise name from a MuscleWiki registry key.
+ * "male-Barbell-barbell-squat-front" → "barbell squat"
+ */
+function keyToExerciseName(key: string): string {
+  return key
+    .replace(/^male-[A-Z][a-zA-Z]+-/, "") // strip "male-Category-"
+    .replace(/-(?:front|side)$/, "")       // strip trailing angle
+    .replace(/-/g, " ")
+    .trim();
 }
-
-// ─── Component ───────────────────────────────────────────────────────────────
 
 export default function EnhancedGifPlayer({
   exerciseKey,
+  exerciseName,
   height = 260,
   showControls = true,
   style,
 }: EnhancedGifPlayerProps) {
   const [angle, setAngle] = useState<Angle>("front");
 
-  // Ensure we always have a front-normalised key for the registry lookup
-  const frontKey = normaliseFrontKey(exerciseKey);
-
-  // Derive the active video URL from the registry
-  const videoUri = getExerciseVideoUrl(frontKey, angle);
-
-  // ── Render ─────────────────────────────────────────────────────────────────
+  // Use explicit name if given; otherwise derive from the registry key
+  const name = exerciseName ?? keyToExerciseName(exerciseKey);
 
   return (
     <View style={[styles.wrapper, style]}>
-      {/* ── Video ── */}
-      <ExerciseVideoPlayer uri={videoUri} height={height} />
+      {/* Animated GIF via ExerciseDB public CDN (no auth headers needed) */}
+      <ExerciseGifDisplay exerciseName={name} height={height} />
 
-      {/* ── Front / Side Toggle ── */}
+      {/* Front / Side toggle — kept for UX parity */}
       {showControls && (
         <View style={styles.toggleRow}>
           <TouchableOpacity
-            style={[
-              styles.toggleBtn,
-              angle === "front" && styles.toggleBtnActive,
-            ]}
+            style={[styles.toggleBtn, angle === "front" && styles.toggleBtnActive]}
             onPress={() => setAngle("front")}
             activeOpacity={0.75}
+            accessibilityRole="button"
+            accessibilityLabel="Show front view"
+            accessibilityState={{ selected: angle === "front" }}
           >
             <Text
               style={[
@@ -108,12 +106,12 @@ export default function EnhancedGifPlayer({
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={[
-              styles.toggleBtn,
-              angle === "side" && styles.toggleBtnActive,
-            ]}
+            style={[styles.toggleBtn, angle === "side" && styles.toggleBtnActive]}
             onPress={() => setAngle("side")}
             activeOpacity={0.75}
+            accessibilityRole="button"
+            accessibilityLabel="Show side view"
+            accessibilityState={{ selected: angle === "side" }}
           >
             <Text
               style={[
@@ -130,13 +128,9 @@ export default function EnhancedGifPlayer({
   );
 }
 
-// ─── Styles ──────────────────────────────────────────────────────────────────
-
 const AMBER = "#F59E0B";
 const AMBER_DIM = "rgba(245,158,11,0.12)";
 const SURFACE = "#141A22";
-const TEXT_MUTED = "#6B7280";
-const TEXT_ACTIVE = "#0A0E14";
 
 const styles = StyleSheet.create({
   wrapper: {
@@ -168,6 +162,6 @@ const styles = StyleSheet.create({
     color: AMBER,
   },
   toggleTextActive: {
-    color: TEXT_ACTIVE,
+    color: "#0A0E14",
   },
 });
