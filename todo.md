@@ -2554,3 +2554,9 @@
 - [x] Replace meal plan prompt construction with strict dietary enforcement
 - [x] Strengthen system message to prioritize dietary restrictions
 - [x] Run tests and verify TypeScript compiles (2088 tests pass, 0 TS errors)
+
+## Bug Fix (Round 30) — AI Body Transformation Missing Facial Fat Reduction (ISSUE-3)
+- [x] Add getFaceTransformationDesc() helper function to server/routers.ts
+- [x] Update image generation prompt to include face transformation instructions
+- [x] Update getBFDescription() to include face context references
+- [x] Run tests and verify TypeScript compiles (2088 tests pass, 0 TS errors)

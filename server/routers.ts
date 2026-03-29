@@ -34,18 +34,38 @@ async function checkAiLimit(userId: number | undefined, endpoint: string): Promi
 
 function getBFDescription(bf: number): string {
   const descriptions: Record<number, string> = {
-    5: "extremely lean, stage-ready competition physique with full muscle separation and prominent veins",
-    8: "very lean athletic physique with clear muscle definition and visible abs",
-    10: "lean athletic body with well-defined muscles and visible six-pack abs",
-    12: "fit and athletic physique with defined muscles and visible abs at rest",
-    15: "healthy athletic build with some muscle definition and good muscle tone",
-    18: "fit average build with moderate muscle tone and healthy proportions",
-    20: "average healthy physique with soft muscle definition and healthy body proportions",
-    25: "average build with minimal muscle definition and typical body composition",
+    5: "extremely lean, stage-ready competition physique with full muscle separation and prominent veins, and a chiseled angular face with razor-sharp jawline",
+    8: "very lean athletic physique with clear muscle definition and visible abs, and angular facial features with prominent cheekbones",
+    10: "a very lean physique with excellent muscle definition, visible vascularity, a chiseled jaw, and angular facial features",
+    12: "a lean athletic physique with clear muscle separation, visible abs, a sharp jawline, and prominent cheekbones",
+    15: "an athletic build with visible muscle definition especially in the arms and shoulders, defined jawline, and emerging cheekbone visibility",
+    18: "fit average build with moderate muscle tone and healthy proportions, and a slightly leaner face",
+    20: "an average healthy build with some muscle tone visible, and a slightly leaner face",
+    25: "a slightly softer physique with minimal visible muscle definition, and a naturally full face",
   };
   const keys = Object.keys(descriptions).map(Number).sort((a, b) => a - b);
   const closest = keys.reduce((a, b) => Math.abs(b - bf) < Math.abs(a - bf) ? b : a);
   return descriptions[closest];
+}
+
+/** Get face transformation description based on target body fat percentage */
+function getFaceTransformationDesc(currentBf: number, targetBf: number): string {
+  const bfDrop = currentBf - targetBf;
+
+  if (bfDrop <= 3) {
+    return "The face should show subtle changes: very slightly more defined jawline and minimally reduced facial puffiness, while maintaining the same overall facial structure and identity.";
+  }
+
+  if (bfDrop <= 7) {
+    return "The face should show noticeable fat reduction: a more defined jawline with reduced softness under the chin, slightly more visible cheekbones, and less overall facial puffiness. The facial structure and features must remain recognisably the same person.";
+  }
+
+  if (bfDrop <= 12) {
+    return "The face should show significant fat loss: a clearly defined, angular jawline, prominent cheekbones with visible contour, noticeably reduced double chin or under-chin fat, and a leaner overall facial appearance. Facial features must still be recognisably the same person.";
+  }
+
+  // bfDrop > 12 — dramatic transformation
+  return "The face should show dramatic fat loss transformation: a sharp, chiseled jawline, very prominent cheekbones with strong angular definition, virtually no under-chin fat, visible facial muscle definition, and a much leaner overall head shape. Despite the dramatic change, the person must still be recognisably the same individual (same eyes, nose shape, skin tone, hair).";
 }
 
 function getFallbackWorkoutPlan(goal: string) {
@@ -231,7 +251,19 @@ export const appRouter = router({
               const bfDesc = getBFDescription(t.target_bf);
               const genderHint = input.gender ?? 'male';
               const { url } = await generateImage({
-                prompt: `Realistic fitness transformation photo of the same ${genderHint} person shown in the reference image. The person should have ${bfDesc}. Keep the person's face, facial features, skin tone, and overall appearance identical to the reference photo. Show the full body from head to mid-thigh in a natural standing pose. Professional fitness photography with clean studio lighting and a neutral background. Photorealistic, motivational, and anatomically accurate.`,
+                prompt: `Realistic fitness transformation photo of the same ${genderHint} person shown in the reference image. The person should now appear at approximately ${t.target_bf}% body fat with ${bfDesc}.
+
+FACE TRANSFORMATION (CRITICAL — do NOT skip):
+${getFaceTransformationDesc(analysis.estimated_body_fat, t.target_bf)}
+
+BODY TRANSFORMATION:
+Show realistic body composition changes for ${t.target_bf}% body fat: ${bfDesc}. Include visible changes to the torso, arms, and overall silhouette proportional to the fat loss.
+
+IDENTITY PRESERVATION:
+The transformed person MUST be clearly recognisable as the same individual — same skin tone, hair color/style, eye color, nose shape, and overall facial proportions. Only the fat distribution should change, not the underlying bone structure or features.
+
+REALISM:
+The transformation should look like a real photograph, not AI-generated. Match the lighting, background, and photo style of the original image. Show the full body from head to mid-thigh in a natural standing pose. Avoid uncanny valley effects.`,
                 originalImages: [{ url: input.photoUrl, mimeType: "image/jpeg" }],
               });
               imageUrl = url ?? null;
