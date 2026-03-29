@@ -169,10 +169,17 @@ export default function HomeScreen() {
   const { totalCalories: todayCalories, calorieGoal, meals: todayMeals, setCalorieGoal, macroTargets } = useCalories();
 
   useEffect(() => {
-    AsyncStorage.getItem("@user_tdee").then(raw => {
-      if (raw) {
-        const tdee = parseInt(raw, 10);
-        if (!isNaN(tdee) && tdee > 0 && tdee !== calorieGoal) setCalorieGoal(tdee);
+    // Read TDEE from both keys to handle race conditions between onboarding and CalorieProvider
+    Promise.all([
+      AsyncStorage.getItem("@user_tdee"),
+      AsyncStorage.getItem("@peakpulse_calorie_goal"),
+    ]).then(([tdeeRaw, goalRaw]) => {
+      const tdee = tdeeRaw ? parseInt(tdeeRaw, 10) : NaN;
+      const goal = goalRaw ? parseInt(goalRaw, 10) : NaN;
+      // Prefer @user_tdee (set by onboarding calculation), fall back to stored goal
+      const best = !isNaN(tdee) && tdee > 0 ? tdee : (!isNaN(goal) && goal > 0 ? goal : 0);
+      if (best > 0 && best !== calorieGoal) {
+        setCalorieGoal(best);
       }
     });
   }, []);

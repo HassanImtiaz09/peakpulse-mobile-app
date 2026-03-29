@@ -2573,3 +2573,11 @@
 - [x] Update SVG rendering to use bodyOutline stroke for body silhouette
 - [x] Update untracked muscle paths to use noneStroke with reduced opacity
 - [x] Run tests and verify TypeScript compiles (2088 tests pass, 0 TS errors)
+
+## Bug Fix (Round 33) — Caloric Intake Calculation & Dashboard Sync
+- [x] Research Mifflin-St Jeor, Harris-Benedict, and TDEE formulas for accuracy
+- [x] Examine current calorie calculation in onboarding, server routers, and dashboard
+- [x] Replace flat calorie adjustments with percentage-based (20% deficit, 15% surplus, 8% recomp)
+- [x] Add goal-based calorie adjustment with safety floors (1500 male, 1200 female)
+- [x] Fix onboarding-to-dashboard calorie sync — write to both @user_tdee and @peakpulse_calorie_goal
+- [x] Run tests and verify TypeScript compiles (2088 tests pass, 0 TS errors)

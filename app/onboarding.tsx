@@ -116,18 +116,29 @@ function calculateTDEE(
   activityKey: string,
   goal: string,
 ): number {
-  // Mifflin-St Jeor BMR
+  // Mifflin-St Jeor BMR (gold standard — Frankenfield et al. 2005)
   const bmr = gender === "male"
     ? 10 * weightKg + 6.25 * heightCm - 5 * age + 5
     : 10 * weightKg + 6.25 * heightCm - 5 * age - 161;
 
   const level = ACTIVITY_LEVELS.find(a => a.key === activityKey) ?? ACTIVITY_LEVELS[2];
-  const tdee = bmr * level.multiplier;
+  const maintenanceTdee = bmr * level.multiplier;
 
-  // Adjust for goal
-  if (goal === "lose_fat") return Math.round(tdee - 400);
-  if (goal === "build_muscle") return Math.round(tdee + 250);
-  return Math.round(tdee);
+  // Goal-based percentage adjustments (evidence-based)
+  let adjusted: number;
+  if (goal === "lose_fat") {
+    adjusted = maintenanceTdee * 0.80; // 20% deficit — sustainable fat loss
+  } else if (goal === "build_muscle") {
+    adjusted = maintenanceTdee * 1.15; // 15% surplus — lean bulk
+  } else if (goal === "athletic") {
+    adjusted = maintenanceTdee * 0.92; // 8% deficit — body recomposition
+  } else {
+    adjusted = maintenanceTdee; // maintain
+  }
+
+  // Safety floors: never go below 1500 kcal (male) or 1200 kcal (female)
+  const minCalories = gender === "male" ? 1500 : 1200;
+  return Math.round(Math.max(adjusted, minCalories));
 }
 
 /**
@@ -345,6 +356,8 @@ export default function OnboardingScreen() {
       // Save TDEE and macro targets to AsyncStorage for dashboard and meals tab
       if (tdee) {
         await AsyncStorage.setItem("@user_tdee", String(tdee));
+        // Also write directly to the CalorieProvider key so dashboard picks it up immediately
+        await AsyncStorage.setItem("@peakpulse_calorie_goal", String(tdee));
         if (wKg) {
           const macros = calculateMacros(tdee, wKg, effectiveGoal);
           await AsyncStorage.setItem("@user_macro_targets", JSON.stringify(macros));

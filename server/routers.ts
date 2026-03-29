@@ -366,9 +366,13 @@ The transformation should look like a real photograph, not AI-generated. Match t
           const bmr = g === 'female' ? (10*w + 6.25*h - 5*a - 161) : (10*w + 6.25*h - 5*a + 5);
           const mult: Record<string,number> = { sedentary:1.2, light:1.375, moderate:1.55, very_active:1.725, extra:1.9 };
           const tdee = bmr * (mult[activity] ?? 1.55);
-          if (goal === 'lose_fat') return Math.round(tdee - 400);
-          if (goal === 'build_muscle') return Math.round(tdee + 250);
-          return Math.round(tdee);
+          let adjusted: number;
+          if (goal === 'lose_fat') adjusted = tdee * 0.80;
+          else if (goal === 'build_muscle') adjusted = tdee * 1.15;
+          else if (goal === 'athletic') adjusted = tdee * 0.92;
+          else adjusted = tdee;
+          const minCal = g === 'female' ? 1200 : 1500;
+          return Math.round(Math.max(adjusted, minCal));
         }
         let calories: number;
         if (input.dailyCalories) {
