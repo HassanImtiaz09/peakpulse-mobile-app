@@ -2560,3 +2560,9 @@
 - [x] Update image generation prompt to include face transformation instructions
 - [x] Update getBFDescription() to include face context references
 - [x] Run tests and verify TypeScript compiles (2088 tests pass, 0 TS errors)
+
+## Feature (Round 31) — Face Zoom Comparison + Single-Target Face-Aware Prompting
+- [x] Find and update single-target transformation endpoint with face-aware prompting (confirmed: only one endpoint exists — bodyScan.analyze — already updated in ISSUE-3)
+- [x] Build FaceZoomComparison component for side-by-side face crop preview
+- [x] Integrate face zoom into transformation preview UI (scan results / body scan screen)
+- [x] Run tests and verify TypeScript compiles (2088 tests pass, 0 TS errors)

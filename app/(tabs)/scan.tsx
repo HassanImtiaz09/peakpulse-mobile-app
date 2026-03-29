@@ -315,7 +315,7 @@ export default function ScanScreen() {
   // Get scan data (real or guest)
   // Fullscreen preview state
   const [previewModal, setPreviewModal] = useState<{ visible: boolean; imageUrl: string; bf: number; beforeUrl: string | null } | null>(null);
-  const [previewTab, setPreviewTab] = useState<"after" | "compare">("after");
+  const [previewTab, setPreviewTab] = useState<"after" | "compare" | "face">("after");
   const screenW = Dimensions.get("window").width;
   const screenH = Dimensions.get("window").height;
 
@@ -365,7 +365,13 @@ export default function ScanScreen() {
                 style={{ flex: 1, paddingVertical: 8, borderRadius: 8, alignItems: "center", backgroundColor: previewTab === "compare" ? "#F59E0B" : "transparent" }}
                 onPress={() => setPreviewTab("compare")}
               >
-                <Text style={{ color: previewTab === "compare" ? FG : MUTED, fontFamily: "DMSans_700Bold", fontSize: 13 }}>Before / After</Text>
+                <Text style={{ color: previewTab === "compare" ? FG : MUTED, fontFamily: "DMSans_700Bold", fontSize: 13 }}>Body</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={{ flex: 1, paddingVertical: 8, borderRadius: 8, alignItems: "center", backgroundColor: previewTab === "face" ? "#F59E0B" : "transparent" }}
+                onPress={() => setPreviewTab("face")}
+              >
+                <Text style={{ color: previewTab === "face" ? FG : MUTED, fontFamily: "DMSans_700Bold", fontSize: 13 }}>Face</Text>
               </TouchableOpacity>
             </View>
           ) : null}
@@ -382,6 +388,61 @@ export default function ScanScreen() {
                 <Text style={{ color: "#FBBF24", fontFamily: "DMSans_700Bold", fontSize: 14, textAlign: "center" }}>AI-Generated Transformation Preview</Text>
                 <Text style={{ color: MUTED, fontSize: 12, textAlign: "center", marginTop: 4 }}>Your potential look with consistent training</Text>
               </View>
+            </View>
+          ) : previewTab === "face" ? (
+            <View style={{ flex: 1, paddingHorizontal: 16 }}>
+              {/* Face Zoom Header */}
+              <View style={{ alignItems: "center", marginBottom: 12 }}>
+                <View style={{ flexDirection: "row", alignItems: "center", gap: 6, backgroundColor: "rgba(245,158,11,0.10)", paddingHorizontal: 14, paddingVertical: 6, borderRadius: 20, borderWidth: 1, borderColor: "rgba(245,158,11,0.15)" }}>
+                  <MaterialIcons name="face" size={16} color="#FBBF24" />
+                  <Text style={{ color: "#FBBF24", fontFamily: "DMSans_700Bold", fontSize: 12 }}>Face Comparison</Text>
+                </View>
+              </View>
+              {/* Side-by-side face crops */}
+              <View style={{ flexDirection: "row", gap: 12, flex: 1 }}>
+                {/* Before face */}
+                <View style={{ flex: 1, alignItems: "center" }}>
+                  <Text style={{ color: MUTED, fontFamily: "DMSans_700Bold", fontSize: 11, marginBottom: 8, textTransform: "uppercase", letterSpacing: 1 }}>Before</Text>
+                  <View style={{ width: "100%", aspectRatio: 0.8, borderRadius: 20, overflow: "hidden", borderWidth: 1.5, borderColor: "rgba(148,163,184,0.25)" }}>
+                    <Image
+                      source={{ uri: beforeUrl! }}
+                      style={{ width: "200%", height: "200%", position: "absolute", top: "-10%", left: "-50%" }}
+                      resizeMode="cover"
+                    />
+                  </View>
+                  <View style={{ marginTop: 8, backgroundColor: "rgba(148,163,184,0.08)", paddingHorizontal: 10, paddingVertical: 4, borderRadius: 8 }}>
+                    <Text style={{ color: MUTED, fontFamily: "DMSans_700Bold", fontSize: 11 }}>Current</Text>
+                  </View>
+                </View>
+                {/* After face */}
+                <View style={{ flex: 1, alignItems: "center" }}>
+                  <Text style={{ color: "#F59E0B", fontFamily: "DMSans_700Bold", fontSize: 11, marginBottom: 8, textTransform: "uppercase", letterSpacing: 1 }}>After</Text>
+                  <View style={{ width: "100%", aspectRatio: 0.8, borderRadius: 20, overflow: "hidden", borderWidth: 1.5, borderColor: "rgba(245,158,11,0.35)" }}>
+                    <Image
+                      source={{ uri: imageUrl }}
+                      style={{ width: "200%", height: "200%", position: "absolute", top: "-10%", left: "-50%" }}
+                      resizeMode="cover"
+                    />
+                  </View>
+                  <View style={{ marginTop: 8, backgroundColor: "rgba(245,158,11,0.10)", paddingHorizontal: 10, paddingVertical: 4, borderRadius: 8 }}>
+                    <Text style={{ color: "#FBBF24", fontFamily: "DMSans_700Bold", fontSize: 11 }}>{bf}% BF</Text>
+                  </View>
+                </View>
+              </View>
+              {/* Face change description */}
+              <View style={{ marginTop: 16, backgroundColor: "rgba(245,158,11,0.06)", borderRadius: 14, padding: 14, borderWidth: 1, borderColor: "rgba(245,158,11,0.12)" }}>
+                <Text style={{ color: "#FBBF24", fontFamily: "DMSans_700Bold", fontSize: 12, marginBottom: 4 }}>What changes in the face?</Text>
+                <Text style={{ color: MUTED, fontSize: 11, lineHeight: 16 }}>
+                  {bf >= 20
+                    ? "Subtle reduction in facial puffiness with a slightly more defined jawline."
+                    : bf >= 15
+                    ? "Noticeable jawline definition with emerging cheekbone visibility and reduced under-chin softness."
+                    : bf >= 12
+                    ? "Sharp jawline with prominent cheekbones, significantly leaner facial appearance."
+                    : "Chiseled, angular jawline with very prominent cheekbones and virtually no under-chin fat."}
+                </Text>
+              </View>
+              <Text style={{ color: MUTED, fontSize: 10, textAlign: "center", marginTop: 10, marginBottom: 4 }}>Face region is cropped and enlarged from the full transformation image</Text>
             </View>
           ) : (
             <View style={{ flex: 1, paddingHorizontal: 16 }}>
