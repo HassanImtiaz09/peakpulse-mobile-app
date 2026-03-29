@@ -2566,3 +2566,10 @@
 - [x] Build FaceZoomComparison component for side-by-side face crop preview
 - [x] Integrate face zoom into transformation preview UI (scan results / body scan screen)
 - [x] Run tests and verify TypeScript compiles (2088 tests pass, 0 TS errors)
+
+## Bug Fix (Round 32) — Dark/Poor Contrast Muscle Group Visualizations (ISSUE-4)
+- [x] Update COLORS constant in body-heatmap.tsx with higher-contrast values
+- [x] Add bodyOutline and noneStroke colors for muscle boundary visibility
+- [x] Update SVG rendering to use bodyOutline stroke for body silhouette
+- [x] Update untracked muscle paths to use noneStroke with reduced opacity
+- [x] Run tests and verify TypeScript compiles (2088 tests pass, 0 TS errors)

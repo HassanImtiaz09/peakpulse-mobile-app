@@ -164,9 +164,9 @@ describe("Round 68 — Body Heatmap Component", () => {
       path.join(__dirname, "..", "components", "body-heatmap.tsx"),
       "utf-8"
     );
-    expect(content).toContain("#EF4444"); // over - red
-    expect(content).toContain("#22C55E"); // optimal - green
-    expect(content).toContain("#3B82F6"); // under - blue
+    expect(content).toContain("#FF5252"); // over - brighter red
+    expect(content).toContain("#4ADE80"); // optimal - brighter green
+    expect(content).toContain("#60A5FA"); // under - brighter blue
   });
 });
 

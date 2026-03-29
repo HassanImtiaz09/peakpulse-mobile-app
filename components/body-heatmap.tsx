@@ -45,23 +45,26 @@ interface BodyHeatmapProps {
 // ── Colors ───────────────────────────────────────────────────────────────────
 
 const COLORS = {
-  // Base body
-  bodyMale: "#1A1200",
-  bodyFemale: "#1A0D10",
-  bodyStroke: "rgba(245,158,11,0.12)",
+  // Base body — MUCH lighter for visibility on dark backgrounds
+  bodyMale: "#3D2E1A",            // Warm dark brown (visible against dark BG)
+  bodyFemale: "#3A2428",          // Warm dark rose-brown
+  bodyStroke: "rgba(245,178,50,0.45)", // Gold stroke at 45% opacity — clearly visible
+  bodyOutline: "rgba(255,255,255,0.08)", // Subtle white outline for body edge
   // Target mode
   targetPrimary: "#F59E0B",
-  targetSecondary: "rgba(245,158,11,0.35)",
-  // Balance mode heatmap
-  over: "#EF4444",
-  overGlow: "rgba(239,68,68,0.3)",
-  optimal: "#22C55E",
-  optimalGlow: "rgba(34,197,94,0.3)",
-  under: "#3B82F6",
-  underGlow: "rgba(59,130,246,0.3)",
-  none: "#2A1A00",
+  targetSecondary: "rgba(245,158,11,0.50)",  // Bumped from 0.35 to 0.50
+  // Balance mode heatmap — boosted saturation and brightness
+  over: "#FF5252",                // Brighter red
+  overGlow: "rgba(255,82,82,0.4)", // Stronger glow
+  optimal: "#4ADE80",             // Brighter green
+  optimalGlow: "rgba(74,222,128,0.4)",
+  under: "#60A5FA",               // Brighter blue
+  underGlow: "rgba(96,165,250,0.4)",
+  none: "#4A3520",                // Warm brown — visible but muted
+  noneStroke: "rgba(245,178,50,0.20)", // Light gold outline for untracked muscles
   // Labels
   labelFg: "#FDE68A",
+  labelBg: "rgba(0,0,0,0.6)",     // Label background for readability
   labelMuted: "#B45309",
 };
 
@@ -224,7 +227,7 @@ function getPathColor(
     if (targetSecondaryPaths.has(pathKey)) {
       return { fill: COLORS.targetSecondary, stroke: "rgba(245,158,11,0.2)", strokeWidth: 1, opacity: 0.8 };
     }
-    return { fill: baseColor, stroke: COLORS.bodyStroke, strokeWidth: 0.6, opacity: 0.4 };
+    return { fill: baseColor, stroke: COLORS.bodyStroke, strokeWidth: 0.8, opacity: 0.6 };
   }
 
   // Balance mode
@@ -237,7 +240,7 @@ function getPathColor(
     case "under":
       return { fill: COLORS.under, stroke: COLORS.underGlow, strokeWidth: 1.2, opacity: 0.85 };
     default:
-      return { fill: baseColor, stroke: COLORS.bodyStroke, strokeWidth: 0.6, opacity: 0.35 };
+      return { fill: COLORS.none, stroke: COLORS.noneStroke, strokeWidth: 0.5, opacity: 0.7 };
   }
 }
 
