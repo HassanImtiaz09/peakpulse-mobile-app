@@ -17,6 +17,7 @@ import { trpc } from "@/lib/trpc";
 import { FeatureGate } from "@/components/feature-gate";
 import { useSubscription } from "@/hooks/use-subscription";
 import { useAiLimit } from "@/components/ai-limit-modal";
+import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
 
 const WORKOUT_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/PZcnawJwIZkQHTEM.jpg";
 
@@ -122,6 +123,7 @@ export default function FormCheckerScreen() {
         setFormScore(null);
       }
     } catch (e: any) {
+      if (e?.message?.includes?.("AI_LIMIT_EXCEEDED") || e?.message?.includes?.("rate limit")) { showLimitModal(e.message); return; }
       Alert.alert("Error", e.message);
     }
   }
@@ -138,6 +140,7 @@ export default function FormCheckerScreen() {
         setFormScore(null);
       }
     } catch (e: any) {
+      if (e?.message?.includes?.("AI_LIMIT_EXCEEDED") || e?.message?.includes?.("rate limit")) { showLimitModal(e.message); return; }
       Alert.alert("Error", e.message);
     }
   }
@@ -191,6 +194,7 @@ export default function FormCheckerScreen() {
       }).start();
 
     } catch (e: any) {
+      if (e?.message?.includes?.("AI_LIMIT_EXCEEDED") || e?.message?.includes?.("rate limit")) { showLimitModal(e.message); return; }
       Alert.alert("Analysis Failed", e.message ?? "Could not analyze form. Please try again.");
     } finally {
       setAnalyzing(false);
@@ -230,8 +234,7 @@ export default function FormCheckerScreen() {
         <View style={{ flex: 1, backgroundColor: "rgba(8,8,16,0.72)", justifyContent: "flex-end", padding: 20, paddingTop: 52 }}>
           <TouchableOpacity
             style={{ position: "absolute", top: 52, left: 20, width: 36, height: 36, borderRadius: 10, backgroundColor: "rgba(255,255,255,0.1)", alignItems: "center", justifyContent: "center" }}
-            onPress={() => router.back()}
-          >
+            onPress={() => router.back()} {...a11yButton(A11Y_LABELS.backButton)}>
             <Text style={{ color: "#F1F5F9", fontSize: 18 }}>←</Text>
           </TouchableOpacity>
           <Text style={{ color: "#F59E0B", fontFamily: "DMSans_700Bold", fontSize: 12, letterSpacing: 1 }}>AI POWERED</Text>
@@ -429,8 +432,7 @@ export default function FormCheckerScreen() {
             </TouchableOpacity>
             <TouchableOpacity
               style={{ backgroundColor: "#141A22", borderRadius: 16, paddingVertical: 14, alignItems: "center", borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}
-              onPress={() => router.back()}
-            >
+              onPress={() => router.back()} {...a11yButton(A11Y_LABELS.backButton)}>
               <Text style={{ color: "#F59E0B", fontFamily: "DMSans_600SemiBold", fontSize: 14 }}>← Back to Workout</Text>
             </TouchableOpacity>
           </View>

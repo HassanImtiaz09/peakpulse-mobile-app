@@ -16,6 +16,7 @@ import {
   saveReportPreferences, ALL_REPORT_METRICS, DEFAULT_SELECTED_METRICS,
   type ReportMetricKey,
 } from "@/lib/health-report-generator";
+import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
 
 const DASHBOARD_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/PZcnawJwIZkQHTEM.jpg";
 
@@ -385,8 +386,7 @@ export default function HealthTrendsScreen() {
               position: "absolute", top: 52, left: 20, width: 36, height: 36, borderRadius: 10,
               backgroundColor: "rgba(255,255,255,0.1)", alignItems: "center", justifyContent: "center",
             }}
-            onPress={() => router.back()}
-          >
+            onPress={() => router.back()} {...a11yButton(A11Y_LABELS.backButton)}>
             <Text style={{ color: "#F1F5F9", fontSize: 18 }}>←</Text>
           </TouchableOpacity>
           <Text style={{ color: "#FBBF24", fontFamily: "DMSans_700Bold", fontSize: 12, letterSpacing: 1 }}>ANALYTICS</Text>

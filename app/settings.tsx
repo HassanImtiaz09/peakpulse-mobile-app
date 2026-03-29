@@ -38,6 +38,7 @@ function formatBytes(bytes: number): string {
 }
 import { GOLDEN_PRIMARY, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgrounds";
 import { UI as SF } from "@/constants/ui-colors";
+import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
 
 const FONT_SIZE_KEY = "@peakpulse_font_size";
 

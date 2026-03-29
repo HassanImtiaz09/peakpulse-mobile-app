@@ -11,6 +11,7 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 import { GOLDEN_SCAN, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgrounds";
 import { UI as SF } from "@/constants/ui-colors";
+import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
 const { width: SCREEN_W } = Dimensions.get("window");
 const PHOTO_W = SCREEN_W - 40;
 const PHOTO_H = Math.round(PHOTO_W * (4 / 3));
@@ -157,8 +158,7 @@ export default function BodyScanCompareScreen() {
           </Text>
           <TouchableOpacity
             style={{ marginTop: 24, backgroundColor: SF.gold, borderRadius: 14, paddingHorizontal: 24, paddingVertical: 12 }}
-            onPress={() => router.back()}
-          >
+            onPress={() => router.back()} {...a11yButton(A11Y_LABELS.backButton)}>
             <Text style={{ color: SF.bg, fontFamily: "DMSans_700Bold", fontSize: 14 }}>Go Back</Text>
           </TouchableOpacity>
         </View>

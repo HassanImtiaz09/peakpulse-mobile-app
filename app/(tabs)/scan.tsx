@@ -26,6 +26,7 @@ import { PremiumFeatureBanner, PremiumFeatureTeaser } from "@/components/premium
 import { recordProgressPhotoTaken } from "@/lib/feature-discovery";
 import { useAiLimit } from "@/components/ai-limit-modal";
 import { ErrorBoundary } from "@/components/error-boundary";
+import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
 
 const SCAN_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/OdDCyHFnLhvyAyWV.jpg";
 
@@ -135,6 +136,7 @@ function ScanScreenContent() {
         recordProgressPhotoTaken().catch(() => {});
       }
     } catch (e: any) {
+      if (e?.message?.includes?.("AI_LIMIT_EXCEEDED") || e?.message?.includes?.("rate limit")) { showLimitModal(e.message); return; }
       Alert.alert("Error", e.message);
     }
   }
@@ -157,6 +159,7 @@ function ScanScreenContent() {
         recordProgressPhotoTaken().catch(() => {});
       }
     } catch (e: any) {
+      if (e?.message?.includes?.("AI_LIMIT_EXCEEDED") || e?.message?.includes?.("rate limit")) { showLimitModal(e.message); return; }
       Alert.alert("Error", e.message);
     }
   }
@@ -203,6 +206,7 @@ function ScanScreenContent() {
         setSelectedImage(result.assets[0].uri);
       }
     } catch (e: any) {
+      if (e?.message?.includes?.("AI_LIMIT_EXCEEDED") || e?.message?.includes?.("rate limit")) { showLimitModal(e.message); return; }
       Alert.alert("Error", e.message);
     }
   }
@@ -249,6 +253,7 @@ function ScanScreenContent() {
         setStep("results");
       }
     } catch (e: any) {
+      if (e?.message?.includes?.("AI_LIMIT_EXCEEDED") || e?.message?.includes?.("rate limit")) { showLimitModal(e.message); return; }
       Alert.alert("Error", e.message);
       setStep("upload");
     }
@@ -310,6 +315,7 @@ function ScanScreenContent() {
       );
       setStep("results");
     } catch (e: any) {
+      if (e?.message?.includes?.("AI_LIMIT_EXCEEDED") || e?.message?.includes?.("rate limit")) { showLimitModal(e.message); return; }
       Alert.alert("Error", e.message);
       setStep("goal_setup");
     }

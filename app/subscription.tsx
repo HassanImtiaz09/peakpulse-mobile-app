@@ -8,6 +8,7 @@ import { useRouter } from "expo-router";
 import { useGuestAuth } from "@/lib/guest-auth";
 import { useSubscription } from "@/hooks/use-subscription";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
 
 const HERO_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/PZcnawJwIZkQHTEM.jpg";
 
@@ -110,7 +111,7 @@ export default function SubscriptionScreen() {
         {/* Hero */}
         <ImageBackground source={{ uri: HERO_BG }} style={styles.hero}>
           <View style={styles.heroOverlay}>
-            <TouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
+            <TouchableOpacity style={styles.backBtn} onPress={() => router.back()} {...a11yButton(A11Y_LABELS.backButton)}>
               <MaterialIcons name="arrow-back" size={20} color="#F1F5F9" />
               <Text style={styles.backText}>Back</Text>
             </TouchableOpacity>
@@ -286,7 +287,7 @@ export default function SubscriptionScreen() {
           {/* CTA */}
           <TouchableOpacity
             style={[styles.ctaBtn, loading && { opacity: 0.7 }]}
-            onPress={handleSubscribe}
+            onPress={handleSubscribe} {...a11yButton("Subscribe")}
             disabled={loading}
           >
             {loading ? (

@@ -2620,3 +2620,27 @@
 - [x] Change 6: Create components/error-boundary.tsx with retry UI
 - [x] Change 6: Wrap all 6 tab screens and root layout with ErrorBoundary
 - [x] Run tests and verify TypeScript compiles (2088 tests pass, 0 TS errors)
+
+## Accessibility & AI Limit Wiring (Round 38)
+- [x] Apply a11yButton props to dashboard interactive elements (TouchableOpacity buttons, quick actions)
+- [x] Apply a11yProgress props to dashboard calorie/macro GoalRing component
+- [x] Apply A11Y_LABELS to dashboard streak badge, calorie progress, menu, notifications
+- [x] Apply a11yButton props to active workout controls (via script)
+- [x] Apply a11yButton/a11yHeader props to plans screen (generate plan, user guide)
+- [x] Apply a11yButton props to meals screen (log meal, scan food, meal timeline)
+- [x] Apply a11yButton props to profile screen (settings, sign in/out)
+- [x] Apply a11yButton props to scan screen (take photo, upload photo, generate plan)
+- [x] Apply a11yButton to back/close navigation buttons across 59 screens
+- [x] Wire AI_LIMIT_EXCEEDED catch blocks in ai-coach.tsx (tab) — 1 check
+- [x] Wire AI_LIMIT_EXCEEDED catch blocks in meals.tsx (tab) — 2 checks
+- [x] Wire AI_LIMIT_EXCEEDED catch blocks in plans.tsx (tab) — 4 checks
+- [x] Wire AI_LIMIT_EXCEEDED catch blocks in scan.tsx (tab) — 5 checks
+- [x] Wire AI_LIMIT_EXCEEDED catch blocks in ai-coach.tsx (standalone) — 1 check
+- [x] Wire AI_LIMIT_EXCEEDED catch blocks in daily-checkin.tsx — 2 checks
+- [x] Wire AI_LIMIT_EXCEEDED catch blocks in form-checker.tsx — 3 checks
+- [x] Wire AI_LIMIT_EXCEEDED catch blocks in meal-prep.tsx — 1 check
+- [x] Wire AI_LIMIT_EXCEEDED catch blocks in onboarding.tsx — 1 check
+- [x] Wire AI_LIMIT_EXCEEDED catch blocks in scan-receipt.tsx — 1 check
+- [x] Wire AI_LIMIT_EXCEEDED catch blocks in active-workout.tsx — 1 check
+- [x] Wire AI_LIMIT_EXCEEDED catch blocks in progress-photos.tsx — 2 checks
+- [x] Run tests and verify TypeScript compiles (2088 tests pass, 0 TS errors)

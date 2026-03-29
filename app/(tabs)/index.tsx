@@ -47,6 +47,7 @@ import { loadTDEEBreakdown, type TDEEBreakdown } from "@/lib/tdee-calculator";
 import { getHistoricalMeals } from "@/lib/calorie-context";
 import { UI as SF } from "@/constants/ui-colors";
 import { ErrorBoundary } from "@/components/error-boundary";
+import { a11yButton, a11yHeader, a11yImage, a11yProgress, A11Y_LABELS } from "@/lib/accessibility";
 
 const AT_DASHBOARD_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/PZcnawJwIZkQHTEM.jpg";
 
@@ -106,7 +107,7 @@ function GoalRing({ value, label, percentage, color }: { value: string; label: s
   const circumference = 2 * Math.PI * R;
   const pct = Math.min(Math.max(percentage, 0), 100);
   return (
-    <View style={{ alignItems: "center", flex: 1 }}>
+    <View style={{ alignItems: "center", flex: 1 }} {...a11yProgress(label, pct, 100)}>
       <View style={{ width: 52, height: 52, alignItems: "center", justifyContent: "center" }}>
         <Svg width={52} height={52}>
           <Circle cx={26} cy={26} r={R} stroke={color + "20"} strokeWidth={4} fill="none" />
@@ -333,7 +334,7 @@ function HomeScreenContent() {
             <Image source={{ uri: APP_LOGO }} style={styles.welcomeLogo} />
             <Text style={styles.welcomeTitle}>PeakPulse AI</Text>
             <Text style={styles.welcomeSub}>Precision performance.{"\n"}Your AI-powered fitness companion.</Text>
-            <TouchableOpacity style={styles.welcomeBtn} onPress={() => router.push("/login" as any)}>
+            <TouchableOpacity style={styles.welcomeBtn} onPress={() => router.push("/login" as any)} {...a11yButton("Get Started", "Sign in or create an account")}>
               <Text style={styles.welcomeBtnText}>Get Started</Text>
               <MaterialIcons name="arrow-forward" size={18} color={SF.bg} style={{ marginLeft: 6 }} />
             </TouchableOpacity>
@@ -367,11 +368,11 @@ function HomeScreenContent() {
               ═══════════════════════════════════════════════════════════ */}
           <View style={styles.heroSection}>
             <View style={styles.heroTopBar}>
-              <TouchableOpacity onPress={() => router.push("/user-guide" as any)} style={{ padding: 4 }}>
+              <TouchableOpacity onPress={() => router.push("/user-guide" as any)} style={{ padding: 4 }} {...a11yButton(A11Y_LABELS.menuButton)}>
                 <MaterialIcons name="menu" size={24} color={SF.fg} />
               </TouchableOpacity>
               <View style={{ flexDirection: "row", gap: 16, alignItems: "center" }}>
-                <TouchableOpacity onPress={() => router.push("/notification-settings" as any)} style={{ padding: 4 }}>
+                <TouchableOpacity onPress={() => router.push("/notification-settings" as any)} style={{ padding: 4 }} {...a11yButton("Notification settings")}>
                   <MaterialIcons name="notifications-none" size={22} color={SF.muted} />
                 </TouchableOpacity>
               </View>
@@ -404,6 +405,7 @@ function HomeScreenContent() {
                 <TouchableOpacity
                   onPress={() => router.push("/streak-details" as any)}
                   style={styles.streakBadge}
+                  {...a11yButton(A11Y_LABELS.streakBadge(streakData!.currentStreak))}
                 >
                   <MaterialIcons name="local-fire-department" size={18} color={SF.gold} />
                   <Text style={styles.streakBadgeText}>{streakData.currentStreak * 7}d</Text>
@@ -436,6 +438,7 @@ function HomeScreenContent() {
                   onPress={() => router.push("/active-workout" as any)}
                   activeOpacity={0.85}
                   style={styles.workoutCard}
+                  {...a11yButton(A11Y_LABELS.startWorkout, "Open today's workout")}
                 >
                   <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start" }}>
                     <View style={{ flex: 1 }}>
@@ -493,12 +496,12 @@ function HomeScreenContent() {
               <View style={styles.section}>
                 <SectionTitle title="Get Started" />
                 <TouchableOpacity
-                  onPress={() => router.push("/(tabs)/plans" as any)}
+                  onPress={() => router.push("/active-workout" as any)}
                   activeOpacity={0.85}
                   style={styles.workoutCard}
+                  {...a11yButton("Create your first workout plan")}
                 >
-                  <View style={{ flexDirection: "row", alignItems: "center", gap: 14 }}>
-                    <View style={styles.workoutPlayBtn}>
+                  <View style={{ flexDirection: "row", alignItems: "center", gap: 14 }}>                   <View style={styles.workoutPlayBtn}>
                       <MaterialIcons name="add" size={24} color={SF.bg} />
                     </View>
                     <View style={{ flex: 1 }}>
@@ -522,6 +525,7 @@ function HomeScreenContent() {
                 style={styles.dailyProgressCard}
                 onPress={() => router.push("/(tabs)/meals" as any)}
                 activeOpacity={0.85}
+                {...a11yButton(A11Y_LABELS.calorieProgress(todayCalories, calorieGoal), "View meal details")}
               >
                 <View style={styles.dailyProgressHeader}>
                   <View style={{ flex: 1 }}>
@@ -871,6 +875,7 @@ function HomeScreenContent() {
                     if (Platform.OS !== "web") Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                   }}
                   style={styles.tipNextBtn}
+                  {...a11yButton("Next tip", "Show another fitness tip")}
                 >
                   <MaterialIcons name="refresh" size={16} color={SF.gold} />
                   <Text style={{ color: SF.gold, fontFamily: "DMSans_600SemiBold", fontSize: 12, marginLeft: 4 }}>Next Tip</Text>
@@ -958,6 +963,7 @@ function HomeScreenContent() {
                   <TouchableOpacity
                     style={styles.pantryQuickBtn}
                     onPress={() => router.push("/barcode-scanner" as any)}
+                    {...a11yButton("Scan barcode", "Add pantry items by scanning barcode")}
                   >
                     <MaterialIcons name="qr-code-scanner" size={14} color={SF.gold} />
                     <Text style={styles.pantryQuickBtnText}>Scan Barcode</Text>
@@ -965,6 +971,7 @@ function HomeScreenContent() {
                   <TouchableOpacity
                     style={styles.pantryQuickBtn}
                     onPress={() => router.push("/scan-receipt" as any)}
+                    {...a11yButton("Scan receipt", "Add pantry items from a receipt photo")}
                   >
                     <MaterialIcons name="receipt-long" size={14} color={SF.gold} />
                     <Text style={styles.pantryQuickBtnText}>Scan Receipt</Text>
@@ -972,6 +979,7 @@ function HomeScreenContent() {
                   <TouchableOpacity
                     style={styles.pantryQuickBtn}
                     onPress={() => router.push("/meal-prep" as any)}
+                    {...a11yButton("Meal prep", "Get AI meal prep suggestions")}
                   >
                     <MaterialIcons name="auto-awesome" size={14} color={SF.gold} />
                     <Text style={styles.pantryQuickBtnText}>Meal Prep</Text>
@@ -1072,7 +1080,7 @@ function HomeScreenContent() {
                   <MaterialIcons name="rocket-launch" size={40} color={SF.gold} style={{ marginBottom: 12 }} />
                   <Text style={styles.ctaTitle}>Ready to Transform?</Text>
                   <Text style={styles.ctaSub}>Start with an AI Body Scan to analyse your physique, then get a personalised workout and meal plan.</Text>
-                  <TouchableOpacity style={styles.ctaBtn} onPress={() => router.push("/(tabs)/scan" as any)}>
+                  <TouchableOpacity style={styles.ctaBtn} onPress={() => router.push("/(tabs)/scan" as any)} {...a11yButton("Start AI Body Scan", "Analyse your physique with AI")}>
                     <Text style={styles.ctaBtnText}>Start AI Body Scan</Text>
                     <MaterialIcons name="arrow-forward" size={16} color={SF.bg} />
                   </TouchableOpacity>
@@ -1089,7 +1097,7 @@ function HomeScreenContent() {
                 <Text style={styles.trialBannerTitle}>Pro Trial — {daysLeftInTrial} day{daysLeftInTrial !== 1 ? "s" : ""} left</Text>
                 <Text style={styles.trialBannerSub}>Enjoying all Pro features. Subscribe to keep access.</Text>
               </View>
-              <TouchableOpacity style={styles.trialBannerBtn} onPress={() => router.push("/subscription" as any)}>
+              <TouchableOpacity style={styles.trialBannerBtn} onPress={() => router.push("/subscription" as any)} {...a11yButton("Subscribe to Pro")}>
                 <Text style={styles.trialBannerBtnText}>Subscribe</Text>
               </TouchableOpacity>
             </View>
@@ -1115,7 +1123,7 @@ function HomeScreenContent() {
                 <Text style={styles.guestBannerTitle}>Using as Guest</Text>
                 <Text style={styles.guestBannerSub}>Your data is stored locally. Sign in to sync across devices.</Text>
               </View>
-              <TouchableOpacity style={styles.guestBannerBtn} onPress={() => router.push("/login" as any)}>
+              <TouchableOpacity style={styles.guestBannerBtn} onPress={() => router.push("/login" as any)} {...a11yButton("Sign In", "Sign in to sync data across devices")}>
                 <Text style={styles.guestBannerBtnText}>Sign In</Text>
               </TouchableOpacity>
             </View>

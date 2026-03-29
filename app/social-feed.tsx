@@ -21,6 +21,7 @@ import { useGuestAuth } from "@/lib/guest-auth";
 import { FeatureGate } from "@/components/feature-gate";
 import { getSeedPosts, getCurrentWeeklyChallenge, WEEKLY_CHALLENGE_TEMPLATES, type SeedPost } from "@/lib/social-feed-seeds";
 import { EmptyState, EMPTY_STATES } from "@/components/empty-state";
+import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
 
 const HERO_BG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/golden-social-bg-6XESYMXaHwooBovbKXUgYi.webp";
 
@@ -212,7 +213,7 @@ export default function SocialFeedScreen() {
       {/* Hero */}
       <ImageBackground source={{ uri: HERO_BG }} style={styles.hero}>
         <View style={styles.heroOverlay}>
-          <TouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
+          <TouchableOpacity style={styles.backBtn} onPress={() => router.back()} {...a11yButton(A11Y_LABELS.backButton)}>
             <Text style={styles.backText}>← Back</Text>
           </TouchableOpacity>
           <View style={styles.heroContent}>

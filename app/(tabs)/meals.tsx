@@ -22,6 +22,7 @@ import { exportMealLogPdf } from "@/lib/meal-pdf";
 import { EmptyState, EMPTY_STATES } from "@/components/empty-state";
 import { useAiLimit } from "@/components/ai-limit-modal";
 import { ErrorBoundary } from "@/components/error-boundary";
+import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
 
 
 // NanoBanana design tokens — Meals uses mint/teal accent
@@ -372,7 +373,7 @@ function MealsScreenContent() {
       setSelectedBase64(null);
       setAnalysisResult(null);
     },
-    onError: (e) => Alert.alert("Error", e.message),
+    onError: (e) => { if (e?.message?.includes?.("AI_LIMIT_EXCEEDED") || e?.message?.includes?.("rate limit")) { showLimitModal(e.message); return; } Alert.alert("Error", e.message); },
   });
 
   // Pick up barcode scan result when returning from scanner
@@ -449,6 +450,7 @@ function MealsScreenContent() {
         setAnalysisResult(null);
       }
     } catch (e: any) {
+      if (e?.message?.includes?.("AI_LIMIT_EXCEEDED") || e?.message?.includes?.("rate limit")) { showLimitModal(e.message); return; }
       Alert.alert("Error", e.message);
     }
   }

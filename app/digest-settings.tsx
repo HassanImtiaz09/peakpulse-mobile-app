@@ -16,6 +16,7 @@ import {
   getLastDigestDate,
   type DigestPreferences,
 } from "@/lib/weekly-health-digest";
+import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
 
 const DASHBOARD_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/PZcnawJwIZkQHTEM.jpg";
 

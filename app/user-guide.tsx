@@ -6,6 +6,7 @@ import { useRouter } from "expo-router";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { ScreenContainer } from "@/components/screen-container";
 import { UI as SF } from "@/constants/ui-colors";
+import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
 
 const HERO_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/PZcnawJwIZkQHTEM.jpg";
 
@@ -110,8 +111,7 @@ export default function UserGuideScreen() {
         <View style={{ flex: 1, backgroundColor: "rgba(10,5,0,0.78)", justifyContent: "flex-end", padding: 20, paddingTop: 52 }}>
           <TouchableOpacity
             style={{ position: "absolute", top: 52, left: 20, width: 38, height: 38, borderRadius: 19, backgroundColor: "rgba(245,158,11,0.15)", alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: SF.border2 }}
-            onPress={() => router.back()}
-          >
+            onPress={() => router.back()} {...a11yButton(A11Y_LABELS.backButton)}>
             <MaterialIcons name="arrow-back" size={20} color={SF.gold} />
           </TouchableOpacity>
           <Text style={{ color: SF.gold, fontFamily: "DMSans_700Bold", fontSize: 11, letterSpacing: 2, marginBottom: 6 }}>PEAKPULSE AI</Text>
@@ -189,8 +189,7 @@ export default function UserGuideScreen() {
           </Text>
           <TouchableOpacity
             style={{ backgroundColor: SF.gold, borderRadius: 14, paddingVertical: 14, paddingHorizontal: 32, marginTop: 8 }}
-            onPress={() => router.back()}
-          >
+            onPress={() => router.back()} {...a11yButton(A11Y_LABELS.backButton)}>
             <Text style={{ color: SF.bg, fontFamily: "BebasNeue_400Regular", fontSize: 15 }}>Let's Go ⚡</Text>
           </TouchableOpacity>
         </View>

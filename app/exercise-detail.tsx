@@ -37,6 +37,7 @@ import {
   GOLDEN_OVERLAY_STYLE,
 } from "@/constants/golden-backgrounds";
 import { C } from "@/constants/ui-colors";
+import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
 
 export default function ExerciseDetailScreen() {
   const { name } = useLocalSearchParams<{ name: string }>();

@@ -13,6 +13,7 @@ import * as Haptics from "expo-haptics";
 import { GOLDEN_MEALS, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgrounds";
 import { UI as SF } from "@/constants/ui-colors";
 import { useAiLimit } from "@/components/ai-limit-modal";
+import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
 // ── Ingredient Matching ──────────────────────────────────────────
 interface IngredientMatch {
   ingredientName: string;
@@ -311,7 +312,8 @@ export default function MealPrepScreen() {
       setRecipes(result.recipes ?? []);
       setTips(result.tips ?? []);
       setGenerated(true);
-    } catch {
+    } catch (e: any) {
+      if (e?.message?.includes?.("AI_LIMIT_EXCEEDED") || e?.message?.includes?.("rate limit")) { showLimitModal(e.message); setLoading(false); return; }
       setRecipes([]);
       setTips(["Could not generate recipes. Try again."]);
       setGenerated(true);

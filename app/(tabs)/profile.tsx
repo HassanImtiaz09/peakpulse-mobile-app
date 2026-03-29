@@ -19,6 +19,7 @@ import { useUserProfile } from "@/lib/user-profile-context";
 import { Modal } from "react-native";
 import { PremiumFeatureBanner, PremiumFeatureTeaser } from "@/components/premium-feature-banner";
 import { ErrorBoundary } from "@/components/error-boundary";
+import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
 
 // Enable LayoutAnimation on Android
 if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental) {
@@ -135,7 +136,7 @@ function ProfileScreenContent() {
             <Text style={{ color: MUTED, fontSize: 14, textAlign: "center", lineHeight: 20, marginBottom: 24 }}>Sign in to save your profile, or continue as guest.</Text>
             <TouchableOpacity
               style={{ backgroundColor: GOLD, borderRadius: 16, paddingVertical: 14, paddingHorizontal: 32, shadowColor: GOLD, shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.5, shadowRadius: 12, marginBottom: 12 }}
-              onPress={() => router.push("/login" as any)}
+              onPress={() => router.push("/login" as any)} {...a11yButton("Sign in", "Sign in to sync data across devices")}
             >
               <Text style={{ color: FG, fontFamily: "BebasNeue_400Regular", fontSize: 16 }}>Sign In / Create Account</Text>
             </TouchableOpacity>
@@ -514,7 +515,7 @@ function ProfileScreenContent() {
           <CollapsibleSection title="Settings & Preferences" count={5}>
             <FeatureLink icon="notifications" label="Notifications" onPress={() => gatedNav("/notification-preferences", "notification_preferences", "notifications", "basic", "Customise your workout and meal reminder times — available on Basic and Pro plans.")} />
             <FeatureLink icon="auto-awesome" label="Smart Reminders" onPress={() => router.push("/smart-reminders" as any)} />
-            <FeatureLink icon="settings" label="App Settings" onPress={() => router.push("/settings" as any)} />
+            <FeatureLink icon="settings" label="App Settings" onPress={() => router.push("/settings" as any)} {...a11yButton(A11Y_LABELS.settingsButton)} />
             <FeatureLink icon="feedback" label="Send Feedback" onPress={() => router.push("/feedback" as any)} />
             <FeatureLink icon="help-outline" label="User Guide" onPress={() => router.push("/user-guide" as any)} />
           </CollapsibleSection>

@@ -34,6 +34,7 @@ import { loadOrCreateFeed, getFeedItemIcon, getFeedItemMessage, getFeedItemColor
 import { getActiveChallenges, type Challenge } from "@/lib/challenge-service";
 import { getActiveGroupGoals, type GroupGoal } from "@/lib/group-goals";
 import { getTotalUnreadCount } from "@/lib/chat-service";
+import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
 
 const HERO_BG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/golden-social-bg-6XESYMXaHwooBovbKXUgYi.webp";
 
@@ -263,7 +264,7 @@ export default function SocialCircleScreen() {
       {/* Hero */}
       <ImageBackground source={{ uri: HERO_BG }} style={{ height: 180 }} resizeMode="cover">
         <View style={styles.heroOverlay}>
-          <TouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
+          <TouchableOpacity style={styles.backBtn} onPress={() => router.back()} {...a11yButton(A11Y_LABELS.backButton)}>
             <Text style={{ color: "#F1F5F9", fontSize: 18 }}>←</Text>
           </TouchableOpacity>
           <Text style={styles.heroLabel}>SOCIAL CIRCLE</Text>

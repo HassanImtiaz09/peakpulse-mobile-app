@@ -40,6 +40,7 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { FlatList } from "react-native";
 import { usePantry, type PantryCategory } from "@/lib/pantry-context";
 import { UI as SF } from "@/constants/ui-colors";
+import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
 
 function mapCategoryToPantry(name: string, brand: string): PantryCategory {
   const combined = `${name} ${brand}`.toLowerCase();
@@ -534,8 +535,7 @@ export default function BarcodeScannerScreen() {
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.backBtn}
-            onPress={() => router.back()}
-          >
+            onPress={() => router.back()} {...a11yButton(A11Y_LABELS.backButton)}>
             <Text style={styles.backBtnText}>Go Back</Text>
           </TouchableOpacity>
         </View>
@@ -578,8 +578,7 @@ export default function BarcodeScannerScreen() {
           <View style={styles.topBar}>
             <TouchableOpacity
               style={styles.topBtn}
-              onPress={() => router.back()}
-            >
+              onPress={() => router.back()} {...a11yButton(A11Y_LABELS.backButton)}>
               <MaterialIcons name="close" size={24} color={SF.fg} />
             </TouchableOpacity>
             <Text style={styles.topTitle}>Scan Barcode</Text>
@@ -1060,8 +1059,7 @@ export default function BarcodeScannerScreen() {
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.goBackBtn}
-                onPress={() => router.back()}
-              >
+                onPress={() => router.back()} {...a11yButton(A11Y_LABELS.backButton)}>
                 <Text style={styles.goBackText}>Go Back</Text>
               </TouchableOpacity>
             </View>

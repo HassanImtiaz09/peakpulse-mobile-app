@@ -65,6 +65,7 @@ import { evaluateAndScheduleSmartReminders } from "@/lib/smart-reminders";
 import { GOLDEN_WORKOUT, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgrounds";
 import { UI as SF } from "@/constants/ui-colors";
 import { useAiLimit } from "@/components/ai-limit-modal";
+import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
 
 const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get("window");
 
@@ -570,7 +571,7 @@ export default function ActiveWorkoutScreen() {
         ]
       );
     },
-    onError: (e) => Alert.alert("Error", e.message),
+    onError: (e) => { if (e?.message?.includes?.("AI_LIMIT_EXCEEDED") || e?.message?.includes?.("rate limit")) { showLimitModal(e.message); return; } Alert.alert("Error", e.message); },
   });
 
   // Load rest timer settings

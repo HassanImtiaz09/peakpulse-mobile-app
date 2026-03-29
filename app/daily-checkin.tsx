@@ -19,6 +19,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { trpc } from "@/lib/trpc";
 import { useGuestAuth } from "@/lib/guest-auth";
 import { useAiLimit } from "@/components/ai-limit-modal";
+import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
 
 const HERO_BG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/golden-challenge-bg-2DXBpSZwN3LCroCHSRyD4K.webp";
 
@@ -159,8 +160,9 @@ export default function DailyCheckInScreen() {
         goal,
       });
       setAnalysisResult({ ...result, uploadedUrl: uploadResult.url });
-    } catch (e) {
+    } catch (e: any) {
       setUploading(false);
+      if (e?.message?.includes?.("AI_LIMIT_EXCEEDED") || e?.message?.includes?.("rate limit")) { showLimitModal(e.message); return; }
       Alert.alert("Analysis Failed", "Could not analyse the photo. Please try again.");
     } finally {
       setAnalysing(false);
@@ -226,7 +228,8 @@ export default function DailyCheckInScreen() {
       setWeight("");
       setNotes("");
       setAnalysisResult(null);
-    } catch (e) {
+    } catch (e: any) {
+      if (e?.message?.includes?.("AI_LIMIT_EXCEEDED") || e?.message?.includes?.("rate limit")) { showLimitModal(e.message); return; }
       Alert.alert("Error", "Could not save check-in. Please try again.");
     } finally {
       setSaving(false);
@@ -242,7 +245,7 @@ export default function DailyCheckInScreen() {
         {/* Hero */}
         <ImageBackground source={{ uri: HERO_BG }} style={styles.hero}>
           <View style={styles.heroOverlay}>
-            <TouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
+            <TouchableOpacity style={styles.backBtn} onPress={() => router.back()} {...a11yButton(A11Y_LABELS.backButton)}>
               <Text style={styles.backText}>← Back</Text>
             </TouchableOpacity>
             <View style={styles.heroContent}>

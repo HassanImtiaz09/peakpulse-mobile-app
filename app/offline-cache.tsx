@@ -18,6 +18,7 @@ import {
   type OfflineCacheStatus,
 } from "@/lib/offline-workout-cache";
 import { C } from "@/constants/ui-colors";
+import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
 
 export default function OfflineCacheScreen() {
   const router = useRouter();
@@ -54,7 +55,7 @@ export default function OfflineCacheScreen() {
   return (
     <ScreenContainer>
       <View style={s.header}>
-        <TouchableOpacity style={s.backBtn} onPress={() => router.back()}>
+        <TouchableOpacity style={s.backBtn} onPress={() => router.back()} {...a11yButton(A11Y_LABELS.backButton)}>
           <MaterialIcons name="arrow-back" size={20} color={C.fg} />
         </TouchableOpacity>
         <View style={s.headerCenter}>

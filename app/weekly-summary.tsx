@@ -9,6 +9,7 @@ import { useColors } from "@/hooks/use-colors";
 import { useExerciseCompletion } from "@/lib/exercise-completion-context";
 import { useCalories } from "@/lib/calorie-context";
 import * as Haptics from "expo-haptics";
+import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
 
 const BG = "#0A0E14";
 const SURFACE = "#141A22";

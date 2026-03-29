@@ -11,6 +11,7 @@ import * as Haptics from "expo-haptics";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 import { GOLDEN_PRIMARY, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgrounds";
+import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
 // NanoBanana design tokens
 const BG = "#0A0E14";
 const SURFACE = "#111827";
@@ -296,7 +297,7 @@ export default function FeedbackScreen() {
                   shadowColor: typeColor, shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 8,
                   opacity: submitting ? 0.7 : 1,
                 }}
-                onPress={handleSubmit}
+                onPress={handleSubmit} {...a11yButton("Submit feedback")}
                 disabled={submitting}
               >
                 {submitting ? (
@@ -331,8 +332,7 @@ export default function FeedbackScreen() {
 
               <TouchableOpacity
                 style={{ paddingVertical: 12, paddingHorizontal: 24 }}
-                onPress={() => router.back()}
-              >
+                onPress={() => router.back()} {...a11yButton(A11Y_LABELS.backButton)}>
                 <Text style={{ color: MUTED, fontFamily: "DMSans_600SemiBold", fontSize: 14 }}>Back to Profile</Text>
               </TouchableOpacity>
             </View>

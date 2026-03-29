@@ -25,6 +25,7 @@ import {
 } from "@/lib/chat-service";
 import { GOLDEN_SOCIAL, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgrounds";
 import { UI as SF } from "@/constants/ui-colors";
+import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
@@ -569,7 +570,7 @@ export default function ChatScreen() {
             />
             <TouchableOpacity
               style={[styles.sendBtn, !inputText.trim() && { opacity: 0.4 }]}
-              onPress={handleSend}
+              onPress={handleSend} {...a11yButton("Send message")}
               disabled={!inputText.trim() || sending}
             >
               {sending ? (

@@ -19,6 +19,7 @@ import { getHistoricalMeals, type MealEntry } from "@/lib/calorie-context";
 import { useCalories } from "@/lib/calorie-context";
 
 import { GOLDEN_PANTRY, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgrounds";
+import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
 type ViewMode = "daily" | "weekly";
 
 interface DaySummary {

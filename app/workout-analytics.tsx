@@ -22,6 +22,7 @@ import {
 } from "@/lib/workout-analytics";
 import { C } from "@/constants/ui-colors";
 import { EmptyState, EMPTY_STATES } from "@/components/empty-state";
+import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
 
 const { width: SCREEN_W } = Dimensions.get("window");
 const CHART_W = SCREEN_W - 48;
@@ -118,7 +119,7 @@ export default function WorkoutAnalyticsScreen() {
     <ScreenContainer>
       {/* Header */}
       <View style={s.header}>
-        <TouchableOpacity style={s.backBtn} onPress={() => router.back()}>
+        <TouchableOpacity style={s.backBtn} onPress={() => router.back()} {...a11yButton(A11Y_LABELS.backButton)}>
           <MaterialIcons name="arrow-back" size={20} color={C.fg} />
         </TouchableOpacity>
         <View style={s.headerCenter}>

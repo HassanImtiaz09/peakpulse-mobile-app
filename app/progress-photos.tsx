@@ -18,6 +18,7 @@ import { FeatureGate } from "@/components/feature-gate";
 import { GOLDEN_SCAN, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgrounds";
 import { EmptyState, EMPTY_STATES } from "@/components/empty-state";
 import { useAiLimit } from "@/components/ai-limit-modal";
+import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
 const { width: SCREEN_W } = Dimensions.get("window");
 const CARD_PADDING = 40;
 const CARD_W = SCREEN_W - CARD_PADDING;
@@ -478,6 +479,7 @@ function ComparisonSlider({ leftPhoto, rightPhoto, userName, userGoal }: {
 export default function ProgressPhotosScreen() {
   const router = useRouter();
   const { isAuthenticated } = useAuth();
+  const { showLimitModal } = useAiLimit();
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [note, setNote] = useState("");
   const [isBaseline, setIsBaseline] = useState(false);
@@ -490,10 +492,10 @@ export default function ProgressPhotosScreen() {
   const { data: profile } = trpc.profile.get.useQuery(undefined, { enabled: isAuthenticated });
   const uploadPhoto = trpc.progress.uploadPhoto.useMutation({
     onSuccess: () => { refetch(); setSelectedImage(null); setNote(""); setWeightInput(""); setBfInput(""); Alert.alert("Saved!", "Progress photo saved."); },
-    onError: (e) => Alert.alert("Error", e.message),
+    onError: (e) => { if (e?.message?.includes?.("AI_LIMIT_EXCEEDED") || e?.message?.includes?.("rate limit")) { showLimitModal(e.message); return; } Alert.alert("Error", e.message); },
   });
   const analyzeProgress = trpc.progress.analyzeProgress.useMutation({
-    onError: (e) => Alert.alert("Error", e.message),
+    onError: (e) => { if (e?.message?.includes?.("AI_LIMIT_EXCEEDED") || e?.message?.includes?.("rate limit")) { showLimitModal(e.message); return; } Alert.alert("Error", e.message); },
   });
 
   const baselinePhoto = photos?.find((p: any) => p.isBaseline);

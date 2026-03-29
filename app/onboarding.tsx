@@ -82,6 +82,7 @@ const DIETARY_PREFS = [
 import { ACTIVITY_LEVELS, calculateTDEEBreakdown, calculateMacros, saveTDEEBreakdown } from "@/lib/tdee-calculator";
 import { UI as SF } from "@/constants/ui-colors";
 import { useAiLimit } from "@/components/ai-limit-modal";
+import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
 
 /** Wrapper to keep existing call sites working — returns just the adjusted TDEE number. */
 function calculateTDEE(
@@ -257,7 +258,8 @@ export default function OnboardingScreen() {
         existing.push(scanEntry);
         await AsyncStorage.setItem("@body_scan_history", JSON.stringify(existing));
       }
-    } catch {
+    } catch (e: any) {
+      if (e?.message?.includes?.("AI_LIMIT_EXCEEDED") || e?.message?.includes?.("rate limit")) { showLimitModal(e.message); setAnalyzingScan(false); return; }
       animateTransition(10);
     } finally {
       setAnalyzingScan(false);

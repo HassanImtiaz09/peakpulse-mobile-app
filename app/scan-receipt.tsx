@@ -12,6 +12,7 @@ import { trpc } from "@/lib/trpc";
 import { GOLDEN_PANTRY, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgrounds";
 import { UI as SF } from "@/constants/ui-colors";
 import { useAiLimit } from "@/components/ai-limit-modal";
+import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
 interface ReceiptItem {
   name: string;
   quantity: number;
@@ -105,6 +106,7 @@ export default function ScanReceiptScreen() {
         category: item.category ?? "other", estimatedExpiry: item.estimatedExpiry ?? 7, selected: true,
       })));
     } catch (e: any) {
+      if (e?.message?.includes?.("AI_LIMIT_EXCEEDED") || e?.message?.includes?.("rate limit")) { showLimitModal(e.message); return; }
       Alert.alert("Scan Failed", e.message ?? "Could not read the receipt.");
     } finally { setScanning(false); }
   }

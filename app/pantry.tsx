@@ -18,6 +18,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { schedulePantryExpiryNotifications } from "@/lib/notification-service";
 import { shareShoppingListAsText, exportShoppingListPdf, type ShoppingExportItem } from "@/lib/shopping-pdf";
 import { EmptyState, EMPTY_STATES } from "@/components/empty-state";
+import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
 
 const PANTRY_BG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/golden-pantry-bg-NX2jKAH9PuCVwSuoatLKxc.webp";
 
@@ -516,7 +517,7 @@ export default function PantryScreen() {
 
             {/* Barcode Scanner Button */}
             <TouchableOpacity
-              onPress={() => router.push("/barcode-scanner" as any)}
+              onPress={() => router.push("/barcode-scanner" as any)} {...a11yButton("Scan barcode")}
               style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 10, backgroundColor: "rgba(34,197,94,0.08)", borderRadius: 16, padding: 16, borderWidth: 1, borderColor: "rgba(34,197,94,0.20)" }}
             >
               <MaterialIcons name="qr-code-scanner" size={24} color="#22C55E" />
@@ -540,7 +541,7 @@ export default function PantryScreen() {
 
             {/* Meal Prep Planner */}
             <TouchableOpacity
-              onPress={() => router.push("/meal-prep" as any)}
+              onPress={() => router.push("/meal-prep" as any)} {...a11yButton("Get meal prep suggestions")}
               style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 10, backgroundColor: "rgba(34,197,94,0.08)", borderRadius: 16, padding: 16, borderWidth: 1, borderColor: "rgba(34,197,94,0.20)" }}
             >
               <MaterialIcons name="auto-awesome" size={24} color="#22C55E" />

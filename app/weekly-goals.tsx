@@ -13,6 +13,7 @@ import {
   getGoalHistory, type GoalHistory,
 } from "@/lib/goal-tracking";
 import { UI as SF } from "@/constants/ui-colors";
+import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
 
 const DASHBOARD_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/PZcnawJwIZkQHTEM.jpg";
 
@@ -290,7 +291,7 @@ export default function WeeklyGoalsScreen() {
 
             {/* Save Button */}
             <TouchableOpacity
-              onPress={handleSave}
+              onPress={handleSave} {...a11yButton("Save weekly goals")}
               disabled={saving}
               style={{
                 backgroundColor: SF.gold, borderRadius: 16, paddingVertical: 16,

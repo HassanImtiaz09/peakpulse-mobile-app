@@ -9,6 +9,7 @@ import { getHistoricalMeals, type MealEntry } from "@/lib/calorie-context";
 
 import { GOLDEN_MEALS, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgrounds";
 import { UI as SF } from "@/constants/ui-colors";
+import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
 const MEAL_TYPE_ICONS: Record<string, keyof typeof MaterialIcons.glyphMap> = {
   breakfast: "free-breakfast", lunch: "restaurant", dinner: "dinner-dining", snack: "cookie",
 };

@@ -21,6 +21,7 @@ import { useSubscription } from "@/hooks/use-subscription";
 import { UI as SF } from "@/constants/ui-colors";
 import { useAiLimit } from "@/components/ai-limit-modal";
 import { ErrorBoundary } from "@/components/error-boundary";
+import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
 
 const HERO_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/PZcnawJwIZkQHTEM.jpg";
 
@@ -149,6 +150,7 @@ function AICoachScreenContent() {
       // Cache insights
       await AsyncStorage.setItem("@ai_coach_insights", JSON.stringify({ ...result, generatedAt: new Date().toISOString() }));
     } catch (e: any) {
+      if (e?.message?.includes?.("AI_LIMIT_EXCEEDED") || e?.message?.includes?.("rate limit")) { showLimitModal(e.message); return; }
       Alert.alert("Error", e.message ?? "Could not generate insights. Please try again.");
     } finally {
       setLoadingInsights(false);

@@ -35,6 +35,7 @@ import type { MuscleGroup } from "@/components/body-diagram";
 import { getExercisesByMuscle, type ExerciseInfo } from "@/lib/exercise-data";
 import { getExerciseDbGifUrl, hasExerciseDbGif } from "@/lib/exercisedb-api";
 import { C } from "@/constants/ui-colors";
+import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
 
 // ── Theme ──────────────────────────────────────────────────────────────────────
 // ── Tappable SVG Paths ────────────────────────────────────────────────────────

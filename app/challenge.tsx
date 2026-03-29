@@ -46,6 +46,7 @@ import {
 import { notifyChallengeInvitation } from "@/lib/social-notifications";
 import { getTotalUnreadCount } from "@/lib/chat-service";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
 
 const HERO_BG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/golden-challenge-bg-2DXBpSZwN3LCroCHSRyD4K.webp";
 
@@ -249,7 +250,7 @@ export default function ChallengeScreen() {
       {/* Hero */}
       <ImageBackground source={{ uri: HERO_BG }} style={{ height: 170 }} resizeMode="cover">
         <View style={styles.heroOverlay}>
-          <TouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
+          <TouchableOpacity style={styles.backBtn} onPress={() => router.back()} {...a11yButton(A11Y_LABELS.backButton)}>
             <Text style={{ color: "#F1F5F9", fontSize: 18 }}>←</Text>
           </TouchableOpacity>
           <Text style={styles.heroLabel}>CHALLENGES</Text>

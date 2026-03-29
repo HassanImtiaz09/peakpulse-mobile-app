@@ -30,6 +30,7 @@ import { getExerciseInfo } from "@/lib/exercise-data";
 import { getFormAnnotations, hasFormAnnotations } from "@/lib/form-annotations";
 import { FormAnnotationOverlay, AnnotationLegend } from "@/components/form-annotation-overlay";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
 
 const { width: SCREEN_W } = Dimensions.get("window");
 const COMPARE_W = (SCREEN_W - 48) / 2;

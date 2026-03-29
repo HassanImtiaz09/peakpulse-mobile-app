@@ -47,6 +47,7 @@ import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useWearable } from "@/lib/wearable-context";
 import { FeatureGate } from "@/components/feature-gate";
+import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
 
 const DASHBOARD_BG =
   "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/PZcnawJwIZkQHTEM.jpg";
@@ -306,8 +307,7 @@ export default function WearableSyncScreen() {
                 alignItems: "center",
                 justifyContent: "center",
               }}
-              onPress={() => router.back()}
-            >
+              onPress={() => router.back()} {...a11yButton(A11Y_LABELS.backButton)}>
               <Text style={{ color: "#F1F5F9", fontSize: 18 }}>←</Text>
             </TouchableOpacity>
             <Text
@@ -1286,8 +1286,7 @@ export default function WearableSyncScreen() {
                 paddingVertical: 12,
                 alignItems: "center",
               }}
-              onPress={() => router.back()}
-            >
+              onPress={() => router.back()} {...a11yButton(A11Y_LABELS.backButton)}>
               <Text
                 style={{
                   color: "#F59E0B",

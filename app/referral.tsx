@@ -11,6 +11,7 @@ import {
   type ReferralData,
 } from "@/lib/referral";
 import { FeatureGate } from "@/components/feature-gate";
+import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
 
 const HERO_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/PZcnawJwIZkQHTEM.jpg";
 
@@ -69,8 +70,7 @@ export default function ReferralScreen() {
         <View style={{ flex: 1, backgroundColor: "rgba(8,8,16,0.75)", justifyContent: "flex-end", padding: 20, paddingTop: 52 }}>
           <TouchableOpacity
             style={{ position: "absolute", top: 52, left: 20, backgroundColor: "#FFFFFF20", borderRadius: 20, width: 36, height: 36, alignItems: "center", justifyContent: "center" }}
-            onPress={() => router.back()}
-          >
+            onPress={() => router.back()} {...a11yButton(A11Y_LABELS.backButton)}>
             <Text style={{ color: "#F1F5F9", fontSize: 18 }}>←</Text>
           </TouchableOpacity>
           <Text style={{ color: "#FDE68A", fontFamily: "DMSans_700Bold", fontSize: 12, letterSpacing: 1 }}>REFERRAL PROGRAMME</Text>
@@ -91,7 +91,7 @@ export default function ReferralScreen() {
           <View style={{ flexDirection: "row", gap: 12 }}>
             <TouchableOpacity
               style={{ flex: 1, backgroundColor: copied ? "#FDE68A" : "rgba(245,158,11,0.10)", borderRadius: 14, paddingVertical: 12, alignItems: "center" }}
-              onPress={handleCopy}
+              onPress={handleCopy} {...a11yButton("Copy referral code")}
             >
               <Text style={{ color: "#F1F5F9", fontFamily: "DMSans_700Bold", fontSize: 14 }}>
                 {copied ? "✓ Copied!" : "📋 Copy Code"}
@@ -99,7 +99,7 @@ export default function ReferralScreen() {
             </TouchableOpacity>
             <TouchableOpacity
               style={{ flex: 1, backgroundColor: "#F59E0B", borderRadius: 14, paddingVertical: 12, alignItems: "center" }}
-              onPress={handleShare}
+              onPress={handleShare} {...a11yButton("Share referral link")}
             >
               <Text style={{ color: "#F1F5F9", fontFamily: "DMSans_700Bold", fontSize: 14 }}>📤 Share Link</Text>
             </TouchableOpacity>

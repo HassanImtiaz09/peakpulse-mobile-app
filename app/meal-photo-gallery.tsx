@@ -17,6 +17,7 @@ import {
   type FavouriteMeal, purgeArchivedMealPhotos,
 } from "@/lib/calorie-context";
 import { GOLDEN_MEALS, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgrounds";
+import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
 
 type PhotoEntry = MealEntry & { date: string; isArchived: boolean; isFavourited: boolean };
 

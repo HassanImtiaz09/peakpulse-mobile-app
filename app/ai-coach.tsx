@@ -18,6 +18,7 @@ import { useGuestAuth } from "@/lib/guest-auth";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { UI as SF } from "@/constants/ui-colors";
 import { useAiLimit } from "@/components/ai-limit-modal";
+import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
 
 const HERO_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/PZcnawJwIZkQHTEM.jpg";
 
@@ -143,6 +144,7 @@ export default function AICoachScreen() {
       // Cache insights
       await AsyncStorage.setItem("@ai_coach_insights", JSON.stringify({ ...result, generatedAt: new Date().toISOString() }));
     } catch (e: any) {
+      if (e?.message?.includes?.("AI_LIMIT_EXCEEDED") || e?.message?.includes?.("rate limit")) { showLimitModal(e.message); return; }
       Alert.alert("Error", e.message ?? "Could not generate insights. Please try again.");
     } finally {
       setLoadingInsights(false);
@@ -200,8 +202,7 @@ export default function AICoachScreen() {
         <View style={{ flex: 1, backgroundColor: "rgba(8,5,0,0.78)", justifyContent: "flex-end", padding: 20, paddingTop: 52 }}>
           <TouchableOpacity
             style={{ position: "absolute", top: 52, left: 20, width: 36, height: 36, borderRadius: 10, backgroundColor: "rgba(255,255,255,0.08)", alignItems: "center", justifyContent: "center" }}
-            onPress={() => router.back()}
-          >
+            onPress={() => router.back()} {...a11yButton(A11Y_LABELS.backButton)}>
             <MaterialIcons name="arrow-back" size={20} color={SF.fg} />
           </TouchableOpacity>
           <Text style={{ color: SF.gold, fontFamily: "DMSans_700Bold", fontSize: 11, letterSpacing: 1.5 }}>🤖 PEAKPULSE</Text>

@@ -28,6 +28,7 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons"; // FIX: added for 
 import { ScreenContainer } from "@/components/screen-container";
 import { GOLDEN_PRIMARY, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgrounds";
 import { UI as SF } from "@/constants/ui-colors";
+import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
 
 const { width: W } = Dimensions.get("window");
 
@@ -110,7 +111,7 @@ export default function OnboardingSummaryScreen() {
         >
           <Text style={{ color: SF.bg, fontFamily: "DMSans_700Bold", fontSize: 15 }}>Continue Anyway →</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={{ marginTop: 12 }} onPress={() => router.back()}>
+        <TouchableOpacity style={{ marginTop: 12 }} onPress={() => router.back()} {...a11yButton(A11Y_LABELS.backButton)}>
           <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 14 }}>← Go Back & Retry</Text>
         </TouchableOpacity>
       </View>

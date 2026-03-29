@@ -38,6 +38,7 @@ import {
 } from "@/lib/voice-coach-settings";
 import { speakCue, stopSpeaking } from "@/lib/audio-form-cues";
 import { C } from "@/constants/ui-colors";
+import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
 
 const VOICE_MODES: VoiceCoachMode[] = [
   "full",
@@ -114,8 +115,7 @@ export default function VoiceCoachSettingsScreen() {
       <View style={styles.header}>
         <TouchableOpacity
           style={styles.backBtn}
-          onPress={() => router.back()}
-        >
+          onPress={() => router.back()} {...a11yButton(A11Y_LABELS.backButton)}>
           <MaterialIcons name="arrow-back" size={20} color={C.fg} />
         </TouchableOpacity>
         <View style={styles.headerCenter}>

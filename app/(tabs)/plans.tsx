@@ -30,6 +30,7 @@ import { useExerciseCompletion } from "@/lib/exercise-completion-context";
 import { EmptyState, EMPTY_STATES } from "@/components/empty-state";
 import { useAiLimit } from "@/components/ai-limit-modal";
 import { ErrorBoundary } from "@/components/error-boundary";
+import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
 
 const WORKOUT_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/yauqLuTRvanJUzsJ.jpg";
 const MEAL_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/yauqLuTRvanJUzsJ.jpg";
@@ -222,7 +223,7 @@ function PlansScreenContent() {
       // Pre-cache videos for the new workout plan
       prefetchExerciseVideos().catch(() => {});
     },
-    onError: (e) => Alert.alert("Error", e.message),
+    onError: (e) => { if (e?.message?.includes?.("AI_LIMIT_EXCEEDED") || e?.message?.includes?.("rate limit")) { showLimitModal(e.message); return; } Alert.alert("Error", e.message); },
   });
 
   const generateMeal = trpc.mealPlan.generate.useMutation({
@@ -230,7 +231,7 @@ function PlansScreenContent() {
       if (isAuthenticated) refetchMeal();
       else setLocalMealPlan(data);
     },
-    onError: (e) => Alert.alert("Error", e.message),
+    onError: (e) => { if (e?.message?.includes?.("AI_LIMIT_EXCEEDED") || e?.message?.includes?.("rate limit")) { showLimitModal(e.message); return; } Alert.alert("Error", e.message); },
   });
 
   // Derive today's plan
@@ -284,6 +285,7 @@ function PlansScreenContent() {
       });
       setSwapExAlts(result.alternatives ?? []);
     } catch (e: any) {
+      if (e?.message?.includes?.("AI_LIMIT_EXCEEDED") || e?.message?.includes?.("rate limit")) { showLimitModal(e.message); return; }
       Alert.alert("Error", e.message);
     } finally {
       setSwapExLoading(false);
@@ -345,6 +347,7 @@ function PlansScreenContent() {
       });
       setSwapMealAlts(result.alternatives ?? []);
     } catch (e: any) {
+      if (e?.message?.includes?.("AI_LIMIT_EXCEEDED") || e?.message?.includes?.("rate limit")) { showLimitModal(e.message); return; }
       Alert.alert("Error", e.message);
     } finally {
       setSwapMealLoading(false);
@@ -448,7 +451,7 @@ function PlansScreenContent() {
             <MaterialIcons name="chevron-left" size={28} color={FG} />
           </TouchableOpacity>
           <Text style={{ color: FG, fontFamily: "BebasNeue_400Regular", fontSize: 24, letterSpacing: 3 }}>WORKOUT PLANS</Text>
-          <TouchableOpacity onPress={() => router.push("/user-guide" as any)} style={{ padding: 4 }}>
+          <TouchableOpacity onPress={() => router.push("/user-guide" as any)} style={{ padding: 4 }} {...a11yButton("User guide")}>
             <MaterialIcons name="more-horiz" size={22} color={MUTED} />
           </TouchableOpacity>
         </View>

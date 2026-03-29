@@ -21,6 +21,7 @@ import {
   type SmartReminderSettings,
   DEFAULT_SETTINGS,
 } from "@/lib/smart-reminders";
+import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
 
 const DAY_LABELS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
