@@ -2548,3 +2548,9 @@
 - [x] Clear @plan_generating flag on plan generation success
 - [x] Import ActivityIndicator in dashboard (already imported)
 - [x] Run tests and verify TypeScript compiles (2088 tests pass, 0 TS errors)
+
+## Bug Fix (Round 29) — Meal Plans Ignoring Dietary Preferences (ISSUE-2)
+- [x] Add getDietaryRestrictions() helper function to server/routers.ts
+- [x] Replace meal plan prompt construction with strict dietary enforcement
+- [x] Strengthen system message to prioritize dietary restrictions
+- [x] Run tests and verify TypeScript compiles (2088 tests pass, 0 TS errors)

@@ -84,6 +84,75 @@ function getFallbackWorkoutPlan(goal: string) {
   ];
 }
 
+/** Build strict dietary restriction instructions for the AI prompt */
+function getDietaryRestrictions(preference: string): string {
+  const restrictions: Record<string, string> = {
+    vegan: `STRICT VEGAN DIET — MANDATORY RULES:
+• ABSOLUTELY NO animal products of any kind: no meat, poultry, fish, seafood, dairy, eggs, honey, gelatin, whey, casein, or any animal-derived ingredients.
+• Every single meal and snack must be 100% plant-based.
+• Use plant proteins: tofu, tempeh, seitan, legumes (lentils, chickpeas, black beans), edamame, quinoa, nuts, seeds.
+• Use plant milks (oat, soy, almond), nutritional yeast, plant-based yogurt.
+• If you include a meal that contains ANY animal product, the entire plan is invalid.`,
+
+    vegetarian: `STRICT VEGETARIAN DIET — MANDATORY RULES:
+• NO meat, poultry, fish, or seafood of any kind.
+• Dairy and eggs are permitted.
+• Focus on diverse protein sources: eggs, Greek yogurt, cottage cheese, legumes, tofu, tempeh, nuts, seeds, quinoa.
+• If you include a meal with meat, poultry, or fish, the entire plan is invalid.`,
+
+    halal: `STRICT HALAL DIET — MANDATORY RULES:
+• ALL meat must be halal-certified (zabiha). Use only halal chicken, halal beef, halal lamb.
+• ABSOLUTELY NO pork, bacon, ham, prosciutto, pepperoni, lard, or any pork-derived products.
+• NO alcohol or alcohol-based ingredients (wine, beer, rum, vanilla extract with alcohol).
+• NO gelatin unless specified as halal gelatin.
+• Seafood (fish, shrimp) is generally permissible.
+• If any meal contains pork or non-halal meat, the entire plan is invalid.`,
+
+    kosher: `STRICT KOSHER DIET — MANDATORY RULES:
+• NO pork or shellfish.
+• Do NOT mix meat and dairy in the same meal.
+• Use only kosher-certified meats.
+• Fish with fins and scales are permitted.
+• Keep meat meals and dairy meals completely separate.`,
+
+    keto: `STRICT KETOGENIC DIET — MANDATORY RULES:
+• Maximum 20-30g net carbs per day across ALL meals.
+• Each meal should be: ~70-75% calories from fat, ~20-25% protein, ~5% carbs.
+• NO bread, pasta, rice, potatoes, sugar, fruit juice, or high-carb fruits.
+• ALLOWED: meat, fatty fish, eggs, butter, cheese, nuts, seeds, avocado, olive oil, coconut oil, low-carb vegetables (spinach, kale, broccoli, cauliflower, zucchini).
+• Include net carb count for each meal.
+• If any single meal exceeds 10g net carbs, the plan is invalid.`,
+
+    paleo: `STRICT PALEO DIET — MANDATORY RULES:
+• NO grains (wheat, rice, oats, corn), legumes (beans, lentils, peanuts), dairy, refined sugar, or processed foods.
+• ALLOWED: meat, fish, eggs, vegetables, fruits, nuts (except peanuts), seeds, olive oil, coconut oil, sweet potatoes.
+• Focus on whole, unprocessed foods only.`,
+
+    pescatarian: `STRICT PESCATARIAN DIET — MANDATORY RULES:
+• NO meat or poultry (chicken, beef, pork, lamb, turkey, etc.).
+• Fish and seafood ARE allowed and should be the primary animal protein.
+• Dairy and eggs are permitted.
+• Include a variety of fish: salmon, tuna, cod, shrimp, sardines.`,
+
+    "gluten-free": `STRICT GLUTEN-FREE DIET — MANDATORY RULES:
+• ABSOLUTELY NO wheat, barley, rye, or any gluten-containing grains.
+• NO regular bread, pasta, flour tortillas, soy sauce (use tamari), beer, or most cereals.
+• ALLOWED grains: rice, quinoa, oats (certified GF), buckwheat, millet, corn.
+• Check all sauces and condiments for hidden gluten.`,
+
+    "dairy-free": `STRICT DAIRY-FREE DIET — MANDATORY RULES:
+• NO milk, cheese, butter, cream, yogurt, ice cream, whey, or casein.
+• Use plant-based alternatives: oat milk, coconut cream, cashew cheese, vegan butter.
+• Check all processed foods for hidden dairy ingredients.`,
+  };
+
+  const key = preference.toLowerCase().replace(/[\s_]+/g, "-");
+  if (key === "omnivore" || key === "none" || !restrictions[key]) {
+    return "No specific dietary restrictions. Include a balanced variety of proteins, carbs, and fats.";
+  }
+  return restrictions[key];
+}
+
 export const appRouter = router({
   health: publicProcedure.query(() => ({ status: "ok" })),
   system: systemRouter,
@@ -250,6 +319,10 @@ export const appRouter = router({
     getAllSessions: protectedProcedure.query(async ({ ctx }) => db.getRecentWorkoutSessions(ctx.user.id, 500)),
   }),
 
+  // ── Dietary restriction enforcement helper ──────────────────────────
+  // Used by meal plan generation to give the LLM strict, non-negotiable rules
+  // for each dietary preference instead of a vague "Diet: vegan" hint.
+
   mealPlan: router({
     // AI generation — works for guests (no DB save for guests)
     generate: guestOrUserProcedure
@@ -278,8 +351,27 @@ export const appRouter = router({
         const favFoodsNote = input.favouriteFoods && input.favouriteFoods.length > 0
           ? `IMPORTANT: The user frequently eats and enjoys these foods. Incorporate them into the meal plan where nutritionally appropriate (at least 3-4 times across the week): ${input.favouriteFoods.map(f => `${f.name} (${f.calories}kcal, P:${f.protein}g C:${f.carbs}g F:${f.fat}g)`).join(", ")}. Use these as base ingredients or full meals, adjusting portions to fit the calorie target.`
           : "";
-        const prompt = `Generate a 7-day meal plan as JSON. Goal: ${input.goal.replace(/_/g," ")}, Diet: ${input.dietaryPreference}${isRamadan ? " (Ramadan/Halal)" : ""}, Calories: ${calories}kcal. ${ramadanNote} ${favFoodsNote} Return this exact structure: {"dailyCalories":${calories},"proteinTarget":150,"carbTarget":200,"fatTarget":65,"dietType":"${input.dietaryPreference}${isRamadan ? "_ramadan" : ""}","isRamadan":${isRamadan},"days":[{"day":"Monday","meals":[{"name":"Scrambled Eggs with Spinach","type":"${isRamadan ? "suhoor" : "breakfast"}","calories":420,"protein":28,"carbs":35,"fat":14,"ingredients":["3 large eggs","1 cup fresh spinach","1 tbsp olive oil","salt and pepper"],"prepTime":"10 min","instructions":["Heat olive oil in a pan over medium heat","Add spinach and wilt for 1 minute","Whisk eggs and pour over spinach","Scramble gently until just set","Season with salt and pepper"],"photoQuery":"scrambled eggs spinach breakfast"}]}],"insight":"personalized nutrition tip"}. ${isRamadan ? "Include suhoor, iftar, and evening snack meals." : "Include 4-5 meals per day (breakfast, morning snack, lunch, afternoon snack, dinner)."} Each meal MUST have ingredients array, instructions array (3-5 steps), and photoQuery (2-4 word food search term). Respect dietary restrictions strictly.`;
-        const response = await invokeLLM({ messages: [{ role: "system", content: "You are an expert dietitian. Always respond with valid JSON." }, { role: "user", content: prompt }], response_format: { type: "json_object" } });
+        const dietaryRules = getDietaryRestrictions(input.dietaryPreference);
+        const prompt = `Generate a 7-day meal plan as JSON.
+
+USER PROFILE:
+- Fitness Goal: ${input.goal.replace(/_/g, " ")}
+- Dietary Preference: ${input.dietaryPreference.toUpperCase()}
+- Daily Calorie Target: ~${calories} kcal
+${input.weightKg ? `- Weight: ${input.weightKg} kg` : ""}
+${input.heightCm ? `- Height: ${input.heightCm} cm` : ""}
+${isRamadan ? `\n${ramadanNote}` : ""}
+${favFoodsNote}
+
+DIETARY RESTRICTIONS (MUST FOLLOW — NON-NEGOTIABLE):
+${dietaryRules}
+
+COMPLIANCE CHECK: Before finalizing, verify EVERY meal in the plan against the dietary restrictions above. If any meal violates the rules, replace it with a compliant alternative.
+
+Each day must include: ${isRamadan ? "suhoor, iftar, and evening snack meals" : "breakfast, morning snack, lunch, afternoon snack, dinner (4-5 meals)"}. Include calories, protein (g), carbs (g), and fat (g) for each meal. Each meal MUST have ingredients array, instructions array (3-5 steps), and photoQuery (2-4 word food search term).
+
+Return this exact structure: {"dailyCalories":${calories},"proteinTarget":150,"carbTarget":200,"fatTarget":65,"dietType":"${input.dietaryPreference}${isRamadan ? "_ramadan" : ""}","isRamadan":${isRamadan},"days":[{"day":"Monday","meals":[{"name":"Meal Name","type":"${isRamadan ? "suhoor" : "breakfast"}","calories":420,"protein":28,"carbs":35,"fat":14,"ingredients":["ingredient 1","ingredient 2"],"prepTime":"10 min","instructions":["Step 1","Step 2","Step 3"],"photoQuery":"food search term"}]}],"insight":"personalized nutrition tip"}`;
+        const response = await invokeLLM({ messages: [{ role: "system", content: "You are an expert registered dietitian who STRICTLY adheres to dietary restrictions. The user's dietary preference is the HIGHEST PRIORITY constraint — it overrides all other considerations. If the user is vegan, every single ingredient must be plant-based. If halal, every meat must be halal-certified with zero pork products. If keto, total daily carbs must stay under 30g. NEVER include a food that violates the stated dietary restriction. Always respond with valid JSON matching the required schema." }, { role: "user", content: prompt }], response_format: { type: "json_object" } });
         let planData: any;
         try { planData = JSON.parse((response.choices[0].message.content as string) ?? "{}"); }
         catch { planData = { dailyCalories: calories, days: [], insight: "Eat balanced meals and stay hydrated." }; }
