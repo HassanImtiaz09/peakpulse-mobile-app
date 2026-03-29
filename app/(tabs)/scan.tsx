@@ -482,6 +482,16 @@ export default function ScanScreen() {
     );
   }
 
+  // 1B: Parallax scroll value for Scan hero — MUST be above early return to avoid hooks ordering violation
+  const scrollY = useSharedValue(0);
+  const heroImgStyle = useAnimatedStyle(() => ({
+    transform: [{ translateY: interpolate(scrollY.value, [0, 200], [0, 100], Extrapolation.CLAMP) }],
+  }));
+  const heroTxtStyle = useAnimatedStyle(() => ({
+    opacity: interpolate(scrollY.value, [0, 150], [1, 0], Extrapolation.CLAMP),
+  }));
+  const onScroll = useCallback((e: any) => { scrollY.value = e.nativeEvent.contentOffset.y; }, []);
+
   if (!canUse) {
     return (
       <View style={{ flex: 1, backgroundColor: BG }}>
@@ -501,16 +511,6 @@ export default function ScanScreen() {
       </View>
     );
   }
-
-  // 1B: Parallax scroll value for Scan hero
-  const scrollY = useSharedValue(0);
-  const heroImgStyle = useAnimatedStyle(() => ({
-    transform: [{ translateY: interpolate(scrollY.value, [0, 200], [0, 100], Extrapolation.CLAMP) }],
-  }));
-  const heroTxtStyle = useAnimatedStyle(() => ({
-    opacity: interpolate(scrollY.value, [0, 150], [1, 0], Extrapolation.CLAMP),
-  }));
-  const onScroll = useCallback((e: any) => { scrollY.value = e.nativeEvent.contentOffset.y; }, []);
 
   return (
     <View style={{ flex: 1, backgroundColor: BG }}>

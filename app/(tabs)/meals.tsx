@@ -591,6 +591,16 @@ export default function MealsScreen() {
       .slice(0, 5);
   }, [mealName, favourites]);
 
+  // 1B: Parallax scroll value for Meals hero — MUST be above early return to avoid hooks ordering violation
+  const mealScrollY = useSharedValue(0);
+  const mealHeroImgStyle = useAnimatedStyle(() => ({
+    transform: [{ translateY: interpolate(mealScrollY.value, [0, 200], [0, 100], Extrapolation.CLAMP) }],
+  }));
+  const mealHeroTxtStyle = useAnimatedStyle(() => ({
+    opacity: interpolate(mealScrollY.value, [0, 150], [1, 0], Extrapolation.CLAMP),
+  }));
+  const onMealScroll = useCallback((e: any) => { mealScrollY.value = e.nativeEvent.contentOffset.y; }, []);
+
   if (!canUse) {
     return (
       <View style={{ flex: 1, backgroundColor: MBG }}>
@@ -604,16 +614,6 @@ export default function MealsScreen() {
       </View>
     );
   }
-
-  // 1B: Parallax scroll value for Meals hero
-  const mealScrollY = useSharedValue(0);
-  const mealHeroImgStyle = useAnimatedStyle(() => ({
-    transform: [{ translateY: interpolate(mealScrollY.value, [0, 200], [0, 100], Extrapolation.CLAMP) }],
-  }));
-  const mealHeroTxtStyle = useAnimatedStyle(() => ({
-    opacity: interpolate(mealScrollY.value, [0, 150], [1, 0], Extrapolation.CLAMP),
-  }));
-  const onMealScroll = useCallback((e: any) => { mealScrollY.value = e.nativeEvent.contentOffset.y; }, []);
 
   // Get today's meal plan data
   const aiDayMeals = aiMealPlan?.days?.[selectedDayIndex]?.meals ?? [];

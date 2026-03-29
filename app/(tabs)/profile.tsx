@@ -552,9 +552,40 @@ export default function ProfileScreen() {
           {/* Logout */}
           <TouchableOpacity
             style={{ backgroundColor: "#EF444420", borderRadius: 16, paddingVertical: 14, alignItems: "center", borderWidth: 1, borderColor: "#EF444440" }}
-            onPress={() => {
+            onPress={async () => {
               if (isGuest) {
-                clearGuest();
+                Alert.alert(
+                  "Exit Guest Mode",
+                  "This will clear all your local data and return to onboarding. Continue?",
+                  [
+                    { text: "Cancel", style: "cancel" },
+                    {
+                      text: "Exit & Re-onboard",
+                      style: "destructive",
+                      onPress: async () => {
+                        try {
+                          // Clear all guest data from AsyncStorage
+                          const keysToRemove = [
+                            "@guest_profile", "@guest_workout_plan", "@guest_meal_plan",
+                            "@user_tdee", "@tdee_breakdown", "@peakpulse_calorie_goal",
+                            "@cached_workout_plan", "@plan_generating",
+                            "@onboarding_complete", "@workout_completed_days",
+                            "@calorie_history", "@pantry_items",
+                          ];
+                          await AsyncStorage.multiRemove(keysToRemove);
+                          await clearGuest();
+                          // TODO: Before app store publish, replace this with a login screen redirect
+                          // instead of allowing re-onboarding as guest. Currently allows guest
+                          // re-onboarding for testing purposes.
+                          router.replace("/onboarding" as any);
+                        } catch (e) {
+                          console.error("Failed to clear guest data:", e);
+                          Alert.alert("Error", "Failed to exit guest mode. Please try again.");
+                        }
+                      },
+                    },
+                  ]
+                );
               } else {
                 router.push("/logout" as any);
               }

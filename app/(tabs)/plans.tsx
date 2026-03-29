@@ -390,23 +390,7 @@ export default function PlansScreen() {
     Alert.alert("Meal Swapped", `Replaced with ${newMeal.name}`);
   }, [swapMealModal, mealPlan, isAuthenticated]);
 
-  if (!canUse) {
-    return (
-      <View style={{ flex: 1, backgroundColor: BG, alignItems: "center", justifyContent: "center", padding: 32 }}>
-        <MaterialIcons name="fitness-center" size={48} color={GOLD} style={{ marginBottom: 16 }} />
-        <Text style={{ color: FG, fontFamily: "BebasNeue_400Regular", fontSize: 28, letterSpacing: 3, textAlign: "center", marginBottom: 8 }}>UNLOCK YOUR PLANS</Text>
-        <Text style={{ color: MUTED, fontSize: 14, textAlign: "center", lineHeight: 20, marginBottom: 24 }}>Sign in or continue as guest to get started.</Text>
-        <TouchableOpacity
-          style={{ backgroundColor: GOLD, paddingHorizontal: 32, paddingVertical: 14, borderRadius: 16 }}
-          onPress={() => router.push("/login" as any)}
-        >
-          <Text style={{ color: BG, fontFamily: "DMSans_700Bold", fontSize: 16 }}>Get Started</Text>
-        </TouchableOpacity>
-      </View>
-    );
-  }
-
-  // Parallax
+  // Parallax — MUST be above early return to avoid hooks ordering violation
   const scrollY = useSharedValue(0);
   const heroImageStyle = useAnimatedStyle(() => ({
     transform: [{ translateY: interpolate(scrollY.value, [0, 200], [0, 100], Extrapolation.CLAMP) }],
@@ -418,7 +402,7 @@ export default function PlansScreen() {
     scrollY.value = event.nativeEvent.contentOffset.y;
   }, []);
 
-  // Workout progress stats
+  // Workout progress stats — MUST be above early return to avoid hooks ordering violation
   const workoutStats = useMemo(() => {
     if (!workoutPlan?.schedule) return null;
     const schedule = workoutPlan.schedule;
@@ -434,6 +418,22 @@ export default function PlansScreen() {
   const styleLabel = WORKOUT_STYLES.find(w => w.key === workoutStyle)?.label ?? workoutStyle;
   const dietLabel = DIETARY_PREFS.find(d => d.key === dietaryPref)?.label ?? dietaryPref;
   const mealGoalLabel = GOALS.find(g => g.key === mealGoal)?.label ?? mealGoal;
+
+  if (!canUse) {
+    return (
+      <View style={{ flex: 1, backgroundColor: BG, alignItems: "center", justifyContent: "center", padding: 32 }}>
+        <MaterialIcons name="fitness-center" size={48} color={GOLD} style={{ marginBottom: 16 }} />
+        <Text style={{ color: FG, fontFamily: "BebasNeue_400Regular", fontSize: 28, letterSpacing: 3, textAlign: "center", marginBottom: 8 }}>UNLOCK YOUR PLANS</Text>
+        <Text style={{ color: MUTED, fontSize: 14, textAlign: "center", lineHeight: 20, marginBottom: 24 }}>Sign in or continue as guest to get started.</Text>
+        <TouchableOpacity
+          style={{ backgroundColor: GOLD, paddingHorizontal: 32, paddingVertical: 14, borderRadius: 16 }}
+          onPress={() => router.push("/login" as any)}
+        >
+          <Text style={{ color: BG, fontFamily: "DMSans_700Bold", fontSize: 16 }}>Get Started</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
 
   return (
     <View style={{ flex: 1, backgroundColor: BG }}>

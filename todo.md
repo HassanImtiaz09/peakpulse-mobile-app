@@ -2595,3 +2595,11 @@
 - [x] Audit all tab screens (Home, Train/Plans, Nutrition/Meals, Profile) for bottom padding
 - [x] Add consistent bottom padding (≥120) to all scrollable tab screens (profile, scan, ai-coach fixed; index, plans, meals already adequate)
 - [x] Run tests and verify TypeScript compiles (2088 tests pass, 0 TS errors)
+
+## Bug Fix (Round 36) — Exit Guest Mode Crash + Re-onboarding
+- [x] Fix "Rendered fewer hooks than expected" crash in PlansScreen after clearGuest() (moved hooks above early return in plans.tsx, scan.tsx, meals.tsx)
+- [x] Change Exit Guest Mode to navigate to onboarding instead of just clearing state
+- [x] Clear all guest data (AsyncStorage) before navigating to onboarding (12 keys cleared)
+- [x] Allow re-onboarding as guest for testing purposes
+- [x] Add TODO comment reminder to disable guest re-onboarding before app store publish
+- [x] Run tests and verify TypeScript compiles (2088 tests pass, 0 TS errors)
