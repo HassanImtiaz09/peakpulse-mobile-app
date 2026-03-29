@@ -6,7 +6,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import {
   ScrollView, Text, View, TouchableOpacity, Switch, Platform, StyleSheet, Alert,
-  ActivityIndicator, ImageBackground} from "react-native";
+  ActivityIndicator, ImageBackground, TextInput} from "react-native";
 import { useRouter } from "expo-router";
 import { ScreenContainer } from "@/components/screen-container";
 import { useThemeContext, type ThemePreference } from "@/lib/theme-provider";
@@ -23,6 +23,13 @@ import {
   clearVideoCache,
   getVideoCacheSize,
 } from "@/lib/gif-cache";
+import {
+  ACTIVITY_LEVELS, GOAL_OPTIONS,
+  calculateTDEEBreakdown, calculateMacros,
+  saveTDEEBreakdown, loadTDEEBreakdown,
+  type TDEEBreakdown,
+} from "@/lib/tdee-calculator";
+import { useCalories } from "@/lib/calorie-context";
 
 function formatBytes(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`;
@@ -62,6 +69,17 @@ export default function SettingsScreen() {
   const [videoCacheSize, setVideoCacheSize] = useState("0 KB");
   const [clearingCache, setClearingCache] = useState(false);
 
+  // TDEE Recalculate state
+  const { setCalorieGoal } = useCalories();
+  const [tdeeBreakdown, setTdeeBreakdown] = useState<TDEEBreakdown | null>(null);
+  const [editWeight, setEditWeight] = useState("");
+  const [editHeight, setEditHeight] = useState("");
+  const [editAge, setEditAge] = useState("");
+  const [editGender, setEditGender] = useState<"male" | "female">("male");
+  const [editActivity, setEditActivity] = useState("moderate");
+  const [editGoal, setEditGoal] = useState("maintain");
+  const [recalculating, setRecalculating] = useState(false);
+
   const loadSettings = useCallback(async () => {
     const fontVal = await AsyncStorage.getItem(FONT_SIZE_KEY);
     if (fontVal) setFontSizeState(fontVal);
@@ -79,6 +97,18 @@ export default function SettingsScreen() {
       const sizeBytes = await getVideoCacheSize();
       setVideoCacheSize(formatBytes(sizeBytes));
     } catch {}
+
+    // Load TDEE breakdown for recalculate form
+    const breakdown = await loadTDEEBreakdown();
+    if (breakdown) {
+      setTdeeBreakdown(breakdown);
+      setEditWeight(String(breakdown.inputs.weightKg));
+      setEditHeight(String(breakdown.inputs.heightCm));
+      setEditAge(String(breakdown.inputs.age));
+      setEditGender(breakdown.inputs.gender);
+      setEditActivity(breakdown.inputs.activityKey);
+      setEditGoal(breakdown.inputs.goal);
+    }
   }, []);
 
   useEffect(() => { loadSettings(); }, [loadSettings]);
@@ -131,6 +161,31 @@ export default function SettingsScreen() {
       Alert.alert("Error", "Failed to update notification settings. Please try again.");
     }
     setPushLoading(false);
+  }
+
+  async function handleRecalculate() {
+    const w = parseFloat(editWeight);
+    const h = parseFloat(editHeight);
+    const a = parseInt(editAge, 10);
+    if (!w || !h || !a || w <= 0 || h <= 0 || a <= 0) {
+      Alert.alert("Invalid Input", "Please enter valid weight, height, and age values.");
+      return;
+    }
+    setRecalculating(true);
+    try {
+      const breakdown = calculateTDEEBreakdown(w, h, a, editGender, editActivity, editGoal);
+      await saveTDEEBreakdown(breakdown);
+      // Also update macro targets
+      const macros = calculateMacros(breakdown.adjustedTdee, w, editGoal);
+      await AsyncStorage.setItem("@user_macro_targets", JSON.stringify(macros));
+      setTdeeBreakdown(breakdown);
+      setCalorieGoal(breakdown.adjustedTdee);
+      if (Platform.OS !== "web") Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      Alert.alert("Updated", `Your daily calorie target is now ${breakdown.adjustedTdee} kcal.`);
+    } catch (err) {
+      Alert.alert("Error", "Failed to recalculate. Please try again.");
+    }
+    setRecalculating(false);
   }
 
   return (
@@ -331,6 +386,118 @@ export default function SettingsScreen() {
           </View>
         </View>
 
+        {/* ── Recalculate TDEE ── */}
+        <Text style={styles.sectionLabel}>CALORIE TARGET</Text>
+        <View style={styles.card}>
+          <View style={{ padding: 14 }}>
+            <View style={{ flexDirection: "row", alignItems: "center", gap: 12, marginBottom: 14 }}>
+              <View style={[styles.optionIcon, styles.optionIconActive]}>
+                <MaterialIcons name="calculate" size={20} color={SF.gold} />
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.optionLabel}>Recalculate TDEE</Text>
+                <Text style={styles.optionDesc}>Update your metrics to get a new daily calorie target</Text>
+              </View>
+            </View>
+
+            {/* Current target display */}
+            {tdeeBreakdown && (
+              <View style={{ backgroundColor: "rgba(245,158,11,0.06)", borderRadius: 10, padding: 12, marginBottom: 14, borderWidth: 1, borderColor: SF.border }}>
+                <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                  <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 11 }}>Current Target</Text>
+                  <Text style={{ color: SF.gold, fontFamily: "DMSans_700Bold", fontSize: 16 }}>{tdeeBreakdown.adjustedTdee} kcal</Text>
+                </View>
+              </View>
+            )}
+
+            {/* Input fields */}
+            <View style={{ gap: 10 }}>
+              <View style={{ flexDirection: "row", gap: 8 }}>
+                <View style={{ flex: 1 }}>
+                  <Text style={tdeeInputLabel}>Weight (kg)</Text>
+                  <TextInput style={tdeeInputStyle} value={editWeight} onChangeText={setEditWeight} keyboardType="decimal-pad" placeholder="70" placeholderTextColor={SF.muted} />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={tdeeInputLabel}>Height (cm)</Text>
+                  <TextInput style={tdeeInputStyle} value={editHeight} onChangeText={setEditHeight} keyboardType="decimal-pad" placeholder="175" placeholderTextColor={SF.muted} />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={tdeeInputLabel}>Age</Text>
+                  <TextInput style={tdeeInputStyle} value={editAge} onChangeText={setEditAge} keyboardType="number-pad" placeholder="25" placeholderTextColor={SF.muted} />
+                </View>
+              </View>
+
+              {/* Gender toggle */}
+              <View>
+                <Text style={tdeeInputLabel}>Gender</Text>
+                <View style={{ flexDirection: "row", gap: 6 }}>
+                  {(["male", "female"] as const).map(g => (
+                    <TouchableOpacity
+                      key={g}
+                      onPress={() => setEditGender(g)}
+                      style={[tdeeChipStyle, editGender === g && tdeeChipActiveStyle]}
+                    >
+                      <Text style={[tdeeChipText, editGender === g && { color: SF.gold }]}>{g === "male" ? "Male" : "Female"}</Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              </View>
+
+              {/* Activity level */}
+              <View>
+                <Text style={tdeeInputLabel}>Activity Level</Text>
+                <View style={{ gap: 4 }}>
+                  {ACTIVITY_LEVELS.map(a => (
+                    <TouchableOpacity
+                      key={a.key}
+                      onPress={() => setEditActivity(a.key)}
+                      style={[tdeeChipStyle, { paddingVertical: 8, paddingHorizontal: 12 }, editActivity === a.key && tdeeChipActiveStyle]}
+                    >
+                      <View style={{ flexDirection: "row", justifyContent: "space-between", flex: 1 }}>
+                        <Text style={[tdeeChipText, editActivity === a.key && { color: SF.gold }]}>{a.label}</Text>
+                        <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 10 }}>{a.desc}</Text>
+                      </View>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              </View>
+
+              {/* Goal */}
+              <View>
+                <Text style={tdeeInputLabel}>Fitness Goal</Text>
+                <View style={{ gap: 4 }}>
+                  {GOAL_OPTIONS.map(g => (
+                    <TouchableOpacity
+                      key={g.key}
+                      onPress={() => setEditGoal(g.key)}
+                      style={[tdeeChipStyle, { paddingVertical: 8, paddingHorizontal: 12 }, editGoal === g.key && tdeeChipActiveStyle]}
+                    >
+                      <View style={{ flexDirection: "row", justifyContent: "space-between", flex: 1 }}>
+                        <Text style={[tdeeChipText, editGoal === g.key && { color: SF.gold }]}>{g.label}</Text>
+                        <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 10 }}>{g.desc}</Text>
+                      </View>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              </View>
+            </View>
+
+            {/* Recalculate button */}
+            <TouchableOpacity
+              onPress={handleRecalculate}
+              disabled={recalculating}
+              style={{ marginTop: 14, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8, backgroundColor: "rgba(245,158,11,0.12)", borderRadius: 12, paddingVertical: 12, borderWidth: 1, borderColor: "rgba(245,158,11,0.30)" }}
+            >
+              {recalculating ? (
+                <ActivityIndicator color={SF.gold} size="small" />
+              ) : (
+                <MaterialIcons name="refresh" size={18} color={SF.gold} />
+              )}
+              <Text style={{ color: SF.gold, fontFamily: "DMSans_700Bold", fontSize: 14 }}>Recalculate</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
         {/* ── About ── */}
         <Text style={styles.sectionLabel}>ABOUT</Text>
         <View style={styles.card}>
@@ -348,6 +515,21 @@ export default function SettingsScreen() {
     </ImageBackground>
   );
 }
+
+// TDEE recalculate form inline styles
+const tdeeInputLabel = { color: SF.muted, fontFamily: "DMSans_600SemiBold" as const, fontSize: 11, marginBottom: 4 };
+const tdeeInputStyle = {
+  backgroundColor: "rgba(245,158,11,0.06)", borderRadius: 10, borderWidth: 1, borderColor: SF.border,
+  paddingHorizontal: 12, paddingVertical: 10, color: SF.fg, fontFamily: "DMSans_600SemiBold" as const, fontSize: 14,
+};
+const tdeeChipStyle = {
+  flex: 1 as const, alignItems: "center" as const, paddingVertical: 8, borderRadius: 10,
+  backgroundColor: "rgba(245,158,11,0.04)", borderWidth: 1, borderColor: SF.border,
+};
+const tdeeChipActiveStyle = {
+  backgroundColor: "rgba(245,158,11,0.12)", borderColor: "rgba(245,158,11,0.30)",
+};
+const tdeeChipText = { color: SF.fg, fontFamily: "DMSans_600SemiBold" as const, fontSize: 12 };
 
 const styles = StyleSheet.create({
   header: {

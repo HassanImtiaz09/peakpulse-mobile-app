@@ -2581,3 +2581,11 @@
 - [x] Add goal-based calorie adjustment with safety floors (1500 male, 1200 female)
 - [x] Fix onboarding-to-dashboard calorie sync — write to both @user_tdee and @peakpulse_calorie_goal
 - [x] Run tests and verify TypeScript compiles (2088 tests pass, 0 TS errors)
+
+## Feature (Round 34) — TDEE Breakdown, Recalculate, Weekly Averaging
+- [x] Create shared TDEE calculation utility (lib/tdee-calculator.ts) with breakdown data
+- [x] Persist TDEE breakdown (BMR, multiplier, goal adjustment) to AsyncStorage
+- [x] Add TDEE breakdown display to dashboard calorie section
+- [x] Add Recalculate TDEE section to Settings screen with editable weight/activity/goal
+- [x] Add 7-day rolling calorie average to dashboard
+- [x] Run tests and verify TypeScript compiles (2088 tests pass, 0 TS errors)

@@ -96,71 +96,14 @@ const DIETARY_PREFS = [
   { key: "paleo",      label: "Paleo",      iconName: "set-meal" as const },
 ];
 
-const ACTIVITY_LEVELS = [
-  { key: "sedentary",   label: "Sedentary",     desc: "Little or no exercise",          multiplier: 1.2 },
-  { key: "light",       label: "Lightly Active", desc: "1-3 days/week",                 multiplier: 1.375 },
-  { key: "moderate",    label: "Moderately Active", desc: "3-5 days/week",              multiplier: 1.55 },
-  { key: "very_active", label: "Very Active",   desc: "6-7 days/week",                  multiplier: 1.725 },
-  { key: "extra",       label: "Extra Active",  desc: "Twice daily / physical job",     multiplier: 1.9 },
-];
+import { ACTIVITY_LEVELS, calculateTDEEBreakdown, calculateMacros, saveTDEEBreakdown } from "@/lib/tdee-calculator";
 
-/**
- * Calculate personalised TDEE using Mifflin-St Jeor BMR × activity multiplier
- * then adjust for goal (deficit for fat loss, surplus for muscle gain).
- */
+/** Wrapper to keep existing call sites working — returns just the adjusted TDEE number. */
 function calculateTDEE(
-  weightKg: number,
-  heightCm: number,
-  age: number,
-  gender: "male" | "female",
-  activityKey: string,
-  goal: string,
+  weightKg: number, heightCm: number, age: number,
+  gender: "male" | "female", activityKey: string, goal: string,
 ): number {
-  // Mifflin-St Jeor BMR (gold standard — Frankenfield et al. 2005)
-  const bmr = gender === "male"
-    ? 10 * weightKg + 6.25 * heightCm - 5 * age + 5
-    : 10 * weightKg + 6.25 * heightCm - 5 * age - 161;
-
-  const level = ACTIVITY_LEVELS.find(a => a.key === activityKey) ?? ACTIVITY_LEVELS[2];
-  const maintenanceTdee = bmr * level.multiplier;
-
-  // Goal-based percentage adjustments (evidence-based)
-  let adjusted: number;
-  if (goal === "lose_fat") {
-    adjusted = maintenanceTdee * 0.80; // 20% deficit — sustainable fat loss
-  } else if (goal === "build_muscle") {
-    adjusted = maintenanceTdee * 1.15; // 15% surplus — lean bulk
-  } else if (goal === "athletic") {
-    adjusted = maintenanceTdee * 0.92; // 8% deficit — body recomposition
-  } else {
-    adjusted = maintenanceTdee; // maintain
-  }
-
-  // Safety floors: never go below 1500 kcal (male) or 1200 kcal (female)
-  const minCalories = gender === "male" ? 1500 : 1200;
-  return Math.round(Math.max(adjusted, minCalories));
-}
-
-/**
- * Calculate macro targets (protein, carbs, fat in grams) from TDEE, weight, and goal.
- * Uses evidence-based splits:
- *   - build_muscle: 2.0g/kg protein, 25% fat, rest carbs
- *   - lose_fat: 2.2g/kg protein, 25% fat, rest carbs
- *   - athletic: 1.8g/kg protein, 25% fat, rest carbs
- *   - maintain: 1.6g/kg protein, 30% fat, rest carbs
- */
-function calculateMacros(tdee: number, weightKg: number, goal: string): { protein: number; carbs: number; fat: number } {
-  let proteinPerKg = 1.6;
-  let fatPct = 0.30;
-  if (goal === "build_muscle") { proteinPerKg = 2.0; fatPct = 0.25; }
-  else if (goal === "lose_fat") { proteinPerKg = 2.2; fatPct = 0.25; }
-  else if (goal === "athletic") { proteinPerKg = 1.8; fatPct = 0.25; }
-
-  const protein = Math.round(proteinPerKg * weightKg);
-  const fat = Math.round((tdee * fatPct) / 9);
-  const carbCals = tdee - (protein * 4) - (fat * 9);
-  const carbs = Math.max(0, Math.round(carbCals / 4));
-  return { protein, carbs, fat };
+  return calculateTDEEBreakdown(weightKg, heightCm, age, gender, activityKey, goal).adjustedTdee;
 }
 
 // Steps:
@@ -349,15 +292,12 @@ export default function OnboardingScreen() {
       const wKg = weightKg ? parseFloat(weightKg) : null;
       const hCm = heightCm ? parseFloat(heightCm) : null;
       const ageN = age ? parseInt(age) : null;
-      const tdee = (wKg && hCm && ageN)
-        ? calculateTDEE(wKg, hCm, ageN, gender, activityLevel, effectiveGoal)
-        : null;
-
-      // Save TDEE and macro targets to AsyncStorage for dashboard and meals tab
-      if (tdee) {
-        await AsyncStorage.setItem("@user_tdee", String(tdee));
-        // Also write directly to the CalorieProvider key so dashboard picks it up immediately
-        await AsyncStorage.setItem("@peakpulse_calorie_goal", String(tdee));
+      let tdee: number | null = null;
+      if (wKg && hCm && ageN) {
+        const breakdown = calculateTDEEBreakdown(wKg, hCm, ageN, gender, activityLevel, effectiveGoal);
+        tdee = breakdown.adjustedTdee;
+        // Persist full breakdown for dashboard display and settings recalculate
+        await saveTDEEBreakdown(breakdown);
         if (wKg) {
           const macros = calculateMacros(tdee, wKg, effectiveGoal);
           await AsyncStorage.setItem("@user_macro_targets", JSON.stringify(macros));

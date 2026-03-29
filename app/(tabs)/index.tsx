@@ -43,6 +43,8 @@ import { PremiumFeatureBanner, PremiumFeatureTeaser } from "@/components/premium
 import { usePantry } from "@/lib/pantry-context";
 import { getActiveChallenges, type Challenge } from "@/lib/challenge-service";
 import { loadOrCreateSocialCircle, getActiveFriendsCount, type SocialCircleData } from "@/lib/social-circle";
+import { loadTDEEBreakdown, type TDEEBreakdown } from "@/lib/tdee-calculator";
+import { getHistoricalMeals } from "@/lib/calorie-context";
 
 const AT_DASHBOARD_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/PZcnawJwIZkQHTEM.jpg";
 
@@ -156,6 +158,10 @@ export default function HomeScreen() {
 
   const [hasLocalWorkoutPlan, setHasLocalWorkoutPlan] = useState(false);
   const [isPlanGenerating, setIsPlanGenerating] = useState(false);
+  const [tdeeBreakdown, setTdeeBreakdown] = useState<TDEEBreakdown | null>(null);
+  const [showTdeeBreakdown, setShowTdeeBreakdown] = useState(false);
+  const [weeklyAvgCalories, setWeeklyAvgCalories] = useState<number | null>(null);
+  const [weeklyDaysLogged, setWeeklyDaysLogged] = useState(0);
 
   const exerciseCompletion = useExerciseCompletion();
   const { displayName: savedDisplayName, profilePhotoUri } = useUserProfile();
@@ -176,11 +182,26 @@ export default function HomeScreen() {
     ]).then(([tdeeRaw, goalRaw]) => {
       const tdee = tdeeRaw ? parseInt(tdeeRaw, 10) : NaN;
       const goal = goalRaw ? parseInt(goalRaw, 10) : NaN;
-      // Prefer @user_tdee (set by onboarding calculation), fall back to stored goal
       const best = !isNaN(tdee) && tdee > 0 ? tdee : (!isNaN(goal) && goal > 0 ? goal : 0);
       if (best > 0 && best !== calorieGoal) {
         setCalorieGoal(best);
       }
+    });
+    // Load TDEE breakdown for display
+    loadTDEEBreakdown().then(b => { if (b) setTdeeBreakdown(b); });
+    // Calculate 7-day rolling calorie average
+    getHistoricalMeals(7).then(history => {
+      let totalCals = 0;
+      let daysWithData = 0;
+      for (const meals of Object.values(history)) {
+        const dayCals = meals.reduce((s, m) => s + (m.calories || 0), 0);
+        if (dayCals > 0) {
+          totalCals += dayCals;
+          daysWithData++;
+        }
+      }
+      setWeeklyDaysLogged(daysWithData);
+      if (daysWithData > 0) setWeeklyAvgCalories(Math.round(totalCals / daysWithData));
     });
   }, []);
 
@@ -548,6 +569,68 @@ export default function HomeScreen() {
                     </View>
                   ))}
                 </View>
+
+                {/* Weekly Average */}
+                {weeklyAvgCalories !== null && (
+                  <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginTop: 14, paddingTop: 12, borderTopWidth: 1, borderTopColor: SF.border }}>
+                    <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+                      <MaterialIcons name="date-range" size={14} color={SF.muted} />
+                      <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 11 }}>7-Day Average</Text>
+                    </View>
+                    <View style={{ flexDirection: "row", alignItems: "baseline", gap: 4 }}>
+                      <Text style={{ color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 15 }}>{weeklyAvgCalories}</Text>
+                      <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 10 }}>kcal/day</Text>
+                      <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 9, marginLeft: 4 }}>({weeklyDaysLogged}d logged)</Text>
+                    </View>
+                  </View>
+                )}
+
+                {/* TDEE Breakdown toggle */}
+                {tdeeBreakdown && (
+                  <TouchableOpacity
+                    onPress={() => { setShowTdeeBreakdown(!showTdeeBreakdown); if (Platform.OS !== "web") Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); }}
+                    style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 4, marginTop: 10, paddingVertical: 6 }}
+                  >
+                    <MaterialIcons name="science" size={13} color={SF.gold} />
+                    <Text style={{ color: SF.gold, fontFamily: "DMSans_600SemiBold", fontSize: 11 }}>
+                      {showTdeeBreakdown ? "Hide" : "How your target was calculated"}
+                    </Text>
+                    <MaterialIcons name={showTdeeBreakdown ? "expand-less" : "expand-more"} size={16} color={SF.gold} />
+                  </TouchableOpacity>
+                )}
+
+                {/* TDEE Breakdown detail */}
+                {showTdeeBreakdown && tdeeBreakdown && (
+                  <View style={{ marginTop: 8, backgroundColor: "rgba(245,158,11,0.06)", borderRadius: 12, padding: 12, borderWidth: 1, borderColor: SF.border }}>
+                    <View style={{ gap: 8 }}>
+                      <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                        <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 11 }}>Basal Metabolic Rate (BMR)</Text>
+                        <Text style={{ color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 13 }}>{tdeeBreakdown.bmr} kcal</Text>
+                      </View>
+                      <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                        <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 11 }}>Activity: {tdeeBreakdown.activityLabel}</Text>
+                        <Text style={{ color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 13 }}>× {tdeeBreakdown.activityMultiplier}</Text>
+                      </View>
+                      <View style={{ height: 1, backgroundColor: SF.border }} />
+                      <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                        <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 11 }}>Maintenance TDEE</Text>
+                        <Text style={{ color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 13 }}>{tdeeBreakdown.maintenanceTdee} kcal</Text>
+                      </View>
+                      <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                        <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 11 }}>Goal: {tdeeBreakdown.goalLabel}</Text>
+                        <Text style={{ color: SF.gold, fontFamily: "DMSans_700Bold", fontSize: 11 }}>{tdeeBreakdown.goalAdjustmentDesc}</Text>
+                      </View>
+                      <View style={{ height: 1, backgroundColor: SF.border }} />
+                      <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                        <Text style={{ color: SF.gold, fontFamily: "DMSans_700Bold", fontSize: 12 }}>Your Daily Target</Text>
+                        <Text style={{ color: SF.gold, fontFamily: "DMSans_700Bold", fontSize: 15 }}>{tdeeBreakdown.adjustedTdee} kcal</Text>
+                      </View>
+                      <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 9, textAlign: "center", marginTop: 2 }}>
+                        Mifflin-St Jeor equation · {tdeeBreakdown.inputs.weightKg}kg · {tdeeBreakdown.inputs.heightCm}cm · {tdeeBreakdown.inputs.age}y · {tdeeBreakdown.inputs.gender}
+                      </Text>
+                    </View>
+                  </View>
+                )}
               </TouchableOpacity>
             </StaggeredCard>
           )}
