@@ -1,103 +1,123 @@
-import { Tabs, useRouter } from "expo-router";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Tabs } from "expo-router";
+import { Platform } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { HapticTab } from "@/components/haptic-tab";
-import { Platform, View, StyleSheet } from "react-native";
-import { BlurView } from "expo-blur";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { useEffect } from "react";
-import { useAuth } from "@/hooks/use-auth";
-import { useGuestAuth } from "@/lib/guest-auth";
 
-// R4: Simplified 4-tab navigation — Home, Train, Nutrition, Profile
-const TAB_ICONS: Record<string, { icon: keyof typeof MaterialIcons.glyphMap; label: string }> = {
-  index: { icon: "dashboard", label: "Home" },
-  plans: { icon: "fitness-center", label: "Train" },
-  meals: { icon: "restaurant", label: "Nutrition" },
-  profile: { icon: "person", label: "Profile" },
-};
+/**
+ * Tab Navigation — 4-Tab Structure
+ *
+ * Redesigned from 6 tabs → 4 tabs:
+ *   Before: Home | Scan | Plans | AI Coach | Meals | Profile
+ *   After:  Today | Train | Eat | Me
+ *
+ * Changes:
+ * - "Scan" (Body Scan) moved into "Me" tab → accessible via Me > Body Scan
+ * - "AI Coach" removed as a tab; accessible via floating assistant on Today tab
+ * - "Plans" renamed "Train" — verb-first, action-oriented
+ * - "Meals" renamed "Eat"  — consistent verb tone
+ * - "Profile" renamed "Me" — personal, concise
+ * - Tab icons updated to match new naming
+ */
 
-function TabIcon({ route, focused }: { route: string; focused: boolean }) {
-  const def = TAB_ICONS[route] ?? { icon: "help-outline" as keyof typeof MaterialIcons.glyphMap, label: route };
-  return (
-    <View style={[styles.tabIconWrapper, focused && styles.tabIconWrapperActive]}>
-      <MaterialIcons name={def.icon} size={22} color={focused ? "#F59E0B" : "#64748B"} />
-      {focused && <View style={styles.activeGlow} />}
-    </View>
-  );
-}
-
-function TabBarBackground() {
-  if (Platform.OS === "web") {
-    return <View style={[StyleSheet.absoluteFill, { backgroundColor: "rgba(10,14,20,0.95)" }]} />;
-  }
-  return (
-    <BlurView
-      intensity={60}
-      tint="dark"
-      style={StyleSheet.absoluteFill}
-    />
-  );
-}
-
-function useAuthGuard() {
-  const router = useRouter();
-  const { isAuthenticated, loading: authLoading } = useAuth();
-  const { isGuest, loading: guestLoading } = useGuestAuth();
-
-  useEffect(() => {
-    if (authLoading || guestLoading) return;
-    if (!isAuthenticated && !isGuest) {
-      router.replace("/login" as any);
-    }
-  }, [isAuthenticated, isGuest, authLoading, guestLoading, router]);
-}
+const GOLD = "#F59E0B";
+const INACTIVE = "#6B7280";
+const BG = "#0D1117";
+const BORDER = "#1F2937";
 
 export default function TabLayout() {
-  const insets = useSafeAreaInsets();
-  const bottomPadding = Platform.OS === "web" ? 12 : Math.max(insets.bottom, 8);
-  const tabBarHeight = 64 + bottomPadding;
-
-  useAuthGuard();
-
   return (
     <Tabs
-      screenOptions={({ route }) => ({
-        tabBarActiveTintColor: "#F59E0B",
-        tabBarInactiveTintColor: "#64748B",
-        headerShown: false,
-        tabBarButton: HapticTab,
-        tabBarIcon: ({ focused }) => <TabIcon route={route.name} focused={focused} />,
-        tabBarBackground: () => <TabBarBackground />,
+      screenOptions={{
+        tabBarActiveTintColor: GOLD,
+        tabBarInactiveTintColor: INACTIVE,
         tabBarStyle: {
-          paddingTop: 6,
-          paddingBottom: bottomPadding,
-          height: tabBarHeight,
-          backgroundColor: "transparent",
-          borderTopColor: "rgba(30,41,59,0.6)",
+          backgroundColor: BG,
+          borderTopColor: BORDER,
           borderTopWidth: 1,
-          position: "absolute",
+          height: Platform.OS === "ios" ? 88 : 68,
+          paddingBottom: Platform.OS === "ios" ? 24 : 10,
+          paddingTop: 10,
+          elevation: 0,
+          shadowOpacity: 0,
         },
         tabBarLabelStyle: {
+          fontSize: 11,
           fontFamily: "DMSans_500Medium",
-          fontSize: 10,
-          letterSpacing: 0.3,
-          marginTop: 0,
+          letterSpacing: 0.2,
         },
-      })}
+        tabBarButton: HapticTab,
+        headerShown: false,
+      }}
     >
-      <Tabs.Screen name="index" options={{ title: "Home" }} />
-      <Tabs.Screen name="plans" options={{ title: "Train" }} />
-      <Tabs.Screen name="meals" options={{ title: "Nutrition" }} />
-      <Tabs.Screen name="profile" options={{ title: "Profile" }} />
-      {/* Hidden tabs — still routable but not shown in tab bar */}
-      <Tabs.Screen name="scan" options={{ href: null }} />
+      {/* ── Tab 1: TODAY (was Home) ─────────────────────────────────── */}
+      <Tabs.Screen
+        name="index"
+        options={{
+          title: "Today",
+          tabBarIcon: ({ color, focused, size }) => (
+            <Ionicons
+              name={focused ? "sunny" : "sunny-outline"}
+              color={color}
+              size={size}
+            />
+          ),
+          tabBarAccessibilityLabel: "Today tab — dashboard and daily overview",
+        }}
+      />
+
+      {/* ── Tab 2: TRAIN (was Plans) ────────────────────────────────── */}
+      <Tabs.Screen
+        name="plans"
+        options={{
+          title: "Train",
+          tabBarIcon: ({ color, focused, size }) => (
+            <Ionicons
+              name={focused ? "barbell" : "barbell-outline"}
+              color={color}
+              size={size}
+            />
+          ),
+          tabBarAccessibilityLabel: "Train tab — workout plans and exercises",
+        }}
+      />
+
+      {/* ── Tab 3: EAT (was Meals) ──────────────────────────────────── */}
+      <Tabs.Screen
+        name="meals"
+        options={{
+          title: "Eat",
+          tabBarIcon: ({ color, focused, size }) => (
+            <Ionicons
+              name={focused ? "nutrition" : "nutrition-outline"}
+              color={color}
+              size={size}
+            />
+          ),
+          tabBarAccessibilityLabel: "Eat tab — meal plans and nutrition tracking",
+        }}
+      />
+
+      {/* ── Tab 4: ME (was Profile) ─────────────────────────────────── */}
+      <Tabs.Screen
+        name="profile"
+        options={{
+          title: "Me",
+          tabBarIcon: ({ color, focused, size }) => (
+            <Ionicons
+              name={focused ? "person-circle" : "person-circle-outline"}
+              color={color}
+              size={size}
+            />
+          ),
+          tabBarAccessibilityLabel: "Me tab — profile, progress, and settings",
+        }}
+      />
+
+      {/* ── Hidden screens (navigable via links, not tab bar) ───────── */}
+      {/* AI Coach: accessible from Today dashboard quick-actions */}
       <Tabs.Screen name="ai-coach" options={{ href: null }} />
+      {/* Scan: accessible from Me tab > Body Scan */}
+      <Tabs.Screen name="scan" options={{ href: null }} />
     </Tabs>
   );
 }
-
-const styles = StyleSheet.create({
-  tabIconWrapper: { width: 40, height: 32, alignItems: "center", justifyContent: "center", borderRadius: 10 },
-  tabIconWrapperActive: { backgroundColor: "rgba(245,158,11,0.10)", borderWidth: 1, borderColor: "rgba(245,158,11,0.20)" },
-  activeGlow: { position: "absolute", bottom: -2, width: 16, height: 2, borderRadius: 1, backgroundColor: "#F59E0B", opacity: 0.8 },
-});
