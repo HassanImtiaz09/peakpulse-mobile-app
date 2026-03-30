@@ -11,7 +11,7 @@
  * 4. No other logic or styling changed.
  */
 
-import React, { useMemo, useState } from "react"; // FIX: added useState
+import React, { useMemo, useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -38,6 +38,8 @@ import {
 } from "@/constants/golden-backgrounds";
 import { C } from "@/constants/ui-colors";
 import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
+import { searchExercisesByName, type ExerciseDBExercise } from "@/lib/exercisedb";
+import { ActivityIndicator } from "react-native";
 
 export default function ExerciseDetailScreen() {
   const { name } = useLocalSearchParams<{ name: string }>();
@@ -54,6 +56,121 @@ export default function ExerciseDetailScreen() {
   // FIX: Track which alternative GIF thumbnails failed to load.
   // Previously a broken URL rendered a blank box — now shows a fallback icon.
   const [altGifErrors, setAltGifErrors] = useState<Set<string>>(new Set());
+
+  // ExerciseDB API fallback — fetch exercise data when not in local DB
+  const [apiExercise, setApiExercise] = useState<ExerciseDBExercise | null>(null);
+  const [apiLoading, setApiLoading] = useState(false);
+
+  useEffect(() => {
+    if (!exercise && name) {
+      setApiLoading(true);
+      searchExercisesByName(name, 1)
+        .then((results) => {
+          if (results.length > 0) setApiExercise(results[0]);
+        })
+        .catch(() => {})
+        .finally(() => setApiLoading(false));
+    }
+  }, [exercise, name]);
+
+  if (!exercise && apiLoading) {
+    return (
+      <View style={[styles.container, { paddingTop: insets.top }]}>
+        <View style={styles.header}>
+          <Pressable onPress={() => router.back()} style={({ pressed }) => [styles.headerButton, pressed && { opacity: 0.7 }]}>
+            <MaterialIcons name="arrow-back" size={22} color={C.gold} />
+          </Pressable>
+          <Text style={styles.headerTitle}>Loading...</Text>
+          <View style={{ width: 36 }} />
+        </View>
+        <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+          <ActivityIndicator color={C.gold} size="large" />
+          <Text style={{ color: C.muted, fontFamily: "DMSans_400Regular", fontSize: 13, marginTop: 12 }}>Fetching from ExerciseDB...</Text>
+        </View>
+      </View>
+    );
+  }
+
+  // Show API exercise detail when local exercise is not found but API returned data
+  if (!exercise && apiExercise) {
+    return (
+      <View style={[styles.container, { paddingTop: insets.top }]}>
+        <View style={styles.header}>
+          <Pressable onPress={() => router.back()} style={({ pressed }) => [styles.headerButton, pressed && { opacity: 0.7 }]}>
+            <MaterialIcons name="arrow-back" size={22} color={C.gold} />
+          </Pressable>
+          <Text style={styles.headerTitle} numberOfLines={1}>
+            {apiExercise.name.replace(/\b\w/g, c => c.toUpperCase())}
+          </Text>
+          <View style={{ paddingHorizontal: 6, paddingVertical: 2, borderRadius: 4, backgroundColor: "rgba(245,158,11,0.15)" }}>
+            <Text style={{ color: C.gold, fontFamily: "DMSans_600SemiBold", fontSize: 9 }}>API</Text>
+          </View>
+        </View>
+
+        <ScrollView style={styles.scrollView} contentContainerStyle={{ paddingBottom: insets.bottom + 24 }} showsVerticalScrollIndicator={false}>
+          {/* GIF from ExerciseDB */}
+          {apiExercise.gifUrl ? (
+            <View style={{ marginHorizontal: 16, marginTop: 12, borderRadius: 16, overflow: "hidden", backgroundColor: C.surface, borderWidth: 1, borderColor: C.border }}>
+              <Image
+                source={{ uri: apiExercise.gifUrl }}
+                style={{ width: "100%", height: 260 }}
+                contentFit="contain"
+                cachePolicy="disk"
+              />
+            </View>
+          ) : null}
+
+          {/* Quick Info */}
+          <View style={[styles.quickInfoCard, { marginHorizontal: 16, marginTop: 12 }]}>
+            <View style={styles.infoItem}>
+              <Text style={styles.infoLabel}>BODY PART</Text>
+              <Text style={styles.infoValue}>{apiExercise.bodyPart}</Text>
+            </View>
+            <View style={styles.infoItem}>
+              <Text style={styles.infoLabel}>EQUIPMENT</Text>
+              <Text style={styles.infoValue}>{apiExercise.equipment}</Text>
+            </View>
+            <View style={styles.infoItem}>
+              <Text style={styles.infoLabel}>TARGET MUSCLE</Text>
+              <View style={styles.muscleChips}>
+                <View style={styles.muscleChip}>
+                  <Text style={styles.muscleChipText}>{apiExercise.target}</Text>
+                </View>
+              </View>
+            </View>
+            {apiExercise.secondaryMuscles.length > 0 && (
+              <View style={styles.infoItem}>
+                <Text style={styles.infoLabel}>SECONDARY MUSCLES</Text>
+                <View style={styles.muscleChips}>
+                  {apiExercise.secondaryMuscles.map((m) => (
+                    <View key={m} style={[styles.muscleChip, styles.muscleChipSecondary]}>
+                      <Text style={[styles.muscleChipText, styles.muscleChipTextSecondary]}>{m}</Text>
+                    </View>
+                  ))}
+                </View>
+              </View>
+            )}
+          </View>
+
+          {/* Instructions */}
+          {apiExercise.instructions.length > 0 && (
+            <View style={[styles.cueCard, { marginHorizontal: 16, marginTop: 12 }]}>
+              <View style={styles.cueHeader}>
+                <MaterialIcons name="format-list-numbered" size={16} color={C.gold} />
+                <Text style={styles.cueTitle}>INSTRUCTIONS</Text>
+              </View>
+              {apiExercise.instructions.map((step, i) => (
+                <View key={i} style={{ flexDirection: "row", gap: 8, marginTop: i === 0 ? 0 : 8 }}>
+                  <Text style={{ color: C.gold, fontFamily: "DMSans_700Bold", fontSize: 12, minWidth: 18 }}>{i + 1}.</Text>
+                  <Text style={{ color: C.fg, fontFamily: "DMSans_400Regular", fontSize: 13, lineHeight: 20, flex: 1 }}>{step}</Text>
+                </View>
+              ))}
+            </View>
+          )}
+        </ScrollView>
+      </View>
+    );
+  }
 
   if (!exercise) {
     return (

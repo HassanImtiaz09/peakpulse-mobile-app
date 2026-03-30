@@ -22,6 +22,9 @@ import {
 import { GOLDEN_WORKOUT, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgrounds";
 import { UI as SF } from "@/constants/ui-colors";
 import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
+import { useExerciseSearch } from "@/lib/exercisedb-hooks";
+import { hasExerciseDBKey, type ExerciseDBExercise } from "@/lib/exercisedb";
+import { getExerciseDbGifUrl } from "@/lib/exercisedb-api";
 
 // ── Theme ────────────────────────────────────────────────────────────────────
 interface SelectedExercise {
@@ -74,6 +77,24 @@ export default function CreateWorkoutScreen() {
 
   // ── Exercise Filtering ───────────────────────────────────────────────────
   const allExercises = useMemo(() => getAllExercises(), []);
+
+  // ExerciseDB API search — supplements local results
+  const { results: apiResults, loading: apiLoading, search: apiSearch } = useExerciseSearch("", 15);
+
+  useEffect(() => {
+    if (searchQuery.trim().length >= 2 && hasExerciseDBKey()) {
+      apiSearch(searchQuery);
+    } else {
+      apiSearch("");
+    }
+  }, [searchQuery, apiSearch]);
+
+  // API exercises not already in local DB
+  const apiExerciseCards = useMemo(() => {
+    if (!searchQuery.trim() || apiResults.length === 0) return [];
+    const localNames = new Set(allExercises.map(e => e.name.toLowerCase()));
+    return apiResults.filter(e => !localNames.has(e.name.toLowerCase())).slice(0, 8);
+  }, [apiResults, searchQuery, allExercises]);
 
   const filteredExercises = useMemo(() => {
     let list = searchQuery ? searchExercises(searchQuery) : allExercises;
@@ -359,6 +380,86 @@ export default function CreateWorkoutScreen() {
             renderItem={renderExerciseCard}
             contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 100 }}
             showsVerticalScrollIndicator={false}
+            ListFooterComponent={
+              apiExerciseCards.length > 0 ? (
+                <View style={{ paddingTop: 8, paddingBottom: 16 }}>
+                  <View style={{ flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 8 }}>
+                    <MaterialIcons name="cloud" size={12} color={SF.gold1} />
+                    <Text style={{ color: SF.gold1, fontFamily: "DMSans_600SemiBold", fontSize: 11, letterSpacing: 0.4 }}>
+                      MORE FROM EXERCISEDB
+                    </Text>
+                    {apiLoading && <ActivityIndicator color={SF.gold1} size="small" />}
+                  </View>
+                  {apiExerciseCards.map((apiEx) => {
+                    const apiSelected = isSelected(apiEx.name);
+                    return (
+                      <TouchableOpacity
+                        key={apiEx.id}
+                        onPress={() => {
+                          if (Platform.OS !== "web") Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                          const suggestion = getRepSuggestion(apiEx.name, goal, level);
+                          const [minReps] = suggestion.suggestedReps.split("-").map(Number);
+                          setSelectedExercises(prev => {
+                            if (prev.some(e => e.name === apiEx.name)) {
+                              return prev.filter(e => e.name !== apiEx.name);
+                            }
+                            return [...prev, {
+                              name: apiEx.name,
+                              sets: suggestion.suggestedSets,
+                              reps: minReps || 10,
+                              restSeconds: parseInt(suggestion.suggestedRest) || 60,
+                              weight: 0,
+                            }];
+                          });
+                        }}
+                        style={{
+                          backgroundColor: apiSelected ? "rgba(245,158,11,0.12)" : SF.surface,
+                          borderRadius: 14, padding: 12, marginBottom: 8,
+                          borderWidth: 1.5,
+                          borderColor: apiSelected ? SF.gold2 : SF.border,
+                          flexDirection: "row", gap: 10, alignItems: "center",
+                        }}
+                      >
+                        {apiEx.gifUrl ? (
+                          <Image
+                            source={{ uri: apiEx.gifUrl }}
+                            style={{ width: 48, height: 48, borderRadius: 10, backgroundColor: "rgba(245,158,11,0.06)" }}
+                            cachePolicy="disk"
+                          />
+                        ) : (
+                          <View style={{ width: 48, height: 48, borderRadius: 10, backgroundColor: SF.surfaceBright, alignItems: "center", justifyContent: "center" }}>
+                            <MaterialIcons name="fitness-center" size={20} color={SF.gold3} />
+                          </View>
+                        )}
+                        <View style={{ flex: 1 }}>
+                          <Text style={{ color: SF.cream, fontFamily: "DMSans_700Bold", fontSize: 13 }}>
+                            {apiEx.name.replace(/\b\w/g, c => c.toUpperCase())}
+                          </Text>
+                          <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 10, marginTop: 1 }}>
+                            {apiEx.target} \u00b7 {apiEx.equipment}
+                          </Text>
+                          <View style={{ flexDirection: "row", alignItems: "center", gap: 4, marginTop: 2 }}>
+                            <View style={{ paddingHorizontal: 4, paddingVertical: 1, borderRadius: 3, backgroundColor: "rgba(245,158,11,0.1)" }}>
+                              <Text style={{ color: SF.gold3, fontFamily: "DMSans_500Medium", fontSize: 8 }}>API</Text>
+                            </View>
+                            <Text style={{ color: SF.gold3, fontFamily: "DMSans_400Regular", fontSize: 9 }}>{apiEx.bodyPart}</Text>
+                          </View>
+                        </View>
+                        <View style={{
+                          width: 26, height: 26, borderRadius: 13,
+                          backgroundColor: apiSelected ? SF.gold2 : "transparent",
+                          borderWidth: apiSelected ? 0 : 1.5,
+                          borderColor: SF.border,
+                          alignItems: "center", justifyContent: "center",
+                        }}>
+                          {apiSelected && <MaterialIcons name="check" size={16} color="#0A0E14" />}
+                        </View>
+                      </TouchableOpacity>
+                    );
+                  })}
+                </View>
+              ) : null
+            }
           />
 
           {/* Bottom Bar */}

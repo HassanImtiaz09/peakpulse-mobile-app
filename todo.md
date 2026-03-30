@@ -2644,3 +2644,17 @@
 - [x] Wire AI_LIMIT_EXCEEDED catch blocks in active-workout.tsx — 1 check
 - [x] Wire AI_LIMIT_EXCEEDED catch blocks in progress-photos.tsx — 2 checks
 - [x] Run tests and verify TypeScript compiles (2088 tests pass, 0 TS errors)
+
+## Environment Config (Round 39)
+- [x] Add EXPO_PUBLIC_RAPIDAPI_KEY for ExerciseDB API
+
+## ExerciseDB API Integration (Round 40)
+- [x] Enhance lib/exercisedb.ts with full API coverage (search, by body part, by equipment, by target muscle, exercise details, metadata lists, caching)
+- [x] Create lib/exercisedb-hooks.ts with React hooks (useExerciseSearch, useExercisesByBodyPart, useExercisesByTarget, useExercisesByEquipment, useExerciseDetail)
+- [x] Integrate ExerciseDB live search into exercise-library.tsx (API results shown in "MORE FROM EXERCISEDB" footer when searching)
+- [x] Integrate ExerciseDB into browse-by-muscle.tsx (API exercises shown in modal footer for selected body part)
+- [x] Integrate ExerciseDB into create-workout.tsx (API exercise cards with GIF thumbnails, selectable for workout)
+- [x] Integrate ExerciseDB into active-workout.tsx (alternative exercise GIFs prefer ExerciseDB CDN via getExerciseDbGifUrl)
+- [x] Integrate ExerciseDB into exercise-detail.tsx (API fallback with GIF, body part, equipment, target, secondary muscles, instructions)
+- [x] Add ExerciseDB GIF thumbnails to exercise cards across all screens (exercise-library, browse-by-muscle, create-workout, active-workout)
+- [x] Run tests and verify TypeScript compiles (0 TS errors, 11 pre-existing test failures unchanged)

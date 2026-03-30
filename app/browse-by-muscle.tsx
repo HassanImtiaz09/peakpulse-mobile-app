@@ -13,7 +13,7 @@
  * 5. No other logic or styling changed — card layout is identical.
  */
 
-import React, { useState, useCallback, useMemo } from "react";
+import React, { useState, useCallback, useMemo, useEffect } from "react";
 import {
   View,
   Text,
@@ -34,6 +34,8 @@ import { useColors } from "@/hooks/use-colors";
 import type { MuscleGroup } from "@/components/body-diagram";
 import { getExercisesByMuscle, type ExerciseInfo } from "@/lib/exercise-data";
 import { getExerciseDbGifUrl, hasExerciseDbGif } from "@/lib/exercisedb-api";
+import { muscleGroupToBodyPart, hasExerciseDBKey, type ExerciseDBExercise } from "@/lib/exercisedb";
+import { useExercisesByBodyPart } from "@/lib/exercisedb-hooks";
 import { C } from "@/constants/ui-colors";
 import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
 
@@ -269,6 +271,22 @@ export default function BrowseByMuscleScreen() {
     return getExercisesByMuscle(selectedMuscle);
   }, [selectedMuscle]);
 
+  // Fetch additional exercises from ExerciseDB API for the selected body part
+  const apiBodyPart = selectedMuscle ? muscleGroupToBodyPart(selectedMuscle) : null;
+  const { exercises: apiExercises, loading: apiLoading } = useExercisesByBodyPart(
+    showExercises ? apiBodyPart : null,
+    30
+  );
+
+  // Filter API results to remove duplicates with local exercises
+  const extraApiExercises = useMemo(() => {
+    if (!apiExercises.length) return [];
+    const localNames = new Set(exercises.map(e => e.name.toLowerCase()));
+    return apiExercises
+      .filter(e => !localNames.has(e.name.toLowerCase()))
+      .slice(0, 15);
+  }, [apiExercises, exercises]);
+
   const selectedLabel = useMemo(() => {
     if (!selectedMuscle) return "";
     const region = [...FRONT_REGIONS, ...BACK_REGIONS].find(
@@ -448,11 +466,58 @@ export default function BrowseByMuscleScreen() {
                 )}
                 contentContainerStyle={styles.listContent}
                 showsVerticalScrollIndicator={false}
-                // FIX: initialNumToRender keeps the initial render small so the
-                // modal opens instantly without spawning 15+ GIF decoders at once.
                 initialNumToRender={6}
                 maxToRenderPerBatch={4}
                 windowSize={5}
+                ListFooterComponent={
+                  extraApiExercises.length > 0 || apiLoading ? (
+                    <View style={{ paddingTop: 12, paddingBottom: 20 }}>
+                      <View style={{ flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 10 }}>
+                        <IconSymbol name="cloud" size={12} color={C.primary} />
+                        <Text style={{ color: C.primary, fontFamily: "DMSans_600SemiBold", fontSize: 11, letterSpacing: 0.4 }}>
+                          MORE FROM EXERCISEDB
+                        </Text>
+                        {apiLoading && <ActivityIndicator color={C.primary} size="small" />}
+                      </View>
+                      {extraApiExercises.map((apiEx) => (
+                        <Pressable
+                          key={apiEx.id}
+                          onPress={() => {
+                            setShowExercises(false);
+                            router.push({ pathname: "/exercise-detail", params: { name: apiEx.name } } as any);
+                          }}
+                          style={({ pressed }) => [styles.exerciseCard, pressed && { opacity: 0.7 }]}
+                        >
+                          <View style={styles.exerciseGifWrap}>
+                            {apiEx.gifUrl ? (
+                              <Image
+                                source={{ uri: apiEx.gifUrl }}
+                                style={styles.exerciseGif}
+                                contentFit="contain"
+                                cachePolicy="disk"
+                              />
+                            ) : (
+                              <View style={styles.gifPlaceholder}>
+                                <IconSymbol name="dumbbell.fill" size={20} color={C.muted} />
+                              </View>
+                            )}
+                          </View>
+                          <View style={styles.exerciseInfo}>
+                            <Text style={styles.exerciseName} numberOfLines={1}>
+                              {apiEx.name.replace(/\b\w/g, c => c.toUpperCase())}
+                            </Text>
+                            <Text style={styles.exerciseMeta} numberOfLines={1}>
+                              {apiEx.equipment} · {apiEx.target}
+                            </Text>
+                          </View>
+                          <View style={{ paddingHorizontal: 5, paddingVertical: 2, borderRadius: 4, backgroundColor: "rgba(245,158,11,0.1)" }}>
+                            <Text style={{ color: C.primary, fontFamily: "DMSans_500Medium", fontSize: 8 }}>API</Text>
+                          </View>
+                        </Pressable>
+                      ))}
+                    </View>
+                  ) : null
+                }
               />
             </View>
           </View>

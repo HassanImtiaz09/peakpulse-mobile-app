@@ -8,7 +8,7 @@
  * - Favorites filter
  * - Exercise cards with inline body diagrams
  */
-import React, { useState, useMemo, useCallback } from "react";
+import React, { useState, useMemo, useCallback, useEffect } from "react";
 import {
   View,
   Text,
@@ -35,6 +35,10 @@ import type { MuscleGroup } from "@/components/body-diagram";
 import { GOLDEN_WORKOUT, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgrounds";
 import { C } from "@/constants/ui-colors";
 import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
+import { useExerciseSearch } from "@/lib/exercisedb-hooks";
+import { hasExerciseDBKey, type ExerciseDBExercise } from "@/lib/exercisedb";
+import { getExerciseDbGifUrl } from "@/lib/exercisedb-api";
+import { ActivityIndicator } from "react-native";
 type FilterMode = "all" | "favorites" | ExerciseInfo["category"];
 
 export default function ExerciseLibraryScreen() {
@@ -47,6 +51,28 @@ export default function ExerciseLibraryScreen() {
 
   const allExercises = useMemo(() => getAllExercises(), []);
   const categories = useMemo(() => getCategories(), []);
+
+  // ExerciseDB API search — supplements local results when search has few matches
+  const { results: apiResults, loading: apiLoading, search: apiSearch } = useExerciseSearch("", 20);
+
+  // Trigger API search when local results are sparse
+  useEffect(() => {
+    if (searchQuery.trim().length >= 2 && hasExerciseDBKey()) {
+      apiSearch(searchQuery);
+    } else {
+      apiSearch("");
+    }
+  }, [searchQuery, apiSearch]);
+
+  // Convert API results to a display-compatible format
+  const apiExerciseCards = useMemo(() => {
+    if (!searchQuery.trim() || apiResults.length === 0) return [];
+    // Filter out exercises already in local DB to avoid duplicates
+    const localNames = new Set(allExercises.map(e => e.name.toLowerCase()));
+    return apiResults
+      .filter(e => !localNames.has(e.name.toLowerCase()))
+      .slice(0, 10);
+  }, [apiResults, searchQuery, allExercises]);
 
   const filteredExercises = useMemo(() => {
     let results: ExerciseInfo[];
@@ -71,7 +97,7 @@ export default function ExerciseLibraryScreen() {
     return results;
   }, [searchQuery, activeFilter, allExercises, getFavoritesList]);
 
-  const handleExercisePress = useCallback((exercise: ExerciseInfo) => {
+  const handleExercisePress = useCallback((exercise: ExerciseInfo | { name: string }) => {
     if (Platform.OS !== "web") {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
     }
@@ -154,21 +180,29 @@ export default function ExerciseLibraryScreen() {
           </View>
         </View>
 
-        {/* Preview Thumbnail */}
+        {/* Preview Thumbnail — prefer ExerciseDB CDN GIF, fall back to local */}
         <View style={styles.cardGif}>
-          {item.angleViews[0]?.gifUrl?.endsWith(".mp4") ? (
-            <View style={[styles.gifPreview, { justifyContent: "center", alignItems: "center", backgroundColor: "rgba(245,158,11,0.06)" }]}>
-              <MaterialIcons name="play-circle-outline" size={24} color={C.gold} />
-            </View>
-          ) : (
-            <Image
-              source={{ uri: item.angleViews[0]?.gifUrl }}
-              style={styles.gifPreview}
-              contentFit="cover"
-              cachePolicy="disk"
-              transition={200}
-            />
-          )}
+          {(() => {
+            const cdnGif = getExerciseDbGifUrl(item.name);
+            const localGif = item.angleViews[0]?.gifUrl;
+            const uri = cdnGif ?? localGif;
+            if (!uri || uri.endsWith(".mp4")) {
+              return (
+                <View style={[styles.gifPreview, { justifyContent: "center", alignItems: "center", backgroundColor: "rgba(245,158,11,0.06)" }]}>
+                  <MaterialIcons name="play-circle-outline" size={24} color={C.gold} />
+                </View>
+              );
+            }
+            return (
+              <Image
+                source={{ uri }}
+                style={styles.gifPreview}
+                contentFit="cover"
+                cachePolicy="disk"
+                transition={200}
+              />
+            );
+          })()}
         </View>
       </Pressable>
     );
@@ -266,19 +300,99 @@ export default function ExerciseLibraryScreen() {
         renderItem={renderExerciseCard}
         contentContainerStyle={[
           styles.listContent,
-          { paddingBottom: insets.bottom + 24 },
+          { paddingBottom: apiExerciseCards.length > 0 ? 8 : insets.bottom + 24 },
         ]}
         showsVerticalScrollIndicator={false}
         ListEmptyComponent={
-          <View style={styles.emptyState}>
-            <MaterialIcons name="search-off" size={48} color={C.muted} />
-            <Text style={styles.emptyTitle}>No exercises found</Text>
-            <Text style={styles.emptySubtitle}>
-              {activeFilter === "favorites"
-                ? "Tap the heart icon on any exercise to add it to your favorites"
-                : "Try a different search term or filter"}
-            </Text>
-          </View>
+          apiLoading ? (
+            <View style={styles.emptyState}>
+              <ActivityIndicator color={C.gold} size="small" />
+              <Text style={styles.emptySubtitle}>Searching ExerciseDB...</Text>
+            </View>
+          ) : (
+            <View style={styles.emptyState}>
+              <MaterialIcons name="search-off" size={48} color={C.muted} />
+              <Text style={styles.emptyTitle}>No exercises found</Text>
+              <Text style={styles.emptySubtitle}>
+                {activeFilter === "favorites"
+                  ? "Tap the heart icon on any exercise to add it to your favorites"
+                  : "Try a different search term or filter"}
+              </Text>
+            </View>
+          )
+        }
+        ListFooterComponent={
+          apiExerciseCards.length > 0 ? (
+            <View style={{ paddingHorizontal: 0, paddingBottom: insets.bottom + 24 }}>
+              {/* API Results Section Header */}
+              <View style={{ flexDirection: "row", alignItems: "center", gap: 8, marginTop: 16, marginBottom: 10 }}>
+                <MaterialIcons name="cloud" size={14} color={C.gold} />
+                <Text style={{ color: C.gold, fontFamily: "DMSans_600SemiBold", fontSize: 12, letterSpacing: 0.5 }}>
+                  MORE FROM EXERCISEDB
+                </Text>
+                {apiLoading && <ActivityIndicator color={C.gold} size="small" />}
+              </View>
+              {/* API Exercise Cards */}
+              {apiExerciseCards.map((apiEx) => (
+                <Pressable
+                  key={apiEx.id}
+                  onPress={() => handleExercisePress({ name: apiEx.name })}
+                  style={({ pressed }) => [
+                    styles.exerciseCard,
+                    { marginBottom: 8 },
+                    pressed && { opacity: 0.7 },
+                  ]}
+                >
+                  {/* GIF Thumbnail */}
+                  <View style={styles.cardGif}>
+                    {apiEx.gifUrl ? (
+                      <Image
+                        source={{ uri: apiEx.gifUrl }}
+                        style={styles.gifPreview}
+                        contentFit="cover"
+                        cachePolicy="disk"
+                        transition={200}
+                      />
+                    ) : (
+                      <View style={[styles.gifPreview, { justifyContent: "center", alignItems: "center", backgroundColor: "rgba(245,158,11,0.06)" }]}>
+                        <MaterialIcons name="fitness-center" size={20} color={C.gold} />
+                      </View>
+                    )}
+                  </View>
+
+                  {/* Info */}
+                  <View style={styles.cardInfo}>
+                    <Text style={styles.cardName} numberOfLines={1}>
+                      {apiEx.name.replace(/\b\w/g, c => c.toUpperCase())}
+                    </Text>
+                    <View style={styles.cardMeta}>
+                      <View style={styles.categoryBadge}>
+                        <Text style={styles.categoryBadgeText}>{apiEx.bodyPart}</Text>
+                      </View>
+                    </View>
+                    <Text style={styles.cardEquipment} numberOfLines={1}>
+                      {apiEx.equipment}
+                    </Text>
+                    <View style={styles.cardMuscles}>
+                      <View style={styles.muscleTag}>
+                        <Text style={styles.muscleTagText}>{apiEx.target}</Text>
+                      </View>
+                      {apiEx.secondaryMuscles.slice(0, 2).map((m) => (
+                        <View key={m} style={styles.muscleTag}>
+                          <Text style={styles.muscleTagText}>{m}</Text>
+                        </View>
+                      ))}
+                    </View>
+                  </View>
+
+                  {/* API Badge */}
+                  <View style={{ paddingHorizontal: 6, paddingVertical: 2, borderRadius: 4, backgroundColor: "rgba(245,158,11,0.1)" }}>
+                    <Text style={{ color: C.gold, fontFamily: "DMSans_500Medium", fontSize: 8 }}>API</Text>
+                  </View>
+                </Pressable>
+              ))}
+            </View>
+          ) : null
         }
       />
     </View>

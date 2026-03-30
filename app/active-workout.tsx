@@ -66,6 +66,7 @@ import { GOLDEN_WORKOUT, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgro
 import { UI as SF } from "@/constants/ui-colors";
 import { useAiLimit } from "@/components/ai-limit-modal";
 import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
+import { getExerciseDbGifUrl } from "@/lib/exercisedb-api";
 
 const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get("window");
 
@@ -1404,7 +1405,7 @@ export default function ActiveWorkoutScreen() {
                           }}
                         >
                           <Image
-                            source={{ uri: alt.angleViews[0]?.gifUrl }}
+                            source={{ uri: getExerciseDbGifUrl(alt.name) ?? alt.angleViews[0]?.gifUrl }}
                             style={{ width: 44, height: 44 }}
                             contentFit="contain"
                             cachePolicy="disk"
