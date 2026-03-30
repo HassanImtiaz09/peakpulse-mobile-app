@@ -2665,3 +2665,9 @@
 - [x] Pass exerciseName directly to EnhancedGifPlayer in exercise-detail.tsx and active-workout.tsx
 - [x] Fixed 14 pre-existing test failures (updated assertions to match expo-image GIF architecture)
 - [x] All 2090 tests pass, 0 TypeScript errors
+
+## Front/Side Angle Video Fix (Round 42)
+- [x] Bug: Front and Side angle views showed the same video — EnhancedGifPlayer was not using the MuscleWiki registry
+- [x] Fix: Rewrote EnhancedGifPlayer to use getExerciseVideoUrl(key, angle) from exercise-gif-registry.ts as priority 1 source, with CDN/API fallback
+- [x] 74 exercises now have distinct front + side MuscleWiki MP4 URLs; Side button shows "(N/A)" when only one angle exists
+- [x] All 2090 tests pass, 0 TypeScript errors
