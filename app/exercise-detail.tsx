@@ -239,6 +239,7 @@ export default function ExerciseDetailScreen() {
         <View style={styles.section}>
           <EnhancedGifPlayer
             exerciseKey={getRegistryKeyForExercise(exercise.name)}
+            exerciseName={exercise.name}
             height={240}
           />
         </View>

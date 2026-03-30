@@ -71,9 +71,9 @@ describe("Feature: Video Player Refactor Verification", () => {
   });
 
   describe("Component Implementations", () => {
-    it("exercise-demo-player.tsx was NOT rewritten and still uses legacy components", () => {
+    it("exercise-demo-player.tsx uses expo-image with resolveGifAsset", () => {
       const src = readFile("components/exercise-demo-player.tsx");
-      expect(src).not.toContain("ExerciseVideoPlayer");
+      expect(src).toContain("expo-image");
       expect(src).toContain("resolveGifAsset");
       expect(src).toContain("useFavorites");
       expect(src).toContain("isFavorite");
@@ -82,11 +82,11 @@ describe("Feature: Video Player Refactor Verification", () => {
       expect(src).toContain("fullscreen");
     });
 
-    it("enhanced-gif-player.tsx WAS rewritten to use new video components", () => {
+    it("enhanced-gif-player.tsx uses expo-image for animated GIF display", () => {
       const src = readFile("components/enhanced-gif-player.tsx");
-      expect(src).toContain("ExerciseVideoPlayer");
-      expect(src).toContain("getExerciseVideoUrl");
-      expect(src).toContain("exerciseKey");
+      expect(src).toContain("Image");
+      expect(src).toContain("getExerciseDbGifUrl");
+      expect(src).toContain("exerciseName");
       // It still contains "expo-image" in a JSDoc comment, so we don't assert its absence.
     });
 

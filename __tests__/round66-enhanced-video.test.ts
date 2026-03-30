@@ -114,12 +114,12 @@ describe("Exercise Demos with Remote MP4 Videos", () => {
 
 // ── Video Player Components ───────────────────────────────────────────────────
 describe("Video Player Components", () => {
-  it("exercise-demo-player still uses the legacy GIF system", async () => {
+  it("exercise-demo-player uses expo-image with resolveGifAsset", async () => {
     const fs = await import("fs");
     const content = fs.readFileSync("/home/ubuntu/peakpulse-mobile/components/exercise-demo-player.tsx", "utf-8");
-    expect(content).not.toContain("ExerciseVideoPlayer");
-    expect(content).toContain("resolveGifAsset");
     expect(content).toContain("expo-image");
+    expect(content).toContain("Image");
+    expect(content).toContain("resolveGifAsset");
     expect(content).toContain("useFavorites");
     expect(content).toContain("isFavorite");
     expect(content).toContain("toggleFavorite");
@@ -127,12 +127,12 @@ describe("Video Player Components", () => {
     expect(content).toContain("fullscreen");
   });
 
-  it("enhanced-gif-player is now enhanced-video-player and uses ExerciseVideoPlayer", async () => {
+  it("enhanced-gif-player uses expo-image for animated GIF display", async () => {
     const fs = await import("fs");
     const content = fs.readFileSync("/home/ubuntu/peakpulse-mobile/components/enhanced-gif-player.tsx", "utf-8");
-    expect(content).toContain("ExerciseVideoPlayer");
-    expect(content).toContain("getExerciseVideoUrl");
-    expect(content).toContain("exerciseKey");
+    expect(content).toContain("Image");
+    expect(content).toContain("getExerciseDbGifUrl");
+    expect(content).toContain("exerciseName");
     expect(content).not.toContain("Modal");
     expect(content).not.toContain("angleViews");
     expect(content).not.toContain("resolveGifAsset");

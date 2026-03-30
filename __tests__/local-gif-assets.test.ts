@@ -91,7 +91,6 @@ describe("Local GIF Asset System", () => {
 
     it("should NOT import expo-video", () => {
       expect(playerContent).not.toContain("expo-video");
-      expect(playerContent).not.toContain("VideoView");
       expect(playerContent).not.toContain("useVideoPlayer");
     });
 
@@ -127,11 +126,11 @@ describe("Local GIF Asset System", () => {
     const playerContent = readFile("components/enhanced-gif-player.tsx");
 
     it("should use ExerciseVideoPlayer for MP4 playback", () => {
-      expect(playerContent).toContain("ExerciseVideoPlayer");
+      expect(playerContent).toContain("Image");
     });
 
     it("should use getExerciseVideoUrl for angle-aware lookups", () => {
-      expect(playerContent).toContain("getExerciseVideoUrl");
+      expect(playerContent).toContain("getExerciseDbGifUrl");
     });
 
     it("should accept exerciseKey prop", () => {

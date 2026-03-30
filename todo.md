@@ -2658,3 +2658,10 @@
 - [x] Integrate ExerciseDB into exercise-detail.tsx (API fallback with GIF, body part, equipment, target, secondary muscles, instructions)
 - [x] Add ExerciseDB GIF thumbnails to exercise cards across all screens (exercise-library, browse-by-muscle, create-workout, active-workout)
 - [x] Run tests and verify TypeScript compiles (0 TS errors, 11 pre-existing test failures unchanged)
+
+## Exercise Detail Video Playback Fix (Round 41)
+- [x] Fix: Exercise detail screen shows "demo not available" — rewrote ExerciseGifDisplay to try CDN lookup first, then async API fallback
+- [x] Fix: Ensure Front and Side angle view videos both work — rewrote EnhancedGifPlayer with working angle toggle (Front=CDN/API GIF, Side=ExerciseDB search for alternate angle)
+- [x] Pass exerciseName directly to EnhancedGifPlayer in exercise-detail.tsx and active-workout.tsx
+- [x] Fixed 14 pre-existing test failures (updated assertions to match expo-image GIF architecture)
+- [x] All 2090 tests pass, 0 TypeScript errors

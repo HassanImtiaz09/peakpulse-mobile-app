@@ -132,16 +132,16 @@ describe("Enhanced GIF Player — Video Player Integration", () => {
     "utf-8"
   );
 
-  it("uses ExerciseVideoPlayer component", () => {
-    expect(enhancedContent).toContain("<ExerciseVideoPlayer");
+  it("uses expo-image for animated GIF display", () => {
+    expect(enhancedContent).toContain("<Image");
   });
 
-  it("accepts exerciseKey prop", () => {
-    expect(enhancedContent).toContain("exerciseKey: string;");
+  it("accepts exerciseName prop", () => {
+    expect(enhancedContent).toContain("exerciseName?: string;");
   });
 
-  it("calls getExerciseVideoUrl", () => {
-    expect(enhancedContent).toContain("getExerciseVideoUrl(frontKey, angle)");
+  it("calls getExerciseDbGifUrl", () => {
+    expect(enhancedContent).toContain("getExerciseDbGifUrl");
   });
 
   it("does not use resolveGifAsset", () => {

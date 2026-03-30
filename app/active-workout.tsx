@@ -206,6 +206,7 @@ function ExerciseDemoVideo({
       {showEnhanced && exerciseInfo ? (
         <EnhancedGifPlayer
           exerciseKey={getRegistryKeyForExercise(exerciseName)}
+          exerciseName={exerciseName}
           height={compact ? 160 : 220}
         />
       ) : (

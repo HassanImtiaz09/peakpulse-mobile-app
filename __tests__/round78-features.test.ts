@@ -28,10 +28,10 @@ describe("MP4 Video Player Architecture", () => {
     expect(src).not.toContain("manuscdn.com");
   });
 
-  it("enhanced-gif-player uses ExerciseVideoPlayer with exerciseKey", () => {
+  it("enhanced-gif-player uses expo-image with exerciseName", () => {
     const src = readFile("components/enhanced-gif-player.tsx");
-    expect(src).toContain("ExerciseVideoPlayer");
-    expect(src).toContain("exerciseKey");
+    expect(src).toContain("Image");
+    expect(src).toContain("exerciseName");
     expect(src).not.toContain("angleViews");
     expect(src).not.toContain("resolveGifAsset");
   });

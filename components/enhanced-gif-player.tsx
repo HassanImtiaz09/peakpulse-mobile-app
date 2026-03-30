@@ -1,37 +1,39 @@
 /**
- * EnhancedGifPlayer — Updated to use ExerciseDB animated GIFs
+ * EnhancedGifPlayer — Multi-Angle Exercise Demo Player
  *
- * WHAT CHANGED vs the previous version:
- *   - Uses ExerciseGifDisplay (expo-image based) instead of
- *     ExerciseVideoPlayer (expo-video based)
- *   - Derives a human-readable exercise name from the registry key and
- *     uses it to look up an animated GIF from ExerciseDB
- *   - Front / Side toggle is preserved in the UI; both angles show the
- *     same ExerciseDB GIF because ExerciseDB does not split by angle
- *     (the toggle is kept to avoid breaking existing UX)
- *   - Accepts an optional `exerciseName` prop so callers can pass the
- *     plain name directly instead of relying on key derivation
+ * Shows animated GIF exercise demos with a Front / Side toggle.
  *
- * WHY THIS FIX WORKS:
- *   expo-video cannot pass HTTP headers to video requests (issue #29436).
- *   MuscleWiki CDN blocks requests without a Referer header — so every
- *   MuscleWiki MP4 URL showed as a black frame in the app. ExerciseDB
- *   GIF URLs are on a public CDN and require no auth headers at all.
- *   expo-image renders them as smooth animated GIFs natively.
+ * Resolution chain per angle:
+ *   1. CDN lookup via getExerciseDbGifUrl() — instant, 104+ name variants
+ *   2. Async ExerciseDB RapidAPI search — 1300+ exercises
+ *   3. "Demo not available" placeholder
  *
- * USAGE (unchanged from original):
+ * Front view: uses the exercise name directly.
+ * Side view: searches ExerciseDB API for the same exercise and picks a
+ *            different result (if available) to approximate a side angle.
+ *            If only one result exists, shows the same GIF.
+ *
+ * USAGE:
  *   import EnhancedGifPlayer from "@/components/enhanced-gif-player";
  *   <EnhancedGifPlayer exerciseKey="male-Barbell-barbell-squat-front" />
+ *   <EnhancedGifPlayer exerciseName="Bench Press" />
  */
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
+  ActivityIndicator,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
   ViewStyle,
 } from "react-native";
-import { ExerciseGifDisplay } from "@/components/exercise-gif-display";
+import { Image } from "expo-image";
+import { getExerciseDbGifUrl } from "@/lib/exercisedb-api";
+import {
+  getExerciseGifUrl,
+  searchExercisesByName,
+  hasExerciseDBKey,
+} from "@/lib/exercisedb";
 
 type Angle = "front" | "side";
 
@@ -40,11 +42,10 @@ interface EnhancedGifPlayerProps {
    * Registry key with or without angle suffix.
    * e.g. "male-Barbell-barbell-squat-front" or "male-Barbell-barbell-squat"
    */
-  exerciseKey: string;
+  exerciseKey?: string;
   /**
-   * Optional human-readable exercise name.
-   * When provided, used directly for ExerciseDB lookup (more accurate).
-   * When omitted, derived from exerciseKey.
+   * Human-readable exercise name (preferred over exerciseKey).
+   * When provided, used directly for lookups (more accurate).
    */
   exerciseName?: string;
   /** Rendered height of the player in pixels. Defaults to 260. */
@@ -62,7 +63,7 @@ interface EnhancedGifPlayerProps {
 function keyToExerciseName(key: string): string {
   return key
     .replace(/^male-[A-Z][a-zA-Z]+-/, "") // strip "male-Category-"
-    .replace(/-(?:front|side)$/, "")       // strip trailing angle
+    .replace(/-(?:front|side)$/, "") // strip trailing angle
     .replace(/-/g, " ")
     .trim();
 }
@@ -75,21 +76,122 @@ export default function EnhancedGifPlayer({
   style,
 }: EnhancedGifPlayerProps) {
   const [angle, setAngle] = useState<Angle>("front");
+  const [frontUrl, setFrontUrl] = useState<string | null>(null);
+  const [sideUrl, setSideUrl] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [imgError, setImgError] = useState(false);
+  const mountedRef = useRef(true);
 
-  // Use explicit name if given; otherwise derive from the registry key
-  const name = exerciseName ?? keyToExerciseName(exerciseKey);
+  // Derive the exercise name
+  const name = exerciseName ?? (exerciseKey ? keyToExerciseName(exerciseKey) : "");
+
+  useEffect(() => {
+    mountedRef.current = true;
+    setLoading(true);
+    setImgError(false);
+    setFrontUrl(null);
+    setSideUrl(null);
+
+    if (!name) {
+      setLoading(false);
+      return;
+    }
+
+    // Step 1: Try synchronous CDN lookup (instant)
+    const cdnUrl = getExerciseDbGifUrl(name);
+    if (cdnUrl) {
+      if (mountedRef.current) {
+        setFrontUrl(cdnUrl);
+        setLoading(false);
+      }
+    }
+
+    // Step 2: Search ExerciseDB API for front + side GIFs
+    if (hasExerciseDBKey()) {
+      searchExercisesByName(name, 5).then((results) => {
+        if (!mountedRef.current) return;
+
+        if (results.length > 0) {
+          // First result = front view
+          const front = results[0].gifUrl;
+          if (front && !cdnUrl) {
+            setFrontUrl(front);
+          }
+
+          // Second result (if different exercise variant) = side view
+          if (results.length > 1) {
+            setSideUrl(results[1].gifUrl);
+          } else if (front) {
+            // Same GIF for side if only one result
+            setSideUrl(front);
+          }
+        }
+
+        setLoading(false);
+      }).catch(() => {
+        if (mountedRef.current) setLoading(false);
+      });
+    } else if (!cdnUrl) {
+      // No CDN hit and no API key — try async single lookup
+      getExerciseGifUrl(name).then((url) => {
+        if (!mountedRef.current) return;
+        if (url) setFrontUrl(url);
+        setLoading(false);
+      });
+    }
+
+    return () => {
+      mountedRef.current = false;
+    };
+  }, [name]);
+
+  const currentUrl = angle === "front" ? frontUrl : (sideUrl ?? frontUrl);
+  const noContent = !currentUrl && !loading;
 
   return (
     <View style={[styles.wrapper, style]}>
-      {/* Animated GIF via ExerciseDB public CDN (no auth headers needed) */}
-      <ExerciseGifDisplay exerciseName={name} height={height} />
+      {/* GIF Display */}
+      <View style={[styles.gifContainer, { height }]}>
+        {loading && !currentUrl && (
+          <View style={[StyleSheet.absoluteFill, styles.loadingLayer]}>
+            <ActivityIndicator color={AMBER} size="small" />
+            <Text style={styles.loadingText}>Loading demo...</Text>
+          </View>
+        )}
 
-      {/* Front / Side toggle — kept for UX parity */}
+        {(noContent || imgError) && (
+          <View style={[StyleSheet.absoluteFill, styles.placeholder]}>
+            <Text style={styles.placeholderTitle}>Demo not available</Text>
+            {!hasExerciseDBKey() && (
+              <Text style={styles.placeholderHint}>
+                Add EXPO_PUBLIC_RAPIDAPI_KEY to .env to enable animated demos
+              </Text>
+            )}
+          </View>
+        )}
+
+        {currentUrl && !imgError && (
+          <Image
+            source={{ uri: currentUrl }}
+            style={StyleSheet.absoluteFill}
+            contentFit="contain"
+            autoplay
+            cachePolicy="memory-disk"
+            onLoad={() => setLoading(false)}
+            onError={() => {
+              setImgError(true);
+              setLoading(false);
+            }}
+          />
+        )}
+      </View>
+
+      {/* Front / Side toggle */}
       {showControls && (
         <View style={styles.toggleRow}>
           <TouchableOpacity
             style={[styles.toggleBtn, angle === "front" && styles.toggleBtnActive]}
-            onPress={() => setAngle("front")}
+            onPress={() => { setAngle("front"); setImgError(false); }}
             activeOpacity={0.75}
             accessibilityRole="button"
             accessibilityLabel="Show front view"
@@ -107,7 +209,7 @@ export default function EnhancedGifPlayer({
 
           <TouchableOpacity
             style={[styles.toggleBtn, angle === "side" && styles.toggleBtnActive]}
-            onPress={() => setAngle("side")}
+            onPress={() => { setAngle("side"); setImgError(false); }}
             activeOpacity={0.75}
             accessibilityRole="button"
             accessibilityLabel="Show side view"
@@ -138,6 +240,41 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     overflow: "hidden",
     backgroundColor: SURFACE,
+  },
+  gifContainer: {
+    width: "100%",
+    backgroundColor: "#0D1117",
+    position: "relative",
+  },
+  loadingLayer: {
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#0D1117",
+    zIndex: 1,
+  },
+  loadingText: {
+    color: "#6B7280",
+    fontSize: 11,
+    fontFamily: "DMSans_400Regular",
+    marginTop: 8,
+  },
+  placeholder: {
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 20,
+    gap: 8,
+  },
+  placeholderTitle: {
+    color: "#6B7280",
+    fontSize: 13,
+    fontFamily: "DMSans_500Medium",
+  },
+  placeholderHint: {
+    color: "#374151",
+    fontSize: 10,
+    fontFamily: "DMSans_400Regular",
+    textAlign: "center",
+    lineHeight: 15,
   },
   toggleRow: {
     flexDirection: "row",

@@ -156,10 +156,10 @@ describe("Form Cue Overlay Integration", () => {
     expect(src).toContain("canShowFormCues");
   });
 
-  it("EnhancedGifPlayer uses ExerciseVideoPlayer for MP4 playback", () => {
+  it("EnhancedGifPlayer uses expo-image for animated GIF playback", () => {
     const src = readFile("components/enhanced-gif-player.tsx");
-    expect(src).toContain("ExerciseVideoPlayer");
-    expect(src).toContain("getExerciseVideoUrl");
+    expect(src).toContain("Image");
+    expect(src).toContain("getExerciseDbGifUrl");
   });
 });
 

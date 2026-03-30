@@ -3,14 +3,17 @@
  *
  * Renders an animated GIF exercise demo using expo-image.
  *
+ * Resolution chain (fast → slow):
+ *   1. Synchronous CDN lookup via getExerciseDbGifUrl() — 75 exercises, instant
+ *   2. Async ExerciseDB RapidAPI call via getExerciseGifUrl() — 1300+ exercises
+ *   3. Fallback URI if provided
+ *   4. "Demo not available" placeholder
+ *
  * WHY expo-image instead of expo-video:
  *   expo-video (VideoView) does not support custom HTTP headers (issue #29436).
  *   MuscleWiki's CDN requires a Referer header — without it every request
- *   returns a black/empty stream in React Native, which is exactly the bug
- *   that caused 8 failed fix attempts.
- *
- *   expo-image handles animated GIFs natively and requires no auth headers
- *   because ExerciseDB's CDN serves GIFs as public URLs.
+ *   returns a black/empty stream in React Native.
+ *   expo-image handles animated GIFs natively and requires no auth headers.
  */
 import React, { useEffect, useRef, useState } from "react";
 import {
@@ -22,11 +25,12 @@ import {
 } from "react-native";
 import { Image } from "expo-image";
 import { getExerciseGifUrl, hasExerciseDBKey } from "@/lib/exercisedb";
+import { getExerciseDbGifUrl } from "@/lib/exercisedb-api";
 
 interface ExerciseGifDisplayProps {
-  /** Exercise name used for ExerciseDB lookup (e.g. "barbell squat") */
+  /** Exercise name used for lookup (e.g. "barbell squat", "Bench Press") */
   exerciseName: string;
-  /** Static fallback URI shown if lookup fails or key is missing */
+  /** Static fallback URI shown if all lookups fail */
   fallbackUri?: string;
   height?: number;
   style?: ViewStyle;
@@ -38,26 +42,42 @@ export function ExerciseGifDisplay({
   height = 260,
   style,
 }: ExerciseGifDisplayProps) {
-  const [gifUrl, setGifUrl] = useState<string | null>(fallbackUri ?? null);
+  const [gifUrl, setGifUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [imgError, setImgError] = useState(false);
   const mountedRef = useRef(true);
 
   useEffect(() => {
     mountedRef.current = true;
-    setLoading(true);
     setImgError(false);
 
-    if (!hasExerciseDBKey() && !fallbackUri) {
+    // Step 1: Try synchronous CDN lookup (instant, covers 104+ name variants)
+    const cdnUrl = getExerciseDbGifUrl(exerciseName);
+    if (cdnUrl) {
+      setGifUrl(cdnUrl);
       setLoading(false);
-      return;
+      return () => { mountedRef.current = false; };
     }
 
-    getExerciseGifUrl(exerciseName).then((url) => {
-      if (!mountedRef.current) return;
-      if (url) setGifUrl(url);
+    // Step 2: Try async ExerciseDB RapidAPI call (covers 1300+ exercises)
+    setLoading(true);
+    if (hasExerciseDBKey()) {
+      getExerciseGifUrl(exerciseName).then((url) => {
+        if (!mountedRef.current) return;
+        if (url) {
+          setGifUrl(url);
+        } else if (fallbackUri) {
+          setGifUrl(fallbackUri);
+        }
+        setLoading(false);
+      });
+    } else if (fallbackUri) {
+      // No API key — use fallback
+      setGifUrl(fallbackUri);
       setLoading(false);
-    });
+    } else {
+      setLoading(false);
+    }
 
     return () => {
       mountedRef.current = false;

@@ -59,21 +59,21 @@ describe("Round 74: Video Caching, Angle Toggle, Favorites Filter", () => {
 
   // ── Video Player Components ──
   describe("Video Player Components", () => {
-    it("enhanced-gif-player.tsx uses ExerciseVideoPlayer for video display", () => {
+    it("enhanced-gif-player.tsx uses expo-image for animated GIF display", () => {
       const content = fs.readFileSync(path.join(ROOT, "components/enhanced-gif-player.tsx"), "utf-8");
-      expect(content).toContain("ExerciseVideoPlayer");
-      expect(content).toContain("getExerciseVideoUrl");
+      expect(content).toContain("Image");
+      expect(content).toContain("getExerciseDbGifUrl");
     });
 
-    it("exercise-demo-player.tsx still uses expo-image and resolveGifAsset", () => {
+    it("exercise-demo-player.tsx uses expo-image and resolveGifAsset", () => {
       const content = fs.readFileSync(path.join(ROOT, "components/exercise-demo-player.tsx"), "utf-8");
-      expect(content).not.toContain("ExerciseVideoPlayer");
+      expect(content).toContain("Image");
       expect(content).toContain("resolveGifAsset");
     });
 
-    it("enhanced-gif-player.tsx uses getExerciseVideoUrl for video lookup", () => {
+    it("enhanced-gif-player.tsx uses getExerciseDbGifUrl for GIF lookup", () => {
       const content = fs.readFileSync(path.join(ROOT, "components/enhanced-gif-player.tsx"), "utf-8");
-      expect(content).toContain("getExerciseVideoUrl");
+      expect(content).toContain("getExerciseDbGifUrl");
     });
 
     it("exercise-demo-player.tsx uses resolveGifAsset for image lookup", () => {
