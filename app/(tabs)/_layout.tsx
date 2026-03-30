@@ -1,6 +1,7 @@
 import { Tabs } from "expo-router";
 import { Platform } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { HapticTab } from "@/components/haptic-tab";
 
 /**
@@ -25,6 +26,18 @@ const BG = "#0D1117";
 const BORDER = "#1F2937";
 
 export default function TabLayout() {
+  const insets = useSafeAreaInsets();
+
+  // Ensure the tab bar clears the system navigation bar on Android.
+  // On iOS the safe-area inset already accounts for the home indicator.
+  // On web we add a small fixed padding.
+  const bottomPadding =
+    Platform.OS === "web"
+      ? 12
+      : Math.max(insets.bottom, Platform.OS === "android" ? 16 : 24);
+
+  const tabBarHeight = 56 + bottomPadding;
+
   return (
     <Tabs
       screenOptions={{
@@ -34,8 +47,8 @@ export default function TabLayout() {
           backgroundColor: BG,
           borderTopColor: BORDER,
           borderTopWidth: 1,
-          height: Platform.OS === "ios" ? 88 : 68,
-          paddingBottom: Platform.OS === "ios" ? 24 : 10,
+          height: tabBarHeight,
+          paddingBottom: bottomPadding,
           paddingTop: 10,
           elevation: 0,
           shadowOpacity: 0,

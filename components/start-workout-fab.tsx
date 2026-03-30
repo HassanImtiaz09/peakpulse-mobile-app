@@ -23,6 +23,7 @@ import {
 import { router } from "expo-router";
 import * as Haptics from "expo-haptics";
 import { Ionicons } from "@expo/vector-icons";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 /* ── Design tokens ───────────────────────────────────────────────── */
 const GOLD       = "#F59E0B";
@@ -30,13 +31,19 @@ const GOLD_PRESS = "#D97706";
 const LABEL      = "#0D1117";   // near-black label on gold bg
 const SHADOW     = "#000";
 
-/* ── Tab bar height offsets (mirror _layout.tsx) ─────────────────── */
-const TAB_H   = Platform.OS === "ios" ? 88 : 68;
-const BOTTOM  = TAB_H + 12;     // 12px gap above tab bar
-
 /* ─────────────────────────────────────────────────────────────────── */
 
 export function StartWorkoutFAB() {
+  const insets = useSafeAreaInsets();
+
+  /* Compute tab bar height to match _layout.tsx logic */
+  const bottomPadding =
+    Platform.OS === "web"
+      ? 12
+      : Math.max(insets.bottom, Platform.OS === "android" ? 16 : 24);
+  const tabBarHeight = 56 + bottomPadding;
+  const BOTTOM = tabBarHeight + 12; // 12px gap above tab bar
+
   /* Entrance animation — slide up + fade in */
   const slideAnim = useRef(new Animated.Value(40)).current;
   const fadeAnim  = useRef(new Animated.Value(0)).current;

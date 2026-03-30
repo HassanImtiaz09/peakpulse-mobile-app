@@ -2704,3 +2704,4 @@
 - [x] Integrated GIF cache into EnhancedGifPlayer (serves cached file:// URIs when available)
 - [x] Integrated prefetchWorkoutGifs() into active-workout.tsx and plans.tsx
 - [x] All 2119 tests pass (29 new), 0 TypeScript errors
+- [x] Fix tab bar overlapping Android system navigation buttons — replaced hardcoded padding with useSafeAreaInsets() in both _layout.tsx and StartWorkoutFAB
