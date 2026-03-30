@@ -125,8 +125,8 @@ describe("Local GIF Asset System", () => {
   describe("Enhanced GIF Player (components/enhanced-gif-player.tsx)", () => {
     const playerContent = readFile("components/enhanced-gif-player.tsx");
 
-    it("should use ExerciseVideoPlayer for MP4 playback", () => {
-      expect(playerContent).toContain("Image");
+    it("should use GifWebViewPlayer for speed-controlled playback", () => {
+      expect(playerContent).toContain("GifWebViewPlayer");
     });
 
     it("should use getExerciseVideoUrl for angle-aware lookups", () => {

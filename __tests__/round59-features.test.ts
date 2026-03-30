@@ -82,12 +82,11 @@ describe("Feature: Video Player Refactor Verification", () => {
       expect(src).toContain("fullscreen");
     });
 
-    it("enhanced-gif-player.tsx uses expo-image for animated GIF display", () => {
+    it("enhanced-gif-player.tsx uses GifWebViewPlayer for speed-controlled GIF display", () => {
       const src = readFile("components/enhanced-gif-player.tsx");
-      expect(src).toContain("Image");
+      expect(src).toContain("GifWebViewPlayer");
       expect(src).toContain("getExerciseDbGifUrl");
       expect(src).toContain("exerciseName");
-      // It still contains "expo-image" in a JSDoc comment, so we don't assert its absence.
     });
 
     it("active-workout.tsx uses preload/clear from video-preload", () => {

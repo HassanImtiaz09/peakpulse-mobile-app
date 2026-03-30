@@ -132,8 +132,9 @@ describe("Enhanced GIF Player — Video Player Integration", () => {
     "utf-8"
   );
 
-  it("uses expo-image for animated GIF display", () => {
-    expect(enhancedContent).toContain("<Image");
+  it("uses GifWebViewPlayer for speed-controlled GIF display", () => {
+    expect(enhancedContent).toContain("GifWebViewPlayer");
+    expect(enhancedContent).toContain("speed");
   });
 
   it("accepts exerciseName prop", () => {

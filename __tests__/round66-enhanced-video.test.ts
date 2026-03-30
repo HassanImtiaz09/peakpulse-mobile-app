@@ -127,13 +127,12 @@ describe("Video Player Components", () => {
     expect(content).toContain("fullscreen");
   });
 
-  it("enhanced-gif-player uses expo-image for animated GIF display", async () => {
+  it("enhanced-gif-player uses GifWebViewPlayer for speed-controlled GIF display", async () => {
     const fs = await import("fs");
     const content = fs.readFileSync("/home/ubuntu/peakpulse-mobile/components/enhanced-gif-player.tsx", "utf-8");
-    expect(content).toContain("Image");
+    expect(content).toContain("GifWebViewPlayer");
     expect(content).toContain("getExerciseDbGifUrl");
     expect(content).toContain("exerciseName");
-    expect(content).not.toContain("Modal");
     expect(content).not.toContain("angleViews");
     expect(content).not.toContain("resolveGifAsset");
   });

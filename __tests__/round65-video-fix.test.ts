@@ -133,9 +133,9 @@ describe("MP4 Video Asset Validity", () => {
 // ── Video-based Demo System ──────────────────────────────────────────────────
 
 describe("Video-based Demo System", () => {
-  it("enhanced-gif-player component uses ExerciseVideoPlayer", () => {
+  it("enhanced-gif-player component uses GifWebViewPlayer for speed control", () => {
     const content = fs.readFileSync("/home/ubuntu/peakpulse-mobile/components/enhanced-gif-player.tsx", "utf-8");
-    expect(content).toContain("Image");
+    expect(content).toContain("GifWebViewPlayer");
     expect(content).toContain("getExerciseDbGifUrl");
     expect(content).toContain("exerciseKey");
     expect(content).not.toContain("resolveGifAsset");

@@ -2695,3 +2695,12 @@
 - [x] Root cause: EnhancedGifPlayer used API search (priority 1) which returned wrong exercises (e.g. "Bench Press" → "smith close-grip bench press", "Barbell Squat" → "ez barbell seated triceps extension")
 - [x] Fix: Rewrote EnhancedGifPlayer to use CDN GIF as priority 1 (same source as library preview), API as fallback only for exercises not in CDN map
 - [x] All 2090 tests pass, 0 TypeScript errors
+
+## Exercise GIF Improvements (Round 46)
+- [x] Improve ExerciseDB API search accuracy — added nameMatchScore() re-ranking so API fallback returns closest name match first
+- [x] Add play/pause overlay on exercise demo GIF — tap to toggle, visual play/pause icon with auto-hide
+- [x] Slow down animated GIFs to 0.25x speed — WebView-based GIF frame parser with configurable speed multiplier, amber speed badge
+- [x] Cache exercise GIFs to disk for active workout plan exercises — new lib/exercise-gif-cache.ts with prefetchWorkoutGifs(), resolveGifUri(), clearGifCache(), 200MB cap
+- [x] Integrated GIF cache into EnhancedGifPlayer (serves cached file:// URIs when available)
+- [x] Integrated prefetchWorkoutGifs() into active-workout.tsx and plans.tsx
+- [x] All 2119 tests pass (29 new), 0 TypeScript errors

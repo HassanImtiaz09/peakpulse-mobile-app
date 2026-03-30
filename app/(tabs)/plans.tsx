@@ -17,6 +17,7 @@ import Svg, { Circle } from "react-native-svg";
 import * as Haptics from "expo-haptics";
 import { exportWorkoutPlanPdf } from "@/lib/workout-pdf";
 import { prefetchExerciseVideos } from "@/lib/gif-cache";
+import { prefetchWorkoutGifs } from "@/lib/exercise-gif-cache";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { BodyHeatmap } from "@/components/body-heatmap";
 import { MuscleSvgDiagram, MuscleSvgMini } from "@/components/muscle-svg-diagram";
@@ -212,6 +213,7 @@ function PlansScreenContent() {
       );
       if (allExNames.length > 0) {
         prefetchExerciseVideos().catch(() => {});
+        prefetchWorkoutGifs(allExNames).catch(() => {});
       }
     }
   }, [workoutPlan?.schedule]);
@@ -220,8 +222,12 @@ function PlansScreenContent() {
     onSuccess: (data) => {
       if (isAuthenticated) refetchWorkout();
       else setLocalWorkoutPlan(data);
-      // Pre-cache videos for the new workout plan
+      // Pre-cache videos and GIFs for the new workout plan
       prefetchExerciseVideos().catch(() => {});
+      const newExNames = ((data as any)?.schedule ?? []).flatMap((d: any) =>
+        (d.exercises ?? []).map((e: any) => e.name as string)
+      );
+      if (newExNames.length > 0) prefetchWorkoutGifs(newExNames).catch(() => {});
     },
     onError: (e) => { if (e?.message?.includes?.("AI_LIMIT_EXCEEDED") || e?.message?.includes?.("rate limit")) { showLimitModal(e.message); return; } Alert.alert("Error", e.message); },
   });

@@ -60,6 +60,7 @@ import {
 import { preloadExerciseVideos, clearPreloadCache } from "@/lib/video-preload";
 import { autoCacheCurrentWorkout } from "@/lib/offline-workout-cache";
 import { prefetchExerciseVideos } from "@/lib/gif-cache";
+import { prefetchWorkoutGifs } from "@/lib/exercise-gif-cache";
 import { recordWorkoutCompleted, recordTimerUsed } from "@/lib/feature-discovery";
 import { evaluateAndScheduleSmartReminders } from "@/lib/smart-reminders";
 import { GOLDEN_WORKOUT, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgrounds";
@@ -622,6 +623,11 @@ export default function ActiveWorkoutScreen() {
 
       prefetchExerciseVideos().catch((err: unknown) => {
         console.warn("[ActiveWorkout] prefetchExerciseVideos failed:", err);
+      });
+
+      // Cache GIFs to disk for offline access
+      prefetchWorkoutGifs(exercises.map((e: Exercise) => e.name)).catch((err: unknown) => {
+        console.warn("[ActiveWorkout] prefetchWorkoutGifs failed:", err);
       });
     }
     return () => clearPreloadCache();

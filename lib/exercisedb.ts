@@ -224,8 +224,32 @@ export async function prewarmExerciseCache(
 // ── Search by Name ──────────────────────────────────────────────────────────
 
 /**
+ * Score how well an API result name matches the query.
+ * Higher = better match. Exact match = 1000, contains query = 500 + length bonus.
+ */
+function nameMatchScore(resultName: string, query: string): number {
+  const rn = resultName.toLowerCase().trim();
+  const qn = query.toLowerCase().trim();
+  if (rn === qn) return 1000;
+  // Exact substring at word boundary
+  if (rn.startsWith(qn + " ") || rn.endsWith(" " + qn) || rn.includes(" " + qn + " ")) return 800;
+  if (rn.includes(qn)) return 600;
+  // Query contains result (e.g. query="barbell bench press", result="bench press")
+  if (qn.includes(rn)) return 500;
+  // Word overlap scoring
+  const qWords = qn.split(/\s+/);
+  const rWords = new Set(rn.split(/\s+/));
+  const overlap = qWords.filter((w) => rWords.has(w)).length;
+  return overlap * 100;
+}
+
+/**
  * Search exercises by name. Returns up to `limit` results.
  * Tries Vercel first (has gifUrl), then RapidAPI fallback.
+ *
+ * Results are re-ranked by name-match accuracy so the closest match
+ * to the query always comes first (fixes the "wrong exercise" bug
+ * where e.g. "Bench Press" returned "smith close-grip bench press").
  */
 export async function searchExercisesByName(
   name: string,
@@ -240,12 +264,18 @@ export async function searchExercisesByName(
 
   const encoded = encodeURIComponent(key);
 
+  // Fetch more results than needed so we can re-rank and pick the best matches
+  const fetchLimit = Math.max(limit * 3, 30);
+
   // Try Vercel first
   const vercelData = await vercelFetch<VercelResponse>(
-    `/exercises?search=${encoded}&limit=${limit}&offset=${offset}`
+    `/exercises?search=${encoded}&limit=${fetchLimit}&offset=${offset}`
   );
   if (vercelData?.data?.length) {
-    const result = vercelData.data.map(normaliseVercel);
+    const all = vercelData.data.map(normaliseVercel);
+    // Re-rank by name match accuracy
+    all.sort((a, b) => nameMatchScore(b.name, key) - nameMatchScore(a.name, key));
+    const result = all.slice(0, limit);
     cacheSet(cacheKey, result);
     return result;
   }
@@ -253,10 +283,10 @@ export async function searchExercisesByName(
   // Fallback to RapidAPI
   if (RAPIDAPI_KEY) {
     const data = await rapidFetch<any[]>(
-      `/exercises/name/${encoded}?limit=${limit}&offset=${offset}`
+      `/exercises/name/${encoded}?limit=${fetchLimit}&offset=${offset}`
     );
     if (data?.length) {
-      const result: ExerciseDBExercise[] = data.map((d) => ({
+      const all: ExerciseDBExercise[] = data.map((d) => ({
         id: d.id ?? "",
         name: d.name ?? "",
         bodyPart: d.bodyPart ?? "",
@@ -266,6 +296,9 @@ export async function searchExercisesByName(
         secondaryMuscles: d.secondaryMuscles ?? [],
         instructions: d.instructions ?? [],
       }));
+      // Re-rank by name match accuracy
+      all.sort((a, b) => nameMatchScore(b.name, key) - nameMatchScore(a.name, key));
+      const result = all.slice(0, limit);
       cacheSet(cacheKey, result);
       return result;
     }

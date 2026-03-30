@@ -59,9 +59,9 @@ describe("Round 74: Video Caching, Angle Toggle, Favorites Filter", () => {
 
   // ── Video Player Components ──
   describe("Video Player Components", () => {
-    it("enhanced-gif-player.tsx uses expo-image for animated GIF display", () => {
+    it("enhanced-gif-player.tsx uses GifWebViewPlayer for speed-controlled GIF display", () => {
       const content = fs.readFileSync(path.join(ROOT, "components/enhanced-gif-player.tsx"), "utf-8");
-      expect(content).toContain("Image");
+      expect(content).toContain("GifWebViewPlayer");
       expect(content).toContain("getExerciseDbGifUrl");
     });
 
