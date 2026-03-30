@@ -70,7 +70,7 @@ export function StartWorkoutFAB() {
         {
           transform: [{ translateY: slideAnim }],
           opacity: fadeAnim,
-          bottom: BOTTOM.
+          bottom: BOTTOM,
         },
       ]}
       pointerEvents="box-none"

@@ -123,20 +123,28 @@ describe("Username Editing", () => {
 
 // ── Dashboard Profile Integration ─────────────────────────────────────────
 describe("Dashboard Profile Integration", () => {
-  it("dashboard imports useUserProfile", () => {
-    const src = readFile("app/(tabs)/index.tsx");
-    expect(src).toContain("useUserProfile");
-    expect(src).toContain("user-profile-context");
-  });
+  // Moved to dedicated screen in Today redesign
+  // it("dashboard imports useUserProfile", () => {
+  //   const src = readFile("app/(tabs)/index.tsx");
+  //   expect(src).toContain("useUserProfile");
+  //   expect(src).toContain("user-profile-context");
+  // });
 
-  it("dashboard uses savedDisplayName for greeting", () => {
-    const src = readFile("app/(tabs)/index.tsx");
-    expect(src).toContain("savedDisplayName");
-  });
+  // Moved to dedicated screen in Today redesign
+  // it("dashboard uses savedDisplayName for greeting", () => {
+  //   const src = readFile("app/(tabs)/index.tsx");
+  //   expect(src).toContain("savedDisplayName");
+  // });
 
-  it("dashboard shows profile photo in hero section", () => {
+  // Moved to dedicated screen in Today redesign
+  // it("dashboard shows profile photo in hero section", () => {
+  //   const src = readFile("app/(tabs)/index.tsx");
+  //   expect(src).toContain("profilePhotoUri");
+  // });
+
+  it("dashboard does not import useUserProfile after Today redesign", () => {
     const src = readFile("app/(tabs)/index.tsx");
-    expect(src).toContain("profilePhotoUri");
+    expect(src).not.toContain("useUserProfile");
   });
 });
 

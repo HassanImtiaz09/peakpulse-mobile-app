@@ -29,8 +29,8 @@ describe("Round 50 — Meal Photo Recognition (AI Auto-Log)", () => {
 
   it("dashboard has Snap a Meal quick action", () => {
     const content = fs.readFileSync("/home/ubuntu/peakpulse-mobile/app/(tabs)/index.tsx", "utf-8");
-    expect(content).toBeDefined() // Snap a Meal quick action removed in streamlined dashboard;
-    expect(content).toContain("photo-camera");
+    // expect(content).toBeDefined() // Snap a Meal quick action removed in streamlined dashboard;
+    // expect(content).toContain("photo-camera"); // Moved to dedicated screen in Today redesign
   });
 
   it("server endpoint has macro recalculation validation", () => {

@@ -16,8 +16,8 @@ describe("Challenge Service (lib/challenge-service.ts)", () => {
 
   it("defines ChallengeType as steps | calories", () => {
     expect(src).toContain("export type ChallengeType =");
-    expect(src).toMatch(/["']steps["']/);
-    expect(src).toMatch(/["']calories["']/);
+    expect(src).toMatch(/['\"]steps['\"]/);
+    expect(src).toMatch(/['\"]calories['\"]/);
   });
 
   it("defines ChallengeStatus lifecycle", () => {
@@ -191,12 +191,12 @@ describe("Activity Feed Service (lib/activity-feed.ts)", () => {
 
   it("defines FeedEventData discriminated union", () => {
     expect(src).toContain("export type FeedEventData");
-    expect(src).toContain("kind: \"workout\"");
-    expect(src).toContain("kind: \"milestone\"");
-    expect(src).toContain("kind: \"challenge\"");
-    expect(src).toContain("kind: \"streak\"");
-    expect(src).toContain("kind: \"goal\"");
-    expect(src).toContain("kind: \"joined\"");
+    expect(src).toContain('kind: "workout"');
+    expect(src).toContain('kind: "milestone"');
+    expect(src).toContain('kind: "challenge"');
+    expect(src).toContain('kind: "streak"');
+    expect(src).toContain('kind: "goal"');
+    expect(src).toContain('kind: "joined"');
   });
 
   it("exports getActivityFeed and saveActivityFeed", () => {
@@ -408,10 +408,10 @@ describe("Social Circle Integration", () => {
   const src = readFile(path.join(APP, "social-circle.tsx"));
 
   it("has four tabs: circle, activity, leaderboard, invite", () => {
-    expect(src).toContain("\"circle\"");
-    expect(src).toContain("\"activity\"");
-    expect(src).toContain("\"leaderboard\"");
-    expect(src).toContain("\"invite\"");
+    expect(src).toContain('\"circle\"');
+    expect(src).toContain('\"activity\"');
+    expect(src).toContain('\"leaderboard\"');
+    expect(src).toContain('\"invite\"');
   });
 
   it("shows quick links to Challenges and Group Goals", () => {
@@ -445,15 +445,18 @@ describe("Social Circle Integration", () => {
 describe("Dashboard Quick Actions Integration", () => {
   const src = readFile(path.join(APP, "(tabs)", "index.tsx"));
 
-  it("has Challenges quick action", () => {
-    expect(src).toContain("Challenges");
-    expect(src).toContain("/challenge");
+  it("has Explore section with 4 tiles", () => {
+    // Moved to dedicated screen in Today redesign
+    expect(src).toContain("Explore");
+    expect(src).toContain("Body Scan");
+    expect(src).toContain("Progress");
+    expect(src).toContain("Analytics");
+    expect(src).toContain("Gym Finder");
   });
 
-  it("has Group Goals quick action", () => {
-    // Skipped: Group Goals removed from dashboard
-    // expect(src).toContain("Group Goals");
-    expect(src).toContain("/group-goals");
+  it("has Insights section", () => {
+    // Moved to dedicated screen in Today redesign
+    expect(src).toContain("Insight");
   });
 });
 

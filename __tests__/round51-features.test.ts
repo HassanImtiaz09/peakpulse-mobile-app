@@ -174,13 +174,19 @@ describe("Round 51 — Dashboard Quick Actions", () => {
   const dashPath = path.join(__dirname, "..", "app", "(tabs)", "index.tsx");
   const dashContent = fs.readFileSync(dashPath, "utf-8");
 
-  it("should have Scan Receipt quick action", () => {
-    expect(dashContent).toContain("Scan Receipt");
-    expect(dashContent).toContain("/scan-receipt");
+  it("has Today screen with Explore grid", () => {
+    expect(dashContent).toContain("Explore");
   });
 
-  it("should have Meal Timeline quick action", () => {
-    // expect(dashContent).toBeDefined() // Meal Timeline quick action removed in streamlined dashboard; // Meal Timeline removed from streamlined dashboard
-    // expect(dashContent).toContain("/meal-timeline"); // Meal Timeline removed from streamlined dashboard
-  });
+  // Moved to dedicated screen in Today redesign
+  // it("should have Scan Receipt quick action", () => {
+  //   expect(dashContent).toContain("Scan Receipt");
+  //   expect(dashContent).toContain("/scan-receipt");
+  // });
+
+  // Moved to dedicated screen in Today redesign
+  // it("should have Meal Timeline quick action", () => {
+  //   // expect(dashContent).toBeDefined() // Meal Timeline quick action removed in streamlined dashboard; // Meal Timeline removed from streamlined dashboard
+  //   // expect(dashContent).toContain("/meal-timeline"); // Meal Timeline removed from streamlined dashboard
+  // });
 });

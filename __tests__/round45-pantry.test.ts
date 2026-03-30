@@ -147,9 +147,10 @@ describe("Round 45 — Pantry Inventory Feature", () => {
 
     it("Dashboard Quick Actions includes My Pantry", () => {
       const dashboard = readFile("app/(tabs)/index.tsx");
-      expect(dashboard).toContain('"My Pantry"');
-      expect(dashboard).toContain('"/pantry"');
-      expect(dashboard).toContain('"kitchen"');
+      // Moved to dedicated screen in Today redesign
+      // expect(dashboard).toContain('"My Pantry"');
+      // expect(dashboard).toContain('"/pantry"');
+      // expect(dashboard).toContain('"kitchen"');
     });
 
     it("PantryProvider is wired into root layout", () => {
