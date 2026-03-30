@@ -231,7 +231,7 @@ export default function ExerciseDetailScreen() {
         contentContainerStyle={{ paddingBottom: insets.bottom + 24 }}
         showsVerticalScrollIndicator={false}
       >
-        {/* Multi-Angle GIF Player */}
+        {/* Exercise Demo GIF */}
         <View style={styles.section}>
           <EnhancedGifPlayer
             exerciseKey={getRegistryKeyForExercise(exercise.name)}

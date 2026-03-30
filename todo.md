@@ -2682,3 +2682,10 @@
 - [x] Fix: Updated browse-by-muscle, create-workout, exercise-library to use getExerciseDbGifUrl() instead of apiEx.gifUrl
 - [x] Fix: Updated exercise-detail API fallback to use EnhancedGifPlayer instead of apiExercise.gifUrl
 - [x] All 2090 tests pass, 0 TypeScript errors
+
+## Remove Front/Side Toggle & Slow GIF Speed (Round 44)
+- [x] Remove Front/Side angle toggle from EnhancedGifPlayer — completely removed angle state, toggle buttons, and side-view logic
+- [x] Slow down GIF animation — restructured priority to prefer ExerciseDB API GIFs (3s loop with built-in pauses at top/bottom of movement) over CDN GIFs (1.2s loop at 10 FPS)
+- [x] Updated exercise-detail.tsx comment from "Multi-Angle" to "Exercise Demo"
+- [x] active-workout.tsx already passes exerciseName — no changes needed
+- [x] All 2090 tests pass, 0 TypeScript errors
