@@ -420,9 +420,9 @@ export default function CreateWorkoutScreen() {
                           flexDirection: "row", gap: 10, alignItems: "center",
                         }}
                       >
-                        {apiEx.gifUrl ? (
+                        {getExerciseDbGifUrl(apiEx.name) ? (
                           <Image
-                            source={{ uri: apiEx.gifUrl }}
+                            source={{ uri: getExerciseDbGifUrl(apiEx.name)! }}
                             style={{ width: 48, height: 48, borderRadius: 10, backgroundColor: "rgba(245,158,11,0.06)" }}
                             cachePolicy="disk"
                           />

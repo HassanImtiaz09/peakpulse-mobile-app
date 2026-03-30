@@ -4,19 +4,24 @@
  * Shows animated exercise demos with a Front / Side toggle.
  *
  * Resolution chain (per angle):
- *   1. MuscleWiki registry via getExerciseVideoUrl(key, angle) — 74 exercises
- *      with distinct front + side MP4 URLs.
- *   2. CDN lookup via getExerciseDbGifUrl() — 104+ name variants (animated GIFs,
- *      single angle only; used for front, duplicated for side if no other source).
- *   3. Async ExerciseDB RapidAPI search — 1300+ exercises (single angle).
- *   4. "Demo not available" placeholder.
+ *   1. CDN GIF lookup via getExerciseDbGifUrl() — 104+ name variants, manuscdn.com
+ *      hosted animated GIFs. Single angle only (same GIF for front & side).
+ *   2. Async ExerciseDB RapidAPI search — 1300+ exercises (single angle).
+ *   3. "Demo not available" placeholder.
+ *
+ * NOTE: MuscleWiki registry (exercise-gif-registry.ts) is intentionally NOT used
+ * because MuscleWiki's CDN now returns HTTP 403 for direct MP4 requests.
+ *
+ * The Front/Side toggle is kept for future use when a second-angle source becomes
+ * available. Currently both angles show the same CDN GIF and the Side button is
+ * disabled with "(N/A)".
  *
  * USAGE:
  *   import EnhancedGifPlayer from "@/components/enhanced-gif-player";
- *   <EnhancedGifPlayer exerciseKey="male-Barbell-barbell-squat-front" />
  *   <EnhancedGifPlayer exerciseName="Bench Press" />
+ *   <EnhancedGifPlayer exerciseKey="male-Barbell-barbell-squat-front" exerciseName="Barbell Squat" />
  */
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import {
   ActivityIndicator,
   StyleSheet,
@@ -32,18 +37,17 @@ import {
   searchExercisesByName,
   hasExerciseDBKey,
 } from "@/lib/exercisedb";
-import { EXERCISE_GIFS, getExerciseVideoUrl } from "@/lib/exercise-gif-registry";
 
 type Angle = "front" | "side";
 
 interface EnhancedGifPlayerProps {
   /**
-   * Registry key (with or without angle suffix).
-   * e.g. "male-Barbell-barbell-squat-front" or "male-Barbell-barbell-squat"
+   * Registry key (used to derive exercise name if exerciseName is not provided).
+   * e.g. "male-Barbell-barbell-squat-front"
    */
   exerciseKey?: string;
   /**
-   * Human-readable exercise name (preferred over exerciseKey for CDN/API lookups).
+   * Human-readable exercise name — PREFERRED prop for GIF resolution.
    */
   exerciseName?: string;
   /** Rendered height of the player in pixels. Defaults to 260. */
@@ -66,27 +70,6 @@ function keyToExerciseName(key: string): string {
     .trim();
 }
 
-/**
- * Ensure the registry key ends with "-front" so getExerciseVideoUrl can
- * derive the "-side" variant correctly.
- */
-function normaliseFrontKey(key: string): string {
-  if (key.endsWith("-front")) return key;
-  if (key.endsWith("-side")) return key.replace(/-side$/, "-front");
-  return `${key}-front`;
-}
-
-/**
- * Check whether the registry has a distinct side URL that differs from front.
- */
-function registryHasDistinctSide(frontKey: string): boolean {
-  const normalised = normaliseFrontKey(frontKey);
-  const sideKey = normalised.replace(/-front$/, "-side");
-  const frontUrl = EXERCISE_GIFS[normalised];
-  const sideUrl = EXERCISE_GIFS[sideKey];
-  return !!sideUrl && sideUrl !== frontUrl;
-}
-
 export default function EnhancedGifPlayer({
   exerciseKey,
   exerciseName,
@@ -95,111 +78,114 @@ export default function EnhancedGifPlayer({
   style,
 }: EnhancedGifPlayerProps) {
   const [angle, setAngle] = useState<Angle>("front");
-  const [frontUrl, setFrontUrl] = useState<string | null>(null);
-  const [sideUrl, setSideUrl] = useState<string | null>(null);
+  const [gifUrl, setGifUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [imgError, setImgError] = useState(false);
-  const [hasDistinctSide, setHasDistinctSide] = useState(false);
+  const [triedApiFallback, setTriedApiFallback] = useState(false);
   const mountedRef = useRef(true);
 
-  // Derive the exercise name for CDN/API fallback
-  const name = exerciseName ?? (exerciseKey ? keyToExerciseName(exerciseKey) : "");
+  // Derive the exercise name for CDN/API lookups
+  const name =
+    exerciseName ?? (exerciseKey ? keyToExerciseName(exerciseKey) : "");
 
   useEffect(() => {
     mountedRef.current = true;
     setLoading(true);
     setImgError(false);
-    setFrontUrl(null);
-    setSideUrl(null);
-    setHasDistinctSide(false);
+    setGifUrl(null);
+    setTriedApiFallback(false);
 
-    if (!name && !exerciseKey) {
+    if (!name) {
       setLoading(false);
       return;
     }
 
-    let resolved = false;
+    // ── Priority 1: CDN GIF lookup (instant, 104+ exercises, manuscdn.com) ──
+    const cdnUrl = getExerciseDbGifUrl(name);
+    if (cdnUrl) {
+      setGifUrl(cdnUrl);
+      setLoading(false);
+      return () => {
+        mountedRef.current = false;
+      };
+    }
 
-    // ── Priority 1: MuscleWiki registry (has proper front + side MP4s) ──
-    if (exerciseKey) {
-      const frontKey = normaliseFrontKey(exerciseKey);
-      const registryFront = EXERCISE_GIFS[frontKey];
-
-      if (registryFront) {
-        const registrySide = getExerciseVideoUrl(frontKey, "side");
-        const distinct = registryHasDistinctSide(frontKey);
-
-        if (mountedRef.current) {
-          setFrontUrl(registryFront);
-          setSideUrl(registrySide);
-          setHasDistinctSide(distinct);
+    // ── Priority 2: Async ExerciseDB RapidAPI search ──
+    if (hasExerciseDBKey()) {
+      searchExercisesByName(name, 1)
+        .then((results) => {
+          if (!mountedRef.current) return;
+          if (results.length > 0 && results[0].gifUrl) {
+            setGifUrl(results[0].gifUrl);
+          }
           setLoading(false);
-          resolved = true;
-        }
-      }
-    }
-
-    // ── Priority 2: CDN GIF lookup (single angle, instant) ──
-    if (!resolved && name) {
-      const cdnUrl = getExerciseDbGifUrl(name);
-      if (cdnUrl && mountedRef.current) {
-        setFrontUrl(cdnUrl);
-        // CDN only has one angle — side will be the same
-        setSideUrl(cdnUrl);
-        setHasDistinctSide(false);
-        setLoading(false);
-        resolved = true;
-      }
-    }
-
-    // ── Priority 3: ExerciseDB RapidAPI (async, single angle GIF) ──
-    if (!resolved && name) {
-      if (hasExerciseDBKey()) {
-        searchExercisesByName(name, 2)
-          .then((results) => {
-            if (!mountedRef.current) return;
-            if (results.length > 0) {
-              setFrontUrl(results[0].gifUrl);
-              // API results are different exercises, not different angles
-              // so use the same GIF for both
-              setSideUrl(results[0].gifUrl);
-              setHasDistinctSide(false);
-            }
+          setTriedApiFallback(true);
+        })
+        .catch(() => {
+          if (mountedRef.current) {
             setLoading(false);
-          })
-          .catch(() => {
-            if (mountedRef.current) setLoading(false);
-          });
-      } else {
-        // No API key — try single async lookup
-        getExerciseGifUrl(name)
-          .then((url) => {
-            if (!mountedRef.current) return;
-            if (url) {
-              setFrontUrl(url);
-              setSideUrl(url);
-            }
+            setTriedApiFallback(true);
+          }
+        });
+    } else {
+      // No API key — try the single-exercise async lookup
+      getExerciseGifUrl(name)
+        .then((url) => {
+          if (!mountedRef.current) return;
+          if (url) setGifUrl(url);
+          setLoading(false);
+          setTriedApiFallback(true);
+        })
+        .catch(() => {
+          if (mountedRef.current) {
             setLoading(false);
-          })
-          .catch(() => {
-            if (mountedRef.current) setLoading(false);
-          });
-      }
+            setTriedApiFallback(true);
+          }
+        });
     }
 
     return () => {
       mountedRef.current = false;
     };
-  }, [name, exerciseKey]);
+  }, [name]);
 
-  const currentUrl = angle === "front" ? frontUrl : (sideUrl ?? frontUrl);
-  const noContent = !currentUrl && !loading;
+  // ── Fallback on image error: try API if CDN GIF failed ──
+  const handleImageError = useCallback(() => {
+    if (!triedApiFallback && name && hasExerciseDBKey()) {
+      setTriedApiFallback(true);
+      searchExercisesByName(name, 1)
+        .then((results) => {
+          if (!mountedRef.current) return;
+          if (results.length > 0 && results[0].gifUrl) {
+            setGifUrl(results[0].gifUrl);
+            setImgError(false);
+          } else {
+            setImgError(true);
+          }
+          setLoading(false);
+        })
+        .catch(() => {
+          if (mountedRef.current) {
+            setImgError(true);
+            setLoading(false);
+          }
+        });
+    } else {
+      setImgError(true);
+      setLoading(false);
+    }
+  }, [name, triedApiFallback]);
+
+  const noContent = !gifUrl && !loading;
+  // Side view is not available since MuscleWiki is blocked and ExerciseDB API
+  // doesn't provide multi-angle GIFs. Keep the toggle UI for future use.
+  const hasDistinctSide = false;
 
   return (
     <View style={[styles.wrapper, style]}>
-      {/* GIF / Video Display */}
+      {/* GIF Display */}
       <View style={[styles.gifContainer, { height }]}>
-        {loading && !currentUrl && (
+        {loading && !gifUrl && (
           <View style={[StyleSheet.absoluteFill, styles.loadingLayer]}>
             <ActivityIndicator color={AMBER} size="small" />
             <Text style={styles.loadingText}>Loading demo...</Text>
@@ -217,18 +203,15 @@ export default function EnhancedGifPlayer({
           </View>
         )}
 
-        {currentUrl && !imgError && (
+        {gifUrl && !imgError && (
           <Image
-            source={{ uri: currentUrl }}
+            source={{ uri: gifUrl }}
             style={StyleSheet.absoluteFill}
             contentFit="contain"
             autoplay
             cachePolicy="memory-disk"
             onLoad={() => setLoading(false)}
-            onError={() => {
-              setImgError(true);
-              setLoading(false);
-            }}
+            onError={handleImageError}
           />
         )}
       </View>
@@ -237,7 +220,10 @@ export default function EnhancedGifPlayer({
       {showControls && (
         <View style={styles.toggleRow}>
           <TouchableOpacity
-            style={[styles.toggleBtn, angle === "front" && styles.toggleBtnActive]}
+            style={[
+              styles.toggleBtn,
+              angle === "front" && styles.toggleBtnActive,
+            ]}
             onPress={() => {
               setAngle("front");
               setImgError(false);

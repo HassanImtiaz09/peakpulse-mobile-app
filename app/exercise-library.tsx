@@ -345,9 +345,9 @@ export default function ExerciseLibraryScreen() {
                 >
                   {/* GIF Thumbnail */}
                   <View style={styles.cardGif}>
-                    {apiEx.gifUrl ? (
+                    {getExerciseDbGifUrl(apiEx.name) ? (
                       <Image
-                        source={{ uri: apiEx.gifUrl }}
+                        source={{ uri: getExerciseDbGifUrl(apiEx.name)! }}
                         style={styles.gifPreview}
                         contentFit="cover"
                         cachePolicy="disk"

@@ -108,17 +108,13 @@ export default function ExerciseDetailScreen() {
         </View>
 
         <ScrollView style={styles.scrollView} contentContainerStyle={{ paddingBottom: insets.bottom + 24 }} showsVerticalScrollIndicator={false}>
-          {/* GIF from ExerciseDB */}
-          {apiExercise.gifUrl ? (
-            <View style={{ marginHorizontal: 16, marginTop: 12, borderRadius: 16, overflow: "hidden", backgroundColor: C.surface, borderWidth: 1, borderColor: C.border }}>
-              <Image
-                source={{ uri: apiExercise.gifUrl }}
-                style={{ width: "100%", height: 260 }}
-                contentFit="contain"
-                cachePolicy="disk"
-              />
-            </View>
-          ) : null}
+          {/* GIF from CDN or ExerciseDB API */}
+          <View style={{ marginHorizontal: 16, marginTop: 12 }}>
+            <EnhancedGifPlayer
+              exerciseName={apiExercise.name}
+              height={240}
+            />
+          </View>
 
           {/* Quick Info */}
           <View style={[styles.quickInfoCard, { marginHorizontal: 16, marginTop: 12 }]}>

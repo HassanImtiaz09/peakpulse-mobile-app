@@ -2671,3 +2671,14 @@
 - [x] Fix: Rewrote EnhancedGifPlayer to use getExerciseVideoUrl(key, angle) from exercise-gif-registry.ts as priority 1 source, with CDN/API fallback
 - [x] 74 exercises now have distinct front + side MuscleWiki MP4 URLs; Side button shows "(N/A)" when only one angle exists
 - [x] All 2090 tests pass, 0 TypeScript errors
+
+## Exercise Detail "Demo Not Available" Regression (Round 43)
+- [x] Bug: All exercises show "demo not available" — MuscleWiki CDN returns HTTP 403 for all MP4 URLs
+- [x] Root cause: EnhancedGifPlayer used MuscleWiki registry as priority 1, but all 148 URLs now return 403
+- [x] Root cause: ExerciseDB RapidAPI endpoint no longer returns gifUrl field (only id, name, bodyPart, etc.)
+- [x] Fix: Rewrote EnhancedGifPlayer — CDN GIFs (manuscdn.com) as priority 1, ExerciseDB API (static.exercisedb.dev) as fallback, MuscleWiki removed
+- [x] Fix: Added onError fallback chain — if primary URL fails, tries next source before showing placeholder
+- [x] Fix: Rewrote exercisedb.ts to use Vercel endpoint (free, returns gifUrl at static.exercisedb.dev) as primary, RapidAPI as fallback
+- [x] Fix: Updated browse-by-muscle, create-workout, exercise-library to use getExerciseDbGifUrl() instead of apiEx.gifUrl
+- [x] Fix: Updated exercise-detail API fallback to use EnhancedGifPlayer instead of apiExercise.gifUrl
+- [x] All 2090 tests pass, 0 TypeScript errors

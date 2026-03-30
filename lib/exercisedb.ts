@@ -1,28 +1,32 @@
 /**
  * ExerciseDB Service — Full API Integration
  *
- * Fetches exercise data from ExerciseDB via RapidAPI.
- * Free tier: 500 requests/month with aggressive in-memory caching.
+ * Fetches exercise data from ExerciseDB.
  *
- * Endpoints used:
- *   - GET /exercises/name/{name}      → search by exercise name
- *   - GET /exercises/bodyPart/{part}   → list by body part
- *   - GET /exercises/target/{target}   → list by target muscle
- *   - GET /exercises/equipment/{equip} → list by equipment
- *   - GET /exercises/{id}              → single exercise detail
- *   - GET /exercises                   → paginated list of all exercises
- *   - GET /exercises/bodyPartList      → list of valid body parts
- *   - GET /exercises/targetList        → list of valid target muscles
- *   - GET /exercises/equipmentList     → list of valid equipment types
+ * Two API sources (tried in order):
+ *   1. Vercel endpoint (free, no key needed, returns gifUrl):
+ *      https://exercisedb-api.vercel.app/api/v1/exercises
+ *   2. RapidAPI endpoint (requires key, no gifUrl in response):
+ *      https://exercisedb.p.rapidapi.com/exercises
+ *
+ * The Vercel endpoint is preferred because it returns `gifUrl` with working
+ * GIF URLs hosted at static.exercisedb.dev. The RapidAPI endpoint is kept
+ * as a fallback for edge cases.
  *
  * All responses are cached in memory for the app session lifetime.
- * Without a key the functions return empty results gracefully.
+ * Without connectivity the functions return empty results gracefully.
  */
 
 const RAPIDAPI_KEY = process.env.EXPO_PUBLIC_RAPIDAPI_KEY ?? "";
-const BASE_URL = "https://exercisedb.p.rapidapi.com";
 
-const API_HEADERS: Record<string, string> = {
+// ── Vercel API (primary — free, returns gifUrl) ─────────────────────────────
+
+const VERCEL_BASE = "https://exercisedb-api.vercel.app/api/v1";
+
+// ── RapidAPI (fallback — requires key, no gifUrl) ───────────────────────────
+
+const RAPID_BASE = "https://exercisedb.p.rapidapi.com";
+const RAPID_HEADERS: Record<string, string> = {
   "X-RapidAPI-Key": RAPIDAPI_KEY,
   "X-RapidAPI-Host": "exercisedb.p.rapidapi.com",
 };
@@ -52,6 +56,45 @@ export type ExerciseDBBodyPart =
   | "upper arms"
   | "upper legs"
   | "waist";
+
+// ── Vercel response types ───────────────────────────────────────────────────
+
+interface VercelExercise {
+  exerciseId: string;
+  name: string;
+  gifUrl: string;
+  targetMuscles: string[];
+  bodyParts: string[];
+  equipments: string[];
+  secondaryMuscles: string[];
+  instructions: string[];
+}
+
+interface VercelResponse {
+  success: boolean;
+  data: VercelExercise[];
+  metadata?: {
+    totalExercises: number;
+    totalPages: number;
+    currentPage: number;
+  };
+}
+
+/** Convert Vercel response format to our internal format */
+function normaliseVercel(v: VercelExercise): ExerciseDBExercise {
+  return {
+    id: v.exerciseId,
+    name: v.name,
+    bodyPart: v.bodyParts?.[0] ?? "",
+    equipment: v.equipments?.[0] ?? "",
+    gifUrl: v.gifUrl ?? "",
+    target: v.targetMuscles?.[0] ?? "",
+    secondaryMuscles: v.secondaryMuscles ?? [],
+    instructions: (v.instructions ?? []).map((s) =>
+      s.replace(/^Step:\d+\s*/i, "")
+    ),
+  };
+}
 
 // ── Cache ────────────────────────────────────────────────────────────────────
 
@@ -92,10 +135,10 @@ function normaliseQuery(name: string): string {
     .trim();
 }
 
-async function apiFetch<T>(path: string): Promise<T | null> {
-  if (!RAPIDAPI_KEY) return null;
+/** Fetch from Vercel API (primary — free, has gifUrl) */
+async function vercelFetch<T>(path: string): Promise<T | null> {
   try {
-    const res = await fetch(`${BASE_URL}${path}`, { headers: API_HEADERS });
+    const res = await fetch(`${VERCEL_BASE}${path}`);
     if (!res.ok) return null;
     return (await res.json()) as T;
   } catch {
@@ -103,36 +146,66 @@ async function apiFetch<T>(path: string): Promise<T | null> {
   }
 }
 
-// ── GIF URL Lookup (original API — kept for backward compat) ─────────────
+/** Fetch from RapidAPI (fallback — requires key) */
+async function rapidFetch<T>(path: string): Promise<T | null> {
+  if (!RAPIDAPI_KEY) return null;
+  try {
+    const res = await fetch(`${RAPID_BASE}${path}`, {
+      headers: RAPID_HEADERS,
+    });
+    if (!res.ok) return null;
+    return (await res.json()) as T;
+  } catch {
+    return null;
+  }
+}
+
+// ── GIF URL Lookup (backward compat) ────────────────────────────────────────
 
 /** In-memory cache: normalised exercise name → gifUrl */
 const _gifCache = new Map<string, string>();
 
 /**
- * Fetch the animated GIF URL for a given exercise name from ExerciseDB.
- * Returns null if no API key is configured or the exercise is not found.
+ * Fetch the animated GIF URL for a given exercise name.
+ * Tries Vercel first (has gifUrl), then RapidAPI fallback.
  * Results are cached in memory for the lifetime of the app session.
  */
 export async function getExerciseGifUrl(
   exerciseName: string
 ): Promise<string | null> {
-  if (!RAPIDAPI_KEY) return null;
-
   const key = normaliseQuery(exerciseName);
   if (_gifCache.has(key)) return _gifCache.get(key)!;
 
   try {
+    // Try Vercel first
     const encoded = encodeURIComponent(key);
-    const url = `${BASE_URL}/exercises/name/${encoded}?limit=1&offset=0`;
-    const res = await fetch(url, { headers: API_HEADERS });
-    if (!res.ok) return null;
+    const vercelData = await vercelFetch<VercelResponse>(
+      `/exercises?search=${encoded}&limit=1`
+    );
+    if (vercelData?.data?.length) {
+      const gifUrl = vercelData.data[0].gifUrl;
+      if (gifUrl) {
+        _gifCache.set(key, gifUrl);
+        return gifUrl;
+      }
+    }
 
-    const data: ExerciseDBExercise[] = await res.json();
-    if (!data || data.length === 0) return null;
+    // Fallback to RapidAPI (no gifUrl, but we can construct one from ID)
+    if (RAPIDAPI_KEY) {
+      const rapidUrl = `${RAPID_BASE}/exercises/name/${encoded}?limit=1&offset=0`;
+      const res = await fetch(rapidUrl, { headers: RAPID_HEADERS });
+      if (res.ok) {
+        const data = await res.json();
+        if (data?.[0]?.id) {
+          // Construct GIF URL from exercise ID
+          const gifUrl = `https://static.exercisedb.dev/media/${data[0].id}.gif`;
+          _gifCache.set(key, gifUrl);
+          return gifUrl;
+        }
+      }
+    }
 
-    const gifUrl = data[0]?.gifUrl ?? null;
-    if (gifUrl) _gifCache.set(key, gifUrl);
-    return gifUrl;
+    return null;
   } catch {
     return null;
   }
@@ -145,22 +218,20 @@ export async function getExerciseGifUrl(
 export async function prewarmExerciseCache(
   exerciseNames: string[]
 ): Promise<void> {
-  if (!RAPIDAPI_KEY) return;
   await Promise.allSettled(exerciseNames.map(getExerciseGifUrl));
 }
 
-// ── Search by Name ───────────────────────────────────────────────────────────
+// ── Search by Name ──────────────────────────────────────────────────────────
 
 /**
  * Search exercises by name. Returns up to `limit` results.
- * Cached per normalised query string.
+ * Tries Vercel first (has gifUrl), then RapidAPI fallback.
  */
 export async function searchExercisesByName(
   name: string,
   limit: number = 20,
   offset: number = 0
 ): Promise<ExerciseDBExercise[]> {
-  if (!RAPIDAPI_KEY) return [];
   const key = normaliseQuery(name);
   const cacheKey = `search:${key}:${limit}:${offset}`;
 
@@ -168,15 +239,42 @@ export async function searchExercisesByName(
   if (cached) return cached;
 
   const encoded = encodeURIComponent(key);
-  const data = await apiFetch<ExerciseDBExercise[]>(
-    `/exercises/name/${encoded}?limit=${limit}&offset=${offset}`
+
+  // Try Vercel first
+  const vercelData = await vercelFetch<VercelResponse>(
+    `/exercises?search=${encoded}&limit=${limit}&offset=${offset}`
   );
-  const result = data ?? [];
-  cacheSet(cacheKey, result);
-  return result;
+  if (vercelData?.data?.length) {
+    const result = vercelData.data.map(normaliseVercel);
+    cacheSet(cacheKey, result);
+    return result;
+  }
+
+  // Fallback to RapidAPI
+  if (RAPIDAPI_KEY) {
+    const data = await rapidFetch<any[]>(
+      `/exercises/name/${encoded}?limit=${limit}&offset=${offset}`
+    );
+    if (data?.length) {
+      const result: ExerciseDBExercise[] = data.map((d) => ({
+        id: d.id ?? "",
+        name: d.name ?? "",
+        bodyPart: d.bodyPart ?? "",
+        equipment: d.equipment ?? "",
+        gifUrl: d.gifUrl ?? `https://static.exercisedb.dev/media/${d.id}.gif`,
+        target: d.target ?? "",
+        secondaryMuscles: d.secondaryMuscles ?? [],
+        instructions: d.instructions ?? [],
+      }));
+      cacheSet(cacheKey, result);
+      return result;
+    }
+  }
+
+  return [];
 }
 
-// ── Fetch by Body Part ───────────────────────────────────────────────────────
+// ── Fetch by Body Part ──────────────────────────────────────────────────────
 
 /**
  * Fetch exercises for a specific body part.
@@ -188,7 +286,6 @@ export async function getExercisesByBodyPart(
   limit: number = 50,
   offset: number = 0
 ): Promise<ExerciseDBExercise[]> {
-  if (!RAPIDAPI_KEY) return [];
   const normalised = bodyPart.toLowerCase().trim();
   const cacheKey = `bodyPart:${normalised}:${limit}:${offset}`;
 
@@ -196,15 +293,42 @@ export async function getExercisesByBodyPart(
   if (cached) return cached;
 
   const encoded = encodeURIComponent(normalised);
-  const data = await apiFetch<ExerciseDBExercise[]>(
-    `/exercises/bodyPart/${encoded}?limit=${limit}&offset=${offset}`
+
+  // Try Vercel first
+  const vercelData = await vercelFetch<VercelResponse>(
+    `/exercises?bodyPart=${encoded}&limit=${limit}&offset=${offset}`
   );
-  const result = data ?? [];
-  cacheSet(cacheKey, result);
-  return result;
+  if (vercelData?.data?.length) {
+    const result = vercelData.data.map(normaliseVercel);
+    cacheSet(cacheKey, result);
+    return result;
+  }
+
+  // Fallback to RapidAPI
+  if (RAPIDAPI_KEY) {
+    const data = await rapidFetch<any[]>(
+      `/exercises/bodyPart/${encoded}?limit=${limit}&offset=${offset}`
+    );
+    if (data?.length) {
+      const result: ExerciseDBExercise[] = data.map((d) => ({
+        id: d.id ?? "",
+        name: d.name ?? "",
+        bodyPart: d.bodyPart ?? "",
+        equipment: d.equipment ?? "",
+        gifUrl: d.gifUrl ?? `https://static.exercisedb.dev/media/${d.id}.gif`,
+        target: d.target ?? "",
+        secondaryMuscles: d.secondaryMuscles ?? [],
+        instructions: d.instructions ?? [],
+      }));
+      cacheSet(cacheKey, result);
+      return result;
+    }
+  }
+
+  return [];
 }
 
-// ── Fetch by Target Muscle ───────────────────────────────────────────────────
+// ── Fetch by Target Muscle ──────────────────────────────────────────────────
 
 /**
  * Fetch exercises that target a specific muscle.
@@ -215,7 +339,6 @@ export async function getExercisesByTarget(
   limit: number = 50,
   offset: number = 0
 ): Promise<ExerciseDBExercise[]> {
-  if (!RAPIDAPI_KEY) return [];
   const normalised = target.toLowerCase().trim();
   const cacheKey = `target:${normalised}:${limit}:${offset}`;
 
@@ -223,15 +346,42 @@ export async function getExercisesByTarget(
   if (cached) return cached;
 
   const encoded = encodeURIComponent(normalised);
-  const data = await apiFetch<ExerciseDBExercise[]>(
-    `/exercises/target/${encoded}?limit=${limit}&offset=${offset}`
+
+  // Try Vercel first
+  const vercelData = await vercelFetch<VercelResponse>(
+    `/exercises?targetMuscle=${encoded}&limit=${limit}&offset=${offset}`
   );
-  const result = data ?? [];
-  cacheSet(cacheKey, result);
-  return result;
+  if (vercelData?.data?.length) {
+    const result = vercelData.data.map(normaliseVercel);
+    cacheSet(cacheKey, result);
+    return result;
+  }
+
+  // Fallback to RapidAPI
+  if (RAPIDAPI_KEY) {
+    const data = await rapidFetch<any[]>(
+      `/exercises/target/${encoded}?limit=${limit}&offset=${offset}`
+    );
+    if (data?.length) {
+      const result: ExerciseDBExercise[] = data.map((d) => ({
+        id: d.id ?? "",
+        name: d.name ?? "",
+        bodyPart: d.bodyPart ?? "",
+        equipment: d.equipment ?? "",
+        gifUrl: d.gifUrl ?? `https://static.exercisedb.dev/media/${d.id}.gif`,
+        target: d.target ?? "",
+        secondaryMuscles: d.secondaryMuscles ?? [],
+        instructions: d.instructions ?? [],
+      }));
+      cacheSet(cacheKey, result);
+      return result;
+    }
+  }
+
+  return [];
 }
 
-// ── Fetch by Equipment ───────────────────────────────────────────────────────
+// ── Fetch by Equipment ──────────────────────────────────────────────────────
 
 /**
  * Fetch exercises that use specific equipment.
@@ -242,7 +392,6 @@ export async function getExercisesByEquipment(
   limit: number = 50,
   offset: number = 0
 ): Promise<ExerciseDBExercise[]> {
-  if (!RAPIDAPI_KEY) return [];
   const normalised = equipment.toLowerCase().trim();
   const cacheKey = `equipment:${normalised}:${limit}:${offset}`;
 
@@ -250,15 +399,42 @@ export async function getExercisesByEquipment(
   if (cached) return cached;
 
   const encoded = encodeURIComponent(normalised);
-  const data = await apiFetch<ExerciseDBExercise[]>(
-    `/exercises/equipment/${encoded}?limit=${limit}&offset=${offset}`
+
+  // Try Vercel first
+  const vercelData = await vercelFetch<VercelResponse>(
+    `/exercises?equipment=${encoded}&limit=${limit}&offset=${offset}`
   );
-  const result = data ?? [];
-  cacheSet(cacheKey, result);
-  return result;
+  if (vercelData?.data?.length) {
+    const result = vercelData.data.map(normaliseVercel);
+    cacheSet(cacheKey, result);
+    return result;
+  }
+
+  // Fallback to RapidAPI
+  if (RAPIDAPI_KEY) {
+    const data = await rapidFetch<any[]>(
+      `/exercises/equipment/${encoded}?limit=${limit}&offset=${offset}`
+    );
+    if (data?.length) {
+      const result: ExerciseDBExercise[] = data.map((d) => ({
+        id: d.id ?? "",
+        name: d.name ?? "",
+        bodyPart: d.bodyPart ?? "",
+        equipment: d.equipment ?? "",
+        gifUrl: d.gifUrl ?? `https://static.exercisedb.dev/media/${d.id}.gif`,
+        target: d.target ?? "",
+        secondaryMuscles: d.secondaryMuscles ?? [],
+        instructions: d.instructions ?? [],
+      }));
+      cacheSet(cacheKey, result);
+      return result;
+    }
+  }
+
+  return [];
 }
 
-// ── Fetch Single Exercise by ID ──────────────────────────────────────────────
+// ── Fetch Single Exercise by ID ─────────────────────────────────────────────
 
 /**
  * Fetch a single exercise by its ExerciseDB ID.
@@ -267,18 +443,44 @@ export async function getExercisesByEquipment(
 export async function getExerciseById(
   id: string
 ): Promise<ExerciseDBExercise | null> {
-  if (!RAPIDAPI_KEY) return null;
   const cacheKey = `exercise:${id}`;
 
   const cached = cacheGet<ExerciseDBExercise>(cacheKey);
   if (cached) return cached;
 
-  const data = await apiFetch<ExerciseDBExercise>(`/exercises/exercise/${id}`);
-  if (data) cacheSet(cacheKey, data);
-  return data;
+  // Try Vercel first
+  const vercelData = await vercelFetch<{ success: boolean; data: VercelExercise }>(
+    `/exercises/${id}`
+  );
+  if (vercelData?.data) {
+    const result = normaliseVercel(vercelData.data);
+    cacheSet(cacheKey, result);
+    return result;
+  }
+
+  // Fallback to RapidAPI
+  if (RAPIDAPI_KEY) {
+    const data = await rapidFetch<any>(`/exercises/exercise/${id}`);
+    if (data) {
+      const result: ExerciseDBExercise = {
+        id: data.id ?? id,
+        name: data.name ?? "",
+        bodyPart: data.bodyPart ?? "",
+        equipment: data.equipment ?? "",
+        gifUrl: data.gifUrl ?? `https://static.exercisedb.dev/media/${id}.gif`,
+        target: data.target ?? "",
+        secondaryMuscles: data.secondaryMuscles ?? [],
+        instructions: data.instructions ?? [],
+      };
+      cacheSet(cacheKey, result);
+      return result;
+    }
+  }
+
+  return null;
 }
 
-// ── Fetch All Exercises (paginated) ──────────────────────────────────────────
+// ── Fetch All Exercises (paginated) ─────────────────────────────────────────
 
 /**
  * Fetch a paginated list of all exercises.
@@ -287,69 +489,125 @@ export async function getAllExercisesFromAPI(
   limit: number = 50,
   offset: number = 0
 ): Promise<ExerciseDBExercise[]> {
-  if (!RAPIDAPI_KEY) return [];
   const cacheKey = `all:${limit}:${offset}`;
 
   const cached = cacheGet<ExerciseDBExercise[]>(cacheKey);
   if (cached) return cached;
 
-  const data = await apiFetch<ExerciseDBExercise[]>(
+  // Try Vercel first
+  const vercelData = await vercelFetch<VercelResponse>(
     `/exercises?limit=${limit}&offset=${offset}`
   );
-  const result = data ?? [];
-  cacheSet(cacheKey, result);
-  return result;
+  if (vercelData?.data?.length) {
+    const result = vercelData.data.map(normaliseVercel);
+    cacheSet(cacheKey, result);
+    return result;
+  }
+
+  // Fallback to RapidAPI
+  if (RAPIDAPI_KEY) {
+    const data = await rapidFetch<any[]>(
+      `/exercises?limit=${limit}&offset=${offset}`
+    );
+    if (data?.length) {
+      const result: ExerciseDBExercise[] = data.map((d) => ({
+        id: d.id ?? "",
+        name: d.name ?? "",
+        bodyPart: d.bodyPart ?? "",
+        equipment: d.equipment ?? "",
+        gifUrl: d.gifUrl ?? `https://static.exercisedb.dev/media/${d.id}.gif`,
+        target: d.target ?? "",
+        secondaryMuscles: d.secondaryMuscles ?? [],
+        instructions: d.instructions ?? [],
+      }));
+      cacheSet(cacheKey, result);
+      return result;
+    }
+  }
+
+  return [];
 }
 
-// ── Metadata Lists ───────────────────────────────────────────────────────────
+// ── Metadata Lists ──────────────────────────────────────────────────────────
 
 /** Fetch the list of valid body parts from ExerciseDB */
 export async function getBodyPartList(): Promise<string[]> {
-  if (!RAPIDAPI_KEY) return [];
   const cacheKey = "meta:bodyPartList";
   const cached = cacheGet<string[]>(cacheKey);
   if (cached) return cached;
 
-  const data = await apiFetch<string[]>("/exercises/bodyPartList");
-  const result = data ?? [];
-  cacheSet(cacheKey, result);
-  return result;
+  // Vercel doesn't have a dedicated list endpoint, use RapidAPI
+  if (RAPIDAPI_KEY) {
+    const data = await rapidFetch<string[]>("/exercises/bodyPartList");
+    if (data?.length) {
+      cacheSet(cacheKey, data);
+      return data;
+    }
+  }
+
+  // Fallback: hardcoded list
+  const fallback = [
+    "back", "cardio", "chest", "lower arms", "lower legs",
+    "neck", "shoulders", "upper arms", "upper legs", "waist",
+  ];
+  cacheSet(cacheKey, fallback);
+  return fallback;
 }
 
 /** Fetch the list of valid target muscles from ExerciseDB */
 export async function getTargetList(): Promise<string[]> {
-  if (!RAPIDAPI_KEY) return [];
   const cacheKey = "meta:targetList";
   const cached = cacheGet<string[]>(cacheKey);
   if (cached) return cached;
 
-  const data = await apiFetch<string[]>("/exercises/targetList");
-  const result = data ?? [];
-  cacheSet(cacheKey, result);
-  return result;
+  if (RAPIDAPI_KEY) {
+    const data = await rapidFetch<string[]>("/exercises/targetList");
+    if (data?.length) {
+      cacheSet(cacheKey, data);
+      return data;
+    }
+  }
+
+  const fallback = [
+    "abductors", "abs", "adductors", "biceps", "calves", "cardiovascular system",
+    "delts", "forearms", "glutes", "hamstrings", "lats", "levator scapulae",
+    "pectorals", "quads", "serratus anterior", "spine", "traps", "triceps",
+    "upper back",
+  ];
+  cacheSet(cacheKey, fallback);
+  return fallback;
 }
 
 /** Fetch the list of valid equipment types from ExerciseDB */
 export async function getEquipmentList(): Promise<string[]> {
-  if (!RAPIDAPI_KEY) return [];
   const cacheKey = "meta:equipmentList";
   const cached = cacheGet<string[]>(cacheKey);
   if (cached) return cached;
 
-  const data = await apiFetch<string[]>("/exercises/equipmentList");
-  const result = data ?? [];
-  cacheSet(cacheKey, result);
-  return result;
+  if (RAPIDAPI_KEY) {
+    const data = await rapidFetch<string[]>("/exercises/equipmentList");
+    if (data?.length) {
+      cacheSet(cacheKey, data);
+      return data;
+    }
+  }
+
+  const fallback = [
+    "assisted", "band", "barbell", "body weight", "bosu ball", "cable",
+    "dumbbell", "elliptical machine", "ez barbell", "hammer", "kettlebell",
+    "leverage machine", "medicine ball", "olympic barbell", "resistance band",
+    "roller", "rope", "skierg machine", "sled machine", "smith machine",
+    "stability ball", "stationary bike", "stepmill machine", "tire",
+    "trap bar", "upper body ergometer", "weighted", "wheel roller",
+  ];
+  cacheSet(cacheKey, fallback);
+  return fallback;
 }
 
-// ── Mapping Helpers ──────────────────────────────────────────────────────────
+// ── Mapping Helpers ─────────────────────────────────────────────────────────
 
 /**
  * Map our internal MuscleGroup names to ExerciseDB body parts.
- * Our app uses: chest, back, shoulders, abs, quads, hamstrings, glutes, biceps,
- *               triceps, forearms, calves, traps, lats, obliques, hip_flexors
- * ExerciseDB uses: back, cardio, chest, lower arms, lower legs, neck, shoulders,
- *                  upper arms, upper legs, waist
  */
 export function muscleGroupToBodyPart(muscle: string): string {
   const map: Record<string, string> = {

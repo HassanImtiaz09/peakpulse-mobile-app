@@ -489,9 +489,9 @@ export default function BrowseByMuscleScreen() {
                           style={({ pressed }) => [styles.exerciseCard, pressed && { opacity: 0.7 }]}
                         >
                           <View style={styles.exerciseGifWrap}>
-                            {apiEx.gifUrl ? (
+                            {getExerciseDbGifUrl(apiEx.name) ? (
                               <Image
-                                source={{ uri: apiEx.gifUrl }}
+                                source={{ uri: getExerciseDbGifUrl(apiEx.name)! }}
                                 style={styles.exerciseGif}
                                 contentFit="contain"
                                 cachePolicy="disk"
