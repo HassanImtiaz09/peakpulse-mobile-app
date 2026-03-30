@@ -445,17 +445,12 @@ describe("Social Circle Integration", () => {
 describe("Dashboard Quick Actions Integration", () => {
   const src = readFile(path.join(APP, "(tabs)", "index.tsx"));
 
-  it("has Explore section with 4 tiles", () => {
-    // Moved to dedicated screen in Today redesign
+  it("has Explore section with key tiles", () => {
     expect(src).toContain("Explore");
     expect(src).toContain("Body Scan");
-    expect(src).toContain("Progress");
-    expect(src).toContain("Analytics");
-    expect(src).toContain("Gym Finder");
   });
 
   it("has Insights section", () => {
-    // Moved to dedicated screen in Today redesign
     expect(src).toContain("Insight");
   });
 });

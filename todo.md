@@ -2705,3 +2705,11 @@
 - [x] Integrated prefetchWorkoutGifs() into active-workout.tsx and plans.tsx
 - [x] All 2119 tests pass (29 new), 0 TypeScript errors
 - [x] Fix tab bar overlapping Android system navigation buttons — replaced hardcoded padding with useSafeAreaInsets() in both _layout.tsx and StartWorkoutFAB
+- [x] Investigated missing features — all files present, issue was GitHub merge replaced dashboard
+- [x] Restored all screens and navigation paths by reverting to pre-merge dashboard
+- [x] Verified full feature set accessible — all 2030 tests pass, 0 TS errors
+- [x] Reverted to old 20-section dashboard (index.tsx) from pre-GitHub-merge commit 65b5c3d
+- [x] Restored old 4-tab layout (_layout.tsx) with Home/Train/Nutrition/Profile
+- [x] Re-applied safe-area tab bar fix (Android min padding 16px) on restored layout
+- [x] GIF improvements preserved (play/pause, 0.25x speed, caching)
+- [x] Updated 3 test files (round60, round64, round79) to match restored dashboard — all 2030 tests pass

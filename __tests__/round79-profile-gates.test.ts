@@ -142,9 +142,9 @@ describe("Dashboard Profile Integration", () => {
   //   expect(src).toContain("profilePhotoUri");
   // });
 
-  it("dashboard does not import useUserProfile after Today redesign", () => {
+  it("dashboard imports useUserProfile for personalized greeting", () => {
     const src = readFile("app/(tabs)/index.tsx");
-    expect(src).not.toContain("useUserProfile");
+    expect(src).toContain("useUserProfile");
   });
 });
 
