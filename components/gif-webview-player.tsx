@@ -5,12 +5,18 @@
  * over playback speed and play/pause state. This bypasses expo-image's
  * limitation of not supporting GIF playback rate adjustment.
  *
+ * ARCHITECTURE FIX (Round 48):
+ *   The GIF binary is fetched in React Native (bypassing CORS) and passed
+ *   to the WebView as a base64 data URI. Previously, the WebView tried to
+ *   fetch() the CDN URL directly, which was blocked by CORS (CloudFront
+ *   returns 403 on preflight from null origin).
+ *
  * Features:
  *   - 0.25x speed playback (configurable via `speed` prop)
  *   - Play/pause toggle via tap overlay
  *   - Speed badge showing current playback rate
  *   - Smooth frame-by-frame rendering using canvas
- *   - Falls back to expo-image for non-WebView environments
+ *   - Falls back to expo-image for web platform
  */
 import React, { useRef, useState, useCallback, useEffect } from "react";
 import {
@@ -19,16 +25,19 @@ import {
   Pressable,
   StyleSheet,
   Platform,
-  ActivityIndicator,
   ViewStyle,
+  Modal,
+  Dimensions,
 } from "react-native";
 import { WebView } from "react-native-webview";
 import { Image } from "expo-image";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 interface GifWebViewPlayerProps {
-  /** URL of the GIF to play */
+  /** Base64-encoded GIF data (without data: prefix) or a URL */
   uri: string;
+  /** Base64 GIF data — preferred over uri for WebView rendering */
+  base64Data?: string;
   /** Playback speed multiplier. 0.25 = quarter speed. Default: 0.25 */
   speed?: number;
   /** Height of the player. Default: 260 */
@@ -41,14 +50,20 @@ interface GifWebViewPlayerProps {
   onError?: () => void;
   /** Called when the GIF successfully loads */
   onLoad?: () => void;
+  /** Whether to show the fullscreen expand button */
+  showExpandButton?: boolean;
 }
 
 /**
  * Generate the HTML content for the WebView GIF player.
- * Uses libgif-js approach: fetches the GIF as binary, parses frames,
- * and renders them on a canvas with controlled timing.
+ * Accepts base64 GIF data directly to avoid CORS issues.
  */
-function generatePlayerHTML(gifUrl: string, speed: number, autoplay: boolean): string {
+function generatePlayerHTML(
+  base64Data: string,
+  speed: number,
+  autoplay: boolean
+): string {
+  // The base64 data is embedded directly in the HTML
   return `<!DOCTYPE html>
 <html>
 <head>
@@ -131,7 +146,7 @@ function generatePlayerHTML(gifUrl: string, speed: number, autoplay: boolean): s
     </div>
   </div>
   <div id="speedBadge">${speed}x</div>
-  <div id="loading"><div class="spinner"></div><div class="loadText">Loading demo...</div></div>
+  <div id="loading"><div class="spinner"></div><div class="loadText">Parsing frames...</div></div>
 </div>
 <script>
 (function() {
@@ -143,54 +158,27 @@ function generatePlayerHTML(gifUrl: string, speed: number, autoplay: boolean): s
   var playSvg = document.getElementById('playSvg');
   var loadingEl = document.getElementById('loading');
   var speed = ${speed};
-  var playing = ${autoplay ? 'true' : 'false'};
+  var playing = ${autoplay ? "true" : "false"};
   var frames = [];
   var frameIndex = 0;
   var animTimer = null;
   var hideTimer = null;
   var loaded = false;
 
-  // Use an Image element to load the GIF, then draw first frame
-  // For frame-by-frame control, we use a different approach:
-  // Load GIF as img, draw to canvas. For speed control, we use
-  // a simpler approach: show/hide the img with CSS animation timing.
-  
-  // Actually, the simplest reliable cross-platform approach:
-  // Load the GIF in an offscreen img, and use requestAnimationFrame
-  // to periodically capture and redraw frames at the desired speed.
-  // But this won't actually slow down the GIF since the browser
-  // controls GIF frame timing internally.
-  
-  // Best approach: Use SuperGif-style parsing or simply use CSS
-  // animation-play-state for pause, and for speed we can use a
-  // creative workaround with the img element.
-  
-  // PRACTICAL SOLUTION: For play/pause, toggle img visibility.
-  // For speed control, we'll use a canvas-based frame stepper.
-  // We parse the GIF binary to extract individual frames.
-
-  // Parse GIF frames from binary data
   function parseGIF(buffer) {
     var dv = new DataView(buffer);
     var offset = 0;
-    
-    // Check GIF header
     var header = '';
     for (var i = 0; i < 6; i++) header += String.fromCharCode(dv.getUint8(i));
     if (header.indexOf('GIF') !== 0) return null;
     offset = 6;
-    
-    // Logical Screen Descriptor
     var width = dv.getUint16(offset, true); offset += 2;
     var height = dv.getUint16(offset, true); offset += 2;
     var packed = dv.getUint8(offset); offset++;
     var bgIndex = dv.getUint8(offset); offset++;
-    var pixelAspect = dv.getUint8(offset); offset++;
-    
+    offset++; // pixel aspect
     var gctFlag = (packed >> 7) & 1;
     var gctSize = 2 << (packed & 7);
-    
-    // Global Color Table
     var gct = null;
     if (gctFlag) {
       gct = [];
@@ -199,47 +187,39 @@ function generatePlayerHTML(gifUrl: string, speed: number, autoplay: boolean): s
         offset += 3;
       }
     }
-    
     var frames = [];
     var gce = { delay: 100, disposalMethod: 0, transparentIndex: -1 };
-    
     while (offset < buffer.byteLength) {
       var sentinel = dv.getUint8(offset); offset++;
-      
-      if (sentinel === 0x3B) break; // Trailer
-      
-      if (sentinel === 0x21) { // Extension
+      if (sentinel === 0x3B) break;
+      if (sentinel === 0x21) {
         var label = dv.getUint8(offset); offset++;
-        
-        if (label === 0xF9) { // Graphics Control Extension
-          var blockSize = dv.getUint8(offset); offset++;
+        if (label === 0xF9) {
+          offset++; // block size
           var gcePacked = dv.getUint8(offset); offset++;
-          gce.delay = dv.getUint16(offset, true) * 10; // Convert to ms
-          if (gce.delay < 20) gce.delay = 100; // Minimum delay
+          gce.delay = dv.getUint16(offset, true) * 10;
+          if (gce.delay < 20) gce.delay = 100;
           offset += 2;
           gce.transparentIndex = (gcePacked & 1) ? dv.getUint8(offset) : -1;
           offset++;
           gce.disposalMethod = (gcePacked >> 2) & 7;
-          offset++; // Block terminator
+          offset++;
         } else {
-          // Skip other extensions
           while (true) {
-            var subBlockSize = dv.getUint8(offset); offset++;
-            if (subBlockSize === 0) break;
-            offset += subBlockSize;
+            var sb = dv.getUint8(offset); offset++;
+            if (sb === 0) break;
+            offset += sb;
           }
         }
-      } else if (sentinel === 0x2C) { // Image Descriptor
+      } else if (sentinel === 0x2C) {
         var imgLeft = dv.getUint16(offset, true); offset += 2;
         var imgTop = dv.getUint16(offset, true); offset += 2;
         var imgWidth = dv.getUint16(offset, true); offset += 2;
         var imgHeight = dv.getUint16(offset, true); offset += 2;
         var imgPacked = dv.getUint8(offset); offset++;
-        
         var lctFlag = (imgPacked >> 7) & 1;
         var interlaced = (imgPacked >> 6) & 1;
         var lctSize = lctFlag ? (2 << (imgPacked & 7)) : 0;
-        
         var lct = null;
         if (lctFlag) {
           lct = [];
@@ -248,64 +228,38 @@ function generatePlayerHTML(gifUrl: string, speed: number, autoplay: boolean): s
             offset += 3;
           }
         }
-        
         var colorTable = lct || gct;
-        
-        // LZW Minimum Code Size
         var minCodeSize = dv.getUint8(offset); offset++;
-        
-        // Collect sub-blocks
         var lzwData = [];
         while (true) {
           var subBlockSize = dv.getUint8(offset); offset++;
           if (subBlockSize === 0) break;
-          for (var i = 0; i < subBlockSize; i++) {
-            lzwData.push(dv.getUint8(offset + i));
-          }
+          for (var i = 0; i < subBlockSize; i++) lzwData.push(dv.getUint8(offset + i));
           offset += subBlockSize;
         }
-        
-        // Decode LZW
         var pixels = decodeLZW(minCodeSize, lzwData, imgWidth * imgHeight);
-        
         frames.push({
-          left: imgLeft, top: imgTop,
-          width: imgWidth, height: imgHeight,
-          pixels: pixels,
-          colorTable: colorTable,
-          delay: gce.delay,
-          disposalMethod: gce.disposalMethod,
-          transparentIndex: gce.transparentIndex,
+          left: imgLeft, top: imgTop, width: imgWidth, height: imgHeight,
+          pixels: pixels, colorTable: colorTable, delay: gce.delay,
+          disposalMethod: gce.disposalMethod, transparentIndex: gce.transparentIndex,
           interlaced: interlaced
         });
-        
-        // Reset GCE
         gce = { delay: 100, disposalMethod: 0, transparentIndex: -1 };
-      } else {
-        // Unknown block, try to skip
-        break;
-      }
+      } else { break; }
     }
-    
     return { width: width, height: height, frames: frames };
   }
-  
+
   function decodeLZW(minCodeSize, data, pixelCount) {
     var clearCode = 1 << minCodeSize;
     var eoiCode = clearCode + 1;
     var codeSize = minCodeSize + 1;
     var codeMask = (1 << codeSize) - 1;
     var nextCode = eoiCode + 1;
-    var maxCode = 1 << codeSize;
-    
-    // Initialize code table
     var table = [];
     for (var i = 0; i < clearCode; i++) table[i] = [i];
-    table[clearCode] = [];
-    table[eoiCode] = null;
-    
+    table[clearCode] = []; table[eoiCode] = null;
     var bitBuf = 0, bitCount = 0, byteIndex = 0;
-    
     function readCode() {
       while (bitCount < codeSize) {
         if (byteIndex >= data.length) return -1;
@@ -313,259 +267,168 @@ function generatePlayerHTML(gifUrl: string, speed: number, autoplay: boolean): s
         bitCount += 8;
       }
       var code = bitBuf & codeMask;
-      bitBuf >>= codeSize;
-      bitCount -= codeSize;
+      bitBuf >>= codeSize; bitCount -= codeSize;
       return code;
     }
-    
     var pixels = new Uint8Array(pixelCount);
     var pixelIndex = 0;
-    
-    // First code must be clear code
     var code = readCode();
     if (code !== clearCode) return pixels;
-    
     code = readCode();
     if (code === -1 || code === eoiCode) return pixels;
-    
     var prevEntry = table[code] ? table[code].slice() : [code];
-    for (var i = 0; i < prevEntry.length && pixelIndex < pixelCount; i++) {
-      pixels[pixelIndex++] = prevEntry[i];
-    }
-    
+    for (var i = 0; i < prevEntry.length && pixelIndex < pixelCount; i++) pixels[pixelIndex++] = prevEntry[i];
     while (pixelIndex < pixelCount) {
       code = readCode();
       if (code === -1 || code === eoiCode) break;
-      
       if (code === clearCode) {
-        codeSize = minCodeSize + 1;
-        codeMask = (1 << codeSize) - 1;
-        nextCode = eoiCode + 1;
-        maxCode = 1 << codeSize;
-        table.length = eoiCode + 1;
-        
+        codeSize = minCodeSize + 1; codeMask = (1 << codeSize) - 1;
+        nextCode = eoiCode + 1; table.length = eoiCode + 1;
         code = readCode();
         if (code === -1 || code === eoiCode) break;
-        
         prevEntry = table[code] ? table[code].slice() : [code];
-        for (var i = 0; i < prevEntry.length && pixelIndex < pixelCount; i++) {
-          pixels[pixelIndex++] = prevEntry[i];
-        }
+        for (var i = 0; i < prevEntry.length && pixelIndex < pixelCount; i++) pixels[pixelIndex++] = prevEntry[i];
         continue;
       }
-      
       var entry;
-      if (code < nextCode && table[code]) {
-        entry = table[code].slice();
-      } else if (code === nextCode) {
-        entry = prevEntry.concat(prevEntry[0]);
-      } else {
-        break; // Error
-      }
-      
-      for (var i = 0; i < entry.length && pixelIndex < pixelCount; i++) {
-        pixels[pixelIndex++] = entry[i];
-      }
-      
+      if (code < nextCode && table[code]) { entry = table[code].slice(); }
+      else if (code === nextCode) { entry = prevEntry.concat(prevEntry[0]); }
+      else { break; }
+      for (var i = 0; i < entry.length && pixelIndex < pixelCount; i++) pixels[pixelIndex++] = entry[i];
       if (nextCode < 4096) {
-        table[nextCode] = prevEntry.concat(entry[0]);
-        nextCode++;
-        if (nextCode > codeMask && codeSize < 12) {
-          codeSize++;
-          codeMask = (1 << codeSize) - 1;
-          maxCode = 1 << codeSize;
-        }
+        table[nextCode] = prevEntry.concat(entry[0]); nextCode++;
+        if (nextCode > codeMask && codeSize < 12) { codeSize++; codeMask = (1 << codeSize) - 1; }
       }
-      
       prevEntry = entry;
     }
-    
     return pixels;
   }
-  
+
   var gifData = null;
   var prevCanvas = null;
-  
+
   function renderFrame(index) {
     if (!gifData || !gifData.frames.length) return;
     var frame = gifData.frames[index];
-    
-    // Handle disposal of previous frame
     if (index > 0) {
       var prevFrame = gifData.frames[index - 1];
-      if (prevFrame.disposalMethod === 2) {
-        // Restore to background
-        ctx.clearRect(prevFrame.left, prevFrame.top, prevFrame.width, prevFrame.height);
-      } else if (prevFrame.disposalMethod === 3 && prevCanvas) {
-        // Restore to previous
-        ctx.putImageData(prevCanvas, 0, 0);
-      }
+      if (prevFrame.disposalMethod === 2) ctx.clearRect(prevFrame.left, prevFrame.top, prevFrame.width, prevFrame.height);
+      else if (prevFrame.disposalMethod === 3 && prevCanvas) ctx.putImageData(prevCanvas, 0, 0);
     }
-    
-    // Save canvas state if needed for next frame disposal
-    if (frame.disposalMethod === 3) {
-      prevCanvas = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    }
-    
-    // Draw frame pixels
+    if (frame.disposalMethod === 3) prevCanvas = ctx.getImageData(0, 0, canvas.width, canvas.height);
     var imageData = ctx.createImageData(frame.width, frame.height);
     var pixels = frame.pixels;
     var ct = frame.colorTable;
-    
-    // Handle interlaced frames
     var rowOrder;
     if (frame.interlaced) {
       rowOrder = [];
-      // Pass 1: every 8th row starting from 0
       for (var r = 0; r < frame.height; r += 8) rowOrder.push(r);
-      // Pass 2: every 8th row starting from 4
       for (var r = 4; r < frame.height; r += 8) rowOrder.push(r);
-      // Pass 3: every 4th row starting from 2
       for (var r = 2; r < frame.height; r += 4) rowOrder.push(r);
-      // Pass 4: every 2nd row starting from 1
       for (var r = 1; r < frame.height; r += 2) rowOrder.push(r);
     }
-    
     for (var y = 0; y < frame.height; y++) {
       var srcRow = frame.interlaced ? rowOrder[y] : y;
       for (var x = 0; x < frame.width; x++) {
         var pixIdx = srcRow * frame.width + x;
         var colorIdx = pixels[pixIdx];
         var dstIdx = (y * frame.width + x) * 4;
-        
         if (colorIdx === frame.transparentIndex) {
-          imageData.data[dstIdx] = 0;
-          imageData.data[dstIdx + 1] = 0;
-          imageData.data[dstIdx + 2] = 0;
-          imageData.data[dstIdx + 3] = 0;
+          imageData.data[dstIdx] = 0; imageData.data[dstIdx+1] = 0;
+          imageData.data[dstIdx+2] = 0; imageData.data[dstIdx+3] = 0;
         } else if (ct && ct[colorIdx]) {
-          imageData.data[dstIdx] = ct[colorIdx][0];
-          imageData.data[dstIdx + 1] = ct[colorIdx][1];
-          imageData.data[dstIdx + 2] = ct[colorIdx][2];
-          imageData.data[dstIdx + 3] = 255;
+          imageData.data[dstIdx] = ct[colorIdx][0]; imageData.data[dstIdx+1] = ct[colorIdx][1];
+          imageData.data[dstIdx+2] = ct[colorIdx][2]; imageData.data[dstIdx+3] = 255;
         }
       }
     }
-    
-    // Use a temporary canvas to put the frame data, then draw it
     var tmpCanvas = document.createElement('canvas');
-    tmpCanvas.width = frame.width;
-    tmpCanvas.height = frame.height;
+    tmpCanvas.width = frame.width; tmpCanvas.height = frame.height;
     tmpCanvas.getContext('2d').putImageData(imageData, 0, 0);
     ctx.drawImage(tmpCanvas, frame.left, frame.top);
   }
-  
+
   function scheduleNextFrame() {
     if (!playing || !gifData || !gifData.frames.length) return;
-    
     var frame = gifData.frames[frameIndex];
-    var delay = frame.delay / speed; // Slow down by dividing by speed
-    
+    var delay = frame.delay / speed;
     animTimer = setTimeout(function() {
       frameIndex = (frameIndex + 1) % gifData.frames.length;
       renderFrame(frameIndex);
       scheduleNextFrame();
     }, delay);
   }
-  
-  function play() {
-    playing = true;
-    scheduleNextFrame();
-  }
-  
-  function pause() {
-    playing = false;
-    if (animTimer) { clearTimeout(animTimer); animTimer = null; }
-  }
-  
+
+  function play() { playing = true; scheduleNextFrame(); }
+  function pause() { playing = false; if (animTimer) { clearTimeout(animTimer); animTimer = null; } }
+
   function showPauseIcon() {
-    pauseSvg.style.display = 'block';
-    playSvg.style.display = 'none';
+    pauseSvg.style.display = 'block'; playSvg.style.display = 'none';
     playIcon.classList.add('visible');
     clearTimeout(hideTimer);
-    hideTimer = setTimeout(function() {
-      if (playing) playIcon.classList.remove('visible');
-    }, 800);
+    hideTimer = setTimeout(function() { if (playing) playIcon.classList.remove('visible'); }, 800);
   }
-  
   function showPlayIcon() {
-    pauseSvg.style.display = 'none';
-    playSvg.style.display = 'block';
+    pauseSvg.style.display = 'none'; playSvg.style.display = 'block';
     playIcon.classList.add('visible');
-    // Don't auto-hide when paused
   }
-  
+
   overlay.addEventListener('click', function(e) {
     e.preventDefault();
     if (!loaded) return;
-    if (playing) {
-      pause();
-      showPlayIcon();
-    } else {
-      play();
-      showPauseIcon();
-    }
-    // Notify React Native
-    try {
-      window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'playState', playing: playing }));
-    } catch(e) {}
+    if (playing) { pause(); showPlayIcon(); }
+    else { play(); showPauseIcon(); }
+    try { window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'playState', playing: playing })); } catch(e) {}
   });
-  
-  // Fetch and parse the GIF
-  fetch('${gifUrl.replace(/'/g, "\\'")}')
-    .then(function(r) { 
-      if (!r.ok) throw new Error('HTTP ' + r.status);
-      return r.arrayBuffer(); 
-    })
-    .then(function(buf) {
-      gifData = parseGIF(buf);
-      if (!gifData || !gifData.frames.length) {
-        throw new Error('No frames parsed');
-      }
-      
-      canvas.width = gifData.width;
-      canvas.height = gifData.height;
-      
-      // Render first frame
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      renderFrame(0);
-      
-      loaded = true;
-      loadingEl.style.display = 'none';
-      
-      try {
-        window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'loaded' }));
-      } catch(e) {}
-      
-      if (playing) scheduleNextFrame();
-    })
-    .catch(function(err) {
-      loadingEl.innerHTML = '<div style="color:#6B7280;font-size:12px;font-family:-apple-system,sans-serif">Failed to load</div>';
-      try {
-        window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'error', message: err.message }));
-      } catch(e) {}
-    });
+
+  // Parse GIF from base64 data embedded in the page
+  try {
+    var b64 = document.getElementById('gifdata').textContent.trim();
+    var binary = atob(b64);
+    var len = binary.length;
+    var bytes = new Uint8Array(len);
+    for (var i = 0; i < len; i++) bytes[i] = binary.charCodeAt(i);
+    var buffer = bytes.buffer;
+
+    gifData = parseGIF(buffer);
+    if (!gifData || !gifData.frames.length) throw new Error('No frames parsed');
+
+    canvas.width = gifData.width;
+    canvas.height = gifData.height;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    renderFrame(0);
+    loaded = true;
+    loadingEl.style.display = 'none';
+    try { window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'loaded' })); } catch(e) {}
+    if (playing) scheduleNextFrame();
+  } catch(err) {
+    loadingEl.innerHTML = '<div style="color:#6B7280;font-size:12px;font-family:-apple-system,sans-serif">Failed to parse: ' + (err.message || err) + '</div>';
+    try { window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'error', message: err.message || String(err) })); } catch(e) {}
+  }
 })();
 </script>
+<!-- Base64 GIF data is embedded here to avoid CORS issues -->
+<div id="gifdata" style="display:none">${base64Data}</div>
 </body>
 </html>`;
 }
 
 export default function GifWebViewPlayer({
   uri,
+  base64Data,
   speed = 0.25,
   height = 260,
   autoplay = true,
   style,
   onError,
   onLoad,
+  showExpandButton = true,
 }: GifWebViewPlayerProps) {
   const webViewRef = useRef<WebView>(null);
   const [isPlaying, setIsPlaying] = useState(autoplay);
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState(false);
-
-  const html = generatePlayerHTML(uri, speed, autoplay);
+  const [fullscreen, setFullscreen] = useState(false);
 
   const handleMessage = useCallback(
     (event: { nativeEvent: { data: string } }) => {
@@ -602,7 +465,20 @@ export default function GifWebViewPlayer({
     );
   }
 
-  if (error) {
+  if (error || !base64Data) {
+    // If no base64 data, fall back to expo-image (no speed control but at least shows the GIF)
+    if (uri && !error) {
+      return (
+        <ExpoImageFallback
+          uri={uri}
+          height={height}
+          style={style}
+          onError={onError}
+          onLoad={onLoad}
+          showExpandButton={showExpandButton}
+        />
+      );
+    }
     return (
       <View style={[styles.container, { height }, style]}>
         <View style={styles.errorContainer}>
@@ -613,10 +489,13 @@ export default function GifWebViewPlayer({
     );
   }
 
-  return (
-    <View style={[styles.container, { height }, style]}>
+  const html = generatePlayerHTML(base64Data, speed, autoplay);
+  const screenDims = Dimensions.get("window");
+
+  const renderPlayer = (playerHeight: number, isModal: boolean) => (
+    <View style={[styles.container, { height: playerHeight }, !isModal && style]}>
       <WebView
-        ref={webViewRef}
+        ref={isModal ? undefined : webViewRef}
         source={{ html }}
         style={styles.webview}
         scrollEnabled={false}
@@ -627,11 +506,180 @@ export default function GifWebViewPlayer({
         mediaPlaybackRequiresUserAction={false}
         onMessage={handleMessage}
         originWhitelist={["*"]}
-        mixedContentMode="always"
-        allowFileAccess
-        allowUniversalAccessFromFileURLs
       />
+      {/* Expand button */}
+      {showExpandButton && !isModal && (
+        <Pressable
+          onPress={() => setFullscreen(true)}
+          style={({ pressed }) => [
+            styles.expandButton,
+            pressed && { opacity: 0.7 },
+          ]}
+        >
+          <MaterialIcons name="fullscreen" size={22} color="#fff" />
+        </Pressable>
+      )}
     </View>
+  );
+
+  return (
+    <>
+      {renderPlayer(height, false)}
+      <Modal
+        visible={fullscreen}
+        animationType="fade"
+        transparent
+        statusBarTranslucent
+        onRequestClose={() => setFullscreen(false)}
+      >
+        <View style={styles.modalBackdrop}>
+          <Pressable
+            onPress={() => setFullscreen(false)}
+            style={({ pressed }) => [
+              styles.modalCloseButton,
+              pressed && { opacity: 0.7 },
+            ]}
+          >
+            <MaterialIcons name="close" size={28} color="#fff" />
+          </Pressable>
+          <View style={styles.modalContent}>
+            <View style={[styles.container, { height: screenDims.width, width: screenDims.width }]}>
+              <WebView
+                source={{ html }}
+                style={styles.webview}
+                scrollEnabled={false}
+                bounces={false}
+                javaScriptEnabled
+                domStorageEnabled
+                allowsInlineMediaPlayback
+                mediaPlaybackRequiresUserAction={false}
+                onMessage={handleMessage}
+                originWhitelist={["*"]}
+              />
+            </View>
+          </View>
+          <Text style={styles.modalHint}>Tap GIF to play/pause</Text>
+        </View>
+      </Modal>
+    </>
+  );
+}
+
+/**
+ * Fallback using expo-image when base64 data is not available.
+ * Shows the GIF at native speed with play/pause support.
+ */
+function ExpoImageFallback({
+  uri,
+  height = 260,
+  style,
+  onError,
+  onLoad,
+  showExpandButton = true,
+}: {
+  uri: string;
+  height?: number;
+  style?: ViewStyle;
+  onError?: () => void;
+  onLoad?: () => void;
+  showExpandButton?: boolean;
+}) {
+  const imageRef = useRef<any>(null);
+  const [isPlaying, setIsPlaying] = useState(true);
+  const [showIcon, setShowIcon] = useState(false);
+  const [fullscreen, setFullscreen] = useState(false);
+  const hideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const screenDims = Dimensions.get("window");
+
+  const togglePlay = useCallback(() => {
+    if (isPlaying) {
+      imageRef.current?.stopAnimating?.();
+      setIsPlaying(false);
+      setShowIcon(true);
+    } else {
+      imageRef.current?.startAnimating?.();
+      setIsPlaying(true);
+      setShowIcon(true);
+      if (hideTimerRef.current) clearTimeout(hideTimerRef.current);
+      hideTimerRef.current = setTimeout(() => setShowIcon(false), 800);
+    }
+  }, [isPlaying]);
+
+  useEffect(() => {
+    return () => {
+      if (hideTimerRef.current) clearTimeout(hideTimerRef.current);
+    };
+  }, []);
+
+  const renderImage = (imgHeight: number) => (
+    <Image
+      ref={imageRef}
+      source={{ uri }}
+      style={{ width: "100%", height: imgHeight }}
+      contentFit="contain"
+      autoplay
+      cachePolicy="memory-disk"
+      onLoad={() => onLoad?.()}
+      onError={() => onError?.()}
+    />
+  );
+
+  return (
+    <>
+      <View style={[styles.container, { height }, style]}>
+        <Pressable onPress={togglePlay} style={StyleSheet.absoluteFill}>
+          {renderImage(height)}
+          {/* Play/Pause icon overlay */}
+          {(showIcon || !isPlaying) && (
+            <View style={styles.iconOverlay}>
+              <View style={styles.iconCircle}>
+                <MaterialIcons
+                  name={isPlaying ? "pause" : "play-arrow"}
+                  size={28}
+                  color="#fff"
+                />
+              </View>
+            </View>
+          )}
+        </Pressable>
+        {showExpandButton && (
+          <Pressable
+            onPress={() => setFullscreen(true)}
+            style={({ pressed }) => [
+              styles.expandButton,
+              pressed && { opacity: 0.7 },
+            ]}
+          >
+            <MaterialIcons name="fullscreen" size={22} color="#fff" />
+          </Pressable>
+        )}
+      </View>
+      <Modal
+        visible={fullscreen}
+        animationType="fade"
+        transparent
+        statusBarTranslucent
+        onRequestClose={() => setFullscreen(false)}
+      >
+        <View style={styles.modalBackdrop}>
+          <Pressable
+            onPress={() => setFullscreen(false)}
+            style={({ pressed }) => [
+              styles.modalCloseButton,
+              pressed && { opacity: 0.7 },
+            ]}
+          >
+            <MaterialIcons name="close" size={28} color="#fff" />
+          </Pressable>
+          <View style={styles.modalContent}>
+            <View style={[styles.container, { height: screenDims.width, width: screenDims.width }]}>
+              {renderImage(screenDims.width)}
+            </View>
+          </View>
+          <Text style={styles.modalHint}>Tap GIF to play/pause</Text>
+        </View>
+      </Modal>
+    </>
   );
 }
 
@@ -688,7 +736,7 @@ function WebFallbackPlayer({
         />
         {/* Speed badge */}
         <View style={styles.speedBadge}>
-          <Text style={styles.speedText}>{speed}x</Text>
+          <Text style={styles.speedText}>{speed}x (web)</Text>
         </View>
         {/* Play/Pause icon overlay */}
         {(showIcon || !isPlaying) && (
@@ -757,5 +805,44 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0.55)",
     alignItems: "center",
     justifyContent: "center",
+  },
+  expandButton: {
+    position: "absolute",
+    bottom: 8,
+    right: 8,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: "rgba(0,0,0,0.55)",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  modalBackdrop: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.95)",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  modalCloseButton: {
+    position: "absolute",
+    top: 50,
+    right: 20,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: "rgba(255,255,255,0.15)",
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 10,
+  },
+  modalContent: {
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  modalHint: {
+    color: "rgba(255,255,255,0.5)",
+    fontSize: 12,
+    fontFamily: "DMSans_400Regular",
+    marginTop: 16,
   },
 });

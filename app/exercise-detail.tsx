@@ -40,6 +40,7 @@ import { C } from "@/constants/ui-colors";
 import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
 import { searchExercisesByName, type ExerciseDBExercise } from "@/lib/exercisedb";
 import { ActivityIndicator } from "react-native";
+import { getExerciseInstructions } from "@/lib/exercise-instructions";
 
 export default function ExerciseDetailScreen() {
   const { name } = useLocalSearchParams<{ name: string }>();
@@ -50,6 +51,12 @@ export default function ExerciseDetailScreen() {
   const favorited = isFavorite(name || "");
   const alternatives = useMemo(
     () => getAlternativeExercises(name || "", 5),
+    [name]
+  );
+
+  // Get exercise instructions for the HOW TO PERFORM section
+  const instructions = useMemo(
+    () => (name ? getExerciseInstructions(name) : null),
     [name]
   );
 
@@ -322,6 +329,44 @@ export default function ExerciseDetailScreen() {
           </View>
           <Text style={styles.cueText}>{exercise.cue}</Text>
         </View>
+
+        {/* HOW TO PERFORM — Step-by-step instructions */}
+        {instructions && (
+          <View style={styles.instructionsCard}>
+            <View style={styles.cueHeader}>
+              <MaterialIcons name="format-list-numbered" size={16} color={C.gold} />
+              <Text style={styles.cueTitle}>HOW TO PERFORM</Text>
+            </View>
+            {instructions.steps.map((step, i) => (
+              <View key={i} style={styles.instructionStep}>
+                <View style={styles.stepNumberCircle}>
+                  <Text style={styles.stepNumber}>{i + 1}</Text>
+                </View>
+                <Text style={styles.stepText}>{step}</Text>
+              </View>
+            ))}
+
+            {/* Common Mistakes */}
+            <View style={styles.instructionDivider} />
+            <View style={styles.cueHeader}>
+              <MaterialIcons name="warning" size={14} color={C.red} />
+              <Text style={[styles.cueTitle, { color: C.red, fontSize: 11 }]}>AVOID</Text>
+            </View>
+            {instructions.avoid.map((item, i) => (
+              <View key={i} style={styles.avoidItem}>
+                <Text style={styles.avoidBullet}>{"\u2022"}</Text>
+                <Text style={styles.avoidText}>{item}</Text>
+              </View>
+            ))}
+
+            {/* Breathing */}
+            <View style={styles.instructionDivider} />
+            <View style={styles.breathingRow}>
+              <MaterialIcons name="air" size={14} color={C.gold} />
+              <Text style={styles.breathingText}>{instructions.breathing}</Text>
+            </View>
+          </View>
+        )}
 
         {/* Angle Views Detail */}
         <View style={styles.anglesSection}>
@@ -689,5 +734,78 @@ const styles = StyleSheet.create({
     fontFamily: "DMSans_500Medium",
     fontSize: 9,
     textTransform: "capitalize",
+  },
+  // ── HOW TO PERFORM styles ──────────────────────────────────────────────
+  instructionsCard: {
+    marginHorizontal: 16,
+    marginTop: 12,
+    backgroundColor: C.surface,
+    borderRadius: 14,
+    padding: 14,
+    borderWidth: 1,
+    borderColor: C.border,
+  },
+  instructionStep: {
+    flexDirection: "row" as const,
+    alignItems: "flex-start" as const,
+    gap: 10,
+    marginTop: 10,
+  },
+  stepNumberCircle: {
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    backgroundColor: "rgba(245,158,11,0.15)",
+    alignItems: "center" as const,
+    justifyContent: "center" as const,
+    marginTop: 1,
+  },
+  stepNumber: {
+    color: C.gold,
+    fontFamily: "DMSans_700Bold",
+    fontSize: 11,
+  },
+  stepText: {
+    flex: 1,
+    color: C.fg,
+    fontFamily: "DMSans_400Regular",
+    fontSize: 13,
+    lineHeight: 20,
+  },
+  instructionDivider: {
+    height: 1,
+    backgroundColor: C.border,
+    marginVertical: 12,
+  },
+  avoidItem: {
+    flexDirection: "row" as const,
+    alignItems: "flex-start" as const,
+    gap: 6,
+    marginTop: 4,
+  },
+  avoidBullet: {
+    color: C.red,
+    fontSize: 14,
+    lineHeight: 20,
+  },
+  avoidText: {
+    flex: 1,
+    color: C.muted,
+    fontFamily: "DMSans_400Regular",
+    fontSize: 12,
+    lineHeight: 18,
+  },
+  breathingRow: {
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
+    gap: 8,
+  },
+  breathingText: {
+    flex: 1,
+    color: C.gold3 || C.muted,
+    fontFamily: "DMSans_400Regular",
+    fontSize: 12,
+    lineHeight: 18,
+    fontStyle: "italic" as const,
   },
 });

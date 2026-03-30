@@ -2713,3 +2713,9 @@
 - [x] Re-applied safe-area tab bar fix (Android min padding 16px) on restored layout
 - [x] GIF improvements preserved (play/pause, 0.25x speed, caching)
 - [x] Updated 3 test files (round60, round64, round79) to match restored dashboard — all 2030 tests pass
+- [x] Fix 'demo not available' — root cause: CORS blocking WebView fetch; fixed by pre-fetching GIF binary in RN and passing base64 to WebView
+- [x] GIF animation speed set to 0.25x via WebView canvas frame-by-frame rendering with speed multiplier
+- [x] Play/pause overlay — tap GIF to toggle, auto-hiding play/pause icon
+- [x] Fullscreen/enlarge — expand button in bottom-right opens modal with full-width GIF
+- [x] Exercise instruction scripts — 75 exercises with numbered steps, AVOID warnings, and breathing cues
+- [x] All 2052 tests pass (22 new), 0 TypeScript errors

@@ -4,6 +4,7 @@
  * Shows a single animated exercise GIF with:
  *   - 0.25x slow-motion playback (configurable via `speed` prop)
  *   - Play/pause toggle via tap overlay
+ *   - Fullscreen/enlarge button
  *   - Speed badge showing current playback rate
  *
  * Resolution chain (priority order):
@@ -11,14 +12,14 @@
  *      manuscdn.com hosted. This is the SAME source the exercise library
  *      preview uses, guaranteeing the detail screen shows the identical GIF.
  *   2. ExerciseDB API GIF (static.exercisedb.dev) — searched by name for
- *      exercises not in the CDN map. These GIFs include built-in pauses
- *      at the top/bottom of the movement (~3 s per loop).
+ *      exercises not in the CDN map.
  *   3. "Demo not available" placeholder.
  *
- * USAGE:
- *   import EnhancedGifPlayer from "@/components/enhanced-gif-player";
- *   <EnhancedGifPlayer exerciseName="Bench Press" />
- *   <EnhancedGifPlayer exerciseName="Barbell Squat" height={280} speed={0.5} />
+ * ARCHITECTURE (Round 48):
+ *   GIF binary is fetched in React Native (no CORS issues) and converted
+ *   to base64. The base64 data is passed to GifWebViewPlayer which embeds
+ *   it directly in the WebView HTML, bypassing CORS restrictions that
+ *   previously caused "demo not available" on the detail screen.
  */
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import {
@@ -27,6 +28,7 @@ import {
   Text,
   View,
   ViewStyle,
+  Platform,
 } from "react-native";
 import GifWebViewPlayer from "@/components/gif-webview-player";
 import { getExerciseDbGifUrl } from "@/lib/exercisedb-api";
@@ -66,6 +68,40 @@ function keyToExerciseName(key: string): string {
     .trim();
 }
 
+/**
+ * Fetch a GIF URL and return base64-encoded data.
+ * This runs in React Native context (no CORS restrictions).
+ */
+async function fetchGifAsBase64(url: string): Promise<string | null> {
+  try {
+    // On native, use FileSystem for reliable binary downloads
+    if (Platform.OS !== "web") {
+      const FileSystem = await import("expo-file-system/legacy");
+      const tmpPath = (FileSystem.cacheDirectory || "") + "tmp_gif_" + Date.now() + ".gif";
+      const result = await FileSystem.downloadAsync(url, tmpPath);
+      if (result.status !== 200) return null;
+      const base64 = await FileSystem.readAsStringAsync(result.uri, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
+      // Clean up temp file (non-blocking)
+      FileSystem.deleteAsync(result.uri, { idempotent: true }).catch(() => {});
+      return base64;
+    }
+    // On web, use fetch + arrayBuffer
+    const response = await fetch(url);
+    if (!response.ok) return null;
+    const buffer = await response.arrayBuffer();
+    const bytes = new Uint8Array(buffer);
+    let binary = "";
+    for (let i = 0; i < bytes.length; i++) {
+      binary += String.fromCharCode(bytes[i]);
+    }
+    return btoa(binary);
+  } catch {
+    return null;
+  }
+}
+
 export default function EnhancedGifPlayer({
   exerciseKey,
   exerciseName,
@@ -74,6 +110,7 @@ export default function EnhancedGifPlayer({
   style,
 }: EnhancedGifPlayerProps) {
   const [gifUrl, setGifUrl] = useState<string | null>(null);
+  const [base64Data, setBase64Data] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [imgError, setImgError] = useState(false);
   const [fallbackUrl, setFallbackUrl] = useState<string | null>(null);
@@ -88,6 +125,7 @@ export default function EnhancedGifPlayer({
     setLoading(true);
     setImgError(false);
     setGifUrl(null);
+    setBase64Data(null);
     setFallbackUrl(null);
 
     if (!name) {
@@ -95,63 +133,75 @@ export default function EnhancedGifPlayer({
       return;
     }
 
-    // ── Priority 1: CDN GIF (synchronous, same source as library preview) ──
-    const cdnUrl = getExerciseDbGifUrl(name);
+    async function resolveGif() {
+      // ── Priority 1: CDN GIF (synchronous lookup, same source as library preview) ──
+      const cdnUrl = getExerciseDbGifUrl(name);
 
-    if (cdnUrl) {
-      // Try to serve from disk cache first (offline support)
-      resolveGifUri(cdnUrl)
-        .then((resolved) => {
-          if (!mountedRef.current) return;
-          setGifUrl(resolved);
-        })
-        .catch(() => {
-          if (!mountedRef.current) return;
-          setGifUrl(cdnUrl);
-        });
-      setLoading(false);
+      if (cdnUrl) {
+        if (!mountedRef.current) return;
+        setGifUrl(cdnUrl);
 
-      // Pre-fetch API URL as fallback (non-blocking)
-      if (hasExerciseDBKey()) {
-        searchExercisesByName(name, 1)
-          .then((results) => {
-            if (!mountedRef.current) return;
-            if (results.length > 0 && results[0].gifUrl) {
-              setFallbackUrl(results[0].gifUrl);
-            }
-          })
-          .catch(() => {
-            // Ignore — CDN is already showing
-          });
-      }
-    } else {
-      // ── Priority 2: ExerciseDB API GIF (no CDN match) ──
-      if (hasExerciseDBKey()) {
-        searchExercisesByName(name, 1)
-          .then((results) => {
-            if (!mountedRef.current) return;
-            if (results.length > 0 && results[0].gifUrl) {
-              // Try to serve from disk cache (offline support)
-              resolveGifUri(results[0].gifUrl)
-                .then((resolved) => {
-                  if (!mountedRef.current) return;
-                  setGifUrl(resolved);
-                })
-                .catch(() => {
-                  if (!mountedRef.current) return;
-                  setGifUrl(results[0].gifUrl!);
-                });
-            }
-            setLoading(false);
-          })
-          .catch(() => {
-            if (!mountedRef.current) return;
-            setLoading(false);
-          });
-      } else {
+        // Try to resolve from disk cache first
+        let resolvedUrl = cdnUrl;
+        try {
+          resolvedUrl = await resolveGifUri(cdnUrl);
+        } catch {
+          // Use original URL
+        }
+
+        if (!mountedRef.current) return;
+        setGifUrl(resolvedUrl);
+
+        // Fetch as base64 for WebView speed control
+        const b64 = await fetchGifAsBase64(resolvedUrl);
+        if (!mountedRef.current) return;
+        if (b64) {
+          setBase64Data(b64);
+        }
         setLoading(false);
+
+        // Pre-fetch API URL as fallback (non-blocking)
+        if (hasExerciseDBKey()) {
+          searchExercisesByName(name, 1)
+            .then((results) => {
+              if (!mountedRef.current) return;
+              if (results.length > 0 && results[0].gifUrl) {
+                setFallbackUrl(results[0].gifUrl);
+              }
+            })
+            .catch(() => {});
+        }
+      } else {
+        // ── Priority 2: ExerciseDB API GIF (no CDN match) ──
+        if (hasExerciseDBKey()) {
+          try {
+            const results = await searchExercisesByName(name, 1);
+            if (!mountedRef.current) return;
+            if (results.length > 0 && results[0].gifUrl) {
+              const apiUrl = results[0].gifUrl;
+              setGifUrl(apiUrl);
+
+              // Try disk cache
+              let resolvedUrl = apiUrl;
+              try {
+                resolvedUrl = await resolveGifUri(apiUrl);
+              } catch {}
+
+              if (!mountedRef.current) return;
+              setGifUrl(resolvedUrl);
+
+              // Fetch as base64
+              const b64 = await fetchGifAsBase64(resolvedUrl);
+              if (!mountedRef.current) return;
+              if (b64) setBase64Data(b64);
+            }
+          } catch {}
+        }
+        if (mountedRef.current) setLoading(false);
       }
     }
+
+    resolveGif();
 
     return () => {
       mountedRef.current = false;
@@ -159,12 +209,18 @@ export default function EnhancedGifPlayer({
   }, [name]);
 
   // ── Fallback on GIF error: try API GIF if CDN failed ──
-  const handleGifError = useCallback(() => {
+  const handleGifError = useCallback(async () => {
     if (fallbackUrl && !imgError) {
       // Switch to API fallback
       setGifUrl(fallbackUrl);
       setFallbackUrl(null);
       setImgError(false);
+      setBase64Data(null);
+      // Fetch fallback as base64
+      const b64 = await fetchGifAsBase64(fallbackUrl);
+      if (mountedRef.current && b64) {
+        setBase64Data(b64);
+      }
     } else {
       setImgError(true);
       setLoading(false);
@@ -192,9 +248,11 @@ export default function EnhancedGifPlayer({
         {gifUrl && !imgError && (
           <GifWebViewPlayer
             uri={gifUrl}
+            base64Data={base64Data ?? undefined}
             speed={speed}
             height={height}
             autoplay
+            showExpandButton
             onLoad={() => setLoading(false)}
             onError={handleGifError}
           />
