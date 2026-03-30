@@ -4,12 +4,12 @@
  * Shows a single animated exercise GIF with no angle toggle.
  *
  * Resolution chain (priority order):
- *   1. ExerciseDB API GIF (static.exercisedb.dev) — preferred because these
- *      GIFs include built-in pauses at the top/bottom of the movement,
- *      making them ~3 s per loop and much easier to follow.
- *   2. CDN GIF lookup via getExerciseDbGifUrl() — 104+ name variants,
- *      manuscdn.com hosted. These play at 10 FPS (1.2 s loop) which is
- *      faster but still usable as a fallback.
+ *   1. CDN GIF lookup via getExerciseDbGifUrl() — 104+ name variants,
+ *      manuscdn.com hosted. This is the SAME source the exercise library
+ *      preview uses, guaranteeing the detail screen shows the identical GIF.
+ *   2. ExerciseDB API GIF (static.exercisedb.dev) — searched by name for
+ *      exercises not in the CDN map. These GIFs include built-in pauses
+ *      at the top/bottom of the movement (~3 s per loop).
  *   3. "Demo not available" placeholder.
  *
  * USAGE:
@@ -88,44 +88,56 @@ export default function EnhancedGifPlayer({
       return;
     }
 
-    // Prepare CDN fallback URL synchronously (fast, 104+ exercises)
+    // ── Priority 1: CDN GIF (synchronous, same source as library preview) ──
     const cdnUrl = getExerciseDbGifUrl(name);
 
-    // ── Priority 1: ExerciseDB API GIF (slower, easier to follow) ──
-    searchExercisesByName(name, 1)
-      .then((results) => {
-        if (!mountedRef.current) return;
-        if (results.length > 0 && results[0].gifUrl) {
-          setGifUrl(results[0].gifUrl);
-          // Keep CDN as fallback in case API GIF fails to load
-          if (cdnUrl) setFallbackUrl(cdnUrl);
-          setLoading(false);
-        } else if (cdnUrl) {
-          // No API result — use CDN GIF
-          setGifUrl(cdnUrl);
-          setLoading(false);
-        } else {
-          setLoading(false);
-        }
-      })
-      .catch(() => {
-        if (!mountedRef.current) return;
-        // API failed — fall back to CDN GIF
-        if (cdnUrl) {
-          setGifUrl(cdnUrl);
-        }
+    if (cdnUrl) {
+      setGifUrl(cdnUrl);
+      // Prepare API as fallback in case CDN GIF fails to load
+      setLoading(false);
+
+      // Pre-fetch API URL as fallback (non-blocking)
+      if (hasExerciseDBKey()) {
+        searchExercisesByName(name, 1)
+          .then((results) => {
+            if (!mountedRef.current) return;
+            if (results.length > 0 && results[0].gifUrl) {
+              setFallbackUrl(results[0].gifUrl);
+            }
+          })
+          .catch(() => {
+            // Ignore — CDN is already showing
+          });
+      }
+    } else {
+      // ── Priority 2: ExerciseDB API GIF (no CDN match) ──
+      if (hasExerciseDBKey()) {
+        searchExercisesByName(name, 1)
+          .then((results) => {
+            if (!mountedRef.current) return;
+            if (results.length > 0 && results[0].gifUrl) {
+              setGifUrl(results[0].gifUrl);
+            }
+            setLoading(false);
+          })
+          .catch(() => {
+            if (!mountedRef.current) return;
+            setLoading(false);
+          });
+      } else {
         setLoading(false);
-      });
+      }
+    }
 
     return () => {
       mountedRef.current = false;
     };
   }, [name]);
 
-  // ── Fallback on image error: try CDN if API GIF failed ──
+  // ── Fallback on image error: try API GIF if CDN failed ──
   const handleImageError = useCallback(() => {
     if (fallbackUrl && !imgError) {
-      // Switch to CDN fallback
+      // Switch to API fallback
       setGifUrl(fallbackUrl);
       setFallbackUrl(null);
       setImgError(false);

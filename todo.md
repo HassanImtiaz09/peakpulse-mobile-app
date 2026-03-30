@@ -2689,3 +2689,9 @@
 - [x] Updated exercise-detail.tsx comment from "Multi-Angle" to "Exercise Demo"
 - [x] active-workout.tsx already passes exerciseName — no changes needed
 - [x] All 2090 tests pass, 0 TypeScript errors
+
+## Exercise GIF Mismatch Bug (Round 45)
+- [x] Bug: Library preview shows correct exercise GIF but detail screen shows wrong/different GIF for the same exercise
+- [x] Root cause: EnhancedGifPlayer used API search (priority 1) which returned wrong exercises (e.g. "Bench Press" → "smith close-grip bench press", "Barbell Squat" → "ez barbell seated triceps extension")
+- [x] Fix: Rewrote EnhancedGifPlayer to use CDN GIF as priority 1 (same source as library preview), API as fallback only for exercises not in CDN map
+- [x] All 2090 tests pass, 0 TypeScript errors
