@@ -127,13 +127,49 @@ const SWAP_PHOTOS: Record<string, string> = {
   "Greek Yogurt with Honey": "https://images.unsplash.com/photo-1488477181946-6428a0291777?w=600&q=80",
 };
 
-// Hardcoded default recipes when no AI plan exists
-const MEAL_RECIPES: Record<string, { title: string; time: string; steps: string[] }> = {
-  breakfast: { title: "Berry Yogurt Parfait", time: "5 min", steps: ["Add 200g Greek yogurt to a bowl", "Layer with 30g granola", "Top with mixed berries", "Drizzle 1 tsp honey and garnish with mint"] },
-  lunch: { title: "Grilled Chicken Quinoa Bowl", time: "25 min", steps: ["Season chicken breast with salt, pepper, garlic powder", "Grill 6-7 min each side", "Cook quinoa per packet instructions", "Roast vegetables at 200\u00b0C for 20 min", "Assemble bowl and squeeze lemon juice"] },
-  dinner: { title: "Pan-Seared Salmon & Asparagus", time: "20 min", steps: ["Pat salmon dry and season with salt, pepper, dill", "Heat olive oil over medium-high heat", "Sear salmon skin-side down 4 min, flip 3 more min", "Steam asparagus 4-5 min", "Microwave sweet potato 5 min, mash with butter"] },
-  snack: { title: "Protein Snack Board", time: "3 min", steps: ["Portion 30g mixed nuts", "Slice one apple into wedges", "Add 2 tbsp almond butter for dipping", "Optional: blend a protein shake"] },
+// Diet-aware default recipes when no AI plan exists
+type DefaultRecipe = { title: string; time: string; steps: string[]; calories: number; protein: number; carbs: number; fat: number };
+const DIET_RECIPES: Record<string, Record<string, DefaultRecipe>> = {
+  omnivore: {
+    breakfast: { title: "Berry Yogurt Parfait", time: "5 min", steps: ["Add 200g Greek yogurt to a bowl", "Layer with 30g granola", "Top with mixed berries", "Drizzle 1 tsp honey"], calories: 320, protein: 22, carbs: 42, fat: 8 },
+    lunch: { title: "Grilled Chicken Quinoa Bowl", time: "25 min", steps: ["Season chicken breast with salt, pepper, garlic", "Grill 6-7 min each side", "Cook quinoa per packet", "Roast vegetables at 200\u00b0C for 20 min", "Assemble and squeeze lemon"], calories: 520, protein: 42, carbs: 48, fat: 14 },
+    dinner: { title: "Pan-Seared Salmon & Asparagus", time: "20 min", steps: ["Pat salmon dry and season", "Sear skin-side down 4 min, flip 3 min", "Steam asparagus 4-5 min", "Serve with sweet potato"], calories: 480, protein: 38, carbs: 28, fat: 22 },
+    snack: { title: "Protein Snack Board", time: "3 min", steps: ["Portion 30g mixed nuts", "Slice one apple", "Add 2 tbsp almond butter"], calories: 210, protein: 10, carbs: 22, fat: 12 },
+  },
+  halal: {
+    breakfast: { title: "Labneh & Za'atar Flatbread", time: "5 min", steps: ["Spread labneh on warm flatbread", "Drizzle olive oil and sprinkle za'atar", "Add sliced cucumber and tomato", "Serve with olives"], calories: 340, protein: 14, carbs: 38, fat: 16 },
+    lunch: { title: "Chicken Shawarma Rice Bowl", time: "25 min", steps: ["Marinate halal chicken in shawarma spices", "Grill or pan-fry until cooked through", "Serve over basmati rice with pickled turnips", "Add garlic sauce and fresh parsley"], calories: 540, protein: 40, carbs: 52, fat: 16 },
+    dinner: { title: "Lamb Kofta with Tabbouleh", time: "30 min", steps: ["Mix minced lamb with onion, parsley, cumin", "Shape into kofta and grill 8-10 min", "Prepare tabbouleh with bulgur, tomato, mint", "Serve with hummus"], calories: 490, protein: 36, carbs: 34, fat: 22 },
+    snack: { title: "Dates & Almonds", time: "2 min", steps: ["Portion 4 medjool dates", "Pair with 30g almonds", "Optional: drizzle of honey"], calories: 220, protein: 6, carbs: 34, fat: 10 },
+  },
+  vegan: {
+    breakfast: { title: "Overnight Oats with Chia & Berries", time: "5 min", steps: ["Mix 60g oats with 200ml oat milk", "Add 1 tbsp chia seeds", "Refrigerate overnight", "Top with berries and maple syrup"], calories: 310, protein: 10, carbs: 50, fat: 8 },
+    lunch: { title: "Tofu & Edamame Buddha Bowl", time: "20 min", steps: ["Press and cube firm tofu, pan-fry with soy sauce", "Cook brown rice", "Steam edamame and broccoli", "Assemble with avocado and sesame dressing"], calories: 510, protein: 28, carbs: 52, fat: 20 },
+    dinner: { title: "Chickpea & Spinach Curry", time: "25 min", steps: ["Saut\u00e9 onion, garlic, ginger", "Add curry paste and coconut milk", "Stir in chickpeas and spinach", "Simmer 15 min, serve over rice"], calories: 460, protein: 18, carbs: 56, fat: 18 },
+    snack: { title: "Hummus & Veggie Sticks", time: "3 min", steps: ["Portion 60g hummus", "Slice carrots, cucumber, bell pepper", "Optional: add rice cakes"], calories: 190, protein: 8, carbs: 20, fat: 10 },
+  },
+  vegetarian: {
+    breakfast: { title: "Spinach & Feta Omelette", time: "10 min", steps: ["Whisk 3 eggs with salt and pepper", "Saut\u00e9 spinach in olive oil", "Pour eggs over spinach, add crumbled feta", "Fold and serve with wholegrain toast"], calories: 350, protein: 24, carbs: 18, fat: 20 },
+    lunch: { title: "Halloumi & Roasted Veg Wrap", time: "20 min", steps: ["Grill halloumi slices until golden", "Roast courgette, peppers, red onion", "Warm a wholegrain wrap", "Assemble with hummus and rocket"], calories: 490, protein: 26, carbs: 42, fat: 24 },
+    dinner: { title: "Paneer Tikka with Brown Rice", time: "25 min", steps: ["Marinate paneer in yogurt and tikka spices", "Grill or bake until charred", "Cook brown rice", "Serve with raita and salad"], calories: 480, protein: 28, carbs: 46, fat: 20 },
+    snack: { title: "Greek Yogurt with Honey & Walnuts", time: "3 min", steps: ["Add 200g Greek yogurt to a bowl", "Drizzle 1 tsp honey", "Top with 20g walnuts"], calories: 230, protein: 16, carbs: 18, fat: 12 },
+  },
+  keto: {
+    breakfast: { title: "Bacon & Avocado Eggs", time: "10 min", steps: ["Fry 3 rashers of bacon until crispy", "Scramble 3 eggs in the bacon fat", "Slice half an avocado", "Serve together with salt and pepper"], calories: 420, protein: 28, carbs: 4, fat: 34 },
+    lunch: { title: "Grilled Chicken Caesar (No Croutons)", time: "15 min", steps: ["Grill seasoned chicken breast", "Toss romaine with parmesan and Caesar dressing", "Slice chicken over salad", "Add boiled egg halves"], calories: 480, protein: 42, carbs: 6, fat: 32 },
+    dinner: { title: "Steak with Butter & Green Beans", time: "20 min", steps: ["Season ribeye with salt and pepper", "Pan-sear 4 min each side", "Rest 5 min, top with herb butter", "Saut\u00e9 green beans in garlic butter"], calories: 520, protein: 44, carbs: 8, fat: 36 },
+    snack: { title: "Cheese & Olives", time: "2 min", steps: ["Portion 40g cheddar or brie", "Add 8-10 olives", "Optional: celery sticks"], calories: 200, protein: 10, carbs: 2, fat: 18 },
+  },
+  paleo: {
+    breakfast: { title: "Sweet Potato Hash with Eggs", time: "15 min", steps: ["Dice sweet potato and pan-fry until tender", "Add diced onion and bell pepper", "Make 2 wells and crack eggs in", "Cover and cook until eggs set"], calories: 380, protein: 20, carbs: 36, fat: 18 },
+    lunch: { title: "Turkey Lettuce Wraps", time: "15 min", steps: ["Cook ground turkey with garlic and ginger", "Add coconut aminos and lime juice", "Spoon into butter lettuce cups", "Top with shredded carrot and fresh herbs"], calories: 420, protein: 36, carbs: 16, fat: 24 },
+    dinner: { title: "Herb-Crusted Salmon with Roasted Veg", time: "25 min", steps: ["Season salmon with herbs and lemon", "Roast at 200\u00b0C for 12-15 min", "Toss broccoli and carrots in olive oil", "Roast vegetables alongside salmon"], calories: 460, protein: 38, carbs: 20, fat: 24 },
+    snack: { title: "Apple Slices with Almond Butter", time: "3 min", steps: ["Slice one apple", "Pair with 2 tbsp almond butter", "Sprinkle with cinnamon"], calories: 200, protein: 6, carbs: 26, fat: 10 },
+  },
 };
+function getMealRecipes(diet: string): Record<string, DefaultRecipe> {
+  return DIET_RECIPES[diet] ?? DIET_RECIPES.omnivore;
+}
 
 function MealsScreenContent() {
   const router = useRouter();
@@ -1260,14 +1296,15 @@ function MealsScreenContent() {
             {MEAL_TYPES.map(type => {
               const swapped = swappedMeals[type];
               const aiMeal = aiMealByType[type];
+              const dietDefault = getMealRecipes(userDietaryPref)[type];
               const recipe = swapped
                 ? { title: swapped.title, time: swapped.recipe.time, steps: swapped.recipe.steps }
                 : aiMeal
                   ? { title: aiMeal.name ?? "AI Meal", time: aiMeal.prepTime ?? "15 min", steps: aiMeal.ingredients ?? aiMeal.steps ?? [] }
-                  : MEAL_RECIPES[type];
+                  : dietDefault;
               const photo = swapped ? swapped.photo : MEAL_PHOTOS[type];
-              const cals = swapped ? swapped.calories : (aiMeal?.calories ?? (type === "breakfast" ? 320 : type === "lunch" ? 520 : type === "dinner" ? 480 : 210));
-              const prot = swapped ? swapped.protein : (aiMeal?.protein ?? 0);
+              const cals = swapped ? swapped.calories : (aiMeal?.calories ?? dietDefault.calories);
+              const prot = swapped ? swapped.protein : (aiMeal?.protein ?? dietDefault.protein);
               const logged = loggedByType[type] ?? [];
               const loggedCals = logged.reduce((s, m) => s + m.calories, 0);
 
@@ -1290,7 +1327,7 @@ function MealsScreenContent() {
                       <TouchableOpacity
                         style={{ flex: 1, backgroundColor: "#F59E0B", borderRadius: 8, paddingVertical: 6, alignItems: "center" }}
                         onPress={() => {
-                          addMeal({ name: recipe.title, mealType: type, calories: cals, protein: prot, carbs: swapped ? swapped.carbs : (aiMeal?.carbs ?? 0), fat: swapped ? swapped.fat : (aiMeal?.fat ?? 0) });
+                          addMeal({ name: recipe.title, mealType: type, calories: cals, protein: prot, carbs: swapped ? swapped.carbs : (aiMeal?.carbs ?? dietDefault.carbs), fat: swapped ? swapped.fat : (aiMeal?.fat ?? dietDefault.fat) });
                           Alert.alert("\u2705 Logged!", `${recipe.title} added.`);
                         }}
                       >
@@ -1300,7 +1337,7 @@ function MealsScreenContent() {
                         style={{ flex: 1, backgroundColor: "rgba(234,88,12,0.15)", borderRadius: 8, paddingVertical: 6, alignItems: "center", borderWidth: 1, borderColor: "rgba(234,88,12,0.25)" }}
                         onPress={() => {
                           setSwapMealType(type);
-                          setSwapMealData({ name: recipe.title, calories: cals, protein: prot, carbs: swapped ? swapped.carbs : (aiMeal?.carbs ?? 0), fat: swapped ? swapped.fat : (aiMeal?.fat ?? 0) });
+                          setSwapMealData({ name: recipe.title, calories: cals, protein: prot, carbs: swapped ? swapped.carbs : (aiMeal?.carbs ?? dietDefault.carbs), fat: swapped ? swapped.fat : (aiMeal?.fat ?? dietDefault.fat) });
                         }}
                       >
                         <Text style={{ color: "#EA580C", fontFamily: "DMSans_700Bold", fontSize: 10 }}>Swap</Text>
@@ -1665,7 +1702,7 @@ function MealsScreenContent() {
                   style={{ backgroundColor: "#F59E0B", borderRadius: 14, paddingVertical: 14, alignItems: "center", opacity: regenerating ? 0.7 : 1 }}
                   onPress={() => {
                     setRegenerating(true);
-                    regenerateMealPlan.mutate({ goal: userGoal, dietaryPreference: userDietaryPref, ramadanMode, weightKg: localProfile?.weightKg, heightCm: localProfile?.heightCm, age: localProfile?.age, gender: localProfile?.gender, activityLevel: localProfile?.activityLevel });
+                    regenerateMealPlan.mutate({ goal: userGoal, dietaryPreference: userDietaryPref, ramadanMode, weightKg: localProfile?.weightKg, heightCm: localProfile?.heightCm, age: localProfile?.age, gender: localProfile?.gender, activityLevel: localProfile?.activityLevel, region: localProfile?.region || undefined, cuisinePrefs: localProfile?.cuisinePrefs?.length ? localProfile.cuisinePrefs : undefined });
                   }}
                   disabled={regenerating}
                 >
@@ -1722,7 +1759,7 @@ function MealsScreenContent() {
                     onPress={() => {
                       setRegenerating(true);
                       setShowMealCustomize(false);
-                      regenerateMealPlan.mutate({ goal: userGoal, dietaryPreference: userDietaryPref, ramadanMode, weightKg: localProfile?.weightKg, heightCm: localProfile?.heightCm, age: localProfile?.age, gender: localProfile?.gender, activityLevel: localProfile?.activityLevel });
+                      regenerateMealPlan.mutate({ goal: userGoal, dietaryPreference: userDietaryPref, ramadanMode, weightKg: localProfile?.weightKg, heightCm: localProfile?.heightCm, age: localProfile?.age, gender: localProfile?.gender, activityLevel: localProfile?.activityLevel, region: localProfile?.region || undefined, cuisinePrefs: localProfile?.cuisinePrefs?.length ? localProfile.cuisinePrefs : undefined });
                     }}
                     disabled={regenerating}
                   >
@@ -1782,7 +1819,7 @@ function MealsScreenContent() {
                     { text: "Cancel", style: "cancel" },
                     { text: "Regenerate", style: "destructive", onPress: () => {
                       setRegenerating(true);
-                      regenerateMealPlan.mutate({ goal: userGoal, dietaryPreference: userDietaryPref, ramadanMode, weightKg: localProfile?.weightKg, heightCm: localProfile?.heightCm, age: localProfile?.age, gender: localProfile?.gender, activityLevel: localProfile?.activityLevel });
+                      regenerateMealPlan.mutate({ goal: userGoal, dietaryPreference: userDietaryPref, ramadanMode, weightKg: localProfile?.weightKg, heightCm: localProfile?.heightCm, age: localProfile?.age, gender: localProfile?.gender, activityLevel: localProfile?.activityLevel, region: localProfile?.region || undefined, cuisinePrefs: localProfile?.cuisinePrefs?.length ? localProfile.cuisinePrefs : undefined });
                     }},
                   ]);
                 }}

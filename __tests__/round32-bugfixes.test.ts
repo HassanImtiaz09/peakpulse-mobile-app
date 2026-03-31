@@ -17,7 +17,7 @@ describe("Round 32 — Bug Fixes", () => {
     });
 
     it("auto-generate useEffect is declared before any early returns", () => {
-      const effectLine = src.indexOf("if (step === 10 && !autoGenTriggered.current");
+      const effectLine = src.indexOf("if (step === 11 && !autoGenTriggered.current");
       const firstEarlyReturn = src.indexOf("if (previewImage)");
       expect(effectLine).toBeGreaterThan(-1);
       expect(firstEarlyReturn).toBeGreaterThan(-1);

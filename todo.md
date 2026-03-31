@@ -2767,4 +2767,17 @@
 
 - [x] Move 'Meal Plan' tab from Train (Workout Plans) section to Nutrition section
 - [x] Run tests and verify TypeScript compiles — 0 TS errors, 2079 tests pass
+- [x] Save checkpoint (version 7b5c0608)
+
+## Personalized Meals & Onboarding (Round 55)
+
+- [x] Audit hardcoded "Today's Meals" in Nutrition Tracker — replaced with diet-aware defaults
+- [x] Add location/region field to onboarding (Middle East, UK, USA, South-East Asia, etc.)
+- [x] Add cuisine preference field to onboarding (Indian, Thai, Turkish, Mediterranean, etc.)
+- [x] Store location and cuisine preferences in local profile (AsyncStorage)
+- [x] Update AI meal plan generation prompts to incorporate dietary preference, location, and cuisine
+- [x] Diet-aware default meals: 6 diets (omnivore, halal, vegan, vegetarian, keto, paleo) with 4 meals each
+- [x] All meal suggestions respect vegan/vegetarian/halal/keto/paleo/omnivore restrictions
+- [x] Pass region/cuisinePrefs to all regenerateMealPlan.mutate calls
+- [x] Run tests and verify TypeScript compiles — 0 TS errors, 2079 tests pass
 - [ ] Save checkpoint

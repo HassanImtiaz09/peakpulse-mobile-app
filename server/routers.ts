@@ -358,7 +358,7 @@ The transformation should look like a real photograph, not AI-generated. Match t
   mealPlan: router({
     // AI generation — works for guests (no DB save for guests)
     generate: guestOrUserProcedure
-      .input(z.object({ goal: z.string(), dietaryPreference: z.string(), dailyCalories: z.number().optional(), weightKg: z.number().optional(), heightCm: z.number().optional(), age: z.number().optional(), gender: z.string().optional(), activityLevel: z.string().optional(), ramadanMode: z.boolean().optional(), favouriteFoods: z.array(z.object({ name: z.string(), calories: z.number(), protein: z.number(), carbs: z.number(), fat: z.number() })).optional() }))
+      .input(z.object({ goal: z.string(), dietaryPreference: z.string(), dailyCalories: z.number().optional(), weightKg: z.number().optional(), heightCm: z.number().optional(), age: z.number().optional(), gender: z.string().optional(), activityLevel: z.string().optional(), ramadanMode: z.boolean().optional(), region: z.string().optional(), cuisinePrefs: z.array(z.string()).optional(), favouriteFoods: z.array(z.object({ name: z.string(), calories: z.number(), protein: z.number(), carbs: z.number(), fat: z.number() })).optional() }))
       .mutation(async ({ ctx, input }) => {
         await checkAiLimit(ctx.user?.id, "mealPlan.generate");
         // Personalised TDEE via Mifflin-St Jeor if body metrics are provided
@@ -388,6 +388,13 @@ The transformation should look like a real photograph, not AI-generated. Match t
           ? `IMPORTANT: The user frequently eats and enjoys these foods. Incorporate them into the meal plan where nutritionally appropriate (at least 3-4 times across the week): ${input.favouriteFoods.map(f => `${f.name} (${f.calories}kcal, P:${f.protein}g C:${f.carbs}g F:${f.fat}g)`).join(", ")}. Use these as base ingredients or full meals, adjusting portions to fit the calorie target.`
           : "";
         const dietaryRules = getDietaryRestrictions(input.dietaryPreference);
+        const regionNote = input.region ? `- Region/Location: ${input.region.replace(/_/g, " ")}` : "";
+        const cuisineNote = input.cuisinePrefs && input.cuisinePrefs.length > 0
+          ? `CUISINE PREFERENCES: The user prefers ${input.cuisinePrefs.map(c => c.replace(/_/g, " ")).join(", ")} cuisine(s). Prioritise dishes from these cuisines while keeping meals healthy and within calorie targets. Use authentic ingredients and cooking methods from these cuisines. At least 70% of meals should reflect these cuisine preferences.`
+          : "";
+        const regionCuisineNote = input.region && !input.cuisinePrefs?.length
+          ? `REGIONAL CONTEXT: The user is based in ${input.region.replace(/_/g, " ")}. Suggest meals using locally available ingredients and popular healthy dishes from this region. Consider local supermarket availability and seasonal produce.`
+          : "";
         const prompt = `Generate a 7-day meal plan as JSON.
 
 USER PROFILE:
@@ -396,8 +403,11 @@ USER PROFILE:
 - Daily Calorie Target: ~${calories} kcal
 ${input.weightKg ? `- Weight: ${input.weightKg} kg` : ""}
 ${input.heightCm ? `- Height: ${input.heightCm} cm` : ""}
+${regionNote}
 ${isRamadan ? `\n${ramadanNote}` : ""}
 ${favFoodsNote}
+${cuisineNote}
+${regionCuisineNote}
 
 DIETARY RESTRICTIONS (MUST FOLLOW — NON-NEGOTIABLE):
 ${dietaryRules}

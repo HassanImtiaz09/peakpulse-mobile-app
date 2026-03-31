@@ -79,6 +79,34 @@ const DIETARY_PREFS = [
   { key: "paleo",      label: "Paleo",      iconName: "set-meal" as const },
 ];
 
+const REGIONS = [
+  { key: "middle_east",   label: "Middle East",    iconName: "mosque" as const },
+  { key: "south_asia",    label: "South Asia",     iconName: "public" as const },
+  { key: "southeast_asia", label: "South-East Asia", iconName: "public" as const },
+  { key: "east_asia",     label: "East Asia",      iconName: "public" as const },
+  { key: "uk_europe",     label: "UK / Europe",    iconName: "language" as const },
+  { key: "north_america", label: "North America",  iconName: "language" as const },
+  { key: "latin_america", label: "Latin America",  iconName: "language" as const },
+  { key: "africa",        label: "Africa",         iconName: "public" as const },
+];
+
+const CUISINES = [
+  { key: "indian",        label: "Indian",         iconName: "restaurant" as const },
+  { key: "thai",          label: "Thai",           iconName: "restaurant" as const },
+  { key: "turkish",       label: "Turkish",        iconName: "restaurant" as const },
+  { key: "mediterranean", label: "Mediterranean",  iconName: "restaurant" as const },
+  { key: "middle_eastern", label: "Middle Eastern", iconName: "restaurant" as const },
+  { key: "japanese",      label: "Japanese",       iconName: "restaurant" as const },
+  { key: "korean",        label: "Korean",         iconName: "restaurant" as const },
+  { key: "chinese",       label: "Chinese",        iconName: "restaurant" as const },
+  { key: "mexican",       label: "Mexican",        iconName: "restaurant" as const },
+  { key: "italian",       label: "Italian",        iconName: "restaurant" as const },
+  { key: "american",      label: "American",       iconName: "restaurant" as const },
+  { key: "african",       label: "African",        iconName: "restaurant" as const },
+  { key: "caribbean",     label: "Caribbean",      iconName: "restaurant" as const },
+  { key: "vietnamese",    label: "Vietnamese",     iconName: "restaurant" as const },
+];
+
 import { ACTIVITY_LEVELS, calculateTDEEBreakdown, calculateMacros, saveTDEEBreakdown } from "@/lib/tdee-calculator";
 import { UI as SF } from "@/constants/ui-colors";
 import { useAiLimit } from "@/components/ai-limit-modal";
@@ -94,14 +122,14 @@ function calculateTDEE(
 
 // Steps:
 // 0-3: intro slides
-// 4: name + goal
-// 4b: body metrics (height, weight, age, gender, activity)
+// 4: name + goal + body metrics
 // 5: workout style
 // 6: dietary pref
-// 7: days per week
-// 8: photo capture
-// 9: transformation images (only if goal != maintain)
-// 10: plan generation + done
+// 7: region & cuisine preferences
+// 8: days per week
+// 9: photo capture
+// 10: transformation images (only if goal != maintain)
+// 11: plan generation + done
 // We encode step 4b as step === 4 + substep 1 via a separate flag
 
 export default function OnboardingScreen() {
@@ -114,6 +142,8 @@ export default function OnboardingScreen() {
   const [goal, setGoal] = useState("lose_fat");
   const [workoutStyle, setWorkoutStyle] = useState("gym");
   const [dietaryPref, setDietaryPref] = useState("omnivore");
+  const [region, setRegion] = useState("");
+  const [cuisinePrefs, setCuisinePrefs] = useState<string[]>([]);
   const [daysPerWeek, setDaysPerWeek] = useState(4);
   // Body metrics
   const [weightKg, setWeightKg] = useState("");
@@ -151,7 +181,7 @@ export default function OnboardingScreen() {
   // Auto-trigger plan generation when step 10 is reached
   // IMPORTANT: This useEffect MUST be before all early returns to satisfy React rules of hooks
   React.useEffect(() => {
-    if (step === 10 && !autoGenTriggered.current && !generatingPlans) {
+    if (step === 11 && !autoGenTriggered.current && !generatingPlans) {
       autoGenTriggered.current = true;
       handleGeneratePlansAndGo();
     }
@@ -196,7 +226,7 @@ export default function OnboardingScreen() {
       const wKg = weightKg ? parseFloat(weightKg) : undefined;
       const hCm = heightCm ? parseFloat(heightCm) : undefined;
       const ageN = age ? parseInt(age) : undefined;
-      const profile = { name: name || "Athlete", goal, workoutStyle, dietaryPreference: dietaryPref, daysPerWeek, weightKg: wKg, heightCm: hCm, age: ageN, gender, activityLevel };
+      const profile = { name: name || "Athlete", goal, workoutStyle, dietaryPreference: dietaryPref, daysPerWeek, weightKg: wKg, heightCm: hCm, age: ageN, gender, activityLevel, region, cuisinePrefs };
       await AsyncStorage.setItem("@guest_profile", JSON.stringify(profile));
       if (isAuthenticated) {
         await upsertProfile.mutateAsync({ goal, workoutStyle, dietaryPreference: dietaryPref, daysPerWeek, weightKg: wKg, heightCm: hCm, age: ageN, gender });
@@ -211,12 +241,12 @@ export default function OnboardingScreen() {
     }
 
     if (goal === "maintain" || !scanPhoto) {
-      animateTransition(10);
+      animateTransition(11);
       return;
     }
 
     setAnalyzingScan(true);
-    animateTransition(9);
+    animateTransition(10);
     try {
       const response = await fetch(scanPhoto);
       const blob = await response.blob();
@@ -260,7 +290,7 @@ export default function OnboardingScreen() {
       }
     } catch (e: any) {
       if (e?.message?.includes?.("AI_LIMIT_EXCEEDED") || e?.message?.includes?.("rate limit")) { showLimitModal(e.message); setAnalyzingScan(false); return; }
-      animateTransition(10);
+      animateTransition(11);
     } finally {
       setAnalyzingScan(false);
     }
@@ -302,7 +332,7 @@ export default function OnboardingScreen() {
 
       const [workoutResult, mealResult] = await Promise.allSettled([
         generateWorkout.mutateAsync({ goal: effectiveGoal, workoutStyle, daysPerWeek, fitnessLevel: "intermediate" }),
-        generateMeal.mutateAsync({ goal: effectiveGoal, dietaryPreference: dietaryPref, dailyCalories: tdee ?? undefined }),
+        generateMeal.mutateAsync({ goal: effectiveGoal, dietaryPreference: dietaryPref, dailyCalories: tdee ?? undefined, region: region || undefined, cuisinePrefs: cuisinePrefs.length > 0 ? cuisinePrefs : undefined }),
       ]);
       // Save to BOTH keys so plans.tsx can read them (guest keys + cached keys)
       if (workoutResult.status === "fulfilled") {
@@ -421,8 +451,8 @@ export default function OnboardingScreen() {
     );
   }
 
-  // ── Transformation images screen (step 9) ────────────────────────────────
-  if (step === 9) {
+  // ── Transformation images screen (step 10) ───────────────────────────────────────
+  if (step === 10) {
     return (
       <View style={{ flex: 1, backgroundColor: SF.bg }}>
         <ImageBackground source={{ uri: BG.ob2 }} style={{ height: 200 }} resizeMode="cover">
@@ -541,7 +571,7 @@ export default function OnboardingScreen() {
               })}
               <TouchableOpacity
                 style={{ backgroundColor: SF.gold, borderRadius: 18, paddingVertical: 18, alignItems: "center", marginTop: 8, opacity: !selectedTransformation ? 0.5 : 1, shadowColor: SF.gold, shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.45, shadowRadius: 14 }}
-                onPress={() => animateTransition(10)}
+                onPress={() => animateTransition(11)}
                 disabled={!selectedTransformation}
               >
                 <Text style={{ color: SF.bg, fontFamily: "BebasNeue_400Regular", fontSize: 17 }}>
@@ -550,7 +580,7 @@ export default function OnboardingScreen() {
               </TouchableOpacity>
               <TouchableOpacity
                 style={{ marginTop: 14, alignItems: "center", paddingVertical: 12 }}
-                onPress={() => animateTransition(10)}
+                onPress={() => animateTransition(11)}
               >
                 <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 13 }}>Skip — I'll set my target later</Text>
               </TouchableOpacity>
@@ -564,7 +594,7 @@ export default function OnboardingScreen() {
               </Text>
               <TouchableOpacity
                 style={{ backgroundColor: SF.gold, borderRadius: 18, paddingVertical: 18, paddingHorizontal: 40, alignItems: "center" }}
-                onPress={() => animateTransition(10)}
+                onPress={() => animateTransition(11)}
               >
                 <Text style={{ color: SF.bg, fontFamily: "BebasNeue_400Regular", fontSize: 17 }}>Continue Anyway →</Text>
               </TouchableOpacity>
@@ -577,7 +607,7 @@ export default function OnboardingScreen() {
 
 
 
-  if (step === 10) {
+  if (step === 11) {
     const wKg = weightKg ? parseFloat(weightKg) : null;
     const hCm = heightCm ? parseFloat(heightCm) : null;
     const ageN = age ? parseInt(age) : null;
@@ -646,11 +676,12 @@ export default function OnboardingScreen() {
 
   // ── Setup steps (steps 4-8) ──────────────────────────────────────────────
   const setupStep = step - 4; // 0-4
-  const SETUP_TITLES = ["Your Profile", "Workout Style", "Dietary Preference", "Training Frequency", "AI Body Scan"];
+  const SETUP_TITLES = ["Your Profile", "Workout Style", "Dietary Preference", "Region & Cuisine", "Training Frequency", "AI Body Scan"];
   const SETUP_SUBTITLES = [
     "Tell us about yourself so we can personalise your plan.",
     "How do you prefer to train?",
     "We'll tailor your meal plans to your dietary needs.",
+    "Help us suggest meals from cuisines you love.",
     "How many days per week can you commit to training?",
     "Take a photo for an instant AI physique analysis.",
   ];
@@ -660,11 +691,11 @@ export default function OnboardingScreen() {
       <ImageBackground source={{ uri: BG.plans }} style={{ height: 200 }} resizeMode="cover">
         <View style={{ flex: 1, backgroundColor: "rgba(10,5,0,0.75)", justifyContent: "flex-end", padding: 24, paddingBottom: 20 }}>
           <View style={{ flexDirection: "row", gap: 4, marginBottom: 12 }}>
-            {[0,1,2,3,4].map(i => (
+            {[0,1,2,3,4,5].map(i => (
               <View key={i} style={{ flex: 1, height: 3, borderRadius: 2, backgroundColor: i <= setupStep ? SF.gold : "rgba(245,158,11,0.20)" }} />
             ))}
           </View>
-              <Text style={{ color: SF.gold, fontFamily: "DMSans_600SemiBold", fontSize: 11, letterSpacing: 2, marginBottom: 6 }}>STEP {setupStep + 1} OF 5</Text>
+              <Text style={{ color: SF.gold, fontFamily: "DMSans_600SemiBold", fontSize: 11, letterSpacing: 2, marginBottom: 6 }}>STEP {setupStep + 1} OF 6</Text>
           <Text style={{ color: SF.fg, fontFamily: "BebasNeue_400Regular", fontSize: 30, letterSpacing: 2 }}>{SETUP_TITLES[setupStep]}</Text>
           <Text style={{ color: SF.gold3, fontFamily: "DMSans_400Regular", fontSize: 13, marginTop: 4 }}>{SETUP_SUBTITLES[setupStep]}</Text>
         </View>
@@ -811,8 +842,51 @@ export default function OnboardingScreen() {
             </View>
           )}
 
-          {/* Step 7: Days per week */}
+          {/* Step 7: Region & Cuisine Preferences */}
           {step === 7 && (
+            <View>
+              <Text style={{ color: SF.muted, fontSize: 12, fontFamily: "DMSans_600SemiBold", letterSpacing: 1, marginBottom: 8 }}>YOUR REGION</Text>
+              <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8, marginBottom: 20 }}>
+                {REGIONS.map(r => (
+                  <TouchableOpacity
+                    key={r.key}
+                    style={{ paddingHorizontal: 14, paddingVertical: 10, borderRadius: 12, backgroundColor: region === r.key ? "rgba(245,158,11,0.15)" : SF.surface, borderWidth: region === r.key ? 2 : 1, borderColor: region === r.key ? SF.gold : SF.border, flexDirection: "row", alignItems: "center", gap: 6 }}
+                    onPress={() => setRegion(r.key)}
+                  >
+                    <MaterialIcons name={r.iconName as any} size={16} color={region === r.key ? SF.gold : SF.muted} />
+                    <Text style={{ color: region === r.key ? SF.gold : SF.fg, fontFamily: "DMSans_600SemiBold", fontSize: 13 }}>{r.label}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+              <Text style={{ color: SF.muted, fontSize: 12, fontFamily: "DMSans_600SemiBold", letterSpacing: 1, marginBottom: 8 }}>FAVOURITE CUISINES (select up to 3)</Text>
+              <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
+                {CUISINES.map(c => {
+                  const selected = cuisinePrefs.includes(c.key);
+                  return (
+                    <TouchableOpacity
+                      key={c.key}
+                      style={{ paddingHorizontal: 14, paddingVertical: 10, borderRadius: 12, backgroundColor: selected ? "rgba(245,158,11,0.15)" : SF.surface, borderWidth: selected ? 2 : 1, borderColor: selected ? SF.gold : SF.border }}
+                      onPress={() => {
+                        if (selected) {
+                          setCuisinePrefs(prev => prev.filter(k => k !== c.key));
+                        } else if (cuisinePrefs.length < 3) {
+                          setCuisinePrefs(prev => [...prev, c.key]);
+                        }
+                      }}
+                    >
+                      <Text style={{ color: selected ? SF.gold : SF.fg, fontFamily: "DMSans_600SemiBold", fontSize: 13 }}>{c.label}</Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+              {cuisinePrefs.length === 0 && (
+                <Text style={{ color: SF.muted, fontSize: 11, fontFamily: "DMSans_400Regular", marginTop: 8 }}>No preference? No problem — we'll suggest a variety of healthy cuisines.</Text>
+              )}
+            </View>
+          )}
+
+          {/* Step 8: Days per week */}
+          {step === 8 && (
             <View>
               <Text style={{ color: SF.gold3, fontFamily: "DMSans_400Regular", fontSize: 14, marginBottom: 24, lineHeight: 20 }}>
                 Choose how many days per week you can commit to training. We recommend 4 days for optimal results.
@@ -833,8 +907,8 @@ export default function OnboardingScreen() {
             </View>
           )}
 
-          {/* Step 8: Photo capture */}
-          {step === 8 && (
+          {/* Step 9: Photo capture */}
+          {step === 9 && (
             <View>
               <Text style={{ color: SF.fg, fontSize: 28, fontFamily: "BebasNeue_400Regular", marginBottom: 8 }}>AI Body Scan</Text>
               {goal === "maintain" ? (
@@ -906,7 +980,7 @@ export default function OnboardingScreen() {
         </TouchableOpacity>
         <TouchableOpacity
           style={{ flex: 2, paddingVertical: 16, borderRadius: 16, alignItems: "center", backgroundColor: SF.gold, opacity: saving || analyzingScan ? 0.7 : 1, shadowColor: SF.gold, shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.45, shadowRadius: 14 }}
-          onPress={step === 8 ? handlePhotoStepContinue : () => animateTransition(step + 1)}
+          onPress={step === 9 ? handlePhotoStepContinue : () => animateTransition(step + 1)}
           disabled={saving || analyzingScan}
         >
           {saving || analyzingScan ? (
@@ -918,7 +992,7 @@ export default function OnboardingScreen() {
             </View>
           ) : (
             <Text style={{ color: SF.bg, fontFamily: "BebasNeue_400Regular", fontSize: 16 }}>
-              {step === 8 ? (scanPhoto ? (goal === "maintain" ? "Continue →" : "Analyse My Physique ⚡") : "Skip for Now →") : "Continue →"}
+              {step === 9 ? (scanPhoto ? (goal === "maintain" ? "Continue →" : "Analyse My Physique ⚡") : "Skip for Now →") : "Continue →"}
             </Text>
           )}
         </TouchableOpacity>
