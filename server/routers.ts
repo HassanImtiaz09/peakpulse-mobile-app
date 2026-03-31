@@ -906,6 +906,42 @@ Return a JSON coaching report with this exact structure:
         catch { result = { suggestions: [] }; }
         return { suggestions: result.suggestions ?? [] };
       }),
+
+    // Generate a full daily meal plan from pantry items, respecting caloric/macro targets
+    generateDailyPlan: guestOrUserProcedure
+      .input(z.object({
+        pantryItems: z.string(),
+        calorieGoal: z.number().default(2000),
+        proteinGoal: z.number().default(150),
+        carbsGoal: z.number().default(250),
+        fatGoal: z.number().default(65),
+        dietaryPreference: z.string().default("omnivore"),
+        fitnessGoal: z.string().default("build_muscle"),
+        region: z.string().optional(),
+        cuisinePrefs: z.array(z.string()).optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        await checkAiLimit(ctx.user?.id, "pantry.generateDailyPlan");
+        const dietNote = input.dietaryPreference !== "omnivore"
+          ? `All meals MUST strictly comply with ${input.dietaryPreference} dietary requirements.`
+          : "";
+        const regionNote = input.region ? `The user is based in ${input.region}.` : "";
+        const cuisineNote = input.cuisinePrefs?.length
+          ? `They prefer these cuisines: ${input.cuisinePrefs.join(", ")}. Incorporate dishes and flavours from these cuisines where possible.`
+          : "";
+        const prompt = `You are an expert nutritionist and chef. The user has these items in their pantry/fridge:\n${input.pantryItems}\n\nTheir DAILY nutritional targets:\n- Calories: ${input.calorieGoal} kcal\n- Protein: ${input.proteinGoal}g\n- Carbs: ${input.carbsGoal}g\n- Fat: ${input.fatGoal}g\nFitness goal: ${input.fitnessGoal.replace(/_/g, " ")}.\n${dietNote}\n${regionNote}\n${cuisineNote}\n\nGenerate a COMPLETE daily meal plan (breakfast, lunch, dinner, and 1 snack) that:\n1. MAXIMISES use of pantry items — use as many as possible\n2. Meets the daily caloric and macro targets (total across all 4 meals should be close to the targets)\n3. Clearly marks which ingredients are FROM THE PANTRY and which NEED TO BE BOUGHT\n4. If the pantry is too limited for a full day, suggest meals that need minimal extra ingredients\n5. Provide accurate calorie and macro estimates for each meal\n6. Include practical cooking instructions\n\nReturn this exact JSON:\n{"dailyPlan":{"totalCalories":0,"totalProtein":0,"totalCarbs":0,"totalFat":0,"pantryItemsUsed":["item1","item2"],"additionalItemsNeeded":["item1","item2"],"meals":[{"mealType":"breakfast","name":"Meal Name","description":"Brief description","ingredients":[{"name":"Chicken Breast","fromPantry":true,"quantity":"150g"}],"calories":450,"protein":35,"carbs":40,"fat":15,"prepTime":"20 min","instructions":["Step 1","Step 2"]}]},"tips":"One practical tip about using their pantry items efficiently"}`;
+        const response = await invokeLLM({
+          messages: [
+            { role: "system", content: "You are an expert chef and nutritionist. Always respond with valid JSON only, no markdown. Be precise with calorie and macro estimates." },
+            { role: "user", content: prompt },
+          ],
+          response_format: { type: "json_object" },
+        });
+        let result: any;
+        try { result = JSON.parse((response.choices[0].message.content as string) ?? "{}"); }
+        catch { result = { dailyPlan: null }; }
+        return result;
+      }),
   }),
 
   receipt: router({

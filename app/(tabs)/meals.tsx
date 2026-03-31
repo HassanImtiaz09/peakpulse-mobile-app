@@ -23,7 +23,7 @@ import { EmptyState, EMPTY_STATES } from "@/components/empty-state";
 import { useAiLimit } from "@/components/ai-limit-modal";
 import { ErrorBoundary } from "@/components/error-boundary";
 import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
-import { usePantry } from "@/lib/pantry-context";
+import { usePantry, PANTRY_CATEGORIES, COMMON_PANTRY_ITEMS, CATEGORY_ICONS as PANTRY_CATEGORY_ICONS, type PantryCategory, type PantryItem, type AISuggestedMeal } from "@/lib/pantry-context";
 import { PremiumFeatureTeaser } from "@/components/premium-feature-banner";
 
 
@@ -206,14 +206,21 @@ function MealsScreenContent() {
   const [selectedDayIndex, setSelectedDayIndex] = useState(0);
   const [regenerating, setRegenerating] = useState(false);
   const [regeneratingWorkout, setRegeneratingWorkout] = useState(false);
-  const [nutritionTab, setNutritionTab] = useState(0); // 0=Tracker, 1=Meal Plan
+  const [nutritionTab, setNutritionTab] = useState(0); // 0=Tracker, 1=Meal Plan, 2=Pantry
   const [ramadanMode, setRamadanMode] = useState(false);
   const [showMealCustomize, setShowMealCustomize] = useState(false);
   const [swapMealPlanModal, setSwapMealPlanModal] = useState<{ meal: any; dayIndex: number; mealIndex: number } | null>(null);
   const [swapMealPlanAlts, setSwapMealPlanAlts] = useState<any[]>([]);
   const [swapMealPlanLoading, setSwapMealPlanLoading] = useState(false);
   const [includeBeyondPantry, setIncludeBeyondPantry] = useState(false);
-  const { items: pantryItems } = usePantry();
+  const { items: pantryItems, addItem: addPantryItem, addItems: addPantryItems, removeItem: removePantryItem, getItemsByCategory, getExpiringItems } = usePantry();
+  // Pantry tab state
+  const [pantryDailyPlan, setPantryDailyPlan] = useState<any>(null);
+  const [generatingPantryPlan, setGeneratingPantryPlan] = useState(false);
+  const [pantryAddMode, setPantryAddMode] = useState(false);
+  const [newPantryItemName, setNewPantryItemName] = useState("");
+  const [newPantryItemCategory, setNewPantryItemCategory] = useState<PantryCategory>("Other");
+  const [expandedPantryMeal, setExpandedPantryMeal] = useState<number | null>(null);
   const pantryNames = useMemo(() => pantryItems.map(p => p.name), [pantryItems]);
   const [localProfile, setLocalProfile] = useState<any>(null);
   const [showShoppingList, setShowShoppingList] = useState(false);
@@ -505,6 +512,59 @@ function MealsScreenContent() {
       }
     });
   }, [refreshFromStorage, mealType, isAuthenticated]));
+
+  // Pantry daily plan generation handler
+  const handleGeneratePantryDailyPlan = React.useCallback(async () => {
+    if (pantryItems.length === 0) {
+      Alert.alert("Empty Pantry", "Add some items to your pantry first so AI can create a meal plan.");
+      return;
+    }
+    setGeneratingPantryPlan(true);
+    setPantryDailyPlan(null);
+    setExpandedPantryMeal(null);
+    try {
+      const pantryList = pantryItems.map(i => i.name).join(", ");
+      const response = await fetch(`${Platform.OS === "web" ? "" : "http://127.0.0.1:3000"}/api/trpc/pantry.generateDailyPlan`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ json: {
+          pantryItems: pantryList,
+          calorieGoal: calorieGoal || 2000,
+          proteinGoal: macroTargets?.protein || 150,
+          carbsGoal: macroTargets?.carbs || 250,
+          fatGoal: macroTargets?.fat || 65,
+          dietaryPreference: userDietaryPref,
+          fitnessGoal: userGoal,
+          region: localProfile?.region || undefined,
+          cuisinePrefs: localProfile?.cuisinePrefs?.length ? localProfile.cuisinePrefs : undefined,
+        }}),
+      });
+      if (response.ok) {
+        const data = await response.json();
+        const plan = data?.result?.data?.json;
+        setPantryDailyPlan(plan);
+      } else {
+        Alert.alert("Error", "Failed to generate meal plan. Please try again.");
+      }
+    } catch {
+      Alert.alert("Error", "Failed to generate meal plan. Please try again.");
+    } finally {
+      setGeneratingPantryPlan(false);
+    }
+  }, [pantryItems, calorieGoal, macroTargets, userDietaryPref, userGoal, localProfile]);
+
+  // Quick add pantry item handler
+  const handleQuickAddPantryItem = React.useCallback(async (name: string, category: PantryCategory) => {
+    await addPantryItem({ name, category, source: "manual" });
+    if (Platform.OS !== "web") {
+      try { const H = require("expo-haptics"); H.impactAsync(H.ImpactFeedbackStyle.Light); } catch {}
+    }
+  }, [addPantryItem]);
+
+  // Pantry grouped items
+  const pantryGrouped = useMemo(() => getItemsByCategory(), [pantryItems]);
+  const pantryNonEmptyCategories = useMemo(() => PANTRY_CATEGORIES.filter(c => pantryGrouped[c]?.length > 0), [pantryGrouped]);
+  const pantryExpiringItems = useMemo(() => getExpiringItems(3), [pantryItems]);
 
   // Meal Plan tab computed values
   const mealPlanTodayName = MEAL_PLAN_DAY_NAMES[new Date().getDay()];
@@ -866,7 +926,7 @@ function MealsScreenContent() {
 
       {/* ── Tab Segmented Control ── */}
       <View style={{ flexDirection: "row", marginHorizontal: 16, marginTop: 12, backgroundColor: MSURFACE, borderRadius: 12, padding: 3, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}>
-        {["Tracker", "Meal Plan"].map((tab, i) => (
+        {["Tracker", "Meal Plan", "Pantry"].map((tab, i) => (
           <TouchableOpacity
             key={tab}
             style={{ flex: 1, paddingVertical: 10, borderRadius: 10, backgroundColor: nutritionTab === i ? "#F59E0B" : "transparent", alignItems: "center" }}
@@ -1830,6 +1890,373 @@ function MealsScreenContent() {
               </TouchableOpacity>
             </View>
           )}
+        </ScrollView>
+      )}
+
+      {/* ── Pantry Tab ── */}
+      {nutritionTab === 2 && (
+        <ScrollView contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 120 }} showsVerticalScrollIndicator={false}>
+          {/* Pantry Stats */}
+          <View style={{ flexDirection: "row", gap: 8, marginTop: 16 }}>
+            <View style={{ flex: 1, backgroundColor: MSURFACE, borderRadius: 14, padding: 12, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}>
+              <Text style={{ color: MMUTED, fontSize: 10, fontFamily: "DMSans_700Bold" }}>ITEMS</Text>
+              <Text style={{ color: "#FDE68A", fontSize: 22, fontFamily: "BebasNeue_400Regular" }}>{pantryItems.length}</Text>
+            </View>
+            <View style={{ flex: 1, backgroundColor: MSURFACE, borderRadius: 14, padding: 12, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}>
+              <Text style={{ color: MMUTED, fontSize: 10, fontFamily: "DMSans_700Bold" }}>CATEGORIES</Text>
+              <Text style={{ color: "#FDE68A", fontSize: 22, fontFamily: "BebasNeue_400Regular" }}>{pantryNonEmptyCategories.length}</Text>
+            </View>
+            <View style={{ flex: 1, backgroundColor: pantryExpiringItems.length > 0 ? "rgba(239,68,68,0.08)" : MSURFACE, borderRadius: 14, padding: 12, borderWidth: 1, borderColor: pantryExpiringItems.length > 0 ? "rgba(239,68,68,0.20)" : "rgba(245,158,11,0.10)" }}>
+              <Text style={{ color: pantryExpiringItems.length > 0 ? "#EF4444" : MMUTED, fontSize: 10, fontFamily: "DMSans_700Bold" }}>EXPIRING</Text>
+              <Text style={{ color: pantryExpiringItems.length > 0 ? "#F87171" : "#FDE68A", fontSize: 22, fontFamily: "BebasNeue_400Regular" }}>{pantryExpiringItems.length}</Text>
+            </View>
+          </View>
+
+          {/* Scan Options */}
+          <View style={{ marginTop: 16, gap: 8 }}>
+            <Text style={{ color: MFG, fontFamily: "DMSans_700Bold", fontSize: 16, marginBottom: 4 }}>Add to Pantry</Text>
+            <View style={{ flexDirection: "row", gap: 8 }}>
+              <TouchableOpacity
+                onPress={() => router.push("/pantry" as any)}
+                style={{ flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6, backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 12, paddingVertical: 12, borderWidth: 1, borderColor: "rgba(245,158,11,0.20)" }}
+              >
+                <MaterialIcons name="photo-camera" size={18} color="#F59E0B" />
+                <Text style={{ color: "#F59E0B", fontFamily: "DMSans_600SemiBold", fontSize: 12 }}>Scan Pantry</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => router.push("/scan-receipt" as any)}
+                style={{ flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6, backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 12, paddingVertical: 12, borderWidth: 1, borderColor: "rgba(245,158,11,0.20)" }}
+              >
+                <MaterialIcons name="receipt-long" size={18} color="#F59E0B" />
+                <Text style={{ color: "#F59E0B", fontFamily: "DMSans_600SemiBold", fontSize: 12 }}>Scan Receipt</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => router.push("/barcode-scanner" as any)}
+                style={{ flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6, backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 12, paddingVertical: 12, borderWidth: 1, borderColor: "rgba(245,158,11,0.20)" }}
+              >
+                <MaterialIcons name="qr-code-scanner" size={18} color="#F59E0B" />
+                <Text style={{ color: "#F59E0B", fontFamily: "DMSans_600SemiBold", fontSize: 12 }}>Barcode</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          {/* Quick Add Common Items */}
+          {pantryAddMode ? (
+            <View style={{ marginTop: 16, backgroundColor: MSURFACE, borderRadius: 16, padding: 16, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}>
+              <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+                <Text style={{ color: MFG, fontFamily: "DMSans_700Bold", fontSize: 15 }}>Add Item</Text>
+                <TouchableOpacity onPress={() => setPantryAddMode(false)}>
+                  <MaterialIcons name="close" size={20} color={MMUTED} />
+                </TouchableOpacity>
+              </View>
+              <TextInput
+                value={newPantryItemName}
+                onChangeText={setNewPantryItemName}
+                placeholder="Item name (e.g. Chicken Breast)"
+                placeholderTextColor={MMUTED}
+                returnKeyType="done"
+                onSubmitEditing={() => {
+                  if (newPantryItemName.trim()) {
+                    handleQuickAddPantryItem(newPantryItemName.trim(), newPantryItemCategory);
+                    setNewPantryItemName("");
+                  }
+                }}
+                style={{ backgroundColor: MBG, borderRadius: 10, padding: 12, color: MFG, fontSize: 14, marginBottom: 10, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}
+              />
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 6, marginBottom: 10 }}>
+                {PANTRY_CATEGORIES.map(cat => (
+                  <TouchableOpacity
+                    key={cat}
+                    onPress={() => setNewPantryItemCategory(cat)}
+                    style={{ paddingHorizontal: 10, paddingVertical: 6, borderRadius: 8, backgroundColor: newPantryItemCategory === cat ? "rgba(245,158,11,0.15)" : "rgba(245,158,11,0.04)", borderWidth: 1, borderColor: newPantryItemCategory === cat ? "rgba(245,158,11,0.30)" : "rgba(245,158,11,0.08)" }}
+                  >
+                    <Text style={{ color: newPantryItemCategory === cat ? "#F59E0B" : MMUTED, fontSize: 11, fontFamily: "DMSans_600SemiBold" }}>{cat}</Text>
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
+              <TouchableOpacity
+                onPress={() => {
+                  if (newPantryItemName.trim()) {
+                    handleQuickAddPantryItem(newPantryItemName.trim(), newPantryItemCategory);
+                    setNewPantryItemName("");
+                  }
+                }}
+                style={{ backgroundColor: "#F59E0B", borderRadius: 10, paddingVertical: 10, alignItems: "center" }}
+              >
+                <Text style={{ color: MBG, fontFamily: "DMSans_700Bold", fontSize: 13 }}>Add to Pantry</Text>
+              </TouchableOpacity>
+              {/* Quick add suggestions */}
+              <Text style={{ color: MMUTED, fontSize: 11, fontFamily: "DMSans_600SemiBold", marginTop: 12, marginBottom: 6 }}>QUICK ADD</Text>
+              <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 6 }}>
+                {COMMON_PANTRY_ITEMS.filter(ci => !pantryItems.some(p => p.name.toLowerCase() === ci.name.toLowerCase())).slice(0, 12).map(ci => (
+                  <TouchableOpacity
+                    key={ci.name}
+                    onPress={() => handleQuickAddPantryItem(ci.name, ci.category)}
+                    style={{ flexDirection: "row", alignItems: "center", gap: 4, paddingHorizontal: 8, paddingVertical: 5, borderRadius: 8, backgroundColor: "rgba(245,158,11,0.06)", borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}
+                  >
+                    <MaterialIcons name="add" size={14} color="#F59E0B" />
+                    <Text style={{ color: "#FDE68A", fontSize: 11 }}>{ci.name}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
+          ) : (
+            <TouchableOpacity
+              onPress={() => setPantryAddMode(true)}
+              style={{ marginTop: 12, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6, backgroundColor: MSURFACE, borderRadius: 12, paddingVertical: 10, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}
+            >
+              <MaterialIcons name="add-circle-outline" size={18} color="#F59E0B" />
+              <Text style={{ color: "#F59E0B", fontFamily: "DMSans_600SemiBold", fontSize: 13 }}>Add Items Manually</Text>
+            </TouchableOpacity>
+          )}
+
+          {/* Current Inventory */}
+          {pantryItems.length > 0 && (
+            <View style={{ marginTop: 16, gap: 10 }}>
+              <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                <Text style={{ color: MFG, fontFamily: "DMSans_700Bold", fontSize: 16 }}>Current Inventory</Text>
+                <TouchableOpacity onPress={() => router.push("/pantry" as any)}>
+                  <Text style={{ color: "#F59E0B", fontFamily: "DMSans_600SemiBold", fontSize: 12 }}>View All</Text>
+                </TouchableOpacity>
+              </View>
+              {pantryNonEmptyCategories.map(cat => (
+                <View key={cat} style={{ gap: 4 }}>
+                  <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+                    <MaterialIcons name={PANTRY_CATEGORY_ICONS[cat] as any} size={16} color="#F59E0B" />
+                    <Text style={{ color: "#FDE68A", fontFamily: "DMSans_700Bold", fontSize: 13 }}>{cat}</Text>
+                    <Text style={{ color: MMUTED, fontSize: 11 }}>({pantryGrouped[cat]?.length})</Text>
+                  </View>
+                  <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 6, paddingLeft: 22 }}>
+                    {pantryGrouped[cat]?.map((item: PantryItem) => (
+                      <View key={item.id} style={{ flexDirection: "row", alignItems: "center", gap: 4, backgroundColor: "rgba(245,158,11,0.06)", borderRadius: 8, paddingHorizontal: 8, paddingVertical: 4, borderWidth: 1, borderColor: "rgba(245,158,11,0.08)" }}>
+                        <Text style={{ color: MFG, fontSize: 12 }}>{item.name}</Text>
+                        <TouchableOpacity onPress={() => removePantryItem(item.id)}>
+                          <MaterialIcons name="close" size={14} color={MMUTED} />
+                        </TouchableOpacity>
+                      </View>
+                    ))}
+                  </View>
+                </View>
+              ))}
+            </View>
+          )}
+
+          {/* Empty state */}
+          {pantryItems.length === 0 && (
+            <View style={{ marginTop: 32, alignItems: "center", gap: 12 }}>
+              <MaterialIcons name="kitchen" size={48} color={MMUTED} />
+              <Text style={{ color: MFG, fontFamily: "DMSans_700Bold", fontSize: 18 }}>Your Pantry is Empty</Text>
+              <Text style={{ color: MMUTED, fontSize: 13, textAlign: "center", maxWidth: 280 }}>
+                Scan your pantry, a receipt, or barcodes to add items. Then generate a meal plan from what you have.
+              </Text>
+            </View>
+          )}
+
+          {/* Generate Meal Plan from Pantry */}
+          {pantryItems.length > 0 && (
+            <View style={{ marginTop: 20 }}>
+              <TouchableOpacity
+                onPress={handleGeneratePantryDailyPlan}
+                disabled={generatingPantryPlan}
+                style={{ backgroundColor: "#F59E0B", borderRadius: 14, paddingVertical: 14, alignItems: "center", flexDirection: "row", justifyContent: "center", gap: 8, opacity: generatingPantryPlan ? 0.6 : 1 }}
+              >
+                {generatingPantryPlan ? (
+                  <ActivityIndicator size="small" color={MBG} />
+                ) : (
+                  <MaterialIcons name="auto-awesome" size={20} color={MBG} />
+                )}
+                <Text style={{ color: MBG, fontFamily: "DMSans_700Bold", fontSize: 15 }}>
+                  {generatingPantryPlan ? "Generating Plan..." : "Generate Daily Plan from Pantry"}
+                </Text>
+              </TouchableOpacity>
+              <Text style={{ color: MMUTED, fontSize: 11, textAlign: "center", marginTop: 6 }}>
+                AI will create breakfast, lunch, dinner & snack using your pantry items
+              </Text>
+            </View>
+          )}
+
+          {/* Pantry Daily Plan Results */}
+          {pantryDailyPlan?.dailyPlan && (
+            <View style={{ marginTop: 20, gap: 12 }}>
+              {/* Plan Summary */}
+              <View style={{ backgroundColor: MSURFACE, borderRadius: 16, padding: 16, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}>
+                <Text style={{ color: MFG, fontFamily: "DMSans_700Bold", fontSize: 16, marginBottom: 10 }}>Daily Plan Summary</Text>
+                <View style={{ flexDirection: "row", justifyContent: "space-around" }}>
+                  <View style={{ alignItems: "center" }}>
+                    <Text style={{ color: "#F59E0B", fontFamily: "BebasNeue_400Regular", fontSize: 20 }}>{pantryDailyPlan.dailyPlan.totalCalories ?? 0}</Text>
+                    <Text style={{ color: MMUTED, fontSize: 10 }}>kcal</Text>
+                    <Text style={{ color: MMUTED, fontSize: 9 }}>/ {calorieGoal || 2000}</Text>
+                  </View>
+                  <View style={{ alignItems: "center" }}>
+                    <Text style={{ color: "#3B82F6", fontFamily: "BebasNeue_400Regular", fontSize: 20 }}>{pantryDailyPlan.dailyPlan.totalProtein ?? 0}g</Text>
+                    <Text style={{ color: MMUTED, fontSize: 10 }}>Protein</Text>
+                  </View>
+                  <View style={{ alignItems: "center" }}>
+                    <Text style={{ color: "#FDE68A", fontFamily: "BebasNeue_400Regular", fontSize: 20 }}>{pantryDailyPlan.dailyPlan.totalCarbs ?? 0}g</Text>
+                    <Text style={{ color: MMUTED, fontSize: 10 }}>Carbs</Text>
+                  </View>
+                  <View style={{ alignItems: "center" }}>
+                    <Text style={{ color: "#FBBF24", fontFamily: "BebasNeue_400Regular", fontSize: 20 }}>{pantryDailyPlan.dailyPlan.totalFat ?? 0}g</Text>
+                    <Text style={{ color: MMUTED, fontSize: 10 }}>Fat</Text>
+                  </View>
+                </View>
+              </View>
+
+              {/* Ingredient Breakdown */}
+              <View style={{ flexDirection: "row", gap: 8 }}>
+                <View style={{ flex: 1, backgroundColor: "rgba(34,197,94,0.08)", borderRadius: 12, padding: 12, borderWidth: 1, borderColor: "rgba(34,197,94,0.15)" }}>
+                  <View style={{ flexDirection: "row", alignItems: "center", gap: 4, marginBottom: 6 }}>
+                    <MaterialIcons name="check-circle" size={14} color="#22C55E" />
+                    <Text style={{ color: "#22C55E", fontFamily: "DMSans_700Bold", fontSize: 11 }}>FROM PANTRY</Text>
+                  </View>
+                  {(pantryDailyPlan.dailyPlan.pantryItemsUsed ?? []).map((item: string, i: number) => (
+                    <Text key={i} style={{ color: "#4ADE80", fontSize: 11, marginLeft: 18, lineHeight: 16 }}>{item}</Text>
+                  ))}
+                  {(pantryDailyPlan.dailyPlan.pantryItemsUsed ?? []).length === 0 && (
+                    <Text style={{ color: MMUTED, fontSize: 11, marginLeft: 18 }}>None</Text>
+                  )}
+                </View>
+                <View style={{ flex: 1, backgroundColor: "rgba(245,158,11,0.08)", borderRadius: 12, padding: 12, borderWidth: 1, borderColor: "rgba(245,158,11,0.15)" }}>
+                  <View style={{ flexDirection: "row", alignItems: "center", gap: 4, marginBottom: 6 }}>
+                    <MaterialIcons name="shopping-cart" size={14} color="#F59E0B" />
+                    <Text style={{ color: "#F59E0B", fontFamily: "DMSans_700Bold", fontSize: 11 }}>NEED TO BUY</Text>
+                  </View>
+                  {(pantryDailyPlan.dailyPlan.additionalItemsNeeded ?? []).map((item: string, i: number) => (
+                    <Text key={i} style={{ color: "#FDE68A", fontSize: 11, marginLeft: 18, lineHeight: 16 }}>{item}</Text>
+                  ))}
+                  {(pantryDailyPlan.dailyPlan.additionalItemsNeeded ?? []).length === 0 && (
+                    <Text style={{ color: MMUTED, fontSize: 11, marginLeft: 18 }}>Nothing extra needed!</Text>
+                  )}
+                </View>
+              </View>
+
+              {/* Meal Cards */}
+              {(pantryDailyPlan.dailyPlan.meals ?? []).map((meal: any, idx: number) => {
+                const isExpanded = expandedPantryMeal === idx;
+                const mealTypeIcon = meal.mealType === "breakfast" ? "free-breakfast" : meal.mealType === "lunch" ? "lunch-dining" : meal.mealType === "dinner" ? "dinner-dining" : "cookie";
+                return (
+                  <TouchableOpacity
+                    key={idx}
+                    onPress={() => setExpandedPantryMeal(isExpanded ? null : idx)}
+                    activeOpacity={0.8}
+                    style={{ backgroundColor: MSURFACE, borderRadius: 16, padding: 16, borderWidth: 1, borderColor: isExpanded ? "rgba(245,158,11,0.25)" : "rgba(245,158,11,0.08)" }}
+                  >
+                    <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+                      <View style={{ width: 40, height: 40, borderRadius: 10, backgroundColor: "rgba(245,158,11,0.10)", alignItems: "center", justifyContent: "center" }}>
+                        <MaterialIcons name={mealTypeIcon as any} size={20} color="#F59E0B" />
+                      </View>
+                      <View style={{ flex: 1 }}>
+                        <Text style={{ color: MMUTED, fontSize: 10, fontFamily: "DMSans_700Bold", textTransform: "uppercase", letterSpacing: 0.5 }}>{meal.mealType}</Text>
+                        <Text style={{ color: MFG, fontFamily: "DMSans_700Bold", fontSize: 14 }}>{meal.name}</Text>
+                      </View>
+                      <View style={{ alignItems: "flex-end" }}>
+                        <Text style={{ color: "#F59E0B", fontFamily: "BebasNeue_400Regular", fontSize: 18 }}>{meal.calories}</Text>
+                        <Text style={{ color: MMUTED, fontSize: 9 }}>kcal</Text>
+                      </View>
+                      <MaterialIcons name={isExpanded ? "expand-less" : "expand-more"} size={20} color={MMUTED} />
+                    </View>
+
+                    {/* Macro bar */}
+                    <View style={{ flexDirection: "row", gap: 12, marginTop: 8 }}>
+                      <Text style={{ color: "#3B82F6", fontSize: 11 }}>P: {meal.protein}g</Text>
+                      <Text style={{ color: "#FDE68A", fontSize: 11 }}>C: {meal.carbs}g</Text>
+                      <Text style={{ color: "#FBBF24", fontSize: 11 }}>F: {meal.fat}g</Text>
+                      {meal.prepTime && <Text style={{ color: MMUTED, fontSize: 11 }}>{meal.prepTime}</Text>}
+                    </View>
+
+                    {isExpanded && (
+                      <View style={{ marginTop: 12, gap: 10 }}>
+                        {meal.description && (
+                          <Text style={{ color: MMUTED, fontSize: 12, fontStyle: "italic" }}>{meal.description}</Text>
+                        )}
+                        {/* Ingredients with pantry/buy indicators */}
+                        {meal.ingredients?.length > 0 && (
+                          <View style={{ gap: 4 }}>
+                            <Text style={{ color: MMUTED, fontSize: 10, fontFamily: "DMSans_700Bold", letterSpacing: 1 }}>INGREDIENTS</Text>
+                            {meal.ingredients.map((ing: any, i: number) => (
+                              <View key={i} style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+                                <MaterialIcons
+                                  name={ing.fromPantry ? "check-circle" : "shopping-cart"}
+                                  size={14}
+                                  color={ing.fromPantry ? "#22C55E" : "#F59E0B"}
+                                />
+                                <Text style={{ color: ing.fromPantry ? "#4ADE80" : "#FDE68A", fontSize: 12 }}>
+                                  {ing.name}{ing.quantity ? ` — ${ing.quantity}` : ""}
+                                </Text>
+                                <Text style={{ color: MMUTED, fontSize: 10 }}>
+                                  {ing.fromPantry ? "(pantry)" : "(buy)"}
+                                </Text>
+                              </View>
+                            ))}
+                          </View>
+                        )}
+                        {/* Instructions */}
+                        {meal.instructions?.length > 0 && (
+                          <View style={{ gap: 6 }}>
+                            <Text style={{ color: MMUTED, fontSize: 10, fontFamily: "DMSans_700Bold", letterSpacing: 1 }}>INSTRUCTIONS</Text>
+                            {meal.instructions.map((step: string, i: number) => (
+                              <View key={i} style={{ flexDirection: "row", alignItems: "flex-start", gap: 8 }}>
+                                <View style={{ width: 20, height: 20, borderRadius: 10, backgroundColor: "#F59E0B", alignItems: "center", justifyContent: "center", flexShrink: 0, marginTop: 1 }}>
+                                  <Text style={{ color: MBG, fontSize: 10, fontFamily: "DMSans_700Bold" }}>{i + 1}</Text>
+                                </View>
+                                <Text style={{ color: MFG, fontSize: 12, flex: 1, lineHeight: 18 }}>{step}</Text>
+                              </View>
+                            ))}
+                          </View>
+                        )}
+                        {/* Log meal button */}
+                        <TouchableOpacity
+                          onPress={() => {
+                            addMeal({
+                              name: meal.name,
+                              mealType: meal.mealType || "lunch",
+                              calories: meal.calories || 0,
+                              protein: meal.protein || 0,
+                              carbs: meal.carbs || 0,
+                              fat: meal.fat || 0,
+                            });
+                            Alert.alert("Logged!", `${meal.name} (${meal.calories} kcal) added to your meal log.`);
+                          }}
+                          style={{ backgroundColor: "rgba(34,197,94,0.12)", borderRadius: 10, paddingVertical: 10, alignItems: "center", flexDirection: "row", justifyContent: "center", gap: 6, borderWidth: 1, borderColor: "rgba(34,197,94,0.25)" }}
+                        >
+                          <MaterialIcons name="add-circle" size={16} color="#22C55E" />
+                          <Text style={{ color: "#22C55E", fontFamily: "DMSans_700Bold", fontSize: 12 }}>Log This Meal</Text>
+                        </TouchableOpacity>
+                      </View>
+                    )}
+                  </TouchableOpacity>
+                );
+              })}
+
+              {/* Tips */}
+              {pantryDailyPlan.tips && (
+                <View style={{ backgroundColor: "rgba(245,158,11,0.06)", borderRadius: 12, padding: 14, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)", flexDirection: "row", gap: 8 }}>
+                  <MaterialIcons name="lightbulb" size={18} color="#F59E0B" style={{ marginTop: 1 }} />
+                  <Text style={{ color: "#FDE68A", fontSize: 12, flex: 1, lineHeight: 18 }}>{pantryDailyPlan.tips}</Text>
+                </View>
+              )}
+
+              {/* Regenerate */}
+              <TouchableOpacity
+                onPress={handleGeneratePantryDailyPlan}
+                disabled={generatingPantryPlan}
+                style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6, backgroundColor: MSURFACE, borderRadius: 12, paddingVertical: 10, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)", marginTop: 4 }}
+              >
+                <MaterialIcons name="refresh" size={16} color="#F59E0B" />
+                <Text style={{ color: "#F59E0B", fontFamily: "DMSans_700Bold", fontSize: 13 }}>{generatingPantryPlan ? "Regenerating..." : "Regenerate Plan"}</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+
+          {/* Link to full pantry management */}
+          <TouchableOpacity
+            onPress={() => router.push("/pantry" as any)}
+            style={{ marginTop: 20, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8, backgroundColor: MSURFACE, borderRadius: 14, paddingVertical: 14, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}
+          >
+            <MaterialIcons name="kitchen" size={20} color="#F59E0B" />
+            <Text style={{ color: "#F59E0B", fontFamily: "DMSans_700Bold", fontSize: 14 }}>Full Pantry Management</Text>
+            <MaterialIcons name="chevron-right" size={20} color="#F59E0B" />
+          </TouchableOpacity>
         </ScrollView>
       )}
 

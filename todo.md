@@ -2780,4 +2780,24 @@
 - [x] All meal suggestions respect vegan/vegetarian/halal/keto/paleo/omnivore restrictions
 - [x] Pass region/cuisinePrefs to all regenerateMealPlan.mutate calls
 - [x] Run tests and verify TypeScript compiles — 0 TS errors, 2079 tests pass
+- [x] Save checkpoint (version cd269006)
+
+## My Pantry Feature (Round 56)
+
+- [x] Audit existing pantry code (usePantry hook, pantry context, pantry.tsx, barcode-scanner.tsx, scan-receipt.tsx)
+- [x] Pantry data model already built with AsyncStorage persistence (PantryItem: name, quantity, unit, category, expiry, source)
+- [x] Pantry list UI: grouped by category with category icons, item count, delete per item
+- [x] "Scan Pantry" option: links to existing pantry.tsx AI photo scan
+- [x] "Scan Receipt" option: links to existing scan-receipt.tsx AI receipt analysis
+- [x] "Scan Barcode" option: links to existing barcode-scanner.tsx with Open Food Facts API
+- [x] Manual "Add Item" form: name input, category selector, quick-add common items
+- [x] Existing AI scan screens already allow user to correct results before confirming
+- [x] Server-side AI endpoints already exist: pantry.scanPhoto, receipt.scan
+- [x] New server endpoint: pantry.generateDailyPlan with caloric/macro targets, region, cuisine
+- [x] "Generate Daily Plan from Pantry" button creates breakfast/lunch/dinner/snack
+- [x] AI meal plan respects user's caloric target and nutritional requirements from onboarding
+- [x] Ingredient breakdown: green = from pantry, amber = need to buy (with shopping cart icon)
+- [x] Caloric values shown per meal and in daily summary with macro breakdown
+- [x] Integrated pantry as 3rd tab in Nutrition section (Tracker / Meal Plan / Pantry)
+- [x] Run tests and verify TypeScript compiles — 0 TS errors, 2079 tests pass
 - [ ] Save checkpoint
