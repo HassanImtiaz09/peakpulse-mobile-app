@@ -41,6 +41,8 @@ import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABEL
 import { searchExercisesByName, type ExerciseDBExercise } from "@/lib/exercisedb";
 import { ActivityIndicator } from "react-native";
 import { getExerciseInstructions } from "@/lib/exercise-instructions";
+import { getStockVideoUrl, getStockVideoEntry } from "@/lib/exercise-stock-videos";
+import { ExerciseStockVideoPlayer } from "@/components/exercise-stock-video-player";
 
 export default function ExerciseDetailScreen() {
   const { name } = useLocalSearchParams<{ name: string }>();
@@ -238,13 +240,28 @@ export default function ExerciseDetailScreen() {
         contentContainerStyle={{ paddingBottom: insets.bottom + 24 }}
         showsVerticalScrollIndicator={false}
       >
-        {/* Exercise Demo GIF */}
+        {/* Exercise Demo — Stock Video (if available) or GIF fallback */}
         <View style={styles.section}>
-          <EnhancedGifPlayer
-            exerciseKey={getRegistryKeyForExercise(exercise.name)}
-            exerciseName={exercise.name}
-            height={240}
-          />
+          {getStockVideoUrl(exercise.name) ? (
+            <View>
+              <ExerciseStockVideoPlayer
+                videoUrl={getStockVideoUrl(exercise.name)!}
+                height={260}
+                initialSpeed={0.25}
+              />
+              {getStockVideoEntry(exercise.name) && (
+                <Text style={styles.videoCredit}>
+                  Video: {getStockVideoEntry(exercise.name)!.credit}
+                </Text>
+              )}
+            </View>
+          ) : (
+            <EnhancedGifPlayer
+              exerciseKey={getRegistryKeyForExercise(exercise.name)}
+              exerciseName={exercise.name}
+              height={240}
+            />
+          )}
         </View>
 
         {/* Body Diagram + Info Row */}
@@ -807,5 +824,12 @@ const styles = StyleSheet.create({
     fontSize: 12,
     lineHeight: 18,
     fontStyle: "italic" as const,
+  },
+  videoCredit: {
+    color: C.muted,
+    fontSize: 11,
+    textAlign: "center",
+    marginTop: 6,
+    fontFamily: "DMSans_400Regular",
   },
 });

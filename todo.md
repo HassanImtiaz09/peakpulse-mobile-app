@@ -2719,3 +2719,12 @@
 - [x] Fullscreen/enlarge — expand button in bottom-right opens modal with full-width GIF
 - [x] Exercise instruction scripts — 75 exercises with numbered steps, AVOID warnings, and breathing cues
 - [x] All 2052 tests pass (22 new), 0 TypeScript errors
+
+## Stock Video Demo (Round 49)
+
+- [x] Source 3 free stock exercise videos from Pexels (Barbell Squat, Bench Press, Deadlift)
+- [x] Build ExerciseStockVideoPlayer component using expo-video with 0.25x/0.5x/1x speed, play/pause, seek, fullscreen, caching
+- [x] Create exercise-stock-videos.ts mapping (3 demo exercises → Pexels MP4 URLs)
+- [x] Integrate into exercise-detail.tsx — stock video shown when available, GIF fallback otherwise
+- [x] Video credit attribution shown below player
+- [x] All 2068 tests pass (16 new), 0 TypeScript errors
