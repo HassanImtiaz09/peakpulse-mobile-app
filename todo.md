@@ -2755,4 +2755,10 @@
 
 - [x] Replace "Today's Target Muscles" in Train section with the same body diagram used in Exercise Library
 - [x] Run tests and verify TypeScript compiles — 0 TS errors, 2079 tests pass
+- [x] Save checkpoint (version ed8bfd48)
+
+## Inline Body Diagrams for Rest of Week (Round 53)
+
+- [x] Add smaller inline body diagrams next to each day in the "Rest of the Week" section
+- [x] Run tests and verify TypeScript compiles — 0 TS errors, 2079 tests pass
 - [ ] Save checkpoint

@@ -20,7 +20,7 @@ import { prefetchExerciseVideos } from "@/lib/gif-cache";
 import { prefetchWorkoutGifs } from "@/lib/exercise-gif-cache";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { BodyHeatmap } from "@/components/body-heatmap";
-import { BodyDiagram } from "@/components/body-diagram";
+import { BodyDiagram, BodyDiagramInline } from "@/components/body-diagram";
 import { MuscleSvgDiagram, MuscleSvgMini } from "@/components/muscle-svg-diagram";
 import { getExerciseInfo, type ExerciseInfo } from "@/lib/exercise-data";
 import { ExerciseSwapSheet } from "@/components/exercise-swap-sheet";
@@ -1220,6 +1220,22 @@ function WorkoutDayCard({ day, onPress, isCompleted, onToggleComplete, isToday, 
             </View>
           </View>
           <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+            {/* Inline body diagram in collapsed header for non-rest days */}
+            {!day.isRest && !expanded && (() => {
+              const pSet = new Set<string>();
+              const sSet = new Set<string>();
+              (day.exercises ?? []).forEach((ex: any) => {
+                const info = getExerciseInfo(ex.name ?? "");
+                if (info) {
+                  info.primaryMuscles.forEach((m: string) => pSet.add(m));
+                  info.secondaryMuscles.forEach((m: string) => sSet.add(m));
+                }
+              });
+              const pArr = Array.from(pSet) as any[];
+              const sArr = Array.from(sSet).filter((m) => !pSet.has(m)) as any[];
+              if (pArr.length === 0) return null;
+              return <BodyDiagramInline primary={pArr} secondary={sArr} />;
+            })()}
             {!day.isRest && <Text style={{ color: MUTED, fontSize: 12 }}>{day.exercises?.length ?? 0} exercises</Text>}
             <MaterialIcons name={expanded ? "expand-less" : "expand-more"} size={18} color={MUTED} />
           </View>
@@ -1228,7 +1244,7 @@ function WorkoutDayCard({ day, onPress, isCompleted, onToggleComplete, isToday, 
 
       {expanded && !day.isRest && (
         <View style={{ paddingHorizontal: 14, paddingBottom: 14, gap: 10 }}>
-          {/* Muscle Diagram for this day's exercises */}
+          {/* Muscle Diagram for this day's exercises — uses same body-highlighter as Library */}
           {(() => {
             const allPrimary = new Set<string>();
             const allSecondary = new Set<string>();
@@ -1245,7 +1261,7 @@ function WorkoutDayCard({ day, onPress, isCompleted, onToggleComplete, isToday, 
             return (
               <View style={{ alignItems: "center", backgroundColor: "rgba(245,158,11,0.04)", borderRadius: 12, paddingVertical: 10, borderWidth: 1, borderColor: "rgba(245,158,11,0.1)" }}>
                 <Text style={{ color: GOLD, fontSize: 10, fontWeight: "700", letterSpacing: 1.2, marginBottom: 6 }}>TARGETED MUSCLES</Text>
-                <MuscleSvgDiagram primary={pArr} secondary={sArr} width={100} height={150} showLabels showToggle />
+                <BodyDiagram primary={pArr} secondary={sArr} width={120} height={160} showLabels={true} showBothViews={true} />
               </View>
             );
           })()}
