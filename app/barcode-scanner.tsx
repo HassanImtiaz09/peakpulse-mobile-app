@@ -896,36 +896,46 @@ export default function BarcodeScannerScreen() {
                       result.name,
                       result.brand
                     );
+                    // Auto-calculate default expiry based on product category
+                    const SHELF_LIFE: Record<string, number> = {
+                      "Proteins": 3, "Dairy": 7, "Grains & Carbs": 90,
+                      "Vegetables": 5, "Fruits": 5, "Condiments & Spices": 180,
+                      "Oils & Fats": 180, "Beverages": 30, "Other": 30,
+                    };
+                    const defaultDays = SHELF_LIFE[category] ?? 30;
+                    const defaultDate = new Date();
+                    defaultDate.setDate(defaultDate.getDate() + defaultDays);
+                    const defaultDateStr = `${String(defaultDate.getDate()).padStart(2, "0")}/${String(defaultDate.getMonth() + 1).padStart(2, "0")}/${defaultDate.getFullYear()}`;
                     Alert.prompt
                       ? Alert.prompt(
                           "Set Expiry Date",
-                          `Add ${name} to pantry.\nEnter expiry date (DD/MM/YYYY) or leave blank:`,
+                          `Add ${name} to pantry (${category}).\n\nSuggested expiry: ${defaultDateStr} (~${defaultDays} days for ${category}).\nEdit below or leave as-is:`,
                           [
                             { text: "Cancel", style: "cancel" },
                             {
                               text: "Add to Pantry",
                               onPress: async (dateStr?: string) => {
                                 let expiresAt: string | undefined;
-                                if (dateStr && dateStr.trim()) {
-                                  const parts = dateStr
-                                    .trim()
-                                    .split(/[\/\-]/);
-                                  if (parts.length === 3) {
-                                    expiresAt =
-                                      parts[0].length === 4
-                                        ? new Date(
-                                            `${parts[0]}-${parts[1].padStart(
-                                              2,
-                                              "0"
-                                            )}-${parts[2].padStart(2, "0")}`
-                                          ).toISOString()
-                                        : new Date(
-                                            `${parts[2]}-${parts[1].padStart(
-                                              2,
-                                              "0"
-                                            )}-${parts[0].padStart(2, "0")}`
-                                          ).toISOString();
-                                  }
+                                const inputDate = (dateStr && dateStr.trim()) ? dateStr.trim() : defaultDateStr;
+                                const parts = inputDate.split(/[\/\-]/);
+                                if (parts.length === 3) {
+                                  expiresAt =
+                                    parts[0].length === 4
+                                      ? new Date(
+                                          `${parts[0]}-${parts[1].padStart(
+                                            2,
+                                            "0"
+                                          )}-${parts[2].padStart(2, "0")}`
+                                        ).toISOString()
+                                      : new Date(
+                                          `${parts[2]}-${parts[1].padStart(
+                                            2,
+                                            "0"
+                                          )}-${parts[0].padStart(2, "0")}`
+                                        ).toISOString();
+                                }
+                                if (!expiresAt) {
+                                  expiresAt = defaultDate.toISOString();
                                 }
                                 await addPantryItem({
                                   name,
@@ -934,7 +944,7 @@ export default function BarcodeScannerScreen() {
                                   expiresAt,
                                 });
                                 Alert.alert(
-                                  "✅ Added to Pantry",
+                                  "\u2705 Added to Pantry",
                                   `${name} added to ${category}.${
                                     expiresAt ? " Expiry tracked." : ""
                                   }`
@@ -947,14 +957,17 @@ export default function BarcodeScannerScreen() {
                           "numbers-and-punctuation"
                         )
                       : (async () => {
+                          // Android: auto-set default expiry based on category
+                          const autoExpiry = defaultDate.toISOString();
                           await addPantryItem({
                             name,
                             category,
                             source: "manual",
+                            expiresAt: autoExpiry,
                           });
                           Alert.alert(
-                            "✅ Added to Pantry",
-                            `${name} added to ${category}. Set expiry date in Pantry screen.`
+                            "\u2705 Added to Pantry",
+                            `${name} added to ${category}.\nExpiry auto-set to ${defaultDateStr} (~${defaultDays} days).`
                           );
                         })();
                   }}

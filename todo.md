@@ -2814,4 +2814,16 @@
 - [x] Shopping list UI: checklist with checkboxes, copy to clipboard, clear done, hide
 - [x] Persist shopping list in AsyncStorage
 - [x] Run tests and verify TypeScript compiles — 0 TS errors, 2079 tests pass
+- [x] Save checkpoint (version 6029d610)
+
+## Pantry Auto-Deduct, Expiry Date Input & Barcode Enhancement (Round 58)
+
+- [x] Auto-deduct pantry items when pantry-based meals are logged (fuzzy name matching)
+- [x] Match meal ingredients against pantry items and reduce qty or remove used items
+- [x] Show confirmation alert listing what was deducted from pantry after logging
+- [x] Add expiry date input (DD/MM/YYYY) to quick-add form in Pantry tab
+- [x] Default expiry auto-set by category: Proteins 3d, Dairy 7d, Vegetables 5d, Grains 90d, etc.
+- [x] Barcode scanner shows suggested expiry based on product category in prompt
+- [x] Barcode scan auto-sets expiry on both iOS (editable prompt) and Android (auto-applied)
+- [x] Run tests and verify TypeScript compiles — 0 TS errors, 2079 tests pass
 - [ ] Save checkpoint

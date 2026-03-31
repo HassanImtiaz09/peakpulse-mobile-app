@@ -215,13 +215,14 @@ function MealsScreenContent() {
   const [swapMealPlanAlts, setSwapMealPlanAlts] = useState<any[]>([]);
   const [swapMealPlanLoading, setSwapMealPlanLoading] = useState(false);
   const [includeBeyondPantry, setIncludeBeyondPantry] = useState(false);
-  const { items: pantryItems, addItem: addPantryItem, addItems: addPantryItems, removeItem: removePantryItem, getItemsByCategory, getExpiringItems } = usePantry();
+  const { items: pantryItems, addItem: addPantryItem, addItems: addPantryItems, removeItem: removePantryItem, updateItem: updatePantryItem, getItemsByCategory, getExpiringItems, logUsage } = usePantry();
   // Pantry tab state
   const [pantryDailyPlan, setPantryDailyPlan] = useState<any>(null);
   const [generatingPantryPlan, setGeneratingPantryPlan] = useState(false);
   const [pantryAddMode, setPantryAddMode] = useState(false);
   const [newPantryItemName, setNewPantryItemName] = useState("");
   const [newPantryItemCategory, setNewPantryItemCategory] = useState<PantryCategory>("Other");
+  const [newPantryItemExpiry, setNewPantryItemExpiry] = useState(""); // DD/MM/YYYY or empty
   const [expandedPantryMeal, setExpandedPantryMeal] = useState<number | null>(null);
   const [pantryShoppingList, setPantryShoppingList] = useState<{ name: string; quantity?: string; checked: boolean }[]>([]);
   const [showPantryShoppingList, setShowPantryShoppingList] = useState(false);
@@ -667,13 +668,67 @@ function MealsScreenContent() {
     });
   }, []);
 
-  // Quick add pantry item handler
-  const handleQuickAddPantryItem = React.useCallback(async (name: string, category: PantryCategory) => {
-    await addPantryItem({ name, category, source: "manual" });
+  // Category-based default shelf life in days
+  const CATEGORY_SHELF_LIFE: Record<PantryCategory, number> = {
+    "Proteins": 3,
+    "Dairy": 7,
+    "Grains & Carbs": 90,
+    "Vegetables": 5,
+    "Fruits": 5,
+    "Condiments & Spices": 180,
+    "Oils & Fats": 180,
+    "Beverages": 30,
+    "Other": 30,
+  };
+
+  // Quick add pantry item handler (with optional expiry)
+  const handleQuickAddPantryItem = React.useCallback(async (name: string, category: PantryCategory, expiryStr?: string) => {
+    let expiresAt: string | undefined;
+    if (expiryStr && expiryStr.trim()) {
+      const parts = expiryStr.trim().split(/[\/\-]/);
+      if (parts.length === 3) {
+        expiresAt = parts[0].length === 4
+          ? new Date(`${parts[0]}-${parts[1].padStart(2, "0")}-${parts[2].padStart(2, "0")}`).toISOString()
+          : new Date(`${parts[2]}-${parts[1].padStart(2, "0")}-${parts[0].padStart(2, "0")}`).toISOString();
+      }
+    }
+    if (!expiresAt) {
+      // Auto-set default expiry based on category
+      const shelfDays = CATEGORY_SHELF_LIFE[category] ?? 30;
+      const d = new Date();
+      d.setDate(d.getDate() + shelfDays);
+      expiresAt = d.toISOString();
+    }
+    await addPantryItem({ name, category, source: "manual", expiresAt });
     if (Platform.OS !== "web") {
       try { const H = require("expo-haptics"); H.impactAsync(H.ImpactFeedbackStyle.Light); } catch {}
     }
   }, [addPantryItem]);
+
+  // Auto-deduct pantry items when a pantry-based meal is logged
+  const deductPantryItems = React.useCallback(async (mealIngredients: { name: string; fromPantry?: boolean; quantity?: string }[]) => {
+    const deducted: string[] = [];
+    const pantryIngredientsUsed = mealIngredients.filter(i => i.fromPantry !== false);
+    for (const ingredient of pantryIngredientsUsed) {
+      const iName = ingredient.name.toLowerCase().trim();
+      // Fuzzy match: find pantry item whose name contains the ingredient or vice versa
+      const match = pantryItems.find(p => {
+        const pName = p.name.toLowerCase().trim();
+        return pName.includes(iName) || iName.includes(pName) || pName.split(" ").some(w => w.length > 3 && iName.includes(w));
+      });
+      if (match) {
+        if (match.quantity && match.quantity > 1) {
+          await updatePantryItem(match.id, { quantity: match.quantity - 1 });
+          deducted.push(`${match.name} (qty: ${match.quantity} → ${match.quantity - 1})`);
+        } else {
+          await removePantryItem(match.id);
+          deducted.push(`${match.name} (removed)`);
+        }
+        await logUsage({ itemName: match.name, action: "used" });
+      }
+    }
+    return deducted;
+  }, [pantryItems, updatePantryItem, removePantryItem, logUsage]);
 
   // Pantry grouped items
   const pantryGrouped = useMemo(() => getItemsByCategory(), [pantryItems]);
@@ -2183,11 +2238,30 @@ function MealsScreenContent() {
                   </TouchableOpacity>
                 ))}
               </ScrollView>
+              {/* Expiry date input */}
+              <View style={{ marginBottom: 10 }}>
+                <Text style={{ color: MMUTED, fontSize: 11, fontFamily: "DMSans_600SemiBold", marginBottom: 4 }}>EXPIRY DATE (optional)</Text>
+                <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+                  <TextInput
+                    value={newPantryItemExpiry}
+                    onChangeText={setNewPantryItemExpiry}
+                    placeholder="DD/MM/YYYY"
+                    placeholderTextColor={MMUTED}
+                    keyboardType="numbers-and-punctuation"
+                    returnKeyType="done"
+                    style={{ flex: 1, backgroundColor: MBG, borderRadius: 10, padding: 12, color: MFG, fontSize: 14, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}
+                  />
+                  <View style={{ backgroundColor: "rgba(245,158,11,0.06)", borderRadius: 8, paddingHorizontal: 8, paddingVertical: 6 }}>
+                    <Text style={{ color: MMUTED, fontSize: 10 }}>Default: {(() => { const SHELF: Record<string, number> = { "Proteins": 3, "Dairy": 7, "Grains & Carbs": 90, "Vegetables": 5, "Fruits": 5, "Condiments & Spices": 180, "Oils & Fats": 180, "Beverages": 30, "Other": 30 }; return SHELF[newPantryItemCategory] ?? 30; })()}d</Text>
+                  </View>
+                </View>
+              </View>
               <TouchableOpacity
                 onPress={() => {
                   if (newPantryItemName.trim()) {
-                    handleQuickAddPantryItem(newPantryItemName.trim(), newPantryItemCategory);
+                    handleQuickAddPantryItem(newPantryItemName.trim(), newPantryItemCategory, newPantryItemExpiry || undefined);
                     setNewPantryItemName("");
+                    setNewPantryItemExpiry("");
                   }
                 }}
                 style={{ backgroundColor: "#F59E0B", borderRadius: 10, paddingVertical: 10, alignItems: "center" }}
@@ -2413,9 +2487,9 @@ function MealsScreenContent() {
                             ))}
                           </View>
                         )}
-                        {/* Log meal button */}
+                        {/* Log meal button with auto-deduct */}
                         <TouchableOpacity
-                          onPress={() => {
+                          onPress={async () => {
                             addMeal({
                               name: meal.name,
                               mealType: meal.mealType || "lunch",
@@ -2424,7 +2498,13 @@ function MealsScreenContent() {
                               carbs: meal.carbs || 0,
                               fat: meal.fat || 0,
                             });
-                            Alert.alert("Logged!", `${meal.name} (${meal.calories} kcal) added to your meal log.`);
+                            // Auto-deduct pantry items
+                            const ingredients = meal.ingredients || [];
+                            const deducted = await deductPantryItems(ingredients);
+                            const deductMsg = deducted.length > 0
+                              ? `\n\nPantry updated:\n${deducted.join("\n")}`
+                              : "";
+                            Alert.alert("Logged!", `${meal.name} (${meal.calories} kcal) added to your meal log.${deductMsg}`);
                           }}
                           style={{ backgroundColor: "rgba(34,197,94,0.12)", borderRadius: 10, paddingVertical: 10, alignItems: "center", flexDirection: "row", justifyContent: "center", gap: 6, borderWidth: 1, borderColor: "rgba(34,197,94,0.25)" }}
                         >
