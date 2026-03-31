@@ -8,8 +8,9 @@
  *  • Fullscreen support (native)
  *  • Loop playback
  *  • Built-in caching (useCaching: true)
+ *  • AI Coach voiceover — narrates exercise form instructions via TTS
  */
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect, useRef } from "react";
 import {
   View,
   Text,
@@ -22,6 +23,11 @@ import { VideoView, useVideoPlayer } from "expo-video";
 import type { VideoSource } from "expo-video";
 import { useEvent } from "expo";
 import { MaterialIcons } from "@expo/vector-icons";
+import {
+  speakCoaching,
+  stopCoaching,
+  type VoiceoverState,
+} from "@/lib/exercise-voiceover";
 
 const SPEED_OPTIONS = [0.25, 0.5, 1] as const;
 type Speed = (typeof SPEED_OPTIONS)[number];
@@ -29,6 +35,8 @@ type Speed = (typeof SPEED_OPTIONS)[number];
 interface ExerciseStockVideoPlayerProps {
   /** Direct MP4 URL (e.g. from Pexels CDN) */
   videoUrl: string;
+  /** Exercise name — used for voiceover coaching script lookup */
+  exerciseName?: string;
   /** Height of the video view. Defaults to 280. */
   height?: number;
   /** Whether to loop. Defaults to true. */
@@ -39,11 +47,24 @@ interface ExerciseStockVideoPlayerProps {
 
 export function ExerciseStockVideoPlayer({
   videoUrl,
+  exerciseName,
   height = 280,
   loop = true,
   initialSpeed = 0.25,
 }: ExerciseStockVideoPlayerProps) {
   const [speed, setSpeed] = useState<Speed>(initialSpeed);
+  const [voiceoverState, setVoiceoverState] =
+    useState<VoiceoverState>("idle");
+  const mountedRef = useRef(true);
+
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+      // Stop any ongoing speech when unmounting
+      stopCoaching().catch(() => {});
+    };
+  }, []);
 
   // Build video source with caching enabled on native
   const videoSource: VideoSource = {
@@ -91,7 +112,36 @@ export function ExerciseStockVideoPlayer({
     player.seekBy(3);
   }, [player]);
 
+  const toggleVoiceover = useCallback(async () => {
+    if (!exerciseName) return;
+
+    if (voiceoverState === "speaking") {
+      await stopCoaching();
+      if (mountedRef.current) setVoiceoverState("idle");
+      return;
+    }
+
+    // Start coaching
+    if (mountedRef.current) setVoiceoverState("speaking");
+    speakCoaching(exerciseName, {
+      rate: 0.85,
+      onStart: () => {
+        if (mountedRef.current) setVoiceoverState("speaking");
+      },
+      onDone: () => {
+        if (mountedRef.current) setVoiceoverState("idle");
+      },
+      onStopped: () => {
+        if (mountedRef.current) setVoiceoverState("idle");
+      },
+      onError: () => {
+        if (mountedRef.current) setVoiceoverState("idle");
+      },
+    });
+  }, [exerciseName, voiceoverState]);
+
   const isLoading = status === "loading";
+  const isSpeaking = voiceoverState === "speaking";
 
   if (!videoUrl) {
     return (
@@ -141,8 +191,22 @@ export function ExerciseStockVideoPlayer({
         {/* Slow-motion label */}
         {speed < 1 && (
           <View style={styles.slowMoLabel}>
-            <MaterialIcons name="slow-motion-video" size={14} color="#D4A843" />
+            <MaterialIcons
+              name="slow-motion-video"
+              size={14}
+              color="#D4A843"
+            />
             <Text style={styles.slowMoText}>Slow Motion</Text>
+          </View>
+        )}
+
+        {/* Voiceover active indicator (top-left, below slow-mo) */}
+        {isSpeaking && (
+          <View
+            style={[styles.coachActiveLabel, speed < 1 && { top: 40 }]}
+          >
+            <MaterialIcons name="record-voice-over" size={14} color="#4ADE80" />
+            <Text style={styles.coachActiveText}>Coach Speaking</Text>
           </View>
         )}
       </View>
@@ -176,17 +240,43 @@ export function ExerciseStockVideoPlayer({
           />
         </Pressable>
 
-        {/* Seek forward */}
-        <Pressable
-          onPress={seekForward}
-          style={({ pressed }) => [
-            styles.controlButton,
-            pressed && { opacity: 0.6 },
-          ]}
-        >
-          <MaterialIcons name="forward-5" size={22} color="#D4A843" />
-          <Text style={styles.controlLabel}>+3s</Text>
-        </Pressable>
+        {/* Coach voiceover button */}
+        {exerciseName ? (
+          <Pressable
+            onPress={toggleVoiceover}
+            style={({ pressed }) => [
+              styles.coachButton,
+              isSpeaking && styles.coachButtonActive,
+              pressed && { opacity: 0.7 },
+            ]}
+          >
+            <MaterialIcons
+              name={isSpeaking ? "voice-over-off" : "record-voice-over"}
+              size={20}
+              color={isSpeaking ? "#0D1117" : "#D4A843"}
+            />
+            <Text
+              style={[
+                styles.coachButtonText,
+                isSpeaking && styles.coachButtonTextActive,
+              ]}
+            >
+              {isSpeaking ? "Stop" : "Coach"}
+            </Text>
+          </Pressable>
+        ) : (
+          /* Seek forward when no exercise name */
+          <Pressable
+            onPress={seekForward}
+            style={({ pressed }) => [
+              styles.controlButton,
+              pressed && { opacity: 0.6 },
+            ]}
+          >
+            <MaterialIcons name="forward-5" size={22} color="#D4A843" />
+            <Text style={styles.controlLabel}>+3s</Text>
+          </Pressable>
+        )}
 
         {/* Speed selector */}
         <Pressable
@@ -283,6 +373,23 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: "600",
   },
+  coachActiveLabel: {
+    position: "absolute",
+    top: 12,
+    left: 12,
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "rgba(0,0,0,0.7)",
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 10,
+    gap: 4,
+  },
+  coachActiveText: {
+    color: "#4ADE80",
+    fontSize: 11,
+    fontWeight: "600",
+  },
   controlsBar: {
     flexDirection: "row",
     alignItems: "center",
@@ -290,7 +397,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 16,
     backgroundColor: "#161B22",
-    gap: 20,
+    gap: 16,
   },
   controlButton: {
     alignItems: "center",
@@ -308,6 +415,29 @@ const styles = StyleSheet.create({
     backgroundColor: "#D4A843",
     justifyContent: "center",
     alignItems: "center",
+  },
+  coachButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    backgroundColor: "rgba(212,168,67,0.15)",
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: "rgba(212,168,67,0.4)",
+  },
+  coachButtonActive: {
+    backgroundColor: "#4ADE80",
+    borderColor: "#4ADE80",
+  },
+  coachButtonText: {
+    color: "#D4A843",
+    fontSize: 12,
+    fontWeight: "700",
+  },
+  coachButtonTextActive: {
+    color: "#0D1117",
   },
   speedButton: {
     backgroundColor: "rgba(212,168,67,0.2)",

@@ -246,6 +246,7 @@ export default function ExerciseDetailScreen() {
             <View>
               <ExerciseStockVideoPlayer
                 videoUrl={getStockVideoUrl(exercise.name)!}
+                exerciseName={exercise.name}
                 height={260}
                 initialSpeed={0.25}
               />

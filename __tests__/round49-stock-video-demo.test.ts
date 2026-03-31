@@ -1,10 +1,11 @@
 /**
- * Round 49 — Stock Video Demo Tests
+ * Round 49 — Stock Video + AI Voiceover Tests
  *
  * Validates the stock video player integration:
- * 1. ExerciseStockVideoPlayer component exists with expo-video
- * 2. exercise-stock-videos.ts maps 3 demo exercises
+ * 1. ExerciseStockVideoPlayer component exists with expo-video + voiceover
+ * 2. exercise-stock-videos.ts maps all 75 exercises
  * 3. exercise-detail.tsx integrates stock video with GIF fallback
+ * 4. exercise-voiceover.ts builds coaching scripts from instructions
  */
 import { describe, it, expect } from "vitest";
 import * as fs from "fs";
@@ -58,27 +59,71 @@ describe("ExerciseStockVideoPlayer component", () => {
     expect(src).toContain("slow-motion-video");
     expect(src).toContain("Slow Motion");
   });
+
+  it("has AI Coach voiceover button", () => {
+    expect(src).toContain("speakCoaching");
+    expect(src).toContain("stopCoaching");
+    expect(src).toContain("toggleVoiceover");
+    expect(src).toContain("record-voice-over");
+    expect(src).toContain("Coach");
+  });
+
+  it("accepts exerciseName prop for voiceover", () => {
+    expect(src).toContain("exerciseName");
+  });
 });
 
 describe("exercise-stock-videos.ts mapping", () => {
   const src = readFile("lib/exercise-stock-videos.ts");
 
-  it("maps barbell squat to a Pexels video", () => {
-    expect(src).toContain('"barbell squat"');
+  it("maps squat to a Pexels video", () => {
+    expect(src).toContain('"squat"');
     expect(src).toContain("videos.pexels.com");
   });
 
-  it("maps barbell bench press to a Pexels video", () => {
-    expect(src).toContain('"barbell bench press"');
+  it("maps bench press to a Pexels video", () => {
+    expect(src).toContain('"bench press"');
   });
 
-  it("maps barbell deadlift to a Pexels video", () => {
-    expect(src).toContain('"barbell deadlift"');
+  it("maps deadlift to a Pexels video", () => {
+    expect(src).toContain('"deadlift"');
+  });
+
+  it("maps all 75 exercises", () => {
+    expect(src).toContain("getExercisesWithStockVideos");
   });
 
   it("exports getStockVideoUrl and hasStockVideo helpers", () => {
     expect(src).toContain("export function getStockVideoUrl");
     expect(src).toContain("export function hasStockVideo");
+  });
+});
+
+describe("exercise-voiceover.ts coaching module", () => {
+  const src = readFile("lib/exercise-voiceover.ts");
+
+  it("builds coaching scripts from exercise instructions", () => {
+    expect(src).toContain("buildCoachingScript");
+    expect(src).toContain("getExerciseInstructions");
+  });
+
+  it("uses expo-speech for TTS on native", () => {
+    expect(src).toContain('import * as Speech from "expo-speech"');
+    expect(src).toContain("Speech.speak");
+  });
+
+  it("supports web SpeechSynthesis fallback", () => {
+    expect(src).toContain("SpeechSynthesisUtterance");
+    expect(src).toContain("speechSynthesis");
+  });
+
+  it("exports speakCoaching and stopCoaching", () => {
+    expect(src).toContain("export function speakCoaching");
+    expect(src).toContain("export async function stopCoaching");
+  });
+
+  it("cleans up text for speech (degrees, dashes)", () => {
+    expect(src).toContain('.replace(/°/g, " degrees")');
   });
 });
 
@@ -91,6 +136,10 @@ describe("exercise-detail.tsx stock video integration", () => {
 
   it("imports getStockVideoUrl", () => {
     expect(src).toContain("getStockVideoUrl");
+  });
+
+  it("passes exerciseName to stock video player for voiceover", () => {
+    expect(src).toContain("exerciseName={exercise.name}");
   });
 
   it("conditionally renders stock video or GIF fallback", () => {

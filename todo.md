@@ -2728,3 +2728,14 @@
 - [x] Integrate into exercise-detail.tsx — stock video shown when available, GIF fallback otherwise
 - [x] Video credit attribution shown below player
 - [x] All 2068 tests pass (16 new), 0 TypeScript errors
+
+## Expand Stock Videos + AI Voiceover (Round 50)
+
+- [x] Sourced stock exercise videos from Pexels for all 75 exercises via API search
+- [x] Verified all 75 video URLs accessible (200 OK)
+- [x] Updated exercise-stock-videos.ts with all 75 exercise-to-video mappings
+- [x] Created exercise-voiceover.ts — builds coaching scripts from exercise-instructions.ts
+- [x] Using expo-speech (on-device TTS) for voiceover — no pre-generated audio files needed
+- [x] Integrated Coach voiceover button into ExerciseStockVideoPlayer (tap to start/stop narration)
+- [x] Coach Speaking indicator shown on video overlay while narrating
+- [x] All 2079 tests pass (11 new), 0 TypeScript errors
