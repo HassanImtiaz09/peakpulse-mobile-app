@@ -2749,4 +2749,10 @@
 - [x] Fix key mismatch: removed "t-bar row" entry (no accurate Pexels video found, uses GIF fallback)
 - [x] Use GIF fallback for 18 exercises where no accurate Pexels video exists
 - [x] Run tests and verify TypeScript compiles — 0 TS errors, 2079 tests pass
+- [x] Save checkpoint (version 13695731)
+
+## Train Section Body Diagram (Round 52)
+
+- [x] Replace "Today's Target Muscles" in Train section with the same body diagram used in Exercise Library
+- [x] Run tests and verify TypeScript compiles — 0 TS errors, 2079 tests pass
 - [ ] Save checkpoint

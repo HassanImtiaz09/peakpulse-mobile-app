@@ -20,6 +20,7 @@ import { prefetchExerciseVideos } from "@/lib/gif-cache";
 import { prefetchWorkoutGifs } from "@/lib/exercise-gif-cache";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { BodyHeatmap } from "@/components/body-heatmap";
+import { BodyDiagram } from "@/components/body-diagram";
 import { MuscleSvgDiagram, MuscleSvgMini } from "@/components/muscle-svg-diagram";
 import { getExerciseInfo, type ExerciseInfo } from "@/lib/exercise-data";
 import { ExerciseSwapSheet } from "@/components/exercise-swap-sheet";
@@ -617,19 +618,17 @@ function PlansScreenContent() {
                       <Text style={{ color: GOLD, fontFamily: "DMSans_700Bold", fontSize: 15 }}>Today — {todayName}</Text>
                     </View>
 
-                    {/* Body Diagram — Today's Target Muscles */}
+                    {/* Body Diagram — Today's Target Muscles (uses same react-native-body-highlighter as Library) */}
                     {todayMuscles.primary.length > 0 && !todayWorkout.isRest && (
                       <View style={{ backgroundColor: GOLD_DIM, borderRadius: 16, padding: 14, marginBottom: 12, borderWidth: 1, borderColor: GOLD_BORDER, alignItems: "center" }}>
                         <Text style={{ color: CREAM, fontFamily: "DMSans_700Bold", fontSize: 12, marginBottom: 8, letterSpacing: 0.5 }}>TODAY'S TARGET MUSCLES</Text>
-                        <BodyHeatmap
-                          gender={userGender}
-                          mode="target"
-                          targetPrimary={todayMuscles.primary}
-                          targetSecondary={todayMuscles.secondary}
-                          width={160}
+                        <BodyDiagram
+                          primary={todayMuscles.primary}
+                          secondary={todayMuscles.secondary}
+                          width={140}
                           height={180}
                           showLabels={true}
-                          showLegend={false}
+                          showBothViews={true}
                         />
                       </View>
                     )}
