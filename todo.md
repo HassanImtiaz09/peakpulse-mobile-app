@@ -2761,4 +2761,10 @@
 
 - [x] Add smaller inline body diagrams next to each day in the "Rest of the Week" section
 - [x] Run tests and verify TypeScript compiles — 0 TS errors, 2079 tests pass
+- [x] Save checkpoint (version 505d4b7e)
+
+## Move Meal Plan Tab to Nutrition (Round 54)
+
+- [x] Move 'Meal Plan' tab from Train (Workout Plans) section to Nutrition section
+- [x] Run tests and verify TypeScript compiles — 0 TS errors, 2079 tests pass
 - [ ] Save checkpoint

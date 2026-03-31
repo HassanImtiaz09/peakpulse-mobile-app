@@ -53,11 +53,12 @@ describe("Calorie-Aware Meal Swaps with Images", () => {
   });
 
   it("meal swap modal shows meal images for each suggestion", () => {
-    const src = readFile("app/(tabs)/plans.tsx");
-    // The swap suggestion should show a meal photo via getMealPhotoUrl
-    expect(src).toContain("getMealPhotoUrl");
-    // Should render an Image component in the swap modal
-    expect(src).toContain("Meal image");
+    // Meal plan tab moved to meals.tsx (Nutrition section)
+    const src = readFile("app/(tabs)/meals.tsx");
+    // The swap suggestion should show a meal photo via getMealPlanPhotoUrl
+    expect(src).toContain("getMealPlanPhotoUrl");
+    // Should render MealPlanMealCard with Image component
+    expect(src).toContain("MealPlanMealCard");
   });
 
   it("meal swap warns when exceeding daily calorie limit", () => {

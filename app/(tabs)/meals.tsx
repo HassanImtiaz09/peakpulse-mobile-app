@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import {
   ScrollView, Text, View, TouchableOpacity, ActivityIndicator, Alert, Image,
   TextInput, Platform, ImageBackground, FlatList,
@@ -23,6 +23,8 @@ import { EmptyState, EMPTY_STATES } from "@/components/empty-state";
 import { useAiLimit } from "@/components/ai-limit-modal";
 import { ErrorBoundary } from "@/components/error-boundary";
 import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
+import { usePantry } from "@/lib/pantry-context";
+import { PremiumFeatureTeaser } from "@/components/premium-feature-banner";
 
 
 // NanoBanana design tokens — Meals uses mint/teal accent
@@ -35,6 +37,49 @@ const MINT = "#14B8A6";
 const MINT_DIM = "rgba(20,184,166,0.10)";
 const MINT_BORDER = "rgba(20,184,166,0.25)";
 const MGOLD = "#F59E0B";
+
+// Meal Plan tab constants
+const MEAL_PLAN_GOALS = [
+  { key: "build_muscle", label: "Build Muscle", iconName: "fitness-center" as const },
+  { key: "lose_fat", label: "Lose Fat", iconName: "local-fire-department" as const },
+  { key: "maintain", label: "Maintain", iconName: "balance" as const },
+  { key: "athletic", label: "Athletic", iconName: "directions-run" as const },
+];
+
+const MEAL_PLAN_DIETARY_PREFS = [
+  { key: "omnivore", label: "Omnivore", iconName: "restaurant" as const },
+  { key: "halal", label: "Halal", iconName: "star-half" as const },
+  { key: "vegan", label: "Vegan", iconName: "eco" as const },
+  { key: "vegetarian", label: "Vegetarian", iconName: "grass" as const },
+  { key: "keto", label: "Keto", iconName: "egg" as const },
+  { key: "paleo", label: "Paleo", iconName: "set-meal" as const },
+];
+
+const MEAL_PLAN_DAY_NAMES = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+const MEAL_PHOTO_MAP: Record<string, string> = {
+  breakfast: "https://images.unsplash.com/photo-1525351484163-7529414344d8?w=400&q=80",
+  "morning snack": "https://images.unsplash.com/photo-1490474418585-ba9bad8fd0ea?w=400&q=80",
+  lunch: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&q=80",
+  "afternoon snack": "https://images.unsplash.com/photo-1505576399279-565b52d4ac71?w=400&q=80",
+  dinner: "https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=400&q=80",
+  snack: "https://images.unsplash.com/photo-1505576399279-565b52d4ac71?w=400&q=80",
+  suhoor: "https://images.unsplash.com/photo-1525351484163-7529414344d8?w=400&q=80",
+  iftar: "https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=400&q=80",
+  default: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&q=80",
+};
+
+function getMealPlanPhotoUrl(meal: any): string {
+  if (meal.photoUrl) return meal.photoUrl;
+  const type = (meal.type ?? "default").toLowerCase();
+  return MEAL_PHOTO_MAP[type] ?? MEAL_PHOTO_MAP.default;
+}
+
+const sanitizeMealName = (name: string): string =>
+  name
+    .replace(/[\u00b7\u2022\u2023\u25e6\u2043\u2219\u25cf\u25cb\u2013\u2014]/g, "")
+    .replace(/\s{2,}/g, " ")
+    .trim();
 
 const MEAL_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/OTOphPKaSpDPZRjp.jpg";
 const MEAL_TYPES = ["breakfast", "lunch", "dinner", "snack"];
@@ -125,6 +170,15 @@ function MealsScreenContent() {
   const [selectedDayIndex, setSelectedDayIndex] = useState(0);
   const [regenerating, setRegenerating] = useState(false);
   const [regeneratingWorkout, setRegeneratingWorkout] = useState(false);
+  const [nutritionTab, setNutritionTab] = useState(0); // 0=Tracker, 1=Meal Plan
+  const [ramadanMode, setRamadanMode] = useState(false);
+  const [showMealCustomize, setShowMealCustomize] = useState(false);
+  const [swapMealPlanModal, setSwapMealPlanModal] = useState<{ meal: any; dayIndex: number; mealIndex: number } | null>(null);
+  const [swapMealPlanAlts, setSwapMealPlanAlts] = useState<any[]>([]);
+  const [swapMealPlanLoading, setSwapMealPlanLoading] = useState(false);
+  const [includeBeyondPantry, setIncludeBeyondPantry] = useState(false);
+  const { items: pantryItems } = usePantry();
+  const pantryNames = useMemo(() => pantryItems.map(p => p.name), [pantryItems]);
   const [localProfile, setLocalProfile] = useState<any>(null);
   const [showShoppingList, setShowShoppingList] = useState(false);
   const [checkedIngredients, setCheckedIngredients] = useState<Record<string, boolean>>({});
@@ -416,6 +470,74 @@ function MealsScreenContent() {
     });
   }, [refreshFromStorage, mealType, isAuthenticated]));
 
+  // Meal Plan tab computed values
+  const mealPlanTodayName = MEAL_PLAN_DAY_NAMES[new Date().getDay()];
+  const mealPlanTodayMeals = aiMealPlan?.days?.find((d: any) => d.day?.toLowerCase().includes(mealPlanTodayName.toLowerCase()));
+  const mealPlanOtherDays = useMemo(() => {
+    if (!aiMealPlan?.days) return [];
+    return aiMealPlan.days.filter((d: any) => !d.day?.toLowerCase().includes(mealPlanTodayName.toLowerCase()));
+  }, [aiMealPlan, mealPlanTodayName]);
+  const mealGoalLabel = MEAL_PLAN_GOALS.find(g => g.key === userGoal)?.label ?? userGoal;
+  const dietLabel = MEAL_PLAN_DIETARY_PREFS.find(d => d.key === userDietaryPref)?.label ?? userDietaryPref;
+  const dailyCalorieTarget = useMemo(() => {
+    if (calorieGoal && calorieGoal > 0) return calorieGoal;
+    return localProfile?.calorieTarget ?? 2000;
+  }, [calorieGoal, localProfile]);
+
+  // Meal Plan swap handler
+  const handleMealPlanSwap = useCallback(async (meal: any, dayIndex: number, mealIndex: number) => {
+    setSwapMealPlanModal({ meal, dayIndex, mealIndex });
+    setSwapMealPlanAlts([]);
+    setSwapMealPlanLoading(true);
+    const dayMeals = aiMealPlan?.days?.[dayIndex]?.meals ?? [];
+    const otherMealsCals = dayMeals.reduce((s: number, m: any, i: number) => i === mealIndex ? s : s + (m.calories ?? 0), 0);
+    const remainingForSlot = Math.max(0, dailyCalorieTarget - otherMealsCals);
+    try {
+      const result = await mealSwapGenerate.mutateAsync({
+        mealName: meal.name,
+        mealType: meal.type ?? "meal",
+        calories: meal.calories ?? 400,
+        protein: meal.protein ?? 30,
+        carbs: meal.carbs ?? 40,
+        fat: meal.fat ?? 15,
+        dietaryPreference: userDietaryPref,
+      });
+      setSwapMealPlanAlts(result.alternatives ?? []);
+    } catch (e: any) {
+      if (e?.message?.includes?.("AI_LIMIT_EXCEEDED") || e?.message?.includes?.("rate limit")) { showLimitModal(e.message); return; }
+      Alert.alert("Error", e.message);
+    } finally {
+      setSwapMealPlanLoading(false);
+    }
+  }, [mealSwapGenerate, userDietaryPref, pantryNames, includeBeyondPantry, dailyCalorieTarget, aiMealPlan]);
+
+  const applyMealPlanSwap = useCallback((newMeal: any) => {
+    if (!swapMealPlanModal || !aiMealPlan?.days) return;
+    const dayMeals = aiMealPlan.days[swapMealPlanModal.dayIndex]?.meals ?? [];
+    const otherMealsCals = dayMeals.reduce((s: number, m: any, i: number) => i === swapMealPlanModal.mealIndex ? s : s + (m.calories ?? 0), 0);
+    const newDayTotal = otherMealsCals + (newMeal.calories ?? 0);
+    const doSwap = () => {
+      const updatedDays = aiMealPlan.days.map((day: any, di: number) => {
+        if (di !== swapMealPlanModal.dayIndex) return day;
+        return { ...day, meals: day.meals?.map((m: any, mi: number) => mi === swapMealPlanModal.mealIndex ? { ...newMeal, type: swapMealPlanModal.meal.type } : m) };
+      });
+      const updatedPlan = { ...aiMealPlan, days: updatedDays };
+      setAiMealPlan(updatedPlan);
+      AsyncStorage.setItem("@guest_meal_plan", JSON.stringify(updatedPlan));
+      setSwapMealPlanModal(null);
+      if (Platform.OS !== "web") { try { const Haptics = require("expo-haptics"); Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success); } catch {} }
+      Alert.alert("Meal Swapped", `Replaced with ${newMeal.name}`);
+    };
+    if (newDayTotal > dailyCalorieTarget) {
+      Alert.alert("Exceeds Daily Limit", `This swap would bring today's total to ${newDayTotal} kcal (target: ${dailyCalorieTarget} kcal). Swap anyway?`, [
+        { text: "Cancel", style: "cancel" },
+        { text: "Swap Anyway", style: "destructive", onPress: doSwap },
+      ]);
+      return;
+    }
+    doSwap();
+  }, [swapMealPlanModal, aiMealPlan, dailyCalorieTarget]);
+
   const caloriePercent = Math.min(100, (totalCalories / calorieGoal) * 100);
   const calorieColor = caloriePercent > 90 ? MMUTED : caloriePercent > 70 ? "#FBBF24" : "#FDE68A";
 
@@ -706,6 +828,20 @@ function MealsScreenContent() {
         </View>
       </View>
 
+      {/* ── Tab Segmented Control ── */}
+      <View style={{ flexDirection: "row", marginHorizontal: 16, marginTop: 12, backgroundColor: MSURFACE, borderRadius: 12, padding: 3, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}>
+        {["Tracker", "Meal Plan"].map((tab, i) => (
+          <TouchableOpacity
+            key={tab}
+            style={{ flex: 1, paddingVertical: 10, borderRadius: 10, backgroundColor: nutritionTab === i ? "#F59E0B" : "transparent", alignItems: "center" }}
+            onPress={() => setNutritionTab(i)}
+          >
+            <Text style={{ color: nutritionTab === i ? MBG : MMUTED, fontFamily: "DMSans_700Bold", fontSize: 13 }}>{tab}</Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+
+      {nutritionTab === 0 && (
       <ScrollView
         contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 120 }}
         showsVerticalScrollIndicator={false}
@@ -1329,43 +1465,6 @@ function MealsScreenContent() {
           </View>
         )}
 
-        {/* ── Regenerate Plans ── */}
-        {aiMealPlan && (
-          <View style={{ flexDirection: "row", gap: 8, marginBottom: 16 }}>
-            <TouchableOpacity
-              style={{ flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6, backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 12, paddingVertical: 10, borderWidth: 1, borderColor: "rgba(245,158,11,0.18)", opacity: regenerating ? 0.7 : 1 }}
-              onPress={() => {
-                Alert.alert("Regenerate Meal Plan?", "This will replace your current meal plan.", [
-                  { text: "Cancel", style: "cancel" },
-                  { text: "Regenerate", style: "destructive", onPress: () => {
-                    setRegenerating(true);
-                    regenerateMealPlan.mutate({ goal: userGoal, dietaryPreference: userDietaryPref, ramadanMode: false, weightKg: localProfile?.weightKg, heightCm: localProfile?.heightCm, age: localProfile?.age, gender: localProfile?.gender, activityLevel: localProfile?.activityLevel });
-                  }},
-                ]);
-              }}
-              disabled={regenerating}
-            >
-              {regenerating ? <ActivityIndicator color="#F59E0B" size="small" /> : <MaterialIcons name="restaurant-menu" size={16} color="#F59E0B" />}
-              <Text style={{ color: "#F59E0B", fontFamily: "DMSans_700Bold", fontSize: 11 }}>{regenerating ? "Regenerating..." : "New Meal Plan"}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={{ flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6, backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 12, paddingVertical: 10, borderWidth: 1, borderColor: "rgba(245,158,11,0.18)", opacity: regeneratingWorkout ? 0.7 : 1 }}
-              onPress={() => {
-                Alert.alert("Regenerate Workout Plan?", "This will replace your current workout plan.", [
-                  { text: "Cancel", style: "cancel" },
-                  { text: "Regenerate", style: "destructive", onPress: () => {
-                    setRegeneratingWorkout(true);
-                    regenerateWorkoutPlan.mutate({ goal: userGoal, workoutStyle: localProfile?.workoutStyle ?? "gym", daysPerWeek: localProfile?.daysPerWeek ?? 4, fitnessLevel: localProfile?.activityLevel });
-                  }},
-                ]);
-              }}
-              disabled={regeneratingWorkout}
-            >
-              {regeneratingWorkout ? <ActivityIndicator color="#F59E0B" size="small" /> : <MaterialIcons name="fitness-center" size={16} color="#F59E0B" />}
-              <Text style={{ color: "#F59E0B", fontFamily: "DMSans_700Bold", fontSize: 11 }}>{regeneratingWorkout ? "Regenerating..." : "New Workout Plan"}</Text>
-            </TouchableOpacity>
-          </View>
-        )}
 
         {/* ── Today's Log ── */}
         <Text style={{ color: MFG, fontFamily: "DMSans_700Bold", fontSize: 15, marginBottom: 10 }}>
@@ -1506,6 +1605,196 @@ function MealsScreenContent() {
           );
         })()}
       </ScrollView>
+      )}
+
+      {/* ── Meal Plan Tab ── */}
+      {nutritionTab === 1 && (
+        <ScrollView contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 120 }} showsVerticalScrollIndicator={false}>
+          {/* No meal plan yet — generate one */}
+          {!aiMealPlan ? (
+            <View style={{ marginTop: 20, gap: 16 }}>
+              <View style={{ backgroundColor: MSURFACE, borderRadius: 20, padding: 20, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}>
+                <View style={{ flexDirection: "row", alignItems: "center", gap: 10, marginBottom: 16 }}>
+                  <View style={{ width: 44, height: 44, borderRadius: 12, backgroundColor: "rgba(245,158,11,0.12)", alignItems: "center", justifyContent: "center" }}>
+                    <MaterialIcons name="restaurant-menu" size={22} color="#F59E0B" />
+                  </View>
+                  <View>
+                    <Text style={{ color: MFG, fontFamily: "DMSans_700Bold", fontSize: 18 }}>AI Meal Plan</Text>
+                    <Text style={{ color: MMUTED, fontSize: 12 }}>Personalized weekly meals</Text>
+                  </View>
+                </View>
+
+                <Text style={{ color: MMUTED, fontSize: 11, fontFamily: "DMSans_700Bold", letterSpacing: 1, marginBottom: 8, textTransform: "uppercase" }}>Your Goal</Text>
+                <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8, marginBottom: 16 }}>
+                  {MEAL_PLAN_GOALS.map(g => (
+                    <TouchableOpacity key={g.key} style={{ flexDirection: "row", alignItems: "center", gap: 6, paddingHorizontal: 14, paddingVertical: 8, borderRadius: 12, backgroundColor: userGoal === g.key ? "#F59E0B" : MSURFACE, borderWidth: 1, borderColor: userGoal === g.key ? "#F59E0B" : "rgba(30,41,59,0.6)" }} onPress={() => setUserGoal(g.key)}>
+                      <MaterialIcons name={g.iconName as any} size={14} color={userGoal === g.key ? MBG : MMUTED} />
+                      <Text style={{ color: userGoal === g.key ? MBG : MMUTED, fontFamily: "DMSans_600SemiBold", fontSize: 13 }}>{g.label}</Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+
+                <Text style={{ color: MMUTED, fontSize: 11, fontFamily: "DMSans_700Bold", letterSpacing: 1, marginBottom: 8, textTransform: "uppercase" }}>Dietary Preference</Text>
+                <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8, marginBottom: 16 }}>
+                  {MEAL_PLAN_DIETARY_PREFS.map(d => (
+                    <TouchableOpacity key={d.key} style={{ flexDirection: "row", alignItems: "center", gap: 6, paddingHorizontal: 14, paddingVertical: 8, borderRadius: 12, backgroundColor: userDietaryPref === d.key ? "#F59E0B" : MSURFACE, borderWidth: 1, borderColor: userDietaryPref === d.key ? "#F59E0B" : "rgba(30,41,59,0.6)" }} onPress={() => setUserDietaryPref(d.key)}>
+                      <MaterialIcons name={d.iconName as any} size={14} color={userDietaryPref === d.key ? MBG : MMUTED} />
+                      <Text style={{ color: userDietaryPref === d.key ? MBG : MMUTED, fontFamily: "DMSans_600SemiBold", fontSize: 13 }}>{d.label}</Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+
+                {/* Ramadan Toggle */}
+                <TouchableOpacity
+                  style={{ flexDirection: "row", alignItems: "center", gap: 10, backgroundColor: ramadanMode ? "rgba(245,158,11,0.15)" : MSURFACE, borderRadius: 12, padding: 12, borderWidth: 1, borderColor: ramadanMode ? "rgba(245,158,11,0.30)" : "rgba(30,41,59,0.6)", marginBottom: 20 }}
+                  onPress={() => setRamadanMode(!ramadanMode)}
+                >
+                  <View style={{ width: 36, height: 36, borderRadius: 10, backgroundColor: ramadanMode ? "rgba(245,158,11,0.20)" : "rgba(245,158,11,0.08)", alignItems: "center", justifyContent: "center" }}>
+                    <MaterialIcons name="nightlight-round" size={18} color={ramadanMode ? "#F59E0B" : MMUTED} />
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <Text style={{ color: ramadanMode ? "#F59E0B" : MFG, fontFamily: "DMSans_700Bold", fontSize: 14 }}>Ramadan Mode</Text>
+                    <Text style={{ color: MMUTED, fontSize: 11 }}>Suhoor & Iftar meal timing</Text>
+                  </View>
+                  <View style={{ width: 44, height: 26, borderRadius: 13, backgroundColor: ramadanMode ? "#F59E0B" : "rgba(100,116,139,0.3)", justifyContent: "center", paddingHorizontal: 2 }}>
+                    <View style={{ width: 22, height: 22, borderRadius: 11, backgroundColor: MFG, alignSelf: ramadanMode ? "flex-end" : "flex-start" }} />
+                  </View>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={{ backgroundColor: "#F59E0B", borderRadius: 14, paddingVertical: 14, alignItems: "center", opacity: regenerating ? 0.7 : 1 }}
+                  onPress={() => {
+                    setRegenerating(true);
+                    regenerateMealPlan.mutate({ goal: userGoal, dietaryPreference: userDietaryPref, ramadanMode, weightKg: localProfile?.weightKg, heightCm: localProfile?.heightCm, age: localProfile?.age, gender: localProfile?.gender, activityLevel: localProfile?.activityLevel });
+                  }}
+                  disabled={regenerating}
+                >
+                  {regenerating ? <ActivityIndicator color={MBG} /> : <Text style={{ color: MBG, fontFamily: "DMSans_700Bold", fontSize: 15 }}>Generate Meal Plan</Text>}
+                </TouchableOpacity>
+              </View>
+            </View>
+          ) : (
+            <View style={{ marginTop: 16, gap: 12 }}>
+              {/* Current Preferences Banner */}
+              <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", backgroundColor: MSURFACE, borderRadius: 14, padding: 12, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}>
+                <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+                  <MaterialIcons name="restaurant-menu" size={16} color="#F59E0B" />
+                  <Text style={{ color: MFG, fontFamily: "DMSans_600SemiBold", fontSize: 13 }}>{mealGoalLabel} \u00b7 {dietLabel}{ramadanMode ? " \u00b7 Ramadan" : ""}</Text>
+                </View>
+                <TouchableOpacity onPress={() => setShowMealCustomize(!showMealCustomize)}>
+                  <MaterialIcons name="tune" size={18} color="#F59E0B" />
+                </TouchableOpacity>
+              </View>
+
+              {/* Customize Panel (collapsible) */}
+              {showMealCustomize && (
+                <View style={{ backgroundColor: MSURFACE, borderRadius: 16, padding: 16, borderWidth: 1, borderColor: "rgba(245,158,11,0.15)", gap: 12 }}>
+                  <Text style={{ color: MMUTED, fontSize: 11, fontFamily: "DMSans_700Bold", letterSpacing: 1, textTransform: "uppercase" }}>Your Goal</Text>
+                  <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
+                    {MEAL_PLAN_GOALS.map(g => (
+                      <TouchableOpacity key={g.key} style={{ flexDirection: "row", alignItems: "center", gap: 6, paddingHorizontal: 14, paddingVertical: 8, borderRadius: 12, backgroundColor: userGoal === g.key ? "#F59E0B" : MSURFACE, borderWidth: 1, borderColor: userGoal === g.key ? "#F59E0B" : "rgba(30,41,59,0.6)" }} onPress={() => setUserGoal(g.key)}>
+                        <MaterialIcons name={g.iconName as any} size={14} color={userGoal === g.key ? MBG : MMUTED} />
+                        <Text style={{ color: userGoal === g.key ? MBG : MMUTED, fontFamily: "DMSans_600SemiBold", fontSize: 13 }}>{g.label}</Text>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                  <Text style={{ color: MMUTED, fontSize: 11, fontFamily: "DMSans_700Bold", letterSpacing: 1, textTransform: "uppercase" }}>Dietary Preference</Text>
+                  <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
+                    {MEAL_PLAN_DIETARY_PREFS.map(d => (
+                      <TouchableOpacity key={d.key} style={{ flexDirection: "row", alignItems: "center", gap: 6, paddingHorizontal: 14, paddingVertical: 8, borderRadius: 12, backgroundColor: userDietaryPref === d.key ? "#F59E0B" : MSURFACE, borderWidth: 1, borderColor: userDietaryPref === d.key ? "#F59E0B" : "rgba(30,41,59,0.6)" }} onPress={() => setUserDietaryPref(d.key)}>
+                        <MaterialIcons name={d.iconName as any} size={14} color={userDietaryPref === d.key ? MBG : MMUTED} />
+                        <Text style={{ color: userDietaryPref === d.key ? MBG : MMUTED, fontFamily: "DMSans_600SemiBold", fontSize: 13 }}>{d.label}</Text>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                  <TouchableOpacity
+                    style={{ flexDirection: "row", alignItems: "center", gap: 10, backgroundColor: ramadanMode ? "rgba(245,158,11,0.15)" : "transparent", borderRadius: 12, padding: 10, borderWidth: 1, borderColor: ramadanMode ? "rgba(245,158,11,0.30)" : "rgba(30,41,59,0.6)" }}
+                    onPress={() => setRamadanMode(!ramadanMode)}
+                  >
+                    <MaterialIcons name="nightlight-round" size={16} color={ramadanMode ? "#F59E0B" : MMUTED} />
+                    <Text style={{ color: ramadanMode ? "#F59E0B" : MFG, fontFamily: "DMSans_600SemiBold", fontSize: 13 }}>Ramadan Mode</Text>
+                    <View style={{ marginLeft: "auto", width: 36, height: 20, borderRadius: 10, backgroundColor: ramadanMode ? "#F59E0B" : "rgba(100,116,139,0.3)", justifyContent: "center", paddingHorizontal: 2 }}>
+                      <View style={{ width: 16, height: 16, borderRadius: 8, backgroundColor: MFG, alignSelf: ramadanMode ? "flex-end" : "flex-start" }} />
+                    </View>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={{ backgroundColor: "#F59E0B", borderRadius: 12, paddingVertical: 12, alignItems: "center", opacity: regenerating ? 0.7 : 1 }}
+                    onPress={() => {
+                      setRegenerating(true);
+                      setShowMealCustomize(false);
+                      regenerateMealPlan.mutate({ goal: userGoal, dietaryPreference: userDietaryPref, ramadanMode, weightKg: localProfile?.weightKg, heightCm: localProfile?.heightCm, age: localProfile?.age, gender: localProfile?.gender, activityLevel: localProfile?.activityLevel });
+                    }}
+                    disabled={regenerating}
+                  >
+                    {regenerating ? <ActivityIndicator color={MBG} size="small" /> : <Text style={{ color: MBG, fontFamily: "DMSans_700Bold", fontSize: 14 }}>Regenerate Plan</Text>}
+                  </TouchableOpacity>
+                </View>
+              )}
+
+              {/* Today's Meals */}
+              {mealPlanTodayMeals && (
+                <View>
+                  <View style={{ flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 10 }}>
+                    <MaterialIcons name="today" size={16} color="#F59E0B" />
+                    <Text style={{ color: MFG, fontFamily: "DMSans_700Bold", fontSize: 16 }}>Today — {mealPlanTodayName}</Text>
+                  </View>
+                  {/* Macro summary for today */}
+                  <View style={{ flexDirection: "row", gap: 8, marginBottom: 12 }}>
+                    {[
+                      { label: "Calories", value: mealPlanTodayMeals.meals?.reduce((s: number, m: any) => s + (m.calories ?? 0), 0) ?? 0, unit: "kcal", color: "#FBBF24" },
+                      { label: "Protein", value: mealPlanTodayMeals.meals?.reduce((s: number, m: any) => s + (m.protein ?? 0), 0) ?? 0, unit: "g", color: "#3B82F6" },
+                      { label: "Carbs", value: mealPlanTodayMeals.meals?.reduce((s: number, m: any) => s + (m.carbs ?? 0), 0) ?? 0, unit: "g", color: "#FDE68A" },
+                      { label: "Fat", value: mealPlanTodayMeals.meals?.reduce((s: number, m: any) => s + (m.fat ?? 0), 0) ?? 0, unit: "g", color: "#FBBF24" },
+                    ].map(m => (
+                      <View key={m.label} style={{ flex: 1, backgroundColor: MSURFACE, borderRadius: 10, padding: 8, alignItems: "center", borderWidth: 1, borderColor: m.color + "30" }}>
+                        <Text style={{ color: m.color, fontFamily: "SpaceMono_700Bold", fontSize: 14 }}>{Math.round(m.value)}</Text>
+                        <Text style={{ color: MMUTED, fontSize: 9, marginTop: 1 }}>{m.unit}</Text>
+                        <Text style={{ color: MMUTED, fontSize: 9, marginTop: 1 }}>{m.label}</Text>
+                      </View>
+                    ))}
+                  </View>
+                  {/* Today's meal cards */}
+                  {mealPlanTodayMeals.meals?.map((meal: any, i: number) => (
+                    <MealPlanMealCard key={i} meal={meal} onSwap={() => {
+                      const todayIdx = aiMealPlan.days?.findIndex((d: any) => d.day?.toLowerCase().includes(mealPlanTodayName.toLowerCase())) ?? 0;
+                      handleMealPlanSwap(meal, todayIdx, i);
+                    }} />
+                  ))}
+                </View>
+              )}
+
+              {/* Rest of the Week */}
+              {mealPlanOtherDays.length > 0 && (
+                <View style={{ marginTop: 8 }}>
+                  <Text style={{ color: MMUTED, fontSize: 11, fontFamily: "DMSans_700Bold", letterSpacing: 1, marginBottom: 10, textTransform: "uppercase" }}>Rest of the Week</Text>
+                  {mealPlanOtherDays.map((day: any, di: number) => {
+                    const realIdx = aiMealPlan.days?.indexOf(day) ?? di;
+                    return <MealPlanDayCard key={di} day={day} dayIndex={realIdx} onMealSwap={handleMealPlanSwap} />;
+                  })}
+                </View>
+              )}
+
+              {/* Regenerate Button */}
+              <TouchableOpacity
+                style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8, backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 14, paddingVertical: 12, borderWidth: 1, borderColor: "rgba(245,158,11,0.18)", marginTop: 8, opacity: regenerating ? 0.7 : 1 }}
+                onPress={() => {
+                  Alert.alert("Regenerate Meal Plan?", "This will replace your current meal plan.", [
+                    { text: "Cancel", style: "cancel" },
+                    { text: "Regenerate", style: "destructive", onPress: () => {
+                      setRegenerating(true);
+                      regenerateMealPlan.mutate({ goal: userGoal, dietaryPreference: userDietaryPref, ramadanMode, weightKg: localProfile?.weightKg, heightCm: localProfile?.heightCm, age: localProfile?.age, gender: localProfile?.gender, activityLevel: localProfile?.activityLevel });
+                    }},
+                  ]);
+                }}
+                disabled={regenerating}
+              >
+                {regenerating ? <ActivityIndicator color="#F59E0B" size="small" /> : <MaterialIcons name="restaurant-menu" size={16} color="#F59E0B" />}
+                <Text style={{ color: "#F59E0B", fontFamily: "DMSans_700Bold", fontSize: 13 }}>{regenerating ? "Regenerating..." : "New Meal Plan"}</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+        </ScrollView>
+      )}
 
       {/* Swap Modal */}
       {swapMealType !== null && (
@@ -1690,6 +1979,146 @@ function MealSwapModal({ mealType, mealData, dietaryPreference, fitnessGoal, gen
               </TouchableOpacity>
             )}
           />
+        )}
+      </View>
+    </View>
+  );
+}
+
+function MealPlanDayCard({ day, dayIndex, onMealSwap }: { day: any; dayIndex: number; onMealSwap?: (meal: any, dayIndex: number, mealIndex: number) => void }) {
+  const [expanded, setExpanded] = React.useState(false);
+  const dayCalories = day.meals?.reduce((s: number, m: any) => s + (m.calories ?? 0), 0) ?? 0;
+  return (
+    <View style={{ backgroundColor: MSURFACE, borderRadius: 18, marginBottom: 10, borderWidth: 1, borderColor: "rgba(30,41,59,0.6)", overflow: "hidden" }}>
+      <TouchableOpacity
+        style={{ padding: 16, flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}
+        onPress={() => setExpanded(!expanded)}
+      >
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+          <View style={{ width: 36, height: 36, borderRadius: 10, backgroundColor: "rgba(245,158,11,0.08)", alignItems: "center", justifyContent: "center" }}>
+            <MaterialIcons name="calendar-today" size={16} color="#F59E0B" />
+          </View>
+          <View>
+            <Text style={{ color: MFG, fontFamily: "DMSans_700Bold", fontSize: 15 }}>{day.day}</Text>
+            <Text style={{ color: MMUTED, fontSize: 12 }}>{day.meals?.length ?? 0} meals</Text>
+          </View>
+        </View>
+        <View style={{ alignItems: "flex-end" }}>
+          <Text style={{ color: "#F59E0B", fontFamily: "SpaceMono_700Bold", fontSize: 15 }}>{dayCalories} kcal</Text>
+          <MaterialIcons name={expanded ? "expand-less" : "expand-more"} size={18} color={MMUTED} style={{ marginTop: 2 }} />
+        </View>
+      </TouchableOpacity>
+
+      {expanded && (
+        <View style={{ paddingHorizontal: 12, paddingBottom: 12, gap: 10 }}>
+          {day.meals?.map((meal: any, i: number) => (
+            <MealPlanMealCard key={i} meal={meal} onSwap={onMealSwap ? () => onMealSwap(meal, dayIndex, i) : undefined} />
+          ))}
+        </View>
+      )}
+    </View>
+  );
+}
+
+function MealPlanMealCard({ meal, onSwap }: { meal: any; onSwap?: () => void }) {
+  const [showPrep, setShowPrep] = React.useState(false);
+  const photoUrl = getMealPlanPhotoUrl(meal);
+  const mealTypeColor: Record<string, string> = {
+    breakfast: "#FBBF24",
+    "morning snack": "#FBBF24",
+    lunch: "#FDE68A",
+    "afternoon snack": "#3B82F6",
+    dinner: "#F59E0B",
+    snack: "#FBBF24",
+    suhoor: "#FBBF24",
+    iftar: "#F59E0B",
+  };
+  const color = mealTypeColor[(meal.type ?? "").toLowerCase()] ?? "#B45309";
+
+  return (
+    <View style={{ backgroundColor: MSURFACE, borderRadius: 16, overflow: "hidden", borderWidth: 1, borderColor: "rgba(30,41,59,0.6)" }}>
+      <Image
+        source={{ uri: photoUrl }}
+        style={{ width: "100%", height: 140 }}
+        resizeMode="cover"
+      />
+      <View style={{ position: "absolute", top: 10, left: 10, backgroundColor: color, borderRadius: 8, paddingHorizontal: 10, paddingVertical: 4 }}>
+        <Text style={{ color: MBG, fontSize: 10, fontFamily: "DMSans_700Bold", textTransform: "uppercase" }}>{meal.type ?? "Meal"}</Text>
+      </View>
+      <View style={{ position: "absolute", top: 10, right: 10, flexDirection: "row", gap: 6 }}>
+        {onSwap && (
+          <TouchableOpacity
+            style={{ backgroundColor: "rgba(34,211,238,0.85)", borderRadius: 8, paddingHorizontal: 10, paddingVertical: 4, flexDirection: "row", alignItems: "center", gap: 3 }}
+            onPress={onSwap}
+          >
+            <MaterialIcons name="swap-horiz" size={12} color="#0A0E14" />
+            <Text style={{ color: "#0A0E14", fontSize: 10, fontFamily: "DMSans_700Bold" }}>Swap</Text>
+          </TouchableOpacity>
+        )}
+        <View style={{ backgroundColor: "rgba(0,0,0,0.7)", borderRadius: 8, paddingHorizontal: 10, paddingVertical: 4 }}>
+          <Text style={{ color: "#F59E0B", fontSize: 11, fontFamily: "SpaceMono_700Bold" }}>{meal.calories} kcal</Text>
+        </View>
+      </View>
+
+      <View style={{ padding: 14 }}>
+        <Text style={{ color: MFG, fontFamily: "DMSans_700Bold", fontSize: 15, marginBottom: 6 }}>{sanitizeMealName(meal.name)}</Text>
+        <View style={{ flexDirection: "row", gap: 12, marginBottom: 10 }}>
+          <Text style={{ color: "#3B82F6", fontSize: 12 }}>P: {meal.protein}g</Text>
+          <Text style={{ color: "#FDE68A", fontSize: 12 }}>C: {meal.carbs}g</Text>
+          <Text style={{ color: "#F59E0B", fontSize: 12 }}>F: {meal.fat}g</Text>
+          {meal.prepTime && (
+            <View style={{ flexDirection: "row", alignItems: "center", gap: 2 }}>
+              <MaterialIcons name="timer" size={11} color={MMUTED} />
+              <Text style={{ color: MMUTED, fontSize: 12 }}>{meal.prepTime}</Text>
+            </View>
+          )}
+        </View>
+
+        <TouchableOpacity
+          style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", backgroundColor: showPrep ? "rgba(34,197,94,0.08)" : MSURFACE, borderRadius: 12, padding: 12, borderWidth: 1, borderColor: showPrep ? "rgba(245,158,11,0.18)" : "rgba(30,41,59,0.6)" }}
+          onPress={() => setShowPrep(!showPrep)}
+        >
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+            <MaterialIcons name="restaurant" size={16} color={showPrep ? "#F59E0B" : MMUTED} />
+            <Text style={{ color: showPrep ? "#F59E0B" : MMUTED, fontFamily: "DMSans_600SemiBold", fontSize: 13 }}>How to Prep This Meal</Text>
+          </View>
+          <MaterialIcons name={showPrep ? "expand-less" : "expand-more"} size={16} color={MMUTED} />
+        </TouchableOpacity>
+
+        {showPrep && (
+          <View style={{ marginTop: 10, gap: 8 }}>
+            {meal.ingredients?.length > 0 && (
+              <View style={{ backgroundColor: MBG, borderRadius: 12, padding: 12 }}>
+                <Text style={{ color: MMUTED, fontSize: 11, fontFamily: "DMSans_700Bold", letterSpacing: 1, marginBottom: 8 }}>INGREDIENTS</Text>
+                {meal.ingredients.map((ing: string, i: number) => (
+                  <View key={i} style={{ flexDirection: "row", alignItems: "flex-start", gap: 8, marginBottom: 4 }}>
+                    <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: "#FDE68A", marginTop: 5 }} />
+                    <Text style={{ color: "#F59E0B", fontSize: 13, flex: 1, lineHeight: 18 }}>{ing}</Text>
+                  </View>
+                ))}
+              </View>
+            )}
+            {meal.instructions?.length > 0 && (
+              <View style={{ backgroundColor: MBG, borderRadius: 12, padding: 12 }}>
+                <Text style={{ color: MMUTED, fontSize: 11, fontFamily: "DMSans_700Bold", letterSpacing: 1, marginBottom: 8 }}>PREP STEPS</Text>
+                {meal.instructions.map((step: string, i: number) => (
+                  <View key={i} style={{ flexDirection: "row", alignItems: "flex-start", gap: 10, marginBottom: 8 }}>
+                    <View style={{ width: 22, height: 22, borderRadius: 11, backgroundColor: "#F59E0B", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                      <Text style={{ color: MBG, fontSize: 11, fontFamily: "DMSans_700Bold" }}>{i + 1}</Text>
+                    </View>
+                    <Text style={{ color: MFG, fontSize: 13, flex: 1, lineHeight: 20 }}>{step}</Text>
+                  </View>
+                ))}
+              </View>
+            )}
+            {(!meal.ingredients?.length && !meal.instructions?.length) && (
+              <View style={{ backgroundColor: MBG, borderRadius: 12, padding: 12 }}>
+                <Text style={{ color: MMUTED, fontSize: 13, textAlign: "center" }}>
+                  Regenerate your meal plan to get detailed prep instructions for each meal.
+                </Text>
+              </View>
+            )}
+          </View>
         )}
       </View>
     </View>

@@ -76,7 +76,7 @@ function getMealPhotoUrl(meal: any): string {
   return MEAL_PHOTO_MAP[type] ?? MEAL_PHOTO_MAP.default;
 }
 
-const TABS = ["Workout", "Meal Plan"];
+// Meal Plan tab moved to Nutrition screen (meals.tsx)
 
 const GOALS = [
   { key: "build_muscle", label: "Build Muscle", iconName: "fitness-center" as const },
@@ -115,22 +115,14 @@ function PlansScreenContent() {
   const { isAuthenticated, user } = useAuth();
   const { isGuest } = useGuestAuth();
   const canUse = isAuthenticated || isGuest;
-  const [activeTab, setActiveTab] = useState(0);
-
   // Workout state
   const [goal, setGoal] = useState("build_muscle");
   const [workoutStyle, setWorkoutStyle] = useState("gym");
   const [daysPerWeek, setDaysPerWeek] = useState(4);
   const [showCustomize, setShowCustomize] = useState(false);
 
-  // Meal plan state
-  const [dietaryPref, setDietaryPref] = useState("omnivore");
-  const [mealGoal, setMealGoal] = useState("build_muscle");
-  const [ramadanMode, setRamadanMode] = useState(false);
-  const [showMealCustomize, setShowMealCustomize] = useState(false);
 
   const { items: pantryItems } = usePantry();
-  const pantryNames = useMemo(() => pantryItems.map(p => p.name), [pantryItems]);
   const { calorieGoal, totalCalories } = useCalories();
   const caloriesRemaining = Math.max(0, calorieGoal - totalCalories);
 
@@ -144,15 +136,10 @@ function PlansScreenContent() {
   const [localSwapVisible, setLocalSwapVisible] = useState(false);
   const [localSwapExName, setLocalSwapExName] = useState("");
 
-  // Meal swap state
-  const [swapMealModal, setSwapMealModal] = useState<{ meal: any; dayIndex: number; mealIndex: number } | null>(null);
-  const [swapMealAlts, setSwapMealAlts] = useState<any[]>([]);
-  const [swapMealLoading, setSwapMealLoading] = useState(false);
-  const [includeBeyondPantry, setIncludeBeyondPantry] = useState(true);
-  const mealSwap = trpc.mealSwapWithPantry.generate.useMutation();
+
 
   const { data: dbWorkoutPlan, refetch: refetchWorkout } = trpc.workoutPlan.getActive.useQuery(undefined, { enabled: isAuthenticated });
-  const { data: dbMealPlan, refetch: refetchMeal } = trpc.mealPlan.getActive.useQuery(undefined, { enabled: isAuthenticated });
+
   const { data: dbProfile } = trpc.profile.get.useQuery(undefined, { enabled: isAuthenticated });
   const [localProfile, setLocalProfile] = React.useState<any>(null);
   React.useEffect(() => {
@@ -161,7 +148,7 @@ function PlansScreenContent() {
   const activeProfile = isAuthenticated ? dbProfile : localProfile;
 
   const [localWorkoutPlan, setLocalWorkoutPlan] = useState<any>(null);
-  const [localMealPlan, setLocalMealPlan] = useState<any>(null);
+
 
   const [completedDays, setCompletedDays] = useState<Record<string, boolean>>({});
 
@@ -197,14 +184,10 @@ function PlansScreenContent() {
       AsyncStorage.getItem("@guest_workout_plan").then(raw => {
         if (raw && !localWorkoutPlan) setLocalWorkoutPlan(JSON.parse(raw));
       });
-      AsyncStorage.getItem("@guest_meal_plan").then(raw => {
-        if (raw && !localMealPlan) setLocalMealPlan(JSON.parse(raw));
-      });
     }
   }, [isGuest]);
 
   const workoutPlan = isAuthenticated ? dbWorkoutPlan : localWorkoutPlan;
-  const mealPlan = isAuthenticated ? dbMealPlan : localMealPlan;
 
   // Pre-cache GIFs when workout plan is loaded
   React.useEffect(() => {
@@ -233,13 +216,6 @@ function PlansScreenContent() {
     onError: (e) => { if (e?.message?.includes?.("AI_LIMIT_EXCEEDED") || e?.message?.includes?.("rate limit")) { showLimitModal(e.message); return; } Alert.alert("Error", e.message); },
   });
 
-  const generateMeal = trpc.mealPlan.generate.useMutation({
-    onSuccess: (data) => {
-      if (isAuthenticated) refetchMeal();
-      else setLocalMealPlan(data);
-    },
-    onError: (e) => { if (e?.message?.includes?.("AI_LIMIT_EXCEEDED") || e?.message?.includes?.("rate limit")) { showLimitModal(e.message); return; } Alert.alert("Error", e.message); },
-  });
 
   // Derive today's plan
   const todayName = getTodayDayName();
@@ -264,19 +240,6 @@ function PlansScreenContent() {
     );
   }, [workoutPlan, todayName]);
 
-  const todayMeals = useMemo(() => {
-    if (!mealPlan?.days) return null;
-    return mealPlan.days.find((d: any) =>
-      d.day?.toLowerCase().includes(todayName.toLowerCase())
-    ) ?? null;
-  }, [mealPlan, todayName]);
-
-  const otherMealDays = useMemo(() => {
-    if (!mealPlan?.days) return [];
-    return mealPlan.days.filter((d: any) =>
-      !d.day?.toLowerCase().includes(todayName.toLowerCase())
-    );
-  }, [mealPlan, todayName]);
 
   // ── Exercise Swap Handler ──
   const handleExerciseSwap = useCallback(async (exercise: any, dayFocus: string) => {
@@ -322,87 +285,6 @@ function PlansScreenContent() {
     Alert.alert("Exercise Swapped", `Replaced ${swapExModal.exercise.name} with ${newExercise.name}`);
   }, [swapExModal, workoutPlan, isAuthenticated]);
 
-  // ── Compute daily calorie target from meal plan ──
-  const dailyCalorieTarget = useMemo(() => {
-    // Use the calorie goal from calorie context, or derive from profile
-    if (calorieGoal && calorieGoal > 0) return calorieGoal;
-    return activeProfile?.calorieTarget ?? 2000;
-  }, [calorieGoal, activeProfile]);
-
-  // ── Meal Swap Handler ──
-  const handleMealSwap = useCallback(async (meal: any, dayIndex: number, mealIndex: number) => {
-    setSwapMealModal({ meal, dayIndex, mealIndex });
-    setSwapMealAlts([]);
-    setSwapMealLoading(true);
-    // Calculate remaining calories for this day excluding the meal being swapped
-    const dayMeals = mealPlan?.days?.[dayIndex]?.meals ?? [];
-    const otherMealsCals = dayMeals.reduce((s: number, m: any, i: number) => i === mealIndex ? s : s + (m.calories ?? 0), 0);
-    const remainingForSlot = Math.max(0, dailyCalorieTarget - otherMealsCals);
-    try {
-      const result = await mealSwap.mutateAsync({
-        mealName: meal.name,
-        mealType: meal.type ?? "meal",
-        calories: meal.calories ?? 400,
-        protein: meal.protein ?? 30,
-        carbs: meal.carbs ?? 40,
-        fat: meal.fat ?? 15,
-        dietaryPreference: dietaryPref,
-        pantryItems: pantryNames,
-        includeBeyondPantry,
-        dailyCalorieTarget,
-        remainingCalories: remainingForSlot,
-      });
-      setSwapMealAlts(result.alternatives ?? []);
-    } catch (e: any) {
-      if (e?.message?.includes?.("AI_LIMIT_EXCEEDED") || e?.message?.includes?.("rate limit")) { showLimitModal(e.message); return; }
-      Alert.alert("Error", e.message);
-    } finally {
-      setSwapMealLoading(false);
-    }
-  }, [mealSwap, dietaryPref, pantryNames, includeBeyondPantry, dailyCalorieTarget, mealPlan]);
-
-  const applyMealSwap = useCallback((newMeal: any) => {
-    if (!swapMealModal || !mealPlan?.days) return;
-    // Check if this swap would exceed daily calorie limit
-    const dayMeals = mealPlan.days[swapMealModal.dayIndex]?.meals ?? [];
-    const otherMealsCals = dayMeals.reduce((s: number, m: any, i: number) => i === swapMealModal.mealIndex ? s : s + (m.calories ?? 0), 0);
-    const newDayTotal = otherMealsCals + (newMeal.calories ?? 0);
-    if (newDayTotal > dailyCalorieTarget) {
-      Alert.alert(
-        "Exceeds Daily Limit",
-        `This swap would bring today's total to ${newDayTotal} kcal (target: ${dailyCalorieTarget} kcal). Swap anyway?`,
-        [
-          { text: "Cancel", style: "cancel" },
-          { text: "Swap Anyway", style: "destructive", onPress: () => doApplyMealSwap(newMeal) },
-        ]
-      );
-      return;
-    }
-    doApplyMealSwap(newMeal);
-  }, [swapMealModal, mealPlan, isAuthenticated, dailyCalorieTarget]);
-
-  const doApplyMealSwap = useCallback((newMeal: any) => {
-    if (!swapMealModal || !mealPlan?.days) return;
-    const updatedDays = mealPlan.days.map((day: any, di: number) => {
-      if (di !== swapMealModal.dayIndex) return day;
-      return {
-        ...day,
-        meals: day.meals?.map((m: any, mi: number) =>
-          mi === swapMealModal.mealIndex ? { ...newMeal, type: swapMealModal.meal.type } : m
-        ),
-      };
-    });
-    const updatedPlan = { ...mealPlan, days: updatedDays };
-    if (isAuthenticated) {
-      setLocalMealPlan(updatedPlan);
-    } else {
-      setLocalMealPlan(updatedPlan);
-      AsyncStorage.setItem("@guest_meal_plan", JSON.stringify(updatedPlan));
-    }
-    setSwapMealModal(null);
-    if (Platform.OS !== "web") Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    Alert.alert("Meal Swapped", `Replaced with ${newMeal.name}`);
-  }, [swapMealModal, mealPlan, isAuthenticated]);
 
   // Parallax — MUST be above early return to avoid hooks ordering violation
   const scrollY = useSharedValue(0);
@@ -430,8 +312,6 @@ function PlansScreenContent() {
   // Goal/style labels for summary
   const goalLabel = GOALS.find(g => g.key === goal)?.label ?? goal;
   const styleLabel = WORKOUT_STYLES.find(w => w.key === workoutStyle)?.label ?? workoutStyle;
-  const dietLabel = DIETARY_PREFS.find(d => d.key === dietaryPref)?.label ?? dietaryPref;
-  const mealGoalLabel = GOALS.find(g => g.key === mealGoal)?.label ?? mealGoal;
 
   if (!canUse) {
     return (
@@ -464,17 +344,8 @@ function PlansScreenContent() {
         </View>
       </View>
 
-      {/* Tab Bar + Exercise Library Button */}
+      {/* Exercise Library + Create Buttons */}
       <View style={{ flexDirection: "row", paddingHorizontal: 20, marginBottom: 12, gap: 8 }}>
-        {TABS.map((tab, i) => (
-          <TouchableOpacity
-            key={tab}
-            style={{ flex: 1, paddingVertical: 10, borderRadius: 12, alignItems: "center", backgroundColor: activeTab === i ? GOLD : SURFACE, borderWidth: 1, borderColor: activeTab === i ? GOLD : "rgba(30,41,59,0.6)" }}
-            onPress={() => setActiveTab(i)}
-          >
-            <Text style={{ color: activeTab === i ? BG : MUTED, fontFamily: "DMSans_700Bold", fontSize: 13 }}>{tab}</Text>
-          </TouchableOpacity>
-        ))}
         <TouchableOpacity
           style={{ paddingVertical: 10, paddingHorizontal: 12, borderRadius: 12, alignItems: "center", backgroundColor: SURFACE, borderWidth: 1, borderColor: GOLD_BORDER, flexDirection: "row", gap: 4 }}
           onPress={() => router.push("/exercise-library" as any)}
@@ -498,9 +369,7 @@ function PlansScreenContent() {
         onScroll={handleScroll}
         scrollEventThrottle={16}
       >
-        {/* ── Workout Tab ── */}
-        {activeTab === 0 && (
-          <View style={{ paddingHorizontal: 20 }}>
+        <View style={{ paddingHorizontal: 20 }}>
             {/* If no plan yet, show full generation form */}
             {!workoutPlan ? (
               <>
@@ -758,205 +627,6 @@ function PlansScreenContent() {
               </>
             )}
           </View>
-        )}
-
-        {/* ── Meal Plan Tab ── */}
-        {activeTab === 1 && (
-          <View style={{ paddingHorizontal: 20 }}>
-            {!mealPlan ? (
-              <>
-                <SectionLabel>Your Goal</SectionLabel>
-                <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8, marginBottom: 16 }}>
-                  {GOALS.map(g => (
-                    <OptionChip key={g.key} iconName={g.iconName} label={g.label} selected={mealGoal === g.key} onPress={() => setMealGoal(g.key)} />
-                  ))}
-                </View>
-
-                <SectionLabel>Dietary Preference</SectionLabel>
-                <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8, marginBottom: 24 }}>
-                  {DIETARY_PREFS.map(d => (
-                    <OptionChip key={d.key} iconName={d.iconName} label={d.label} selected={dietaryPref === d.key} onPress={() => setDietaryPref(d.key)} />
-                  ))}
-                </View>
-
-                {(dietaryPref === "halal" || ramadanMode) && (
-                  <TouchableOpacity
-                    style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", backgroundColor: ramadanMode ? "rgba(245,158,11,0.10)" : SURFACE, borderRadius: 12, padding: 14, marginBottom: 16, borderWidth: 1, borderColor: ramadanMode ? "#F59E0B" : "rgba(245,158,11,0.10)" }}
-                    onPress={() => setRamadanMode(v => !v)}
-                  >
-                    <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
-                      <MaterialIcons name="nightlight-round" size={20} color={GOLD} />
-                      <View>
-                        <Text style={{ color: FG, fontFamily: "DMSans_700Bold", fontSize: 14 }}>Ramadan Mode</Text>
-                        <Text style={{ color: MUTED, fontSize: 11, marginTop: 2 }}>Suhoor, Iftar & Isha meals</Text>
-                      </View>
-                    </View>
-                    <View style={{ width: 44, height: 26, borderRadius: 13, backgroundColor: ramadanMode ? GOLD : GOLD_DIM, justifyContent: "center", paddingHorizontal: 2 }}>
-                      <View style={{ width: 22, height: 22, borderRadius: 11, backgroundColor: FG, alignSelf: ramadanMode ? "flex-end" : "flex-start" }} />
-                    </View>
-                  </TouchableOpacity>
-                )}
-
-                <View style={{ backgroundColor: GOLD_DIM, borderRadius: 10, padding: 10, marginBottom: 16, borderWidth: 1, borderColor: GOLD_BORDER, flexDirection: "row", gap: 8 }}>
-                  <MaterialIcons name="warning-amber" size={14} color={CREAM} />
-                  <Text style={{ color: CREAM, fontSize: 11, lineHeight: 16, flex: 1 }}>AI plans are for guidance. Consult a nutritionist for major changes.</Text>
-                </View>
-
-                <TouchableOpacity
-                  style={{ backgroundColor: GOLD, borderRadius: 16, paddingVertical: 14, alignItems: "center", marginBottom: 24, opacity: generateMeal.isPending ? 0.7 : 1 }}
-                  onPress={() => generateMeal.mutate({ goal: mealGoal, dietaryPreference: dietaryPref, ramadanMode, weightKg: activeProfile?.weightKg ?? undefined, heightCm: activeProfile?.heightCm ?? undefined, age: activeProfile?.age ?? undefined, gender: activeProfile?.gender ?? undefined, activityLevel: activeProfile?.activityLevel ?? undefined })}
-                  disabled={generateMeal.isPending}
-                >
-                  {generateMeal.isPending ? (
-                    <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-                      <ActivityIndicator color={BG} size="small" />
-                      <Text style={{ color: BG, fontFamily: "DMSans_700Bold", fontSize: 15 }}>Generating Plan...</Text>
-                    </View>
-                  ) : (
-                    <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
-                      <MaterialIcons name="auto-awesome" size={16} color={BG} />
-                      <Text style={{ color: BG, fontFamily: "DMSans_700Bold", fontSize: 15 }}>Generate Meal Plan</Text>
-                    </View>
-                  )}
-                </TouchableOpacity>
-              </>
-            ) : (
-              <>
-                {/* ── Meal Plan Summary Bar ── */}
-                <View style={{ backgroundColor: SURFACE, borderRadius: 14, padding: 14, marginBottom: 12, borderWidth: 1, borderColor: "rgba(30,41,59,0.6)" }}>
-                  <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
-                    <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
-                      <View style={{ backgroundColor: "rgba(34,197,94,0.15)", borderRadius: 6, paddingHorizontal: 8, paddingVertical: 2 }}>
-                        <Text style={{ color: "#4ADE80", fontSize: 10, fontFamily: "DMSans_700Bold" }}>ACTIVE</Text>
-                      </View>
-                      <Text style={{ color: MUTED, fontSize: 11 }}>{mealGoalLabel} · {dietLabel}</Text>
-                    </View>
-                  </View>
-                  {/* Macro summary row */}
-                  <View style={{ flexDirection: "row", gap: 8 }}>
-                    <MacroCard label="Calories" value={mealPlan.dailyCalories} unit="kcal" color={GOLD} />
-                    <MacroCard label="Protein" value={mealPlan.proteinTarget} unit="g" color="#3B82F6" />
-                    <MacroCard label="Carbs" value={mealPlan.carbTarget} unit="g" color={CREAM} />
-                    <MacroCard label="Fat" value={mealPlan.fatTarget} unit="g" color={GOLD} />
-                  </View>
-                </View>
-
-                {mealPlan.insight && (
-                  <View style={{ backgroundColor: "#22C55E10", borderRadius: 12, padding: 12, marginBottom: 14, borderWidth: 1, borderColor: "#22C55E30" }}>
-                    <View style={{ flexDirection: "row", gap: 8, alignItems: "flex-start" }}>
-                      <MaterialIcons name="lightbulb" size={14} color={GOLD} style={{ marginTop: 2 }} />
-                      <Text style={{ color: GOLD, fontSize: 12, lineHeight: 18, flex: 1 }}>{String(mealPlan.insight)}</Text>
-                    </View>
-                  </View>
-                )}
-
-                {/* ── TODAY'S MEALS (highlighted) ── */}
-                {todayMeals && (
-                  <>
-                    <View style={{ flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 10 }}>
-                      <MaterialIcons name="today" size={16} color={GOLD} />
-                      <Text style={{ color: GOLD, fontFamily: "DMSans_700Bold", fontSize: 15 }}>Today — {todayName}</Text>
-                    </View>
-                    <MealDayCard day={todayMeals} defaultExpanded dayIndex={mealPlan.days?.findIndex((d: any) => d.day?.toLowerCase().includes(todayName.toLowerCase())) ?? 0} onMealSwap={handleMealSwap} />
-                  </>
-                )}
-
-                {/* ── REST OF THE WEEK ── */}
-                {otherMealDays.length > 0 && (
-                  <>
-                    <View style={{ flexDirection: "row", alignItems: "center", gap: 8, marginTop: 8, marginBottom: 10 }}>
-                      <MaterialIcons name="date-range" size={16} color={MUTED} />
-                      <Text style={{ color: MUTED, fontFamily: "DMSans_700Bold", fontSize: 13 }}>Rest of the Week</Text>
-                    </View>
-                    {otherMealDays.map((day: any, i: number) => {
-                      const actualIndex = mealPlan.days?.findIndex((d: any) => d.day === day.day) ?? i;
-                      return <MealDayCard key={i} day={day} dayIndex={actualIndex} onMealSwap={handleMealSwap} />;
-                    })}
-                  </>
-                )}
-
-                {/* Premium Feature Teasers */}
-                <View style={{ gap: 8, marginTop: 10 }}>
-                  <PremiumFeatureTeaser
-                    feature="pantry"
-                    text="Unlock Smart Pantry to get meals customised to your ingredients"
-                    requiredTier="basic"
-                  />
-                  <PremiumFeatureTeaser
-                    feature="progress_photos"
-                    text="AI Photo Logging — snap your meal and auto-track calories"
-                    requiredTier="basic"
-                  />
-                </View>
-
-                {/* Customize / Regenerate (collapsible) */}
-                <TouchableOpacity
-                  style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6, marginTop: 16, paddingVertical: 10 }}
-                  onPress={() => setShowMealCustomize(!showMealCustomize)}
-                >
-                  <MaterialIcons name={showMealCustomize ? "expand-less" : "tune"} size={16} color={MUTED} />
-                  <Text style={{ color: MUTED, fontFamily: "DMSans_700Bold", fontSize: 12 }}>{showMealCustomize ? "Hide Options" : "Customize & Regenerate"}</Text>
-                </TouchableOpacity>
-
-                {showMealCustomize && (
-                  <View style={{ marginTop: 8 }}>
-                    <SectionLabel>Your Goal</SectionLabel>
-                    <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8, marginBottom: 16 }}>
-                      {GOALS.map(g => (
-                        <OptionChip key={g.key} iconName={g.iconName} label={g.label} selected={mealGoal === g.key} onPress={() => setMealGoal(g.key)} />
-                      ))}
-                    </View>
-                    <SectionLabel>Dietary Preference</SectionLabel>
-                    <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8, marginBottom: 16 }}>
-                      {DIETARY_PREFS.map(d => (
-                        <OptionChip key={d.key} iconName={d.iconName} label={d.label} selected={dietaryPref === d.key} onPress={() => setDietaryPref(d.key)} />
-                      ))}
-                    </View>
-                    {(dietaryPref === "halal" || ramadanMode) && (
-                      <TouchableOpacity
-                        style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", backgroundColor: ramadanMode ? "rgba(245,158,11,0.10)" : SURFACE, borderRadius: 12, padding: 14, marginBottom: 16, borderWidth: 1, borderColor: ramadanMode ? "#F59E0B" : "rgba(245,158,11,0.10)" }}
-                        onPress={() => setRamadanMode(v => !v)}
-                      >
-                        <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
-                          <MaterialIcons name="nightlight-round" size={20} color={GOLD} />
-                          <View>
-                            <Text style={{ color: FG, fontFamily: "DMSans_700Bold", fontSize: 14 }}>Ramadan Mode</Text>
-                            <Text style={{ color: MUTED, fontSize: 11, marginTop: 2 }}>Suhoor, Iftar & Isha meals</Text>
-                          </View>
-                        </View>
-                        <View style={{ width: 44, height: 26, borderRadius: 13, backgroundColor: ramadanMode ? GOLD : GOLD_DIM, justifyContent: "center", paddingHorizontal: 2 }}>
-                          <View style={{ width: 22, height: 22, borderRadius: 11, backgroundColor: FG, alignSelf: ramadanMode ? "flex-end" : "flex-start" }} />
-                        </View>
-                      </TouchableOpacity>
-                    )}
-                    <TouchableOpacity
-                      style={{ backgroundColor: "rgba(245,158,11,0.12)", borderRadius: 14, paddingVertical: 12, alignItems: "center", borderWidth: 1, borderColor: GOLD_BORDER, flexDirection: "row", justifyContent: "center", gap: 8, opacity: generateMeal.isPending ? 0.7 : 1 }}
-                      onPress={() => {
-                        Alert.alert("Regenerate Meal Plan?", "This will replace your current plan.", [
-                          { text: "Cancel", style: "cancel" },
-                          { text: "Regenerate", style: "destructive", onPress: () => generateMeal.mutate({ goal: mealGoal, dietaryPreference: dietaryPref, ramadanMode, weightKg: activeProfile?.weightKg ?? undefined, heightCm: activeProfile?.heightCm ?? undefined, age: activeProfile?.age ?? undefined, gender: activeProfile?.gender ?? undefined, activityLevel: activeProfile?.activityLevel ?? undefined }) },
-                        ]);
-                      }}
-                      disabled={generateMeal.isPending}
-                    >
-                      {generateMeal.isPending ? (
-                        <>
-                          <ActivityIndicator color={GOLD} size="small" />
-                          <Text style={{ color: GOLD, fontFamily: "DMSans_700Bold", fontSize: 13 }}>Regenerating...</Text>
-                        </>
-                      ) : (
-                        <>
-                          <MaterialIcons name="refresh" size={16} color={GOLD} />
-                          <Text style={{ color: GOLD, fontFamily: "DMSans_700Bold", fontSize: 13 }}>Regenerate Meal Plan</Text>
-                        </>
-                      )}
-                    </TouchableOpacity>
-                  </View>
-                )}
-              </>
-            )}
-          </View>
-        )}
       </Animated.ScrollView>
 
       {/* ── Exercise Swap Modal ── */}
@@ -1043,120 +713,6 @@ function PlansScreenContent() {
         }}
       />
 
-      {/* ── Meal Swap Modal ── */}
-      <Modal visible={!!swapMealModal} transparent animationType="slide" onRequestClose={() => setSwapMealModal(null)} statusBarTranslucent>
-        <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.85)", justifyContent: "flex-end" }}>
-          <View style={{ backgroundColor: SURFACE, borderTopLeftRadius: 24, borderTopRightRadius: 24, maxHeight: "85%", paddingBottom: 40 }}>
-            <View style={{ padding: 20, borderBottomWidth: 1, borderBottomColor: "rgba(30,41,59,0.6)" }}>
-              <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-                <View style={{ flex: 1 }}>
-                  <Text style={{ color: "#22D3EE", fontFamily: "DMSans_700Bold", fontSize: 12, letterSpacing: 1 }}>AI MEAL SWAP</Text>
-                  <Text style={{ color: FG, fontFamily: "DMSans_700Bold", fontSize: 16, marginTop: 2 }}>Replace: {swapMealModal?.meal?.name}</Text>
-                </View>
-                <TouchableOpacity onPress={() => setSwapMealModal(null)} style={{ padding: 8 }}>
-                  <MaterialIcons name="close" size={22} color={MUTED} />
-                </TouchableOpacity>
-              </View>
-              {/* Daily calorie budget banner */}
-              <View style={{ flexDirection: "row", alignItems: "center", gap: 8, marginTop: 10, backgroundColor: BG, borderRadius: 10, padding: 10, borderWidth: 1, borderColor: GOLD_BORDER }}>
-                <MaterialIcons name="local-fire-department" size={16} color={GOLD} />
-                <View style={{ flex: 1 }}>
-                  <Text style={{ color: FG, fontSize: 12, fontFamily: "DMSans_600SemiBold" }}>Daily Budget: {dailyCalorieTarget} kcal</Text>
-                  <View style={{ height: 4, backgroundColor: "rgba(30,41,59,0.6)", borderRadius: 2, marginTop: 4, overflow: "hidden" }}>
-                    <View style={{ height: 4, borderRadius: 2, backgroundColor: totalCalories > dailyCalorieTarget ? "#F87171" : GOLD, width: `${Math.min(100, (totalCalories / dailyCalorieTarget) * 100)}%` }} />
-                  </View>
-                  <Text style={{ color: MUTED, fontSize: 10, marginTop: 3 }}>{totalCalories} / {dailyCalorieTarget} kcal consumed today</Text>
-                </View>
-              </View>
-              {/* Pantry toggle */}
-              <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginTop: 10, backgroundColor: BG, borderRadius: 12, padding: 12 }}>
-                <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-                  <MaterialIcons name="kitchen" size={16} color={GOLD} />
-                  <View>
-                    <Text style={{ color: FG, fontSize: 13, fontFamily: "DMSans_600SemiBold" }}>Use Pantry Items</Text>
-                    <Text style={{ color: MUTED, fontSize: 11 }}>{pantryNames.length} items available</Text>
-                  </View>
-                </View>
-                <TouchableOpacity
-                  style={{ width: 44, height: 26, borderRadius: 13, backgroundColor: includeBeyondPantry ? "#22D3EE" : GOLD_DIM, justifyContent: "center", paddingHorizontal: 2 }}
-                  onPress={() => setIncludeBeyondPantry(v => !v)}
-                >
-                  <View style={{ width: 22, height: 22, borderRadius: 11, backgroundColor: FG, alignSelf: includeBeyondPantry ? "flex-end" : "flex-start" }} />
-                </TouchableOpacity>
-              </View>
-              <Text style={{ color: MUTED, fontSize: 11, marginTop: 6 }}>{includeBeyondPantry ? "Showing pantry + other alternatives" : "Only showing pantry-based alternatives"}</Text>
-            </View>
-            {swapMealLoading ? (
-              <View style={{ padding: 40, alignItems: "center" }}>
-                <ActivityIndicator size="large" color="#22D3EE" />
-                <Text style={{ color: MUTED, marginTop: 12, fontSize: 13 }}>AI is finding meal alternatives...</Text>
-              </View>
-            ) : (
-              <ScrollView style={{ padding: 16 }} showsVerticalScrollIndicator={false}>
-                {swapMealAlts.length === 0 ? (
-                  <Text style={{ color: MUTED, textAlign: "center", padding: 20 }}>No alternatives found. Try again.</Text>
-                ) : (
-                  swapMealAlts.map((alt: any, i: number) => {
-                    const exceedsLimit = alt.exceedsLimit || false;
-                    const mealPhotoUrl = alt.imageUrl || getMealPhotoUrl({ name: alt.name, type: alt.photoQuery ?? alt.name });
-                    return (
-                      <View key={i} style={{ backgroundColor: BG, borderRadius: 14, overflow: "hidden", marginBottom: 10, borderWidth: 1, borderColor: exceedsLimit ? "rgba(248,113,113,0.3)" : alt.usesPantry ? "rgba(34,211,238,0.25)" : "rgba(30,41,59,0.6)" }}>
-                        {/* Meal image */}
-                        <Image
-                          source={{ uri: mealPhotoUrl }}
-                          style={{ width: "100%", height: 100 }}
-                          resizeMode="cover"
-                        />
-                        {exceedsLimit && (
-                          <View style={{ position: "absolute", top: 8, right: 8, backgroundColor: "rgba(248,113,113,0.9)", borderRadius: 6, paddingHorizontal: 8, paddingVertical: 3, flexDirection: "row", alignItems: "center", gap: 4 }}>
-                            <MaterialIcons name="warning" size={10} color="#0A0E14" />
-                            <Text style={{ color: "#0A0E14", fontSize: 9, fontFamily: "DMSans_700Bold" }}>EXCEEDS LIMIT</Text>
-                          </View>
-                        )}
-                        {alt.usesPantry && (
-                          <View style={{ position: "absolute", top: 8, left: 8, backgroundColor: "rgba(34,211,238,0.85)", borderRadius: 6, paddingHorizontal: 8, paddingVertical: 3 }}>
-                            <Text style={{ color: "#0A0E14", fontSize: 9, fontFamily: "DMSans_700Bold" }}>PANTRY</Text>
-                          </View>
-                        )}
-                        <View style={{ padding: 14 }}>
-                          <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start" }}>
-                            <View style={{ flex: 1 }}>
-                              <Text style={{ color: FG, fontFamily: "DMSans_700Bold", fontSize: 14 }}>{sanitizeMealName(alt.name)}</Text>
-                              <View style={{ flexDirection: "row", gap: 10, marginTop: 4 }}>
-                                <Text style={{ color: exceedsLimit ? "#F87171" : GOLD, fontSize: 11, fontFamily: "SpaceMono_700Bold" }}>{alt.calories} kcal</Text>
-                                <Text style={{ color: "#3B82F6", fontSize: 11 }}>P:{alt.protein}g</Text>
-                                <Text style={{ color: CREAM, fontSize: 11 }}>C:{alt.carbs}g</Text>
-                                <Text style={{ color: GOLD, fontSize: 11 }}>F:{alt.fat}g</Text>
-                              </View>
-                              {alt.prepTime && <Text style={{ color: MUTED, fontSize: 11, marginTop: 2 }}>⏱ {alt.prepTime}</Text>}
-                            </View>
-                            <TouchableOpacity
-                              style={{ backgroundColor: exceedsLimit ? "rgba(248,113,113,0.8)" : "#22D3EE", borderRadius: 10, paddingHorizontal: 14, paddingVertical: 8 }}
-                              onPress={() => applyMealSwap(alt)}
-                            >
-                              <Text style={{ color: BG, fontFamily: "DMSans_700Bold", fontSize: 12 }}>Select</Text>
-                            </TouchableOpacity>
-                          </View>
-                          {alt.description && <Text style={{ color: MUTED, fontSize: 11, marginTop: 6, lineHeight: 16 }}>{alt.description}</Text>}
-                          {alt.pantryItemsUsed?.length > 0 && (
-                            <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 4, marginTop: 6 }}>
-                              {alt.pantryItemsUsed.map((item: string, j: number) => (
-                                <View key={j} style={{ backgroundColor: "rgba(34,211,238,0.10)", borderRadius: 6, paddingHorizontal: 6, paddingVertical: 2 }}>
-                                  <Text style={{ color: "#22D3EE", fontSize: 10 }}>{item}</Text>
-                                </View>
-                              ))}
-                            </View>
-                          )}
-                        </View>
-                      </View>
-                    );
-                  })
-                )}
-              </ScrollView>
-            )}
-          </View>
-        </View>
-      </Modal>
     </View>
   );
 }
