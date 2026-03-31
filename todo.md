@@ -2800,4 +2800,18 @@
 - [x] Caloric values shown per meal and in daily summary with macro breakdown
 - [x] Integrated pantry as 3rd tab in Nutrition section (Tracker / Meal Plan / Pantry)
 - [x] Run tests and verify TypeScript compiles — 0 TS errors, 2079 tests pass
+- [x] Save checkpoint (version 78f4a3de)
+
+## Pantry Expiry Alerts & Shopping List (Round 57)
+
+- [x] Add pantry expiry check: identify items expiring within 1-3 days
+- [x] Schedule push notifications for items about to expire (today, tomorrow, 2-3 days)
+- [x] Show expiry alert banner in Pantry tab with urgency color-coding (red/amber/yellow)
+- [x] AI "Use It Up" meal suggestions using expiring items via pantry.suggestMeals endpoint
+- [x] Meal suggestions show which expiring items they use, with Log This Meal button
+- [x] Add "Create Shopping List" button after generating a pantry meal plan
+- [x] Shopping list compiles all "need to buy" items from the generated plan
+- [x] Shopping list UI: checklist with checkboxes, copy to clipboard, clear done, hide
+- [x] Persist shopping list in AsyncStorage
+- [x] Run tests and verify TypeScript compiles — 0 TS errors, 2079 tests pass
 - [ ] Save checkpoint

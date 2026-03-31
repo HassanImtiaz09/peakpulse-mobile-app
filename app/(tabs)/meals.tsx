@@ -25,6 +25,8 @@ import { ErrorBoundary } from "@/components/error-boundary";
 import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
 import { usePantry, PANTRY_CATEGORIES, COMMON_PANTRY_ITEMS, CATEGORY_ICONS as PANTRY_CATEGORY_ICONS, type PantryCategory, type PantryItem, type AISuggestedMeal } from "@/lib/pantry-context";
 import { PremiumFeatureTeaser } from "@/components/premium-feature-banner";
+import { schedulePantryExpiryAlerts, type PantryExpiryItem } from "@/lib/notifications";
+import * as Sharing from "expo-sharing";
 
 
 // NanoBanana design tokens — Meals uses mint/teal accent
@@ -221,6 +223,11 @@ function MealsScreenContent() {
   const [newPantryItemName, setNewPantryItemName] = useState("");
   const [newPantryItemCategory, setNewPantryItemCategory] = useState<PantryCategory>("Other");
   const [expandedPantryMeal, setExpandedPantryMeal] = useState<number | null>(null);
+  const [pantryShoppingList, setPantryShoppingList] = useState<{ name: string; quantity?: string; checked: boolean }[]>([]);
+  const [showPantryShoppingList, setShowPantryShoppingList] = useState(false);
+  const [generatingExpiryMeals, setGeneratingExpiryMeals] = useState(false);
+  const [expiryMealSuggestions, setExpiryMealSuggestions] = useState<any[]>([]);
+  const [showExpiryMeals, setShowExpiryMeals] = useState(false);
   const pantryNames = useMemo(() => pantryItems.map(p => p.name), [pantryItems]);
   const [localProfile, setLocalProfile] = useState<any>(null);
   const [showShoppingList, setShowShoppingList] = useState(false);
@@ -552,6 +559,113 @@ function MealsScreenContent() {
       setGeneratingPantryPlan(false);
     }
   }, [pantryItems, calorieGoal, macroTargets, userDietaryPref, userGoal, localProfile]);
+
+  // ── Pantry Expiry Alerts — schedule notifications when items are expiring ──
+  React.useEffect(() => {
+    if (pantryItems.length === 0) return;
+    const now = new Date();
+    const expiringForNotif: PantryExpiryItem[] = pantryItems
+      .filter(i => i.expiresAt)
+      .map(i => {
+        const exp = new Date(i.expiresAt!);
+        const daysLeft = Math.ceil((exp.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+        return { name: i.name, expiresAt: i.expiresAt!, daysLeft };
+      })
+      .filter(i => i.daysLeft <= 3);
+    if (expiringForNotif.length > 0) {
+      schedulePantryExpiryAlerts(expiringForNotif).catch(() => {});
+    }
+  }, [pantryItems]);
+
+  // ── Generate "Use It Up" meal suggestions for expiring items ──
+  const handleUseItUpSuggestions = React.useCallback(async () => {
+    const expiring = getExpiringItems(3);
+    if (expiring.length === 0) return;
+    setGeneratingExpiryMeals(true);
+    setShowExpiryMeals(true);
+    try {
+      const expiringNames = expiring.map(i => i.name).join(", ");
+      const allNames = pantryItems.map(i => i.name).join(", ");
+      const response = await fetch(`${Platform.OS === "web" ? "" : "http://127.0.0.1:3000"}/api/trpc/pantry.suggestMeals`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ json: {
+          pantryItems: allNames,
+          dietaryPreference: userDietaryPref,
+          fitnessGoal: userGoal,
+          prioritizeItems: expiringNames,
+        }}),
+      });
+      if (response.ok) {
+        const data = await response.json();
+        const meals = data?.result?.data?.json?.meals ?? [];
+        setExpiryMealSuggestions(meals);
+      }
+    } catch {}
+    setGeneratingExpiryMeals(false);
+  }, [pantryItems, getExpiringItems, userDietaryPref, userGoal]);
+
+  // ── Pantry Shopping List — compile "need to buy" items from daily plan ──
+  const handleCreatePantryShoppingList = React.useCallback(() => {
+    if (!pantryDailyPlan?.dailyPlan) return;
+    const needToBuy: { name: string; quantity?: string }[] = [];
+    const seen = new Set<string>();
+    // Collect from additionalItemsNeeded
+    for (const item of (pantryDailyPlan.dailyPlan.additionalItemsNeeded ?? [])) {
+      const key = (typeof item === "string" ? item : item.name || "").toLowerCase();
+      if (key && !seen.has(key)) {
+        seen.add(key);
+        needToBuy.push({ name: typeof item === "string" ? item : item.name });
+      }
+    }
+    // Also collect from meal ingredients marked as not from pantry
+    for (const meal of (pantryDailyPlan.dailyPlan.meals ?? [])) {
+      for (const ing of (meal.ingredients ?? [])) {
+        if (!ing.fromPantry) {
+          const key = (ing.name || "").toLowerCase();
+          if (key && !seen.has(key)) {
+            seen.add(key);
+            needToBuy.push({ name: ing.name, quantity: ing.quantity });
+          }
+        }
+      }
+    }
+    const list = needToBuy.map(i => ({ ...i, checked: false }));
+    setPantryShoppingList(list);
+    setShowPantryShoppingList(true);
+    AsyncStorage.setItem("@pantry_shopping_list", JSON.stringify(list));
+  }, [pantryDailyPlan]);
+
+  const togglePantryShoppingItem = React.useCallback((index: number) => {
+    setPantryShoppingList(prev => {
+      const updated = prev.map((item, i) => i === index ? { ...item, checked: !item.checked } : item);
+      AsyncStorage.setItem("@pantry_shopping_list", JSON.stringify(updated));
+      return updated;
+    });
+  }, []);
+
+  const sharePantryShoppingList = React.useCallback(async () => {
+    const unchecked = pantryShoppingList.filter(i => !i.checked);
+    const items = unchecked.length > 0 ? unchecked : pantryShoppingList;
+    const text = `PeakPulse Shopping List\n\n${items.map(i => `\u25a1 ${i.name}${i.quantity ? " — " + i.quantity : ""}`).join("\n")}`;
+    await Clipboard.setStringAsync(text);
+    Alert.alert("\u2705 Copied!", `${items.length} items copied to clipboard. Paste anywhere to share.`);
+  }, [pantryShoppingList]);
+
+  const clearCheckedPantryShoppingItems = React.useCallback(() => {
+    setPantryShoppingList(prev => {
+      const updated = prev.filter(i => !i.checked);
+      AsyncStorage.setItem("@pantry_shopping_list", JSON.stringify(updated));
+      return updated;
+    });
+  }, []);
+
+  // Load persisted pantry shopping list
+  React.useEffect(() => {
+    AsyncStorage.getItem("@pantry_shopping_list").then(raw => {
+      if (raw) try { setPantryShoppingList(JSON.parse(raw)); } catch {}
+    });
+  }, []);
 
   // Quick add pantry item handler
   const handleQuickAddPantryItem = React.useCallback(async (name: string, category: PantryCategory) => {
@@ -1912,6 +2026,101 @@ function MealsScreenContent() {
             </View>
           </View>
 
+          {/* Expiring Soon Banner */}
+          {pantryExpiringItems.length > 0 && (
+            <View style={{ marginTop: 16, backgroundColor: "rgba(239,68,68,0.08)", borderRadius: 16, borderWidth: 1, borderColor: "rgba(239,68,68,0.20)", overflow: "hidden" }}>
+              <View style={{ padding: 14 }}>
+                <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+                  <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+                    <MaterialIcons name="warning" size={18} color="#EF4444" />
+                    <Text style={{ color: "#F87171", fontFamily: "DMSans_700Bold", fontSize: 14 }}>Expiring Soon</Text>
+                    <View style={{ backgroundColor: "rgba(239,68,68,0.20)", borderRadius: 6, paddingHorizontal: 6, paddingVertical: 1 }}>
+                      <Text style={{ color: "#EF4444", fontFamily: "DMSans_700Bold", fontSize: 10 }}>{pantryExpiringItems.length}</Text>
+                    </View>
+                  </View>
+                  <TouchableOpacity
+                    onPress={handleUseItUpSuggestions}
+                    disabled={generatingExpiryMeals}
+                    style={{ flexDirection: "row", alignItems: "center", gap: 4, backgroundColor: "rgba(239,68,68,0.15)", borderRadius: 8, paddingHorizontal: 10, paddingVertical: 5 }}
+                  >
+                    <MaterialIcons name="restaurant" size={14} color="#F87171" />
+                    <Text style={{ color: "#F87171", fontFamily: "DMSans_700Bold", fontSize: 11 }}>{generatingExpiryMeals ? "Loading..." : "Use It Up"}</Text>
+                  </TouchableOpacity>
+                </View>
+                <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 6, marginTop: 10 }}>
+                  {pantryExpiringItems.map((item, idx) => {
+                    const now = new Date();
+                    const exp = item.expiresAt ? new Date(item.expiresAt) : null;
+                    const daysLeft = exp ? Math.ceil((exp.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)) : 99;
+                    const urgencyColor = daysLeft <= 0 ? "#EF4444" : daysLeft === 1 ? "#F59E0B" : "#FBBF24";
+                    return (
+                      <View key={idx} style={{ flexDirection: "row", alignItems: "center", gap: 4, backgroundColor: "rgba(239,68,68,0.10)", borderRadius: 8, paddingHorizontal: 8, paddingVertical: 4 }}>
+                        <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: urgencyColor }} />
+                        <Text style={{ color: MFG, fontFamily: "DMSans_500Medium", fontSize: 12 }}>{item.name}</Text>
+                        <Text style={{ color: urgencyColor, fontFamily: "DMSans_700Bold", fontSize: 10 }}>
+                          {daysLeft <= 0 ? "Today!" : daysLeft === 1 ? "1d" : `${daysLeft}d`}
+                        </Text>
+                      </View>
+                    );
+                  })}
+                </View>
+              </View>
+
+              {/* Use It Up Meal Suggestions */}
+              {showExpiryMeals && (
+                <View style={{ borderTopWidth: 1, borderTopColor: "rgba(239,68,68,0.15)", padding: 14 }}>
+                  {generatingExpiryMeals ? (
+                    <View style={{ alignItems: "center", paddingVertical: 16 }}>
+                      <ActivityIndicator color="#F87171" />
+                      <Text style={{ color: MMUTED, fontFamily: "DMSans_500Medium", fontSize: 12, marginTop: 8 }}>Finding meals to use expiring items...</Text>
+                    </View>
+                  ) : expiryMealSuggestions.length > 0 ? (
+                    <View style={{ gap: 10 }}>
+                      <Text style={{ color: MFG, fontFamily: "DMSans_700Bold", fontSize: 13 }}>Suggested Meals to Use Expiring Items</Text>
+                      {expiryMealSuggestions.slice(0, 3).map((meal: any, idx: number) => (
+                        <View key={idx} style={{ backgroundColor: MSURFACE, borderRadius: 12, padding: 12, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}>
+                          <Text style={{ color: MFG, fontFamily: "DMSans_700Bold", fontSize: 14 }}>{meal.name}</Text>
+                          <View style={{ flexDirection: "row", gap: 12, marginTop: 4 }}>
+                            <Text style={{ color: "#FBBF24", fontFamily: "DMSans_600SemiBold", fontSize: 11 }}>{meal.calories ?? "~"} kcal</Text>
+                            <Text style={{ color: "#3B82F6", fontFamily: "DMSans_600SemiBold", fontSize: 11 }}>{meal.protein ?? "~"}g protein</Text>
+                            {meal.prepTime && <Text style={{ color: MMUTED, fontFamily: "DMSans_500Medium", fontSize: 11 }}>{meal.prepTime}</Text>}
+                          </View>
+                          {meal.usesExpiring && (
+                            <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 4, marginTop: 6 }}>
+                              {(Array.isArray(meal.usesExpiring) ? meal.usesExpiring : []).map((ing: string, i: number) => (
+                                <View key={i} style={{ flexDirection: "row", alignItems: "center", gap: 3, backgroundColor: "rgba(239,68,68,0.10)", borderRadius: 6, paddingHorizontal: 6, paddingVertical: 2 }}>
+                                  <MaterialIcons name="timer" size={10} color="#F87171" />
+                                  <Text style={{ color: "#F87171", fontFamily: "DMSans_600SemiBold", fontSize: 10 }}>{ing}</Text>
+                                </View>
+                              ))}
+                            </View>
+                          )}
+                          <TouchableOpacity
+                            onPress={() => {
+                              if (addMeal) {
+                                addMeal({ name: meal.name, mealType: "lunch", calories: meal.calories ?? 0, protein: meal.protein ?? 0, carbs: meal.carbs ?? 0, fat: meal.fat ?? 0 });
+                                Alert.alert("\u2705 Logged!", `${meal.name} added to your food diary.`);
+                              }
+                            }}
+                            style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 4, marginTop: 8, backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 8, paddingVertical: 6 }}
+                          >
+                            <MaterialIcons name="add-circle-outline" size={14} color="#F59E0B" />
+                            <Text style={{ color: "#F59E0B", fontFamily: "DMSans_700Bold", fontSize: 11 }}>Log This Meal</Text>
+                          </TouchableOpacity>
+                        </View>
+                      ))}
+                      <TouchableOpacity onPress={() => setShowExpiryMeals(false)} style={{ alignItems: "center", paddingVertical: 6 }}>
+                        <Text style={{ color: MMUTED, fontFamily: "DMSans_600SemiBold", fontSize: 11 }}>Hide Suggestions</Text>
+                      </TouchableOpacity>
+                    </View>
+                  ) : (
+                    <Text style={{ color: MMUTED, fontFamily: "DMSans_500Medium", fontSize: 12, textAlign: "center" }}>No suggestions available. Try adding more items to your pantry.</Text>
+                  )}
+                </View>
+              )}
+            </View>
+          )}
+
           {/* Scan Options */}
           <View style={{ marginTop: 16, gap: 8 }}>
             <Text style={{ color: MFG, fontFamily: "DMSans_700Bold", fontSize: 16, marginBottom: 4 }}>Add to Pantry</Text>
@@ -2245,6 +2454,61 @@ function MealsScreenContent() {
                 <MaterialIcons name="refresh" size={16} color="#F59E0B" />
                 <Text style={{ color: "#F59E0B", fontFamily: "DMSans_700Bold", fontSize: 13 }}>{generatingPantryPlan ? "Regenerating..." : "Regenerate Plan"}</Text>
               </TouchableOpacity>
+              {/* Create Shopping List Button */}
+              <TouchableOpacity
+                onPress={handleCreatePantryShoppingList}
+                style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6, backgroundColor: "rgba(59,130,246,0.10)", borderRadius: 12, paddingVertical: 10, borderWidth: 1, borderColor: "rgba(59,130,246,0.20)", marginTop: 4 }}
+              >
+                <MaterialIcons name="shopping-cart" size={16} color="#3B82F6" />
+                <Text style={{ color: "#3B82F6", fontFamily: "DMSans_700Bold", fontSize: 13 }}>Create Shopping List</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+
+          {/* Pantry Shopping List */}
+          {showPantryShoppingList && pantryShoppingList.length > 0 && (
+            <View style={{ marginTop: 16, backgroundColor: MSURFACE, borderRadius: 16, borderWidth: 1, borderColor: "rgba(59,130,246,0.15)", overflow: "hidden" }}>
+              <View style={{ height: 3, backgroundColor: "rgba(59,130,246,0.10)" }}>
+                <View style={{ height: 3, backgroundColor: "#3B82F6", width: `${(pantryShoppingList.filter(i => i.checked).length / pantryShoppingList.length) * 100}%` as any, borderRadius: 2 }} />
+              </View>
+              <View style={{ padding: 14 }}>
+                <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
+                  <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+                    <MaterialIcons name="shopping-cart" size={16} color="#3B82F6" />
+                    <Text style={{ color: MFG, fontFamily: "DMSans_700Bold", fontSize: 14 }}>Shopping List</Text>
+                    <View style={{ backgroundColor: "rgba(59,130,246,0.15)", borderRadius: 6, paddingHorizontal: 6, paddingVertical: 1 }}>
+                      <Text style={{ color: "#3B82F6", fontFamily: "DMSans_700Bold", fontSize: 10 }}>{pantryShoppingList.filter(i => i.checked).length}/{pantryShoppingList.length}</Text>
+                    </View>
+                  </View>
+                  <View style={{ flexDirection: "row", gap: 10 }}>
+                    <TouchableOpacity onPress={sharePantryShoppingList}>
+                      <Text style={{ color: "#3B82F6", fontFamily: "DMSans_700Bold", fontSize: 10 }}>Copy</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={clearCheckedPantryShoppingItems}>
+                      <Text style={{ color: "#F59E0B", fontFamily: "DMSans_700Bold", fontSize: 10 }}>Clear Done</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => setShowPantryShoppingList(false)}>
+                      <Text style={{ color: MMUTED, fontFamily: "DMSans_700Bold", fontSize: 10 }}>Hide</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+                {pantryShoppingList.map((item, idx) => (
+                  <TouchableOpacity
+                    key={idx}
+                    style={{ flexDirection: "row", alignItems: "center", gap: 10, paddingVertical: 8, borderBottomWidth: idx < pantryShoppingList.length - 1 ? 1 : 0, borderBottomColor: "rgba(59,130,246,0.06)", opacity: item.checked ? 0.5 : 1 }}
+                    onPress={() => togglePantryShoppingItem(idx)}
+                  >
+                    <View style={{ width: 22, height: 22, borderRadius: 6, borderWidth: 2, borderColor: item.checked ? "#3B82F6" : "rgba(59,130,246,0.25)", backgroundColor: item.checked ? "#3B82F6" : "transparent", alignItems: "center", justifyContent: "center" }}>
+                      {item.checked && <MaterialIcons name="check" size={13} color={MFG} />}
+                    </View>
+                    <View style={{ flex: 1 }}>
+                      <Text style={{ color: item.checked ? MMUTED : MFG, fontFamily: "DMSans_500Medium", fontSize: 13, textDecorationLine: item.checked ? "line-through" : "none" }}>{item.name}</Text>
+                      {item.quantity && <Text style={{ color: MMUTED, fontFamily: "DMSans_500Medium", fontSize: 10 }}>{item.quantity}</Text>}
+                    </View>
+                    <MaterialIcons name="add" size={16} color="#F59E0B" style={{ opacity: item.checked ? 0 : 0.6 }} />
+                  </TouchableOpacity>
+                ))}
+              </View>
             </View>
           )}
 

@@ -632,3 +632,101 @@ export async function getProgressPhotoReminderSettings(): Promise<{
     weekday,
   };
 }
+
+// ── Pantry Expiry Alerts ────────────────────────────────────────────
+const PANTRY_EXPIRY_NOTIF_IDS_KEY = "@pantry_expiry_notif_ids";
+
+export interface PantryExpiryItem {
+  name: string;
+  expiresAt: string; // ISO date
+  daysLeft: number;
+}
+
+/**
+ * Schedule push notifications for pantry items expiring within 1-3 days.
+ * Call this whenever the pantry changes or on app launch.
+ */
+export async function schedulePantryExpiryAlerts(
+  expiringItems: PantryExpiryItem[]
+): Promise<void> {
+  if (Platform.OS === "web") return;
+
+  // Cancel previous pantry expiry notifications
+  await cancelPantryExpiryAlerts();
+
+  if (expiringItems.length === 0) return;
+
+  const ids: string[] = [];
+
+  // Group items by urgency
+  const expiredOrToday = expiringItems.filter(i => i.daysLeft <= 0);
+  const tomorrow = expiringItems.filter(i => i.daysLeft === 1);
+  const soonItems = expiringItems.filter(i => i.daysLeft === 2 || i.daysLeft === 3);
+
+  // Immediate alert for items expiring today or already expired
+  if (expiredOrToday.length > 0) {
+    const names = expiredOrToday.map(i => i.name).join(", ");
+    const id = await Notifications.scheduleNotificationAsync({
+      content: {
+        title: "⚠️ Pantry Items Expiring Today!",
+        body: `${names} ${expiredOrToday.length === 1 ? "is" : "are"} expiring today. Use ${expiredOrToday.length === 1 ? "it" : "them"} up before ${expiredOrToday.length === 1 ? "it goes" : "they go"} to waste!`,
+        data: { type: "pantry_expiry", screen: "meals", tab: 2 },
+        sound: "default",
+      },
+      trigger: { type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL, seconds: 5 },
+    });
+    ids.push(id);
+  }
+
+  // Alert for items expiring tomorrow — schedule for 9 AM tomorrow
+  if (tomorrow.length > 0) {
+    const names = tomorrow.map(i => i.name).join(", ");
+    const id = await Notifications.scheduleNotificationAsync({
+      content: {
+        title: "🕐 Pantry Items Expire Tomorrow",
+        body: `${names} will expire tomorrow. Tap to see meal suggestions using these items.`,
+        data: { type: "pantry_expiry", screen: "meals", tab: 2 },
+        sound: "default",
+      },
+      trigger: { type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL, seconds: 3600 },
+    });
+    ids.push(id);
+  }
+
+  // Alert for items expiring in 2-3 days — schedule as a gentle reminder
+  if (soonItems.length > 0) {
+    const names = soonItems.map(i => i.name).join(", ");
+    const id = await Notifications.scheduleNotificationAsync({
+      content: {
+        title: "📋 Pantry Items Expiring Soon",
+        body: `${names} will expire in 2-3 days. Plan meals around these items to reduce waste.`,
+        data: { type: "pantry_expiry", screen: "meals", tab: 2 },
+        sound: "default",
+      },
+      trigger: { type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL, seconds: 7200 },
+    });
+    ids.push(id);
+  }
+
+  // Save notification IDs for later cancellation
+  await AsyncStorage.setItem(PANTRY_EXPIRY_NOTIF_IDS_KEY, JSON.stringify(ids));
+}
+
+/**
+ * Cancel all previously scheduled pantry expiry notifications.
+ */
+export async function cancelPantryExpiryAlerts(): Promise<void> {
+  if (Platform.OS === "web") return;
+  try {
+    const raw = await AsyncStorage.getItem(PANTRY_EXPIRY_NOTIF_IDS_KEY);
+    if (raw) {
+      const ids: string[] = JSON.parse(raw);
+      for (const id of ids) {
+        await Notifications.cancelScheduledNotificationAsync(id);
+      }
+    }
+    await AsyncStorage.removeItem(PANTRY_EXPIRY_NOTIF_IDS_KEY);
+  } catch {
+    // ignore
+  }
+}
