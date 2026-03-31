@@ -2739,3 +2739,14 @@
 - [x] Integrated Coach voiceover button into ExerciseStockVideoPlayer (tap to start/stop narration)
 - [x] Coach Speaking indicator shown on video overlay while narrating
 - [x] All 2079 tests pass (11 new), 0 TypeScript errors
+
+## Exercise Videos - Careful Approach (Round 51)
+
+- [x] Audited all 75 Pexels video mappings for accuracy
+- [x] Identified 5 critically wrong + 20 duplicate/mismatched videos
+- [x] Searched Pexels for accurate replacements for 30 problematic exercises
+- [x] Update exercise-stock-videos.ts with verified accurate matches (57 videos kept, 18 removed)
+- [x] Fix key mismatch: removed "t-bar row" entry (no accurate Pexels video found, uses GIF fallback)
+- [x] Use GIF fallback for 18 exercises where no accurate Pexels video exists
+- [x] Run tests and verify TypeScript compiles — 0 TS errors, 2079 tests pass
+- [ ] Save checkpoint
