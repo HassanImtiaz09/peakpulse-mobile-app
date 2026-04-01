@@ -2868,4 +2868,17 @@
   - [x] Interactive checklist with progress bar
   - [x] Copy to clipboard, Share, and PDF export
 - [x] Run tests and verify TypeScript compiles — 0 TS errors, 69 test suites pass (2102 tests), 12 new grocery list tests
+- [x] Save checkpoint (version 1ac06b0e)
+
+## Bug Fixes & Enhancements (Round 62)
+
+- [x] Fix: Uniform calorie/nutrition targets — TDEE now saved to @peakpulse_calorie_goal and @guest_profile.calorieTarget during onboarding
+- [x] Fix: Meals are now unique across all 7 days — AI prompt updated with CRITICAL VARIETY REQUIREMENT
+- [x] Feature: End-of-week push notification — scheduleMealPlanRenewalReminder() fires every Friday 6pm
+- [x] Feature: AI-generated meal images — server endpoint mealImages.generateBatch creates unique images per meal
+  - [x] Auto-triggers when meal plan is set/updated (detects meals without photoUrl)
+  - [x] Progress bar shown during generation
+  - [x] Falls back to Unsplash type-based images if generation fails
+  - [x] Regenerated days also get fresh images (photoUrl cleared on regeneration)
+- [x] Run tests and verify TypeScript compiles — 0 TS errors, 70 test suites pass (2116 tests), 14 new tests
 - [ ] Save checkpoint

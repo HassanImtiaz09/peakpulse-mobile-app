@@ -414,9 +414,11 @@ ${dietaryRules}
 
 COMPLIANCE CHECK: Before finalizing, verify EVERY meal in the plan against the dietary restrictions above. If any meal violates the rules, replace it with a compliant alternative.
 
-Each day must include: ${isRamadan ? "suhoor, iftar, and evening snack meals" : "breakfast, morning snack, lunch, afternoon snack, dinner (4-5 meals)"}. Include calories, protein (g), carbs (g), and fat (g) for each meal. Each meal MUST have ingredients array, instructions array (3-5 steps), and photoQuery (2-4 word food search term).
+Each day must include: ${isRamadan ? "suhoor, iftar, and evening snack meals" : "breakfast, morning snack, lunch, afternoon snack, dinner (4-5 meals)"}. Include calories, protein (g), carbs (g), and fat (g) for each meal. Each meal MUST have ingredients array, instructions array (3-5 steps), and photoQuery (2-4 word food search term for finding a photo of this SPECIFIC dish).
 
 IMPORTANT: The "days" array MUST contain exactly 7 entries, one for each day of the week, using these EXACT day names in this order: "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday". Do NOT use abbreviations, numbers, or any other format.
+
+CRITICAL VARIETY REQUIREMENT: Every single meal across all 7 days MUST be unique and different. Do NOT repeat the same dish on multiple days. Each breakfast must be a different recipe, each lunch must be a different recipe, each dinner must be a different recipe. Vary cooking methods (grilled, baked, stir-fried, steamed, raw), protein sources, cuisines, and flavour profiles across the week. For example: Monday breakfast could be scrambled eggs, Tuesday could be overnight oats, Wednesday could be a smoothie bowl — never the same meal twice. The user should feel excited to see what each new day brings.
 
 Return this exact structure: {"dailyCalories":${calories},"proteinTarget":150,"carbTarget":200,"fatTarget":65,"dietType":"${input.dietaryPreference}${isRamadan ? "_ramadan" : ""}","isRamadan":${isRamadan},"days":[{"day":"Monday","meals":[{"name":"Meal Name","type":"${isRamadan ? "suhoor" : "breakfast"}","calories":420,"protein":28,"carbs":35,"fat":14,"ingredients":["ingredient 1","ingredient 2"],"prepTime":"10 min","instructions":["Step 1","Step 2","Step 3"],"photoQuery":"food search term"}]},{"day":"Tuesday","meals":[...]},{"day":"Wednesday","meals":[...]},{"day":"Thursday","meals":[...]},{"day":"Friday","meals":[...]},{"day":"Saturday","meals":[...]},{"day":"Sunday","meals":[...]}],"insight":"personalized nutrition tip"}`;
         const response = await invokeLLM({ messages: [{ role: "system", content: "You are an expert registered dietitian who STRICTLY adheres to dietary restrictions. The user's dietary preference is the HIGHEST PRIORITY constraint — it overrides all other considerations. If the user is vegan, every single ingredient must be plant-based. If halal, every meat must be halal-certified with zero pork products. If keto, total daily carbs must stay under 30g. NEVER include a food that violates the stated dietary restriction. Always respond with valid JSON matching the required schema." }, { role: "user", content: prompt }], response_format: { type: "json_object" } });
@@ -486,6 +488,43 @@ Return ONLY this structure: {"day":"${input.dayName}","meals":[{"name":"Meal Nam
         catch { dayData = { day: input.dayName, meals: [] }; }
         if (!dayData.day) dayData.day = input.dayName;
         return dayData;
+      }),
+  }),
+
+  mealImages: router({
+    // Generate AI images for meals in a meal plan
+    generateBatch: guestOrUserProcedure
+      .input(z.object({
+        meals: z.array(z.object({
+          dayIndex: z.number(),
+          mealIndex: z.number(),
+          name: z.string(),
+          photoQuery: z.string().optional(),
+        })),
+      }))
+      .mutation(async ({ input }) => {
+        // Generate images in parallel (max 5 concurrent to avoid overload)
+        const results: Array<{ dayIndex: number; mealIndex: number; photoUrl: string | null }> = [];
+        const BATCH_SIZE = 5;
+        for (let i = 0; i < input.meals.length; i += BATCH_SIZE) {
+          const batch = input.meals.slice(i, i + BATCH_SIZE);
+          const batchResults = await Promise.allSettled(
+            batch.map(async (meal) => {
+              const query = meal.photoQuery || meal.name;
+              const prompt = `Professional food photography of ${query}. Beautifully plated dish, top-down view, natural lighting, on a clean modern plate, restaurant quality presentation. No text, no watermarks.`;
+              try {
+                const { url } = await generateImage({ prompt });
+                return { dayIndex: meal.dayIndex, mealIndex: meal.mealIndex, photoUrl: url ?? null };
+              } catch {
+                return { dayIndex: meal.dayIndex, mealIndex: meal.mealIndex, photoUrl: null };
+              }
+            })
+          );
+          for (const r of batchResults) {
+            if (r.status === "fulfilled") results.push(r.value);
+          }
+        }
+        return { images: results };
       }),
   }),
 

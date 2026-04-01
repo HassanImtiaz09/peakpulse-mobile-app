@@ -307,6 +307,9 @@ function MealsScreenContent() {
   // Grocery shopping list state
   const [showGroceryList, setShowGroceryList] = useState(false);
   const [groceryChecked, setGroceryChecked] = useState<Record<string, boolean>>({});
+  // Meal image generation state
+  const [generatingImages, setGeneratingImages] = useState(false);
+  const [imageGenProgress, setImageGenProgress] = useState(0);
   // Favourite autocomplete
   const [showAutoComplete, setShowAutoComplete] = useState(false);
 
@@ -560,8 +563,10 @@ function MealsScreenContent() {
     onSuccess: (data) => {
       if (!aiMealPlan?.days) return;
       const dayName = WEEK_DAYS_FULL[selectedWeekDay];
+      // Clear photoUrl from new meals so image generation triggers for them
+      const newMeals = (data.meals ?? []).map((m: any) => ({ ...m, photoUrl: undefined }));
       const updatedDays = aiMealPlan.days.map((d: any) =>
-        d.day?.toLowerCase() === dayName.toLowerCase() ? { ...d, meals: data.meals ?? [] } : d
+        d.day?.toLowerCase() === dayName.toLowerCase() ? { ...d, meals: newMeals } : d
       );
       const updatedPlan = { ...aiMealPlan, days: updatedDays };
       setAiMealPlan(updatedPlan);
@@ -633,6 +638,75 @@ function MealsScreenContent() {
       });
     });
   }, [localProfile, aiMealPlan]);
+
+  // ── AI Meal Image Generation ──────────────────────────────────────
+  const generateMealImages = trpc.mealImages.generateBatch.useMutation();
+
+  const triggerMealImageGeneration = useCallback(async (plan: any) => {
+    if (!plan?.days || generatingImages) return;
+    // Collect all meals that don't already have a photoUrl
+    const mealsToGenerate: Array<{ dayIndex: number; mealIndex: number; name: string; photoQuery?: string }> = [];
+    plan.days.forEach((day: any, dayIdx: number) => {
+      day.meals?.forEach((meal: any, mealIdx: number) => {
+        if (!meal.photoUrl) {
+          mealsToGenerate.push({
+            dayIndex: dayIdx,
+            mealIndex: mealIdx,
+            name: meal.name || "healthy meal",
+            photoQuery: meal.photoQuery,
+          });
+        }
+      });
+    });
+    if (mealsToGenerate.length === 0) return;
+    setGeneratingImages(true);
+    setImageGenProgress(0);
+    try {
+      // Process in batches of 10 to show progress
+      const CHUNK = 10;
+      let allResults: Array<{ dayIndex: number; mealIndex: number; photoUrl: string | null }> = [];
+      for (let i = 0; i < mealsToGenerate.length; i += CHUNK) {
+        const chunk = mealsToGenerate.slice(i, i + CHUNK);
+        const result = await generateMealImages.mutateAsync({ meals: chunk });
+        allResults = [...allResults, ...result.images];
+        setImageGenProgress(Math.round((allResults.length / mealsToGenerate.length) * 100));
+      }
+      // Apply generated images to the plan
+      const updatedDays = plan.days.map((day: any, dayIdx: number) => ({
+        ...day,
+        meals: day.meals?.map((meal: any, mealIdx: number) => {
+          const match = allResults.find(r => r.dayIndex === dayIdx && r.mealIndex === mealIdx);
+          if (match?.photoUrl) return { ...meal, photoUrl: match.photoUrl };
+          return meal;
+        }),
+      }));
+      const updatedPlan = { ...plan, days: updatedDays };
+      setAiMealPlan(updatedPlan);
+      const json = JSON.stringify(updatedPlan);
+      await AsyncStorage.setItem("@guest_meal_plan", json);
+      await AsyncStorage.setItem("@cached_meal_plan", json);
+    } catch (e) {
+      // Silently fail — fallback images will be used
+      console.warn("Meal image generation failed:", e);
+    } finally {
+      setGeneratingImages(false);
+      setImageGenProgress(0);
+    }
+  }, [generatingImages]);
+
+  // Trigger image generation whenever a new meal plan is set
+  const prevPlanRef = React.useRef<string | null>(null);
+  React.useEffect(() => {
+    if (!aiMealPlan?.days) return;
+    const planKey = JSON.stringify(aiMealPlan.days.map((d: any) => d.meals?.map((m: any) => m.name)));
+    if (prevPlanRef.current === planKey) return;
+    prevPlanRef.current = planKey;
+    // Check if any meals are missing photoUrl
+    const needsImages = aiMealPlan.days.some((d: any) => d.meals?.some((m: any) => !m.photoUrl));
+    if (needsImages) {
+      triggerMealImageGeneration(aiMealPlan);
+    }
+  }, [aiMealPlan]);
 
   const uploadPhoto = trpc.upload.photo.useMutation();
   const analyzePhoto = trpc.mealLog.analyzePhoto.useMutation();
@@ -2286,6 +2360,19 @@ function MealsScreenContent() {
                     >
                       {regenerating && mealPlanMode === "pantry" ? <ActivityIndicator color="#22C55E" size="small" /> : <Text style={{ color: "#22C55E", fontFamily: "DMSans_700Bold", fontSize: 13 }}>From Pantry</Text>}
                     </TouchableOpacity>
+                  </View>
+                </View>
+              )}
+
+              {/* ── AI Image Generation Progress ── */}
+              {generatingImages && (
+                <View style={{ flexDirection: "row", alignItems: "center", gap: 8, backgroundColor: "rgba(59,130,246,0.08)", borderRadius: 12, padding: 10, borderWidth: 1, borderColor: "rgba(59,130,246,0.15)" }}>
+                  <ActivityIndicator size="small" color="#3B82F6" />
+                  <View style={{ flex: 1 }}>
+                    <Text style={{ color: MFG, fontFamily: "DMSans_600SemiBold", fontSize: 12 }}>Generating meal images... {imageGenProgress}%</Text>
+                    <View style={{ height: 3, backgroundColor: "rgba(59,130,246,0.15)", borderRadius: 2, marginTop: 4 }}>
+                      <View style={{ height: 3, backgroundColor: "#3B82F6", borderRadius: 2, width: `${imageGenProgress}%` as any }} />
+                    </View>
                   </View>
                 </View>
               )}

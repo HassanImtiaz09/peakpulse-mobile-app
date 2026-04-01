@@ -226,7 +226,12 @@ export default function OnboardingScreen() {
       const wKg = weightKg ? parseFloat(weightKg) : undefined;
       const hCm = heightCm ? parseFloat(heightCm) : undefined;
       const ageN = age ? parseInt(age) : undefined;
-      const profile = { name: name || "Athlete", goal, workoutStyle, dietaryPreference: dietaryPref, daysPerWeek, weightKg: wKg, heightCm: hCm, age: ageN, gender, activityLevel, region, cuisinePrefs };
+      // Pre-calculate TDEE for the profile so it's available as calorieTarget everywhere
+      let profileTdee: number | undefined;
+      if (wKg && hCm && ageN) {
+        profileTdee = Math.round(calculateTDEEBreakdown(wKg, hCm, ageN, gender, activityLevel, goal).adjustedTdee);
+      }
+      const profile = { name: name || "Athlete", goal, workoutStyle, dietaryPreference: dietaryPref, daysPerWeek, weightKg: wKg, heightCm: hCm, age: ageN, gender, activityLevel, region, cuisinePrefs, calorieTarget: profileTdee };
       await AsyncStorage.setItem("@guest_profile", JSON.stringify(profile));
       if (isAuthenticated) {
         await upsertProfile.mutateAsync({ goal, workoutStyle, dietaryPreference: dietaryPref, daysPerWeek, weightKg: wKg, heightCm: hCm, age: ageN, gender });
@@ -316,6 +321,8 @@ export default function OnboardingScreen() {
         tdee = breakdown.adjustedTdee;
         // Persist full breakdown for dashboard display and settings recalculate
         await saveTDEEBreakdown(breakdown);
+        // Persist TDEE as the calorie goal so CalorieContext and Meal Plan tab use the same target
+        await AsyncStorage.setItem("@peakpulse_calorie_goal", String(Math.round(tdee)));
         if (wKg) {
           const macros = calculateMacros(tdee, wKg, effectiveGoal);
           await AsyncStorage.setItem("@user_macro_targets", JSON.stringify(macros));

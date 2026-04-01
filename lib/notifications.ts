@@ -140,6 +140,7 @@ export async function scheduleAllDefaultReminders(): Promise<void> {
   await scheduleMealTimeReminders(8, 0, 12, 30, 18, 30);
   await scheduleWaterReminder(2);
   await scheduleWeeklyRecapNotification(19, 0);
+  await scheduleMealPlanRenewalReminder(18, 0);
 }
 
 export async function sendImmediateNotification(title: string, body: string): Promise<void> {
@@ -728,5 +729,85 @@ export async function cancelPantryExpiryAlerts(): Promise<void> {
     await AsyncStorage.removeItem(PANTRY_EXPIRY_NOTIF_IDS_KEY);
   } catch {
     // ignore
+  }
+}
+
+// ── Weekly Meal Plan Renewal Reminder ──────────────────────────────
+const MEAL_PLAN_RENEWAL_NOTIF_ID_KEY = "@meal_plan_renewal_notif_id";
+export const MEAL_PLAN_RENEWAL_ENABLED_KEY = "@meal_plan_renewal_enabled";
+
+/**
+ * Schedule a weekly notification on Friday evening prompting the user
+ * to generate next week's AI meal plan.
+ * Fires every Friday at 18:00 (6 PM) by default.
+ */
+export async function scheduleMealPlanRenewalReminder(
+  hour: number = 18,
+  minute: number = 0,
+): Promise<void> {
+  if (Platform.OS === "web") return;
+
+  // Check opt-in preference (default enabled)
+  const prefRaw = await AsyncStorage.getItem(MEAL_PLAN_RENEWAL_ENABLED_KEY);
+  const enabled = prefRaw === null ? true : prefRaw === "true";
+  if (!enabled) return;
+
+  const granted = await requestNotificationPermissions();
+  if (!granted) return;
+
+  // Cancel any existing renewal notification
+  await cancelMealPlanRenewalReminder();
+
+  const messages = [
+    { title: "🗓️ Time for Next Week's Meal Plan!", body: "Your current meal plan ends soon. Tap to generate a fresh week of delicious, varied meals." },
+    { title: "🍽️ Plan Next Week's Meals", body: "Stay on track — generate your AI meal plan for next week before the weekend starts!" },
+    { title: "📋 New Week, New Meals!", body: "Ready for variety? Generate next week's meal plan now and keep your nutrition goals on point." },
+    { title: "⚡ Meal Plan Refresh Available", body: "Your weekly meal plan is wrapping up. Tap to create a brand new plan with fresh recipes!" },
+  ];
+  const msg = messages[Math.floor(Math.random() * messages.length)];
+
+  const id = await Notifications.scheduleNotificationAsync({
+    content: {
+      title: msg.title,
+      body: msg.body,
+      data: { url: "/(tabs)/meals", type: "meal_plan_renewal" },
+      categoryIdentifier: "peakpulse",
+    },
+    trigger: {
+      weekday: 6, // 6 = Friday in Expo (1=Sun, 2=Mon, ... 6=Fri, 7=Sat)
+      hour,
+      minute,
+      repeats: true,
+    } as any,
+  });
+
+  await AsyncStorage.setItem(MEAL_PLAN_RENEWAL_NOTIF_ID_KEY, id);
+}
+
+/**
+ * Cancel the weekly meal plan renewal reminder.
+ */
+export async function cancelMealPlanRenewalReminder(): Promise<void> {
+  if (Platform.OS === "web") return;
+  const existingId = await AsyncStorage.getItem(MEAL_PLAN_RENEWAL_NOTIF_ID_KEY);
+  if (existingId) {
+    await Notifications.cancelScheduledNotificationAsync(existingId).catch(() => {});
+    await AsyncStorage.removeItem(MEAL_PLAN_RENEWAL_NOTIF_ID_KEY);
+  }
+}
+
+/**
+ * Toggle the weekly meal plan renewal reminder on or off.
+ */
+export async function setMealPlanRenewalEnabled(
+  enabled: boolean,
+  hour: number = 18,
+  minute: number = 0,
+): Promise<void> {
+  await AsyncStorage.setItem(MEAL_PLAN_RENEWAL_ENABLED_KEY, String(enabled));
+  if (enabled) {
+    await scheduleMealPlanRenewalReminder(hour, minute);
+  } else {
+    await cancelMealPlanRenewalReminder();
   }
 }
