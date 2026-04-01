@@ -59,6 +59,26 @@ const MEAL_PLAN_DIETARY_PREFS = [
 
 const MEAL_PLAN_DAY_NAMES = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
+const CUISINE_OPTIONS = [
+  { key: "indian", label: "Indian", icon: "restaurant" },
+  { key: "thai", label: "Thai", icon: "ramen-dining" },
+  { key: "mexican", label: "Mexican", icon: "local-fire-department" },
+  { key: "turkish", label: "Turkish", icon: "kebab-dining" },
+  { key: "mediterranean", label: "Mediterranean", icon: "set-meal" },
+  { key: "japanese", label: "Japanese", icon: "rice-bowl" },
+  { key: "korean", label: "Korean", icon: "soup-kitchen" },
+  { key: "chinese", label: "Chinese", icon: "takeout-dining" },
+  { key: "italian", label: "Italian", icon: "local-pizza" },
+  { key: "american", label: "American", icon: "lunch-dining" },
+  { key: "middle_eastern", label: "Middle Eastern", icon: "bakery-dining" },
+  { key: "southeast_asian", label: "SE Asian", icon: "ramen-dining" },
+  { key: "african", label: "African", icon: "dinner-dining" },
+  { key: "caribbean", label: "Caribbean", icon: "set-meal" },
+];
+
+const WEEK_DAYS_SHORT = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+const WEEK_DAYS_FULL = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+
 const MEAL_PHOTO_MAP: Record<string, string> = {
   breakfast: "https://images.unsplash.com/photo-1525351484163-7529414344d8?w=400&q=80",
   "morning snack": "https://images.unsplash.com/photo-1490474418585-ba9bad8fd0ea?w=400&q=80",
@@ -211,6 +231,12 @@ function MealsScreenContent() {
   const [nutritionTab, setNutritionTab] = useState(0); // 0=Tracker, 1=Meal Plan, 2=Pantry
   const [ramadanMode, setRamadanMode] = useState(false);
   const [showMealCustomize, setShowMealCustomize] = useState(false);
+  const [mealPlanMode, setMealPlanMode] = useState<"generic" | "pantry">("generic");
+  const [selectedCuisines, setSelectedCuisines] = useState<string[]>([]);
+  const [selectedWeekDay, setSelectedWeekDay] = useState(() => {
+    const jsDay = new Date().getDay(); // 0=Sun
+    return jsDay === 0 ? 6 : jsDay - 1; // Convert to 0=Mon index
+  });
   const [swapMealPlanModal, setSwapMealPlanModal] = useState<{ meal: any; dayIndex: number; mealIndex: number } | null>(null);
   const [swapMealPlanAlts, setSwapMealPlanAlts] = useState<any[]>([]);
   const [swapMealPlanLoading, setSwapMealPlanLoading] = useState(false);
@@ -425,6 +451,7 @@ function MealsScreenContent() {
           const p = JSON.parse(raw);
           if (p.dietaryPreference) setUserDietaryPref(p.dietaryPreference);
           if (p.goal) setUserGoal(p.goal);
+          if (p.cuisinePrefs?.length) setSelectedCuisines(p.cuisinePrefs);
           setLocalProfile(p);
         } catch {}
       }
@@ -744,6 +771,44 @@ function MealsScreenContent() {
   }, [aiMealPlan, mealPlanTodayName]);
   const mealGoalLabel = MEAL_PLAN_GOALS.find(g => g.key === userGoal)?.label ?? userGoal;
   const dietLabel = MEAL_PLAN_DIETARY_PREFS.find(d => d.key === userDietaryPref)?.label ?? userDietaryPref;
+
+  // Weekly day selector: find the selected day's data from the AI plan
+  const selectedDayData = useMemo(() => {
+    if (!aiMealPlan?.days) return null;
+    const dayName = WEEK_DAYS_FULL[selectedWeekDay];
+    return aiMealPlan.days.find((d: any) => d.day?.toLowerCase().includes(dayName.toLowerCase())) ?? null;
+  }, [aiMealPlan, selectedWeekDay]);
+
+  const selectedDayDayCals = useMemo(() => {
+    if (!selectedDayData?.meals) return { calories: 0, protein: 0, carbs: 0, fat: 0 };
+    return {
+      calories: selectedDayData.meals.reduce((s: number, m: any) => s + (m.calories ?? 0), 0),
+      protein: selectedDayData.meals.reduce((s: number, m: any) => s + (m.protein ?? 0), 0),
+      carbs: selectedDayData.meals.reduce((s: number, m: any) => s + (m.carbs ?? 0), 0),
+      fat: selectedDayData.meals.reduce((s: number, m: any) => s + (m.fat ?? 0), 0),
+    };
+  }, [selectedDayData]);
+
+  const toggleCuisine = useCallback((key: string) => {
+    setSelectedCuisines(prev => prev.includes(key) ? prev.filter(c => c !== key) : [...prev, key]);
+  }, []);
+
+  // Build the mutate params for meal plan generation
+  const getMealPlanMutateParams = useCallback((mode: "generic" | "pantry") => {
+    const base = {
+      goal: userGoal,
+      dietaryPreference: userDietaryPref,
+      ramadanMode,
+      weightKg: localProfile?.weightKg,
+      heightCm: localProfile?.heightCm,
+      age: localProfile?.age,
+      gender: localProfile?.gender,
+      activityLevel: localProfile?.activityLevel,
+      region: localProfile?.region || undefined,
+      cuisinePrefs: selectedCuisines.length > 0 ? selectedCuisines : (localProfile?.cuisinePrefs?.length ? localProfile.cuisinePrefs : undefined),
+    };
+    return base;
+  }, [userGoal, userDietaryPref, ramadanMode, localProfile, selectedCuisines]);
   const dailyCalorieTarget = useMemo(() => {
     if (calorieGoal && calorieGoal > 0) return calorieGoal;
     return localProfile?.calorieTarget ?? 2000;
@@ -1885,11 +1950,12 @@ function MealsScreenContent() {
                     <MaterialIcons name="restaurant-menu" size={22} color="#F59E0B" />
                   </View>
                   <View>
-                    <Text style={{ color: MFG, fontFamily: "DMSans_700Bold", fontSize: 18 }}>AI Meal Plan</Text>
-                    <Text style={{ color: MMUTED, fontSize: 12 }}>Personalized weekly meals</Text>
+                    <Text style={{ color: MFG, fontFamily: "DMSans_700Bold", fontSize: 18 }}>AI Weekly Meal Plan</Text>
+                    <Text style={{ color: MMUTED, fontSize: 12 }}>Personalized 7-day meals</Text>
                   </View>
                 </View>
 
+                {/* Goal Selection */}
                 <Text style={{ color: MMUTED, fontSize: 11, fontFamily: "DMSans_700Bold", letterSpacing: 1, marginBottom: 8, textTransform: "uppercase" }}>Your Goal</Text>
                 <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8, marginBottom: 16 }}>
                   {MEAL_PLAN_GOALS.map(g => (
@@ -1900,6 +1966,7 @@ function MealsScreenContent() {
                   ))}
                 </View>
 
+                {/* Dietary Preference */}
                 <Text style={{ color: MMUTED, fontSize: 11, fontFamily: "DMSans_700Bold", letterSpacing: 1, marginBottom: 8, textTransform: "uppercase" }}>Dietary Preference</Text>
                 <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8, marginBottom: 16 }}>
                   {MEAL_PLAN_DIETARY_PREFS.map(d => (
@@ -1908,6 +1975,21 @@ function MealsScreenContent() {
                       <Text style={{ color: userDietaryPref === d.key ? MBG : MMUTED, fontFamily: "DMSans_600SemiBold", fontSize: 13 }}>{d.label}</Text>
                     </TouchableOpacity>
                   ))}
+                </View>
+
+                {/* Cuisine Preferences (multi-select) */}
+                <Text style={{ color: MMUTED, fontSize: 11, fontFamily: "DMSans_700Bold", letterSpacing: 1, marginBottom: 8, textTransform: "uppercase" }}>Cuisine Preferences <Text style={{ color: MMUTED, fontSize: 9, fontFamily: "DMSans_400Regular", textTransform: "none" }}>(select one or more)</Text></Text>
+                <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8, marginBottom: 16 }}>
+                  {CUISINE_OPTIONS.map(c => {
+                    const sel = selectedCuisines.includes(c.key);
+                    return (
+                      <TouchableOpacity key={c.key} style={{ flexDirection: "row", alignItems: "center", gap: 5, paddingHorizontal: 12, paddingVertical: 7, borderRadius: 12, backgroundColor: sel ? "rgba(245,158,11,0.20)" : MSURFACE, borderWidth: 1, borderColor: sel ? "#F59E0B" : "rgba(30,41,59,0.6)" }} onPress={() => toggleCuisine(c.key)}>
+                        <MaterialIcons name={c.icon as any} size={13} color={sel ? "#F59E0B" : MMUTED} />
+                        <Text style={{ color: sel ? "#F59E0B" : MMUTED, fontFamily: "DMSans_600SemiBold", fontSize: 12 }}>{c.label}</Text>
+                        {sel && <MaterialIcons name="check" size={12} color="#F59E0B" />}
+                      </TouchableOpacity>
+                    );
+                  })}
                 </View>
 
                 {/* Ramadan Toggle */}
@@ -1927,25 +2009,56 @@ function MealsScreenContent() {
                   </View>
                 </TouchableOpacity>
 
-                <TouchableOpacity
-                  style={{ backgroundColor: "#F59E0B", borderRadius: 14, paddingVertical: 14, alignItems: "center", opacity: regenerating ? 0.7 : 1 }}
-                  onPress={() => {
-                    setRegenerating(true);
-                    regenerateMealPlan.mutate({ goal: userGoal, dietaryPreference: userDietaryPref, ramadanMode, weightKg: localProfile?.weightKg, heightCm: localProfile?.heightCm, age: localProfile?.age, gender: localProfile?.gender, activityLevel: localProfile?.activityLevel, region: localProfile?.region || undefined, cuisinePrefs: localProfile?.cuisinePrefs?.length ? localProfile.cuisinePrefs : undefined });
-                  }}
-                  disabled={regenerating}
-                >
-                  {regenerating ? <ActivityIndicator color={MBG} /> : <Text style={{ color: MBG, fontFamily: "DMSans_700Bold", fontSize: 15 }}>Generate Meal Plan</Text>}
-                </TouchableOpacity>
+                {/* Calorie Target Info */}
+                <View style={{ flexDirection: "row", alignItems: "center", gap: 8, backgroundColor: "rgba(59,130,246,0.08)", borderRadius: 10, padding: 10, marginBottom: 16, borderWidth: 1, borderColor: "rgba(59,130,246,0.15)" }}>
+                  <MaterialIcons name="local-fire-department" size={16} color="#3B82F6" />
+                  <Text style={{ color: MMUTED, fontSize: 12, flex: 1 }}>Daily target: <Text style={{ color: "#3B82F6", fontFamily: "DMSans_700Bold" }}>{dailyCalorieTarget} kcal</Text> (from your profile)</Text>
+                </View>
+
+                {/* Two Generation Buttons */}
+                <View style={{ gap: 10 }}>
+                  <TouchableOpacity
+                    style={{ backgroundColor: "#F59E0B", borderRadius: 14, paddingVertical: 14, alignItems: "center", flexDirection: "row", justifyContent: "center", gap: 8, opacity: regenerating ? 0.7 : 1 }}
+                    onPress={() => {
+                      setMealPlanMode("generic");
+                      setRegenerating(true);
+                      regenerateMealPlan.mutate(getMealPlanMutateParams("generic"));
+                    }}
+                    disabled={regenerating}
+                  >
+                    {regenerating && mealPlanMode === "generic" ? <ActivityIndicator color={MBG} /> : <MaterialIcons name="auto-awesome" size={18} color={MBG} />}
+                    <Text style={{ color: MBG, fontFamily: "DMSans_700Bold", fontSize: 15 }}>Generate Meal Plan</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={{ backgroundColor: "rgba(34,197,94,0.15)", borderRadius: 14, paddingVertical: 14, alignItems: "center", flexDirection: "row", justifyContent: "center", gap: 8, borderWidth: 1, borderColor: "rgba(34,197,94,0.30)", opacity: (regenerating || pantryItems.length === 0) ? 0.5 : 1 }}
+                    onPress={() => {
+                      setMealPlanMode("pantry");
+                      setRegenerating(true);
+                      regenerateMealPlan.mutate({
+                        ...getMealPlanMutateParams("pantry"),
+                        favouriteFoods: pantryItems.slice(0, 30).map(p => ({ name: p.name, calories: 0, protein: 0, carbs: 0, fat: 0 })),
+                      });
+                    }}
+                    disabled={regenerating || pantryItems.length === 0}
+                  >
+                    {regenerating && mealPlanMode === "pantry" ? <ActivityIndicator color="#22C55E" /> : <MaterialIcons name="kitchen" size={18} color="#22C55E" />}
+                    <Text style={{ color: "#22C55E", fontFamily: "DMSans_700Bold", fontSize: 15 }}>Generate from Pantry</Text>
+                    {pantryItems.length > 0 && <Text style={{ color: MMUTED, fontSize: 11 }}>({pantryItems.length} items)</Text>}
+                  </TouchableOpacity>
+                  {pantryItems.length === 0 && (
+                    <Text style={{ color: MMUTED, fontSize: 11, textAlign: "center" }}>Add items to your Pantry tab first to generate from pantry</Text>
+                  )}
+                </View>
               </View>
             </View>
           ) : (
-            <View style={{ marginTop: 16, gap: 12 }}>
-              {/* Current Preferences Banner */}
+            <View style={{ marginTop: 12, gap: 12 }}>
+              {/* Preferences Banner + Customize Toggle */}
               <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", backgroundColor: MSURFACE, borderRadius: 14, padding: 12, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}>
-                <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+                <View style={{ flexDirection: "row", alignItems: "center", gap: 8, flex: 1 }}>
                   <MaterialIcons name="restaurant-menu" size={16} color="#F59E0B" />
-                  <Text style={{ color: MFG, fontFamily: "DMSans_600SemiBold", fontSize: 13 }}>{mealGoalLabel} \u00b7 {dietLabel}{ramadanMode ? " \u00b7 Ramadan" : ""}</Text>
+                  <Text style={{ color: MFG, fontFamily: "DMSans_600SemiBold", fontSize: 13 }} numberOfLines={1}>{mealGoalLabel} \u00b7 {dietLabel}{selectedCuisines.length > 0 ? ` \u00b7 ${selectedCuisines.length} cuisine${selectedCuisines.length > 1 ? "s" : ""}` : ""}{ramadanMode ? " \u00b7 Ramadan" : ""}</Text>
                 </View>
                 <TouchableOpacity onPress={() => setShowMealCustomize(!showMealCustomize)}>
                   <MaterialIcons name="tune" size={18} color="#F59E0B" />
@@ -1973,6 +2086,18 @@ function MealsScreenContent() {
                       </TouchableOpacity>
                     ))}
                   </View>
+                  <Text style={{ color: MMUTED, fontSize: 11, fontFamily: "DMSans_700Bold", letterSpacing: 1, textTransform: "uppercase" }}>Cuisine Preferences</Text>
+                  <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 6 }}>
+                    {CUISINE_OPTIONS.map(c => {
+                      const sel = selectedCuisines.includes(c.key);
+                      return (
+                        <TouchableOpacity key={c.key} style={{ flexDirection: "row", alignItems: "center", gap: 4, paddingHorizontal: 10, paddingVertical: 6, borderRadius: 10, backgroundColor: sel ? "rgba(245,158,11,0.20)" : "transparent", borderWidth: 1, borderColor: sel ? "#F59E0B" : "rgba(30,41,59,0.6)" }} onPress={() => toggleCuisine(c.key)}>
+                          <Text style={{ color: sel ? "#F59E0B" : MMUTED, fontFamily: "DMSans_600SemiBold", fontSize: 11 }}>{c.label}</Text>
+                          {sel && <MaterialIcons name="check" size={10} color="#F59E0B" />}
+                        </TouchableOpacity>
+                      );
+                    })}
+                  </View>
                   <TouchableOpacity
                     style={{ flexDirection: "row", alignItems: "center", gap: 10, backgroundColor: ramadanMode ? "rgba(245,158,11,0.15)" : "transparent", borderRadius: 12, padding: 10, borderWidth: 1, borderColor: ramadanMode ? "rgba(245,158,11,0.30)" : "rgba(30,41,59,0.6)" }}
                     onPress={() => setRamadanMode(!ramadanMode)}
@@ -1983,34 +2108,71 @@ function MealsScreenContent() {
                       <View style={{ width: 16, height: 16, borderRadius: 8, backgroundColor: MFG, alignSelf: ramadanMode ? "flex-end" : "flex-start" }} />
                     </View>
                   </TouchableOpacity>
-                  <TouchableOpacity
-                    style={{ backgroundColor: "#F59E0B", borderRadius: 12, paddingVertical: 12, alignItems: "center", opacity: regenerating ? 0.7 : 1 }}
-                    onPress={() => {
-                      setRegenerating(true);
-                      setShowMealCustomize(false);
-                      regenerateMealPlan.mutate({ goal: userGoal, dietaryPreference: userDietaryPref, ramadanMode, weightKg: localProfile?.weightKg, heightCm: localProfile?.heightCm, age: localProfile?.age, gender: localProfile?.gender, activityLevel: localProfile?.activityLevel, region: localProfile?.region || undefined, cuisinePrefs: localProfile?.cuisinePrefs?.length ? localProfile.cuisinePrefs : undefined });
-                    }}
-                    disabled={regenerating}
-                  >
-                    {regenerating ? <ActivityIndicator color={MBG} size="small" /> : <Text style={{ color: MBG, fontFamily: "DMSans_700Bold", fontSize: 14 }}>Regenerate Plan</Text>}
-                  </TouchableOpacity>
+                  {/* Regenerate Buttons in Customize Panel */}
+                  <View style={{ flexDirection: "row", gap: 8 }}>
+                    <TouchableOpacity
+                      style={{ flex: 1, backgroundColor: "#F59E0B", borderRadius: 12, paddingVertical: 12, alignItems: "center", opacity: regenerating ? 0.7 : 1 }}
+                      onPress={() => {
+                        setMealPlanMode("generic");
+                        setRegenerating(true);
+                        setShowMealCustomize(false);
+                        regenerateMealPlan.mutate(getMealPlanMutateParams("generic"));
+                      }}
+                      disabled={regenerating}
+                    >
+                      {regenerating && mealPlanMode === "generic" ? <ActivityIndicator color={MBG} size="small" /> : <Text style={{ color: MBG, fontFamily: "DMSans_700Bold", fontSize: 13 }}>Regenerate</Text>}
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={{ flex: 1, backgroundColor: "rgba(34,197,94,0.15)", borderRadius: 12, paddingVertical: 12, alignItems: "center", borderWidth: 1, borderColor: "rgba(34,197,94,0.30)", opacity: (regenerating || pantryItems.length === 0) ? 0.5 : 1 }}
+                      onPress={() => {
+                        setMealPlanMode("pantry");
+                        setRegenerating(true);
+                        setShowMealCustomize(false);
+                        regenerateMealPlan.mutate({
+                          ...getMealPlanMutateParams("pantry"),
+                          favouriteFoods: pantryItems.slice(0, 30).map(p => ({ name: p.name, calories: 0, protein: 0, carbs: 0, fat: 0 })),
+                        });
+                      }}
+                      disabled={regenerating || pantryItems.length === 0}
+                    >
+                      {regenerating && mealPlanMode === "pantry" ? <ActivityIndicator color="#22C55E" size="small" /> : <Text style={{ color: "#22C55E", fontFamily: "DMSans_700Bold", fontSize: 13 }}>From Pantry</Text>}
+                    </TouchableOpacity>
+                  </View>
                 </View>
               )}
 
-              {/* Today's Meals */}
-              {mealPlanTodayMeals && (
-                <View>
-                  <View style={{ flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 10 }}>
+              {/* ── Weekly Day Selector Bar ── */}
+              <View style={{ flexDirection: "row", gap: 4, marginTop: 4 }}>
+                {WEEK_DAYS_SHORT.map((day, idx) => {
+                  const isToday = (() => { const jsDay = new Date().getDay(); return idx === (jsDay === 0 ? 6 : jsDay - 1); })();
+                  const isSelected = idx === selectedWeekDay;
+                  return (
+                    <TouchableOpacity
+                      key={day}
+                      style={{ flex: 1, alignItems: "center", paddingVertical: 10, borderRadius: 12, backgroundColor: isSelected ? "#F59E0B" : MSURFACE, borderWidth: isToday && !isSelected ? 1.5 : 1, borderColor: isSelected ? "#F59E0B" : isToday ? "rgba(245,158,11,0.50)" : "rgba(30,41,59,0.4)" }}
+                      onPress={() => setSelectedWeekDay(idx)}
+                    >
+                      <Text style={{ color: isSelected ? MBG : isToday ? "#F59E0B" : MMUTED, fontFamily: "DMSans_700Bold", fontSize: 12 }}>{day}</Text>
+                      {isToday && !isSelected && <View style={{ width: 4, height: 4, borderRadius: 2, backgroundColor: "#F59E0B", marginTop: 2 }} />}
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+
+              {/* ── Selected Day Meals ── */}
+              {selectedDayData ? (
+                <View style={{ gap: 10 }}>
+                  <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
                     <MaterialIcons name="today" size={16} color="#F59E0B" />
-                    <Text style={{ color: MFG, fontFamily: "DMSans_700Bold", fontSize: 16 }}>Today — {mealPlanTodayName}</Text>
+                    <Text style={{ color: MFG, fontFamily: "DMSans_700Bold", fontSize: 16 }}>{WEEK_DAYS_FULL[selectedWeekDay]}</Text>
                   </View>
-                  {/* Macro summary for today */}
-                  <View style={{ flexDirection: "row", gap: 8, marginBottom: 12 }}>
+                  {/* Macro summary for selected day */}
+                  <View style={{ flexDirection: "row", gap: 8 }}>
                     {[
-                      { label: "Calories", value: mealPlanTodayMeals.meals?.reduce((s: number, m: any) => s + (m.calories ?? 0), 0) ?? 0, unit: "kcal", color: "#FBBF24" },
-                      { label: "Protein", value: mealPlanTodayMeals.meals?.reduce((s: number, m: any) => s + (m.protein ?? 0), 0) ?? 0, unit: "g", color: "#3B82F6" },
-                      { label: "Carbs", value: mealPlanTodayMeals.meals?.reduce((s: number, m: any) => s + (m.carbs ?? 0), 0) ?? 0, unit: "g", color: "#FDE68A" },
-                      { label: "Fat", value: mealPlanTodayMeals.meals?.reduce((s: number, m: any) => s + (m.fat ?? 0), 0) ?? 0, unit: "g", color: "#FBBF24" },
+                      { label: "Calories", value: selectedDayDayCals.calories, unit: "kcal", color: "#FBBF24" },
+                      { label: "Protein", value: selectedDayDayCals.protein, unit: "g", color: "#3B82F6" },
+                      { label: "Carbs", value: selectedDayDayCals.carbs, unit: "g", color: "#FDE68A" },
+                      { label: "Fat", value: selectedDayDayCals.fat, unit: "g", color: "#FBBF24" },
                     ].map(m => (
                       <View key={m.label} style={{ flex: 1, backgroundColor: MSURFACE, borderRadius: 10, padding: 8, alignItems: "center", borderWidth: 1, borderColor: m.color + "30" }}>
                         <Text style={{ color: m.color, fontFamily: "SpaceMono_700Bold", fontSize: 14 }}>{Math.round(m.value)}</Text>
@@ -2019,44 +2181,66 @@ function MealsScreenContent() {
                       </View>
                     ))}
                   </View>
-                  {/* Today's meal cards */}
-                  {mealPlanTodayMeals.meals?.map((meal: any, i: number) => (
-                    <MealPlanMealCard key={i} meal={meal} onSwap={() => {
-                      const todayIdx = aiMealPlan.days?.findIndex((d: any) => d.day?.toLowerCase().includes(mealPlanTodayName.toLowerCase())) ?? 0;
-                      handleMealPlanSwap(meal, todayIdx, i);
-                    }} />
-                  ))}
-                </View>
-              )}
-
-              {/* Rest of the Week */}
-              {mealPlanOtherDays.length > 0 && (
-                <View style={{ marginTop: 8 }}>
-                  <Text style={{ color: MMUTED, fontSize: 11, fontFamily: "DMSans_700Bold", letterSpacing: 1, marginBottom: 10, textTransform: "uppercase" }}>Rest of the Week</Text>
-                  {mealPlanOtherDays.map((day: any, di: number) => {
-                    const realIdx = aiMealPlan.days?.indexOf(day) ?? di;
-                    return <MealPlanDayCard key={di} day={day} dayIndex={realIdx} onMealSwap={handleMealPlanSwap} />;
+                  {/* Calorie target comparison */}
+                  {dailyCalorieTarget > 0 && (
+                    <View style={{ flexDirection: "row", alignItems: "center", gap: 6, backgroundColor: Math.abs(selectedDayDayCals.calories - dailyCalorieTarget) < 100 ? "rgba(34,197,94,0.08)" : "rgba(245,158,11,0.08)", borderRadius: 8, padding: 8, borderWidth: 1, borderColor: Math.abs(selectedDayDayCals.calories - dailyCalorieTarget) < 100 ? "rgba(34,197,94,0.15)" : "rgba(245,158,11,0.15)" }}>
+                      <MaterialIcons name={Math.abs(selectedDayDayCals.calories - dailyCalorieTarget) < 100 ? "check-circle" : "info"} size={14} color={Math.abs(selectedDayDayCals.calories - dailyCalorieTarget) < 100 ? "#22C55E" : "#F59E0B"} />
+                      <Text style={{ color: MMUTED, fontSize: 11 }}>{Math.round(selectedDayDayCals.calories)} / {dailyCalorieTarget} kcal target ({selectedDayDayCals.calories >= dailyCalorieTarget ? "+" : ""}{Math.round(selectedDayDayCals.calories - dailyCalorieTarget)})</Text>
+                    </View>
+                  )}
+                  {/* Meal cards for selected day */}
+                  {selectedDayData.meals?.map((meal: any, i: number) => {
+                    const dayIdx = aiMealPlan.days?.findIndex((d: any) => d.day?.toLowerCase().includes(WEEK_DAYS_FULL[selectedWeekDay].toLowerCase())) ?? 0;
+                    return <MealPlanMealCard key={i} meal={meal} onSwap={() => handleMealPlanSwap(meal, dayIdx, i)} />;
                   })}
                 </View>
+              ) : (
+                <View style={{ alignItems: "center", paddingVertical: 30 }}>
+                  <MaterialIcons name="event-busy" size={36} color={MMUTED} />
+                  <Text style={{ color: MMUTED, fontSize: 13, marginTop: 8 }}>No meals planned for {WEEK_DAYS_FULL[selectedWeekDay]}</Text>
+                </View>
               )}
 
-              {/* Regenerate Button */}
-              <TouchableOpacity
-                style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8, backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 14, paddingVertical: 12, borderWidth: 1, borderColor: "rgba(245,158,11,0.18)", marginTop: 8, opacity: regenerating ? 0.7 : 1 }}
-                onPress={() => {
-                  Alert.alert("Regenerate Meal Plan?", "This will replace your current meal plan.", [
-                    { text: "Cancel", style: "cancel" },
-                    { text: "Regenerate", style: "destructive", onPress: () => {
-                      setRegenerating(true);
-                      regenerateMealPlan.mutate({ goal: userGoal, dietaryPreference: userDietaryPref, ramadanMode, weightKg: localProfile?.weightKg, heightCm: localProfile?.heightCm, age: localProfile?.age, gender: localProfile?.gender, activityLevel: localProfile?.activityLevel, region: localProfile?.region || undefined, cuisinePrefs: localProfile?.cuisinePrefs?.length ? localProfile.cuisinePrefs : undefined });
-                    }},
-                  ]);
-                }}
-                disabled={regenerating}
-              >
-                {regenerating ? <ActivityIndicator color="#F59E0B" size="small" /> : <MaterialIcons name="restaurant-menu" size={16} color="#F59E0B" />}
-                <Text style={{ color: "#F59E0B", fontFamily: "DMSans_700Bold", fontSize: 13 }}>{regenerating ? "Regenerating..." : "New Meal Plan"}</Text>
-              </TouchableOpacity>
+              {/* Regenerate Buttons at Bottom */}
+              <View style={{ flexDirection: "row", gap: 8, marginTop: 8 }}>
+                <TouchableOpacity
+                  style={{ flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6, backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 14, paddingVertical: 12, borderWidth: 1, borderColor: "rgba(245,158,11,0.18)", opacity: regenerating ? 0.7 : 1 }}
+                  onPress={() => {
+                    Alert.alert("Regenerate Meal Plan?", "This will replace your current weekly meal plan.", [
+                      { text: "Cancel", style: "cancel" },
+                      { text: "Regenerate", style: "destructive", onPress: () => {
+                        setMealPlanMode("generic");
+                        setRegenerating(true);
+                        regenerateMealPlan.mutate(getMealPlanMutateParams("generic"));
+                      }},
+                    ]);
+                  }}
+                  disabled={regenerating}
+                >
+                  {regenerating && mealPlanMode === "generic" ? <ActivityIndicator color="#F59E0B" size="small" /> : <MaterialIcons name="auto-awesome" size={14} color="#F59E0B" />}
+                  <Text style={{ color: "#F59E0B", fontFamily: "DMSans_700Bold", fontSize: 12 }}>{regenerating && mealPlanMode === "generic" ? "Generating..." : "New Plan"}</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={{ flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6, backgroundColor: "rgba(34,197,94,0.08)", borderRadius: 14, paddingVertical: 12, borderWidth: 1, borderColor: "rgba(34,197,94,0.18)", opacity: (regenerating || pantryItems.length === 0) ? 0.5 : 1 }}
+                  onPress={() => {
+                    Alert.alert("Generate from Pantry?", `Use your ${pantryItems.length} pantry items to create a weekly meal plan.`, [
+                      { text: "Cancel", style: "cancel" },
+                      { text: "Generate", onPress: () => {
+                        setMealPlanMode("pantry");
+                        setRegenerating(true);
+                        regenerateMealPlan.mutate({
+                          ...getMealPlanMutateParams("pantry"),
+                          favouriteFoods: pantryItems.slice(0, 30).map(p => ({ name: p.name, calories: 0, protein: 0, carbs: 0, fat: 0 })),
+                        });
+                      }},
+                    ]);
+                  }}
+                  disabled={regenerating || pantryItems.length === 0}
+                >
+                  {regenerating && mealPlanMode === "pantry" ? <ActivityIndicator color="#22C55E" size="small" /> : <MaterialIcons name="kitchen" size={14} color="#22C55E" />}
+                  <Text style={{ color: "#22C55E", fontFamily: "DMSans_700Bold", fontSize: 12 }}>{regenerating && mealPlanMode === "pantry" ? "Generating..." : "From Pantry"}</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           )}
         </ScrollView>

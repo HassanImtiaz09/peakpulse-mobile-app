@@ -2826,4 +2826,18 @@
 - [x] Barcode scanner shows suggested expiry based on product category in prompt
 - [x] Barcode scan auto-sets expiry on both iOS (editable prompt) and Android (auto-applied)
 - [x] Run tests and verify TypeScript compiles — 0 TS errors, 2079 tests pass
+- [x] Save checkpoint (version 4c56b73c)
+
+## Meal Plan Tab Overhaul - Weekly Plan with Dual Mode & Cuisine Filter (Round 59)
+
+- [x] Redesign Meal Plan tab with full weekly plan (Mon-Sun) horizontal day selector bar
+- [x] Add two generation modes: "Generate Meal Plan" (generic) and "Generate from Pantry" buttons
+- [x] Add cuisine multi-select filter (12 options: Thai, Indian, Mexican, Turkish, Mediterranean, Japanese, Korean, Chinese, Italian, American, Middle Eastern, French)
+- [x] Dietary restrictions (vegan, halal, keto, etc.) respected in both modes via getMealPlanMutateParams
+- [x] Caloric/macro targets shown per day with comparison to daily target from profile
+- [x] Pantry mode sends up to 30 pantry items as favouriteFoods to server endpoint
+- [x] Each day shows meals with calories, protein, carbs, fat + daily summary + target comparison
+- [x] Day-by-day navigation via horizontal selector bar with today indicator dot
+- [x] Cuisine selector also available in collapsible customize panel after plan is generated
+- [x] Run tests and verify TypeScript compiles — 0 TS errors, 2079 tests pass
 - [ ] Save checkpoint
