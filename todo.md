@@ -2840,4 +2840,16 @@
 - [x] Day-by-day navigation via horizontal selector bar with today indicator dot
 - [x] Cuisine selector also available in collapsible customize panel after plan is generated
 - [x] Run tests and verify TypeScript compiles — 0 TS errors, 2079 tests pass
+- [x] Save checkpoint (version b5e5084e)
+
+## Auto-Generate Meal Plan at Onboarding (Round 60)
+
+- [x] Auto-generate a full 7-day meal plan when user completes onboarding
+- [x] Meal plan respects dietary preferences, caloric targets, region, and cuisine preferences from onboarding
+- [x] Meal Plan tab shows the auto-generated plan immediately (no "No Meals planned" empty state)
+- [x] Day-name normalization: handles "Day 1", abbreviations, case-insensitive, pure numbers, fills missing days
+- [x] Auto-generation fallback: if onboarding plan fails, auto-generates on first Meal Plan tab visit
+- [x] Loading state shown during auto-generation (animated spinner with day preview)
+- [x] Server prompt updated to explicitly request 7 days Monday-Sunday
+- [x] Run tests and verify TypeScript compiles — 0 TS errors, 11 normalization tests pass
 - [ ] Save checkpoint

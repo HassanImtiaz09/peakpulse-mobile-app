@@ -79,6 +79,44 @@ const CUISINE_OPTIONS = [
 const WEEK_DAYS_SHORT = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 const WEEK_DAYS_FULL = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
+/** Normalize AI-returned day names to standard "Monday".."Sunday" format.
+ *  Handles: "Day 1", "day 1", "Mon", "monday", "MONDAY", "1", etc. */
+function normalizeMealPlanDays(plan: any): any {
+  if (!plan?.days || !Array.isArray(plan.days)) return plan;
+  const CANONICAL = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+  const ABBR: Record<string, string> = { mon: "Monday", tue: "Tuesday", wed: "Wednesday", thu: "Thursday", fri: "Friday", sat: "Saturday", sun: "Sunday" };
+  const normalized = plan.days.map((d: any, idx: number) => {
+    const raw = (d.day ?? "").trim().toLowerCase();
+    // Already canonical?
+    const exact = CANONICAL.find(c => c.toLowerCase() === raw);
+    if (exact) return { ...d, day: exact };
+    // Abbreviation match ("mon", "tue", etc.)
+    const abbrMatch = ABBR[raw.slice(0, 3)];
+    if (abbrMatch) return { ...d, day: abbrMatch };
+    // "Day 1" / "Day 2" pattern
+    const dayNumMatch = raw.match(/day\s*(\d+)/);
+    if (dayNumMatch) {
+      const num = parseInt(dayNumMatch[1], 10);
+      if (num >= 1 && num <= 7) return { ...d, day: CANONICAL[num - 1] };
+    }
+    // Pure number "1".."7"
+    const pureNum = parseInt(raw, 10);
+    if (pureNum >= 1 && pureNum <= 7) return { ...d, day: CANONICAL[pureNum - 1] };
+    // Fallback: assign by index
+    return { ...d, day: CANONICAL[idx % 7] };
+  });
+  // Ensure all 7 days exist — fill missing ones with empty meals
+  const daySet = new Set(normalized.map((d: any) => d.day));
+  for (const c of CANONICAL) {
+    if (!daySet.has(c)) {
+      normalized.push({ day: c, meals: [] });
+    }
+  }
+  // Sort in canonical order
+  normalized.sort((a: any, b: any) => CANONICAL.indexOf(a.day) - CANONICAL.indexOf(b.day));
+  return { ...plan, days: normalized };
+}
+
 const MEAL_PHOTO_MAP: Record<string, string> = {
   breakfast: "https://images.unsplash.com/photo-1525351484163-7529414344d8?w=400&q=80",
   "morning snack": "https://images.unsplash.com/photo-1490474418585-ba9bad8fd0ea?w=400&q=80",
@@ -228,6 +266,8 @@ function MealsScreenContent() {
   const [selectedDayIndex, setSelectedDayIndex] = useState(0);
   const [regenerating, setRegenerating] = useState(false);
   const [regeneratingWorkout, setRegeneratingWorkout] = useState(false);
+  const [autoGeneratingPlan, setAutoGeneratingPlan] = useState(false);
+  const autoGenRef = React.useRef(false);
   const [nutritionTab, setNutritionTab] = useState(0); // 0=Tracker, 1=Meal Plan, 2=Pantry
   const [ramadanMode, setRamadanMode] = useState(false);
   const [showMealCustomize, setShowMealCustomize] = useState(false);
@@ -458,7 +498,7 @@ function MealsScreenContent() {
     });
     AsyncStorage.getItem("@guest_meal_plan").then(raw => {
       if (raw) {
-        try { setAiMealPlan(JSON.parse(raw)); } catch {}
+        try { setAiMealPlan(normalizeMealPlanDays(JSON.parse(raw))); } catch {}
       }
     });
   }, []);
@@ -481,19 +521,64 @@ function MealsScreenContent() {
   // Regenerate meal plan mutation
   const regenerateMealPlan = trpc.mealPlan.generate.useMutation({
     onSuccess: (data) => {
-      setAiMealPlan(data);
+      const normalized = normalizeMealPlanDays(data);
+      setAiMealPlan(normalized);
       setSelectedDayIndex(0);
       setRegenerating(false);
-      const json = JSON.stringify(data);
+      setAutoGeneratingPlan(false);
+      const json = JSON.stringify(normalized);
       AsyncStorage.setItem("@guest_meal_plan", json);
       AsyncStorage.setItem("@cached_meal_plan", json);
-      Alert.alert("\u2705 Meal Plan Updated", "Your new AI meal plan has been generated based on your current preferences.");
+      if (!autoGenRef.current) {
+        Alert.alert("\u2705 Meal Plan Updated", "Your new AI meal plan has been generated based on your current preferences.");
+      }
+      autoGenRef.current = false;
     },
     onError: (e) => {
       setRegenerating(false);
+      setAutoGeneratingPlan(false);
+      autoGenRef.current = false;
       Alert.alert("Error", e.message);
     },
   });
+
+  // Auto-generate meal plan if none exists (e.g. after onboarding or first visit)
+  const autoGenTriggeredRef = React.useRef(false);
+  React.useEffect(() => {
+    // Wait until profile is loaded before deciding
+    if (localProfile === null) return;
+    // Only trigger once, and only if no plan exists
+    if (aiMealPlan || autoGenTriggeredRef.current || regenerating || autoGeneratingPlan) return;
+    autoGenTriggeredRef.current = true;
+    // Check if onboarding is complete — only auto-generate after onboarding
+    AsyncStorage.getItem("@onboarding_complete").then(val => {
+      if (val !== "true") return;
+      // Double-check storage hasn't been populated in the meantime
+      AsyncStorage.getItem("@guest_meal_plan").then(raw => {
+        if (raw) {
+          try {
+            const parsed = normalizeMealPlanDays(JSON.parse(raw));
+            setAiMealPlan(parsed);
+            return;
+          } catch {}
+        }
+        // No plan exists — auto-generate
+        autoGenRef.current = true;
+        setAutoGeneratingPlan(true);
+        regenerateMealPlan.mutate({
+          goal: localProfile?.goal || userGoal,
+          dietaryPreference: localProfile?.dietaryPreference || userDietaryPref,
+          weightKg: localProfile?.weightKg,
+          heightCm: localProfile?.heightCm,
+          age: localProfile?.age,
+          gender: localProfile?.gender,
+          activityLevel: localProfile?.activityLevel,
+          region: localProfile?.region || undefined,
+          cuisinePrefs: localProfile?.cuisinePrefs?.length ? localProfile.cuisinePrefs : undefined,
+        });
+      });
+    });
+  }, [localProfile, aiMealPlan]);
 
   const uploadPhoto = trpc.upload.photo.useMutation();
   const analyzePhoto = trpc.mealLog.analyzePhoto.useMutation();
@@ -1941,8 +2026,23 @@ function MealsScreenContent() {
       {/* ── Meal Plan Tab ── */}
       {nutritionTab === 1 && (
         <ScrollView contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 120 }} showsVerticalScrollIndicator={false}>
-          {/* No meal plan yet — generate one */}
-          {!aiMealPlan ? (
+          {/* Auto-generating meal plan loading state */}
+          {!aiMealPlan && autoGeneratingPlan ? (
+            <View style={{ marginTop: 40, alignItems: "center", gap: 16, paddingHorizontal: 20 }}>
+              <View style={{ width: 64, height: 64, borderRadius: 20, backgroundColor: "rgba(245,158,11,0.12)", alignItems: "center", justifyContent: "center" }}>
+                <ActivityIndicator size="large" color="#F59E0B" />
+              </View>
+              <Text style={{ color: MFG, fontFamily: "DMSans_700Bold", fontSize: 18, textAlign: "center" }}>Generating Your Meal Plan</Text>
+              <Text style={{ color: MMUTED, fontSize: 13, textAlign: "center", lineHeight: 20 }}>Creating a personalized 7-day meal plan based on your dietary preferences, fitness goals, and caloric targets...</Text>
+              <View style={{ flexDirection: "row", gap: 8, marginTop: 8 }}>
+                {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((d, i) => (
+                  <View key={d} style={{ flex: 1, alignItems: "center", paddingVertical: 8, borderRadius: 10, backgroundColor: MSURFACE, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}>
+                    <Text style={{ color: MMUTED, fontFamily: "DMSans_600SemiBold", fontSize: 11 }}>{d}</Text>
+                  </View>
+                ))}
+              </View>
+            </View>
+          ) : !aiMealPlan ? (
             <View style={{ marginTop: 20, gap: 16 }}>
               <View style={{ backgroundColor: MSURFACE, borderRadius: 20, padding: 20, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}>
                 <View style={{ flexDirection: "row", alignItems: "center", gap: 10, marginBottom: 16 }}>

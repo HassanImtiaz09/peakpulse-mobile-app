@@ -341,7 +341,34 @@ export default function OnboardingScreen() {
         await AsyncStorage.setItem("@guest_workout_plan", wpJson);
       }
       if (mealResult.status === "fulfilled") {
-        const mpJson = JSON.stringify(mealResult.value);
+        // Normalize day names to ensure Monday-Sunday format
+        const CANONICAL_DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+        const ABBR_MAP: Record<string, string> = { mon: "Monday", tue: "Tuesday", wed: "Wednesday", thu: "Thursday", fri: "Friday", sat: "Saturday", sun: "Sunday" };
+        let mealData = mealResult.value as any;
+        if (mealData?.days && Array.isArray(mealData.days)) {
+          mealData = {
+            ...mealData,
+            days: mealData.days.map((d: any, idx: number) => {
+              const raw = (d.day ?? "").trim().toLowerCase();
+              const exact = CANONICAL_DAYS.find(c => c.toLowerCase() === raw);
+              if (exact) return { ...d, day: exact };
+              const abbrMatch = ABBR_MAP[raw.slice(0, 3)];
+              if (abbrMatch) return { ...d, day: abbrMatch };
+              const numMatch = raw.match(/day\s*(\d+)/);
+              if (numMatch) { const n = parseInt(numMatch[1], 10); if (n >= 1 && n <= 7) return { ...d, day: CANONICAL_DAYS[n - 1] }; }
+              const pureNum = parseInt(raw, 10);
+              if (pureNum >= 1 && pureNum <= 7) return { ...d, day: CANONICAL_DAYS[pureNum - 1] };
+              return { ...d, day: CANONICAL_DAYS[idx % 7] };
+            }),
+          };
+          // Fill missing days
+          const daySet = new Set(mealData.days.map((d: any) => d.day));
+          for (const c of CANONICAL_DAYS) {
+            if (!daySet.has(c)) mealData.days.push({ day: c, meals: [] });
+          }
+          mealData.days.sort((a: any, b: any) => CANONICAL_DAYS.indexOf(a.day) - CANONICAL_DAYS.indexOf(b.day));
+        }
+        const mpJson = JSON.stringify(mealData);
         await AsyncStorage.setItem("@cached_meal_plan", mpJson);
         await AsyncStorage.setItem("@guest_meal_plan", mpJson);
       }
