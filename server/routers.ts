@@ -436,6 +436,57 @@ Return this exact structure: {"dailyCalories":${calories},"proteinTarget":150,"c
       const data = JSON.parse(plan.planJson);
       return { id: plan.id, ...data, insight: plan.insight };
     }),
+    // Regenerate a single day's meals without touching the rest of the week
+    regenerateDay: guestOrUserProcedure
+      .input(z.object({
+        dayName: z.string(),
+        theme: z.string().optional(),
+        goal: z.string(),
+        dietaryPreference: z.string(),
+        dailyCalories: z.number().optional(),
+        ramadanMode: z.boolean().optional(),
+        region: z.string().optional(),
+        cuisinePrefs: z.array(z.string()).optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        await checkAiLimit(ctx.user?.id, "mealPlan.regenerateDay");
+        const calories = input.dailyCalories ?? 2000;
+        const isRamadan = input.ramadanMode === true;
+        const dietaryRules = getDietaryRestrictions(input.dietaryPreference);
+        const themeNote = input.theme ? `THEME FOR THIS DAY: ${input.theme}. All meals for this day should follow this theme — e.g., if the theme is "high-protein", maximise protein in every meal; if it's "Mediterranean", use Mediterranean ingredients and cooking styles; if it's "comfort food", use hearty comforting dishes while staying within calorie limits.` : "";
+        const cuisineNote = input.cuisinePrefs && input.cuisinePrefs.length > 0
+          ? `CUISINE PREFERENCES: Prioritise ${input.cuisinePrefs.map(c => c.replace(/_/g, " ")).join(", ")} cuisine(s).`
+          : "";
+        const prompt = `Generate meals for a SINGLE day (${input.dayName}) as JSON.
+
+USER PROFILE:
+- Fitness Goal: ${input.goal.replace(/_/g, " ")}
+- Dietary Preference: ${input.dietaryPreference.toUpperCase()}
+- Daily Calorie Target: ~${calories} kcal
+${input.region ? `- Region: ${input.region.replace(/_/g, " ")}` : ""}
+${themeNote}
+${cuisineNote}
+
+DIETARY RESTRICTIONS (MUST FOLLOW — NON-NEGOTIABLE):
+${dietaryRules}
+
+Include: ${isRamadan ? "suhoor, iftar, and evening snack meals" : "breakfast, morning snack, lunch, afternoon snack, dinner (4-5 meals)"}. Each meal MUST have: name, type, calories, protein, carbs, fat, ingredients array, prepTime, instructions array (3-5 steps), photoQuery.
+
+Return ONLY this structure: {"day":"${input.dayName}","meals":[{"name":"Meal Name","type":"breakfast","calories":420,"protein":28,"carbs":35,"fat":14,"ingredients":["ingredient 1"],"prepTime":"10 min","instructions":["Step 1"],"photoQuery":"food term"}]}`;
+        const response = await invokeLLM({
+          messages: [
+            { role: "system", content: "You are an expert registered dietitian. Generate meals for a single day only. STRICTLY adhere to dietary restrictions. Always respond with valid JSON." },
+            { role: "user", content: prompt },
+          ],
+          response_format: { type: "json_object" },
+          model: "flash-lite",
+        });
+        let dayData: any;
+        try { dayData = JSON.parse((response.choices[0].message.content as string) ?? "{}"); }
+        catch { dayData = { day: input.dayName, meals: [] }; }
+        if (!dayData.day) dayData.day = input.dayName;
+        return dayData;
+      }),
   }),
 
   mealPrep: router({

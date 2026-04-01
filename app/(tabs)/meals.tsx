@@ -27,6 +27,7 @@ import { usePantry, PANTRY_CATEGORIES, COMMON_PANTRY_ITEMS, CATEGORY_ICONS as PA
 import { PremiumFeatureTeaser } from "@/components/premium-feature-banner";
 import { schedulePantryExpiryAlerts, type PantryExpiryItem } from "@/lib/notifications";
 import * as Sharing from "expo-sharing";
+import { extractGroceryList, copyGroceryList, shareGroceryList, exportGroceryPdf, type GroceryCategory } from "@/lib/grocery-list";
 
 
 // NanoBanana design tokens — Meals uses mint/teal accent
@@ -280,6 +281,10 @@ function MealsScreenContent() {
   const [swapMealPlanModal, setSwapMealPlanModal] = useState<{ meal: any; dayIndex: number; mealIndex: number } | null>(null);
   const [swapMealPlanAlts, setSwapMealPlanAlts] = useState<any[]>([]);
   const [swapMealPlanLoading, setSwapMealPlanLoading] = useState(false);
+  // Per-day customization state
+  const [dayCustomizeModal, setDayCustomizeModal] = useState(false);
+  const [dayCustomizeTheme, setDayCustomizeTheme] = useState("");
+  const [regeneratingDay, setRegeneratingDay] = useState(false);
   const [includeBeyondPantry, setIncludeBeyondPantry] = useState(false);
   const { items: pantryItems, addItem: addPantryItem, addItems: addPantryItems, removeItem: removePantryItem, updateItem: updatePantryItem, getItemsByCategory, getExpiringItems, logUsage } = usePantry();
   // Pantry tab state
@@ -299,6 +304,9 @@ function MealsScreenContent() {
   const [localProfile, setLocalProfile] = useState<any>(null);
   const [showShoppingList, setShowShoppingList] = useState(false);
   const [checkedIngredients, setCheckedIngredients] = useState<Record<string, boolean>>({});
+  // Grocery shopping list state
+  const [showGroceryList, setShowGroceryList] = useState(false);
+  const [groceryChecked, setGroceryChecked] = useState<Record<string, boolean>>({});
   // Favourite autocomplete
   const [showAutoComplete, setShowAutoComplete] = useState(false);
 
@@ -541,6 +549,52 @@ function MealsScreenContent() {
       Alert.alert("Error", e.message);
     },
   });
+
+  const dailyCalorieTarget = useMemo(() => {
+    if (calorieGoal && calorieGoal > 0) return calorieGoal;
+    return localProfile?.calorieTarget ?? 2000;
+  }, [calorieGoal, localProfile]);
+
+  // Per-day meal plan regeneration mutation
+  const regenerateDayMealPlan = trpc.mealPlan.regenerateDay.useMutation({
+    onSuccess: (data) => {
+      if (!aiMealPlan?.days) return;
+      const dayName = WEEK_DAYS_FULL[selectedWeekDay];
+      const updatedDays = aiMealPlan.days.map((d: any) =>
+        d.day?.toLowerCase() === dayName.toLowerCase() ? { ...d, meals: data.meals ?? [] } : d
+      );
+      const updatedPlan = { ...aiMealPlan, days: updatedDays };
+      setAiMealPlan(updatedPlan);
+      const json = JSON.stringify(updatedPlan);
+      AsyncStorage.setItem("@guest_meal_plan", json);
+      AsyncStorage.setItem("@cached_meal_plan", json);
+      setRegeneratingDay(false);
+      setDayCustomizeModal(false);
+      setDayCustomizeTheme("");
+      if (Platform.OS !== "web") { try { const Haptics = require("expo-haptics"); Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success); } catch {} }
+      Alert.alert("\u2705 Day Updated", `${dayName}'s meals have been refreshed${data.meals?.length ? ` with ${data.meals.length} new meals` : ""}.`);
+    },
+    onError: (e: any) => {
+      setRegeneratingDay(false);
+      if (e?.message?.includes?.("AI_LIMIT_EXCEEDED") || e?.message?.includes?.("rate limit")) { showLimitModal(e.message); return; }
+      Alert.alert("Error", e.message);
+    },
+  });
+
+  const handleRegenerateDay = useCallback((theme?: string) => {
+    setRegeneratingDay(true);
+    const dayName = WEEK_DAYS_FULL[selectedWeekDay];
+    regenerateDayMealPlan.mutate({
+      dayName,
+      theme: theme || undefined,
+      goal: userGoal,
+      dietaryPreference: userDietaryPref,
+      dailyCalories: dailyCalorieTarget > 0 ? dailyCalorieTarget : undefined,
+      ramadanMode,
+      region: localProfile?.region || undefined,
+      cuisinePrefs: selectedCuisines.length > 0 ? selectedCuisines : (localProfile?.cuisinePrefs?.length ? localProfile.cuisinePrefs : undefined),
+    });
+  }, [selectedWeekDay, userGoal, userDietaryPref, dailyCalorieTarget, ramadanMode, localProfile, selectedCuisines]);
 
   // Auto-generate meal plan if none exists (e.g. after onboarding or first visit)
   const autoGenTriggeredRef = React.useRef(false);
@@ -894,12 +948,7 @@ function MealsScreenContent() {
     };
     return base;
   }, [userGoal, userDietaryPref, ramadanMode, localProfile, selectedCuisines]);
-  const dailyCalorieTarget = useMemo(() => {
-    if (calorieGoal && calorieGoal > 0) return calorieGoal;
-    return localProfile?.calorieTarget ?? 2000;
-  }, [calorieGoal, localProfile]);
-
-  // Meal Plan swap handler
+   // Meal Plan swap handler
   const handleMealPlanSwap = useCallback(async (meal: any, dayIndex: number, mealIndex: number) => {
     setSwapMealPlanModal({ meal, dayIndex, mealIndex });
     setSwapMealPlanAlts([]);
@@ -2262,10 +2311,80 @@ function MealsScreenContent() {
               {/* ── Selected Day Meals ── */}
               {selectedDayData ? (
                 <View style={{ gap: 10 }}>
-                  <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-                    <MaterialIcons name="today" size={16} color="#F59E0B" />
-                    <Text style={{ color: MFG, fontFamily: "DMSans_700Bold", fontSize: 16 }}>{WEEK_DAYS_FULL[selectedWeekDay]}</Text>
+                  <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+                    <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+                      <MaterialIcons name="today" size={16} color="#F59E0B" />
+                      <Text style={{ color: MFG, fontFamily: "DMSans_700Bold", fontSize: 16 }}>{WEEK_DAYS_FULL[selectedWeekDay]}</Text>
+                    </View>
+                    <TouchableOpacity
+                      style={{ flexDirection: "row", alignItems: "center", gap: 4, backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 8, paddingHorizontal: 10, paddingVertical: 5, borderWidth: 1, borderColor: "rgba(245,158,11,0.18)" }}
+                      onPress={() => setDayCustomizeModal(true)}
+                      disabled={regeneratingDay}
+                    >
+                      {regeneratingDay ? <ActivityIndicator color="#F59E0B" size={12} /> : <MaterialIcons name="edit-calendar" size={14} color="#F59E0B" />}
+                      <Text style={{ color: "#F59E0B", fontFamily: "DMSans_700Bold", fontSize: 11 }}>{regeneratingDay ? "Updating..." : "Customize Day"}</Text>
+                    </TouchableOpacity>
                   </View>
+                  {/* Per-day customization modal */}
+                  {dayCustomizeModal && (
+                    <View style={{ backgroundColor: MSURFACE, borderRadius: 16, padding: 16, borderWidth: 1, borderColor: "rgba(245,158,11,0.20)", gap: 12 }}>
+                      <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+                        <Text style={{ color: MFG, fontFamily: "DMSans_700Bold", fontSize: 14 }}>Customize {WEEK_DAYS_FULL[selectedWeekDay]}</Text>
+                        <TouchableOpacity onPress={() => { setDayCustomizeModal(false); setDayCustomizeTheme(""); }}>
+                          <MaterialIcons name="close" size={18} color={MMUTED} />
+                        </TouchableOpacity>
+                      </View>
+                      <Text style={{ color: MMUTED, fontSize: 11 }}>Choose a theme to regenerate only this day's meals. The rest of your week stays unchanged.</Text>
+                      <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 6 }}>
+                        {[
+                          { key: "high-protein", label: "High Protein", icon: "fitness-center" },
+                          { key: "low-carb", label: "Low Carb", icon: "trending-down" },
+                          { key: "comfort-food", label: "Comfort Food", icon: "favorite" },
+                          { key: "quick-meals", label: "Quick Meals", icon: "timer" },
+                          { key: "mediterranean", label: "Mediterranean", icon: "set-meal" },
+                          { key: "asian-fusion", label: "Asian Fusion", icon: "ramen-dining" },
+                          { key: "budget-friendly", label: "Budget Friendly", icon: "savings" },
+                          { key: "meal-prep", label: "Meal Prep", icon: "kitchen" },
+                        ].map(t => {
+                          const sel = dayCustomizeTheme === t.key;
+                          return (
+                            <TouchableOpacity
+                              key={t.key}
+                              style={{ flexDirection: "row", alignItems: "center", gap: 4, paddingHorizontal: 10, paddingVertical: 7, borderRadius: 10, backgroundColor: sel ? "rgba(245,158,11,0.20)" : "transparent", borderWidth: 1, borderColor: sel ? "#F59E0B" : "rgba(30,41,59,0.6)" }}
+                              onPress={() => setDayCustomizeTheme(sel ? "" : t.key)}
+                            >
+                              <MaterialIcons name={t.icon as any} size={12} color={sel ? "#F59E0B" : MMUTED} />
+                              <Text style={{ color: sel ? "#F59E0B" : MMUTED, fontFamily: "DMSans_600SemiBold", fontSize: 11 }}>{t.label}</Text>
+                            </TouchableOpacity>
+                          );
+                        })}
+                      </View>
+                      <TextInput
+                        style={{ backgroundColor: MSURFACE2, borderRadius: 10, paddingHorizontal: 12, paddingVertical: 8, color: MFG, fontFamily: "DMSans_400Regular", fontSize: 12, borderWidth: 1, borderColor: "rgba(245,158,11,0.15)" }}
+                        placeholder="Or type a custom theme (e.g., 'Italian night')..."
+                        placeholderTextColor={MMUTED}
+                        value={dayCustomizeTheme.startsWith("custom:") ? dayCustomizeTheme.slice(7) : (!["high-protein","low-carb","comfort-food","quick-meals","mediterranean","asian-fusion","budget-friendly","meal-prep"].includes(dayCustomizeTheme) && dayCustomizeTheme ? dayCustomizeTheme : "")}
+                        onChangeText={(text) => setDayCustomizeTheme(text)}
+                        returnKeyType="done"
+                      />
+                      <View style={{ flexDirection: "row", gap: 8 }}>
+                        <TouchableOpacity
+                          style={{ flex: 1, backgroundColor: "rgba(100,116,139,0.15)", borderRadius: 12, paddingVertical: 11, alignItems: "center", borderWidth: 1, borderColor: "rgba(100,116,139,0.20)" }}
+                          onPress={() => { handleRegenerateDay(); }}
+                          disabled={regeneratingDay}
+                        >
+                          {regeneratingDay && !dayCustomizeTheme ? <ActivityIndicator color={MMUTED} size="small" /> : <Text style={{ color: MMUTED, fontFamily: "DMSans_700Bold", fontSize: 12 }}>Shuffle Day</Text>}
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                          style={{ flex: 1, backgroundColor: dayCustomizeTheme ? "#F59E0B" : "rgba(245,158,11,0.30)", borderRadius: 12, paddingVertical: 11, alignItems: "center", opacity: regeneratingDay ? 0.7 : 1 }}
+                          onPress={() => { handleRegenerateDay(dayCustomizeTheme); }}
+                          disabled={regeneratingDay || !dayCustomizeTheme}
+                        >
+                          {regeneratingDay && dayCustomizeTheme ? <ActivityIndicator color={MBG} size="small" /> : <Text style={{ color: dayCustomizeTheme ? MBG : MMUTED, fontFamily: "DMSans_700Bold", fontSize: 12 }}>Apply Theme</Text>}
+                        </TouchableOpacity>
+                      </View>
+                    </View>
+                  )}
                   {/* Macro summary for selected day */}
                   <View style={{ flexDirection: "row", gap: 8 }}>
                     {[
@@ -2341,6 +2460,91 @@ function MealsScreenContent() {
                   <Text style={{ color: "#22C55E", fontFamily: "DMSans_700Bold", fontSize: 12 }}>{regenerating && mealPlanMode === "pantry" ? "Generating..." : "From Pantry"}</Text>
                 </TouchableOpacity>
               </View>
+
+              {/* Grocery Shopping List Button */}
+              <TouchableOpacity
+                style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6, backgroundColor: "rgba(59,130,246,0.08)", borderRadius: 14, paddingVertical: 12, marginTop: 4, borderWidth: 1, borderColor: "rgba(59,130,246,0.18)" }}
+                onPress={() => { setShowGroceryList(!showGroceryList); setGroceryChecked({}); }}
+              >
+                <MaterialIcons name="shopping-cart" size={16} color="#3B82F6" />
+                <Text style={{ color: "#3B82F6", fontFamily: "DMSans_700Bold", fontSize: 12 }}>{showGroceryList ? "Hide Grocery List" : "View Grocery List"}</Text>
+              </TouchableOpacity>
+
+              {/* Grocery Shopping List */}
+              {showGroceryList && (() => {
+                const groceryCategories = extractGroceryList(aiMealPlan);
+                const totalItems = groceryCategories.reduce((s, c) => s + c.items.length, 0);
+                const checkedCount = Object.values(groceryChecked).filter(Boolean).length;
+                return (
+                  <View style={{ backgroundColor: MSURFACE, borderRadius: 16, padding: 16, borderWidth: 1, borderColor: "rgba(59,130,246,0.15)", gap: 12, marginTop: 4 }}>
+                    {/* Header */}
+                    <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+                      <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+                        <MaterialIcons name="shopping-cart" size={18} color="#3B82F6" />
+                        <Text style={{ color: MFG, fontFamily: "DMSans_700Bold", fontSize: 15 }}>Grocery List</Text>
+                        <View style={{ backgroundColor: "rgba(59,130,246,0.15)", borderRadius: 8, paddingHorizontal: 6, paddingVertical: 2 }}>
+                          <Text style={{ color: "#3B82F6", fontFamily: "DMSans_700Bold", fontSize: 10 }}>{checkedCount}/{totalItems}</Text>
+                        </View>
+                      </View>
+                    </View>
+                    {/* Progress bar */}
+                    <View style={{ height: 4, backgroundColor: "rgba(59,130,246,0.10)", borderRadius: 2, overflow: "hidden" }}>
+                      <View style={{ height: 4, backgroundColor: "#3B82F6", borderRadius: 2, width: totalItems > 0 ? `${(checkedCount / totalItems) * 100}%` : "0%" }} />
+                    </View>
+                    {/* Categories */}
+                    {groceryCategories.map(cat => (
+                      <View key={cat.name} style={{ gap: 4 }}>
+                        <View style={{ flexDirection: "row", alignItems: "center", gap: 6, marginTop: 4 }}>
+                          <Text style={{ fontSize: 14 }}>{cat.icon}</Text>
+                          <Text style={{ color: MFG, fontFamily: "DMSans_700Bold", fontSize: 13 }}>{cat.name}</Text>
+                          <Text style={{ color: MMUTED, fontSize: 10 }}>({cat.items.length})</Text>
+                        </View>
+                        {cat.items.map(item => {
+                          const key = `${cat.name}:${item.name}`;
+                          const checked = groceryChecked[key] ?? false;
+                          return (
+                            <TouchableOpacity
+                              key={key}
+                              style={{ flexDirection: "row", alignItems: "center", gap: 8, paddingVertical: 6, paddingHorizontal: 8, borderRadius: 8, backgroundColor: checked ? "rgba(34,197,94,0.06)" : "transparent" }}
+                              onPress={() => setGroceryChecked(prev => ({ ...prev, [key]: !checked }))}
+                            >
+                              <MaterialIcons name={checked ? "check-box" : "check-box-outline-blank"} size={18} color={checked ? "#22C55E" : MMUTED} />
+                              <View style={{ flex: 1 }}>
+                                <Text style={{ color: checked ? MMUTED : MFG, fontFamily: "DMSans_400Regular", fontSize: 13, textDecorationLine: checked ? "line-through" : "none" }}>{item.name}</Text>
+                                <Text style={{ color: MMUTED, fontSize: 9 }}>{item.days.length === 7 ? "All week" : item.days.join(", ")}</Text>
+                              </View>
+                            </TouchableOpacity>
+                          );
+                        })}
+                      </View>
+                    ))}
+                    {/* Export buttons */}
+                    <View style={{ flexDirection: "row", gap: 8, marginTop: 4 }}>
+                      <TouchableOpacity
+                        style={{ flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 4, backgroundColor: "rgba(59,130,246,0.10)", borderRadius: 10, paddingVertical: 10, borderWidth: 1, borderColor: "rgba(59,130,246,0.18)" }}
+                        onPress={() => copyGroceryList(groceryCategories)}
+                      >
+                        <MaterialIcons name="content-copy" size={14} color="#3B82F6" />
+                        <Text style={{ color: "#3B82F6", fontFamily: "DMSans_700Bold", fontSize: 11 }}>Copy</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        style={{ flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 4, backgroundColor: "rgba(59,130,246,0.10)", borderRadius: 10, paddingVertical: 10, borderWidth: 1, borderColor: "rgba(59,130,246,0.18)" }}
+                        onPress={() => shareGroceryList(groceryCategories)}
+                      >
+                        <MaterialIcons name="share" size={14} color="#3B82F6" />
+                        <Text style={{ color: "#3B82F6", fontFamily: "DMSans_700Bold", fontSize: 11 }}>Share</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        style={{ flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 4, backgroundColor: "#3B82F6", borderRadius: 10, paddingVertical: 10 }}
+                        onPress={() => exportGroceryPdf(groceryCategories)}
+                      >
+                        <MaterialIcons name="picture-as-pdf" size={14} color="#fff" />
+                        <Text style={{ color: "#fff", fontFamily: "DMSans_700Bold", fontSize: 11 }}>PDF</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                );
+              })()}
             </View>
           )}
         </ScrollView>

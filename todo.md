@@ -2852,4 +2852,20 @@
 - [x] Loading state shown during auto-generation (animated spinner with day preview)
 - [x] Server prompt updated to explicitly request 7 days Monday-Sunday
 - [x] Run tests and verify TypeScript compiles — 0 TS errors, 11 normalization tests pass
+- [x] Save checkpoint (version 60c418fa)
+
+## New Features (Round 61)
+
+- [x] Meal Plan Ready notification: send push notification after onboarding confirming meal plan is ready
+- [x] Per-day meal customization: swap individual day themes without regenerating the entire week
+  - [x] Server endpoint mealPlan.regenerateDay added
+  - [x] 8 preset themes (High Protein, Low Carb, Comfort Food, Quick Meals, Mediterranean, Asian Fusion, Budget Friendly, Meal Prep)
+  - [x] Custom theme text input
+  - [x] Shuffle Day button (random regeneration without theme)
+- [x] Grocery shopping list export: auto-compile all ingredients from weekly meal plan into shareable list grouped by category
+  - [x] Auto-categorises ingredients (Proteins, Dairy, Vegetables, Fruits, Grains, Nuts, Oils, Spices, Beverages)
+  - [x] Deduplicates across meals/days with day tracking
+  - [x] Interactive checklist with progress bar
+  - [x] Copy to clipboard, Share, and PDF export
+- [x] Run tests and verify TypeScript compiles — 0 TS errors, 69 test suites pass (2102 tests), 12 new grocery list tests
 - [ ] Save checkpoint

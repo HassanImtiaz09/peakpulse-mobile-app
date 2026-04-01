@@ -10,7 +10,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { trpc } from "@/lib/trpc";
 import * as ImagePicker from "expo-image-picker";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { scheduleAllDefaultReminders } from "@/lib/notifications";
+import { scheduleAllDefaultReminders, sendImmediateNotification } from "@/lib/notifications";
 
 const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get("window");
 
@@ -375,6 +375,14 @@ export default function OnboardingScreen() {
 
       // Clear generating flag now that plans are saved
       await AsyncStorage.removeItem("@plan_generating");
+
+      // Send "Meal Plan Ready" push notification
+      if (Platform.OS !== "web" && mealResult.status === "fulfilled") {
+        sendImmediateNotification(
+          "Your Meal Plan is Ready!",
+          "Your personalized 7-day meal plan has been created based on your goals and preferences. Tap to check it out in the Meals tab."
+        ).catch(() => {});
+      }
     } catch {
       // Plans generated on demand from tabs if this fails
     } finally {
