@@ -2881,4 +2881,20 @@
   - [x] Falls back to Unsplash type-based images if generation fails
   - [x] Regenerated days also get fresh images (photoUrl cleared on regeneration)
 - [x] Run tests and verify TypeScript compiles — 0 TS errors, 70 test suites pass (2116 tests), 14 new tests
+- [x] Save checkpoint (version e1015867)
+
+## New Features (Round 63)
+
+- [x] Meal rating and favourites: heart button + 5-star rating on each meal card with AsyncStorage persistence
+  - [x] Preference learning: build preference summary from ratings/favourites and pass to AI for future plans
+  - [x] Server-side preferenceHint added to mealPlan.generate and mealSwap.generate endpoints
+- [x] Weekly meal plan calendar overview: visual 7-day grid with colour-coded macro balance indicators per day
+  - [x] Macro bars (protein blue / carbs yellow / fat orange) with legend
+  - [x] Calorie colour coding: red (>105%), green (90-105%), yellow (70-90%), blue (<70%)
+  - [x] Today indicator, tap day to navigate
+- [x] Smart meal swap suggestions: dislike button auto-rates meal as 1 star and triggers swap with 3 AI alternatives
+  - [x] Bottom sheet modal showing 3 alternatives with macros, description, prep time
+  - [x] Tap to swap — replaces the meal in the plan and persists to AsyncStorage
+  - [x] Preference hint passed to AI for personalised alternatives
+- [x] Run tests and verify TypeScript compiles — 0 TS errors, 71 test suites pass (2130 tests), 14 new tests
 - [ ] Save checkpoint

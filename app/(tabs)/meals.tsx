@@ -28,6 +28,7 @@ import { PremiumFeatureTeaser } from "@/components/premium-feature-banner";
 import { schedulePantryExpiryAlerts, type PantryExpiryItem } from "@/lib/notifications";
 import * as Sharing from "expo-sharing";
 import { extractGroceryList, copyGroceryList, shareGroceryList, exportGroceryPdf, type GroceryCategory } from "@/lib/grocery-list";
+import { loadMealPreferences, toggleFavourite, rateMeal, isFavourite, getMealRating, buildPreferenceSummary, type MealPreferences } from "@/lib/meal-preferences";
 
 
 // NanoBanana design tokens — Meals uses mint/teal accent
@@ -310,6 +311,12 @@ function MealsScreenContent() {
   // Meal image generation state
   const [generatingImages, setGeneratingImages] = useState(false);
   const [imageGenProgress, setImageGenProgress] = useState(0);
+  // Meal rating & favourites
+  const [mealPrefs, setMealPrefs] = useState<MealPreferences>({ ratings: {}, favourites: [], disliked: [] });
+  const [ratingMeal, setRatingMeal] = useState<{ name: string; dayIdx: number; mealIdx: number } | null>(null);
+  const [tempRating, setTempRating] = useState(0);
+  // Calendar overview
+  const [showCalendarOverview, setShowCalendarOverview] = useState(false);
   // Favourite autocomplete
   const [showAutoComplete, setShowAutoComplete] = useState(false);
 
@@ -492,6 +499,11 @@ function MealsScreenContent() {
       AsyncStorage.setItem("@shopping_list_checked", JSON.stringify(next));
       return next;
     });
+  }, []);
+
+  // Load meal preferences
+  React.useEffect(() => {
+    loadMealPreferences().then(setMealPrefs);
   }, []);
 
   // Load user profile and AI-generated meal plan
@@ -1006,9 +1018,11 @@ function MealsScreenContent() {
     setSelectedCuisines(prev => prev.includes(key) ? prev.filter(c => c !== key) : [...prev, key]);
   }, []);
 
-  // Build the mutate params for meal plan generation
-  const getMealPlanMutateParams = useCallback((mode: "generic" | "pantry") => {
-    const base = {
+  // Build the mutate params for meal plan generation  // Build preference hint for AI
+  const prefSummary = useMemo(() => buildPreferenceSummary(mealPrefs), [mealPrefs]);
+
+  const getMealPlanMutateParams = useCallback((mode: "generic" | "pantry"): any => {
+    const base: any = {
       goal: userGoal,
       dietaryPreference: userDietaryPref,
       ramadanMode,
@@ -1020,10 +1034,17 @@ function MealsScreenContent() {
       region: localProfile?.region || undefined,
       cuisinePrefs: selectedCuisines.length > 0 ? selectedCuisines : (localProfile?.cuisinePrefs?.length ? localProfile.cuisinePrefs : undefined),
     };
+    // Include preference summary so AI learns from user ratings
+    if (prefSummary) base.preferenceHint = prefSummary;
     return base;
-  }, [userGoal, userDietaryPref, ramadanMode, localProfile, selectedCuisines]);
+  }, [userGoal, userDietaryPref, ramadanMode, localProfile, selectedCuisines, prefSummary]);
    // Meal Plan swap handler
-  const handleMealPlanSwap = useCallback(async (meal: any, dayIndex: number, mealIndex: number) => {
+  const handleMealPlanSwap = useCallback(async (meal: any, dayIndex: number, mealIndex: number, isDislike?: boolean) => {
+    // Auto-rate as 1 star when triggered from dislike button
+    if (isDislike) {
+      const updated = await rateMeal(meal.name, 1);
+      setMealPrefs(updated);
+    }
     setSwapMealPlanModal({ meal, dayIndex, mealIndex });
     setSwapMealPlanAlts([]);
     setSwapMealPlanLoading(true);
@@ -1039,6 +1060,7 @@ function MealsScreenContent() {
         carbs: meal.carbs ?? 40,
         fat: meal.fat ?? 15,
         dietaryPreference: userDietaryPref,
+        preferenceHint: prefSummary || undefined,
       });
       setSwapMealPlanAlts(result.alternatives ?? []);
     } catch (e: any) {
@@ -1047,7 +1069,7 @@ function MealsScreenContent() {
     } finally {
       setSwapMealPlanLoading(false);
     }
-  }, [mealSwapGenerate, userDietaryPref, pantryNames, includeBeyondPantry, dailyCalorieTarget, aiMealPlan]);
+  }, [mealSwapGenerate, userDietaryPref, pantryNames, includeBeyondPantry, dailyCalorieTarget, aiMealPlan, prefSummary, mealPrefs]);
 
   const applyMealPlanSwap = useCallback((newMeal: any) => {
     if (!swapMealPlanModal || !aiMealPlan?.days) return;
@@ -2377,6 +2399,89 @@ function MealsScreenContent() {
                 </View>
               )}
 
+              {/* ── Calendar Overview Toggle ── */}
+              <TouchableOpacity
+                style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6, backgroundColor: showCalendarOverview ? "rgba(245,158,11,0.12)" : "rgba(59,130,246,0.08)", borderRadius: 12, paddingVertical: 10, borderWidth: 1, borderColor: showCalendarOverview ? "rgba(245,158,11,0.25)" : "rgba(59,130,246,0.15)" }}
+                onPress={() => setShowCalendarOverview(!showCalendarOverview)}
+              >
+                <MaterialIcons name="calendar-view-week" size={16} color={showCalendarOverview ? "#F59E0B" : "#3B82F6"} />
+                <Text style={{ color: showCalendarOverview ? "#F59E0B" : "#3B82F6", fontFamily: "DMSans_700Bold", fontSize: 12 }}>{showCalendarOverview ? "Hide Week Overview" : "Week Overview"}</Text>
+              </TouchableOpacity>
+
+              {/* ── Calendar Overview Grid ── */}
+              {showCalendarOverview && aiMealPlan?.days && (
+                <View style={{ gap: 6 }}>
+                  {WEEK_DAYS_FULL.map((dayName, idx) => {
+                    const dayData = aiMealPlan.days.find((d: any) => d.day?.toLowerCase() === dayName.toLowerCase());
+                    const meals = dayData?.meals ?? [];
+                    const dayCals = meals.reduce((s: number, m: any) => s + (m.calories ?? 0), 0);
+                    const dayProtein = meals.reduce((s: number, m: any) => s + (m.protein ?? 0), 0);
+                    const dayCarbs = meals.reduce((s: number, m: any) => s + (m.carbs ?? 0), 0);
+                    const dayFat = meals.reduce((s: number, m: any) => s + (m.fat ?? 0), 0);
+                    const calPct = dailyCalorieTarget > 0 ? Math.min(100, (dayCals / dailyCalorieTarget) * 100) : 0;
+                    const isToday = (() => { const jsDay = new Date().getDay(); return idx === (jsDay === 0 ? 6 : jsDay - 1); })();
+                    const calColor = calPct > 105 ? "#EF4444" : calPct > 90 ? "#22C55E" : calPct > 70 ? "#FBBF24" : "#3B82F6";
+                    return (
+                      <TouchableOpacity
+                        key={dayName}
+                        style={{ flexDirection: "row", alignItems: "center", backgroundColor: isToday ? "rgba(245,158,11,0.06)" : MSURFACE, borderRadius: 12, padding: 10, borderWidth: 1, borderColor: isToday ? "rgba(245,158,11,0.25)" : "rgba(30,41,59,0.4)" }}
+                        onPress={() => { setSelectedWeekDay(idx); setShowCalendarOverview(false); }}
+                      >
+                        <View style={{ width: 44, alignItems: "center" }}>
+                          <Text style={{ color: isToday ? "#F59E0B" : MFG, fontFamily: "DMSans_700Bold", fontSize: 12 }}>{WEEK_DAYS_SHORT[idx]}</Text>
+                          {isToday && <View style={{ width: 4, height: 4, borderRadius: 2, backgroundColor: "#F59E0B", marginTop: 2 }} />}
+                        </View>
+                        <View style={{ flex: 1, marginLeft: 8 }}>
+                          <View style={{ flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 4 }}>
+                            <Text style={{ color: calColor, fontFamily: "SpaceMono_700Bold", fontSize: 13 }}>{Math.round(dayCals)} kcal</Text>
+                            <Text style={{ color: MMUTED, fontSize: 10 }}>{meals.length} meals</Text>
+                          </View>
+                          {/* Macro bar */}
+                          <View style={{ flexDirection: "row", height: 6, borderRadius: 3, overflow: "hidden", backgroundColor: "rgba(30,41,59,0.4)" }}>
+                            {(() => {
+                              const total = dayProtein + dayCarbs + dayFat;
+                              if (total === 0) return null;
+                              const pPct = (dayProtein / total) * 100;
+                              const cPct = (dayCarbs / total) * 100;
+                              const fPct = (dayFat / total) * 100;
+                              return (
+                                <>
+                                  <View style={{ width: `${pPct}%` as any, height: 6, backgroundColor: "#3B82F6" }} />
+                                  <View style={{ width: `${cPct}%` as any, height: 6, backgroundColor: "#FDE68A" }} />
+                                  <View style={{ width: `${fPct}%` as any, height: 6, backgroundColor: "#F59E0B" }} />
+                                </>
+                              );
+                            })()}
+                          </View>
+                          {/* Macro numbers */}
+                          <View style={{ flexDirection: "row", gap: 8, marginTop: 3 }}>
+                            <Text style={{ color: "#3B82F6", fontSize: 9 }}>P: {Math.round(dayProtein)}g</Text>
+                            <Text style={{ color: "#FDE68A", fontSize: 9 }}>C: {Math.round(dayCarbs)}g</Text>
+                            <Text style={{ color: "#F59E0B", fontSize: 9 }}>F: {Math.round(dayFat)}g</Text>
+                          </View>
+                        </View>
+                        <MaterialIcons name="chevron-right" size={16} color={MMUTED} />
+                      </TouchableOpacity>
+                    );
+                  })}
+                  {/* Legend */}
+                  <View style={{ flexDirection: "row", justifyContent: "center", gap: 12, paddingTop: 4 }}>
+                    <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
+                      <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: "#3B82F6" }} />
+                      <Text style={{ color: MMUTED, fontSize: 9 }}>Protein</Text>
+                    </View>
+                    <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
+                      <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: "#FDE68A" }} />
+                      <Text style={{ color: MMUTED, fontSize: 9 }}>Carbs</Text>
+                    </View>
+                    <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
+                      <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: "#F59E0B" }} />
+                      <Text style={{ color: MMUTED, fontSize: 9 }}>Fat</Text>
+                    </View>
+                  </View>
+                </View>
+              )}
+
               {/* ── Weekly Day Selector Bar ── */}
               <View style={{ flexDirection: "row", gap: 4, marginTop: 4 }}>
                 {WEEK_DAYS_SHORT.map((day, idx) => {
@@ -2497,7 +2602,26 @@ function MealsScreenContent() {
                   {/* Meal cards for selected day */}
                   {selectedDayData.meals?.map((meal: any, i: number) => {
                     const dayIdx = aiMealPlan.days?.findIndex((d: any) => d.day?.toLowerCase().includes(WEEK_DAYS_FULL[selectedWeekDay].toLowerCase())) ?? 0;
-                    return <MealPlanMealCard key={i} meal={meal} onSwap={() => handleMealPlanSwap(meal, dayIdx, i)} />;
+                    return (
+                      <MealPlanMealCard
+                        key={i}
+                        meal={meal}
+                        onSwap={() => handleMealPlanSwap(meal, dayIdx, i)}
+                        isFav={isFavourite(mealPrefs, meal.name)}
+                        rating={getMealRating(mealPrefs, meal.name)}
+                        onToggleFav={async () => {
+                          const updated = await toggleFavourite(meal.name);
+                          setMealPrefs(updated);
+                          if (Platform.OS !== "web") { try { const H = require("expo-haptics"); H.impactAsync(H.ImpactFeedbackStyle.Light); } catch {} }
+                        }}
+                        onRate={async (stars: number) => {
+                          const updated = await rateMeal(meal.name, stars);
+                          setMealPrefs(updated);
+                          if (Platform.OS !== "web") { try { const H = require("expo-haptics"); H.notificationAsync(H.NotificationFeedbackType.Success); } catch {} }
+                        }}
+                        onDislike={() => handleMealPlanSwap(meal, dayIdx, i, true)}
+                      />
+                    );
                   })}
                 </View>
               ) : (
@@ -3179,6 +3303,95 @@ function MealsScreenContent() {
         </ScrollView>
       )}
 
+      {/* Meal Plan Swap Alternatives Modal */}
+      {swapMealPlanModal && (
+        <View style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, backgroundColor: "rgba(10,5,0,0.88)", justifyContent: "flex-end", zIndex: 999 }}>
+          <View style={{ backgroundColor: MBG, borderTopLeftRadius: 28, borderTopRightRadius: 28, paddingTop: 20, paddingBottom: 40, maxHeight: "85%", borderWidth: 1, borderColor: "rgba(245,158,11,0.20)" }}>
+            <View style={{ width: 40, height: 4, borderRadius: 2, backgroundColor: "rgba(245,158,11,0.25)", alignSelf: "center", marginBottom: 16 }} />
+            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingHorizontal: 20, marginBottom: 12 }}>
+              <View style={{ flex: 1 }}>
+                <Text style={{ color: "#F59E0B", fontSize: 11, fontFamily: "DMSans_700Bold", letterSpacing: 1.5 }}>SMART SWAP</Text>
+                <Text style={{ color: MFG, fontSize: 20, fontFamily: "BebasNeue_400Regular", marginTop: 2 }}>Choose a Replacement</Text>
+                <Text style={{ color: MMUTED, fontSize: 11, marginTop: 2 }}>Replacing: {swapMealPlanModal.meal.name} \u00b7 {swapMealPlanModal.meal.calories} kcal</Text>
+              </View>
+              <TouchableOpacity
+                style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: "rgba(245,158,11,0.10)", alignItems: "center", justifyContent: "center" }}
+                onPress={() => setSwapMealPlanModal(null)}
+              >
+                <MaterialIcons name="close" size={18} color="#F59E0B" />
+              </TouchableOpacity>
+            </View>
+
+            {swapMealPlanLoading && (
+              <View style={{ alignItems: "center", paddingVertical: 40, gap: 12 }}>
+                <ActivityIndicator size="large" color="#F59E0B" />
+                <Text style={{ color: "#FBBF24", fontFamily: "DMSans_700Bold", fontSize: 15 }}>Finding 3 alternatives...</Text>
+                <Text style={{ color: MMUTED, fontSize: 11 }}>Based on your preferences and macro targets</Text>
+              </View>
+            )}
+
+            {!swapMealPlanLoading && swapMealPlanAlts.length === 0 && (
+              <View style={{ alignItems: "center", paddingVertical: 30, gap: 12 }}>
+                <MaterialIcons name="error-outline" size={36} color="#DC2626" />
+                <Text style={{ color: "#DC2626", fontFamily: "DMSans_700Bold", fontSize: 14, textAlign: "center" }}>Could not generate alternatives</Text>
+                <TouchableOpacity style={{ backgroundColor: "#F59E0B", borderRadius: 12, paddingHorizontal: 20, paddingVertical: 10 }} onPress={() => setSwapMealPlanModal(null)}>
+                  <Text style={{ color: MBG, fontFamily: "DMSans_700Bold", fontSize: 13 }}>Close</Text>
+                </TouchableOpacity>
+              </View>
+            )}
+
+            {!swapMealPlanLoading && swapMealPlanAlts.length > 0 && (
+              <FlatList
+                data={swapMealPlanAlts.slice(0, 3)}
+                keyExtractor={(item, i) => item.name + i}
+                contentContainerStyle={{ paddingHorizontal: 20, gap: 10, paddingBottom: 10 }}
+                showsVerticalScrollIndicator={false}
+                ListHeaderComponent={
+                  <Text style={{ color: MMUTED, fontSize: 11, marginBottom: 4 }}>Tap a meal to swap it in. Alternatives match your calorie and macro targets.</Text>
+                }
+                renderItem={({ item, index }) => (
+                  <TouchableOpacity
+                    style={{ backgroundColor: MSURFACE, borderRadius: 16, padding: 14, borderWidth: 1, borderColor: "rgba(245,158,11,0.15)", gap: 8 }}
+                    onPress={() => applyMealPlanSwap(item)}
+                  >
+                    <View style={{ flexDirection: "row", alignItems: "center", gap: 12 }}>
+                      <View style={{ width: 44, height: 44, borderRadius: 12, backgroundColor: "rgba(245,158,11,0.10)", alignItems: "center", justifyContent: "center" }}>
+                        <Text style={{ fontSize: 20 }}>{["\ud83c\udf73", "\ud83e\udd57", "\ud83c\udf72"][index] ?? "\ud83c\udf7d\ufe0f"}</Text>
+                      </View>
+                      <View style={{ flex: 1 }}>
+                        <Text style={{ color: MFG, fontFamily: "DMSans_700Bold", fontSize: 14 }} numberOfLines={1}>{item.name}</Text>
+                        {item.description && <Text style={{ color: MMUTED, fontSize: 11, marginTop: 2 }} numberOfLines={2}>{item.description}</Text>}
+                      </View>
+                      <MaterialIcons name="swap-horiz" size={20} color="#F59E0B" />
+                    </View>
+                    <View style={{ flexDirection: "row", gap: 8 }}>
+                      <View style={{ flex: 1, backgroundColor: "rgba(251,191,36,0.06)", borderRadius: 8, padding: 6, alignItems: "center" }}>
+                        <Text style={{ color: "#FBBF24", fontFamily: "SpaceMono_700Bold", fontSize: 12 }}>{item.calories} kcal</Text>
+                      </View>
+                      <View style={{ flex: 1, backgroundColor: "rgba(59,130,246,0.06)", borderRadius: 8, padding: 6, alignItems: "center" }}>
+                        <Text style={{ color: "#3B82F6", fontFamily: "SpaceMono_700Bold", fontSize: 12 }}>P: {item.protein}g</Text>
+                      </View>
+                      <View style={{ flex: 1, backgroundColor: "rgba(253,230,138,0.06)", borderRadius: 8, padding: 6, alignItems: "center" }}>
+                        <Text style={{ color: "#FDE68A", fontFamily: "SpaceMono_700Bold", fontSize: 12 }}>C: {item.carbs}g</Text>
+                      </View>
+                      <View style={{ flex: 1, backgroundColor: "rgba(249,115,22,0.06)", borderRadius: 8, padding: 6, alignItems: "center" }}>
+                        <Text style={{ color: "#F97316", fontFamily: "SpaceMono_700Bold", fontSize: 12 }}>F: {item.fat}g</Text>
+                      </View>
+                    </View>
+                    {item.prepTime && (
+                      <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
+                        <MaterialIcons name="timer" size={12} color={MMUTED} />
+                        <Text style={{ color: MMUTED, fontSize: 11 }}>{item.prepTime}</Text>
+                      </View>
+                    )}
+                  </TouchableOpacity>
+                )}
+              />
+            )}
+          </View>
+        </View>
+      )}
+
       {/* Swap Modal */}
       {swapMealType !== null && (
         <MealSwapModal
@@ -3403,8 +3616,9 @@ function MealPlanDayCard({ day, dayIndex, onMealSwap }: { day: any; dayIndex: nu
   );
 }
 
-function MealPlanMealCard({ meal, onSwap }: { meal: any; onSwap?: () => void }) {
+function MealPlanMealCard({ meal, onSwap, isFav, rating, onToggleFav, onRate, onDislike }: { meal: any; onSwap?: () => void; isFav?: boolean; rating?: number; onToggleFav?: () => void; onRate?: (stars: number) => void; onDislike?: () => void }) {
   const [showPrep, setShowPrep] = React.useState(false);
+  const [showRating, setShowRating] = React.useState(false);
   const photoUrl = getMealPlanPhotoUrl(meal);
   const mealTypeColor: Record<string, string> = {
     breakfast: "#FBBF24",
@@ -3444,7 +3658,37 @@ function MealPlanMealCard({ meal, onSwap }: { meal: any; onSwap?: () => void }) 
       </View>
 
       <View style={{ padding: 14 }}>
-        <Text style={{ color: MFG, fontFamily: "DMSans_700Bold", fontSize: 15, marginBottom: 6 }}>{sanitizeMealName(meal.name)}</Text>
+        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 6 }}>
+          <Text style={{ color: MFG, fontFamily: "DMSans_700Bold", fontSize: 15, flex: 1 }}>{sanitizeMealName(meal.name)}</Text>
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+            {onToggleFav && (
+              <TouchableOpacity onPress={onToggleFav} style={{ padding: 4 }}>
+                <MaterialIcons name={isFav ? "favorite" : "favorite-border"} size={20} color={isFav ? "#EF4444" : MMUTED} />
+              </TouchableOpacity>
+            )}
+            {onRate && (
+              <TouchableOpacity onPress={() => setShowRating(!showRating)} style={{ padding: 4 }}>
+                <MaterialIcons name="star" size={20} color={rating && rating > 0 ? "#FBBF24" : MMUTED} />
+              </TouchableOpacity>
+            )}
+          </View>
+        </View>
+        {/* Star rating row */}
+        {showRating && onRate && (
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 4, marginBottom: 8, paddingVertical: 6, paddingHorizontal: 8, backgroundColor: "rgba(251,191,36,0.06)", borderRadius: 10, borderWidth: 1, borderColor: "rgba(251,191,36,0.15)" }}>
+            <Text style={{ color: MMUTED, fontSize: 11, marginRight: 4 }}>Rate:</Text>
+            {[1, 2, 3, 4, 5].map(star => (
+              <TouchableOpacity key={star} onPress={() => { onRate(star); setShowRating(false); }} style={{ padding: 2 }}>
+                <MaterialIcons name={rating && star <= rating ? "star" : "star-border"} size={22} color={rating && star <= rating ? "#FBBF24" : MMUTED} />
+              </TouchableOpacity>
+            ))}
+            {onDislike && (
+              <TouchableOpacity onPress={() => { onDislike(); setShowRating(false); }} style={{ marginLeft: 8, padding: 4, backgroundColor: "rgba(239,68,68,0.08)", borderRadius: 8, borderWidth: 1, borderColor: "rgba(239,68,68,0.15)" }}>
+                <MaterialIcons name="thumb-down" size={16} color="#EF4444" />
+              </TouchableOpacity>
+            )}
+          </View>
+        )}
         <View style={{ flexDirection: "row", gap: 12, marginBottom: 10 }}>
           <Text style={{ color: "#3B82F6", fontSize: 12 }}>P: {meal.protein}g</Text>
           <Text style={{ color: "#FDE68A", fontSize: 12 }}>C: {meal.carbs}g</Text>
