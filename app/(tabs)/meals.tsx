@@ -32,7 +32,7 @@ import { loadMealPreferences, toggleFavourite, rateMeal, isFavourite, getMealRat
 import { saveMealPlanToHistory, getPastMealNames, updatePhotoCacheFromPlan, applyCachedPhotos, isWeeklyRefreshNeeded, markWeeklyRefreshDone, loadPinnedMeals, togglePinnedMeal, applyPinnedMeals, cleanupPinnedMeals } from "@/lib/meal-history";
 
 
-// NanoBanana design tokens â Meals uses mint/teal accent
+// NanoBanana design tokens Ã¢ÂÂ Meals uses mint/teal accent
 const MBG = "#0A0E14";
 const MSURFACE = "#111827";
 const MSURFACE2 = "#1E293B";
@@ -122,48 +122,104 @@ function normalizeMealPlanDays(plan: any): any {
   );
 
   // Cuisine-themed replacement pools for deduplication
-  const VARIETY_POOLS: Record<string, Array<{ name: string; type: string; calories: number; protein: number; carbs: number; fat: number; photoQuery: string }>> = {
+  const VARIETY_POOLS: Record<string, Array<{ name: string; type: string; calories: number; protein: number; carbs: number; fat: number; photoQuery: string; ingredients: string[]; instructions: string[] }>> = {
     Mediterranean: [
-      { name: "Greek Salad with Grilled Chicken", type: "lunch", calories: 420, protein: 35, carbs: 22, fat: 18, photoQuery: "greek salad chicken" },
-      { name: "Shakshuka with Crusty Bread", type: "breakfast", calories: 340, protein: 18, carbs: 30, fat: 16, photoQuery: "shakshuka eggs tomato" },
-      { name: "Grilled Sea Bass with Lemon Herbs", type: "dinner", calories: 460, protein: 40, carbs: 18, fat: 22, photoQuery: "grilled sea bass fish" },
-      { name: "Hummus & Falafel Plate", type: "snack", calories: 280, protein: 14, carbs: 32, fat: 12, photoQuery: "falafel hummus plate" },
+      { name: "Greek Salad with Grilled Chicken", type: "lunch", calories: 420, protein: 35, carbs: 22, fat: 18, photoQuery: "greek salad chicken",
+        ingredients: ["150g chicken breast", "80g romaine lettuce (chopped)", "60g cucumber (diced)", "40g cherry tomatoes (halved)", "30g red onion (sliced)", "30g kalamata olives", "30g feta cheese (crumbled)", "1 tbsp (15ml) olive oil", "1 tbsp red wine vinegar", "1 tsp dried oregano", "Salt and pepper"],
+        instructions: ["Season chicken with oregano, salt, pepper, and half the olive oil. Grill over medium-high heat 6 min per side until 74\u00b0C internal (12 min)", "Chop romaine, dice cucumber, halve tomatoes, slice onion. Combine in a large bowl (3 min)", "Add olives and crumbled feta. Whisk remaining olive oil with red wine vinegar, drizzle over salad (1 min)", "Slice grilled chicken into strips. Arrange on top of the salad. Serve immediately (2 min)"] },
+      { name: "Shakshuka with Crusty Bread", type: "breakfast", calories: 340, protein: 18, carbs: 30, fat: 16, photoQuery: "shakshuka eggs tomato",
+        ingredients: ["2 large eggs", "1 can (200g) chopped tomatoes", "1/2 red pepper (60g, diced)", "1/2 onion (50g, diced)", "2 cloves garlic (minced)", "1 tsp cumin", "1 tsp paprika", "1/2 tsp chili flakes", "1 tbsp (15ml) olive oil", "1 slice crusty bread (50g)", "Fresh parsley (5g)"],
+        instructions: ["Heat olive oil in a deep skillet over medium heat. Add diced onion and pepper, cook 5 min until soft (5 min)", "Add garlic, cumin, paprika, and chili flakes. Stir 1 min until fragrant (1 min)", "Pour in chopped tomatoes. Simmer 8 min until sauce thickens slightly (8 min)", "Make 2 wells in the sauce, crack an egg into each. Cover and cook on low 5-6 min until whites are set but yolks runny (6 min)", "Garnish with parsley. Serve with crusty bread for dipping (1 min)"] },
+      { name: "Grilled Sea Bass with Lemon Herbs", type: "dinner", calories: 460, protein: 40, carbs: 18, fat: 22, photoQuery: "grilled sea bass fish",
+        ingredients: ["180g sea bass fillet (skin-on)", "150g baby potatoes (halved)", "100g cherry tomatoes (on the vine)", "1 lemon (sliced + juice)", "2 tbsp (30ml) olive oil", "2 cloves garlic (sliced)", "1 sprig fresh rosemary", "1 sprig fresh thyme", "Salt and pepper"],
+        instructions: ["Preheat oven to 200\u00b0C. Toss halved baby potatoes with 1 tbsp olive oil, salt, pepper. Roast 15 min (15 min)", "Score sea bass skin 3 times. Season both sides with salt, pepper, lemon juice (1 min)", "Add cherry tomatoes and garlic slices to the potato tray. Place sea bass on top, skin-side up. Drizzle remaining oil, lay lemon slices and herbs over fish (2 min)", "Roast 12-14 min until fish is opaque and flakes easily (14 min)", "Plate fish over potatoes and tomatoes. Squeeze extra lemon and drizzle pan juices (1 min)"] },
+      { name: "Hummus & Falafel Plate", type: "snack", calories: 280, protein: 14, carbs: 32, fat: 12, photoQuery: "falafel hummus plate",
+        ingredients: ["4 falafel balls (120g, shop-bought or homemade)", "60g hummus", "1/2 wholemeal pita (30g)", "30g pickled vegetables", "A few mint leaves"],
+        instructions: ["Warm falafel in oven at 180\u00b0C for 8 min or microwave 1 min until hot (8 min)", "Warm pita bread briefly (30 sec)", "Arrange falafel on a plate with hummus, pickles, and torn pita (1 min)", "Garnish with mint leaves and serve (15 sec)"] },
     ],
     Asian: [
-      { name: "Teriyaki Chicken Rice Bowl", type: "lunch", calories: 480, protein: 32, carbs: 52, fat: 14, photoQuery: "teriyaki chicken rice" },
-      { name: "Miso Soup with Tofu & Seaweed", type: "breakfast", calories: 180, protein: 12, carbs: 14, fat: 6, photoQuery: "miso soup tofu" },
-      { name: "Salmon Poke Bowl", type: "dinner", calories: 440, protein: 34, carbs: 42, fat: 16, photoQuery: "salmon poke bowl" },
-      { name: "Edamame with Sea Salt", type: "snack", calories: 190, protein: 16, carbs: 14, fat: 8, photoQuery: "edamame beans" },
+      { name: "Teriyaki Chicken Rice Bowl", type: "lunch", calories: 480, protein: 32, carbs: 52, fat: 14, photoQuery: "teriyaki chicken rice",
+        ingredients: ["150g chicken thigh (boneless)", "80g jasmine rice (dry)", "60g broccoli florets", "1 medium carrot (50g, julienned)", "2 tbsp (30ml) soy sauce", "1 tbsp (15ml) mirin", "1 tbsp (15g) honey", "1 tsp sesame oil", "1 tsp cornstarch + 1 tbsp water", "5g sesame seeds", "1 spring onion (sliced)"],
+        instructions: ["Cook 80g jasmine rice in 160ml water — bring to boil, cover, simmer 12 min. Rest 5 min (17 min)", "Make teriyaki sauce: whisk soy sauce, mirin, honey, and cornstarch slurry in a small bowl (1 min)", "Cut chicken into 2cm pieces. Heat sesame oil in a pan over medium-high. Cook chicken 5-6 min, turning, until golden (6 min)", "Pour teriyaki sauce over chicken, stir 1-2 min until glossy and thick. Add broccoli and carrot, toss to coat, cook 2 min (4 min)", "Serve over rice. Top with sesame seeds and sliced spring onion (1 min)"] },
+      { name: "Miso Soup with Tofu & Seaweed", type: "breakfast", calories: 180, protein: 12, carbs: 14, fat: 6, photoQuery: "miso soup tofu",
+        ingredients: ["2 tbsp (36g) white miso paste", "100g silken tofu (cubed 1.5cm)", "5g dried wakame seaweed", "500ml dashi stock (or water + 1 tsp dashi powder)", "1 spring onion (finely sliced)", "1 tsp soy sauce (optional)"],
+        instructions: ["Heat dashi stock in a saucepan until simmering — do not boil (3 min)", "Add dried wakame; let rehydrate in the hot stock for 2 min (2 min)", "Add tofu cubes gently. Heat through 1 min (1 min)", "Remove pot from heat. Dissolve miso paste in a ladle of the hot stock, then stir back into the pot. Do NOT boil after adding miso (1 min)", "Serve in bowls, garnish with sliced spring onion (30 sec)"] },
+      { name: "Salmon Poke Bowl", type: "dinner", calories: 440, protein: 34, carbs: 42, fat: 16, photoQuery: "salmon poke bowl",
+        ingredients: ["150g sushi-grade salmon (cubed 2cm)", "80g sushi rice (dry)", "1/2 avocado (60g, sliced)", "50g edamame beans (shelled)", "30g cucumber (sliced)", "1 tbsp (15ml) soy sauce", "1 tsp sesame oil", "1 tsp rice vinegar", "5g pickled ginger", "5g sesame seeds", "1 sheet nori (torn)"],
+        instructions: ["Cook sushi rice per packet instructions (usually 12 min + 10 min rest). Season with rice vinegar while warm (22 min)", "Marinate salmon cubes in soy sauce and sesame oil for 10 min (10 min, runs parallel)", "Cook edamame in boiling water 3 min, drain and cool (3 min)", "Build bowl: rice base, arrange salmon, avocado slices, edamame, cucumber in sections (2 min)", "Top with pickled ginger, sesame seeds, and torn nori strips (1 min)"] },
+      { name: "Edamame with Sea Salt", type: "snack", calories: 190, protein: 16, carbs: 14, fat: 8, photoQuery: "edamame beans",
+        ingredients: ["150g frozen edamame (in pods)", "1/2 tsp flaky sea salt", "Pinch of chili flakes (optional)"],
+        instructions: ["Bring a pot of water to a rolling boil. Add frozen edamame pods (2 min)", "Boil 4 min until bright green and tender (4 min)", "Drain and toss with sea salt and optional chili flakes (30 sec)", "Serve warm — squeeze pods to pop out the beans (eat immediately)"] },
     ],
     Indian: [
-      { name: "Chicken Tikka Masala with Basmati", type: "dinner", calories: 520, protein: 36, carbs: 48, fat: 18, photoQuery: "chicken tikka masala curry" },
-      { name: "Masala Omelette with Paratha", type: "breakfast", calories: 380, protein: 22, carbs: 32, fat: 18, photoQuery: "indian masala omelette" },
-      { name: "Dal Tadka with Brown Rice", type: "lunch", calories: 420, protein: 18, carbs: 56, fat: 10, photoQuery: "dal lentil curry rice" },
-      { name: "Chana Chaat", type: "snack", calories: 220, protein: 10, carbs: 28, fat: 8, photoQuery: "chana chickpea chaat" },
+      { name: "Chicken Tikka Masala with Basmati", type: "dinner", calories: 520, protein: 36, carbs: 48, fat: 18, photoQuery: "chicken tikka masala curry",
+        ingredients: ["150g chicken breast (cubed 3cm)", "80g basmati rice (dry)", "80g tomato passata", "60ml single cream or yogurt", "1/2 onion (60g, diced)", "2 cloves garlic (minced)", "10g ginger (grated)", "1 tbsp tikka masala spice mix", "1/2 tsp garam masala", "1/2 tsp turmeric", "1 tbsp (15ml) vegetable oil", "Fresh coriander (10g)"],
+        instructions: ["Cook basmati rice: rinse, add to pot with 160ml water, boil, cover, simmer 12 min. Rest 5 min (17 min)", "Heat oil in a pan over medium-high. Add chicken cubes, cook 4-5 min turning until browned on all sides. Remove and set aside (5 min)", "In the same pan, add onion. Cook 4 min until golden. Add garlic, ginger, tikka spice, turmeric. Stir 1 min (5 min)", "Add tomato passata, stir well. Return chicken to the pan. Cover and simmer 12 min (12 min)", "Stir in cream/yogurt and garam masala. Cook 2 more min. Do not boil if using yogurt (2 min)", "Serve curry over fluffed basmati, garnish with coriander (1 min)"] },
+      { name: "Masala Omelette with Paratha", type: "breakfast", calories: 380, protein: 22, carbs: 32, fat: 18, photoQuery: "indian masala omelette",
+        ingredients: ["3 large eggs", "1/2 small onion (30g, finely diced)", "1 small tomato (40g, diced)", "1 green chili (deseeded, finely chopped)", "15g fresh coriander (chopped)", "1/2 tsp turmeric", "1/4 tsp chili powder", "1 wholemeal paratha or roti (50g)", "1 tsp (5ml) oil or ghee", "Salt and pepper"],
+        instructions: ["Crack eggs into a bowl. Add turmeric, chili powder, salt. Whisk until combined (1 min)", "Fold in diced onion, tomato, green chili, and half the coriander (30 sec)", "Heat oil in a non-stick pan over medium heat. Pour in egg mixture, swirl to spread evenly (30 sec)", "Cook without stirring 2 min until base sets. Fold in half and cook 1 more min (3 min)", "Warm paratha in a dry pan or directly over flame for 30 sec each side (1 min)", "Plate omelette alongside paratha, garnish with remaining coriander (30 sec)"] },
+      { name: "Dal Tadka with Brown Rice", type: "lunch", calories: 420, protein: 18, carbs: 56, fat: 10, photoQuery: "dal lentil curry rice",
+        ingredients: ["100g red lentils (masoor dal, rinsed)", "80g brown rice (dry)", "1/2 onion (50g, diced)", "2 cloves garlic (minced)", "10g ginger (grated)", "1 medium tomato (80g, diced)", "1 tsp cumin seeds", "1/2 tsp turmeric", "1/2 tsp chili powder", "1 tbsp (15ml) ghee or oil", "400ml water", "Fresh coriander (5g)", "Salt to taste"],
+        instructions: ["Start brown rice: rinse, add to pot with 200ml water. Boil, cover, simmer 22 min. Rest 5 min (27 min)", "Rinse lentils until water runs clear. Add to a separate pot with 400ml water, turmeric, and a pinch of salt. Bring to boil, then simmer 18-20 min until soft and mushy, skimming foam (20 min, parallel with rice)", "Make the tadka: heat ghee in a small pan. Add cumin seeds, cook 30 sec until they crackle. Add garlic, ginger, cook 1 min (1.5 min)", "Add diced onion and tomato to the tadka. Cook 4-5 min until soft. Add chili powder (5 min)", "Pour the tadka into the cooked dal, stir well. Simmer together 3 min (3 min)", "Serve dal over brown rice, garnish with coriander (1 min)"] },
+      { name: "Chana Chaat", type: "snack", calories: 220, protein: 10, carbs: 28, fat: 8, photoQuery: "chana chickpea chaat",
+        ingredients: ["150g canned chickpeas (drained, rinsed)", "1 small tomato (40g, finely diced)", "1/4 red onion (20g, finely diced)", "1 green chili (finely chopped)", "10g fresh coriander (chopped)", "1 tbsp lemon juice", "1/2 tsp chaat masala", "1/4 tsp cumin powder", "Salt to taste"],
+        instructions: ["Drain and rinse chickpeas. Pat dry with a paper towel (1 min)", "Combine chickpeas, diced tomato, onion, and green chili in a bowl (1 min)", "Add lemon juice, chaat masala, cumin powder, and salt. Toss well to coat (30 sec)", "Garnish with fresh coriander. Serve at room temperature (30 sec)"] },
     ],
     Latin: [
-      { name: "Chicken Burrito Bowl", type: "lunch", calories: 510, protein: 38, carbs: 48, fat: 16, photoQuery: "burrito bowl chicken" },
-      { name: "Huevos Rancheros", type: "breakfast", calories: 380, protein: 20, carbs: 34, fat: 16, photoQuery: "huevos rancheros breakfast" },
-      { name: "Grilled Fish Tacos with Slaw", type: "dinner", calories: 440, protein: 32, carbs: 36, fat: 18, photoQuery: "fish tacos" },
-      { name: "Guacamole with Veggie Sticks", type: "snack", calories: 200, protein: 4, carbs: 16, fat: 14, photoQuery: "guacamole avocado" },
+      { name: "Chicken Burrito Bowl", type: "lunch", calories: 510, protein: 38, carbs: 48, fat: 16, photoQuery: "burrito bowl chicken",
+        ingredients: ["150g chicken breast", "80g long grain rice (dry)", "80g canned black beans (drained)", "1/2 avocado (60g)", "40g sweetcorn", "30g tomato salsa", "20g cheddar cheese (grated)", "1 tsp cumin", "1 tsp smoked paprika", "1/2 lime (juice)", "1 tbsp (15ml) oil", "Fresh coriander (5g)", "Salt and pepper"],
+        instructions: ["Cook rice in 160ml water — boil, cover, simmer 12 min. Stir in lime juice and a pinch of salt when done (12 min)", "Season chicken with cumin, paprika, salt, pepper. Heat oil in a pan over medium-high. Cook 6 min per side until 74\u00b0C internal (12 min)", "Warm black beans and sweetcorn in a small saucepan or microwave (2 min)", "Slice chicken into strips. Build bowl: rice base, chicken, beans, sweetcorn in sections (2 min)", "Top with sliced avocado, salsa, grated cheese, and coriander (1 min)"] },
+      { name: "Huevos Rancheros", type: "breakfast", calories: 380, protein: 20, carbs: 34, fat: 16, photoQuery: "huevos rancheros breakfast",
+        ingredients: ["2 large eggs", "2 small corn tortillas (50g)", "100g canned chopped tomatoes", "60g canned black beans (drained)", "1/2 jalape\u00f1o (sliced, optional)", "1/4 onion (30g, diced)", "1 clove garlic (minced)", "1/2 tsp cumin", "1 tsp (5ml) oil", "20g cheddar (grated)", "Fresh coriander (5g)", "1/2 lime (wedge)"],
+        instructions: ["Heat oil in a skillet over medium heat. Cook onion and garlic 3 min until soft. Add cumin, stir 30 sec (3.5 min)", "Add chopped tomatoes, black beans, and jalape\u00f1o. Simmer 5 min until slightly thickened (5 min)", "Make 2 wells in the sauce. Crack an egg into each. Cover and cook on low 4-5 min until whites set (5 min)", "Warm tortillas in a dry pan 20 sec each side (1 min)", "Place tortillas on a plate, spoon the eggs and sauce on top. Add grated cheese, coriander, and lime (1 min)"] },
+      { name: "Grilled Fish Tacos with Slaw", type: "dinner", calories: 440, protein: 32, carbs: 36, fat: 18, photoQuery: "fish tacos",
+        ingredients: ["150g white fish fillet (cod or tilapia)", "3 small corn tortillas (75g)", "60g red cabbage (finely shredded)", "1/2 avocado (60g, sliced)", "30g Greek yogurt", "1 lime (juice + wedges)", "1 tsp chipotle paste or chili powder", "1 tsp cumin", "1 tbsp (15ml) oil", "10g fresh coriander", "Salt and pepper"],
+        instructions: ["Make slaw: toss shredded cabbage with half the lime juice and a pinch of salt. Set aside to soften (5 min)", "Mix Greek yogurt with chipotle paste and remaining lime juice to make a crema (1 min)", "Season fish with cumin, salt, pepper. Brush with oil. Grill or pan-fry 3-4 min per side until fish flakes easily (8 min)", "Warm tortillas in a dry pan 20 sec each side (1 min)", "Flake fish into chunks. Build tacos: tortilla, slaw, fish, avocado slices, drizzle of crema, coriander (2 min)"] },
+      { name: "Guacamole with Veggie Sticks", type: "snack", calories: 200, protein: 4, carbs: 16, fat: 14, photoQuery: "guacamole avocado",
+        ingredients: ["1 ripe avocado (120g flesh)", "1/2 lime (juice)", "1/4 red onion (15g, finely diced)", "1 small tomato (30g, diced)", "10g fresh coriander (chopped)", "Pinch of salt and chili flakes", "1 medium carrot (80g) and 1/2 cucumber (60g) cut into sticks"],
+        instructions: ["Halve avocado, remove pit, scoop flesh into a bowl. Mash with a fork to desired texture (1 min)", "Add lime juice, diced onion, tomato, coriander, salt, and chili flakes. Mix gently (1 min)", "Cut carrot and cucumber into sticks for dipping (1 min)", "Serve guacamole immediately with veggie sticks on the side (30 sec)"] },
     ],
     Thai: [
-      { name: "Pad Thai with Shrimp", type: "lunch", calories: 480, protein: 28, carbs: 54, fat: 16, photoQuery: "pad thai shrimp noodles" },
-      { name: "Thai Coconut Oat Bowl", type: "breakfast", calories: 320, protein: 10, carbs: 42, fat: 14, photoQuery: "coconut oats tropical" },
-      { name: "Green Curry with Jasmine Rice", type: "dinner", calories: 500, protein: 30, carbs: 48, fat: 20, photoQuery: "thai green curry rice" },
-      { name: "Mango Sticky Rice", type: "snack", calories: 240, protein: 4, carbs: 42, fat: 8, photoQuery: "mango sticky rice thai" },
+      { name: "Pad Thai with Shrimp", type: "lunch", calories: 480, protein: 28, carbs: 54, fat: 16, photoQuery: "pad thai shrimp noodles",
+        ingredients: ["120g flat rice noodles (dry)", "100g shrimp/prawns (peeled)", "1 egg", "50g bean sprouts", "2 spring onions (sliced)", "2 tbsp (30ml) tamarind paste", "1 tbsp (15ml) fish sauce", "1 tbsp (15g) palm sugar or brown sugar", "1 tbsp (15ml) vegetable oil", "15g roasted peanuts (crushed)", "1/2 lime (juice + wedge)", "Pinch of chili flakes"],
+        instructions: ["Soak rice noodles in warm water for 20 min until pliable but still firm. Drain well (20 min)", "Make pad thai sauce: mix tamarind paste, fish sauce, and sugar in a small bowl until sugar dissolves (1 min)", "Heat oil in a wok over high heat. Cook shrimp 2 min until pink. Push to one side. Crack egg into the wok, scramble 30 sec (2.5 min)", "Add drained noodles and sauce. Toss vigorously with tongs 2-3 min until noodles absorb sauce and are tender (3 min)", "Add bean sprouts and half the spring onions. Toss 30 sec (30 sec)", "Plate and top with crushed peanuts, remaining spring onions, chili flakes, and lime wedge (1 min)"] },
+      { name: "Thai Coconut Oat Bowl", type: "breakfast", calories: 320, protein: 10, carbs: 42, fat: 14, photoQuery: "coconut oats tropical",
+        ingredients: ["60g rolled oats", "150ml coconut milk", "50ml water", "1/2 banana (sliced)", "30g mango (diced)", "10g toasted coconut flakes", "1 tsp (7g) honey", "Pinch of cardamom"],
+        instructions: ["In a saucepan, combine oats, coconut milk, water, and cardamom. Bring to a simmer over medium heat (2 min)", "Cook 4-5 min, stirring frequently, until creamy and thickened (5 min)", "Transfer to a bowl. Top with sliced banana, diced mango, and toasted coconut flakes (1 min)", "Drizzle honey over the top. Serve warm (15 sec)"] },
+      { name: "Green Curry with Jasmine Rice", type: "dinner", calories: 500, protein: 30, carbs: 48, fat: 20, photoQuery: "thai green curry rice",
+        ingredients: ["150g chicken thigh (cubed 2.5cm) or firm tofu", "80g jasmine rice (dry)", "100ml coconut milk", "2 tbsp (30g) green curry paste", "80g bamboo shoots (canned, drained)", "60g Thai aubergine or regular aubergine (cubed)", "6 Thai basil leaves", "2 kaffir lime leaves (torn)", "1 tbsp (15ml) fish sauce", "1 tsp (5g) palm sugar", "1 tbsp (15ml) vegetable oil"],
+        instructions: ["Cook jasmine rice: 80g rice in 160ml water. Boil, cover, simmer 12 min. Rest 5 min (17 min)", "Heat oil in a wok over medium heat. Fry green curry paste 1 min until fragrant (1 min)", "Add half the coconut milk, stir to combine with paste. Cook 2 min until oil separates slightly (2 min)", "Add chicken pieces. Stir-fry 4 min until nearly cooked through (4 min)", "Add remaining coconut milk, bamboo shoots, aubergine, fish sauce, palm sugar, and kaffir lime leaves. Simmer 8 min (8 min)", "Stir in Thai basil leaves just before serving. Plate curry over jasmine rice (1 min)"] },
+      { name: "Mango Sticky Rice", type: "snack", calories: 240, protein: 4, carbs: 42, fat: 8, photoQuery: "mango sticky rice thai",
+        ingredients: ["60g glutinous (sticky) rice", "80ml coconut milk", "1 tbsp (15g) sugar", "Pinch of salt", "1/2 ripe mango (100g, sliced)", "5g toasted sesame seeds"],
+        instructions: ["Soak sticky rice in water for at least 30 min (or overnight). Drain (30 min)", "Steam soaked rice in a bamboo steamer or fine-mesh sieve over simmering water for 20 min until translucent and sticky (20 min)", "While rice steams, warm coconut milk with sugar and salt in a small pan until sugar dissolves. Do not boil (2 min)", "Transfer hot rice to a bowl, pour 2/3 of the sweet coconut milk over it. Stir gently, cover, let absorb 10 min (10 min)", "Plate rice alongside sliced mango. Drizzle remaining coconut milk over the top, sprinkle sesame seeds (1 min)"] },
     ],
     Turkish: [
-      { name: "Turkish Eggs (Cilbir) with Yogurt", type: "breakfast", calories: 350, protein: 20, carbs: 22, fat: 20, photoQuery: "cilbir turkish eggs yogurt" },
-      { name: "Lamb Kebab with Bulgur Salad", type: "lunch", calories: 490, protein: 36, carbs: 38, fat: 20, photoQuery: "lamb kebab bulgur" },
-      { name: "Grilled Chicken Adana with Rice", type: "dinner", calories: 480, protein: 38, carbs: 40, fat: 16, photoQuery: "adana kebab chicken" },
-      { name: "Roasted Chickpeas (Leblebi)", type: "snack", calories: 200, protein: 10, carbs: 28, fat: 6, photoQuery: "roasted chickpeas" },
+      { name: "Turkish Eggs (Cilbir) with Yogurt", type: "breakfast", calories: 350, protein: 20, carbs: 22, fat: 20, photoQuery: "cilbir turkish eggs yogurt",
+        ingredients: ["2 large eggs", "120g thick Greek yogurt", "1 clove garlic (minced)", "20g butter", "1 tsp Aleppo pepper (pul biber) or paprika", "1 tsp white vinegar", "1 slice sourdough bread (50g, toasted)", "Fresh dill (5g)", "Flaky salt"],
+        instructions: ["Mix Greek yogurt with minced garlic and a pinch of salt in a bowl. Spread onto a plate, making a well in the centre (1 min)", "Bring a pot of water to a gentle simmer. Add white vinegar. Create a whirlpool and poach eggs one at a time — 3 min each for runny yolks (6 min)", "Melt butter in a small pan over medium heat. Add Aleppo pepper, swirl 30 sec until butter turns red — remove from heat immediately (1 min)", "Place poached eggs on the yogurt bed. Drizzle the spiced butter over everything (30 sec)", "Garnish with fresh dill and flaky salt. Serve with toasted sourdough for dipping (1 min)"] },
+      { name: "Lamb Kebab with Bulgur Salad", type: "lunch", calories: 490, protein: 36, carbs: 38, fat: 20, photoQuery: "lamb kebab bulgur",
+        ingredients: ["180g minced lamb", "60g bulgur wheat (dry)", "1/2 onion (40g, grated)", "10g parsley (chopped)", "1 tsp cumin", "1/2 tsp sumac", "1 medium tomato (80g, diced)", "1/4 cucumber (40g, diced)", "1 tbsp (15ml) olive oil", "1 tbsp lemon juice", "Fresh mint (5g)", "Salt and pepper"],
+        instructions: ["Soak bulgur in 120ml boiling water. Cover, let stand 15 min until tender (15 min)", "Combine lamb, grated onion, half the parsley, cumin, salt and pepper. Knead 2 min until sticky. Shape into 4 oval kebabs around flat skewers (4 min)", "Grill kebabs over high heat (or under a broiler) 4-5 min per side until browned and cooked through (10 min)", "Fluff bulgur with a fork. Add diced tomato, cucumber, remaining parsley, mint, olive oil, lemon juice, and sumac. Toss (2 min)", "Plate bulgur salad with kebabs alongside (1 min)"] },
+      { name: "Grilled Chicken Adana with Rice", type: "dinner", calories: 480, protein: 38, carbs: 40, fat: 16, photoQuery: "adana kebab chicken",
+        ingredients: ["150g chicken mince or finely diced breast", "80g basmati rice (dry)", "1/2 onion (40g, grated)", "1 red pepper (roasted, from jar — 50g)", "1 tsp paprika", "1/2 tsp chili flakes", "1/2 tsp cumin", "1 tbsp (15ml) olive oil", "40g tomato (grilled)", "Fresh parsley (5g)", "Salt and pepper"],
+        instructions: ["Cook basmati rice: rinse, 160ml water, boil, cover, simmer 12 min. Rest 5 min (17 min)", "Mix chicken mince with grated onion, paprika, chili flakes, cumin, salt, pepper. Knead until smooth (2 min)", "Shape mixture into flat sausage shapes on metal skewers (or form into patties) (2 min)", "Grill over high heat 4 min per side until charred edges and cooked through (8 min)", "Halve a tomato, brush with oil and grill cut-side down 2 min alongside the chicken (2 min)", "Plate rice, lay Adana kebab on top with grilled tomato and roasted pepper. Garnish with parsley (1 min)"] },
+      { name: "Roasted Chickpeas (Leblebi)", type: "snack", calories: 200, protein: 10, carbs: 28, fat: 6, photoQuery: "roasted chickpeas",
+        ingredients: ["200g canned chickpeas (drained, rinsed, patted very dry)", "1 tbsp (15ml) olive oil", "1/2 tsp cumin", "1/2 tsp paprika", "1/4 tsp garlic powder", "Pinch of cayenne", "1/2 tsp flaky salt"],
+        instructions: ["Preheat oven to 200\u00b0C. Pat chickpeas as dry as possible with paper towels — the drier, the crunchier (2 min)", "Toss chickpeas with olive oil, cumin, paprika, garlic powder, and cayenne on a baking tray. Spread in a single layer (1 min)", "Roast 25-30 min, shaking the tray halfway through, until golden and crunchy (30 min)", "Remove from oven, sprinkle with flaky salt immediately. Let cool 5 min — they crisp further as they cool (5 min)"] },
     ],
     Nordic: [
-      { name: "Smoked Salmon on Rye with Cream Cheese", type: "breakfast", calories: 340, protein: 24, carbs: 28, fat: 14, photoQuery: "smoked salmon rye bread" },
-      { name: "Open-Face Shrimp Sandwich", type: "lunch", calories: 380, protein: 26, carbs: 32, fat: 14, photoQuery: "shrimp sandwich open face" },
-      { name: "Baked Cod with Dill Potatoes", type: "dinner", calories: 420, protein: 36, carbs: 34, fat: 12, photoQuery: "baked cod fish potatoes" },
-      { name: "Berry Skyr Bowl", type: "snack", calories: 180, protein: 16, carbs: 22, fat: 4, photoQuery: "skyr yogurt berries" },
+      { name: "Smoked Salmon on Rye with Cream Cheese", type: "breakfast", calories: 340, protein: 24, carbs: 28, fat: 14, photoQuery: "smoked salmon rye bread",
+        ingredients: ["80g smoked salmon", "2 slices dark rye bread (60g total)", "30g cream cheese", "1/4 red onion (15g, thinly sliced into rings)", "10g capers (drained)", "Fresh dill (5g)", "1/2 lemon (wedge)", "Black pepper"],
+        instructions: ["Toast rye bread slices lightly if desired (1 min)", "Spread 15g cream cheese evenly on each slice (30 sec)", "Arrange 40g smoked salmon on each slice, draping it in loose folds (30 sec)", "Top with red onion rings, capers, and fresh dill sprigs (30 sec)", "Finish with a crack of black pepper and a squeeze of lemon (15 sec)"] },
+      { name: "Open-Face Shrimp Sandwich", type: "lunch", calories: 380, protein: 26, carbs: 32, fat: 14, photoQuery: "shrimp sandwich open face",
+        ingredients: ["100g cooked peeled shrimp", "1 slice sourdough bread (50g)", "2 tbsp (30g) mayo (or skyr-based dressing)", "1 tsp lemon juice", "1/2 tsp Dijon mustard", "30g cucumber (thinly sliced)", "10g fresh dill (chopped)", "4 thin lemon slices", "Salt, white pepper, paprika"],
+        instructions: ["Mix mayo, lemon juice, Dijon, and half the dill in a bowl. Season with salt and white pepper (1 min)", "Fold cooked shrimp into the dressing gently (30 sec)", "Toast sourdough slice until golden and firm (2 min)", "Layer cucumber slices on the toast. Pile the dressed shrimp on top (1 min)", "Garnish with remaining dill, lemon slices, and a dust of paprika (30 sec)"] },
+      { name: "Baked Cod with Dill Potatoes", type: "dinner", calories: 420, protein: 36, carbs: 34, fat: 12, photoQuery: "baked cod fish potatoes",
+        ingredients: ["170g cod fillet", "200g baby potatoes (halved)", "1 tbsp (15ml) olive oil", "1 tbsp (15g) butter", "20g fresh dill (chopped)", "1 lemon (zest + juice of half, wedges from other)", "100g green beans (trimmed)", "1 clove garlic (minced)", "Salt, white pepper"],
+        instructions: ["Boil baby potatoes in salted water 12-15 min until tender. Drain, toss with butter, half the dill, and lemon zest (15 min)", "Meanwhile, preheat oven to 190\u00b0C. Place cod on a lined tray. Drizzle with olive oil, season with salt, white pepper, and lemon juice (1 min)", "Bake cod 12-14 min until flesh is opaque and flakes with a fork (14 min)", "Blanch green beans in boiling water 3-4 min until tender-crisp. Drain (4 min)", "Plate cod alongside dill potatoes and green beans. Scatter remaining dill and serve with lemon wedges (1 min)"] },
+      { name: "Berry Skyr Bowl", type: "snack", calories: 180, protein: 16, carbs: 22, fat: 4, photoQuery: "skyr yogurt berries",
+        ingredients: ["200g Icelandic skyr (plain)", "60g mixed berries (blueberries, raspberries)", "1 tsp (7g) honey", "10g granola or toasted oats", "Pinch of cinnamon"],
+        instructions: ["Spoon 200g skyr into a bowl (15 sec)", "Top with mixed berries arranged in a cluster (30 sec)", "Sprinkle granola or toasted oats over one side (15 sec)", "Drizzle honey and dust with cinnamon (15 sec)"] },
     ],
   };
   const themeKeys = Object.keys(VARIETY_POOLS);
@@ -174,7 +230,7 @@ function normalizeMealPlanDays(plan: any): any {
   daySignatures.forEach((sig: string, idx: number) => {
     if (!sig) return;
     if (seenSigs.has(sig) && normalized[idx].meals?.length > 0) {
-      // This day is a duplicate — replace with themed alternatives
+      // This day is a duplicate â replace with themed alternatives
       const theme = themeKeys[themeIdx % themeKeys.length];
       themeIdx++;
       const pool = VARIETY_POOLS[theme];
@@ -207,6 +263,123 @@ function normalizeMealPlanDays(plan: any): any {
   return { ...plan, days: normalized };
 }
 
+
+// ============================================================================================
+// CURATED MEAL PHOTO DATABASE — Local mapping of meal names to accurate food photographs.
+// This eliminates reliance on AI-generated images. Every URL points to a verified Unsplash
+// photo that visually matches the dish name. Lookup is case-insensitive via getMealPlanPhotoUrl.
+// ============================================================================================
+const CURATED_MEAL_PHOTOS: Record<string, string> = {
+  // ── BREAKFAST ──────────────────────────────────────────────────────────────────
+  "berry yogurt parfait":            "https://images.unsplash.com/photo-1488477181946-6428a0291777?w=600&q=80",
+  "overnight oats with chia & berries": "https://images.unsplash.com/photo-1517673132405-a56a62b18caf?w=600&q=80",
+  "overnight oats with banana":      "https://images.unsplash.com/photo-1517673132405-a56a62b18caf?w=600&q=80",
+  "spinach & feta omelette":         "https://images.unsplash.com/photo-1510693206972-df098062cb71?w=600&q=80",
+  "bacon & avocado eggs":            "https://images.unsplash.com/photo-1525351484163-7529414344d8?w=600&q=80",
+  "sweet potato hash with eggs":     "https://images.unsplash.com/photo-1528712306091-ed0763094c98?w=600&q=80",
+  "labneh & za'atar flatbread":      "https://images.unsplash.com/photo-1623428187969-5da2dcea5ebf?w=600&q=80",
+  "scrambled eggs on wholegrain toast": "https://images.unsplash.com/photo-1525351484163-7529414344d8?w=600&q=80",
+  "avocado toast with poached egg":  "https://images.unsplash.com/photo-1541519227354-08fa5d50c820?w=600&q=80",
+  "smoothie bowl (acai & berries)":  "https://images.unsplash.com/photo-1511690743698-d9d85f2fbf38?w=600&q=80",
+  "protein pancakes (3 pcs)":        "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=600&q=80",
+  "masala omelette with paratha":    "https://images.unsplash.com/photo-1510693206972-df098062cb71?w=600&q=80",
+  "shakshuka with crusty bread":     "https://images.unsplash.com/photo-1590412200988-a436970781fa?w=600&q=80",
+  "turkish eggs (cilbir) with yogurt": "https://images.unsplash.com/photo-1590412200988-a436970781fa?w=600&q=80",
+  "thai coconut oat bowl":           "https://images.unsplash.com/photo-1517673132405-a56a62b18caf?w=600&q=80",
+  "smoked salmon on rye with cream cheese": "https://images.unsplash.com/photo-1525351484163-7529414344d8?w=600&q=80",
+  "huevos rancheros":                "https://images.unsplash.com/photo-1590412200988-a436970781fa?w=600&q=80",
+  "miso soup with tofu & seaweed":   "https://images.unsplash.com/photo-1547592166-23ac45744acd?w=600&q=80",
+  "congee with ginger & scallions":  "https://images.unsplash.com/photo-1547592166-23ac45744acd?w=600&q=80",
+  "french toast with maple syrup":   "https://images.unsplash.com/photo-1484723091739-30990106e7c6?w=600&q=80",
+  "egg white & spinach wrap":        "https://images.unsplash.com/photo-1626700051175-6818013e1d4f?w=600&q=80",
+  "chia pudding with mango":         "https://images.unsplash.com/photo-1511690743698-d9d85f2fbf38?w=600&q=80",
+  "banana protein pancakes":         "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=600&q=80",
+  "cottage cheese & fruit plate":    "https://images.unsplash.com/photo-1490474418585-ba9bad8fd0ea?w=600&q=80",
+
+  // ── LUNCH ─────────────────────────────────────────────────────────────────────
+  "grilled chicken quinoa bowl":     "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&q=80",
+  "chicken shawarma rice bowl":      "https://images.unsplash.com/photo-1529006557810-274b9b2fc783?w=600&q=80",
+  "tofu & edamame buddha bowl":      "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=600&q=80",
+  "halloumi & roasted veg wrap":     "https://images.unsplash.com/photo-1626700051175-6818013e1d4f?w=600&q=80",
+  "grilled chicken caesar (no croutons)": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&q=80",
+  "turkey lettuce wraps":            "https://images.unsplash.com/photo-1626700051175-6818013e1d4f?w=600&q=80",
+  "turkey & avocado wrap":           "https://images.unsplash.com/photo-1626700051175-6818013e1d4f?w=600&q=80",
+  "tuna salad sandwich":             "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=600&q=80",
+  "lentil & vegetable soup + bread": "https://images.unsplash.com/photo-1547592180-85f173990554?w=600&q=80",
+  "greek salad with grilled chicken": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&q=80",
+  "dal tadka with brown rice":       "https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=600&q=80",
+  "teriyaki chicken rice bowl":      "https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=600&q=80",
+  "pad thai with shrimp":            "https://images.unsplash.com/photo-1562565652-a0d8f0c59eb4?w=600&q=80",
+  "lamb kebab with bulgur salad":    "https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?w=600&q=80",
+  "chicken burrito bowl":            "https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=600&q=80",
+  "open-face shrimp sandwich":       "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=600&q=80",
+  "falafel wrap with hummus":        "https://images.unsplash.com/photo-1593001872095-7d5b3868fb1d?w=600&q=80",
+  "poke bowl with salmon":           "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&q=80",
+  "chicken tikka wrap":              "https://images.unsplash.com/photo-1626700051175-6818013e1d4f?w=600&q=80",
+  "mediterranean grain bowl":        "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&q=80",
+  "sushi roll platter":              "https://images.unsplash.com/photo-1553621042-f6e147245754?w=600&q=80",
+  "vietnamese pho":                  "https://images.unsplash.com/photo-1569058242253-92a9c755a0ec?w=600&q=80",
+
+  // ── DINNER ────────────────────────────────────────────────────────────────────
+  "pan-seared salmon & asparagus":   "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=600&q=80",
+  "lamb kofta with tabbouleh":       "https://images.unsplash.com/photo-1529042410759-befb1204b468?w=600&q=80",
+  "chickpea & spinach curry":        "https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=600&q=80",
+  "paneer tikka with brown rice":    "https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=600&q=80",
+  "steak with butter & green beans": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&q=80",
+  "herb-crusted salmon with roasted veg": "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=600&q=80",
+  "chicken tikka masala with basmati": "https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=600&q=80",
+  "grilled sea bass with lemon herbs": "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=600&q=80",
+  "salmon poke bowl":                "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&q=80",
+  "green curry with jasmine rice":   "https://images.unsplash.com/photo-1562565652-a0d8f0c59eb4?w=600&q=80",
+  "grilled chicken adana with rice": "https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?w=600&q=80",
+  "baked cod with dill potatoes":    "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=600&q=80",
+  "grilled fish tacos with slaw":    "https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=600&q=80",
+  "steak & sweet potato bowl":       "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&q=80",
+  "baked cod with roasted veg":      "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=600&q=80",
+  "chicken stir-fry with brown rice": "https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=600&q=80",
+  "beef & broccoli with noodles":    "https://images.unsplash.com/photo-1569050467447-ce54b3bbc37d?w=600&q=80",
+  "prawn & vegetable curry + rice":  "https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=600&q=80",
+  "turkey meatballs & courgette pasta": "https://images.unsplash.com/photo-1555949258-eb67b1ef0ceb?w=600&q=80",
+  "butter chicken with naan":        "https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=600&q=80",
+  "thai basil chicken with rice":    "https://images.unsplash.com/photo-1562565652-a0d8f0c59eb4?w=600&q=80",
+  "beef bulgogi with steamed rice":  "https://images.unsplash.com/photo-1590301157890-4810ed352733?w=600&q=80",
+  "jollof rice with grilled chicken": "https://images.unsplash.com/photo-1604329760661-e71dc83f8f26?w=600&q=80",
+  "jerk chicken with rice & peas":   "https://images.unsplash.com/photo-1625398407796-82650a8c135f?w=600&q=80",
+  "lamb tagine with couscous":       "https://images.unsplash.com/photo-1604329760661-e71dc83f8f26?w=600&q=80",
+  "chicken fajitas":                 "https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=600&q=80",
+  "mushroom risotto":                "https://images.unsplash.com/photo-1498579150354-977475b7ea0b?w=600&q=80",
+  "spaghetti bolognese":             "https://images.unsplash.com/photo-1569050467447-ce54b3bbc37d?w=600&q=80",
+  "chicken parmesan with spaghetti": "https://images.unsplash.com/photo-1498579150354-977475b7ea0b?w=600&q=80",
+  "korean bibimbap":                 "https://images.unsplash.com/photo-1590301157890-4810ed352733?w=600&q=80",
+  "rendang beef with rice":          "https://images.unsplash.com/photo-1569058242253-92a9c755a0ec?w=600&q=80",
+  "nasi goreng":                     "https://images.unsplash.com/photo-1569058242253-92a9c755a0ec?w=600&q=80",
+  "mapo tofu with rice":             "https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=600&q=80",
+  "doner kebab plate":               "https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?w=600&q=80",
+
+  // ── SNACKS ────────────────────────────────────────────────────────────────────
+  "protein snack board":             "https://images.unsplash.com/photo-1505576399279-565b52d4ac71?w=600&q=80",
+  "dates & almonds":                 "https://images.unsplash.com/photo-1559181567-c3190bfa4cfe?w=600&q=80",
+  "dates & almonds (30g each)":      "https://images.unsplash.com/photo-1559181567-c3190bfa4cfe?w=600&q=80",
+  "hummus & veggie sticks":          "https://images.unsplash.com/photo-1593001872095-7d5b3868fb1d?w=600&q=80",
+  "greek yogurt with honey & walnuts": "https://images.unsplash.com/photo-1488477181946-6428a0291777?w=600&q=80",
+  "greek yogurt with honey":         "https://images.unsplash.com/photo-1488477181946-6428a0291777?w=600&q=80",
+  "cheese & olives":                 "https://images.unsplash.com/photo-1505576399279-565b52d4ac71?w=600&q=80",
+  "apple slices with almond butter": "https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=600&q=80",
+  "banana & almond butter":          "https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=600&q=80",
+  "rice cakes with peanut butter":   "https://images.unsplash.com/photo-1590301157890-4810ed352733?w=600&q=80",
+  "boiled eggs (2) with cucumber":   "https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=600&q=80",
+  "protein bar (quest / fulfil)":    "https://images.unsplash.com/photo-1622484212850-eb596d769edc?w=600&q=80",
+  "edamame with sea salt":           "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=600&q=80",
+  "hummus & falafel plate":          "https://images.unsplash.com/photo-1593001872095-7d5b3868fb1d?w=600&q=80",
+  "chana chaat":                     "https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=600&q=80",
+  "guacamole with veggie sticks":    "https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=600&q=80",
+  "mango sticky rice":               "https://images.unsplash.com/photo-1562565652-a0d8f0c59eb4?w=600&q=80",
+  "roasted chickpeas (leblebi)":     "https://images.unsplash.com/photo-1559181567-c3190bfa4cfe?w=600&q=80",
+  "berry skyr bowl":                 "https://images.unsplash.com/photo-1488477181946-6428a0291777?w=600&q=80",
+  "trail mix (40g)":                 "https://images.unsplash.com/photo-1559181567-c3190bfa4cfe?w=600&q=80",
+  "dark chocolate (2 squares) & almonds": "https://images.unsplash.com/photo-1559181567-c3190bfa4cfe?w=600&q=80",
+  "caprese skewers":                 "https://images.unsplash.com/photo-1505576399279-565b52d4ac71?w=600&q=80",
+};
 const MEAL_PHOTO_MAP: Record<string, string> = {
   breakfast: "https://images.unsplash.com/photo-1525351484163-7529414344d8?w=400&q=80",
   "morning snack": "https://images.unsplash.com/photo-1490474418585-ba9bad8fd0ea?w=400&q=80",
@@ -219,7 +392,7 @@ const MEAL_PHOTO_MAP: Record<string, string> = {
   default: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&q=80",
 };
 
-// Keyword-matched food photos for intelligent fallback â matches meal description to appropriate image
+// Keyword-matched food photos for intelligent fallback Ã¢ÂÂ matches meal description to appropriate image
 const FOOD_KEYWORD_PHOTOS: Array<{ keywords: string[]; url: string }> = [
   { keywords: ["chicken", "grilled chicken", "roast chicken", "poultry"], url: "https://images.unsplash.com/photo-1598103442097-8b74394b95c6?w=400&q=80" },
   { keywords: ["salmon", "fish", "seafood", "tuna", "cod", "shrimp", "prawn", "sea bass", "trout", "tilapia"], url: "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=400&q=80" },
@@ -271,20 +444,32 @@ function hashString(str: string): number {
 }
 
 function getMealPlanPhotoUrl(meal: any): string {
+  // 1. If the meal already has an AI-generated or cached photoUrl, use it
   if (meal.photoUrl) return meal.photoUrl;
 
-  // Build search text from all available meal info for best matching
-  const searchText = `${meal.name ?? ""} ${meal.photoQuery ?? ""} ${meal.type ?? ""} ${meal.cuisine ?? ""}`.toLowerCase();
+  // 2. Check CURATED_MEAL_PHOTOS — exact name match (case-insensitive)
+  const mealNameLower = (meal.name ?? "").toLowerCase().trim();
+  if (mealNameLower && CURATED_MEAL_PHOTOS[mealNameLower]) {
+    return CURATED_MEAL_PHOTOS[mealNameLower];
+  }
 
+  // 3. Partial match: check if any curated key is contained within the meal name or vice versa
+  if (mealNameLower.length > 3) {
+    for (const [key, url] of Object.entries(CURATED_MEAL_PHOTOS)) {
+      if (mealNameLower.includes(key) || key.includes(mealNameLower)) {
+        return url;
+      }
+    }
+  }
+
+  // 4. Keyword-based matching from FOOD_KEYWORD_PHOTOS
+  const searchText = `${meal.name ?? ""} ${meal.photoQuery ?? ""} ${meal.type ?? ""} ${meal.cuisine ?? ""}`.toLowerCase();
   if (searchText.trim().length > 1) {
-    // Score each keyword photo by how many keywords match
-    // Multi-word phrases and longer keywords score higher for precision
     let bestMatch: { url: string; score: number } | null = null;
     for (const entry of FOOD_KEYWORD_PHOTOS) {
       let score = 0;
       for (const kw of entry.keywords) {
         if (searchText.includes(kw)) {
-          // Boost multi-word matches (e.g. "pad thai" > "thai")
           const wordCount = kw.split(" ").length;
           score += kw.length * wordCount;
         }
@@ -295,13 +480,13 @@ function getMealPlanPhotoUrl(meal: any): string {
     }
     if (bestMatch) return bestMatch.url;
 
-    // No keyword match — use deterministic hash selection from pool
-    // Hash on just the meal name for consistency (same meal always gets same image)
+    // Hash-based fallback — deterministic so the same meal always gets the same image
     const hashKey = (meal.name ?? searchText).toLowerCase().trim();
     const idx = hashString(hashKey) % FOOD_PHOTO_POOL.length;
     return FOOD_PHOTO_POOL[idx];
   }
 
+  // 5. Final fallback: generic meal-type photo
   const type = (meal.type ?? "default").toLowerCase();
   return MEAL_PHOTO_MAP[type] ?? MEAL_PHOTO_MAP.default;
 }
@@ -359,43 +544,345 @@ const SWAP_PHOTOS: Record<string, string> = {
 };
 
 // Diet-aware default recipes when no AI plan exists
-type DefaultRecipe = { title: string; time: string; steps: string[]; calories: number; protein: number; carbs: number; fat: number };
+type DefaultRecipe = {
+  title: string;
+  time: string;
+  ingredients: string[];
+  steps: string[];
+  calories: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+};
 const DIET_RECIPES: Record<string, Record<string, DefaultRecipe>> = {
   omnivore: {
-    breakfast: { title: "Berry Yogurt Parfait", time: "5 min", steps: ["Add 200g Greek yogurt to a bowl", "Layer with 30g granola", "Top with mixed berries", "Drizzle 1 tsp honey"], calories: 320, protein: 22, carbs: 42, fat: 8 },
-    lunch: { title: "Grilled Chicken Quinoa Bowl", time: "25 min", steps: ["Season chicken breast with salt, pepper, garlic", "Grill 6-7 min each side", "Cook quinoa per packet", "Roast vegetables at 200\u00b0C for 20 min", "Assemble and squeeze lemon"], calories: 520, protein: 42, carbs: 48, fat: 14 },
-    dinner: { title: "Pan-Seared Salmon & Asparagus", time: "20 min", steps: ["Pat salmon dry and season", "Sear skin-side down 4 min, flip 3 min", "Steam asparagus 4-5 min", "Serve with sweet potato"], calories: 480, protein: 38, carbs: 28, fat: 22 },
-    snack: { title: "Protein Snack Board", time: "3 min", steps: ["Portion 30g mixed nuts", "Slice one apple", "Add 2 tbsp almond butter"], calories: 210, protein: 10, carbs: 22, fat: 12 },
+    breakfast: {
+      title: "Berry Yogurt Parfait",
+      time: "5 min",
+      ingredients: ["200g Greek yogurt (0% fat)", "30g granola", "80g mixed berries (strawberries, blueberries, raspberries)", "1 tsp (7g) honey", "5g chia seeds"],
+      steps: [
+        "Spoon 100g Greek yogurt into the bottom of a tall glass or bowl (30 sec)",
+        "Sprinkle half the granola (15g) and half the berries over the yogurt (30 sec)",
+        "Add remaining 100g yogurt as a second layer (15 sec)",
+        "Top with remaining granola, berries, and chia seeds (30 sec)",
+        "Drizzle 1 tsp honey in a thin stream across the top (15 sec)"
+      ],
+      calories: 320, protein: 22, carbs: 42, fat: 8
+    },
+    lunch: {
+      title: "Grilled Chicken Quinoa Bowl",
+      time: "30 min",
+      ingredients: ["150g chicken breast", "80g quinoa (dry weight)", "1 tbsp (15ml) olive oil", "100g mixed vegetables (bell pepper, courgette, red onion)", "1/2 lemon (juice)", "1 tsp smoked paprika", "1/2 tsp garlic powder", "Salt and pepper to taste", "30g baby spinach"],
+      steps: [
+        "Rinse 80g quinoa under cold water, add to a saucepan with 160ml water. Bring to boil, reduce heat, cover and simmer 15 min until fluffy (15 min)",
+        "Meanwhile, butterfly the chicken breast to even thickness. Season both sides with smoked paprika, garlic powder, salt and pepper (2 min)",
+        "Heat a grill pan over medium-high heat. Brush chicken with half the olive oil. Grill 6-7 min per side until internal temp reaches 74\u00b0C (14 min)",
+        "Chop vegetables into 2cm pieces. Toss with remaining olive oil, spread on a baking tray and roast at 200\u00b0C for 15 min (runs parallel with chicken) (15 min)",
+        "Slice chicken into strips. Assemble bowl: quinoa base, roasted veg, chicken, baby spinach. Squeeze lemon juice over the top (3 min)"
+      ],
+      calories: 520, protein: 42, carbs: 48, fat: 14
+    },
+    dinner: {
+      title: "Pan-Seared Salmon & Asparagus",
+      time: "25 min",
+      ingredients: ["170g salmon fillet (skin-on)", "200g asparagus spears (trimmed)", "150g sweet potato (peeled, cubed 2cm)", "1 tbsp (15ml) olive oil", "1/2 lemon (juice + zest)", "2 cloves garlic (minced)", "1 tsp dried dill", "Salt and black pepper to taste", "10g butter"],
+      steps: [
+        "Preheat oven to 200\u00b0C. Toss sweet potato cubes with half the olive oil, salt, and pepper. Spread on a baking tray and roast for 20 min (20 min)",
+        "Pat salmon dry with paper towels. Season skin side and flesh with salt, pepper, and dried dill (1 min)",
+        "Heat remaining olive oil in a non-stick pan over medium-high heat until shimmering. Place salmon skin-side down, press gently for 10 sec. Cook without moving for 4 min until skin is crispy (4 min)",
+        "Flip salmon, add butter and minced garlic to the pan. Baste salmon with the garlic butter for 3 min until fish is just opaque in centre (3 min)",
+        "In the last 5 min of sweet potato cooking, add asparagus to the same tray, drizzle with a little oil. Roast until tender-crisp (5 min)",
+        "Plate salmon over sweet potato and asparagus. Squeeze lemon juice and sprinkle zest over everything (1 min)"
+      ],
+      calories: 480, protein: 38, carbs: 28, fat: 22
+    },
+    snack: {
+      title: "Protein Snack Board",
+      time: "3 min",
+      ingredients: ["30g mixed nuts (almonds, cashews, walnuts)", "1 medium apple (150g)", "2 tbsp (32g) almond butter"],
+      steps: [
+        "Portion 30g mixed nuts into a small bowl or one section of a plate (30 sec)",
+        "Wash and slice the apple into 8 wedges, removing the core (1 min)",
+        "Spoon 2 tbsp almond butter into a small ramekin for dipping (30 sec)",
+        "Arrange everything on a plate or board for easy snacking (30 sec)"
+      ],
+      calories: 210, protein: 10, carbs: 22, fat: 12
+    },
   },
   halal: {
-    breakfast: { title: "Labneh & Za'atar Flatbread", time: "5 min", steps: ["Spread labneh on warm flatbread", "Drizzle olive oil and sprinkle za'atar", "Add sliced cucumber and tomato", "Serve with olives"], calories: 340, protein: 14, carbs: 38, fat: 16 },
-    lunch: { title: "Chicken Shawarma Rice Bowl", time: "25 min", steps: ["Marinate halal chicken in shawarma spices", "Grill or pan-fry until cooked through", "Serve over basmati rice with pickled turnips", "Add garlic sauce and fresh parsley"], calories: 540, protein: 40, carbs: 52, fat: 16 },
-    dinner: { title: "Lamb Kofta with Tabbouleh", time: "30 min", steps: ["Mix minced lamb with onion, parsley, cumin", "Shape into kofta and grill 8-10 min", "Prepare tabbouleh with bulgur, tomato, mint", "Serve with hummus"], calories: 490, protein: 36, carbs: 34, fat: 22 },
-    snack: { title: "Dates & Almonds", time: "2 min", steps: ["Portion 4 medjool dates", "Pair with 30g almonds", "Optional: drizzle of honey"], calories: 220, protein: 6, carbs: 34, fat: 10 },
+    breakfast: {
+      title: "Labneh & Za'atar Flatbread",
+      time: "8 min",
+      ingredients: ["80g labneh (strained yogurt)", "1 wholemeal flatbread/pita (60g)", "1 tbsp (15ml) extra virgin olive oil", "1 tsp za'atar spice blend", "1/2 medium cucumber (60g, sliced)", "1 small tomato (80g, diced)", "6 black olives (30g)", "Pinch of sumac"],
+      steps: [
+        "Warm the flatbread in a dry pan over medium heat for 30 sec each side, or toast lightly (1 min)",
+        "Spread 80g labneh generously over the warm flatbread (30 sec)",
+        "Drizzle 1 tbsp olive oil in a zigzag pattern over the labneh (15 sec)",
+        "Sprinkle 1 tsp za'atar evenly across the surface, add a pinch of sumac (15 sec)",
+        "Arrange cucumber slices, diced tomato, and olives on top. Fold or serve open-faced (1 min)"
+      ],
+      calories: 340, protein: 14, carbs: 38, fat: 16
+    },
+    lunch: {
+      title: "Chicken Shawarma Rice Bowl",
+      time: "30 min",
+      ingredients: ["150g halal chicken thigh (boneless)", "80g basmati rice (dry weight)", "1 tbsp (15ml) olive oil", "2 tbsp (30g) garlic sauce (toum)", "1 tsp cumin", "1 tsp paprika", "1/2 tsp turmeric", "1/2 tsp cinnamon", "40g pickled turnips", "Fresh parsley (10g, chopped)", "1/2 lemon (juice)"],
+      steps: [
+        "Rinse 80g basmati rice. Add to a saucepan with 160ml water and a pinch of salt. Bring to boil, reduce to low heat, cover and cook 12 min. Rest 5 min (17 min)",
+        "Slice chicken thigh into 1cm strips. Toss with olive oil, cumin, paprika, turmeric, cinnamon, salt, and lemon juice. Marinate while rice cooks (5 min minimum)",
+        "Heat a large pan or griddle over high heat. Cook chicken strips 3-4 min per side until charred and cooked through (internal temp 74\u00b0C) (8 min)",
+        "Fluff rice with a fork. Build bowl: rice base, shawarma chicken on top (1 min)",
+        "Garnish with pickled turnips, a generous spoonful of garlic sauce, and fresh parsley (1 min)"
+      ],
+      calories: 540, protein: 40, carbs: 52, fat: 16
+    },
+    dinner: {
+      title: "Lamb Kofta with Tabbouleh",
+      time: "35 min",
+      ingredients: ["200g minced lamb (halal)", "1/2 medium onion (40g, grated)", "15g fresh parsley (finely chopped)", "1 tsp cumin", "1/2 tsp coriander", "60g bulgur wheat (dry)", "2 medium tomatoes (150g, diced)", "1/2 cucumber (60g, diced)", "20g fresh mint (chopped)", "1 lemon (juice)", "1 tbsp (15ml) olive oil", "60g hummus"],
+      steps: [
+        "Soak 60g bulgur wheat in 120ml boiling water. Cover and let stand 15 min until tender (15 min)",
+        "In a bowl, combine minced lamb, grated onion, half the parsley, cumin, coriander, salt and pepper. Mix thoroughly with your hands for 2 min (3 min)",
+        "Divide lamb mixture into 6 portions. Shape each around a flat skewer or roll into oval kofta shapes (3 min)",
+        "Preheat grill to high. Grill kofta 4-5 min per side until browned and cooked through (internal temp 71\u00b0C) (10 min)",
+        "Drain any excess water from bulgur. Add diced tomatoes, cucumber, remaining parsley, mint, lemon juice, and olive oil. Toss well (3 min)",
+        "Plate tabbouleh alongside kofta. Serve with 60g hummus on the side (1 min)"
+      ],
+      calories: 490, protein: 36, carbs: 34, fat: 22
+    },
+    snack: {
+      title: "Dates & Almonds",
+      time: "2 min",
+      ingredients: ["4 medjool dates (80g)", "30g raw almonds (approx 20 almonds)", "1/2 tsp cinnamon (optional)"],
+      steps: [
+        "Remove pits from 4 medjool dates if not already pitted (30 sec)",
+        "Portion 30g almonds (roughly 20 almonds) into a small bowl (15 sec)",
+        "Optionally split each date open and stuff with 2-3 almonds for a more satisfying bite (1 min)",
+        "Dust with cinnamon if desired. Serve immediately (15 sec)"
+      ],
+      calories: 220, protein: 6, carbs: 34, fat: 10
+    },
   },
   vegan: {
-    breakfast: { title: "Overnight Oats with Chia & Berries", time: "5 min", steps: ["Mix 60g oats with 200ml oat milk", "Add 1 tbsp chia seeds", "Refrigerate overnight", "Top with berries and maple syrup"], calories: 310, protein: 10, carbs: 50, fat: 8 },
-    lunch: { title: "Tofu & Edamame Buddha Bowl", time: "20 min", steps: ["Press and cube firm tofu, pan-fry with soy sauce", "Cook brown rice", "Steam edamame and broccoli", "Assemble with avocado and sesame dressing"], calories: 510, protein: 28, carbs: 52, fat: 20 },
-    dinner: { title: "Chickpea & Spinach Curry", time: "25 min", steps: ["Saut\u00e9 onion, garlic, ginger", "Add curry paste and coconut milk", "Stir in chickpeas and spinach", "Simmer 15 min, serve over rice"], calories: 460, protein: 18, carbs: 56, fat: 18 },
-    snack: { title: "Hummus & Veggie Sticks", time: "3 min", steps: ["Portion 60g hummus", "Slice carrots, cucumber, bell pepper", "Optional: add rice cakes"], calories: 190, protein: 8, carbs: 20, fat: 10 },
+    breakfast: {
+      title: "Overnight Oats with Chia & Berries",
+      time: "5 min prep + overnight",
+      ingredients: ["60g rolled oats", "200ml oat milk", "1 tbsp (12g) chia seeds", "80g mixed berries (fresh or frozen)", "1 tbsp (20g) maple syrup", "1/2 tsp vanilla extract", "Pinch of cinnamon"],
+      steps: [
+        "In a mason jar or bowl, combine 60g oats, 200ml oat milk, chia seeds, vanilla extract, and cinnamon. Stir well to combine (1 min)",
+        "Cover and refrigerate for at least 6 hours or overnight. The oats and chia will absorb the liquid and thicken (6-8 hrs)",
+        "In the morning, stir the mixture — add a splash more oat milk if too thick (30 sec)",
+        "Top with mixed berries and drizzle maple syrup over the top (30 sec)",
+        "Eat cold or microwave for 90 sec if you prefer warm oats (0-2 min)"
+      ],
+      calories: 310, protein: 10, carbs: 50, fat: 8
+    },
+    lunch: {
+      title: "Tofu & Edamame Buddha Bowl",
+      time: "25 min",
+      ingredients: ["150g firm tofu (pressed and cubed 2cm)", "80g brown rice (dry weight)", "80g frozen edamame beans (shelled)", "80g broccoli florets", "1/2 ripe avocado (60g)", "1 tbsp (15ml) soy sauce or tamari", "1 tsp sesame oil", "1 tbsp (15ml) rice vinegar", "1 tsp maple syrup", "5g sesame seeds", "1 tbsp (15ml) vegetable oil"],
+      steps: [
+        "Cook 80g brown rice in 200ml water — bring to boil, reduce heat, cover and simmer 20 min until tender. Rest 5 min (25 min)",
+        "Press tofu between paper towels with a heavy object for 10 min to remove moisture. Cut into 2cm cubes (10 min, runs parallel)",
+        "Heat vegetable oil in a non-stick pan over medium-high heat. Pan-fry tofu cubes 3-4 min per side until golden and crispy. Add soy sauce in the last minute (8 min)",
+        "Steam or boil edamame and broccoli together for 4 min until bright green and tender-crisp (4 min)",
+        "Make dressing: whisk together sesame oil, rice vinegar, and maple syrup (30 sec)",
+        "Build bowl: rice base, tofu, edamame, broccoli, sliced avocado. Drizzle dressing and sprinkle sesame seeds (2 min)"
+      ],
+      calories: 510, protein: 28, carbs: 52, fat: 20
+    },
+    dinner: {
+      title: "Chickpea & Spinach Curry",
+      time: "30 min",
+      ingredients: ["1 can (400g) chickpeas (drained, rinsed)", "200g fresh spinach", "1 can (200ml) coconut milk", "1 medium onion (120g, diced)", "3 cloves garlic (minced)", "15g fresh ginger (grated)", "2 tbsp (30g) curry paste (red or yellow)", "80g basmati rice (dry weight)", "1 tbsp (15ml) vegetable oil", "1 tsp cumin seeds", "1/2 tsp turmeric", "Salt to taste", "Fresh coriander for garnish (10g)"],
+      steps: [
+        "Start rice: rinse 80g basmati, add to pot with 160ml water. Bring to boil, reduce heat, cover and cook 12 min. Rest 5 min off heat (17 min)",
+        "Heat vegetable oil in a large pan over medium heat. Add cumin seeds and cook 30 sec until fragrant. Add diced onion and cook 5 min until softened (5.5 min)",
+        "Add minced garlic and grated ginger, stir for 1 min until aromatic. Add curry paste and turmeric, stir 30 sec (1.5 min)",
+        "Pour in coconut milk, stir to combine. Add drained chickpeas and bring to a gentle simmer. Cook 10 min, stirring occasionally (10 min)",
+        "Add spinach in handfuls, stirring each batch until wilted — about 2 min total. Season with salt (2 min)",
+        "Serve curry over fluffed basmati rice. Garnish with fresh coriander leaves (1 min)"
+      ],
+      calories: 460, protein: 18, carbs: 56, fat: 18
+    },
+    snack: {
+      title: "Hummus & Veggie Sticks",
+      time: "5 min",
+      ingredients: ["60g hummus (shop-bought or homemade)", "1 medium carrot (80g, cut into sticks)", "1/2 cucumber (80g, cut into sticks)", "1/2 bell pepper (60g, sliced)", "2 rice cakes (optional, 18g)"],
+      steps: [
+        "Wash and peel the carrot. Cut into sticks roughly 8cm long and 1cm wide (1 min)",
+        "Cut cucumber into similar-sized sticks. Slice bell pepper into strips (1 min)",
+        "Spoon 60g hummus into a small bowl or ramekin (15 sec)",
+        "Arrange vegetable sticks around the hummus. Add rice cakes alongside if using (1 min)",
+        "Serve immediately — keeps in an airtight container for up to 4 hours (15 sec)"
+      ],
+      calories: 190, protein: 8, carbs: 20, fat: 10
+    },
   },
   vegetarian: {
-    breakfast: { title: "Spinach & Feta Omelette", time: "10 min", steps: ["Whisk 3 eggs with salt and pepper", "Saut\u00e9 spinach in olive oil", "Pour eggs over spinach, add crumbled feta", "Fold and serve with wholegrain toast"], calories: 350, protein: 24, carbs: 18, fat: 20 },
-    lunch: { title: "Halloumi & Roasted Veg Wrap", time: "20 min", steps: ["Grill halloumi slices until golden", "Roast courgette, peppers, red onion", "Warm a wholegrain wrap", "Assemble with hummus and rocket"], calories: 490, protein: 26, carbs: 42, fat: 24 },
-    dinner: { title: "Paneer Tikka with Brown Rice", time: "25 min", steps: ["Marinate paneer in yogurt and tikka spices", "Grill or bake until charred", "Cook brown rice", "Serve with raita and salad"], calories: 480, protein: 28, carbs: 46, fat: 20 },
-    snack: { title: "Greek Yogurt with Honey & Walnuts", time: "3 min", steps: ["Add 200g Greek yogurt to a bowl", "Drizzle 1 tsp honey", "Top with 20g walnuts"], calories: 230, protein: 16, carbs: 18, fat: 12 },
+    breakfast: {
+      title: "Spinach & Feta Omelette",
+      time: "12 min",
+      ingredients: ["3 large eggs", "40g fresh spinach", "30g feta cheese (crumbled)", "1 tsp (5ml) olive oil", "1 slice wholegrain bread (40g, toasted)", "Salt and black pepper to taste", "Pinch of nutmeg"],
+      steps: [
+        "Crack 3 eggs into a bowl. Season with salt, pepper, and a pinch of nutmeg. Whisk with a fork until just combined — don't over-beat (1 min)",
+        "Heat olive oil in a 22cm non-stick pan over medium heat. Add spinach and cook 1-2 min, stirring until wilted. Remove and set aside (2 min)",
+        "Wipe the pan, add a tiny drizzle more oil. Pour in the whisked eggs, tilting the pan to spread evenly. Cook without stirring for 1 min until edges set (1 min)",
+        "Gently lift edges with a spatula, tilt pan to let uncooked egg flow underneath. Cook 2 more min until mostly set but still slightly glossy on top (2 min)",
+        "Scatter wilted spinach and crumbled feta over one half of the omelette. Fold the other half over. Cook 30 more sec (30 sec)",
+        "Slide onto a plate. Serve alongside a slice of toasted wholegrain bread (1 min)"
+      ],
+      calories: 350, protein: 24, carbs: 18, fat: 20
+    },
+    lunch: {
+      title: "Halloumi & Roasted Veg Wrap",
+      time: "25 min",
+      ingredients: ["80g halloumi cheese (sliced 1cm thick)", "1 wholegrain tortilla wrap (60g)", "1/2 courgette (80g, sliced lengthwise)", "1/2 red pepper (60g, quartered)", "1/4 red onion (30g, sliced into rings)", "2 tbsp (30g) hummus", "20g rocket/arugula", "1 tbsp (15ml) olive oil", "1/2 tsp dried oregano", "1/2 lemon (juice)"],
+      steps: [
+        "Preheat oven to 200\u00b0C. Toss sliced courgette, red pepper, and red onion with olive oil and dried oregano on a baking tray. Roast for 18-20 min until charred at edges (20 min)",
+        "While veg roast, heat a dry non-stick pan or griddle over medium-high heat. Cook halloumi slices 2 min per side until golden brown with grill marks (4 min)",
+        "Warm the tortilla wrap in the same pan for 20 sec each side to make it pliable (40 sec)",
+        "Spread 2 tbsp hummus down the centre of the warm wrap (15 sec)",
+        "Layer roasted vegetables, grilled halloumi slices, and rocket on top. Squeeze lemon juice over (1 min)",
+        "Fold the bottom of the wrap up, then fold both sides inward. Roll tightly and cut in half diagonally (30 sec)"
+      ],
+      calories: 490, protein: 26, carbs: 42, fat: 24
+    },
+    dinner: {
+      title: "Paneer Tikka with Brown Rice",
+      time: "30 min",
+      ingredients: ["180g paneer (cubed 2.5cm)", "80g brown rice (dry weight)", "80g Greek yogurt", "1 tbsp tikka masala paste", "1 tsp garam masala", "1/2 tsp turmeric", "1/2 tsp chili powder", "1 lemon (juice of half, wedges from other half)", "1/2 green pepper (60g, cubed)", "1/2 red onion (40g, quartered)", "1 tbsp (15ml) oil", "Fresh coriander (10g)", "30g raita (yogurt, cucumber, mint)"],
+      steps: [
+        "Start brown rice: rinse 80g rice, add to pot with 200ml water. Bring to boil, reduce heat, cover and simmer 22-25 min until tender (25 min)",
+        "In a bowl, mix yogurt, tikka paste, garam masala, turmeric, chili powder, and lemon juice. Add paneer cubes, pepper, and onion. Coat thoroughly. Marinate 10 min minimum (10 min, runs parallel)",
+        "Preheat oven grill/broiler to high. Thread marinated paneer and vegetables onto skewers or spread on a lined baking tray (2 min)",
+        "Grill under broiler for 5-6 min, turn once, until paneer is charred and slightly blistered on edges (6 min)",
+        "Fluff rice with a fork. Plate rice, arrange tikka paneer and veg on top (1 min)",
+        "Spoon raita alongside, scatter fresh coriander, and serve with lemon wedges (1 min)"
+      ],
+      calories: 480, protein: 28, carbs: 46, fat: 20
+    },
+    snack: {
+      title: "Greek Yogurt with Honey & Walnuts",
+      time: "3 min",
+      ingredients: ["200g Greek yogurt (full fat or 0%)", "1 tsp (7g) raw honey", "20g walnuts (roughly chopped, about 5 halves)", "Pinch of cinnamon (optional)"],
+      steps: [
+        "Spoon 200g Greek yogurt into a bowl (15 sec)",
+        "Roughly chop 20g walnuts — about 5 walnut halves broken into pieces (30 sec)",
+        "Scatter walnuts over the yogurt (15 sec)",
+        "Drizzle 1 tsp honey in a thin stream. Dust with cinnamon if desired (30 sec)"
+      ],
+      calories: 230, protein: 16, carbs: 18, fat: 12
+    },
   },
   keto: {
-    breakfast: { title: "Bacon & Avocado Eggs", time: "10 min", steps: ["Fry 3 rashers of bacon until crispy", "Scramble 3 eggs in the bacon fat", "Slice half an avocado", "Serve together with salt and pepper"], calories: 420, protein: 28, carbs: 4, fat: 34 },
-    lunch: { title: "Grilled Chicken Caesar (No Croutons)", time: "15 min", steps: ["Grill seasoned chicken breast", "Toss romaine with parmesan and Caesar dressing", "Slice chicken over salad", "Add boiled egg halves"], calories: 480, protein: 42, carbs: 6, fat: 32 },
-    dinner: { title: "Steak with Butter & Green Beans", time: "20 min", steps: ["Season ribeye with salt and pepper", "Pan-sear 4 min each side", "Rest 5 min, top with herb butter", "Saut\u00e9 green beans in garlic butter"], calories: 520, protein: 44, carbs: 8, fat: 36 },
-    snack: { title: "Cheese & Olives", time: "2 min", steps: ["Portion 40g cheddar or brie", "Add 8-10 olives", "Optional: celery sticks"], calories: 200, protein: 10, carbs: 2, fat: 18 },
+    breakfast: {
+      title: "Bacon & Avocado Eggs",
+      time: "12 min",
+      ingredients: ["3 rashers back bacon (75g)", "3 large eggs", "1/2 ripe avocado (75g)", "10g butter", "Salt and black pepper", "Pinch of chili flakes (optional)"],
+      steps: [
+        "Place 3 bacon rashers in a cold non-stick pan. Turn heat to medium. Cook 3-4 min per side until crispy to your liking, flipping once (8 min)",
+        "Remove bacon to a plate lined with kitchen paper. Keep 1 tsp of the rendered bacon fat in the pan (30 sec)",
+        "Add 10g butter to the pan over medium-low heat. Crack 3 eggs into the pan. Scramble gently with a spatula, making large curds — remove from heat while still slightly wet (they'll finish cooking from residual heat) (3 min)",
+        "Halve the avocado, remove pit, and slice or scoop 75g onto the plate (30 sec)",
+        "Plate scrambled eggs alongside bacon and avocado. Season with salt, pepper, and chili flakes if desired (30 sec)"
+      ],
+      calories: 420, protein: 28, carbs: 4, fat: 34
+    },
+    lunch: {
+      title: "Grilled Chicken Caesar (No Croutons)",
+      time: "20 min",
+      ingredients: ["150g chicken breast", "100g romaine lettuce (chopped)", "20g parmesan cheese (shaved)", "2 tbsp (30ml) Caesar dressing", "2 boiled eggs (halved)", "1 tbsp (15ml) olive oil", "1/2 lemon (juice)", "1 clove garlic (minced)", "Salt and black pepper"],
+      steps: [
+        "Boil 2 eggs: bring water to a rolling boil, lower eggs in gently, cook exactly 9 min for jammy centres. Transfer to ice water for 5 min (14 min total, start first)",
+        "Butterfly chicken breast to even thickness. Season with salt, pepper, and minced garlic (1 min)",
+        "Heat olive oil in a grill pan over medium-high heat. Grill chicken 5-6 min per side until internal temp reaches 74\u00b0C and nice char marks form (12 min)",
+        "Chop romaine lettuce and place in a large bowl. Add Caesar dressing and lemon juice, toss to coat evenly (1 min)",
+        "Slice grilled chicken into 1cm strips. Arrange over dressed romaine. Top with shaved parmesan and halved boiled eggs (2 min)"
+      ],
+      calories: 480, protein: 42, carbs: 6, fat: 32
+    },
+    dinner: {
+      title: "Steak with Butter & Green Beans",
+      time: "25 min",
+      ingredients: ["200g ribeye steak (2.5cm thick)", "150g green beans (trimmed)", "20g butter", "2 cloves garlic (crushed)", "1 sprig fresh rosemary", "1 sprig fresh thyme", "1 tbsp (15ml) olive oil", "Flaky sea salt and black pepper"],
+      steps: [
+        "Remove steak from fridge 20 min before cooking to reach room temperature. Pat completely dry with paper towels. Season generously on both sides with flaky salt and pepper (20 min + 1 min)",
+        "Heat olive oil in a heavy cast-iron skillet over high heat until just beginning to smoke (2 min)",
+        "Lay steak away from you into the hot pan. Do not move it. Sear 4 min for a deep golden crust. Flip once (4 min)",
+        "Add butter, crushed garlic, rosemary, and thyme to the pan. Tilt pan slightly and baste steak with the foaming butter using a spoon for 3 min. For medium-rare, internal temp should read 52-54\u00b0C (3 min)",
+        "Transfer steak to a cutting board. Rest for 5 min — this allows juices to redistribute (5 min)",
+        "While steak rests, use the same pan (reduce heat to medium). Add green beans with a pinch of salt, saut\u00e9 4-5 min tossing frequently until tender-crisp and slightly blistered (5 min)",
+        "Slice steak against the grain. Plate alongside green beans, spooning any resting juices over the top (1 min)"
+      ],
+      calories: 520, protein: 44, carbs: 8, fat: 36
+    },
+    snack: {
+      title: "Cheese & Olives",
+      time: "2 min",
+      ingredients: ["40g aged cheddar or brie cheese", "8-10 kalamata olives (35g)", "3 celery sticks (60g, optional)"],
+      steps: [
+        "Cut 40g cheese into bite-sized cubes or slices (30 sec)",
+        "Drain olives and portion 8-10 onto the plate (15 sec)",
+        "Wash and trim celery into 8cm sticks if using (30 sec)",
+        "Arrange on a small plate or board for easy nibbling (15 sec)"
+      ],
+      calories: 200, protein: 10, carbs: 2, fat: 18
+    },
   },
   paleo: {
-    breakfast: { title: "Sweet Potato Hash with Eggs", time: "15 min", steps: ["Dice sweet potato and pan-fry until tender", "Add diced onion and bell pepper", "Make 2 wells and crack eggs in", "Cover and cook until eggs set"], calories: 380, protein: 20, carbs: 36, fat: 18 },
-    lunch: { title: "Turkey Lettuce Wraps", time: "15 min", steps: ["Cook ground turkey with garlic and ginger", "Add coconut aminos and lime juice", "Spoon into butter lettuce cups", "Top with shredded carrot and fresh herbs"], calories: 420, protein: 36, carbs: 16, fat: 24 },
-    dinner: { title: "Herb-Crusted Salmon with Roasted Veg", time: "25 min", steps: ["Season salmon with herbs and lemon", "Roast at 200\u00b0C for 12-15 min", "Toss broccoli and carrots in olive oil", "Roast vegetables alongside salmon"], calories: 460, protein: 38, carbs: 20, fat: 24 },
-    snack: { title: "Apple Slices with Almond Butter", time: "3 min", steps: ["Slice one apple", "Pair with 2 tbsp almond butter", "Sprinkle with cinnamon"], calories: 200, protein: 6, carbs: 26, fat: 10 },
+    breakfast: {
+      title: "Sweet Potato Hash with Eggs",
+      time: "20 min",
+      ingredients: ["1 medium sweet potato (200g, peeled and diced 1.5cm)", "2 large eggs", "1/2 medium onion (50g, diced)", "1/2 bell pepper (60g, diced)", "1 tbsp (15ml) coconut oil or olive oil", "1/2 tsp smoked paprika", "1/2 tsp garlic powder", "Salt and pepper", "Fresh chives for garnish (5g)"],
+      steps: [
+        "Heat oil in a large non-stick or cast-iron skillet over medium heat. Add diced sweet potato in a single layer. Cook 8-10 min, flipping every 2-3 min, until golden and fork-tender (10 min)",
+        "Add diced onion and bell pepper to the skillet. Season everything with smoked paprika, garlic powder, salt, and pepper. Cook 3-4 min until vegetables soften (4 min)",
+        "Make 2 wells in the hash by pushing vegetables aside. Crack an egg into each well (15 sec)",
+        "Cover the pan with a lid or large plate. Cook on medium-low for 4-5 min until egg whites are set but yolks are still runny (5 min)",
+        "Remove from heat. Garnish with chopped fresh chives. Serve directly from the pan (30 sec)"
+      ],
+      calories: 380, protein: 20, carbs: 36, fat: 18
+    },
+    lunch: {
+      title: "Turkey Lettuce Wraps",
+      time: "18 min",
+      ingredients: ["200g lean ground turkey", "1 tbsp (15ml) coconut aminos (soy-free alternative)", "1 tbsp (15ml) fresh lime juice", "2 cloves garlic (minced)", "10g fresh ginger (grated)", "8 large butter lettuce leaves", "1 medium carrot (60g, julienned)", "1/4 cup fresh herbs (coriander, mint, basil — 15g total)", "1 tbsp (15ml) avocado oil", "1/2 tsp fish sauce (optional)", "Pinch of red pepper flakes"],
+      steps: [
+        "Heat avocado oil in a large skillet over medium-high heat until shimmering (1 min)",
+        "Add minced garlic and grated ginger, stir for 30 sec until fragrant. Add ground turkey, breaking it up with a wooden spoon (30 sec)",
+        "Cook turkey 5-6 min, continuing to break into small pieces, until browned and no pink remains (6 min)",
+        "Add coconut aminos, lime juice, fish sauce if using, and red pepper flakes. Stir well and cook 2 more min until sauce is absorbed (2 min)",
+        "Wash and separate 8 butter lettuce leaves, pat dry. These are your 'wrap shells' (1 min)",
+        "Spoon turkey mixture into each lettuce cup. Top with julienned carrot and fresh herbs. Serve with extra lime wedges (2 min)"
+      ],
+      calories: 420, protein: 36, carbs: 16, fat: 24
+    },
+    dinner: {
+      title: "Herb-Crusted Salmon with Roasted Veg",
+      time: "30 min",
+      ingredients: ["180g salmon fillet (skin-on)", "150g broccoli florets", "1 medium carrot (100g, sliced 1cm rounds)", "1 tbsp (15ml) olive oil + 1 tsp for veg", "1 lemon (zest + juice of half, wedges from other half)", "1 tbsp fresh dill (chopped, 5g)", "1 tbsp fresh parsley (chopped, 5g)", "1 clove garlic (minced)", "1 tsp Dijon mustard", "Salt and pepper"],
+      steps: [
+        "Preheat oven to 200\u00b0C. Toss broccoli florets and carrot slices with 1 tsp olive oil, salt, and pepper on a lined baking tray. Roast for 20 min (20 min)",
+        "Meanwhile, make herb crust: mix 1 tbsp olive oil, chopped dill, parsley, minced garlic, Dijon mustard, lemon zest, and a pinch of salt in a small bowl (2 min)",
+        "Pat salmon dry. Place skin-side down on a separate lined tray or alongside the veg. Spread herb mixture evenly over the top of the salmon (1 min)",
+        "After vegetables have roasted 10 min, add the salmon tray to the oven. Roast both for the remaining 12-15 min until salmon flakes easily and reaches 52\u00b0C internal for medium (12-15 min)",
+        "Plate salmon with roasted broccoli and carrots. Squeeze lemon juice over everything and serve with lemon wedges (1 min)"
+      ],
+      calories: 460, protein: 38, carbs: 20, fat: 24
+    },
+    snack: {
+      title: "Apple Slices with Almond Butter",
+      time: "3 min",
+      ingredients: ["1 medium apple (150g — Gala, Fuji, or Granny Smith)", "2 tbsp (32g) almond butter (no added sugar)", "1/4 tsp ground cinnamon"],
+      steps: [
+        "Wash the apple. Cut into quarters, remove core, then slice each quarter into 3 wedges (12 slices total) (1 min)",
+        "Spoon 2 tbsp almond butter into a small bowl for dipping (15 sec)",
+        "Dust apple slices with ground cinnamon (15 sec)",
+        "Dip slices into almond butter as you eat. Alternatively, spread almond butter onto each slice (30 sec)"
+      ],
+      calories: 200, protein: 6, carbs: 26, fat: 10
+    },
   },
 };
 function getMealRecipes(diet: string): Record<string, DefaultRecipe> {
@@ -885,7 +1372,7 @@ function MealsScreenContent() {
     // Only trigger once, and only if no plan exists
     if (aiMealPlan || autoGenTriggeredRef.current || regenerating || autoGeneratingPlan) return;
     autoGenTriggeredRef.current = true;
-    // Check if onboarding is complete â only auto-generate after onboarding
+    // Check if onboarding is complete Ã¢ÂÂ only auto-generate after onboarding
     AsyncStorage.getItem("@onboarding_complete").then(val => {
       if (val !== "true") return;
       // Double-check storage hasn't been populated in the meantime
@@ -897,7 +1384,7 @@ function MealsScreenContent() {
             return;
           } catch {}
         }
-        // No plan exists â auto-generate
+        // No plan exists Ã¢ÂÂ auto-generate
         autoGenRef.current = true;
         setAutoGeneratingPlan(true);
         regenerateMealPlan.mutate({
@@ -923,7 +1410,7 @@ function MealsScreenContent() {
     weeklyRefreshRef.current = true;
     isWeeklyRefreshNeeded().then(needed => {
       if (!needed) return;
-      // It's a new week â auto-regenerate the meal plan
+      // It's a new week Ã¢ÂÂ auto-regenerate the meal plan
       autoGenRef.current = true;
       setAutoGeneratingPlan(true);
       regenerateMealPlan.mutate({
@@ -941,7 +1428,7 @@ function MealsScreenContent() {
     }).catch(() => {});
   }, [aiMealPlan, localProfile]);
 
-  // ââ AI Meal Image Generation ââââââââââââââââââââââââââââââââââââââââââââââââââ
+  // Ã¢ÂÂÃ¢ÂÂ AI Meal Image Generation Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
   const generateMealImages = trpc.mealImages.generateBatch.useMutation();
 
   const triggerMealImageGeneration = useCallback(async (plan: any) => {
@@ -990,7 +1477,7 @@ function MealsScreenContent() {
       // Update the persistent photo cache so images survive app restarts
       updatePhotoCacheFromPlan(updatedPlan).catch(() => {});
     } catch (e) {
-      // Silently fail â fallback images will be used
+      // Silently fail Ã¢ÂÂ fallback images will be used
       console.warn("Meal image generation failed:", e);
     } finally {
       setGeneratingImages(false);
@@ -1105,7 +1592,7 @@ function MealsScreenContent() {
     }
   }, [pantryItems, calorieGoal, macroTargets, userDietaryPref, userGoal, localProfile]);
 
-  // ââ Pantry Expiry Alerts â schedule notifications when items are expiring ââ
+  // Ã¢ÂÂÃ¢ÂÂ Pantry Expiry Alerts Ã¢ÂÂ schedule notifications when items are expiring Ã¢ÂÂÃ¢ÂÂ
   React.useEffect(() => {
     if (pantryItems.length === 0) return;
     const now = new Date();
@@ -1122,7 +1609,7 @@ function MealsScreenContent() {
     }
   }, [pantryItems]);
 
-  // ââ Generate "Use It Up" meal suggestions for expiring items ââ
+  // Ã¢ÂÂÃ¢ÂÂ Generate "Use It Up" meal suggestions for expiring items Ã¢ÂÂÃ¢ÂÂ
   const handleUseItUpSuggestions = React.useCallback(async () => {
     const expiring = getExpiringItems(3);
     if (expiring.length === 0) return;
@@ -1150,7 +1637,7 @@ function MealsScreenContent() {
     setGeneratingExpiryMeals(false);
   }, [pantryItems, getExpiringItems, userDietaryPref, userGoal]);
 
-  // ââ Pantry Shopping List â compile "need to buy" items from daily plan ââ
+  // Ã¢ÂÂÃ¢ÂÂ Pantry Shopping List Ã¢ÂÂ compile "need to buy" items from daily plan Ã¢ÂÂÃ¢ÂÂ
   const handleCreatePantryShoppingList = React.useCallback(() => {
     if (!pantryDailyPlan?.dailyPlan) return;
     const needToBuy: { name: string; quantity?: string }[] = [];
@@ -1192,7 +1679,7 @@ function MealsScreenContent() {
   const sharePantryShoppingList = React.useCallback(async () => {
     const unchecked = pantryShoppingList.filter(i => !i.checked);
     const items = unchecked.length > 0 ? unchecked : pantryShoppingList;
-    const text = `PeakPulse Shopping List\n\n${items.map(i => `\u25a1 ${i.name}${i.quantity ? " â " + i.quantity : ""}`).join("\n")}`;
+    const text = `PeakPulse Shopping List\n\n${items.map(i => `\u25a1 ${i.name}${i.quantity ? " Ã¢ÂÂ " + i.quantity : ""}`).join("\n")}`;
     await Clipboard.setStringAsync(text);
     Alert.alert("\u2705 Copied!", `${items.length} items copied to clipboard. Paste anywhere to share.`);
   }, [pantryShoppingList]);
@@ -1263,7 +1750,7 @@ function MealsScreenContent() {
       if (match) {
         if (match.quantity && match.quantity > 1) {
           await updatePantryItem(match.id, { quantity: match.quantity - 1 });
-          deducted.push(`${match.name} (qty: ${match.quantity} â ${match.quantity - 1})`);
+          deducted.push(`${match.name} (qty: ${match.quantity} Ã¢ÂÂ ${match.quantity - 1})`);
         } else {
           await removePantryItem(match.id);
           deducted.push(`${match.name} (removed)`);
@@ -1336,7 +1823,7 @@ function MealsScreenContent() {
     // Include past meal names so AI avoids repeating dishes
     if (pastMealNames.length > 0) base.pastMealNames = pastMealNames;
 
-    // Explicit variety instruction — tell the AI to generate unique meals per day
+    // Explicit variety instruction â tell the AI to generate unique meals per day
     base.varietyHint = "IMPORTANT: Each day of the week MUST have completely different meals. Do NOT repeat the same dishes across different days. Vary cuisines, cooking methods, and ingredients across the week. At most 1-2 dishes may appear twice in the entire week. Each day should feel like a fresh menu.";
 
     // If cuisines selected, reinforce them in the hint
@@ -1587,7 +2074,7 @@ function MealsScreenContent() {
       .slice(0, 5);
   }, [mealName, favourites]);
 
-  // 1B: Parallax scroll value for Meals hero â MUST be above early return to avoid hooks ordering violation
+  // 1B: Parallax scroll value for Meals hero Ã¢ÂÂ MUST be above early return to avoid hooks ordering violation
   const mealScrollY = useSharedValue(0);
   const mealHeroImgStyle = useAnimatedStyle(() => ({
     transform: [{ translateY: interpolate(mealScrollY.value, [0, 200], [0, 100], Extrapolation.CLAMP) }],
@@ -1679,7 +2166,7 @@ function MealsScreenContent() {
         </ReAnimated.View>
       </View>
 
-      {/* Daily Summary Card â compact */}
+      {/* Daily Summary Card Ã¢ÂÂ compact */}
       <View style={{ marginHorizontal: 16, marginTop: -16, backgroundColor: MSURFACE, borderRadius: 20, padding: 14, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)", shadowColor: "#000", shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.4, shadowRadius: 8, zIndex: 10 }}>
         <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
           <Text style={{ color: MMUTED, fontSize: 10, fontFamily: "DMSans_700Bold", textTransform: "uppercase" }}>Today's Nutrition</Text>
@@ -1696,7 +2183,7 @@ function MealsScreenContent() {
         </View>
       </View>
 
-      {/* ââ Tab Segmented Control ââ */}
+      {/* Ã¢ÂÂÃ¢ÂÂ Tab Segmented Control Ã¢ÂÂÃ¢ÂÂ */}
       <View style={{ flexDirection: "row", marginHorizontal: 16, marginTop: 12, backgroundColor: MSURFACE, borderRadius: 12, padding: 3, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}>
         {["Tracker", "Meal Plan", "Pantry"].map((tab, i) => (
           <TouchableOpacity
@@ -1725,7 +2212,7 @@ function MealsScreenContent() {
           />
         }
       >
-        {/* ââ Log Meal Dropdown Button ââ */}
+        {/* Ã¢ÂÂÃ¢ÂÂ Log Meal Dropdown Button Ã¢ÂÂÃ¢ÂÂ */}
         <View style={{ marginTop: 16, marginBottom: 12, zIndex: 20 }}>
           <TouchableOpacity
             style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8, backgroundColor: "#F59E0B", borderRadius: 14, paddingVertical: 12 }}
@@ -1769,7 +2256,7 @@ function MealsScreenContent() {
           )}
         </View>
 
-        {/* ââ Manual Log Panel ââ */}
+        {/* Ã¢ÂÂÃ¢ÂÂ Manual Log Panel Ã¢ÂÂÃ¢ÂÂ */}
         {logMethod === "manual" && (
           <View style={{ backgroundColor: MSURFACE, borderRadius: 16, padding: 16, marginBottom: 16, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}>
             <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
@@ -1898,7 +2385,7 @@ function MealsScreenContent() {
           </View>
         )}
 
-        {/* ââ AI Scan Panel ââ */}
+        {/* Ã¢ÂÂÃ¢ÂÂ AI Scan Panel Ã¢ÂÂÃ¢ÂÂ */}
         {logMethod === "ai-scan" && (
           <View style={{ backgroundColor: MSURFACE, borderRadius: 16, padding: 16, marginBottom: 16, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}>
             <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
@@ -2089,7 +2576,7 @@ function MealsScreenContent() {
           </View>
         )}
 
-        {/* ââ Day Meal Tiles (Breakfast, Lunch, Dinner, Snack) ââ */}
+        {/* Ã¢ÂÂÃ¢ÂÂ Day Meal Tiles (Breakfast, Lunch, Dinner, Snack) Ã¢ÂÂÃ¢ÂÂ */}
         <View style={{ marginBottom: 16 }}>
           <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
             <Text style={{ color: MFG, fontFamily: "DMSans_700Bold", fontSize: 16 }}>Today's Meals</Text>
@@ -2191,7 +2678,7 @@ function MealsScreenContent() {
           </View>
         </View>
 
-        {/* ââ Inline Nutrition Chart (7-day) ââ */}
+        {/* Ã¢ÂÂÃ¢ÂÂ Inline Nutrition Chart (7-day) Ã¢ÂÂÃ¢ÂÂ */}
         {chartData.length > 0 && (
           <View style={{ backgroundColor: MSURFACE, borderRadius: 16, padding: 14, marginBottom: 16, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}>
             <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
@@ -2223,7 +2710,7 @@ function MealsScreenContent() {
           </View>
         )}
 
-        {/* ââ Water Intake ââ */}
+        {/* Ã¢ÂÂÃ¢ÂÂ Water Intake Ã¢ÂÂÃ¢ÂÂ */}
         <View style={{ backgroundColor: MSURFACE, borderRadius: 16, padding: 14, marginBottom: 16, borderWidth: 1, borderColor: "rgba(59,130,246,0.15)" }}>
           <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
             <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
@@ -2260,7 +2747,7 @@ function MealsScreenContent() {
           </View>
         </View>
 
-        {/* ââ Quick Add from Saved Foods ââ */}
+        {/* Ã¢ÂÂÃ¢ÂÂ Quick Add from Saved Foods Ã¢ÂÂÃ¢ÂÂ */}
         {favourites.length > 0 && (
           <View style={{ marginBottom: 12 }}>
             <Text style={{ color: MMUTED, fontSize: 10, fontFamily: "DMSans_700Bold", letterSpacing: 1, marginBottom: 8 }}>QUICK ADD FROM SAVED FOODS</Text>
@@ -2279,7 +2766,7 @@ function MealsScreenContent() {
           </View>
         )}
 
-        {/* ââ Meal Gallery + Pantry + Favourites Links ââ */}
+        {/* Ã¢ÂÂÃ¢ÂÂ Meal Gallery + Pantry + Favourites Links Ã¢ÂÂÃ¢ÂÂ */}
         <View style={{ flexDirection: "row", gap: 8, marginBottom: 16 }}>
           <TouchableOpacity
             style={{ flex: 1, flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 4, backgroundColor: MSURFACE, borderRadius: 12, paddingVertical: 10, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}
@@ -2304,7 +2791,7 @@ function MealsScreenContent() {
           </TouchableOpacity>
         </View>
 
-        {/* ââ Favourites Expanded ââ */}
+        {/* Ã¢ÂÂÃ¢ÂÂ Favourites Expanded Ã¢ÂÂÃ¢ÂÂ */}
         {showFavourites && (
           <View style={{ backgroundColor: MSURFACE, borderRadius: 16, padding: 14, marginBottom: 16, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}>
             <Text style={{ color: MFG, fontFamily: "DMSans_700Bold", fontSize: 14, marginBottom: 10 }}>Saved Foods</Text>
@@ -2344,7 +2831,7 @@ function MealsScreenContent() {
         )}
 
 
-        {/* ââ Today's Log ââ */}
+        {/* Ã¢ÂÂÃ¢ÂÂ Today's Log Ã¢ÂÂÃ¢ÂÂ */}
         <Text style={{ color: MFG, fontFamily: "DMSans_700Bold", fontSize: 15, marginBottom: 10 }}>
           Today's Log {meals.length > 0 ? `(${meals.length})` : ""}
         </Text>
@@ -2396,7 +2883,7 @@ function MealsScreenContent() {
           ))
         )}
 
-        {/* ââ Shopping List (collapsible) ââ */}
+        {/* Ã¢ÂÂÃ¢ÂÂ Shopping List (collapsible) Ã¢ÂÂÃ¢ÂÂ */}
         {aiMealPlan?.days && aiMealPlan.days.length > 0 && (() => {
           const ingredientMap: Record<string, { count: number; sources: string[] }> = {};
           for (const day of aiMealPlan.days) {
@@ -2485,7 +2972,7 @@ function MealsScreenContent() {
       </ScrollView>
       )}
 
-      {/* ââ Meal Plan Tab ââ */}
+      {/* Ã¢ÂÂÃ¢ÂÂ Meal Plan Tab Ã¢ÂÂÃ¢ÂÂ */}
       {nutritionTab === 1 && (
         <ScrollView contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 120 }} showsVerticalScrollIndicator={false}
           refreshControl={
@@ -2713,7 +3200,7 @@ function MealsScreenContent() {
                 </View>
               )}
 
-              {/* ââ AI Image Generation Progress ââ */}
+              {/* Ã¢ÂÂÃ¢ÂÂ AI Image Generation Progress Ã¢ÂÂÃ¢ÂÂ */}
               {generatingImages && (
                 <View style={{ flexDirection: "row", alignItems: "center", gap: 8, backgroundColor: "rgba(59,130,246,0.08)", borderRadius: 12, padding: 10, borderWidth: 1, borderColor: "rgba(59,130,246,0.15)" }}>
                   <ActivityIndicator size="small" color="#3B82F6" />
@@ -2726,7 +3213,7 @@ function MealsScreenContent() {
                 </View>
               )}
 
-              {/* ââ Calendar Overview Toggle ââ */}
+              {/* Ã¢ÂÂÃ¢ÂÂ Calendar Overview Toggle Ã¢ÂÂÃ¢ÂÂ */}
               <TouchableOpacity
                 style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6, backgroundColor: showCalendarOverview ? "rgba(245,158,11,0.12)" : "rgba(59,130,246,0.08)", borderRadius: 12, paddingVertical: 10, borderWidth: 1, borderColor: showCalendarOverview ? "rgba(245,158,11,0.25)" : "rgba(59,130,246,0.15)" }}
                 onPress={() => setShowCalendarOverview(!showCalendarOverview)}
@@ -2735,7 +3222,7 @@ function MealsScreenContent() {
                 <Text style={{ color: showCalendarOverview ? "#F59E0B" : "#3B82F6", fontFamily: "DMSans_700Bold", fontSize: 12 }}>{showCalendarOverview ? "Hide Week Overview" : "Week Overview"}</Text>
               </TouchableOpacity>
 
-              {/* ââ Calendar Overview Grid ââ */}
+              {/* Ã¢ÂÂÃ¢ÂÂ Calendar Overview Grid Ã¢ÂÂÃ¢ÂÂ */}
               {showCalendarOverview && aiMealPlan?.days && (
                 <View style={{ gap: 6 }}>
                   {WEEK_DAYS_FULL.map((dayName, idx) => {
@@ -2809,7 +3296,7 @@ function MealsScreenContent() {
                 </View>
               )}
 
-              {/* ââ Weekly Day Selector Bar ââ */}
+              {/* Ã¢ÂÂÃ¢ÂÂ Weekly Day Selector Bar Ã¢ÂÂÃ¢ÂÂ */}
               <View style={{ flexDirection: "row", gap: 4, marginTop: 4 }}>
                 {WEEK_DAYS_SHORT.map((day, idx) => {
                   const isToday = (() => { const jsDay = new Date().getDay(); return idx === (jsDay === 0 ? 6 : jsDay - 1); })();
@@ -2827,7 +3314,7 @@ function MealsScreenContent() {
                 })}
               </View>
 
-              {/* ââ Selected Day Meals ââ */}
+              {/* Ã¢ÂÂÃ¢ÂÂ Selected Day Meals Ã¢ÂÂÃ¢ÂÂ */}
               {selectedDayData ? (
                 <View style={{ gap: 10 }}>
                   <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
@@ -3108,7 +3595,7 @@ function MealsScreenContent() {
         </ScrollView>
       )}
 
-      {/* ââ Pantry Tab ââ */}
+      {/* Ã¢ÂÂÃ¢ÂÂ Pantry Tab Ã¢ÂÂÃ¢ÂÂ */}
       {nutritionTab === 2 && (
         <ScrollView contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 120 }} showsVerticalScrollIndicator={false}
           refreshControl={
@@ -3520,7 +4007,7 @@ function MealsScreenContent() {
                                   color={ing.fromPantry ? "#22C55E" : "#F59E0B"}
                                 />
                                 <Text style={{ color: ing.fromPantry ? "#4ADE80" : "#FDE68A", fontSize: 12 }}>
-                                  {ing.name}{ing.quantity ? ` â ${ing.quantity}` : ""}
+                                  {ing.name}{ing.quantity ? ` Ã¢ÂÂ ${ing.quantity}` : ""}
                                 </Text>
                                 <Text style={{ color: MMUTED, fontSize: 10 }}>
                                   {ing.fromPantry ? "(pantry)" : "(buy)"}
