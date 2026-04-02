@@ -2897,4 +2897,13 @@
   - [x] Tap to swap — replaces the meal in the plan and persists to AsyncStorage
   - [x] Preference hint passed to AI for personalised alternatives
 - [x] Run tests and verify TypeScript compiles — 0 TS errors, 71 test suites pass (2130 tests), 14 new tests
+- [x] Save checkpoint (version 54ab2815)
+
+## Home Tab Improvements (Round 64)
+
+- [x] Declutter Home tab: sections 7-13 now behind collapsible 'More' toggle button
+- [x] Replace Muscle Balance BodyHeatmap with high-quality MuscleSvgDiagram from Train section
+- [x] Fix Today's Workout: localWorkoutPlan state now falls back to AsyncStorage cached plan
+  - [x] Loading state only shows when isPlanGenerating, not when hasLocalWorkoutPlan
+- [x] Run tests and verify TypeScript compiles — 0 TS errors, 15 new tests pass
 - [ ] Save checkpoint

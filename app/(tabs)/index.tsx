@@ -36,7 +36,8 @@ import { ExploreGrid } from "@/components/explore-grid";
 import { FloatingStartWorkout } from "@/components/floating-start-workout";
 import { DiscoveryBanner } from "@/components/discovery-banner";
 import { analyzeMuscleBalance, generateSuggestions, generatePlanChanges, type MuscleBalanceReport, type ExerciseSuggestion, type PlanChange } from "@/lib/muscle-balance";
-import { BodyHeatmap } from "@/components/body-heatmap";
+import { MuscleSvgDiagram } from "@/components/muscle-svg-diagram";
+import type { MuscleGroup } from "@/components/body-diagram";
 import { TrendChart, type TrendDataPoint } from "@/components/trend-chart";
 import { WearableMetricsPanel } from "@/components/wearable-metrics-panel";
 import { PremiumFeatureBanner, PremiumFeatureTeaser } from "@/components/premium-feature-banner";
@@ -148,10 +149,12 @@ function HomeScreenContent() {
 
   const [hasLocalWorkoutPlan, setHasLocalWorkoutPlan] = useState(false);
   const [isPlanGenerating, setIsPlanGenerating] = useState(false);
+  const [localWorkoutPlan, setLocalWorkoutPlan] = useState<any>(null);
   const [tdeeBreakdown, setTdeeBreakdown] = useState<TDEEBreakdown | null>(null);
   const [showTdeeBreakdown, setShowTdeeBreakdown] = useState(false);
   const [weeklyAvgCalories, setWeeklyAvgCalories] = useState<number | null>(null);
   const [weeklyDaysLogged, setWeeklyDaysLogged] = useState(0);
+  const [showMore, setShowMore] = useState(false);
 
   const exerciseCompletion = useExerciseCompletion();
   const { displayName: savedDisplayName, profilePhotoUri } = useUserProfile();
@@ -209,8 +212,8 @@ function HomeScreenContent() {
           setHasLocalWorkoutPlan(true);
           try {
             const plan = JSON.parse(cachedPlan || guestPlan || "{}");
-            if (plan?.schedule?.[0] && !workoutPlan) {
-              // We have a local plan but server hasn't returned one yet
+            if (plan?.schedule?.[0]) {
+              setLocalWorkoutPlan(plan);
             }
           } catch {}
         }
@@ -430,7 +433,7 @@ function HomeScreenContent() {
           {/* ═══════════════════════════════════════════════════════════
               SECTION 2: Today's Workout Card with CTA
               ═══════════════════════════════════════════════════════════ */}
-          {workoutPlan?.schedule?.[0] ? (
+          {(workoutPlan ?? localWorkoutPlan)?.schedule?.[0] ? (
             <StaggeredCard index={1}>
               <View style={styles.section}>
                 <SectionTitle title="Today's Workout" />
@@ -442,10 +445,10 @@ function HomeScreenContent() {
                 >
                   <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start" }}>
                     <View style={{ flex: 1 }}>
-                      <Text style={styles.cardEyebrow}>{workoutPlan.schedule[0].day?.toUpperCase()}</Text>
-                      <Text style={styles.workoutCardTitle}>{workoutPlan.schedule[0].focus}</Text>
+                      <Text style={styles.cardEyebrow}>{((workoutPlan ?? localWorkoutPlan)!.schedule[0].day ?? "").toUpperCase()}</Text>
+                      <Text style={styles.workoutCardTitle}>{(workoutPlan ?? localWorkoutPlan)!.schedule[0].focus}</Text>
                       <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 12, marginTop: 4 }}>
-                        {workoutPlan.schedule[0].exercises?.length ?? 0} exercises
+                        {(workoutPlan ?? localWorkoutPlan)!.schedule[0].exercises?.length ?? 0} exercises
                       </Text>
                     </View>
                     <View style={styles.workoutPlayBtn}>
@@ -454,7 +457,7 @@ function HomeScreenContent() {
                   </View>
                   {/* Progress bar */}
                   {(() => {
-                    const exList = (workoutPlan.schedule[0].exercises ?? []).map((e: any) => e.name ?? e);
+                    const exList = ((workoutPlan ?? localWorkoutPlan)!.schedule[0].exercises ?? []).map((e: any) => e.name ?? e);
                     const today = new Date().toISOString().split("T")[0];
                     const done = exerciseCompletion.getCompletedCount(today, exList);
                     const total = exList.length;
@@ -474,7 +477,7 @@ function HomeScreenContent() {
                 </TouchableOpacity>
               </View>
             </StaggeredCard>
-          ) : (hasLocalWorkoutPlan || isPlanGenerating) ? (
+          ) : (isPlanGenerating) ? (
             <StaggeredCard index={1}>
               <View style={styles.section}>
                 <SectionTitle title="Today's Workout" />
@@ -706,6 +709,27 @@ function HomeScreenContent() {
           </StaggeredCard>
 
           {/* ═══════════════════════════════════════════════════════════
+              MORE SECTIONS TOGGLE
+              ═══════════════════════════════════════════════════════════ */}
+          <StaggeredCard index={6}>
+            <TouchableOpacity
+              onPress={() => { setShowMore(!showMore); if (Platform.OS !== "web") Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); }}
+              style={{
+                flexDirection: "row", alignItems: "center", justifyContent: "center",
+                gap: 8, paddingVertical: 14, marginHorizontal: 20, marginTop: 4, marginBottom: 8,
+                borderRadius: 14, backgroundColor: SF.surface, borderWidth: 1, borderColor: SF.border,
+              }}
+              {...a11yButton(showMore ? "Show less" : "Show more sections", "Toggle additional dashboard sections")}
+            >
+              <MaterialIcons name={showMore ? "expand-less" : "expand-more"} size={20} color={SF.gold} />
+              <Text style={{ color: SF.gold, fontFamily: "DMSans_600SemiBold", fontSize: 13 }}>
+                {showMore ? "Show Less" : "More"}
+              </Text>
+            </TouchableOpacity>
+          </StaggeredCard>
+
+          {showMore && (<>
+          {/* ═══════════════════════════════════════════════════════════
               SECTION 7: Wearable Metrics Panel (compact)
               ═══════════════════════════════════════════════════════════ */}
           <StaggeredCard index={6}>
@@ -775,12 +799,13 @@ function HomeScreenContent() {
                   }
                 />
                 <View style={styles.heatmapCard}>
-                  <BodyHeatmap
-                    mode="balance"
-                    balanceEntries={muscleReport.entries}
+                  <MuscleSvgDiagram
+                    primary={muscleReport.overExercised.concat(muscleReport.optimal) as MuscleGroup[]}
+                    secondary={muscleReport.underExercised as MuscleGroup[]}
                     width={130}
                     height={200}
-                    showLegend
+                    showLabels={false}
+                    showToggle
                   />
                   {/* Summary chips */}
                   <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 6, marginTop: 12, justifyContent: "center" }}>
@@ -1071,6 +1096,7 @@ function HomeScreenContent() {
               </View>
             </View>
           </StaggeredCard>
+          </>)}
 
           {/* ── No plans CTA ── */}
           {!workoutPlan && !mealPlan && (
