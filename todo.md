@@ -2999,4 +2999,11 @@
 - [x] Fetched latest from GitHub remote (commit 652cdb8)
 - [x] Merged: feat(meals): add curated photo database, detailed recipes with ingredients & durations (584 ins, 97 del)
 - [x] Verify TypeScript compiles (0 TS errors, 0 LSP errors, dev server running)
+- [x] Save checkpoint (version 93019b19)
+
+## Round 72: Sync with GitHub repository
+- [x] Fetched latest from GitHub remote (commit 6dc5706)
+- [x] Merged: feat(meal-prep): add detailed from-scratch recipes with step durations and equipment (238 ins, 28 del)
+- [x] Fixed TS error: added detailHint to fromExpiring server endpoint input schema
+- [x] Verify TypeScript compiles (0 TS errors)
 - [ ] Save checkpoint
