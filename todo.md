@@ -2906,4 +2906,12 @@
 - [x] Fix Today's Workout: localWorkoutPlan state now falls back to AsyncStorage cached plan
   - [x] Loading state only shows when isPlanGenerating, not when hasLocalWorkoutPlan
 - [x] Run tests and verify TypeScript compiles — 0 TS errors, 15 new tests pass
+- [x] Save checkpoint (version c62ee04a)
+
+## Pull-to-Refresh (Round 65)
+
+- [x] Pull-to-refresh on Home tab: swipe down refreshes TDEE, workout plan, analytics, streak, PRs, muscle balance, discovery
+- [x] Pull-to-refresh on Train tab: swipe down refreshes profile, workout plan, completed days, and exercise history
+- [x] Pull-to-refresh on Nutrition/Meals tab: RefreshControl on all 3 sub-tabs (Tracker, Meal Plan, Pantry) refreshes profile, meal plan, favourites, water, chart, preferences
+- [x] Run tests and verify TypeScript compiles — 0 TS errors, 73 test suites pass (2161 tests), 16 new pull-to-refresh tests
 - [ ] Save checkpoint

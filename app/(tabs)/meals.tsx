@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import {
   ScrollView, Text, View, TouchableOpacity, ActivityIndicator, Alert, Image,
-  TextInput, Platform, ImageBackground, FlatList,
+  TextInput, Platform, ImageBackground, FlatList, RefreshControl,
 } from "react-native";
 import ReAnimated, {
   useSharedValue, useAnimatedStyle, interpolate, Extrapolation,
@@ -319,6 +319,68 @@ function MealsScreenContent() {
   const [showCalendarOverview, setShowCalendarOverview] = useState(false);
   // Favourite autocomplete
   const [showAutoComplete, setShowAutoComplete] = useState(false);
+  // Pull-to-refresh
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    try {
+      // Reload profile
+      const profileRaw = await AsyncStorage.getItem("@guest_profile");
+      if (profileRaw) {
+        try {
+          const p = JSON.parse(profileRaw);
+          if (p.dietaryPreference) setUserDietaryPref(p.dietaryPreference);
+          if (p.goal) setUserGoal(p.goal);
+          if (p.cuisinePrefs?.length) setSelectedCuisines(p.cuisinePrefs);
+          setLocalProfile(p);
+        } catch {}
+      }
+      // Reload meal plan
+      const mealPlanRaw = await AsyncStorage.getItem("@guest_meal_plan");
+      if (mealPlanRaw) {
+        try { setAiMealPlan(normalizeMealPlanDays(JSON.parse(mealPlanRaw))); } catch {}
+      }
+      // Reload favourites
+      const favRaw = await AsyncStorage.getItem("@favourite_foods");
+      if (favRaw) try { setFavourites(JSON.parse(favRaw)); } catch {}
+      // Reload water intake
+      const today = new Date().toISOString().split("T")[0];
+      const waterRaw = await AsyncStorage.getItem(`@water_intake_${today}`);
+      if (waterRaw) try { setWaterIntake(JSON.parse(waterRaw)); } catch {}
+      // Reload chart data
+      const history = await getHistoricalMeals(7);
+      const todayDate = new Date();
+      const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+      const data: typeof chartData = [];
+      for (let i = 6; i >= 0; i--) {
+        const d = new Date(todayDate);
+        d.setDate(d.getDate() - i);
+        const key = d.toISOString().split("T")[0];
+        const dayMeals = history[key] || [];
+        data.push({
+          label: DAYS[d.getDay()],
+          calories: dayMeals.reduce((s: number, m: any) => s + (m.calories || 0), 0),
+          protein: dayMeals.reduce((s: number, m: any) => s + (m.protein || 0), 0),
+          carbs: dayMeals.reduce((s: number, m: any) => s + (m.carbs || 0), 0),
+          fat: dayMeals.reduce((s: number, m: any) => s + (m.fat || 0), 0),
+        });
+      }
+      setChartData(data);
+      // Reload calorie context
+      await refreshFromStorage();
+      // Reload meal preferences
+      const prefs = await loadMealPreferences();
+      setMealPrefs(prefs);
+      // Reload checked ingredients
+      const checkedRaw = await AsyncStorage.getItem("@shopping_list_checked");
+      if (checkedRaw) try { setCheckedIngredients(JSON.parse(checkedRaw)); } catch {}
+    } catch (err) {
+      console.warn("Pull-to-refresh error:", err);
+    } finally {
+      setRefreshing(false);
+    }
+  }, [refreshFromStorage]);
 
   // Inline mini chart data
   const [chartData, setChartData] = useState<{ label: string; calories: number; protein: number; carbs: number; fat: number }[]>([]);
@@ -1407,6 +1469,15 @@ function MealsScreenContent() {
         showsVerticalScrollIndicator={false}
         onScroll={onMealScroll}
         scrollEventThrottle={16}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={MGOLD}
+            colors={[MGOLD]}
+            progressBackgroundColor={MSURFACE}
+          />
+        }
       >
         {/* ── Log Meal Dropdown Button ── */}
         <View style={{ marginTop: 16, marginBottom: 12, zIndex: 20 }}>
@@ -2170,7 +2241,17 @@ function MealsScreenContent() {
 
       {/* ── Meal Plan Tab ── */}
       {nutritionTab === 1 && (
-        <ScrollView contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 120 }} showsVerticalScrollIndicator={false}>
+        <ScrollView contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 120 }} showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              tintColor={MGOLD}
+              colors={[MGOLD]}
+              progressBackgroundColor={MSURFACE}
+            />
+          }
+        >
           {/* Auto-generating meal plan loading state */}
           {!aiMealPlan && autoGeneratingPlan ? (
             <View style={{ marginTop: 40, alignItems: "center", gap: 16, paddingHorizontal: 20 }}>
@@ -2763,7 +2844,17 @@ function MealsScreenContent() {
 
       {/* ── Pantry Tab ── */}
       {nutritionTab === 2 && (
-        <ScrollView contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 120 }} showsVerticalScrollIndicator={false}>
+        <ScrollView contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 120 }} showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              tintColor={MGOLD}
+              colors={[MGOLD]}
+              progressBackgroundColor={MSURFACE}
+            />
+          }
+        >
           {/* Pantry Stats */}
           <View style={{ flexDirection: "row", gap: 8, marginTop: 16 }}>
             <View style={{ flex: 1, backgroundColor: MSURFACE, borderRadius: 14, padding: 12, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}>

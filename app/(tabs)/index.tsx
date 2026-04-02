@@ -12,7 +12,7 @@ import Animated, {
 import { useCalories, type MealEntry } from "@/lib/calorie-context";
 import { scheduleAllDefaultReminders } from "@/lib/notifications";
 import {
-  Text, View, TouchableOpacity, ImageBackground, Image, StyleSheet, Platform, ActivityIndicator,
+  Text, View, TouchableOpacity, ImageBackground, Image, StyleSheet, Platform, ActivityIndicator, RefreshControl,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { useAuth } from "@/hooks/use-auth";
@@ -155,6 +155,7 @@ function HomeScreenContent() {
   const [weeklyAvgCalories, setWeeklyAvgCalories] = useState<number | null>(null);
   const [weeklyDaysLogged, setWeeklyDaysLogged] = useState(0);
   const [showMore, setShowMore] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   const exerciseCompletion = useExerciseCompletion();
   const { displayName: savedDisplayName, profilePhotoUri } = useUserProfile();
@@ -305,6 +306,85 @@ function HomeScreenContent() {
     }
   }, [canUse]);
 
+  // ── Pull-to-refresh handler ─────
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    try {
+      // Reload TDEE / calorie goal
+      const [tdeeRaw, goalRaw] = await Promise.all([
+        AsyncStorage.getItem("@user_tdee"),
+        AsyncStorage.getItem("@peakpulse_calorie_goal"),
+      ]);
+      const tdee = tdeeRaw ? parseInt(tdeeRaw, 10) : NaN;
+      const goal = goalRaw ? parseInt(goalRaw, 10) : NaN;
+      const best = !isNaN(tdee) && tdee > 0 ? tdee : (!isNaN(goal) && goal > 0 ? goal : 0);
+      if (best > 0 && best !== calorieGoal) setCalorieGoal(best);
+
+      // Reload TDEE breakdown
+      const b = await loadTDEEBreakdown();
+      if (b) setTdeeBreakdown(b);
+
+      // Reload 7-day rolling calorie average
+      const history = await getHistoricalMeals(7);
+      let totalCals = 0;
+      let daysWithData = 0;
+      for (const meals of Object.values(history)) {
+        const dayCals = meals.reduce((s: number, m: any) => s + (m.calories || 0), 0);
+        if (dayCals > 0) { totalCals += dayCals; daysWithData++; }
+      }
+      setWeeklyDaysLogged(daysWithData);
+      if (daysWithData > 0) setWeeklyAvgCalories(Math.round(totalCals / daysWithData));
+
+      // Reload local workout plan
+      const [cachedPlan, guestPlan] = await Promise.all([
+        AsyncStorage.getItem("@cached_workout_plan"),
+        AsyncStorage.getItem("@guest_workout_plan"),
+      ]);
+      if (cachedPlan || guestPlan) {
+        setHasLocalWorkoutPlan(true);
+        try {
+          const plan = JSON.parse(cachedPlan || guestPlan || "{}");
+          if (plan?.schedule?.[0]) setLocalWorkoutPlan(plan);
+        } catch {}
+      }
+
+      // Reload analytics: goals, streak, PRs, muscle balance, social
+      const enabled = await isGoalTrackingEnabled();
+      setGoalsEnabled(enabled);
+      if (enabled) {
+        const goals = await getWeeklyGoals();
+        const workoutsThisWeek = await getWorkoutsThisWeek();
+        const progress = calculateWeeklyProgress(goals, {
+          avgDailySteps: wearableData.stats.steps,
+          avgDailyCalories: wearableData.stats.totalCaloriesBurnt,
+          workoutsThisWeek,
+        });
+        setGoalProgress(progress);
+      }
+      const streak = await getStreakData();
+      setStreakData(streak);
+      const summary = await getPRSummary();
+      setPrSummary(summary);
+      const report = await analyzeMuscleBalance(7);
+      setMuscleReport(report);
+      try {
+        const challenges = await getActiveChallenges();
+        setActiveChallenges(challenges);
+        const userName = savedDisplayName ?? user?.name ?? guestProfile?.name ?? "Athlete";
+        const circle = await loadOrCreateSocialCircle(userName);
+        setSocialCircle(circle);
+      } catch {}
+
+      // Reload discovery prompt
+      const p = await getNextPrompt();
+      setDiscoveryPrompt(p);
+    } catch (err) {
+      console.warn("Pull-to-refresh error:", err);
+    } finally {
+      setRefreshing(false);
+    }
+  }, [calorieGoal, wearableData.stats.steps, wearableData.stats.totalCaloriesBurnt, savedDisplayName, user?.name, guestProfile?.name]);
+
   const caloriesRemaining = Math.max(0, calorieGoal - todayCalories);
   const calorieProgress = calorieGoal > 0 ? Math.min(todayCalories / calorieGoal, 1) : 0;
   const activeProfile = isAuthenticated ? profile : guestProfile;
@@ -365,6 +445,15 @@ function HomeScreenContent() {
           contentContainerStyle={{ paddingBottom: 140 }}
           style={{ flex: 1 }}
           scrollEventThrottle={16}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              tintColor={SF.gold}
+              colors={[SF.gold]}
+              progressBackgroundColor={SF.surface}
+            />
+          }
         >
           {/* ═══════════════════════════════════════════════════════════
               SECTION 1: Hero Greeting + Date

@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useMemo } from "react";
 import {
   ScrollView, Text, View, TouchableOpacity, ActivityIndicator,
-  Alert, ImageBackground, Image, Platform, Modal, TextInput, FlatList,
+  Alert, ImageBackground, Image, Platform, Modal, TextInput, FlatList, RefreshControl,
 } from "react-native";
 import Animated, {
   useSharedValue, useAnimatedStyle, interpolate, Extrapolation,
@@ -148,6 +148,7 @@ function PlansScreenContent() {
   const activeProfile = isAuthenticated ? dbProfile : localProfile;
 
   const [localWorkoutPlan, setLocalWorkoutPlan] = useState<any>(null);
+  const [refreshing, setRefreshing] = useState(false);
 
 
   const [completedDays, setCompletedDays] = useState<Record<string, boolean>>({});
@@ -286,6 +287,36 @@ function PlansScreenContent() {
   }, [swapExModal, workoutPlan, isAuthenticated]);
 
 
+  // ── Pull-to-refresh handler ─────
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    try {
+      // Reload profile
+      const profileRaw = await AsyncStorage.getItem("@guest_profile");
+      if (profileRaw) try { setLocalProfile(JSON.parse(profileRaw)); } catch {}
+
+      // Reload workout plan
+      if (isAuthenticated) {
+        await refetchWorkout();
+      } else {
+        const [cached, guest] = await Promise.all([
+          AsyncStorage.getItem("@cached_workout_plan"),
+          AsyncStorage.getItem("@guest_workout_plan"),
+        ]);
+        const raw = cached || guest;
+        if (raw) try { setLocalWorkoutPlan(JSON.parse(raw)); } catch {}
+      }
+
+      // Reload completed days
+      const daysRaw = await AsyncStorage.getItem("@workout_completed_days");
+      if (daysRaw) try { setCompletedDays(JSON.parse(daysRaw)); } catch {}
+    } catch (err) {
+      console.warn("Pull-to-refresh error:", err);
+    } finally {
+      setRefreshing(false);
+    }
+  }, [isAuthenticated, refetchWorkout]);
+
   // Parallax — MUST be above early return to avoid hooks ordering violation
   const scrollY = useSharedValue(0);
   const heroImageStyle = useAnimatedStyle(() => ({
@@ -368,6 +399,15 @@ function PlansScreenContent() {
         style={{ flex: 1 }}
         onScroll={handleScroll}
         scrollEventThrottle={16}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={GOLD}
+            colors={[GOLD]}
+            progressBackgroundColor={SURFACE}
+          />
+        }
       >
         <View style={{ paddingHorizontal: 20 }}>
             {/* If no plan yet, show full generation form */}
