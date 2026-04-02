@@ -2969,4 +2969,14 @@
 - [x] Integrate pinned meals into regeneration: preserve pinned meals, only regenerate unpinned ones
 - [x] Show visual indicator for pinned meals in the UI
 - [x] Test and verify TypeScript compiles (0 TS errors, 10 new tests pass)
+- [x] Save checkpoint (version 12f42212)
+
+## Round 68: Fix identical meals across days and mismatched food images (critical)
+- [x] Investigate how selectedWeekDay maps to actual day data in the meal plan
+- [x] Check if normalizeMealPlanDays produces truly different meals per day
+- [x] Root cause found: AI response JSON truncation due to insufficient max_tokens (8192 → 16384)
+- [x] Added retry logic with compact prompt when AI response is truncated
+- [x] Added max_tokens to regenerateDay endpoint (8192 + retry)
+- [x] Fix food images: replaced generic hash-based fallback with keyword-matched photos (24 food categories)
+- [x] Test and verify TypeScript compiles (0 TS errors, 14 new tests pass)
 - [ ] Save checkpoint

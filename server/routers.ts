@@ -419,7 +419,7 @@ ${dietaryRules}
 
 COMPLIANCE CHECK: Before finalizing, verify EVERY meal in the plan against the dietary restrictions above. If any meal violates the rules, replace it with a compliant alternative.
 
-Each day must include: ${isRamadan ? "suhoor, iftar, and evening snack meals" : "breakfast, morning snack, lunch, afternoon snack, dinner (4-5 meals)"}. Include calories, protein (g), carbs (g), and fat (g) for each meal. Each meal MUST have ingredients array, instructions array (3-5 steps), and photoQuery (2-4 word food search term for finding a photo of this SPECIFIC dish).
+Each day must include: ${isRamadan ? "suhoor, iftar, and evening snack (3 meals)" : "breakfast, lunch, dinner, and 1 snack (4 meals)"}. For each meal include: name (SHORT, 3-5 words), type, calories, protein, carbs, fat, ingredients (3-5 items), prepTime, instructions (2-3 SHORT steps), photoQuery (2-3 word search term specific to that dish, e.g. \"grilled salmon asparagus\").
 
 IMPORTANT: The "days" array MUST contain exactly 7 entries, one for each day of the week, using these EXACT day names in this order: "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday". Do NOT use abbreviations, numbers, or any other format.
 
@@ -432,11 +432,58 @@ CRITICAL VARIETY REQUIREMENT — THIS IS THE MOST IMPORTANT RULE:
 6. SELF-CHECK: Before returning, count all meal names. If ANY two meals share the same name, replace one with a different recipe.
 7. The plan must contain exactly 7 day objects with DIFFERENT meals in each — the user should see completely new food every day.
 
-Return this exact structure: {"dailyCalories":${calories},"proteinTarget":150,"carbTarget":200,"fatTarget":65,"dietType":"${input.dietaryPreference}${isRamadan ? "_ramadan" : ""}","isRamadan":${isRamadan},"days":[{"day":"Monday","meals":[{"name":"Meal Name","type":"${isRamadan ? "suhoor" : "breakfast"}","calories":420,"protein":28,"carbs":35,"fat":14,"ingredients":["ingredient 1","ingredient 2"],"prepTime":"10 min","instructions":["Step 1","Step 2","Step 3"],"photoQuery":"food search term"}]},{"day":"Tuesday","meals":[...]},{"day":"Wednesday","meals":[...]},{"day":"Thursday","meals":[...]},{"day":"Friday","meals":[...]},{"day":"Saturday","meals":[...]},{"day":"Sunday","meals":[...]}],"insight":"personalized nutrition tip"}`;
-        const response = await invokeLLM({ messages: [{ role: "system", content: "You are an expert registered dietitian who STRICTLY adheres to dietary restrictions. The user's dietary preference is the HIGHEST PRIORITY constraint — it overrides all other considerations. If the user is vegan, every single ingredient must be plant-based. If halal, every meat must be halal-certified with zero pork products. If keto, total daily carbs must stay under 30g. NEVER include a food that violates the stated dietary restriction. Always respond with valid JSON matching the required schema." }, { role: "user", content: prompt }], response_format: { type: "json_object" } });
+Return COMPACT JSON: {"dailyCalories":${calories},"days":[{"day":"Monday","meals":[{"name":"Egg Avocado Toast","type":"breakfast","calories":420,"protein":28,"carbs":35,"fat":14,"ingredients":["eggs","avocado","bread"],"prepTime":"10 min","instructions":["Toast bread","Cook eggs","Assemble"],"photoQuery":"avocado egg toast"},...]},...all 7 days...],"insight":"tip"}`;
+        // Use higher max_tokens to prevent truncation of 7-day meal plan JSON
+        const llmCall = async (maxTokens: number, retryPrompt?: string) => {
+          return invokeLLM({
+            messages: [
+              { role: "system", content: "You are an expert registered dietitian who STRICTLY adheres to dietary restrictions. The user's dietary preference is the HIGHEST PRIORITY constraint — it overrides all other considerations. If the user is vegan, every single ingredient must be plant-based. If halal, every meat must be halal-certified with zero pork products. If keto, total daily carbs must stay under 30g. NEVER include a food that violates the stated dietary restriction. Always respond with valid JSON matching the required schema. Keep meal names SHORT (3-5 words max). Keep instructions to 3 steps max. Keep ingredients to 5 items max. This ensures the response fits within token limits." },
+              { role: "user", content: retryPrompt ?? prompt },
+            ],
+            response_format: { type: "json_object" },
+            max_tokens: maxTokens,
+          });
+        };
         let planData: any;
-        try { planData = JSON.parse((response.choices[0].message.content as string) ?? "{}"); }
-        catch { planData = { dailyCalories: calories, days: [], insight: "Eat balanced meals and stay hydrated." }; }
+        // First attempt with generous token limit
+        let response = await llmCall(16384);
+        let rawContent = (response.choices[0].message.content as string) ?? "{}";
+        try {
+          planData = JSON.parse(rawContent);
+        } catch {
+          // JSON truncated — retry with a more compact prompt
+          console.warn("[MealPlan] First attempt truncated, retrying with compact prompt...");
+          const compactPrompt = `Generate a 7-day meal plan as JSON. Target: ~${calories} kcal/day, ${input.dietaryPreference} diet, goal: ${input.goal.replace(/_/g, " ")}.
+${isRamadan ? "Ramadan mode: suhoor, iftar, evening snack." : "Meals: breakfast, lunch, dinner, 1-2 snacks."}
+${dietaryRules}
+${input.pastMealNames?.length ? `Avoid these past meals: ${input.pastMealNames.slice(0, 20).join(", ")}` : ""}
+${cuisineNote}
+Rules: EVERY day must have DIFFERENT meals. Keep names short (3-5 words). 3 ingredients max per meal. 2 instruction steps max. Each meal needs: name, type, calories, protein, carbs, fat, ingredients[], instructions[], photoQuery (2-3 words describing the specific dish).
+Day names MUST be: "Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday".
+Return: {"dailyCalories":${calories},"days":[{"day":"Monday","meals":[{"name":"...","type":"breakfast","calories":400,"protein":30,"carbs":40,"fat":15,"ingredients":["..."],"instructions":["..."],"photoQuery":"..."},...]},...],"insight":"tip"}`;
+          try {
+            response = await llmCall(16384, compactPrompt);
+            rawContent = (response.choices[0].message.content as string) ?? "{}";
+            planData = JSON.parse(rawContent);
+          } catch {
+            console.warn("[MealPlan] Second attempt also failed, using fallback");
+            planData = { dailyCalories: calories, days: [], insight: "Eat balanced meals and stay hydrated." };
+          }
+        }
+        // Validate that we got 7 days with meals — if not, the response was likely truncated
+        if (!planData?.days || planData.days.length < 7 || planData.days.some((d: any) => !d.meals?.length)) {
+          console.warn(`[MealPlan] Incomplete plan: ${planData?.days?.length ?? 0} days. Attempting compact retry...`);
+          const compactRetryPrompt = `Generate a 7-day meal plan as compact JSON. ~${calories} kcal/day, ${input.dietaryPreference} diet.
+Each day: 4 meals (breakfast, lunch, dinner, snack). Keep names SHORT. Minimal ingredients (3 max). No instructions needed.
+Days: Monday through Sunday. ALL different meals each day.
+Format: {"dailyCalories":${calories},"days":[{"day":"Monday","meals":[{"name":"Egg Toast","type":"breakfast","calories":350,"protein":20,"carbs":30,"fat":12,"ingredients":["eggs","bread"],"instructions":["Cook"],"photoQuery":"egg toast"}]}],"insight":"tip"}`;
+          try {
+            response = await llmCall(16384, compactRetryPrompt);
+            rawContent = (response.choices[0].message.content as string) ?? "{}";
+            const retryData = JSON.parse(rawContent);
+            if (retryData?.days?.length >= 7) planData = retryData;
+          } catch { /* keep whatever we had */ }
+        }
         // Post-generation deduplication: ensure no two days share the same meals
         if (planData?.days && Array.isArray(planData.days)) {
           const seenMealNames = new Set<string>();
@@ -531,15 +578,32 @@ IMPORTANT: Every meal name must be unique and specific. Each photoQuery must be 
 Return ONLY this structure: {"day":"${input.dayName}","meals":[{"name":"Meal Name","type":"breakfast","calories":420,"protein":28,"carbs":35,"fat":14,"ingredients":["ingredient 1"],"prepTime":"10 min","instructions":["Step 1"],"photoQuery":"food term"}]}`;
         const response = await invokeLLM({
           messages: [
-            { role: "system", content: "You are an expert registered dietitian. Generate meals for a single day only. STRICTLY adhere to dietary restrictions. Always respond with valid JSON." },
+            { role: "system", content: "You are an expert registered dietitian. Generate meals for a single day only. STRICTLY adhere to dietary restrictions. Always respond with valid JSON. Keep meal names SHORT (3-5 words). Keep ingredients to 5 items max. Keep instructions to 3 steps max." },
             { role: "user", content: prompt },
           ],
           response_format: { type: "json_object" },
           model: "flash-lite",
+          max_tokens: 8192,
         });
         let dayData: any;
         try { dayData = JSON.parse((response.choices[0].message.content as string) ?? "{}"); }
-        catch { dayData = { day: input.dayName, meals: [] }; }
+        catch {
+          console.warn("[MealPlan] regenerateDay JSON parse failed, retrying...");
+          try {
+            const retry = await invokeLLM({
+              messages: [
+                { role: "system", content: "You are a dietitian. Respond with compact JSON only. Short meal names, 3 ingredients max, 2 steps max." },
+                { role: "user", content: `Generate 4 meals for ${input.dayName}. ~${calories} kcal total. ${input.dietaryPreference} diet. Return: {"day":"${input.dayName}","meals":[{"name":"Short Name","type":"breakfast","calories":400,"protein":30,"carbs":40,"fat":15,"ingredients":["item"],"prepTime":"10 min","instructions":["Cook"],"photoQuery":"dish name"}]}` },
+              ],
+              response_format: { type: "json_object" },
+              model: "flash-lite",
+              max_tokens: 4096,
+            });
+            dayData = JSON.parse((retry.choices[0].message.content as string) ?? "{}");
+          } catch {
+            dayData = { day: input.dayName, meals: [] };
+          }
+        }
         if (!dayData.day) dayData.day = input.dayName;
         return dayData;
       }),

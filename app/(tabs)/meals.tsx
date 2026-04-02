@@ -153,33 +153,36 @@ const MEAL_PHOTO_MAP: Record<string, string> = {
   default: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&q=80",
 };
 
-// Pool of diverse food photos for fallback — each meal gets a unique one based on its name hash
-const FOOD_PHOTO_POOL = [
-  "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&q=80", // colorful salad
-  "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=400&q=80", // pancakes
-  "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400&q=80", // steak bowl
-  "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&q=80", // green salad
-  "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=400&q=80", // buddha bowl
-  "https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=400&q=80", // stir fry
-  "https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=400&q=80", // curry
-  "https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=400&q=80", // eggs
-  "https://images.unsplash.com/photo-1484723091739-30990106e7c6?w=400&q=80", // breakfast
-  "https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=400&q=80", // dinner plate
-  "https://images.unsplash.com/photo-1490474418585-ba9bad8fd0ea?w=400&q=80", // snack
-  "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=400&q=80", // fish
-  "https://images.unsplash.com/photo-1547592180-85f173990554?w=400&q=80", // soup
-  "https://images.unsplash.com/photo-1569050467447-ce54b3bbc37d?w=400&q=80", // noodles
-  "https://images.unsplash.com/photo-1525351484163-7529414344d8?w=400&q=80", // toast eggs
-  "https://images.unsplash.com/photo-1541519227354-08fa5d50c820?w=400&q=80", // avocado toast
-  "https://images.unsplash.com/photo-1511690743698-d9d85f2fbf38?w=400&q=80", // smoothie bowl
-  "https://images.unsplash.com/photo-1505576399279-565b52d4ac71?w=400&q=80", // fruit snack
-  "https://images.unsplash.com/photo-1626700051175-6818013e1d4f?w=400&q=80", // wrap
-  "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=400&q=80", // sandwich
-  "https://images.unsplash.com/photo-1517673132405-a56a62b18caf?w=400&q=80", // oats
-  "https://images.unsplash.com/photo-1559181567-c3190bfa4cfe?w=400&q=80", // dates
-  "https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=400&q=80", // banana
-  "https://images.unsplash.com/photo-1593001872095-7d5b3868fb1d?w=400&q=80", // falafel
+// Keyword-matched food photos for intelligent fallback — matches meal description to appropriate image
+const FOOD_KEYWORD_PHOTOS: Array<{ keywords: string[]; url: string }> = [
+  { keywords: ["chicken", "grilled chicken", "roast chicken", "poultry"], url: "https://images.unsplash.com/photo-1598103442097-8b74394b95c6?w=400&q=80" },
+  { keywords: ["salmon", "fish", "seafood", "tuna", "cod", "shrimp", "prawn"], url: "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=400&q=80" },
+  { keywords: ["steak", "beef", "meat", "lamb", "rib"], url: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400&q=80" },
+  { keywords: ["egg", "omelette", "scramble", "frittata"], url: "https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=400&q=80" },
+  { keywords: ["salad", "greens", "kale", "spinach", "arugula"], url: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&q=80" },
+  { keywords: ["rice", "bowl", "grain", "quinoa", "buddha"], url: "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=400&q=80" },
+  { keywords: ["pasta", "noodle", "spaghetti", "penne", "ramen"], url: "https://images.unsplash.com/photo-1569050467447-ce54b3bbc37d?w=400&q=80" },
+  { keywords: ["soup", "stew", "broth", "chili", "chowder"], url: "https://images.unsplash.com/photo-1547592180-85f173990554?w=400&q=80" },
+  { keywords: ["toast", "bread", "avocado", "bruschetta"], url: "https://images.unsplash.com/photo-1541519227354-08fa5d50c820?w=400&q=80" },
+  { keywords: ["pancake", "waffle", "french toast", "crepe"], url: "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=400&q=80" },
+  { keywords: ["smoothie", "shake", "acai", "protein shake"], url: "https://images.unsplash.com/photo-1511690743698-d9d85f2fbf38?w=400&q=80" },
+  { keywords: ["oat", "porridge", "granola", "muesli", "cereal"], url: "https://images.unsplash.com/photo-1517673132405-a56a62b18caf?w=400&q=80" },
+  { keywords: ["wrap", "burrito", "tortilla", "taco"], url: "https://images.unsplash.com/photo-1626700051175-6818013e1d4f?w=400&q=80" },
+  { keywords: ["sandwich", "panini", "sub", "club"], url: "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=400&q=80" },
+  { keywords: ["curry", "tikka", "masala", "dal", "lentil", "indian"], url: "https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=400&q=80" },
+  { keywords: ["stir fry", "wok", "asian", "teriyaki", "soy"], url: "https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=400&q=80" },
+  { keywords: ["fruit", "apple", "banana", "berry", "mango"], url: "https://images.unsplash.com/photo-1505576399279-565b52d4ac71?w=400&q=80" },
+  { keywords: ["yogurt", "parfait", "cottage cheese"], url: "https://images.unsplash.com/photo-1488477181946-6428a0291777?w=400&q=80" },
+  { keywords: ["date", "nut", "almond", "trail mix", "energy"], url: "https://images.unsplash.com/photo-1559181567-c3190bfa4cfe?w=400&q=80" },
+  { keywords: ["falafel", "hummus", "pita", "mediterranean", "middle eastern"], url: "https://images.unsplash.com/photo-1593001872095-7d5b3868fb1d?w=400&q=80" },
+  { keywords: ["pizza", "flatbread"], url: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400&q=80" },
+  { keywords: ["sushi", "japanese", "miso", "tofu"], url: "https://images.unsplash.com/photo-1553621042-f6e147245754?w=400&q=80" },
+  { keywords: ["turkey", "deli", "roast"], url: "https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=400&q=80" },
+  { keywords: ["sweet potato", "potato", "baked"], url: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&q=80" },
 ];
+
+// Fallback pool for when no keyword matches
+const FOOD_PHOTO_POOL = FOOD_KEYWORD_PHOTOS.map(p => p.url);
 
 function hashString(str: string): number {
   let hash = 0;
@@ -192,10 +195,23 @@ function hashString(str: string): number {
 
 function getMealPlanPhotoUrl(meal: any): string {
   if (meal.photoUrl) return meal.photoUrl;
-  // Use meal name + type to pick a unique photo from the pool
-  const key = `${meal.name ?? ""}|${meal.type ?? ""}`.toLowerCase();
-  if (key.length > 1) {
-    const idx = hashString(key) % FOOD_PHOTO_POOL.length;
+  // Try keyword matching first — find the best photo based on meal name and photoQuery
+  const searchText = `${meal.name ?? ""} ${meal.photoQuery ?? ""} ${meal.type ?? ""}`.toLowerCase();
+  if (searchText.trim().length > 1) {
+    // Score each keyword photo by how many keywords match
+    let bestMatch: { url: string; score: number } | null = null;
+    for (const entry of FOOD_KEYWORD_PHOTOS) {
+      let score = 0;
+      for (const kw of entry.keywords) {
+        if (searchText.includes(kw)) score += kw.length; // longer keyword matches score higher
+      }
+      if (score > 0 && (!bestMatch || score > bestMatch.score)) {
+        bestMatch = { url: entry.url, score };
+      }
+    }
+    if (bestMatch) return bestMatch.url;
+    // No keyword match — use hash-based selection from pool
+    const idx = hashString(searchText) % FOOD_PHOTO_POOL.length;
     return FOOD_PHOTO_POOL[idx];
   }
   const type = (meal.type ?? "default").toLowerCase();
