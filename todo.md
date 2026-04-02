@@ -2933,4 +2933,14 @@
   - [x] Falls back to Plans tab if no workout plan found
   - [x] Works for both cold-start and foreground notification taps
 - [x] Run tests and verify TypeScript compiles — 0 TS errors, 12 new tests pass
+- [x] Save checkpoint (version 371192cb)
+
+## Workout History, Rest Day, & Streak Animation (Round 68)
+
+- [x] Workout history on Home: "Recent Sessions" section shows last 3 completed workouts with date, duration, exercise count, and completion badge
+- [x] Rest day handling: detects rest/recovery/off days and shows green Recovery Day card with 3 stretching suggestions (Full Body Stretch, Foam Rolling, Yoga Flow)
+- [x] Daily streak animation: fire-burst celebration overlay with 8 animated fire particles, auto-dismiss after 3.5s, triggers at every 7-day milestone (7, 14, 21...)
+  - [x] Fixed streak trigger condition (was always true, now correctly checks % 7 === 0)
+  - [x] Celebration persisted per milestone to avoid re-showing
+- [x] Run tests and verify TypeScript compiles — 0 TS errors, 19 new tests pass
 - [ ] Save checkpoint

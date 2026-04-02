@@ -45,6 +45,7 @@ import { usePantry } from "@/lib/pantry-context";
 import { getActiveChallenges, type Challenge } from "@/lib/challenge-service";
 import { loadOrCreateSocialCircle, getActiveFriendsCount, type SocialCircleData } from "@/lib/social-circle";
 import { loadTDEEBreakdown, type TDEEBreakdown } from "@/lib/tdee-calculator";
+import { loadWorkoutLogs, type WorkoutLogEntry } from "@/lib/workout-analytics";
 import { getHistoricalMeals } from "@/lib/calorie-context";
 import { UI as SF } from "@/constants/ui-colors";
 import { ErrorBoundary } from "@/components/error-boundary";
@@ -156,6 +157,10 @@ function HomeScreenContent() {
   const [weeklyDaysLogged, setWeeklyDaysLogged] = useState(0);
   const [showMore, setShowMore] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const [recentSessions, setRecentSessions] = useState<WorkoutLogEntry[]>([]);
+  const [showStreakCelebration, setShowStreakCelebration] = useState(false);
+  const streakCelebrationOpacity = useSharedValue(0);
+  const streakCelebrationScale = useSharedValue(0.5);
 
   const exerciseCompletion = useExerciseCompletion();
   const { displayName: savedDisplayName, profilePhotoUri } = useUserProfile();
@@ -180,6 +185,22 @@ function HomeScreenContent() {
     });
     return match ?? plan.schedule[0];
   }, [workoutPlan, localWorkoutPlan]);
+
+  // ── Rest day detection ──
+  const isRestDay = useMemo(() => {
+    if (!todayWorkout) return false;
+    const focus = (todayWorkout.focus ?? "").toLowerCase();
+    const exercises = todayWorkout.exercises ?? [];
+    return focus.includes("rest") || focus.includes("recovery") || focus.includes("off") || exercises.length === 0;
+  }, [todayWorkout]);
+
+  // ── Stretching suggestions for rest days ──
+  const STRETCHING_ROUTINES = [
+    { name: "Full Body Stretch", duration: "15 min", icon: "self-improvement" as const, description: "Gentle stretches for all major muscle groups" },
+    { name: "Foam Rolling", duration: "10 min", icon: "sports-gymnastics" as const, description: "Myofascial release for tight muscles" },
+    { name: "Yoga Flow", duration: "20 min", icon: "spa" as const, description: "Sun salutations and restorative poses" },
+    { name: "Mobility Drills", duration: "12 min", icon: "accessibility-new" as const, description: "Joint circles, hip openers, shoulder work" },
+  ];
 
   useEffect(() => {
     // Read TDEE from both keys to handle race conditions between onboarding and CalorieProvider
@@ -291,8 +312,25 @@ function HomeScreenContent() {
         }
         const streak = await getStreakData();
         setStreakData(streak);
+        // Trigger streak celebration for 7-day milestones
+        if (streak.currentStreak > 0 && streak.currentStreak % 7 === 0) {
+          const celebratedKey = `@streak_celebrated_${streak.currentStreak}`;
+          const alreadyCelebrated = await AsyncStorage.getItem(celebratedKey);
+          if (!alreadyCelebrated) {
+            setShowStreakCelebration(true);
+            await AsyncStorage.setItem(celebratedKey, "true");
+          }
+        }
         const summary = await getPRSummary();
         setPrSummary(summary);
+        // Load last 3 workout sessions
+        try {
+          const logs = await loadWorkoutLogs();
+          const sorted = logs
+            .filter(l => l.workout?.startDate)
+            .sort((a, b) => new Date(b.workout.startDate).getTime() - new Date(a.workout.startDate).getTime());
+          setRecentSessions(sorted.slice(0, 3));
+        } catch {}
         const report = await analyzeMuscleBalance(7);
         setMuscleReport(report);
         // Social & challenges
@@ -380,6 +418,14 @@ function HomeScreenContent() {
       setPrSummary(summary);
       const report = await analyzeMuscleBalance(7);
       setMuscleReport(report);
+      // Reload recent sessions
+      try {
+        const logs = await loadWorkoutLogs();
+        const sorted = logs
+          .filter(l => l.workout?.startDate)
+          .sort((a, b) => new Date(b.workout.startDate).getTime() - new Date(a.workout.startDate).getTime());
+        setRecentSessions(sorted.slice(0, 3));
+      } catch {}
       try {
         const challenges = await getActiveChallenges();
         setActiveChallenges(challenges);
@@ -533,9 +579,52 @@ function HomeScreenContent() {
           )}
 
           {/* ═══════════════════════════════════════════════════════════
-              SECTION 2: Today's Workout Card with CTA
+              SECTION 2: Today's Workout Card with CTA (or Rest Day Recovery Card)
               ═══════════════════════════════════════════════════════════ */}
-          {todayWorkout ? (
+          {todayWorkout && isRestDay ? (
+            /* ── REST DAY RECOVERY CARD ── */
+            <StaggeredCard index={1}>
+              <View style={styles.section}>
+                <SectionTitle title="Recovery Day" />
+                <View style={[styles.workoutCard, { borderColor: "rgba(34,197,94,0.25)" }]}>
+                  <View style={{ flexDirection: "row", alignItems: "center", gap: 14, marginBottom: 16 }}>
+                    <View style={[styles.workoutPlayBtn, { backgroundColor: "rgba(34,197,94,0.15)" }]}>
+                      <MaterialIcons name="spa" size={24} color="#22C55E" />
+                    </View>
+                    <View style={{ flex: 1 }}>
+                      <Text style={styles.cardEyebrow}>{(todayWorkout.day ?? "").toUpperCase()}</Text>
+                      <Text style={[styles.workoutCardTitle, { color: "#22C55E" }]}>Rest & Recover</Text>
+                      <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 12, marginTop: 2 }}>
+                        Your muscles grow during rest. Try some light stretching today.
+                      </Text>
+                    </View>
+                  </View>
+                  {/* Stretching Suggestions */}
+                  <Text style={{ color: SF.muted, fontFamily: "DMSans_600SemiBold", fontSize: 10, letterSpacing: 1.5, textTransform: "uppercase", marginBottom: 10 }}>SUGGESTED ACTIVITIES</Text>
+                  {STRETCHING_ROUTINES.map((routine, i) => (
+                    <TouchableOpacity
+                      key={routine.name}
+                      activeOpacity={0.7}
+                      style={{
+                        flexDirection: "row", alignItems: "center", gap: 12,
+                        paddingVertical: 10,
+                        borderTopWidth: i > 0 ? 1 : 0, borderTopColor: SF.border,
+                      }}
+                    >
+                      <View style={{ width: 36, height: 36, borderRadius: 10, backgroundColor: "rgba(34,197,94,0.08)", alignItems: "center", justifyContent: "center" }}>
+                        <MaterialIcons name={routine.icon} size={18} color="#22C55E" />
+                      </View>
+                      <View style={{ flex: 1 }}>
+                        <Text style={{ color: SF.fg, fontFamily: "DMSans_600SemiBold", fontSize: 13 }}>{routine.name}</Text>
+                        <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 11, marginTop: 1 }}>{routine.description}</Text>
+                      </View>
+                      <Text style={{ color: SF.muted, fontFamily: "SpaceMono_700Bold", fontSize: 11 }}>{routine.duration}</Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              </View>
+            </StaggeredCard>
+          ) : todayWorkout && !isRestDay ? (
             <StaggeredCard index={1}>
               <View style={styles.section}>
                 <SectionTitle title="Today's Workout" />
@@ -619,6 +708,51 @@ function HomeScreenContent() {
                     </View>
                   </View>
                 </TouchableOpacity>
+              </View>
+            </StaggeredCard>
+          )}
+
+          {/* ═══════════════════════════════════════════════════════════
+              SECTION 2b: Last 3 Sessions
+              ═══════════════════════════════════════════════════════════ */}
+          {recentSessions.length > 0 && (
+            <StaggeredCard index={1}>
+              <View style={styles.section}>
+                <SectionTitle title="Recent Sessions" />
+                {recentSessions.map((session, i) => {
+                  const w = session.workout;
+                  const dateStr = w.startDate ? new Date(w.startDate).toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" }) : "";
+                  const durationMin = w.durationMinutes ?? 0;
+                  const completedExercises = w.completedExercisesJson ? JSON.parse(w.completedExercisesJson) : [];
+                  const exCount = Array.isArray(completedExercises) ? completedExercises.length : 0;
+                  return (
+                    <View
+                      key={`session-${i}`}
+                      style={{
+                        flexDirection: "row", alignItems: "center", gap: 12,
+                        paddingVertical: 12,
+                        borderTopWidth: i > 0 ? 1 : 0, borderTopColor: SF.border,
+                      }}
+                    >
+                      <View style={{ width: 40, height: 40, borderRadius: 12, backgroundColor: "rgba(245,158,11,0.1)", alignItems: "center", justifyContent: "center" }}>
+                        <MaterialIcons name="fitness-center" size={18} color={SF.gold} />
+                      </View>
+                      <View style={{ flex: 1 }}>
+                        <Text style={{ color: SF.fg, fontFamily: "DMSans_600SemiBold", fontSize: 13 }}>
+                          {w.focus ?? w.dayName ?? `Session ${i + 1}`}
+                        </Text>
+                        <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 11, marginTop: 1 }}>
+                          {dateStr}{durationMin > 0 ? ` \u00B7 ${durationMin} min` : ""} \u00B7 {exCount} exercises
+                        </Text>
+                      </View>
+                      {w.completedAt && (
+                        <View style={{ width: 24, height: 24, borderRadius: 12, backgroundColor: "rgba(34,197,94,0.15)", alignItems: "center", justifyContent: "center" }}>
+                          <MaterialIcons name="check" size={14} color="#22C55E" />
+                        </View>
+                      )}
+                    </View>
+                  );
+                })}
               </View>
             </StaggeredCard>
           )}
@@ -1264,8 +1398,183 @@ function HomeScreenContent() {
             R5: Floating "Start Workout" Button
             ═══════════════════════════════════════════════════════════ */}
         <FloatingStartWorkout />
+
+        {/* ═══ STREAK CELEBRATION OVERLAY ═══ */}
+        {showStreakCelebration && (
+          <StreakCelebration
+            streakDays={streakData?.currentStreak ?? 7}
+            onDismiss={() => setShowStreakCelebration(false)}
+          />
+        )}
       </View>
     </>
+  );
+}
+
+/* ────────────────────────────────────────────────────────────────────────
+   Streak Celebration Component — Fire-burst animation overlay
+   ──────────────────────────────────────────────────────────────────────── */
+function StreakCelebration({ streakDays, onDismiss }: { streakDays: number; onDismiss: () => void }) {
+  const opacity = useSharedValue(0);
+  const scale = useSharedValue(0.3);
+  const fireScale = useSharedValue(0.5);
+  const fireRotation = useSharedValue(0);
+
+  useEffect(() => {
+    // Entrance animation
+    opacity.value = withTiming(1, { duration: 300 });
+    scale.value = withTiming(1, { duration: 400, easing: Easing.out(Easing.back(1.5)) });
+    fireScale.value = withSequence(
+      withTiming(1.3, { duration: 300, easing: Easing.out(Easing.quad) }),
+      withTiming(1, { duration: 200 }),
+    );
+    fireRotation.value = withSequence(
+      withTiming(-5, { duration: 100 }),
+      withTiming(5, { duration: 100 }),
+      withTiming(-3, { duration: 100 }),
+      withTiming(3, { duration: 100 }),
+      withTiming(0, { duration: 100 }),
+    );
+
+    // Auto-dismiss after 3.5s
+    const timer = setTimeout(() => {
+      opacity.value = withTiming(0, { duration: 400 });
+      scale.value = withTiming(0.8, { duration: 400 });
+      setTimeout(onDismiss, 450);
+    }, 3500);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const overlayStyle = useAnimatedStyle(() => ({
+    opacity: opacity.value,
+  }));
+
+  const cardStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
+
+  const fireStyle = useAnimatedStyle(() => ({
+    transform: [
+      { scale: fireScale.value },
+      { rotate: `${fireRotation.value}deg` },
+    ],
+  }));
+
+  // Fire particle positions (pre-computed)
+  const particles = [
+    { x: -60, y: -80, delay: 0, size: 20 },
+    { x: 50, y: -90, delay: 50, size: 16 },
+    { x: -40, y: -110, delay: 100, size: 14 },
+    { x: 70, y: -70, delay: 150, size: 18 },
+    { x: -20, y: -100, delay: 200, size: 12 },
+    { x: 30, y: -120, delay: 80, size: 15 },
+    { x: -70, y: -60, delay: 120, size: 13 },
+    { x: 60, y: -100, delay: 180, size: 17 },
+  ];
+
+  return (
+    <Animated.View
+      style={[
+        {
+          position: "absolute", top: 0, left: 0, right: 0, bottom: 0,
+          backgroundColor: "rgba(0,0,0,0.75)",
+          alignItems: "center", justifyContent: "center",
+          zIndex: 999,
+        },
+        overlayStyle,
+      ]}
+    >
+      <TouchableOpacity
+        activeOpacity={1}
+        onPress={() => {
+          opacity.value = withTiming(0, { duration: 300 });
+          scale.value = withTiming(0.8, { duration: 300 });
+          setTimeout(onDismiss, 350);
+        }}
+        style={{ alignItems: "center", justifyContent: "center" }}
+      >
+        {/* Fire particles */}
+        {particles.map((p, i) => (
+          <FireParticle key={i} x={p.x} y={p.y} delay={p.delay} size={p.size} />
+        ))}
+
+        <Animated.View style={[{ alignItems: "center" }, cardStyle]}>
+          {/* Main fire icon */}
+          <Animated.View style={fireStyle}>
+            <Text style={{ fontSize: 72 }}>{"\uD83D\uDD25"}</Text>
+          </Animated.View>
+
+          {/* Streak count */}
+          <Text style={{
+            color: "#F59E0B", fontFamily: "BebasNeue_400Regular",
+            fontSize: 64, letterSpacing: 4, marginTop: 8,
+          }}>
+            {streakDays} DAYS
+          </Text>
+
+          <Text style={{
+            color: "#FBBF24", fontFamily: "DMSans_700Bold",
+            fontSize: 20, marginTop: 4,
+          }}>
+            Streak Milestone!
+          </Text>
+
+          <Text style={{
+            color: "rgba(255,255,255,0.6)", fontFamily: "DMSans_400Regular",
+            fontSize: 14, marginTop: 12, textAlign: "center",
+            maxWidth: 260, lineHeight: 20,
+          }}>
+            You've been crushing it for {streakDays} days straight. Keep the momentum going!
+          </Text>
+
+          <Text style={{
+            color: "rgba(255,255,255,0.3)", fontFamily: "DMSans_400Regular",
+            fontSize: 11, marginTop: 24,
+          }}>
+            Tap to dismiss
+          </Text>
+        </Animated.View>
+      </TouchableOpacity>
+    </Animated.View>
+  );
+}
+
+/* Fire particle sub-component */
+function FireParticle({ x, y, delay, size }: { x: number; y: number; delay: number; size: number }) {
+  const translateY = useSharedValue(0);
+  const particleOpacity = useSharedValue(0);
+  const particleScale = useSharedValue(0.3);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      particleOpacity.value = withSequence(
+        withTiming(1, { duration: 200 }),
+        withTiming(0, { duration: 800 }),
+      );
+      translateY.value = withTiming(-60, { duration: 1000, easing: Easing.out(Easing.quad) });
+      particleScale.value = withSequence(
+        withTiming(1.2, { duration: 300 }),
+        withTiming(0.4, { duration: 700 }),
+      );
+    }, delay);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const style = useAnimatedStyle(() => ({
+    position: "absolute" as const,
+    left: x,
+    top: y,
+    opacity: particleOpacity.value,
+    transform: [
+      { translateY: translateY.value },
+      { scale: particleScale.value },
+    ],
+  }));
+
+  return (
+    <Animated.View style={style}>
+      <Text style={{ fontSize: size }}>{"\uD83D\uDD25"}</Text>
+    </Animated.View>
   );
 }
 
