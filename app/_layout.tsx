@@ -6,6 +6,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import "react-native-reanimated";
 import { Platform } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import "@/lib/_core/nativewind-pressable";
 import { ThemeProvider } from "@/lib/theme-provider";
 import { GuestAuthProvider } from "@/lib/guest-auth";
@@ -79,8 +80,70 @@ export const unstable_settings = {
  * Listens for notification taps and deep-links to the URL stored in notification data.
  * Handles both cold-start (app launched from notification) and foreground tap scenarios.
  */
+/** Find today's workout from a schedule array based on current day of week */
+function findTodayWorkout(schedule: any[]): any | null {
+  if (!schedule?.length) return null;
+  const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  const todayName = dayNames[new Date().getDay()];
+  const match = schedule.find((d: any) => {
+    const dayStr = (d.day ?? "").toLowerCase();
+    return dayStr === todayName.toLowerCase() || dayStr.startsWith(todayName.toLowerCase().slice(0, 3));
+  });
+  return match ?? schedule[0];
+}
+
+/** Load workout plan from AsyncStorage and return today's workout day data */
+async function loadTodayWorkoutData(): Promise<any | null> {
+  try {
+    const [cached, guest] = await Promise.all([
+      AsyncStorage.getItem("@cached_workout_plan"),
+      AsyncStorage.getItem("@guest_workout_plan"),
+    ]);
+    const raw = cached || guest;
+    if (!raw) return null;
+    const plan = JSON.parse(raw);
+    return findTodayWorkout(plan?.schedule);
+  } catch {
+    return null;
+  }
+}
+
 function useNotificationDeepLink(ready: boolean) {
   const router = useRouter();
+
+  /** Handle a notification response — navigate based on type or url */
+  const handleNotificationResponse = useCallback(async (data: Record<string, any> | undefined, delay = 0) => {
+    if (!data) return;
+    // Explicit URL takes priority
+    if (typeof data.url === "string") {
+      if (delay > 0) setTimeout(() => router.push(data.url as any), delay);
+      else router.push(data.url as any);
+      return;
+    }
+    // Workout reminder: load today's workout and deep-link to active-workout
+    if (data.type === "workout_reminder") {
+      const todayData = await loadTodayWorkoutData();
+      const nav = () => {
+        if (todayData) {
+          router.push({ pathname: "/active-workout", params: { dayData: JSON.stringify(todayData) } } as any);
+        } else {
+          // No plan found — go to plans tab
+          router.push("/(tabs)/plans" as any);
+        }
+      };
+      if (delay > 0) setTimeout(nav, delay);
+      else nav();
+      return;
+    }
+    // Meal reminder: go to meals tab
+    if (data.type === "meal_reminder" || data.type === "meal_plan_renewal") {
+      const nav = () => router.push("/(tabs)/meals" as any);
+      if (delay > 0) setTimeout(nav, delay);
+      else nav();
+      return;
+    }
+  }, [router]);
+
   useEffect(() => {
     if (Platform.OS === "web" || !ready) return;
     // Handle notification that launched the app from a closed/background state
@@ -88,23 +151,16 @@ function useNotificationDeepLink(ready: boolean) {
       try {
         const lastResponse = await Notifications.getLastNotificationResponseAsync();
         if (lastResponse) {
-          const url = lastResponse.notification.request.content.data?.url;
-          if (typeof url === "string") {
-            // Defer slightly to let the navigator mount before pushing
-            setTimeout(() => router.push(url as any), 400);
-          }
+          await handleNotificationResponse(lastResponse.notification.request.content.data, 400);
         }
       } catch (_) { /* cold-start: navigator may not be ready */ }
     })();
     // Handle notification taps while the app is already running
-    const subscription = Notifications.addNotificationResponseReceivedListener((response) => {
-      const url = response.notification.request.content.data?.url;
-      if (typeof url === "string") {
-        router.push(url as any);
-      }
+    const subscription = Notifications.addNotificationResponseReceivedListener(async (response) => {
+      await handleNotificationResponse(response.notification.request.content.data);
     });
     return () => subscription.remove();
-  }, [router, ready]);
+  }, [router, ready, handleNotificationResponse]);
 }
 
 /**

@@ -2923,4 +2923,14 @@
   - [x] Fix: Now passes JSON.stringify(schedule[0]) as dayData param
   - [x] "Get Started" card now navigates to Plans tab instead of empty active-workout
 - [x] Run tests and verify TypeScript compiles — 0 TS errors, 6 new tests pass
+- [x] Save checkpoint (version d7c22701)
+
+## Smart Day Matching & Notification Deep-Link (Round 67)
+
+- [x] Smart day matching: todayWorkout useMemo matches current day of week against schedule entries, falls back to schedule[0]
+- [x] Quick-start from notification: workout_reminder taps load today's workout from AsyncStorage and deep-link to /active-workout with dayData
+  - [x] Also handles meal_reminder and meal_plan_renewal notification types
+  - [x] Falls back to Plans tab if no workout plan found
+  - [x] Works for both cold-start and foreground notification taps
+- [x] Run tests and verify TypeScript compiles — 0 TS errors, 12 new tests pass
 - [ ] Save checkpoint

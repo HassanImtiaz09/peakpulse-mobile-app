@@ -3,7 +3,7 @@
  * 6 focused sections replacing 20+ deep-scroll sections.
  * Sections: Hero, Today's Workout, Daily Progress, Weekly Goals, Quick Insights, Explore Grid
  */
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
 import Svg, { Circle } from "react-native-svg";
 import Animated, {
   useSharedValue, useAnimatedProps, useAnimatedStyle,
@@ -167,6 +167,19 @@ function HomeScreenContent() {
   const { data: mealPlan } = trpc.mealPlan.getActive.useQuery(undefined, { enabled: isAuthenticated });
 
   const { totalCalories: todayCalories, calorieGoal, meals: todayMeals, setCalorieGoal, macroTargets } = useCalories();
+
+  // ── Smart day matching: find today's workout from the schedule ──
+  const todayWorkout = useMemo(() => {
+    const plan = workoutPlan ?? localWorkoutPlan;
+    if (!plan?.schedule?.length) return null;
+    const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    const todayName = dayNames[new Date().getDay()];
+    const match = plan.schedule.find((d: any) => {
+      const dayStr = (d.day ?? "").toLowerCase();
+      return dayStr === todayName.toLowerCase() || dayStr.startsWith(todayName.toLowerCase().slice(0, 3));
+    });
+    return match ?? plan.schedule[0];
+  }, [workoutPlan, localWorkoutPlan]);
 
   useEffect(() => {
     // Read TDEE from both keys to handle race conditions between onboarding and CalorieProvider
@@ -522,18 +535,13 @@ function HomeScreenContent() {
           {/* ═══════════════════════════════════════════════════════════
               SECTION 2: Today's Workout Card with CTA
               ═══════════════════════════════════════════════════════════ */}
-          {(workoutPlan ?? localWorkoutPlan)?.schedule?.[0] ? (
+          {todayWorkout ? (
             <StaggeredCard index={1}>
               <View style={styles.section}>
                 <SectionTitle title="Today's Workout" />
                 <TouchableOpacity
                   onPress={() => {
-                    const todayData = (workoutPlan ?? localWorkoutPlan)?.schedule?.[0];
-                    if (todayData) {
-                      router.push({ pathname: "/active-workout", params: { dayData: JSON.stringify(todayData) } } as any);
-                    } else {
-                      router.push("/active-workout" as any);
-                    }
+                    router.push({ pathname: "/active-workout", params: { dayData: JSON.stringify(todayWorkout) } } as any);
                   }}
                   activeOpacity={0.85}
                   style={styles.workoutCard}
@@ -541,10 +549,10 @@ function HomeScreenContent() {
                 >
                   <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start" }}>
                     <View style={{ flex: 1 }}>
-                      <Text style={styles.cardEyebrow}>{((workoutPlan ?? localWorkoutPlan)!.schedule[0].day ?? "").toUpperCase()}</Text>
-                      <Text style={styles.workoutCardTitle}>{(workoutPlan ?? localWorkoutPlan)!.schedule[0].focus}</Text>
+                      <Text style={styles.cardEyebrow}>{(todayWorkout.day ?? "").toUpperCase()}</Text>
+                      <Text style={styles.workoutCardTitle}>{todayWorkout.focus}</Text>
                       <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 12, marginTop: 4 }}>
-                        {(workoutPlan ?? localWorkoutPlan)!.schedule[0].exercises?.length ?? 0} exercises
+                        {todayWorkout.exercises?.length ?? 0} exercises
                       </Text>
                     </View>
                     <View style={styles.workoutPlayBtn}>
@@ -553,7 +561,7 @@ function HomeScreenContent() {
                   </View>
                   {/* Progress bar */}
                   {(() => {
-                    const exList = ((workoutPlan ?? localWorkoutPlan)!.schedule[0].exercises ?? []).map((e: any) => e.name ?? e);
+                    const exList = (todayWorkout.exercises ?? []).map((e: any) => e.name ?? e);
                     const today = new Date().toISOString().split("T")[0];
                     const done = exerciseCompletion.getCompletedCount(today, exList);
                     const total = exList.length;
