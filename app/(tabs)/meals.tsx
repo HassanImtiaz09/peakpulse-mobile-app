@@ -29,6 +29,7 @@ import { schedulePantryExpiryAlerts, type PantryExpiryItem } from "@/lib/notific
 import * as Sharing from "expo-sharing";
 import { extractGroceryList, copyGroceryList, shareGroceryList, exportGroceryPdf, type GroceryCategory } from "@/lib/grocery-list";
 import { loadMealPreferences, toggleFavourite, rateMeal, isFavourite, getMealRating, buildPreferenceSummary, type MealPreferences } from "@/lib/meal-preferences";
+import { saveMealPlanToHistory, getPastMealNames, updatePhotoCacheFromPlan, applyCachedPhotos } from "@/lib/meal-history";
 
 
 // NanoBanana design tokens — Meals uses mint/teal accent
@@ -328,6 +329,7 @@ function MealsScreenContent() {
   const [swapMealData, setSwapMealData] = useState<{ name: string; calories: number; protein: number; carbs: number; fat: number } | null>(null);
   const [userDietaryPref, setUserDietaryPref] = useState("omnivore");
   const [userGoal, setUserGoal] = useState("build_muscle");
+  const [pastMealNames, setPastMealNames] = useState<string[]>([]);
   const [aiMealPlan, setAiMealPlan] = useState<any>(null);
   const [selectedDayIndex, setSelectedDayIndex] = useState(() => {
     const jsDay = new Date().getDay(); // 0=Sun
@@ -648,11 +650,18 @@ function MealsScreenContent() {
         } catch {}
       }
     });
-    AsyncStorage.getItem("@guest_meal_plan").then(raw => {
+    AsyncStorage.getItem("@guest_meal_plan").then(async (raw) => {
       if (raw) {
-        try { setAiMealPlan(normalizeMealPlanDays(JSON.parse(raw))); } catch {}
+        try {
+          const parsed = normalizeMealPlanDays(JSON.parse(raw));
+          // Apply cached photos to restore previously generated images
+          const withPhotos = await applyCachedPhotos(parsed).catch(() => parsed);
+          setAiMealPlan(withPhotos);
+        } catch {}
       }
     });
+    // Load meal history for AI prompt
+    getPastMealNames().then(setPastMealNames).catch(() => {});
   }, []);
 
   // Regenerate workout plan mutation
@@ -672,13 +681,19 @@ function MealsScreenContent() {
 
   // Regenerate meal plan mutation
   const regenerateMealPlan = trpc.mealPlan.generate.useMutation({
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
+      // Save current plan to history before replacing it
+      if (aiMealPlan) {
+        saveMealPlanToHistory(aiMealPlan).catch(() => {});
+      }
       const normalized = normalizeMealPlanDays(data);
-      setAiMealPlan(normalized);
+      // Apply cached photos to the new plan (reuse previously generated images)
+      const withCachedPhotos = await applyCachedPhotos(normalized).catch(() => normalized);
+      setAiMealPlan(withCachedPhotos);
       setSelectedDayIndex(0);
       setRegenerating(false);
       setAutoGeneratingPlan(false);
-      const json = JSON.stringify(normalized);
+      const json = JSON.stringify(withCachedPhotos);
       AsyncStorage.setItem("@guest_meal_plan", json);
       AsyncStorage.setItem("@cached_meal_plan", json);
       if (!autoGenRef.current) {
@@ -739,8 +754,9 @@ function MealsScreenContent() {
       ramadanMode,
       region: localProfile?.region || undefined,
       cuisinePrefs: selectedCuisines.length > 0 ? selectedCuisines : (localProfile?.cuisinePrefs?.length ? localProfile.cuisinePrefs : undefined),
+      pastMealNames: pastMealNames.length > 0 ? pastMealNames : undefined,
     });
-  }, [selectedWeekDay, userGoal, userDietaryPref, dailyCalorieTarget, ramadanMode, localProfile, selectedCuisines]);
+  }, [selectedWeekDay, userGoal, userDietaryPref, dailyCalorieTarget, ramadanMode, localProfile, selectedCuisines, pastMealNames]);
 
   // Auto-generate meal plan if none exists (e.g. after onboarding or first visit)
   const autoGenTriggeredRef = React.useRef(false);
@@ -775,6 +791,7 @@ function MealsScreenContent() {
           activityLevel: localProfile?.activityLevel,
           region: localProfile?.region || undefined,
           cuisinePrefs: localProfile?.cuisinePrefs?.length ? localProfile.cuisinePrefs : undefined,
+          pastMealNames: pastMealNames.length > 0 ? pastMealNames : undefined,
         });
       });
     });
@@ -826,6 +843,8 @@ function MealsScreenContent() {
       const json = JSON.stringify(updatedPlan);
       await AsyncStorage.setItem("@guest_meal_plan", json);
       await AsyncStorage.setItem("@cached_meal_plan", json);
+      // Update the persistent photo cache so images survive app restarts
+      updatePhotoCacheFromPlan(updatedPlan).catch(() => {});
     } catch (e) {
       // Silently fail — fallback images will be used
       console.warn("Meal image generation failed:", e);
@@ -1165,8 +1184,10 @@ function MealsScreenContent() {
     };
     // Include preference summary so AI learns from user ratings
     if (prefSummary) base.preferenceHint = prefSummary;
+    // Include past meal names so AI avoids repeating dishes
+    if (pastMealNames.length > 0) base.pastMealNames = pastMealNames;
     return base;
-  }, [userGoal, userDietaryPref, ramadanMode, localProfile, selectedCuisines, prefSummary]);
+  }, [userGoal, userDietaryPref, ramadanMode, localProfile, selectedCuisines, prefSummary, pastMealNames]);
    // Meal Plan swap handler
   const handleMealPlanSwap = useCallback(async (meal: any, dayIndex: number, mealIndex: number, isDislike?: boolean) => {
     // Auto-rate as 1 star when triggered from dislike button

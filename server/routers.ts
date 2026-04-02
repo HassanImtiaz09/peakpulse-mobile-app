@@ -358,7 +358,7 @@ The transformation should look like a real photograph, not AI-generated. Match t
   mealPlan: router({
     // AI generation — works for guests (no DB save for guests)
     generate: guestOrUserProcedure
-      .input(z.object({ goal: z.string(), dietaryPreference: z.string(), dailyCalories: z.number().optional(), weightKg: z.number().optional(), heightCm: z.number().optional(), age: z.number().optional(), gender: z.string().optional(), activityLevel: z.string().optional(), ramadanMode: z.boolean().optional(), region: z.string().optional(), cuisinePrefs: z.array(z.string()).optional(), preferenceHint: z.string().optional(), favouriteFoods: z.array(z.object({ name: z.string(), calories: z.number(), protein: z.number(), carbs: z.number(), fat: z.number() })).optional() }))
+      .input(z.object({ goal: z.string(), dietaryPreference: z.string(), dailyCalories: z.number().optional(), weightKg: z.number().optional(), heightCm: z.number().optional(), age: z.number().optional(), gender: z.string().optional(), activityLevel: z.string().optional(), ramadanMode: z.boolean().optional(), region: z.string().optional(), cuisinePrefs: z.array(z.string()).optional(), preferenceHint: z.string().optional(), favouriteFoods: z.array(z.object({ name: z.string(), calories: z.number(), protein: z.number(), carbs: z.number(), fat: z.number() })).optional(), pastMealNames: z.array(z.string()).optional() }))
       .mutation(async ({ ctx, input }) => {
         await checkAiLimit(ctx.user?.id, "mealPlan.generate");
         // Personalised TDEE via Mifflin-St Jeor if body metrics are provided
@@ -409,7 +409,11 @@ ${isRamadan ? `\n${ramadanNote}` : ""}
 ${favFoodsNote}
 ${cuisineNote}
 ${regionCuisineNote}
-${prefHintNote}
+${prefHintNote}${input.pastMealNames && input.pastMealNames.length > 0 ? `
+MEAL HISTORY — DO NOT REPEAT THESE DISHES (the user has had these recently):
+${input.pastMealNames.slice(0, 50).join(", ")}
+Generate COMPLETELY DIFFERENT meals from the ones listed above. Use different proteins, cooking methods, and flavour profiles.
+` : ""}
 DIETARY RESTRICTIONS (MUST FOLLOW — NON-NEGOTIABLE):
 ${dietaryRules}
 
@@ -496,6 +500,7 @@ Return this exact structure: {"dailyCalories":${calories},"proteinTarget":150,"c
         ramadanMode: z.boolean().optional(),
         region: z.string().optional(),
         cuisinePrefs: z.array(z.string()).optional(),
+        pastMealNames: z.array(z.string()).optional(),
       }))
       .mutation(async ({ ctx, input }) => {
         await checkAiLimit(ctx.user?.id, "mealPlan.regenerateDay");
@@ -515,7 +520,7 @@ USER PROFILE:
 ${input.region ? `- Region: ${input.region.replace(/_/g, " ")}` : ""}
 ${themeNote}
 ${cuisineNote}
-
+${input.pastMealNames && input.pastMealNames.length > 0 ? `\nMEAL HISTORY — DO NOT REPEAT THESE DISHES:\n${input.pastMealNames.slice(0, 30).join(", ")}\nGenerate COMPLETELY DIFFERENT meals from the above.\n` : ""}
 DIETARY RESTRICTIONS (MUST FOLLOW — NON-NEGOTIABLE):
 ${dietaryRules}
 

@@ -2951,4 +2951,12 @@
 - [x] Fix meal image generation so each meal gets a unique image
 - [x] Fix UI rendering to display correct day-specific meals and images
 - [x] Test and verify TypeScript compiles (0 TS errors, 8 new tests pass)
+- [x] Save checkpoint (version dd01b9ed)
+
+## Round 66: Meal history, photo caching, and auto-regeneration
+- [x] Implement meal history tracking: save past meal plan names to AsyncStorage when a new plan is generated
+- [x] Integrate meal history into AI prompt so it avoids repeating meals from previous weeks
+- [x] Implement meal photo caching: persist AI-generated photoUrls in AsyncStorage so they survive app restarts
+- [x] Auto-regenerate current meal plan on first load after this update (one-time trigger)
+- [x] Test and verify TypeScript compiles (0 TS errors, 20 new tests pass)
 - [ ] Save checkpoint
