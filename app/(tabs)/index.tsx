@@ -36,8 +36,7 @@ import { ExploreGrid } from "@/components/explore-grid";
 import { FloatingStartWorkout } from "@/components/floating-start-workout";
 import { DiscoveryBanner } from "@/components/discovery-banner";
 import { analyzeMuscleBalance, generateSuggestions, generatePlanChanges, type MuscleBalanceReport, type ExerciseSuggestion, type PlanChange } from "@/lib/muscle-balance";
-import { MuscleSvgDiagram } from "@/components/muscle-svg-diagram";
-import type { MuscleGroup } from "@/components/body-diagram";
+import { BodyDiagramInteractive, type MuscleGroup } from "@/components/body-diagram";
 import { TrendChart, type TrendDataPoint } from "@/components/trend-chart";
 import { WearableMetricsPanel } from "@/components/wearable-metrics-panel";
 import { PremiumFeatureBanner, PremiumFeatureTeaser } from "@/components/premium-feature-banner";
@@ -1037,13 +1036,9 @@ function HomeScreenContent() {
                   }
                 />
                 <View style={styles.heatmapCard}>
-                  <MuscleSvgDiagram
+                  <BodyDiagramInteractive
                     primary={muscleReport.overExercised.concat(muscleReport.optimal) as MuscleGroup[]}
                     secondary={muscleReport.underExercised as MuscleGroup[]}
-                    width={130}
-                    height={200}
-                    showLabels={false}
-                    showToggle
                   />
                   {/* Summary chips */}
                   <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 6, marginTop: 12, justifyContent: "center" }}>

@@ -2979,4 +2979,11 @@
 - [x] Added max_tokens to regenerateDay endpoint (8192 + retry)
 - [x] Fix food images: replaced generic hash-based fallback with keyword-matched photos (24 food categories)
 - [x] Test and verify TypeScript compiles (0 TS errors, 14 new tests pass)
+- [x] Save checkpoint (version 83814bdc)
+
+## Round 69: Fix Home tab muscle overview image quality
+- [x] Investigate muscle overview image on Home tab vs exercise section
+- [x] Fix Home tab: replaced MuscleSvgDiagram (basic SVG paths) with BodyDiagramInteractive (react-native-body-highlighter)
+- [x] Fix Plans tab: replaced MuscleSvgMini with BodyDiagramInline for consistency
+- [x] Test and verify TypeScript compiles (0 TS errors)
 - [ ] Save checkpoint

@@ -21,7 +21,7 @@ import { prefetchWorkoutGifs } from "@/lib/exercise-gif-cache";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { BodyHeatmap } from "@/components/body-heatmap";
 import { BodyDiagram, BodyDiagramInline } from "@/components/body-diagram";
-import { MuscleSvgDiagram, MuscleSvgMini } from "@/components/muscle-svg-diagram";
+// MuscleSvgDiagram/Mini replaced with higher-quality BodyDiagram components
 import { getExerciseInfo, type ExerciseInfo } from "@/lib/exercise-data";
 import { ExerciseSwapSheet } from "@/components/exercise-swap-sheet";
 import { getTodayTargetMuscles } from "@/lib/muscle-balance";
@@ -907,7 +907,7 @@ function ExercisePreviewCard({ exercise, onSwap, isToday }: { exercise: any; onS
             )}
             {exInfo && (
               <View style={{ marginTop: 2 }}>
-                <MuscleSvgMini primary={exInfo.primaryMuscles} secondary={exInfo.secondaryMuscles} />
+                <BodyDiagramInline primary={exInfo.primaryMuscles} secondary={exInfo.secondaryMuscles} />
               </View>
             )}
             <View style={{ flex: 1 }}>
