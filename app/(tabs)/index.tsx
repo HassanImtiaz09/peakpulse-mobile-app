@@ -527,7 +527,14 @@ function HomeScreenContent() {
               <View style={styles.section}>
                 <SectionTitle title="Today's Workout" />
                 <TouchableOpacity
-                  onPress={() => router.push("/active-workout" as any)}
+                  onPress={() => {
+                    const todayData = (workoutPlan ?? localWorkoutPlan)?.schedule?.[0];
+                    if (todayData) {
+                      router.push({ pathname: "/active-workout", params: { dayData: JSON.stringify(todayData) } } as any);
+                    } else {
+                      router.push("/active-workout" as any);
+                    }
+                  }}
                   activeOpacity={0.85}
                   style={styles.workoutCard}
                   {...a11yButton(A11Y_LABELS.startWorkout, "Open today's workout")}
@@ -588,7 +595,7 @@ function HomeScreenContent() {
               <View style={styles.section}>
                 <SectionTitle title="Get Started" />
                 <TouchableOpacity
-                  onPress={() => router.push("/active-workout" as any)}
+                  onPress={() => router.push("/plans" as any)}
                   activeOpacity={0.85}
                   style={styles.workoutCard}
                   {...a11yButton("Create your first workout plan")}

@@ -2914,4 +2914,13 @@
 - [x] Pull-to-refresh on Train tab: swipe down refreshes profile, workout plan, completed days, and exercise history
 - [x] Pull-to-refresh on Nutrition/Meals tab: RefreshControl on all 3 sub-tabs (Tracker, Meal Plan, Pantry) refreshes profile, meal plan, favourites, water, chart, preferences
 - [x] Run tests and verify TypeScript compiles — 0 TS errors, 73 test suites pass (2161 tests), 16 new pull-to-refresh tests
+- [x] Save checkpoint (version b8448d85)
+
+## Bug Fix: Today's Workout (Round 66)
+
+- [x] Fix "No workout data found" when tapping Today's Workout on Home tab
+  - [x] Root cause: Home tab navigated to /active-workout without dayData params
+  - [x] Fix: Now passes JSON.stringify(schedule[0]) as dayData param
+  - [x] "Get Started" card now navigates to Plans tab instead of empty active-workout
+- [x] Run tests and verify TypeScript compiles — 0 TS errors, 6 new tests pass
 - [ ] Save checkpoint
