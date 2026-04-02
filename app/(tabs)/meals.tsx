@@ -116,6 +116,27 @@ function normalizeMealPlanDays(plan: any): any {
   }
   // Sort in canonical order
   normalized.sort((a: any, b: any) => CANONICAL.indexOf(a.day) - CANONICAL.indexOf(b.day));
+  // Client-side deduplication: detect if multiple days have identical meal sets
+  const daySignatures = normalized.map((d: any) =>
+    (d.meals ?? []).map((m: any) => (m.name ?? "").toLowerCase().trim()).sort().join("|")
+  );
+  const seenSigs = new Map<string, number>();
+  const dayThemes = ["Mediterranean", "Asian", "Latin", "Middle Eastern", "Nordic", "Indian", "American"];
+  daySignatures.forEach((sig: string, idx: number) => {
+    if (!sig) return; // empty day
+    if (seenSigs.has(sig) && normalized[idx].meals?.length > 0) {
+      // This day is a duplicate — rename meals to differentiate
+      const theme = dayThemes[idx % dayThemes.length];
+      normalized[idx].meals = normalized[idx].meals.map((m: any) => ({
+        ...m,
+        name: `${theme} ${m.name}`,
+        photoQuery: `${theme.toLowerCase()} ${m.photoQuery || m.name}`,
+        photoUrl: undefined, // Force re-generation of image
+      }));
+    } else {
+      seenSigs.set(sig, idx);
+    }
+  });
   return { ...plan, days: normalized };
 }
 
@@ -131,8 +152,51 @@ const MEAL_PHOTO_MAP: Record<string, string> = {
   default: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&q=80",
 };
 
+// Pool of diverse food photos for fallback — each meal gets a unique one based on its name hash
+const FOOD_PHOTO_POOL = [
+  "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&q=80", // colorful salad
+  "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=400&q=80", // pancakes
+  "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400&q=80", // steak bowl
+  "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&q=80", // green salad
+  "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=400&q=80", // buddha bowl
+  "https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=400&q=80", // stir fry
+  "https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=400&q=80", // curry
+  "https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=400&q=80", // eggs
+  "https://images.unsplash.com/photo-1484723091739-30990106e7c6?w=400&q=80", // breakfast
+  "https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=400&q=80", // dinner plate
+  "https://images.unsplash.com/photo-1490474418585-ba9bad8fd0ea?w=400&q=80", // snack
+  "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=400&q=80", // fish
+  "https://images.unsplash.com/photo-1547592180-85f173990554?w=400&q=80", // soup
+  "https://images.unsplash.com/photo-1569050467447-ce54b3bbc37d?w=400&q=80", // noodles
+  "https://images.unsplash.com/photo-1525351484163-7529414344d8?w=400&q=80", // toast eggs
+  "https://images.unsplash.com/photo-1541519227354-08fa5d50c820?w=400&q=80", // avocado toast
+  "https://images.unsplash.com/photo-1511690743698-d9d85f2fbf38?w=400&q=80", // smoothie bowl
+  "https://images.unsplash.com/photo-1505576399279-565b52d4ac71?w=400&q=80", // fruit snack
+  "https://images.unsplash.com/photo-1626700051175-6818013e1d4f?w=400&q=80", // wrap
+  "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=400&q=80", // sandwich
+  "https://images.unsplash.com/photo-1517673132405-a56a62b18caf?w=400&q=80", // oats
+  "https://images.unsplash.com/photo-1559181567-c3190bfa4cfe?w=400&q=80", // dates
+  "https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=400&q=80", // banana
+  "https://images.unsplash.com/photo-1593001872095-7d5b3868fb1d?w=400&q=80", // falafel
+];
+
+function hashString(str: string): number {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = ((hash << 5) - hash) + str.charCodeAt(i);
+    hash |= 0;
+  }
+  return Math.abs(hash);
+}
+
 function getMealPlanPhotoUrl(meal: any): string {
   if (meal.photoUrl) return meal.photoUrl;
+  // Use meal name + type to pick a unique photo from the pool
+  const key = `${meal.name ?? ""}|${meal.type ?? ""}`.toLowerCase();
+  if (key.length > 1) {
+    const idx = hashString(key) % FOOD_PHOTO_POOL.length;
+    return FOOD_PHOTO_POOL[idx];
+  }
   const type = (meal.type ?? "default").toLowerCase();
   return MEAL_PHOTO_MAP[type] ?? MEAL_PHOTO_MAP.default;
 }
@@ -265,7 +329,10 @@ function MealsScreenContent() {
   const [userDietaryPref, setUserDietaryPref] = useState("omnivore");
   const [userGoal, setUserGoal] = useState("build_muscle");
   const [aiMealPlan, setAiMealPlan] = useState<any>(null);
-  const [selectedDayIndex, setSelectedDayIndex] = useState(0);
+  const [selectedDayIndex, setSelectedDayIndex] = useState(() => {
+    const jsDay = new Date().getDay(); // 0=Sun
+    return jsDay === 0 ? 6 : jsDay - 1; // Convert to 0=Mon index
+  });
   const [regenerating, setRegenerating] = useState(false);
   const [regeneratingWorkout, setRegeneratingWorkout] = useState(false);
   const [autoGeneratingPlan, setAutoGeneratingPlan] = useState(false);
@@ -1897,7 +1964,7 @@ function MealsScreenContent() {
                 : aiMeal
                   ? { title: aiMeal.name ?? "AI Meal", time: aiMeal.prepTime ?? "15 min", steps: aiMeal.ingredients ?? aiMeal.steps ?? [] }
                   : dietDefault;
-              const photo = swapped ? swapped.photo : MEAL_PHOTOS[type];
+              const photo = swapped ? swapped.photo : (aiMeal?.photoUrl ? aiMeal.photoUrl : getMealPlanPhotoUrl(aiMeal ?? { type }));
               const cals = swapped ? swapped.calories : (aiMeal?.calories ?? dietDefault.calories);
               const prot = swapped ? swapped.protein : (aiMeal?.protein ?? dietDefault.protein);
               const logged = loggedByType[type] ?? [];

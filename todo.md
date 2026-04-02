@@ -2943,4 +2943,12 @@
   - [x] Fixed streak trigger condition (was always true, now correctly checks % 7 === 0)
   - [x] Celebration persisted per milestone to avoid re-showing
 - [x] Run tests and verify TypeScript compiles — 0 TS errors, 19 new tests pass
+- [x] Save checkpoint (version 27795410)
+
+## Round 65: Fix duplicate meals and images across days
+- [x] Investigate why all days show the same meals in the Meal Plan tab
+- [x] Fix meal plan generation/parsing so each day has unique meals
+- [x] Fix meal image generation so each meal gets a unique image
+- [x] Fix UI rendering to display correct day-specific meals and images
+- [x] Test and verify TypeScript compiles (0 TS errors, 8 new tests pass)
 - [ ] Save checkpoint

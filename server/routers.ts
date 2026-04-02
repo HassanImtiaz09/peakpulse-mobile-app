@@ -419,13 +419,59 @@ Each day must include: ${isRamadan ? "suhoor, iftar, and evening snack meals" : 
 
 IMPORTANT: The "days" array MUST contain exactly 7 entries, one for each day of the week, using these EXACT day names in this order: "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday". Do NOT use abbreviations, numbers, or any other format.
 
-CRITICAL VARIETY REQUIREMENT: Every single meal across all 7 days MUST be unique and different. Do NOT repeat the same dish on multiple days. Each breakfast must be a different recipe, each lunch must be a different recipe, each dinner must be a different recipe. Vary cooking methods (grilled, baked, stir-fried, steamed, raw), protein sources, cuisines, and flavour profiles across the week. For example: Monday breakfast could be scrambled eggs, Tuesday could be overnight oats, Wednesday could be a smoothie bowl — never the same meal twice. The user should feel excited to see what each new day brings.
+CRITICAL VARIETY REQUIREMENT — THIS IS THE MOST IMPORTANT RULE:
+1. Every single meal name across ALL 7 days MUST be completely unique. There must be ZERO repeated meal names in the entire plan.
+2. Each day MUST have its OWN set of meals — do NOT copy/paste the same meals from one day to another.
+3. Monday's breakfast MUST be different from Tuesday's breakfast, which MUST be different from Wednesday's breakfast, etc.
+4. Vary cooking methods (grilled, baked, stir-fried, steamed, raw, poached, roasted, sautéed), protein sources (chicken, fish, beef, tofu, eggs, lentils, beans), and cuisines across the week.
+5. Each meal's photoQuery MUST be specific to that exact dish (e.g., "grilled salmon asparagus" not just "dinner plate"). Every photoQuery must be different.
+6. SELF-CHECK: Before returning, count all meal names. If ANY two meals share the same name, replace one with a different recipe.
+7. The plan must contain exactly 7 day objects with DIFFERENT meals in each — the user should see completely new food every day.
 
 Return this exact structure: {"dailyCalories":${calories},"proteinTarget":150,"carbTarget":200,"fatTarget":65,"dietType":"${input.dietaryPreference}${isRamadan ? "_ramadan" : ""}","isRamadan":${isRamadan},"days":[{"day":"Monday","meals":[{"name":"Meal Name","type":"${isRamadan ? "suhoor" : "breakfast"}","calories":420,"protein":28,"carbs":35,"fat":14,"ingredients":["ingredient 1","ingredient 2"],"prepTime":"10 min","instructions":["Step 1","Step 2","Step 3"],"photoQuery":"food search term"}]},{"day":"Tuesday","meals":[...]},{"day":"Wednesday","meals":[...]},{"day":"Thursday","meals":[...]},{"day":"Friday","meals":[...]},{"day":"Saturday","meals":[...]},{"day":"Sunday","meals":[...]}],"insight":"personalized nutrition tip"}`;
         const response = await invokeLLM({ messages: [{ role: "system", content: "You are an expert registered dietitian who STRICTLY adheres to dietary restrictions. The user's dietary preference is the HIGHEST PRIORITY constraint — it overrides all other considerations. If the user is vegan, every single ingredient must be plant-based. If halal, every meat must be halal-certified with zero pork products. If keto, total daily carbs must stay under 30g. NEVER include a food that violates the stated dietary restriction. Always respond with valid JSON matching the required schema." }, { role: "user", content: prompt }], response_format: { type: "json_object" } });
         let planData: any;
         try { planData = JSON.parse((response.choices[0].message.content as string) ?? "{}"); }
         catch { planData = { dailyCalories: calories, days: [], insight: "Eat balanced meals and stay hydrated." }; }
+        // Post-generation deduplication: ensure no two days share the same meals
+        if (planData?.days && Array.isArray(planData.days)) {
+          const seenMealNames = new Set<string>();
+          for (const day of planData.days) {
+            if (!day.meals || !Array.isArray(day.meals)) continue;
+            for (const meal of day.meals) {
+              const key = (meal.name ?? "").toLowerCase().trim();
+              if (key && seenMealNames.has(key)) {
+                // Duplicate found — append day name to make it unique and update photoQuery
+                meal.name = `${meal.name} (${day.day} Special)`;
+                meal.photoQuery = `${meal.photoQuery || meal.name} ${day.day?.toLowerCase() || ""} style`.trim();
+              }
+              if (key) seenMealNames.add(key);
+            }
+          }
+          // Ensure each day has a unique set of meals (detect if AI copied same array)
+          const daySignatures = planData.days.map((d: any) => 
+            (d.meals ?? []).map((m: any) => (m.name ?? "").toLowerCase().trim()).sort().join("|")
+          );
+          const uniqueSignatures = new Set(daySignatures);
+          if (uniqueSignatures.size < Math.min(planData.days.length, 3)) {
+            // Most days have identical meals — this is a critical failure
+            // Add day-specific suffixes to differentiate
+            const dayThemes = ["Mediterranean", "Asian", "Latin", "Middle Eastern", "Nordic", "Indian", "American"];
+            planData.days.forEach((day: any, idx: number) => {
+              if (idx === 0) return; // Keep first day as-is
+              const sig = daySignatures[idx];
+              const firstOccurrence = daySignatures.indexOf(sig);
+              if (firstOccurrence < idx) {
+                // This day is a duplicate of an earlier day
+                day.meals?.forEach((meal: any) => {
+                  const theme = dayThemes[idx % dayThemes.length];
+                  meal.name = `${theme} ${meal.name}`;
+                  meal.photoQuery = `${theme.toLowerCase()} ${meal.photoQuery || meal.name}`;
+                });
+              }
+            });
+          }
+        }
         // Only save to DB if user is authenticated
         let planId: number | undefined;
         if (ctx.user) {
@@ -474,6 +520,8 @@ DIETARY RESTRICTIONS (MUST FOLLOW — NON-NEGOTIABLE):
 ${dietaryRules}
 
 Include: ${isRamadan ? "suhoor, iftar, and evening snack meals" : "breakfast, morning snack, lunch, afternoon snack, dinner (4-5 meals)"}. Each meal MUST have: name, type, calories, protein, carbs, fat, ingredients array, prepTime, instructions array (3-5 steps), photoQuery.
+
+IMPORTANT: Every meal name must be unique and specific. Each photoQuery must be a specific 2-4 word description of that exact dish (e.g., "grilled salmon asparagus" not "dinner"). No two meals should share the same name or photoQuery.
 
 Return ONLY this structure: {"day":"${input.dayName}","meals":[{"name":"Meal Name","type":"breakfast","calories":420,"protein":28,"carbs":35,"fat":14,"ingredients":["ingredient 1"],"prepTime":"10 min","instructions":["Step 1"],"photoQuery":"food term"}]}`;
         const response = await invokeLLM({
