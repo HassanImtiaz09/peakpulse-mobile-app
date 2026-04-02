@@ -32,7 +32,7 @@ import { loadMealPreferences, toggleFavourite, rateMeal, isFavourite, getMealRat
 import { saveMealPlanToHistory, getPastMealNames, updatePhotoCacheFromPlan, applyCachedPhotos, isWeeklyRefreshNeeded, markWeeklyRefreshDone, loadPinnedMeals, togglePinnedMeal, applyPinnedMeals, cleanupPinnedMeals } from "@/lib/meal-history";
 
 
-// NanoBanana design tokens — Meals uses mint/teal accent
+// NanoBanana design tokens â Meals uses mint/teal accent
 const MBG = "#0A0E14";
 const MSURFACE = "#111827";
 const MSURFACE2 = "#1E293B";
@@ -86,58 +86,124 @@ const WEEK_DAYS_FULL = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", 
  *  Handles: "Day 1", "day 1", "Mon", "monday", "MONDAY", "1", etc. */
 function normalizeMealPlanDays(plan: any): any {
   if (!plan?.days || !Array.isArray(plan.days)) return plan;
+
   const CANONICAL = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
   const ABBR: Record<string, string> = { mon: "Monday", tue: "Tuesday", wed: "Wednesday", thu: "Thursday", fri: "Friday", sat: "Saturday", sun: "Sunday" };
+
   const normalized = plan.days.map((d: any, idx: number) => {
     const raw = (d.day ?? "").trim().toLowerCase();
-    // Already canonical?
     const exact = CANONICAL.find(c => c.toLowerCase() === raw);
     if (exact) return { ...d, day: exact };
-    // Abbreviation match ("mon", "tue", etc.)
     const abbrMatch = ABBR[raw.slice(0, 3)];
     if (abbrMatch) return { ...d, day: abbrMatch };
-    // "Day 1" / "Day 2" pattern
     const dayNumMatch = raw.match(/day\s*(\d+)/);
     if (dayNumMatch) {
       const num = parseInt(dayNumMatch[1], 10);
       if (num >= 1 && num <= 7) return { ...d, day: CANONICAL[num - 1] };
     }
-    // Pure number "1".."7"
     const pureNum = parseInt(raw, 10);
     if (pureNum >= 1 && pureNum <= 7) return { ...d, day: CANONICAL[pureNum - 1] };
-    // Fallback: assign by index
     return { ...d, day: CANONICAL[idx % 7] };
   });
-  // Ensure all 7 days exist — fill missing ones with empty meals
+
+  // Ensure all 7 days exist
   const daySet = new Set(normalized.map((d: any) => d.day));
   for (const c of CANONICAL) {
     if (!daySet.has(c)) {
       normalized.push({ day: c, meals: [] });
     }
   }
-  // Sort in canonical order
   normalized.sort((a: any, b: any) => CANONICAL.indexOf(a.day) - CANONICAL.indexOf(b.day));
-  // Client-side deduplication: detect if multiple days have identical meal sets
+
+  // ===== ROBUST DEDUPLICATION =====
+  // Detect days with identical or near-identical meal sets and diversify them
   const daySignatures = normalized.map((d: any) =>
     (d.meals ?? []).map((m: any) => (m.name ?? "").toLowerCase().trim()).sort().join("|")
   );
+
+  // Cuisine-themed replacement pools for deduplication
+  const VARIETY_POOLS: Record<string, Array<{ name: string; type: string; calories: number; protein: number; carbs: number; fat: number; photoQuery: string }>> = {
+    Mediterranean: [
+      { name: "Greek Salad with Grilled Chicken", type: "lunch", calories: 420, protein: 35, carbs: 22, fat: 18, photoQuery: "greek salad chicken" },
+      { name: "Shakshuka with Crusty Bread", type: "breakfast", calories: 340, protein: 18, carbs: 30, fat: 16, photoQuery: "shakshuka eggs tomato" },
+      { name: "Grilled Sea Bass with Lemon Herbs", type: "dinner", calories: 460, protein: 40, carbs: 18, fat: 22, photoQuery: "grilled sea bass fish" },
+      { name: "Hummus & Falafel Plate", type: "snack", calories: 280, protein: 14, carbs: 32, fat: 12, photoQuery: "falafel hummus plate" },
+    ],
+    Asian: [
+      { name: "Teriyaki Chicken Rice Bowl", type: "lunch", calories: 480, protein: 32, carbs: 52, fat: 14, photoQuery: "teriyaki chicken rice" },
+      { name: "Miso Soup with Tofu & Seaweed", type: "breakfast", calories: 180, protein: 12, carbs: 14, fat: 6, photoQuery: "miso soup tofu" },
+      { name: "Salmon Poke Bowl", type: "dinner", calories: 440, protein: 34, carbs: 42, fat: 16, photoQuery: "salmon poke bowl" },
+      { name: "Edamame with Sea Salt", type: "snack", calories: 190, protein: 16, carbs: 14, fat: 8, photoQuery: "edamame beans" },
+    ],
+    Indian: [
+      { name: "Chicken Tikka Masala with Basmati", type: "dinner", calories: 520, protein: 36, carbs: 48, fat: 18, photoQuery: "chicken tikka masala curry" },
+      { name: "Masala Omelette with Paratha", type: "breakfast", calories: 380, protein: 22, carbs: 32, fat: 18, photoQuery: "indian masala omelette" },
+      { name: "Dal Tadka with Brown Rice", type: "lunch", calories: 420, protein: 18, carbs: 56, fat: 10, photoQuery: "dal lentil curry rice" },
+      { name: "Chana Chaat", type: "snack", calories: 220, protein: 10, carbs: 28, fat: 8, photoQuery: "chana chickpea chaat" },
+    ],
+    Latin: [
+      { name: "Chicken Burrito Bowl", type: "lunch", calories: 510, protein: 38, carbs: 48, fat: 16, photoQuery: "burrito bowl chicken" },
+      { name: "Huevos Rancheros", type: "breakfast", calories: 380, protein: 20, carbs: 34, fat: 16, photoQuery: "huevos rancheros breakfast" },
+      { name: "Grilled Fish Tacos with Slaw", type: "dinner", calories: 440, protein: 32, carbs: 36, fat: 18, photoQuery: "fish tacos" },
+      { name: "Guacamole with Veggie Sticks", type: "snack", calories: 200, protein: 4, carbs: 16, fat: 14, photoQuery: "guacamole avocado" },
+    ],
+    Thai: [
+      { name: "Pad Thai with Shrimp", type: "lunch", calories: 480, protein: 28, carbs: 54, fat: 16, photoQuery: "pad thai shrimp noodles" },
+      { name: "Thai Coconut Oat Bowl", type: "breakfast", calories: 320, protein: 10, carbs: 42, fat: 14, photoQuery: "coconut oats tropical" },
+      { name: "Green Curry with Jasmine Rice", type: "dinner", calories: 500, protein: 30, carbs: 48, fat: 20, photoQuery: "thai green curry rice" },
+      { name: "Mango Sticky Rice", type: "snack", calories: 240, protein: 4, carbs: 42, fat: 8, photoQuery: "mango sticky rice thai" },
+    ],
+    Turkish: [
+      { name: "Turkish Eggs (Cilbir) with Yogurt", type: "breakfast", calories: 350, protein: 20, carbs: 22, fat: 20, photoQuery: "cilbir turkish eggs yogurt" },
+      { name: "Lamb Kebab with Bulgur Salad", type: "lunch", calories: 490, protein: 36, carbs: 38, fat: 20, photoQuery: "lamb kebab bulgur" },
+      { name: "Grilled Chicken Adana with Rice", type: "dinner", calories: 480, protein: 38, carbs: 40, fat: 16, photoQuery: "adana kebab chicken" },
+      { name: "Roasted Chickpeas (Leblebi)", type: "snack", calories: 200, protein: 10, carbs: 28, fat: 6, photoQuery: "roasted chickpeas" },
+    ],
+    Nordic: [
+      { name: "Smoked Salmon on Rye with Cream Cheese", type: "breakfast", calories: 340, protein: 24, carbs: 28, fat: 14, photoQuery: "smoked salmon rye bread" },
+      { name: "Open-Face Shrimp Sandwich", type: "lunch", calories: 380, protein: 26, carbs: 32, fat: 14, photoQuery: "shrimp sandwich open face" },
+      { name: "Baked Cod with Dill Potatoes", type: "dinner", calories: 420, protein: 36, carbs: 34, fat: 12, photoQuery: "baked cod fish potatoes" },
+      { name: "Berry Skyr Bowl", type: "snack", calories: 180, protein: 16, carbs: 22, fat: 4, photoQuery: "skyr yogurt berries" },
+    ],
+  };
+  const themeKeys = Object.keys(VARIETY_POOLS);
+
   const seenSigs = new Map<string, number>();
-  const dayThemes = ["Mediterranean", "Asian", "Latin", "Middle Eastern", "Nordic", "Indian", "American"];
+  let themeIdx = 0;
+
   daySignatures.forEach((sig: string, idx: number) => {
-    if (!sig) return; // empty day
+    if (!sig) return;
     if (seenSigs.has(sig) && normalized[idx].meals?.length > 0) {
-      // This day is a duplicate — rename meals to differentiate
-      const theme = dayThemes[idx % dayThemes.length];
-      normalized[idx].meals = normalized[idx].meals.map((m: any) => ({
-        ...m,
-        name: `${theme} ${m.name}`,
-        photoQuery: `${theme.toLowerCase()} ${m.photoQuery || m.name}`,
-        photoUrl: undefined, // Force re-generation of image
-      }));
+      // This day is a duplicate — replace with themed alternatives
+      const theme = themeKeys[themeIdx % themeKeys.length];
+      themeIdx++;
+      const pool = VARIETY_POOLS[theme];
+      const origMeals = normalized[idx].meals;
+
+      normalized[idx].meals = origMeals.map((m: any, mi: number) => {
+        // Find a pool meal of matching type, or use round-robin
+        const mType = (m.type ?? "meal").toLowerCase();
+        const poolMatch = pool.find(p => p.type === mType) ?? pool[mi % pool.length];
+        return {
+          ...poolMatch,
+          type: m.type ?? poolMatch.type,
+          photoUrl: undefined,  // Force fresh image lookup
+        };
+      });
     } else {
       seenSigs.set(sig, idx);
     }
   });
+
+  // Ensure every meal has a photoQuery for better image matching
+  normalized.forEach((day: any) => {
+    day.meals?.forEach((meal: any) => {
+      if (!meal.photoQuery && meal.name) {
+        meal.photoQuery = meal.name.toLowerCase();
+      }
+    });
+  });
+
   return { ...plan, days: normalized };
 }
 
@@ -153,32 +219,43 @@ const MEAL_PHOTO_MAP: Record<string, string> = {
   default: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&q=80",
 };
 
-// Keyword-matched food photos for intelligent fallback — matches meal description to appropriate image
+// Keyword-matched food photos for intelligent fallback â matches meal description to appropriate image
 const FOOD_KEYWORD_PHOTOS: Array<{ keywords: string[]; url: string }> = [
   { keywords: ["chicken", "grilled chicken", "roast chicken", "poultry"], url: "https://images.unsplash.com/photo-1598103442097-8b74394b95c6?w=400&q=80" },
-  { keywords: ["salmon", "fish", "seafood", "tuna", "cod", "shrimp", "prawn"], url: "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=400&q=80" },
-  { keywords: ["steak", "beef", "meat", "lamb", "rib"], url: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400&q=80" },
-  { keywords: ["egg", "omelette", "scramble", "frittata"], url: "https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=400&q=80" },
-  { keywords: ["salad", "greens", "kale", "spinach", "arugula"], url: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&q=80" },
-  { keywords: ["rice", "bowl", "grain", "quinoa", "buddha"], url: "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=400&q=80" },
-  { keywords: ["pasta", "noodle", "spaghetti", "penne", "ramen"], url: "https://images.unsplash.com/photo-1569050467447-ce54b3bbc37d?w=400&q=80" },
-  { keywords: ["soup", "stew", "broth", "chili", "chowder"], url: "https://images.unsplash.com/photo-1547592180-85f173990554?w=400&q=80" },
-  { keywords: ["toast", "bread", "avocado", "bruschetta"], url: "https://images.unsplash.com/photo-1541519227354-08fa5d50c820?w=400&q=80" },
+  { keywords: ["salmon", "fish", "seafood", "tuna", "cod", "shrimp", "prawn", "sea bass", "trout", "tilapia"], url: "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=400&q=80" },
+  { keywords: ["steak", "beef", "meat", "lamb", "rib", "sirloin", "filet", "tenderloin"], url: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400&q=80" },
+  { keywords: ["egg", "omelette", "scramble", "frittata", "boiled egg", "poached egg"], url: "https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=400&q=80" },
+  { keywords: ["salad", "greens", "kale", "spinach", "arugula", "mixed greens", "caesar"], url: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&q=80" },
+  { keywords: ["rice", "bowl", "grain", "quinoa", "buddha", "poke", "bibimbap"], url: "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=400&q=80" },
+  { keywords: ["pasta", "noodle", "spaghetti", "penne", "ramen", "linguine", "fettuccine", "udon", "pho", "pad thai", "laksa"], url: "https://images.unsplash.com/photo-1569050467447-ce54b3bbc37d?w=400&q=80" },
+  { keywords: ["soup", "stew", "broth", "chili", "chowder", "bisque", "minestrone", "tom yum", "tom kha"], url: "https://images.unsplash.com/photo-1547592180-85f173990554?w=400&q=80" },
+  { keywords: ["toast", "bread", "avocado", "bruschetta", "sourdough"], url: "https://images.unsplash.com/photo-1541519227354-08fa5d50c820?w=400&q=80" },
   { keywords: ["pancake", "waffle", "french toast", "crepe"], url: "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=400&q=80" },
-  { keywords: ["smoothie", "shake", "acai", "protein shake"], url: "https://images.unsplash.com/photo-1511690743698-d9d85f2fbf38?w=400&q=80" },
-  { keywords: ["oat", "porridge", "granola", "muesli", "cereal"], url: "https://images.unsplash.com/photo-1517673132405-a56a62b18caf?w=400&q=80" },
-  { keywords: ["wrap", "burrito", "tortilla", "taco"], url: "https://images.unsplash.com/photo-1626700051175-6818013e1d4f?w=400&q=80" },
-  { keywords: ["sandwich", "panini", "sub", "club"], url: "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=400&q=80" },
-  { keywords: ["curry", "tikka", "masala", "dal", "lentil", "indian"], url: "https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=400&q=80" },
-  { keywords: ["stir fry", "wok", "asian", "teriyaki", "soy"], url: "https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=400&q=80" },
-  { keywords: ["fruit", "apple", "banana", "berry", "mango"], url: "https://images.unsplash.com/photo-1505576399279-565b52d4ac71?w=400&q=80" },
-  { keywords: ["yogurt", "parfait", "cottage cheese"], url: "https://images.unsplash.com/photo-1488477181946-6428a0291777?w=400&q=80" },
-  { keywords: ["date", "nut", "almond", "trail mix", "energy"], url: "https://images.unsplash.com/photo-1559181567-c3190bfa4cfe?w=400&q=80" },
-  { keywords: ["falafel", "hummus", "pita", "mediterranean", "middle eastern"], url: "https://images.unsplash.com/photo-1593001872095-7d5b3868fb1d?w=400&q=80" },
-  { keywords: ["pizza", "flatbread"], url: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400&q=80" },
-  { keywords: ["sushi", "japanese", "miso", "tofu"], url: "https://images.unsplash.com/photo-1553621042-f6e147245754?w=400&q=80" },
+  { keywords: ["smoothie", "shake", "acai", "protein shake", "lassi", "milkshake"], url: "https://images.unsplash.com/photo-1511690743698-d9d85f2fbf38?w=400&q=80" },
+  { keywords: ["oat", "porridge", "granola", "muesli", "cereal", "overnight"], url: "https://images.unsplash.com/photo-1517673132405-a56a62b18caf?w=400&q=80" },
+  { keywords: ["wrap", "burrito", "tortilla", "taco", "quesadilla", "enchilada", "fajita", "shawarma"], url: "https://images.unsplash.com/photo-1626700051175-6818013e1d4f?w=400&q=80" },
+  { keywords: ["sandwich", "panini", "sub", "club", "baguette", "ciabatta"], url: "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=400&q=80" },
+  { keywords: ["curry", "tikka", "masala", "dal", "lentil", "indian", "biryani", "tandoori", "korma", "vindaloo", "samosa", "naan", "chapati", "paneer", "butter chicken", "palak"], url: "https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=400&q=80" },
+  { keywords: ["stir fry", "wok", "teriyaki", "soy", "chinese", "kung pao", "sweet and sour", "chow mein", "fried rice", "lo mein", "dim sum", "dumpling", "spring roll", "wontons"], url: "https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=400&q=80" },
+  { keywords: ["fruit", "apple", "banana", "berry", "mango", "melon", "pineapple", "papaya"], url: "https://images.unsplash.com/photo-1505576399279-565b52d4ac71?w=400&q=80" },
+  { keywords: ["yogurt", "parfait", "cottage cheese", "raita", "tzatziki"], url: "https://images.unsplash.com/photo-1488477181946-6428a0291777?w=400&q=80" },
+  { keywords: ["date", "nut", "almond", "trail mix", "energy", "cashew", "pistachio", "walnut"], url: "https://images.unsplash.com/photo-1559181567-c3190bfa4cfe?w=400&q=80" },
+  { keywords: ["falafel", "hummus", "pita", "mediterranean", "middle eastern", "tabbouleh", "fattoush", "baba ganoush", "labneh", "shakshuka"], url: "https://images.unsplash.com/photo-1593001872095-7d5b3868fb1d?w=400&q=80" },
+  { keywords: ["pizza", "flatbread", "calzone", "focaccia"], url: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400&q=80" },
+  { keywords: ["sushi", "japanese", "miso", "tofu", "edamame", "sashimi", "tempura", "onigiri", "matcha", "teriyaki salmon"], url: "https://images.unsplash.com/photo-1553621042-f6e147245754?w=400&q=80" },
   { keywords: ["turkey", "deli", "roast"], url: "https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=400&q=80" },
-  { keywords: ["sweet potato", "potato", "baked"], url: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&q=80" },
+  { keywords: ["sweet potato", "potato", "baked", "roasted vegetables", "root"], url: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&q=80" },
+  { keywords: ["thai", "pad thai", "green curry", "red curry", "massaman", "tom yum", "thai basil", "pad see ew", "satay", "coconut curry"], url: "https://images.unsplash.com/photo-1562565652-a0d8f0c59eb4?w=400&q=80" },
+  { keywords: ["korean", "bibimbap", "kimchi", "bulgogi", "japchae", "tteokbokki", "gochujang", "korean bbq", "banchan"], url: "https://images.unsplash.com/photo-1590301157890-4810ed352733?w=400&q=80" },
+  { keywords: ["turkish", "kebab", "kofte", "borek", "pide", "lahmacun", "baklava", "gozleme", "adana", "iskender", "doner"], url: "https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?w=400&q=80" },
+  { keywords: ["mexican", "guacamole", "salsa", "nachos", "churro", "tamale", "elote", "pozole", "chilaquiles", "carnitas", "mole", "ceviche"], url: "https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=400&q=80" },
+  { keywords: ["italian", "risotto", "gnocchi", "pesto", "carbonara", "bolognese", "lasagna", "tiramisu", "prosciutto", "caprese", "minestrone"], url: "https://images.unsplash.com/photo-1498579150354-977475b7ea0b?w=400&q=80" },
+  { keywords: ["african", "jollof", "injera", "tagine", "couscous", "plantain", "fufu", "suya", "bobotie", "bunny chow"], url: "https://images.unsplash.com/photo-1604329760661-e71dc83f8f26?w=400&q=80" },
+  { keywords: ["caribbean", "jerk", "ackee", "callaloo", "roti", "pelau", "rice and peas", "patty", "oxtail"], url: "https://images.unsplash.com/photo-1625398407796-82650a8c135f?w=400&q=80" },
+  { keywords: ["southeast asian", "nasi goreng", "rendang", "banh mi", "spring roll", "satay", "laksa", "gado gado", "lumpia"], url: "https://images.unsplash.com/photo-1569058242253-92a9c755a0ec?w=400&q=80" },
+  { keywords: ["american", "burger", "hot dog", "mac and cheese", "bbq", "pulled pork", "wings", "coleslaw", "cornbread", "biscuit"], url: "https://images.unsplash.com/photo-1550547660-d9450f859349?w=400&q=80" },
+  { keywords: ["kofta", "lamb kofta", "meatball", "polpette"], url: "https://images.unsplash.com/photo-1529042410759-befb1204b468?w=400&q=80" },
+  { keywords: ["grilled", "bbq", "barbecue", "chargrilled", "flame"], url: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=400&q=80" },
 ];
 
 // Fallback pool for when no keyword matches
@@ -195,25 +272,36 @@ function hashString(str: string): number {
 
 function getMealPlanPhotoUrl(meal: any): string {
   if (meal.photoUrl) return meal.photoUrl;
-  // Try keyword matching first — find the best photo based on meal name and photoQuery
-  const searchText = `${meal.name ?? ""} ${meal.photoQuery ?? ""} ${meal.type ?? ""}`.toLowerCase();
+
+  // Build search text from all available meal info for best matching
+  const searchText = `${meal.name ?? ""} ${meal.photoQuery ?? ""} ${meal.type ?? ""} ${meal.cuisine ?? ""}`.toLowerCase();
+
   if (searchText.trim().length > 1) {
     // Score each keyword photo by how many keywords match
+    // Multi-word phrases and longer keywords score higher for precision
     let bestMatch: { url: string; score: number } | null = null;
     for (const entry of FOOD_KEYWORD_PHOTOS) {
       let score = 0;
       for (const kw of entry.keywords) {
-        if (searchText.includes(kw)) score += kw.length; // longer keyword matches score higher
+        if (searchText.includes(kw)) {
+          // Boost multi-word matches (e.g. "pad thai" > "thai")
+          const wordCount = kw.split(" ").length;
+          score += kw.length * wordCount;
+        }
       }
       if (score > 0 && (!bestMatch || score > bestMatch.score)) {
         bestMatch = { url: entry.url, score };
       }
     }
     if (bestMatch) return bestMatch.url;
-    // No keyword match — use hash-based selection from pool
-    const idx = hashString(searchText) % FOOD_PHOTO_POOL.length;
+
+    // No keyword match — use deterministic hash selection from pool
+    // Hash on just the meal name for consistency (same meal always gets same image)
+    const hashKey = (meal.name ?? searchText).toLowerCase().trim();
+    const idx = hashString(hashKey) % FOOD_PHOTO_POOL.length;
     return FOOD_PHOTO_POOL[idx];
   }
+
   const type = (meal.type ?? "default").toLowerCase();
   return MEAL_PHOTO_MAP[type] ?? MEAL_PHOTO_MAP.default;
 }
@@ -797,7 +885,7 @@ function MealsScreenContent() {
     // Only trigger once, and only if no plan exists
     if (aiMealPlan || autoGenTriggeredRef.current || regenerating || autoGeneratingPlan) return;
     autoGenTriggeredRef.current = true;
-    // Check if onboarding is complete — only auto-generate after onboarding
+    // Check if onboarding is complete â only auto-generate after onboarding
     AsyncStorage.getItem("@onboarding_complete").then(val => {
       if (val !== "true") return;
       // Double-check storage hasn't been populated in the meantime
@@ -809,7 +897,7 @@ function MealsScreenContent() {
             return;
           } catch {}
         }
-        // No plan exists — auto-generate
+        // No plan exists â auto-generate
         autoGenRef.current = true;
         setAutoGeneratingPlan(true);
         regenerateMealPlan.mutate({
@@ -835,7 +923,7 @@ function MealsScreenContent() {
     weeklyRefreshRef.current = true;
     isWeeklyRefreshNeeded().then(needed => {
       if (!needed) return;
-      // It's a new week — auto-regenerate the meal plan
+      // It's a new week â auto-regenerate the meal plan
       autoGenRef.current = true;
       setAutoGeneratingPlan(true);
       regenerateMealPlan.mutate({
@@ -853,7 +941,7 @@ function MealsScreenContent() {
     }).catch(() => {});
   }, [aiMealPlan, localProfile]);
 
-  // ── AI Meal Image Generation ──────────────────────────────────────────────────
+  // ââ AI Meal Image Generation ââââââââââââââââââââââââââââââââââââââââââââââââââ
   const generateMealImages = trpc.mealImages.generateBatch.useMutation();
 
   const triggerMealImageGeneration = useCallback(async (plan: any) => {
@@ -902,7 +990,7 @@ function MealsScreenContent() {
       // Update the persistent photo cache so images survive app restarts
       updatePhotoCacheFromPlan(updatedPlan).catch(() => {});
     } catch (e) {
-      // Silently fail — fallback images will be used
+      // Silently fail â fallback images will be used
       console.warn("Meal image generation failed:", e);
     } finally {
       setGeneratingImages(false);
@@ -1017,7 +1105,7 @@ function MealsScreenContent() {
     }
   }, [pantryItems, calorieGoal, macroTargets, userDietaryPref, userGoal, localProfile]);
 
-  // ── Pantry Expiry Alerts — schedule notifications when items are expiring ──
+  // ââ Pantry Expiry Alerts â schedule notifications when items are expiring ââ
   React.useEffect(() => {
     if (pantryItems.length === 0) return;
     const now = new Date();
@@ -1034,7 +1122,7 @@ function MealsScreenContent() {
     }
   }, [pantryItems]);
 
-  // ── Generate "Use It Up" meal suggestions for expiring items ──
+  // ââ Generate "Use It Up" meal suggestions for expiring items ââ
   const handleUseItUpSuggestions = React.useCallback(async () => {
     const expiring = getExpiringItems(3);
     if (expiring.length === 0) return;
@@ -1062,7 +1150,7 @@ function MealsScreenContent() {
     setGeneratingExpiryMeals(false);
   }, [pantryItems, getExpiringItems, userDietaryPref, userGoal]);
 
-  // ── Pantry Shopping List — compile "need to buy" items from daily plan ──
+  // ââ Pantry Shopping List â compile "need to buy" items from daily plan ââ
   const handleCreatePantryShoppingList = React.useCallback(() => {
     if (!pantryDailyPlan?.dailyPlan) return;
     const needToBuy: { name: string; quantity?: string }[] = [];
@@ -1104,7 +1192,7 @@ function MealsScreenContent() {
   const sharePantryShoppingList = React.useCallback(async () => {
     const unchecked = pantryShoppingList.filter(i => !i.checked);
     const items = unchecked.length > 0 ? unchecked : pantryShoppingList;
-    const text = `PeakPulse Shopping List\n\n${items.map(i => `\u25a1 ${i.name}${i.quantity ? " — " + i.quantity : ""}`).join("\n")}`;
+    const text = `PeakPulse Shopping List\n\n${items.map(i => `\u25a1 ${i.name}${i.quantity ? " â " + i.quantity : ""}`).join("\n")}`;
     await Clipboard.setStringAsync(text);
     Alert.alert("\u2705 Copied!", `${items.length} items copied to clipboard. Paste anywhere to share.`);
   }, [pantryShoppingList]);
@@ -1175,7 +1263,7 @@ function MealsScreenContent() {
       if (match) {
         if (match.quantity && match.quantity > 1) {
           await updatePantryItem(match.id, { quantity: match.quantity - 1 });
-          deducted.push(`${match.name} (qty: ${match.quantity} → ${match.quantity - 1})`);
+          deducted.push(`${match.name} (qty: ${match.quantity} â ${match.quantity - 1})`);
         } else {
           await removePantryItem(match.id);
           deducted.push(`${match.name} (removed)`);
@@ -1236,14 +1324,28 @@ function MealsScreenContent() {
       gender: localProfile?.gender,
       activityLevel: localProfile?.activityLevel,
       region: localProfile?.region || undefined,
-      cuisinePrefs: selectedCuisines.length > 0 ? selectedCuisines : (localProfile?.cuisinePrefs?.length ? localProfile.cuisinePrefs : undefined),
+      cuisinePrefs: selectedCuisines.length > 0
+        ? selectedCuisines
+        : (localProfile?.cuisinePrefs?.length ? localProfile.cuisinePrefs : undefined),
+      dailyCalories: dailyCalorieTarget > 0 ? dailyCalorieTarget : undefined,
     };
+
     // Include preference summary so AI learns from user ratings
     if (prefSummary) base.preferenceHint = prefSummary;
+
     // Include past meal names so AI avoids repeating dishes
     if (pastMealNames.length > 0) base.pastMealNames = pastMealNames;
+
+    // Explicit variety instruction — tell the AI to generate unique meals per day
+    base.varietyHint = "IMPORTANT: Each day of the week MUST have completely different meals. Do NOT repeat the same dishes across different days. Vary cuisines, cooking methods, and ingredients across the week. At most 1-2 dishes may appear twice in the entire week. Each day should feel like a fresh menu.";
+
+    // If cuisines selected, reinforce them in the hint
+    if (base.cuisinePrefs?.length > 0) {
+      base.varietyHint += " Incorporate these cuisine styles across the week: " + base.cuisinePrefs.join(", ") + ". Distribute different cuisines across different days for maximum variety.";
+    }
+
     return base;
-  }, [userGoal, userDietaryPref, ramadanMode, localProfile, selectedCuisines, prefSummary, pastMealNames]);
+  }, [userGoal, userDietaryPref, ramadanMode, localProfile, selectedCuisines, prefSummary, pastMealNames, dailyCalorieTarget]);
    // Meal Plan swap handler
   const handleMealPlanSwap = useCallback(async (meal: any, dayIndex: number, mealIndex: number, isDislike?: boolean) => {
     // Auto-rate as 1 star when triggered from dislike button
@@ -1485,7 +1587,7 @@ function MealsScreenContent() {
       .slice(0, 5);
   }, [mealName, favourites]);
 
-  // 1B: Parallax scroll value for Meals hero — MUST be above early return to avoid hooks ordering violation
+  // 1B: Parallax scroll value for Meals hero â MUST be above early return to avoid hooks ordering violation
   const mealScrollY = useSharedValue(0);
   const mealHeroImgStyle = useAnimatedStyle(() => ({
     transform: [{ translateY: interpolate(mealScrollY.value, [0, 200], [0, 100], Extrapolation.CLAMP) }],
@@ -1577,7 +1679,7 @@ function MealsScreenContent() {
         </ReAnimated.View>
       </View>
 
-      {/* Daily Summary Card — compact */}
+      {/* Daily Summary Card â compact */}
       <View style={{ marginHorizontal: 16, marginTop: -16, backgroundColor: MSURFACE, borderRadius: 20, padding: 14, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)", shadowColor: "#000", shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.4, shadowRadius: 8, zIndex: 10 }}>
         <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
           <Text style={{ color: MMUTED, fontSize: 10, fontFamily: "DMSans_700Bold", textTransform: "uppercase" }}>Today's Nutrition</Text>
@@ -1594,7 +1696,7 @@ function MealsScreenContent() {
         </View>
       </View>
 
-      {/* ── Tab Segmented Control ── */}
+      {/* ââ Tab Segmented Control ââ */}
       <View style={{ flexDirection: "row", marginHorizontal: 16, marginTop: 12, backgroundColor: MSURFACE, borderRadius: 12, padding: 3, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}>
         {["Tracker", "Meal Plan", "Pantry"].map((tab, i) => (
           <TouchableOpacity
@@ -1623,7 +1725,7 @@ function MealsScreenContent() {
           />
         }
       >
-        {/* ── Log Meal Dropdown Button ── */}
+        {/* ââ Log Meal Dropdown Button ââ */}
         <View style={{ marginTop: 16, marginBottom: 12, zIndex: 20 }}>
           <TouchableOpacity
             style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8, backgroundColor: "#F59E0B", borderRadius: 14, paddingVertical: 12 }}
@@ -1667,7 +1769,7 @@ function MealsScreenContent() {
           )}
         </View>
 
-        {/* ── Manual Log Panel ── */}
+        {/* ââ Manual Log Panel ââ */}
         {logMethod === "manual" && (
           <View style={{ backgroundColor: MSURFACE, borderRadius: 16, padding: 16, marginBottom: 16, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}>
             <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
@@ -1796,7 +1898,7 @@ function MealsScreenContent() {
           </View>
         )}
 
-        {/* ── AI Scan Panel ── */}
+        {/* ââ AI Scan Panel ââ */}
         {logMethod === "ai-scan" && (
           <View style={{ backgroundColor: MSURFACE, borderRadius: 16, padding: 16, marginBottom: 16, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}>
             <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
@@ -1987,7 +2089,7 @@ function MealsScreenContent() {
           </View>
         )}
 
-        {/* ── Day Meal Tiles (Breakfast, Lunch, Dinner, Snack) ── */}
+        {/* ââ Day Meal Tiles (Breakfast, Lunch, Dinner, Snack) ââ */}
         <View style={{ marginBottom: 16 }}>
           <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
             <Text style={{ color: MFG, fontFamily: "DMSans_700Bold", fontSize: 16 }}>Today's Meals</Text>
@@ -2089,7 +2191,7 @@ function MealsScreenContent() {
           </View>
         </View>
 
-        {/* ── Inline Nutrition Chart (7-day) ── */}
+        {/* ââ Inline Nutrition Chart (7-day) ââ */}
         {chartData.length > 0 && (
           <View style={{ backgroundColor: MSURFACE, borderRadius: 16, padding: 14, marginBottom: 16, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}>
             <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
@@ -2121,7 +2223,7 @@ function MealsScreenContent() {
           </View>
         )}
 
-        {/* ── Water Intake ── */}
+        {/* ââ Water Intake ââ */}
         <View style={{ backgroundColor: MSURFACE, borderRadius: 16, padding: 14, marginBottom: 16, borderWidth: 1, borderColor: "rgba(59,130,246,0.15)" }}>
           <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
             <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
@@ -2158,7 +2260,7 @@ function MealsScreenContent() {
           </View>
         </View>
 
-        {/* ── Quick Add from Saved Foods ── */}
+        {/* ââ Quick Add from Saved Foods ââ */}
         {favourites.length > 0 && (
           <View style={{ marginBottom: 12 }}>
             <Text style={{ color: MMUTED, fontSize: 10, fontFamily: "DMSans_700Bold", letterSpacing: 1, marginBottom: 8 }}>QUICK ADD FROM SAVED FOODS</Text>
@@ -2177,7 +2279,7 @@ function MealsScreenContent() {
           </View>
         )}
 
-        {/* ── Meal Gallery + Pantry + Favourites Links ── */}
+        {/* ââ Meal Gallery + Pantry + Favourites Links ââ */}
         <View style={{ flexDirection: "row", gap: 8, marginBottom: 16 }}>
           <TouchableOpacity
             style={{ flex: 1, flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 4, backgroundColor: MSURFACE, borderRadius: 12, paddingVertical: 10, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}
@@ -2202,7 +2304,7 @@ function MealsScreenContent() {
           </TouchableOpacity>
         </View>
 
-        {/* ── Favourites Expanded ── */}
+        {/* ââ Favourites Expanded ââ */}
         {showFavourites && (
           <View style={{ backgroundColor: MSURFACE, borderRadius: 16, padding: 14, marginBottom: 16, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}>
             <Text style={{ color: MFG, fontFamily: "DMSans_700Bold", fontSize: 14, marginBottom: 10 }}>Saved Foods</Text>
@@ -2242,7 +2344,7 @@ function MealsScreenContent() {
         )}
 
 
-        {/* ── Today's Log ── */}
+        {/* ââ Today's Log ââ */}
         <Text style={{ color: MFG, fontFamily: "DMSans_700Bold", fontSize: 15, marginBottom: 10 }}>
           Today's Log {meals.length > 0 ? `(${meals.length})` : ""}
         </Text>
@@ -2294,7 +2396,7 @@ function MealsScreenContent() {
           ))
         )}
 
-        {/* ── Shopping List (collapsible) ── */}
+        {/* ââ Shopping List (collapsible) ââ */}
         {aiMealPlan?.days && aiMealPlan.days.length > 0 && (() => {
           const ingredientMap: Record<string, { count: number; sources: string[] }> = {};
           for (const day of aiMealPlan.days) {
@@ -2383,7 +2485,7 @@ function MealsScreenContent() {
       </ScrollView>
       )}
 
-      {/* ── Meal Plan Tab ── */}
+      {/* ââ Meal Plan Tab ââ */}
       {nutritionTab === 1 && (
         <ScrollView contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 120 }} showsVerticalScrollIndicator={false}
           refreshControl={
@@ -2611,7 +2713,7 @@ function MealsScreenContent() {
                 </View>
               )}
 
-              {/* ── AI Image Generation Progress ── */}
+              {/* ââ AI Image Generation Progress ââ */}
               {generatingImages && (
                 <View style={{ flexDirection: "row", alignItems: "center", gap: 8, backgroundColor: "rgba(59,130,246,0.08)", borderRadius: 12, padding: 10, borderWidth: 1, borderColor: "rgba(59,130,246,0.15)" }}>
                   <ActivityIndicator size="small" color="#3B82F6" />
@@ -2624,7 +2726,7 @@ function MealsScreenContent() {
                 </View>
               )}
 
-              {/* ── Calendar Overview Toggle ── */}
+              {/* ââ Calendar Overview Toggle ââ */}
               <TouchableOpacity
                 style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6, backgroundColor: showCalendarOverview ? "rgba(245,158,11,0.12)" : "rgba(59,130,246,0.08)", borderRadius: 12, paddingVertical: 10, borderWidth: 1, borderColor: showCalendarOverview ? "rgba(245,158,11,0.25)" : "rgba(59,130,246,0.15)" }}
                 onPress={() => setShowCalendarOverview(!showCalendarOverview)}
@@ -2633,7 +2735,7 @@ function MealsScreenContent() {
                 <Text style={{ color: showCalendarOverview ? "#F59E0B" : "#3B82F6", fontFamily: "DMSans_700Bold", fontSize: 12 }}>{showCalendarOverview ? "Hide Week Overview" : "Week Overview"}</Text>
               </TouchableOpacity>
 
-              {/* ── Calendar Overview Grid ── */}
+              {/* ââ Calendar Overview Grid ââ */}
               {showCalendarOverview && aiMealPlan?.days && (
                 <View style={{ gap: 6 }}>
                   {WEEK_DAYS_FULL.map((dayName, idx) => {
@@ -2707,7 +2809,7 @@ function MealsScreenContent() {
                 </View>
               )}
 
-              {/* ── Weekly Day Selector Bar ── */}
+              {/* ââ Weekly Day Selector Bar ââ */}
               <View style={{ flexDirection: "row", gap: 4, marginTop: 4 }}>
                 {WEEK_DAYS_SHORT.map((day, idx) => {
                   const isToday = (() => { const jsDay = new Date().getDay(); return idx === (jsDay === 0 ? 6 : jsDay - 1); })();
@@ -2725,7 +2827,7 @@ function MealsScreenContent() {
                 })}
               </View>
 
-              {/* ── Selected Day Meals ── */}
+              {/* ââ Selected Day Meals ââ */}
               {selectedDayData ? (
                 <View style={{ gap: 10 }}>
                   <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
@@ -3006,7 +3108,7 @@ function MealsScreenContent() {
         </ScrollView>
       )}
 
-      {/* ── Pantry Tab ── */}
+      {/* ââ Pantry Tab ââ */}
       {nutritionTab === 2 && (
         <ScrollView contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 120 }} showsVerticalScrollIndicator={false}
           refreshControl={
@@ -3418,7 +3520,7 @@ function MealsScreenContent() {
                                   color={ing.fromPantry ? "#22C55E" : "#F59E0B"}
                                 />
                                 <Text style={{ color: ing.fromPantry ? "#4ADE80" : "#FDE68A", fontSize: 12 }}>
-                                  {ing.name}{ing.quantity ? ` — ${ing.quantity}` : ""}
+                                  {ing.name}{ing.quantity ? ` â ${ing.quantity}` : ""}
                                 </Text>
                                 <Text style={{ color: MMUTED, fontSize: 10 }}>
                                   {ing.fromPantry ? "(pantry)" : "(buy)"}
