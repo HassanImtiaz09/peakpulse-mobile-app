@@ -29,7 +29,7 @@ import { schedulePantryExpiryAlerts, type PantryExpiryItem } from "@/lib/notific
 import * as Sharing from "expo-sharing";
 import { extractGroceryList, copyGroceryList, shareGroceryList, exportGroceryPdf, type GroceryCategory } from "@/lib/grocery-list";
 import { loadMealPreferences, toggleFavourite, rateMeal, isFavourite, getMealRating, buildPreferenceSummary, type MealPreferences } from "@/lib/meal-preferences";
-import { saveMealPlanToHistory, getPastMealNames, updatePhotoCacheFromPlan, applyCachedPhotos } from "@/lib/meal-history";
+import { saveMealPlanToHistory, getPastMealNames, updatePhotoCacheFromPlan, applyCachedPhotos, isWeeklyRefreshNeeded, markWeeklyRefreshDone, loadPinnedMeals, togglePinnedMeal, applyPinnedMeals, cleanupPinnedMeals } from "@/lib/meal-history";
 
 
 // NanoBanana design tokens — Meals uses mint/teal accent
@@ -330,6 +330,7 @@ function MealsScreenContent() {
   const [userDietaryPref, setUserDietaryPref] = useState("omnivore");
   const [userGoal, setUserGoal] = useState("build_muscle");
   const [pastMealNames, setPastMealNames] = useState<string[]>([]);
+  const [pinnedMeals, setPinnedMeals] = useState<Record<string, any>>({});
   const [aiMealPlan, setAiMealPlan] = useState<any>(null);
   const [selectedDayIndex, setSelectedDayIndex] = useState(() => {
     const jsDay = new Date().getDay(); // 0=Sun
@@ -662,6 +663,8 @@ function MealsScreenContent() {
     });
     // Load meal history for AI prompt
     getPastMealNames().then(setPastMealNames).catch(() => {});
+    // Load pinned meals
+    loadPinnedMeals().then(setPinnedMeals).catch(() => {});
   }, []);
 
   // Regenerate workout plan mutation
@@ -687,8 +690,10 @@ function MealsScreenContent() {
         saveMealPlanToHistory(aiMealPlan).catch(() => {});
       }
       const normalized = normalizeMealPlanDays(data);
+      // Apply pinned meals to preserve user's favourites
+      const withPinned = applyPinnedMeals(normalized, pinnedMeals);
       // Apply cached photos to the new plan (reuse previously generated images)
-      const withCachedPhotos = await applyCachedPhotos(normalized).catch(() => normalized);
+      const withCachedPhotos = await applyCachedPhotos(withPinned).catch(() => withPinned);
       setAiMealPlan(withCachedPhotos);
       setSelectedDayIndex(0);
       setRegenerating(false);
@@ -696,8 +701,18 @@ function MealsScreenContent() {
       const json = JSON.stringify(withCachedPhotos);
       AsyncStorage.setItem("@guest_meal_plan", json);
       AsyncStorage.setItem("@cached_meal_plan", json);
+      // Mark weekly refresh as done
+      markWeeklyRefreshDone().catch(() => {});
+      // Refresh past meal names for next generation
+      getPastMealNames().then(setPastMealNames).catch(() => {});
+      // Clean up pinned meals that no longer match the plan structure
+      cleanupPinnedMeals(withCachedPhotos).then(setPinnedMeals).catch(() => {});
       if (!autoGenRef.current) {
-        Alert.alert("\u2705 Meal Plan Updated", "Your new AI meal plan has been generated based on your current preferences.");
+        const pinnedCount = Object.keys(pinnedMeals).length;
+        const msg = pinnedCount > 0
+          ? `Your new AI meal plan has been generated. ${pinnedCount} pinned meal${pinnedCount > 1 ? "s" : ""} preserved.`
+          : "Your new AI meal plan has been generated based on your current preferences.";
+        Alert.alert("\u2705 Meal Plan Updated", msg);
       }
       autoGenRef.current = false;
     },
@@ -797,7 +812,32 @@ function MealsScreenContent() {
     });
   }, [localProfile, aiMealPlan]);
 
-  // ── AI Meal Image Generation ──────────────────────────────────────
+  // Weekly auto-refresh: regenerate meal plan if a new week has started
+  const weeklyRefreshRef = React.useRef(false);
+  React.useEffect(() => {
+    if (!aiMealPlan || !localProfile || weeklyRefreshRef.current || regenerating || autoGeneratingPlan) return;
+    weeklyRefreshRef.current = true;
+    isWeeklyRefreshNeeded().then(needed => {
+      if (!needed) return;
+      // It's a new week — auto-regenerate the meal plan
+      autoGenRef.current = true;
+      setAutoGeneratingPlan(true);
+      regenerateMealPlan.mutate({
+        goal: localProfile?.goal || userGoal,
+        dietaryPreference: localProfile?.dietaryPreference || userDietaryPref,
+        weightKg: localProfile?.weightKg,
+        heightCm: localProfile?.heightCm,
+        age: localProfile?.age,
+        gender: localProfile?.gender,
+        activityLevel: localProfile?.activityLevel,
+        region: localProfile?.region || undefined,
+        cuisinePrefs: localProfile?.cuisinePrefs?.length ? localProfile.cuisinePrefs : undefined,
+        pastMealNames: pastMealNames.length > 0 ? pastMealNames : undefined,
+      });
+    }).catch(() => {});
+  }, [aiMealPlan, localProfile]);
+
+  // ── AI Meal Image Generation ──────────────────────────────────────────────────
   const generateMealImages = trpc.mealImages.generateBatch.useMutation();
 
   const triggerMealImageGeneration = useCallback(async (plan: any) => {
@@ -2771,6 +2811,7 @@ function MealsScreenContent() {
                   {/* Meal cards for selected day */}
                   {selectedDayData.meals?.map((meal: any, i: number) => {
                     const dayIdx = aiMealPlan.days?.findIndex((d: any) => d.day?.toLowerCase().includes(WEEK_DAYS_FULL[selectedWeekDay].toLowerCase())) ?? 0;
+                    const pinKey = `${dayIdx}-${i}`;
                     return (
                       <MealPlanMealCard
                         key={i}
@@ -2778,6 +2819,12 @@ function MealsScreenContent() {
                         onSwap={() => handleMealPlanSwap(meal, dayIdx, i)}
                         isFav={isFavourite(mealPrefs, meal.name)}
                         rating={getMealRating(mealPrefs, meal.name)}
+                        isPinned={!!pinnedMeals[pinKey]}
+                        onTogglePin={async () => {
+                          const updated = await togglePinnedMeal(pinKey, meal);
+                          setPinnedMeals(updated);
+                          if (Platform.OS !== "web") { try { const H = require("expo-haptics"); H.impactAsync(H.ImpactFeedbackStyle.Medium); } catch {} }
+                        }}
                         onToggleFav={async () => {
                           const updated = await toggleFavourite(meal.name);
                           setMealPrefs(updated);
@@ -2800,12 +2847,25 @@ function MealsScreenContent() {
                 </View>
               )}
 
+              {/* Pinned meals info */}
+              {Object.keys(pinnedMeals).length > 0 && (
+                <View style={{ flexDirection: "row", alignItems: "center", gap: 8, backgroundColor: "rgba(34,197,94,0.06)", borderRadius: 12, padding: 10, borderWidth: 1, borderColor: "rgba(34,197,94,0.15)", marginTop: 8 }}>
+                  <MaterialIcons name="push-pin" size={14} color="#22C55E" />
+                  <Text style={{ color: MMUTED, fontSize: 11, flex: 1 }}>
+                    <Text style={{ color: "#22C55E", fontFamily: "DMSans_700Bold" }}>{Object.keys(pinnedMeals).length}</Text> pinned meal{Object.keys(pinnedMeals).length > 1 ? "s" : ""} will be preserved when you regenerate.
+                  </Text>
+                </View>
+              )}
               {/* Regenerate Buttons at Bottom */}
               <View style={{ flexDirection: "row", gap: 8, marginTop: 8 }}>
                 <TouchableOpacity
                   style={{ flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6, backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 14, paddingVertical: 12, borderWidth: 1, borderColor: "rgba(245,158,11,0.18)", opacity: regenerating ? 0.7 : 1 }}
                   onPress={() => {
-                    Alert.alert("Regenerate Meal Plan?", "This will replace your current weekly meal plan.", [
+                    const pinnedCount = Object.keys(pinnedMeals).length;
+                    const msg = pinnedCount > 0
+                      ? `This will replace your current weekly meal plan. ${pinnedCount} pinned meal${pinnedCount > 1 ? "s" : ""} will be preserved.`
+                      : "This will replace your current weekly meal plan.";
+                    Alert.alert("Regenerate Meal Plan?", msg, [
                       { text: "Cancel", style: "cancel" },
                       { text: "Regenerate", style: "destructive", onPress: () => {
                         setMealPlanMode("generic");
@@ -3795,7 +3855,7 @@ function MealPlanDayCard({ day, dayIndex, onMealSwap }: { day: any; dayIndex: nu
   );
 }
 
-function MealPlanMealCard({ meal, onSwap, isFav, rating, onToggleFav, onRate, onDislike }: { meal: any; onSwap?: () => void; isFav?: boolean; rating?: number; onToggleFav?: () => void; onRate?: (stars: number) => void; onDislike?: () => void }) {
+function MealPlanMealCard({ meal, onSwap, isFav, rating, onToggleFav, onRate, onDislike, isPinned, onTogglePin }: { meal: any; onSwap?: () => void; isFav?: boolean; rating?: number; onToggleFav?: () => void; onRate?: (stars: number) => void; onDislike?: () => void; isPinned?: boolean; onTogglePin?: () => void }) {
   const [showPrep, setShowPrep] = React.useState(false);
   const [showRating, setShowRating] = React.useState(false);
   const photoUrl = getMealPlanPhotoUrl(meal);
@@ -3812,14 +3872,26 @@ function MealPlanMealCard({ meal, onSwap, isFav, rating, onToggleFav, onRate, on
   const color = mealTypeColor[(meal.type ?? "").toLowerCase()] ?? "#B45309";
 
   return (
-    <View style={{ backgroundColor: MSURFACE, borderRadius: 16, overflow: "hidden", borderWidth: 1, borderColor: "rgba(30,41,59,0.6)" }}>
+    <View style={{ backgroundColor: MSURFACE, borderRadius: 16, overflow: "hidden", borderWidth: isPinned ? 2 : 1, borderColor: isPinned ? "rgba(34,197,94,0.6)" : "rgba(30,41,59,0.6)" }}>
       <Image
         source={{ uri: photoUrl }}
         style={{ width: "100%", height: 140 }}
         resizeMode="cover"
       />
-      <View style={{ position: "absolute", top: 10, left: 10, backgroundColor: color, borderRadius: 8, paddingHorizontal: 10, paddingVertical: 4 }}>
-        <Text style={{ color: MBG, fontSize: 10, fontFamily: "DMSans_700Bold", textTransform: "uppercase" }}>{meal.type ?? "Meal"}</Text>
+      {/* Pinned indicator overlay */}
+      {isPinned && (
+        <View style={{ position: "absolute", top: 0, left: 0, right: 0, height: 140, backgroundColor: "rgba(34,197,94,0.08)" }} />
+      )}
+      <View style={{ position: "absolute", top: 10, left: 10, flexDirection: "row", gap: 6 }}>
+        <View style={{ backgroundColor: color, borderRadius: 8, paddingHorizontal: 10, paddingVertical: 4 }}>
+          <Text style={{ color: MBG, fontSize: 10, fontFamily: "DMSans_700Bold", textTransform: "uppercase" }}>{meal.type ?? "Meal"}</Text>
+        </View>
+        {isPinned && (
+          <View style={{ backgroundColor: "rgba(34,197,94,0.9)", borderRadius: 8, paddingHorizontal: 8, paddingVertical: 4, flexDirection: "row", alignItems: "center", gap: 3 }}>
+            <MaterialIcons name="push-pin" size={10} color="#fff" />
+            <Text style={{ color: "#fff", fontSize: 9, fontFamily: "DMSans_700Bold" }}>PINNED</Text>
+          </View>
+        )}
       </View>
       <View style={{ position: "absolute", top: 10, right: 10, flexDirection: "row", gap: 6 }}>
         {onSwap && (
@@ -3840,6 +3912,11 @@ function MealPlanMealCard({ meal, onSwap, isFav, rating, onToggleFav, onRate, on
         <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 6 }}>
           <Text style={{ color: MFG, fontFamily: "DMSans_700Bold", fontSize: 15, flex: 1 }}>{sanitizeMealName(meal.name)}</Text>
           <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+            {onTogglePin && (
+              <TouchableOpacity onPress={onTogglePin} style={{ padding: 4 }}>
+                <MaterialIcons name="push-pin" size={20} color={isPinned ? "#22C55E" : MMUTED} />
+              </TouchableOpacity>
+            )}
             {onToggleFav && (
               <TouchableOpacity onPress={onToggleFav} style={{ padding: 4 }}>
                 <MaterialIcons name={isFav ? "favorite" : "favorite-border"} size={20} color={isFav ? "#EF4444" : MMUTED} />

@@ -2959,4 +2959,14 @@
 - [x] Implement meal photo caching: persist AI-generated photoUrls in AsyncStorage so they survive app restarts
 - [x] Auto-regenerate current meal plan on first load after this update (one-time trigger)
 - [x] Test and verify TypeScript compiles (0 TS errors, 20 new tests pass)
+- [x] Save checkpoint (version 4d2f0939)
+
+## Round 67: Weekly auto-refresh and favourite meals lock
+- [x] Implement weekly auto-refresh: detect if it's a new week (Monday) and auto-regenerate the meal plan
+- [x] Store last-refresh timestamp in AsyncStorage to avoid duplicate refreshes
+- [x] Implement favourite meals lock: add pin/unpin button to MealPlanMealCard
+- [x] Persist pinned meal IDs in AsyncStorage
+- [x] Integrate pinned meals into regeneration: preserve pinned meals, only regenerate unpinned ones
+- [x] Show visual indicator for pinned meals in the UI
+- [x] Test and verify TypeScript compiles (0 TS errors, 10 new tests pass)
 - [ ] Save checkpoint
