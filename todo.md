@@ -3066,3 +3066,9 @@
 - [x] Write unit tests for loading and error states (23 tests, all passing)
 - [x] Verify TypeScript compiles (0 errors)
 - [x] Save checkpoint
+
+## Round 83: Sync with GitHub repository
+- [x] Fetched 2 new commits from GitHub
+- [x] Merged: fix: reduce BodyDiagramInline scale to 0.2 and widen container to 48x90 (body-diagram.tsx)
+- [x] Merged: fix: widen cardDiagram container to 48px (exercise-library.tsx)
+- [x] Fast-forward merge — no conflicts, 0 TypeScript errors
