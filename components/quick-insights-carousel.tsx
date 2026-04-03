@@ -1,29 +1,33 @@
-/**
- * R6: Quick Insights Carousel
- * Horizontally swipeable cards that surface different features each session.
- * Replaces 15+ deep-scroll sections with a compact, rotating carousel.
- */
-import React, { useEffect, useState, useRef } from "react";
-import { View, Text, FlatList, TouchableOpacity, StyleSheet, Dimensions } from "react-native";
+import React, { useRef, useEffect, useState } from "react";
+import {
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  Dimensions,
+  StyleSheet,
+  Animated,
+} from "react-native";
+import { MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { UI as SF } from "@/constants/ui-colors";
+import { useSafeAreaFrame } from "@/lib/safe-frame";
+import { useColors } from "@/lib/colors";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const CARD_WIDTH = SCREEN_WIDTH - 64;
-const CARD_GAP = 10;
+const CARD_GAP = 12;
 
 interface InsightCard {
   id: string;
-  icon: string;
-  iconColor: string;
-  bgColor: string;
-  borderColor: string;
+  emoji: string;
+  accentColor: string;
+  accentBg: string;
   title: string;
+  value: string;
   subtitle: string;
   route: string;
   cta: string;
+  isPremium?: boolean;
 }
 
 interface QuickInsightsCarouselProps {
@@ -41,124 +45,206 @@ export function QuickInsightsCarousel({
   volumeChange,
   totalWorkouts = 0,
 }: QuickInsightsCarouselProps) {
+  const SF = useColors();
   const router = useRouter();
   const flatListRef = useRef<FlatList>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
 
-  const cards: InsightCard[] = [];
+  const isUp = volumeChange ? volumeChange > 0 : false;
 
-  // Streak card
-  if (streakDays > 0) {
-    cards.push({
+  const cards: InsightCard[] = [
+    {
       id: "streak",
-      icon: "local-fire-department",
-      iconColor: "#F97316",
-      bgColor: "rgba(249,115,22,0.08)",
-      borderColor: "rgba(249,115,22,0.20)",
-      title: `${streakDays}-Day Streak`,
-      subtitle: streakDays >= 7 ? "Incredible consistency! Keep the momentum." : "You're building a great habit!",
-      route: "/workout-calendar",
+      emoji: streakDays >= 7 ? "\u{1F525}" : "\u{1F4AA}",
+      accentColor: "#F97316",
+      accentBg: "#FFF7ED",
+      title: "Streak",
+      value: `${streakDays}-Day`,
+      subtitle: streakDays >= 7
+        ? "Incredible consistency! Keep going."
+        : streakDays > 0
+        ? "Building momentum. Stay consistent!"
+        : "Start your streak today!",
+      route: "/(tabs)/plans",
+      cta: "View Plans",
+    },
+    ...(recentPR
+      ? [
+          {
+            id: "pr",
+            emoji: "\u{1F3C6}",
+            accentColor: "#EAB308",
+            accentBg: "#FEFCE8",
+            title: "New PR!",
+            value: recentPR.exercise,
+            subtitle: `${recentPR.weight}kg x ${recentPR.reps} reps — Personal best!`,
+            route: "/workout/analytics",
+            cta: "View Records",
+          },
+        ]
+      : []),
+    ...(volumeChange !== null && volumeChange !== undefined
+      ? [
+          {
+            id: "volume",
+            emoji: isUp ? "\u{1F4C8}" : "\u{1F4C9}",
+            accentColor: isUp ? "#22C55E" : "#EF4444",
+            accentBg: isUp ? "#F0FDF4" : "#FEF2F2",
+            title: "Weekly Volume",
+            value: `${isUp ? "+" : ""}${Math.abs(volumeChange)}%`,
+            subtitle: isUp
+              ? "Great progress this week!"
+              : "Consider increasing training load.",
+            route: "/workout/analytics",
+            cta: "View Analytics",
+          },
+        ]
+      : []),
+    {
+      id: "workouts",
+      emoji: "\u{1F3CB}",
+      accentColor: "#8B5CF6",
+      accentBg: "#F5F3FF",
+      title: "Total Workouts",
+      value: `${totalWorkouts}`,
+      subtitle: totalWorkouts > 20
+        ? "You're a dedicated athlete!"
+        : "Every workout counts. Keep pushing!",
+      route: "/workout/analytics",
       cta: "View History",
-    });
-  }
+    },
+    {
+      id: "ai-coach",
+      emoji: "\u{1F916}",
+      accentColor: "#06B6D4",
+      accentBg: "#ECFEFF",
+      title: "AI Coach",
+      value: "Premium",
+      subtitle: "Get personalised tips and form advice.",
+      route: "/(tabs)/ai-coach",
+      cta: "Ask Coach",
+      isPremium: true,
+    },
+    {
+      id: "voice-coach",
+      emoji: "\u{1F399}",
+      accentColor: "#EC4899",
+      accentBg: "#FDF2F8",
+      title: "Voice Coaching",
+      value: "Premium",
+      subtitle: "Audio cues for hands-free guidance.",
+      route: "/voice-coach-settings",
+      cta: "Configure",
+      isPremium: true,
+    },
+  ];
 
-  // Recent PR card
-  if (recentPR) {
-    cards.push({
-      id: "pr",
-      icon: "emoji-events",
-      iconColor: "#22C55E",
-      bgColor: "rgba(34,197,94,0.08)",
-      borderColor: "rgba(34,197,94,0.20)",
-      title: `New PR: ${recentPR.exercise}`,
-      subtitle: `${recentPR.weight}kg × ${recentPR.reps} reps`,
-      route: "/workout-analytics",
-      cta: "View Records",
-    });
-  }
-
-  // Muscle balance tip
-  if (muscleTip) {
-    cards.push({
-      id: "muscle",
-      icon: "accessibility-new",
-      iconColor: SF.blue,
-      bgColor: "rgba(59,130,246,0.08)",
-      borderColor: "rgba(59,130,246,0.20)",
-      title: "Muscle Balance Tip",
-      subtitle: muscleTip,
-      route: "/workout-analytics",
-      cta: "View Balance",
-    });
-  }
-
-  // Volume change card
-  if (volumeChange !== null && volumeChange !== undefined && totalWorkouts >= 3) {
-    const isUp = volumeChange > 0;
-    cards.push({
-      id: "volume",
-      icon: isUp ? "trending-up" : "trending-down",
-      iconColor: isUp ? SF.emerald : SF.red,
-      bgColor: isUp ? "rgba(16,185,129,0.08)" : "rgba(239,68,68,0.08)",
-      borderColor: isUp ? "rgba(16,185,129,0.20)" : "rgba(239,68,68,0.20)",
-      title: `Volume ${isUp ? "Up" : "Down"} ${Math.abs(volumeChange)}%`,
-      subtitle: isUp ? "Great progress this week!" : "Consider increasing your training load.",
-      route: "/workout-analytics",
-      cta: "View Analytics",
-    });
-  }
-
-  // AI Coach suggestion
-  cards.push({
-    id: "ai-coach",
-    icon: "smart-toy",
-    iconColor: SF.purple,
-    bgColor: "rgba(168,85,247,0.08)",
-    borderColor: "rgba(168,85,247,0.20)",
-    title: "AI Coach",
-    subtitle: "Get personalised tips and form advice from your AI coach.",
-    route: "/(tabs)/ai-coach",
-    cta: "Ask Coach",
-  });
-
-  // Voice coaching
-  cards.push({
-    id: "voice-coach",
-    icon: "record-voice-over",
-    iconColor: SF.gold,
-    bgColor: "rgba(245,158,11,0.08)",
-    borderColor: "rgba(245,158,11,0.20)",
-    title: "Voice Coaching",
-    subtitle: "Enable audio cues during your workout for hands-free guidance.",
-    route: "/voice-coach-settings",
-    cta: "Configure",
-  });
-
-  if (cards.length === 0) return null;
-
-  const renderCard = ({ item }: { item: InsightCard }) => (
+  const renderCard = ({ item, index }: { item: InsightCard; index: number }) => (
     <TouchableOpacity
-      style={[styles.card, { backgroundColor: item.bgColor, borderColor: item.borderColor }]}
+      activeOpacity={0.85}
       onPress={() => router.push(item.route as any)}
-      activeOpacity={0.8}
+      style={{
+        width: CARD_WIDTH,
+        marginRight: CARD_GAP,
+        borderRadius: 20,
+        overflow: "hidden",
+        backgroundColor: SF.surface,
+        borderWidth: 1.5,
+        borderColor: item.isPremium ? item.accentColor + "40" : SF.border,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.08,
+        shadowRadius: 12,
+        elevation: 4,
+      }}
     >
-      <View style={styles.cardTop}>
-        <View style={[styles.iconCircle, { backgroundColor: item.bgColor }]}>
-          <MaterialIcons name={item.icon as any} size={22} color={item.iconColor} />
+      {/* Top accent bar */}
+      <View
+        style={{
+          height: 4,
+          backgroundColor: item.accentColor,
+          borderTopLeftRadius: 20,
+          borderTopRightRadius: 20,
+        }}
+      />
+
+      <View style={{ padding: 20 }}>
+        {/* Header row */}
+        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+            <View
+              style={{
+                width: 44,
+                height: 44,
+                borderRadius: 14,
+                backgroundColor: item.accentBg,
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Text style={{ fontSize: 22 }}>{item.emoji}</Text>
+            </View>
+            <View>
+              <Text style={{ fontSize: 13, fontWeight: "600", color: SF.secondaryText, textTransform: "uppercase", letterSpacing: 0.5 }}>
+                {item.title}
+              </Text>
+              <Text style={{ fontSize: 22, fontWeight: "800", color: item.accentColor }}>
+                {item.value}
+              </Text>
+            </View>
+          </View>
+          {item.isPremium && (
+            <View
+              style={{
+                backgroundColor: item.accentColor + "18",
+                paddingHorizontal: 10,
+                paddingVertical: 4,
+                borderRadius: 10,
+              }}
+            >
+              <Text style={{ fontSize: 10, fontWeight: "700", color: item.accentColor, textTransform: "uppercase" }}>
+                Premium
+              </Text>
+            </View>
+          )}
         </View>
-        <View style={styles.cardTextContainer}>
-          <Text style={styles.cardTitle} numberOfLines={1}>{item.title}</Text>
-          <Text style={styles.cardSubtitle} numberOfLines={2}>{item.subtitle}</Text>
-        </View>
-      </View>
-      <View style={styles.cardBottom}>
-        <Text style={[styles.ctaText, { color: item.iconColor }]}>{item.cta}</Text>
-        <MaterialIcons name="arrow-forward" size={14} color={item.iconColor} />
+
+        {/* Subtitle */}
+        <Text style={{ fontSize: 14, lineHeight: 20, color: SF.secondaryText, marginBottom: 16 }}>
+          {item.subtitle}
+        </Text>
+
+        {/* CTA button */}
+        <TouchableOpacity
+          onPress={() => router.push(item.route as any)}
+          style={{
+            backgroundColor: item.accentColor + "14",
+            paddingVertical: 10,
+            paddingHorizontal: 16,
+            borderRadius: 12,
+            alignItems: "center",
+            flexDirection: "row",
+            justifyContent: "center",
+            gap: 6,
+          }}
+        >
+          <Text style={{ fontSize: 13, fontWeight: "700", color: item.accentColor }}>
+            {item.cta}
+          </Text>
+          <MaterialIcons name="arrow-forward" size={14} color={item.accentColor} />
+        </TouchableOpacity>
       </View>
     </TouchableOpacity>
   );
 
+  const onViewableItemsChanged = useRef(({ viewableItems }: any) => {
+    if (viewableItems.length > 0) {
+      setActiveIndex(viewableItems[0].index || 0);
+    }
+  }).current;
+
   return (
-    <View style={styles.container}>
+    <View>
       <FlatList
         ref={flatListRef}
         data={cards}
@@ -168,89 +254,25 @@ export function QuickInsightsCarousel({
         showsHorizontalScrollIndicator={false}
         snapToInterval={CARD_WIDTH + CARD_GAP}
         decelerationRate="fast"
-        contentContainerStyle={styles.listContent}
-        ItemSeparatorComponent={() => <View style={{ width: CARD_GAP }} />}
+        contentContainerStyle={{ paddingHorizontal: 20 }}
+        onViewableItemsChanged={onViewableItemsChanged}
+        viewabilityConfig={{ itemVisiblePercentThreshold: 60 }}
       />
       {/* Pagination dots */}
-      {cards.length > 1 && (
-        <View style={styles.dots}>
-          {cards.map((c, i) => (
-            <View key={c.id} style={[styles.dot, i === 0 && styles.dotActive]} />
-          ))}
-        </View>
-      )}
+      <View style={{ flexDirection: "row", justifyContent: "center", gap: 6, marginTop: 14 }}>
+        {cards.map((card, i) => (
+          <View
+            key={card.id}
+            style={{
+              width: i === activeIndex ? 20 : 6,
+              height: 6,
+              borderRadius: 3,
+              backgroundColor: i === activeIndex ? card.accentColor : SF.border,
+              transition: "width 0.2s",
+            }}
+          />
+        ))}
+      </View>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    marginTop: 16,
-  },
-  listContent: {
-    paddingHorizontal: 16,
-  },
-  card: {
-    width: CARD_WIDTH,
-    borderRadius: 18,
-    padding: 16,
-    borderWidth: 1,
-    justifyContent: "space-between",
-    minHeight: 120,
-  },
-  cardTop: {
-    flexDirection: "row",
-    gap: 12,
-    alignItems: "flex-start",
-  },
-  iconCircle: {
-    width: 44,
-    height: 44,
-    borderRadius: 12,
-    alignItems: "center",
-    justifyContent: "center",
-    flexShrink: 0,
-  },
-  cardTextContainer: {
-    flex: 1,
-  },
-  cardTitle: {
-    color: "#F1F5F9",
-    fontFamily: "DMSans_700Bold",
-    fontSize: 15,
-    marginBottom: 4,
-  },
-  cardSubtitle: {
-    color: "#94A3B8",
-    fontFamily: "DMSans_400Regular",
-    fontSize: 12,
-    lineHeight: 18,
-  },
-  cardBottom: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
-    marginTop: 12,
-    alignSelf: "flex-end",
-  },
-  ctaText: {
-    fontFamily: "DMSans_600SemiBold",
-    fontSize: 12,
-  },
-  dots: {
-    flexDirection: "row",
-    justifyContent: "center",
-    gap: 6,
-    marginTop: 12,
-  },
-  dot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: "rgba(100,116,139,0.3)",
-  },
-  dotActive: {
-    backgroundColor: "#F59E0B",
-    width: 16,
-  },
-});
