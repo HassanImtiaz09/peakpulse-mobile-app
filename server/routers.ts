@@ -34,38 +34,54 @@ async function checkAiLimit(userId: number | undefined, endpoint: string): Promi
 
 function getBFDescription(bf: number): string {
   const descriptions: Record<number, string> = {
-    5: "extremely lean, stage-ready competition physique with full muscle separation and prominent veins, and a chiseled angular face with razor-sharp jawline",
-    8: "very lean athletic physique with clear muscle definition and visible abs, and angular facial features with prominent cheekbones",
-    10: "a very lean physique with excellent muscle definition, visible vascularity, a chiseled jaw, and angular facial features",
-    12: "a lean athletic physique with clear muscle separation, visible abs, a sharp jawline, and prominent cheekbones",
-    15: "an athletic build with visible muscle definition especially in the arms and shoulders, defined jawline, and emerging cheekbone visibility",
-    18: "fit average build with moderate muscle tone and healthy proportions, and a slightly leaner face",
-    20: "an average healthy build with some muscle tone visible, and a slightly leaner face",
-    25: "a slightly softer physique with minimal visible muscle definition, and a naturally full face",
+    5: "an extremely shredded, stage-ready competition physique with paper-thin skin, full muscle striations across the chest and shoulders, prominent vascularity on the arms and torso, deeply separated abdominal muscles, and a gaunt angular face with razor-sharp jawline and sunken cheeks",
+    8: "a very lean athletic physique with visible six-pack abs, clear muscle definition across all body parts, visible veins on the forearms and biceps, minimal subcutaneous fat, and an angular face with prominent cheekbones, defined jawline, and lean hollow cheeks",
+    10: "a lean and muscular physique with well-defined abs (at least a four-pack visible), clear separation between muscle groups, visible arm vascularity, and a chiseled face with strong jawline definition, visible cheekbones, and no facial puffiness",
+    12: "a fit athletic physique with faintly visible upper abs, good muscle tone in the arms and shoulders, a relatively flat stomach with minimal fat, and a lean face with a noticeable jawline and moderately defined cheekbones",
+    15: "an athletic but softer build with no visible abs, some muscle definition in the arms and chest, a small amount of fat around the midsection, and a healthy face with a visible but not sharp jawline and slightly fuller cheeks than a lean person",
+    18: "an average-fit build with noticeable body fat covering muscle definition, a soft midsection with some belly, reduced arm definition, and a face with a softer jawline, mildly rounded cheeks, and the beginning of a slight double chin",
+    20: "a typical average build with visible belly fat, love handles beginning to form, little visible muscle definition, and a noticeably rounder face with soft jawline, full cheeks, and mild double chin",
+    25: "a clearly overweight physique with a prominent belly, visible love handles, no muscle definition visible anywhere, thick arms and legs with significant subcutaneous fat, and a round full face with a soft undefined jawline, puffy cheeks, noticeable double chin, and fat deposits under the chin and neck",
+    30: "an obese physique with a large protruding belly, substantial love handles and back fat, very thick limbs, no visible muscle tone, and a very round puffy face with no jawline definition, heavy jowls, prominent double chin, and a thick neck",
   };
   const keys = Object.keys(descriptions).map(Number).sort((a, b) => a - b);
   const closest = keys.reduce((a, b) => Math.abs(b - bf) < Math.abs(a - bf) ? b : a);
   return descriptions[closest];
 }
 
-/** Get face transformation description based on target body fat percentage */
+/** Get face transformation description based on current and target body fat percentage.
+ *  Handles both fat-loss (target < current) and fat-gain (target > current) directions. */
 function getFaceTransformationDesc(currentBf: number, targetBf: number): string {
-  const bfDrop = currentBf - targetBf;
+  const bfChange = currentBf - targetBf; // positive = fat loss, negative = fat gain
 
-  if (bfDrop <= 3) {
-    return "The face should show subtle changes: very slightly more defined jawline and minimally reduced facial puffiness, while maintaining the same overall facial structure and identity.";
+  // --- FAT GAIN direction (target BF is higher than current) ---
+  if (bfChange < -12) {
+    return "The face must show dramatic fat GAIN: a very round, puffy face with no jawline definition, heavy jowls, a prominent double chin, thick fat deposits under the chin and neck, and noticeably swollen cheeks. Despite the dramatic change, the person must still be recognisably the same individual (same eyes, nose shape, skin tone, hair).";
+  }
+  if (bfChange < -7) {
+    return "The face must show significant fat GAIN: a noticeably rounder and fuller face, soft undefined jawline, visible double chin forming, puffy cheeks with reduced cheekbone visibility, and fat accumulation under the chin. The facial structure and features must remain recognisably the same person.";
+  }
+  if (bfChange < -3) {
+    return "The face must show moderate fat GAIN: a rounder face shape with softer jawline, slightly fuller cheeks, mild puffiness, and reduced cheekbone definition. Under-chin area should appear softer and thicker. The facial structure and features must remain recognisably the same person.";
+  }
+  if (bfChange < 0) {
+    return "The face should show subtle fat GAIN: very slightly fuller cheeks, marginally softer jawline, and minimal increase in facial roundness, while maintaining the same overall facial structure and identity.";
   }
 
-  if (bfDrop <= 7) {
-    return "The face should show noticeable fat reduction: a more defined jawline with reduced softness under the chin, slightly more visible cheekbones, and less overall facial puffiness. The facial structure and features must remain recognisably the same person.";
+  // --- MINIMAL CHANGE ---
+  if (bfChange <= 3) {
+    return "The face should show subtle fat LOSS: very slightly more defined jawline, marginally reduced facial puffiness, and minimal increase in cheekbone visibility, while maintaining the same overall facial structure and identity.";
   }
 
-  if (bfDrop <= 12) {
-    return "The face should show significant fat loss: a clearly defined, angular jawline, prominent cheekbones with visible contour, noticeably reduced double chin or under-chin fat, and a leaner overall facial appearance. Facial features must still be recognisably the same person.";
+  // --- FAT LOSS direction (target BF is lower than current) ---
+  if (bfChange <= 7) {
+    return "The face must show noticeable fat LOSS: a more defined jawline with clearly reduced softness under the chin, more visible cheekbones emerging through the skin, less overall facial puffiness, and a leaner profile. The facial structure and features must remain recognisably the same person.";
   }
-
-  // bfDrop > 12 — dramatic transformation
-  return "The face should show dramatic fat loss transformation: a sharp, chiseled jawline, very prominent cheekbones with strong angular definition, virtually no under-chin fat, visible facial muscle definition, and a much leaner overall head shape. Despite the dramatic change, the person must still be recognisably the same individual (same eyes, nose shape, skin tone, hair).";
+  if (bfChange <= 12) {
+    return "The face must show significant fat LOSS: a clearly defined angular jawline, prominent cheekbones with visible contour and shadows beneath them, greatly reduced double chin or under-chin fat, hollow cheeks beginning to emerge, and a noticeably leaner overall facial appearance. Facial features must still be recognisably the same person.";
+  }
+  // bfChange > 12 - dramatic fat loss
+  return "The face must show dramatic fat LOSS transformation: a sharp chiseled jawline with visible mandible line, very prominent cheekbones with strong angular definition and visible shadows, virtually no under-chin fat, visibly hollow cheeks, facial muscle definition apparent, and a much leaner angular head shape. Despite the dramatic change, the person must still be recognisably the same individual (same eyes, nose shape, skin tone, hair).";
 }
 
 function getFallbackWorkoutPlan(goal: string) {
@@ -107,63 +123,63 @@ function getFallbackWorkoutPlan(goal: string) {
 /** Build strict dietary restriction instructions for the AI prompt */
 function getDietaryRestrictions(preference: string): string {
   const restrictions: Record<string, string> = {
-    vegan: `STRICT VEGAN DIET — MANDATORY RULES:
-• ABSOLUTELY NO animal products of any kind: no meat, poultry, fish, seafood, dairy, eggs, honey, gelatin, whey, casein, or any animal-derived ingredients.
-• Every single meal and snack must be 100% plant-based.
-• Use plant proteins: tofu, tempeh, seitan, legumes (lentils, chickpeas, black beans), edamame, quinoa, nuts, seeds.
-• Use plant milks (oat, soy, almond), nutritional yeast, plant-based yogurt.
-• If you include a meal that contains ANY animal product, the entire plan is invalid.`,
+    vegan: `STRICT VEGAN DIET â MANDATORY RULES:
+â¢ ABSOLUTELY NO animal products of any kind: no meat, poultry, fish, seafood, dairy, eggs, honey, gelatin, whey, casein, or any animal-derived ingredients.
+â¢ Every single meal and snack must be 100% plant-based.
+â¢ Use plant proteins: tofu, tempeh, seitan, legumes (lentils, chickpeas, black beans), edamame, quinoa, nuts, seeds.
+â¢ Use plant milks (oat, soy, almond), nutritional yeast, plant-based yogurt.
+â¢ If you include a meal that contains ANY animal product, the entire plan is invalid.`,
 
-    vegetarian: `STRICT VEGETARIAN DIET — MANDATORY RULES:
-• NO meat, poultry, fish, or seafood of any kind.
-• Dairy and eggs are permitted.
-• Focus on diverse protein sources: eggs, Greek yogurt, cottage cheese, legumes, tofu, tempeh, nuts, seeds, quinoa.
-• If you include a meal with meat, poultry, or fish, the entire plan is invalid.`,
+    vegetarian: `STRICT VEGETARIAN DIET â MANDATORY RULES:
+â¢ NO meat, poultry, fish, or seafood of any kind.
+â¢ Dairy and eggs are permitted.
+â¢ Focus on diverse protein sources: eggs, Greek yogurt, cottage cheese, legumes, tofu, tempeh, nuts, seeds, quinoa.
+â¢ If you include a meal with meat, poultry, or fish, the entire plan is invalid.`,
 
-    halal: `STRICT HALAL DIET — MANDATORY RULES:
-• ALL meat must be halal-certified (zabiha). Use only halal chicken, halal beef, halal lamb.
-• ABSOLUTELY NO pork, bacon, ham, prosciutto, pepperoni, lard, or any pork-derived products.
-• NO alcohol or alcohol-based ingredients (wine, beer, rum, vanilla extract with alcohol).
-• NO gelatin unless specified as halal gelatin.
-• Seafood (fish, shrimp) is generally permissible.
-• If any meal contains pork or non-halal meat, the entire plan is invalid.`,
+    halal: `STRICT HALAL DIET â MANDATORY RULES:
+â¢ ALL meat must be halal-certified (zabiha). Use only halal chicken, halal beef, halal lamb.
+â¢ ABSOLUTELY NO pork, bacon, ham, prosciutto, pepperoni, lard, or any pork-derived products.
+â¢ NO alcohol or alcohol-based ingredients (wine, beer, rum, vanilla extract with alcohol).
+â¢ NO gelatin unless specified as halal gelatin.
+â¢ Seafood (fish, shrimp) is generally permissible.
+â¢ If any meal contains pork or non-halal meat, the entire plan is invalid.`,
 
-    kosher: `STRICT KOSHER DIET — MANDATORY RULES:
-• NO pork or shellfish.
-• Do NOT mix meat and dairy in the same meal.
-• Use only kosher-certified meats.
-• Fish with fins and scales are permitted.
-• Keep meat meals and dairy meals completely separate.`,
+    kosher: `STRICT KOSHER DIET â MANDATORY RULES:
+â¢ NO pork or shellfish.
+â¢ Do NOT mix meat and dairy in the same meal.
+â¢ Use only kosher-certified meats.
+â¢ Fish with fins and scales are permitted.
+â¢ Keep meat meals and dairy meals completely separate.`,
 
-    keto: `STRICT KETOGENIC DIET — MANDATORY RULES:
-• Maximum 20-30g net carbs per day across ALL meals.
-• Each meal should be: ~70-75% calories from fat, ~20-25% protein, ~5% carbs.
-• NO bread, pasta, rice, potatoes, sugar, fruit juice, or high-carb fruits.
-• ALLOWED: meat, fatty fish, eggs, butter, cheese, nuts, seeds, avocado, olive oil, coconut oil, low-carb vegetables (spinach, kale, broccoli, cauliflower, zucchini).
-• Include net carb count for each meal.
-• If any single meal exceeds 10g net carbs, the plan is invalid.`,
+    keto: `STRICT KETOGENIC DIET â MANDATORY RULES:
+â¢ Maximum 20-30g net carbs per day across ALL meals.
+â¢ Each meal should be: ~70-75% calories from fat, ~20-25% protein, ~5% carbs.
+â¢ NO bread, pasta, rice, potatoes, sugar, fruit juice, or high-carb fruits.
+â¢ ALLOWED: meat, fatty fish, eggs, butter, cheese, nuts, seeds, avocado, olive oil, coconut oil, low-carb vegetables (spinach, kale, broccoli, cauliflower, zucchini).
+â¢ Include net carb count for each meal.
+â¢ If any single meal exceeds 10g net carbs, the plan is invalid.`,
 
-    paleo: `STRICT PALEO DIET — MANDATORY RULES:
-• NO grains (wheat, rice, oats, corn), legumes (beans, lentils, peanuts), dairy, refined sugar, or processed foods.
-• ALLOWED: meat, fish, eggs, vegetables, fruits, nuts (except peanuts), seeds, olive oil, coconut oil, sweet potatoes.
-• Focus on whole, unprocessed foods only.`,
+    paleo: `STRICT PALEO DIET â MANDATORY RULES:
+â¢ NO grains (wheat, rice, oats, corn), legumes (beans, lentils, peanuts), dairy, refined sugar, or processed foods.
+â¢ ALLOWED: meat, fish, eggs, vegetables, fruits, nuts (except peanuts), seeds, olive oil, coconut oil, sweet potatoes.
+â¢ Focus on whole, unprocessed foods only.`,
 
-    pescatarian: `STRICT PESCATARIAN DIET — MANDATORY RULES:
-• NO meat or poultry (chicken, beef, pork, lamb, turkey, etc.).
-• Fish and seafood ARE allowed and should be the primary animal protein.
-• Dairy and eggs are permitted.
-• Include a variety of fish: salmon, tuna, cod, shrimp, sardines.`,
+    pescatarian: `STRICT PESCATARIAN DIET â MANDATORY RULES:
+â¢ NO meat or poultry (chicken, beef, pork, lamb, turkey, etc.).
+â¢ Fish and seafood ARE allowed and should be the primary animal protein.
+â¢ Dairy and eggs are permitted.
+â¢ Include a variety of fish: salmon, tuna, cod, shrimp, sardines.`,
 
-    "gluten-free": `STRICT GLUTEN-FREE DIET — MANDATORY RULES:
-• ABSOLUTELY NO wheat, barley, rye, or any gluten-containing grains.
-• NO regular bread, pasta, flour tortillas, soy sauce (use tamari), beer, or most cereals.
-• ALLOWED grains: rice, quinoa, oats (certified GF), buckwheat, millet, corn.
-• Check all sauces and condiments for hidden gluten.`,
+    "gluten-free": `STRICT GLUTEN-FREE DIET â MANDATORY RULES:
+â¢ ABSOLUTELY NO wheat, barley, rye, or any gluten-containing grains.
+â¢ NO regular bread, pasta, flour tortillas, soy sauce (use tamari), beer, or most cereals.
+â¢ ALLOWED grains: rice, quinoa, oats (certified GF), buckwheat, millet, corn.
+â¢ Check all sauces and condiments for hidden gluten.`,
 
-    "dairy-free": `STRICT DAIRY-FREE DIET — MANDATORY RULES:
-• NO milk, cheese, butter, cream, yogurt, ice cream, whey, or casein.
-• Use plant-based alternatives: oat milk, coconut cream, cashew cheese, vegan butter.
-• Check all processed foods for hidden dairy ingredients.`,
+    "dairy-free": `STRICT DAIRY-FREE DIET â MANDATORY RULES:
+â¢ NO milk, cheese, butter, cream, yogurt, ice cream, whey, or casein.
+â¢ Use plant-based alternatives: oat milk, coconut cream, cashew cheese, vegan butter.
+â¢ Check all processed foods for hidden dairy ingredients.`,
   };
 
   const key = preference.toLowerCase().replace(/[\s_]+/g, "-");
@@ -186,7 +202,7 @@ export const appRouter = router({
   }),
 
   profile: router({
-    // Protected — only for logged-in users
+    // Protected â only for logged-in users
     get: protectedProcedure.query(async ({ ctx }) => db.getUserProfile(ctx.user.id)),
     upsert: protectedProcedure
       .input(z.object({
@@ -197,7 +213,7 @@ export const appRouter = router({
         targetBodyFat: z.number().optional(), units: z.string().optional(), daysPerWeek: z.number().optional(),
       }))
       .mutation(async ({ ctx, input }) => db.upsertUserProfile(ctx.user.id, input)),
-    // Daily insight — works for guests too (no user-specific data needed)
+    // Daily insight â works for guests too (no user-specific data needed)
     getDailyInsight: guestOrUserProcedure
       .input(z.object({ goal: z.string().optional() }).optional())
       .query(async ({ input }) => {
@@ -208,19 +224,19 @@ export const appRouter = router({
             { role: "user", content: `My goal is "${goal}". Give me a daily coaching tip.` },
           ],
         });
-        return { insight: response.choices[0].message.content ?? "Stay consistent — small daily actions compound into big results." };
+        return { insight: response.choices[0].message.content ?? "Stay consistent â small daily actions compound into big results." };
       }),
   }),
 
   bodyScan: router({
-    // AI analysis — works for guests (no DB save for guests)
+    // AI analysis â works for guests (no DB save for guests)
     analyze: guestOrUserProcedure
       .input(z.object({ photoUrl: z.string(), weightKg: z.number().optional(), heightCm: z.number().optional(), age: z.number().optional(), gender: z.string().optional() }))
       .mutation(async ({ ctx, input }) => {
         await checkAiLimit(ctx.user?.id, "bodyScan.analyze");
         const metricsNote = (input.weightKg && input.heightCm && input.age)
-          ? `User body metrics: weight ${input.weightKg}kg, height ${input.heightCm}cm, age ${input.age}, gender ${input.gender ?? 'male'}. Use these metrics alongside the photo to compute a more accurate body fat estimate using the BMI-based Deurenberg formula as a cross-check: BF% = (1.20 × BMI) + (0.23 × age) − (10.8 × (gender=male?1:0)) − 5.4. Reconcile the formula result with the visual assessment from the photo and report the best estimate.`
-          : 'No body metrics provided — estimate from photo only.';
+          ? `User body metrics: weight ${input.weightKg}kg, height ${input.heightCm}cm, age ${input.age}, gender ${input.gender ?? 'male'}. Use these metrics alongside the photo to compute a more accurate body fat estimate using the BMI-based Deurenberg formula as a cross-check: BF% = (1.20 Ã BMI) + (0.23 Ã age) â (10.8 Ã (gender=male?1:0)) â 5.4. Reconcile the formula result with the visual assessment from the photo and report the best estimate.`
+          : 'No body metrics provided â estimate from photo only.';
         const prompt = `You are an expert fitness assessment AI and body composition specialist. Analyze this full-body photo and provide:\n${metricsNote}\n\nReturn JSON with:\n1. estimated_body_fat: best estimated body fat percentage (number, 1 decimal place)\n2. confidence_low: lower bound (number)\n3. confidence_high: upper bound (number)\n4. muscle_mass_estimate: "low"|"moderate"|"high"|"very_high"\n5. analysis_notes: 2-3 sentences about physique and how metrics influenced the estimate\n6. transformations: array of 5 objects for target BF levels [25,20,15,12,10], each with: target_bf, description, estimated_weeks, effort_level`;
         const aiResult = await invokeLLM({
           messages: [
@@ -250,20 +266,34 @@ export const appRouter = router({
             try {
               const bfDesc = getBFDescription(t.target_bf);
               const genderHint = input.gender ?? 'male';
+              const isGaining = t.target_bf > analysis.estimated_body_fat;
+              const directionWord = isGaining ? "GAIN" : "LOSS";
+              const bodyChangeDesc = isGaining 
+                ? `Show realistic body composition changes for fat GAIN to ${t.target_bf}% body fat: ${bfDesc}. The person should appear heavier with MORE subcutaneous fat on the torso, arms, thighs, and overall silhouette. Fat should accumulate naturally around the midsection, love handles, chest, and upper arms.`
+                : `Show realistic body composition changes for fat LOSS to ${t.target_bf}% body fat: ${bfDesc}. The person should appear leaner with LESS subcutaneous fat, more visible muscle definition on the torso, arms, and overall silhouette proportional to the fat reduction.`;
               const { url } = await generateImage({
-                prompt: `Realistic fitness transformation photo of the same ${genderHint} person shown in the reference image. The person should now appear at approximately ${t.target_bf}% body fat with ${bfDesc}.
+                prompt: `BODY FAT TRANSFORMATION IMAGE — ${directionWord} direction (current: ${analysis.estimated_body_fat}% → target: ${t.target_bf}% body fat).
 
-FACE TRANSFORMATION (CRITICAL — do NOT skip):
+SUBJECT: The exact same ${genderHint} person shown in the reference photo, transformed to appear at ${t.target_bf}% body fat.
+
+FACE TRANSFORMATION — THIS IS MANDATORY, DO NOT SKIP OR COPY THE ORIGINAL FACE:
+You MUST fully regenerate the face to match ${t.target_bf}% body fat. Do NOT copy-paste or leave the original face unchanged.
 ${getFaceTransformationDesc(analysis.estimated_body_fat, t.target_bf)}
+The face must look like it naturally belongs on a body at ${t.target_bf}% body fat. A lean body (low BF%) must have a lean angular face. A heavier body (high BF%) must have a fuller rounder face. The face and body fat levels must be visually consistent with each other.
 
 BODY TRANSFORMATION:
-Show realistic body composition changes for ${t.target_bf}% body fat: ${bfDesc}. Include visible changes to the torso, arms, and overall silhouette proportional to the fat loss.
+${bodyChangeDesc}
+Target appearance: ${bfDesc}.
 
-IDENTITY PRESERVATION:
-The transformed person MUST be clearly recognisable as the same individual — same skin tone, hair color/style, eye color, nose shape, and overall facial proportions. Only the fat distribution should change, not the underlying bone structure or features.
+IDENTITY PRESERVATION (CRITICAL):
+The person MUST be clearly recognisable as the same individual — same skin tone, hair color and style, eye color, nose shape, ear shape, and overall facial bone structure. Only the fat distribution and subcutaneous fat thickness should change, not the underlying skeletal structure or features.
 
-REALISM:
-The transformation should look like a real photograph, not AI-generated. Match the lighting, background, and photo style of the original image. Show the full body from head to mid-thigh in a natural standing pose. Avoid uncanny valley effects.`,
+PHOTO REALISM:
+- Must look like a real photograph, not AI-generated or digitally manipulated
+- Match the lighting, background, camera angle, and photo style of the original reference image exactly
+- Show full body from head to mid-thigh in the same natural standing pose as the reference
+- No uncanny valley effects, no plastic-looking skin, no unrealistic muscle definition
+- Clothing should be the same as in the original photo, fitting differently based on body size`,
                 originalImages: [{ url: input.photoUrl, mimeType: "image/jpeg" }],
               });
               imageUrl = url ?? null;
@@ -322,7 +352,7 @@ The transformation should look like a real photograph, not AI-generated. Match t
   }),
 
   workoutPlan: router({
-    // AI generation — works for guests (no DB save for guests)
+    // AI generation â works for guests (no DB save for guests)
     generate: guestOrUserProcedure
       .input(z.object({ goal: z.string(), workoutStyle: z.string(), daysPerWeek: z.number().default(4), fitnessLevel: z.string().default("intermediate") }))
       .mutation(async ({ ctx, input }) => {
@@ -351,12 +381,12 @@ The transformation should look like a real photograph, not AI-generated. Match t
     getAllSessions: protectedProcedure.query(async ({ ctx }) => db.getRecentWorkoutSessions(ctx.user.id, 500)),
   }),
 
-  // ── Dietary restriction enforcement helper ──────────────────────────
+  // ââ Dietary restriction enforcement helper ââââââââââââââââââââââââââ
   // Used by meal plan generation to give the LLM strict, non-negotiable rules
   // for each dietary preference instead of a vague "Diet: vegan" hint.
 
   mealPlan: router({
-    // AI generation — works for guests (no DB save for guests)
+    // AI generation â works for guests (no DB save for guests)
     generate: guestOrUserProcedure
       .input(z.object({ goal: z.string(), dietaryPreference: z.string(), dailyCalories: z.number().optional(), weightKg: z.number().optional(), heightCm: z.number().optional(), age: z.number().optional(), gender: z.string().optional(), activityLevel: z.string().optional(), ramadanMode: z.boolean().optional(), region: z.string().optional(), cuisinePrefs: z.array(z.string()).optional(), preferenceHint: z.string().optional(), favouriteFoods: z.array(z.object({ name: z.string(), calories: z.number(), protein: z.number(), carbs: z.number(), fat: z.number() })).optional(), pastMealNames: z.array(z.string()).optional() }))
       .mutation(async ({ ctx, input }) => {
@@ -410,11 +440,11 @@ ${favFoodsNote}
 ${cuisineNote}
 ${regionCuisineNote}
 ${prefHintNote}${input.pastMealNames && input.pastMealNames.length > 0 ? `
-MEAL HISTORY — DO NOT REPEAT THESE DISHES (the user has had these recently):
+MEAL HISTORY â DO NOT REPEAT THESE DISHES (the user has had these recently):
 ${input.pastMealNames.slice(0, 50).join(", ")}
 Generate COMPLETELY DIFFERENT meals from the ones listed above. Use different proteins, cooking methods, and flavour profiles.
 ` : ""}
-DIETARY RESTRICTIONS (MUST FOLLOW — NON-NEGOTIABLE):
+DIETARY RESTRICTIONS (MUST FOLLOW â NON-NEGOTIABLE):
 ${dietaryRules}
 
 COMPLIANCE CHECK: Before finalizing, verify EVERY meal in the plan against the dietary restrictions above. If any meal violates the rules, replace it with a compliant alternative.
@@ -423,21 +453,21 @@ Each day must include: ${isRamadan ? "suhoor, iftar, and evening snack (3 meals)
 
 IMPORTANT: The "days" array MUST contain exactly 7 entries, one for each day of the week, using these EXACT day names in this order: "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday". Do NOT use abbreviations, numbers, or any other format.
 
-CRITICAL VARIETY REQUIREMENT — THIS IS THE MOST IMPORTANT RULE:
+CRITICAL VARIETY REQUIREMENT â THIS IS THE MOST IMPORTANT RULE:
 1. Every single meal name across ALL 7 days MUST be completely unique. There must be ZERO repeated meal names in the entire plan.
-2. Each day MUST have its OWN set of meals — do NOT copy/paste the same meals from one day to another.
+2. Each day MUST have its OWN set of meals â do NOT copy/paste the same meals from one day to another.
 3. Monday's breakfast MUST be different from Tuesday's breakfast, which MUST be different from Wednesday's breakfast, etc.
-4. Vary cooking methods (grilled, baked, stir-fried, steamed, raw, poached, roasted, sautéed), protein sources (chicken, fish, beef, tofu, eggs, lentils, beans), and cuisines across the week.
+4. Vary cooking methods (grilled, baked, stir-fried, steamed, raw, poached, roasted, sautÃ©ed), protein sources (chicken, fish, beef, tofu, eggs, lentils, beans), and cuisines across the week.
 5. Each meal's photoQuery MUST be specific to that exact dish (e.g., "grilled salmon asparagus" not just "dinner plate"). Every photoQuery must be different.
 6. SELF-CHECK: Before returning, count all meal names. If ANY two meals share the same name, replace one with a different recipe.
-7. The plan must contain exactly 7 day objects with DIFFERENT meals in each — the user should see completely new food every day.
+7. The plan must contain exactly 7 day objects with DIFFERENT meals in each â the user should see completely new food every day.
 
 Return COMPACT JSON: {"dailyCalories":${calories},"days":[{"day":"Monday","meals":[{"name":"Egg Avocado Toast","type":"breakfast","calories":420,"protein":28,"carbs":35,"fat":14,"ingredients":["eggs","avocado","bread"],"prepTime":"10 min","instructions":["Toast bread","Cook eggs","Assemble"],"photoQuery":"avocado egg toast"},...]},...all 7 days...],"insight":"tip"}`;
         // Use higher max_tokens to prevent truncation of 7-day meal plan JSON
         const llmCall = async (maxTokens: number, retryPrompt?: string) => {
           return invokeLLM({
             messages: [
-              { role: "system", content: "You are an expert registered dietitian who STRICTLY adheres to dietary restrictions. The user's dietary preference is the HIGHEST PRIORITY constraint — it overrides all other considerations. If the user is vegan, every single ingredient must be plant-based. If halal, every meat must be halal-certified with zero pork products. If keto, total daily carbs must stay under 30g. NEVER include a food that violates the stated dietary restriction. Always respond with valid JSON matching the required schema. Keep meal names SHORT (3-5 words max). Keep instructions to 3 steps max. Keep ingredients to 5 items max. This ensures the response fits within token limits." },
+              { role: "system", content: "You are an expert registered dietitian who STRICTLY adheres to dietary restrictions. The user's dietary preference is the HIGHEST PRIORITY constraint â it overrides all other considerations. If the user is vegan, every single ingredient must be plant-based. If halal, every meat must be halal-certified with zero pork products. If keto, total daily carbs must stay under 30g. NEVER include a food that violates the stated dietary restriction. Always respond with valid JSON matching the required schema. Keep meal names SHORT (3-5 words max). Keep instructions to 3 steps max. Keep ingredients to 5 items max. This ensures the response fits within token limits." },
               { role: "user", content: retryPrompt ?? prompt },
             ],
             response_format: { type: "json_object" },
@@ -451,7 +481,7 @@ Return COMPACT JSON: {"dailyCalories":${calories},"days":[{"day":"Monday","meals
         try {
           planData = JSON.parse(rawContent);
         } catch {
-          // JSON truncated — retry with a more compact prompt
+          // JSON truncated â retry with a more compact prompt
           console.warn("[MealPlan] First attempt truncated, retrying with compact prompt...");
           const compactPrompt = `Generate a 7-day meal plan as JSON. Target: ~${calories} kcal/day, ${input.dietaryPreference} diet, goal: ${input.goal.replace(/_/g, " ")}.
 ${isRamadan ? "Ramadan mode: suhoor, iftar, evening snack." : "Meals: breakfast, lunch, dinner, 1-2 snacks."}
@@ -470,7 +500,7 @@ Return: {"dailyCalories":${calories},"days":[{"day":"Monday","meals":[{"name":".
             planData = { dailyCalories: calories, days: [], insight: "Eat balanced meals and stay hydrated." };
           }
         }
-        // Validate that we got 7 days with meals — if not, the response was likely truncated
+        // Validate that we got 7 days with meals â if not, the response was likely truncated
         if (!planData?.days || planData.days.length < 7 || planData.days.some((d: any) => !d.meals?.length)) {
           console.warn(`[MealPlan] Incomplete plan: ${planData?.days?.length ?? 0} days. Attempting compact retry...`);
           const compactRetryPrompt = `Generate a 7-day meal plan as compact JSON. ~${calories} kcal/day, ${input.dietaryPreference} diet.
@@ -492,7 +522,7 @@ Format: {"dailyCalories":${calories},"days":[{"day":"Monday","meals":[{"name":"E
             for (const meal of day.meals) {
               const key = (meal.name ?? "").toLowerCase().trim();
               if (key && seenMealNames.has(key)) {
-                // Duplicate found — append day name to make it unique and update photoQuery
+                // Duplicate found â append day name to make it unique and update photoQuery
                 meal.name = `${meal.name} (${day.day} Special)`;
                 meal.photoQuery = `${meal.photoQuery || meal.name} ${day.day?.toLowerCase() || ""} style`.trim();
               }
@@ -505,7 +535,7 @@ Format: {"dailyCalories":${calories},"days":[{"day":"Monday","meals":[{"name":"E
           );
           const uniqueSignatures = new Set(daySignatures);
           if (uniqueSignatures.size < Math.min(planData.days.length, 3)) {
-            // Most days have identical meals — this is a critical failure
+            // Most days have identical meals â this is a critical failure
             // Add day-specific suffixes to differentiate
             const dayThemes = ["Mediterranean", "Asian", "Latin", "Middle Eastern", "Nordic", "Indian", "American"];
             planData.days.forEach((day: any, idx: number) => {
@@ -554,7 +584,7 @@ Format: {"dailyCalories":${calories},"days":[{"day":"Monday","meals":[{"name":"E
         const calories = input.dailyCalories ?? 2000;
         const isRamadan = input.ramadanMode === true;
         const dietaryRules = getDietaryRestrictions(input.dietaryPreference);
-        const themeNote = input.theme ? `THEME FOR THIS DAY: ${input.theme}. All meals for this day should follow this theme — e.g., if the theme is "high-protein", maximise protein in every meal; if it's "Mediterranean", use Mediterranean ingredients and cooking styles; if it's "comfort food", use hearty comforting dishes while staying within calorie limits.` : "";
+        const themeNote = input.theme ? `THEME FOR THIS DAY: ${input.theme}. All meals for this day should follow this theme â e.g., if the theme is "high-protein", maximise protein in every meal; if it's "Mediterranean", use Mediterranean ingredients and cooking styles; if it's "comfort food", use hearty comforting dishes while staying within calorie limits.` : "";
         const cuisineNote = input.cuisinePrefs && input.cuisinePrefs.length > 0
           ? `CUISINE PREFERENCES: Prioritise ${input.cuisinePrefs.map(c => c.replace(/_/g, " ")).join(", ")} cuisine(s).`
           : "";
@@ -567,8 +597,8 @@ USER PROFILE:
 ${input.region ? `- Region: ${input.region.replace(/_/g, " ")}` : ""}
 ${themeNote}
 ${cuisineNote}
-${input.pastMealNames && input.pastMealNames.length > 0 ? `\nMEAL HISTORY — DO NOT REPEAT THESE DISHES:\n${input.pastMealNames.slice(0, 30).join(", ")}\nGenerate COMPLETELY DIFFERENT meals from the above.\n` : ""}
-DIETARY RESTRICTIONS (MUST FOLLOW — NON-NEGOTIABLE):
+${input.pastMealNames && input.pastMealNames.length > 0 ? `\nMEAL HISTORY â DO NOT REPEAT THESE DISHES:\n${input.pastMealNames.slice(0, 30).join(", ")}\nGenerate COMPLETELY DIFFERENT meals from the above.\n` : ""}
+DIETARY RESTRICTIONS (MUST FOLLOW â NON-NEGOTIABLE):
 ${dietaryRules}
 
 Include: ${isRamadan ? "suhoor, iftar, and evening snack meals" : "breakfast, morning snack, lunch, afternoon snack, dinner (4-5 meals)"}. Each meal MUST have: name, type, calories, protein, carbs, fat, ingredients array, prepTime, instructions array (3-5 steps), photoQuery.
@@ -647,7 +677,7 @@ Return ONLY this structure: {"day":"${input.dayName}","meals":[{"name":"Meal Nam
   }),
 
   mealPrep: router({
-    // AI generation — works for guests
+    // AI generation â works for guests
     generate: guestOrUserProcedure
       .input(z.object({ dietaryPreference: z.string(), servings: z.number().default(4), budget: z.string().default("moderate") }))
       .mutation(async ({ input }) => {
@@ -673,7 +703,7 @@ Return ONLY this structure: {"day":"${input.dayName}","meals":[{"name":"Meal Nam
   }),
 
   mealLog: router({
-    // Photo calorie analysis — works for guests
+    // Photo calorie analysis â works for guests
     analyzePhoto: guestOrUserProcedure
       .input(z.object({ photoUrl: z.string() }))
       .mutation(async ({ ctx, input }) => {
@@ -689,7 +719,7 @@ Return ONLY this structure: {"day":"${input.dayName}","meals":[{"name":"Meal Nam
         try { result = JSON.parse((response.choices[0].message.content as string) ?? "{}"); }
         catch { result = { foods: [], totalCalories: 0, totalProtein: 0, totalCarbs: 0, totalFat: 0, confidence: "low", notes: "Could not analyze" }; }
 
-        // Server-side macro recalculation: validate every food item with p×4 + c×4 + f×9
+        // Server-side macro recalculation: validate every food item with pÃ4 + cÃ4 + fÃ9
         if (result.foods && Array.isArray(result.foods)) {
           for (const food of result.foods) {
             const p = Number(food.protein) || 0;
@@ -713,7 +743,7 @@ Return ONLY this structure: {"day":"${input.dayName}","meals":[{"name":"Meal Nam
 
         return result;
       }),
-    // Logging to DB — only for authenticated users
+    // Logging to DB â only for authenticated users
     log: protectedProcedure
       .input(z.object({ name: z.string(), mealType: z.string().optional(), calories: z.number().optional(), protein: z.number().optional(), carbs: z.number().optional(), fat: z.number().optional(), photoUrl: z.string().optional() }))
       .mutation(async ({ ctx, input }) => db.createMealLog(ctx.user.id, input)),
@@ -721,7 +751,7 @@ Return ONLY this structure: {"day":"${input.dayName}","meals":[{"name":"Meal Nam
   }),
 
   progress: router({
-    // Photo upload and analysis — works for guests (no DB save for guests)
+    // Photo upload and analysis â works for guests (no DB save for guests)
     uploadPhoto: guestOrUserProcedure
       .input(z.object({ photoBase64: z.string(), note: z.string().optional(), isBaseline: z.boolean().optional(), weightKg: z.number().optional(), bodyFatPercent: z.number().optional() }))
       .mutation(async ({ ctx, input }) => {
@@ -756,7 +786,7 @@ Return ONLY this structure: {"day":"${input.dayName}","meals":[{"name":"Meal Nam
   }),
 
   workout: router({
-    // AI form analysis — works for guests
+    // AI form analysis â works for guests
     // Uses Gemini File API resumable upload for video instead of raw base64 in body
     analyzeForm: guestOrUserProcedure
       .input(z.object({ exerciseName: z.string(), videoBase64: z.string().optional(), hasVideo: z.boolean().default(false) }))
@@ -853,7 +883,7 @@ Return ONLY this structure: {"day":"${input.dayName}","meals":[{"name":"Meal Nam
   }),
 
   mealSwap: router({
-    // AI-powered meal swap — generates 6 personalised calorie-equivalent alternatives
+    // AI-powered meal swap â generates 6 personalised calorie-equivalent alternatives
     generate: guestOrUserProcedure
       .input(z.object({
         mealName: z.string(),
@@ -932,7 +962,7 @@ PROGRESS PHOTOS: ${progressSummary}
 Return a JSON coaching report with this exact structure:
 {
   "overallScore": 72,
-  "headline": "Solid foundation — time to sharpen your technique",
+  "headline": "Solid foundation â time to sharpen your technique",
   "formAnalysis": {
     "summary": "2-3 sentence analysis of their form patterns across exercises",
     "topIssues": ["Issue 1 with specific correction", "Issue 2 with specific correction"],
@@ -952,10 +982,10 @@ Return a JSON coaching report with this exact structure:
     { "day": "Friday", "focus": "Technique refinement", "tip": "Specific actionable tip" }
   ],
   "personalizedTips": [
-    { "category": "Nutrition", "icon": "🥩", "tip": "Specific tip based on their goal and BF%" },
-    { "category": "Recovery", "icon": "😴", "tip": "Specific recovery tip" },
-    { "category": "Form", "icon": "🎯", "tip": "Most critical form fix" },
-    { "category": "Mindset", "icon": "🧠", "tip": "Motivational insight specific to their progress" }
+    { "category": "Nutrition", "icon": "ð¥©", "tip": "Specific tip based on their goal and BF%" },
+    { "category": "Recovery", "icon": "ð´", "tip": "Specific recovery tip" },
+    { "category": "Form", "icon": "ð¯", "tip": "Most critical form fix" },
+    { "category": "Mindset", "icon": "ð§ ", "tip": "Motivational insight specific to their progress" }
   ],
   "nextMilestone": {
     "title": "Milestone name",
@@ -975,7 +1005,7 @@ Return a JSON coaching report with this exact structure:
         catch {
           result = {
             overallScore: 70,
-            headline: "Keep up the great work — consistency is your superpower",
+            headline: "Keep up the great work â consistency is your superpower",
             formAnalysis: { summary: "You're building good habits. Focus on technique over weight.", topIssues: ["Ensure full range of motion on all exercises"], strengths: ["Consistent training frequency"], priorityExercise: "Squat", priorityReason: "Foundation of all lower body strength" },
             progressAnalysis: { summary: "Steady progress detected. Stay consistent with nutrition.", trend: "improving", estimatedWeeksToGoal: 12, weeklyBFLoss: 0.3 },
             weeklyPlan: [
@@ -984,17 +1014,17 @@ Return a JSON coaching report with this exact structure:
               { day: "Friday", focus: "Full body", tip: "End the week strong" },
             ],
             personalizedTips: [
-              { category: "Nutrition", icon: "🥩", tip: "Hit your protein target every day — it's the #1 driver of muscle retention" },
-              { category: "Recovery", icon: "😴", tip: "7-9 hours of sleep is non-negotiable for body composition" },
-              { category: "Form", icon: "🎯", tip: "Record yourself once a week to catch form drift early" },
-              { category: "Mindset", icon: "🧠", tip: "Progress is not always visible — trust the data, not the mirror" },
+              { category: "Nutrition", icon: "ð¥©", tip: "Hit your protein target every day â it's the #1 driver of muscle retention" },
+              { category: "Recovery", icon: "ð´", tip: "7-9 hours of sleep is non-negotiable for body composition" },
+              { category: "Form", icon: "ð¯", tip: "Record yourself once a week to catch form drift early" },
+              { category: "Mindset", icon: "ð§ ", tip: "Progress is not always visible â trust the data, not the mirror" },
             ],
             nextMilestone: { title: "First Form Score 80+", description: "Achieving excellent form on a compound lift", estimatedDate: "2 weeks" },
           };
         }
         return result;
       }),
-    // AI Coach chat — conversational coaching
+    // AI Coach chat â conversational coaching
     chat: guestOrUserProcedure
       .input(z.object({
         message: z.string(),
@@ -1027,7 +1057,7 @@ Return a JSON coaching report with this exact structure:
         const premiumInstructions = hasPremiumContext
           ? " You have access to their form check history, body scan data, and meal logs. Reference specific data points when giving advice. Track their form improvements over time and celebrate progress. If their nutrition doesn't align with their goal, mention it tactfully."
           : "";
-        const systemPrompt = `You are PeakPulse AI Coach — an elite, no-nonsense fitness coach. You give specific, evidence-based advice. You know the user's profile: ${profileContext}.${premiumInstructions} Keep responses concise (2-4 sentences max) and always end with one actionable next step.`;
+        const systemPrompt = `You are PeakPulse AI Coach â an elite, no-nonsense fitness coach. You give specific, evidence-based advice. You know the user's profile: ${profileContext}.${premiumInstructions} Keep responses concise (2-4 sentences max) and always end with one actionable next step.`;
         const messages: any[] = [
           { role: "system", content: systemPrompt },
           ...(input.history ?? []),
@@ -1142,7 +1172,7 @@ Return a JSON coaching report with this exact structure:
         const cuisineNote = input.cuisinePrefs?.length
           ? `They prefer these cuisines: ${input.cuisinePrefs.join(", ")}. Incorporate dishes and flavours from these cuisines where possible.`
           : "";
-        const prompt = `You are an expert nutritionist and chef. The user has these items in their pantry/fridge:\n${input.pantryItems}\n\nTheir DAILY nutritional targets:\n- Calories: ${input.calorieGoal} kcal\n- Protein: ${input.proteinGoal}g\n- Carbs: ${input.carbsGoal}g\n- Fat: ${input.fatGoal}g\nFitness goal: ${input.fitnessGoal.replace(/_/g, " ")}.\n${dietNote}\n${regionNote}\n${cuisineNote}\n\nGenerate a COMPLETE daily meal plan (breakfast, lunch, dinner, and 1 snack) that:\n1. MAXIMISES use of pantry items — use as many as possible\n2. Meets the daily caloric and macro targets (total across all 4 meals should be close to the targets)\n3. Clearly marks which ingredients are FROM THE PANTRY and which NEED TO BE BOUGHT\n4. If the pantry is too limited for a full day, suggest meals that need minimal extra ingredients\n5. Provide accurate calorie and macro estimates for each meal\n6. Include practical cooking instructions\n\nReturn this exact JSON:\n{"dailyPlan":{"totalCalories":0,"totalProtein":0,"totalCarbs":0,"totalFat":0,"pantryItemsUsed":["item1","item2"],"additionalItemsNeeded":["item1","item2"],"meals":[{"mealType":"breakfast","name":"Meal Name","description":"Brief description","ingredients":[{"name":"Chicken Breast","fromPantry":true,"quantity":"150g"}],"calories":450,"protein":35,"carbs":40,"fat":15,"prepTime":"20 min","instructions":["Step 1","Step 2"]}]},"tips":"One practical tip about using their pantry items efficiently"}`;
+        const prompt = `You are an expert nutritionist and chef. The user has these items in their pantry/fridge:\n${input.pantryItems}\n\nTheir DAILY nutritional targets:\n- Calories: ${input.calorieGoal} kcal\n- Protein: ${input.proteinGoal}g\n- Carbs: ${input.carbsGoal}g\n- Fat: ${input.fatGoal}g\nFitness goal: ${input.fitnessGoal.replace(/_/g, " ")}.\n${dietNote}\n${regionNote}\n${cuisineNote}\n\nGenerate a COMPLETE daily meal plan (breakfast, lunch, dinner, and 1 snack) that:\n1. MAXIMISES use of pantry items â use as many as possible\n2. Meets the daily caloric and macro targets (total across all 4 meals should be close to the targets)\n3. Clearly marks which ingredients are FROM THE PANTRY and which NEED TO BE BOUGHT\n4. If the pantry is too limited for a full day, suggest meals that need minimal extra ingredients\n5. Provide accurate calorie and macro estimates for each meal\n6. Include practical cooking instructions\n\nReturn this exact JSON:\n{"dailyPlan":{"totalCalories":0,"totalProtein":0,"totalCarbs":0,"totalFat":0,"pantryItemsUsed":["item1","item2"],"additionalItemsNeeded":["item1","item2"],"meals":[{"mealType":"breakfast","name":"Meal Name","description":"Brief description","ingredients":[{"name":"Chicken Breast","fromPantry":true,"quantity":"150g"}],"calories":450,"protein":35,"carbs":40,"fat":15,"prepTime":"20 min","instructions":["Step 1","Step 2"]}]},"tips":"One practical tip about using their pantry items efficiently"}`;
         const response = await invokeLLM({
           messages: [
             { role: "system", content: "You are an expert chef and nutritionist. Always respond with valid JSON only, no markdown. Be precise with calorie and macro estimates." },
@@ -1167,7 +1197,7 @@ Return a JSON coaching report with this exact structure:
           messages: [
             {
               role: "system",
-              content: `You are an expert at reading grocery store receipts. Analyze this receipt photo and extract every grocery item.\n\nFor each item, determine:\n- name: Clean product name (remove store codes, abbreviations)\n- quantity: Number of units purchased (default 1)\n- price: Price paid for this item (number, 0 if unreadable)\n- category: One of: produce, dairy, meat, seafood, grains, canned, frozen, beverages, snacks, condiments, bakery, other\n- estimatedExpiry: Estimated days until expiry based on product type (e.g. milk=7, bread=5, canned=365, produce=5, meat=3, frozen=90)\n\nAlso extract:\n- storeName: Name of the store (if visible)\n- total: Total amount on receipt\n- date: Receipt date (if visible, ISO format)\n\nReturn JSON:\n{\n  "items": [{ "name": "string", "quantity": number, "price": number, "category": "string", "estimatedExpiry": number }],\n  "storeName": "string or null",\n  "total": number,\n  "date": "string or null",\n  "itemCount": number\n}\n\nBe thorough — extract every line item. Clean up abbreviated names to be human-readable.`,
+              content: `You are an expert at reading grocery store receipts. Analyze this receipt photo and extract every grocery item.\n\nFor each item, determine:\n- name: Clean product name (remove store codes, abbreviations)\n- quantity: Number of units purchased (default 1)\n- price: Price paid for this item (number, 0 if unreadable)\n- category: One of: produce, dairy, meat, seafood, grains, canned, frozen, beverages, snacks, condiments, bakery, other\n- estimatedExpiry: Estimated days until expiry based on product type (e.g. milk=7, bread=5, canned=365, produce=5, meat=3, frozen=90)\n\nAlso extract:\n- storeName: Name of the store (if visible)\n- total: Total amount on receipt\n- date: Receipt date (if visible, ISO format)\n\nReturn JSON:\n{\n  "items": [{ "name": "string", "quantity": number, "price": number, "category": "string", "estimatedExpiry": number }],\n  "storeName": "string or null",\n  "total": number,\n  "date": "string or null",\n  "itemCount": number\n}\n\nBe thorough â extract every line item. Clean up abbreviated names to be human-readable.`,
             },
             {
               role: "user",
@@ -1193,7 +1223,7 @@ Return a JSON coaching report with this exact structure:
   }),
 
   exerciseSwap: router({
-    // AI-powered exercise swap — generates alternatives targeting the same muscle group
+    // AI-powered exercise swap â generates alternatives targeting the same muscle group
     generate: guestOrUserProcedure
       .input(z.object({
         exerciseName: z.string(),
@@ -1224,7 +1254,7 @@ Return JSON:
   }),
 
   mealSwapWithPantry: router({
-    // AI-powered meal swap using pantry items — generates alternatives from available ingredients
+    // AI-powered meal swap using pantry items â generates alternatives from available ingredients
     generate: guestOrUserProcedure
       .input(z.object({
         mealName: z.string(),
@@ -1268,7 +1298,7 @@ Return JSON:
         try { result = JSON.parse((response.choices[0].message.content as string) ?? "{}"); }
         catch { result = { alternatives: [] }; }
         // Generate image URLs for each alternative using Unsplash
-        // Curated food photos for variety — each suggestion gets a unique image
+        // Curated food photos for variety â each suggestion gets a unique image
         const FOOD_PHOTOS = [
           "photo-1512621776951-a57141f2eefd", // colorful salad bowl
           "photo-1490645935967-10de6ba17061", // plated meal
@@ -1292,7 +1322,7 @@ Return JSON:
       }),
   }),
 
-  // Guest data migration — imports AsyncStorage data from guest mode into authenticated account
+  // Guest data migration â imports AsyncStorage data from guest mode into authenticated account
   migrateGuestData: protectedProcedure
     .input(z.object({
       key: z.string(),
@@ -1322,7 +1352,7 @@ Return JSON:
           case "@peakpulse_guest_profile":
           case "@peakpulse_onboarding_data":
           case "@peakpulse_preferences":
-            // Store as user metadata — the data is preserved for future use
+            // Store as user metadata â the data is preserved for future use
             console.log(`[Migration] Stored ${input.key} (${JSON.stringify(input.data).length} bytes)`);
             break;
           default:
@@ -1335,7 +1365,7 @@ Return JSON:
       return { success: true };
     }),
   upload: router({
-    // Photo upload — works for guests (stored to S3 without user ID)
+    // Photo upload â works for guests (stored to S3 without user ID)
     photo: guestOrUserProcedure
       .input(z.object({ base64: z.string(), mimeType: z.string().default("image/jpeg") }))
       .mutation(async ({ ctx, input }) => {
