@@ -3072,3 +3072,9 @@
 - [x] Merged: fix: reduce BodyDiagramInline scale to 0.2 and widen container to 48x90 (body-diagram.tsx)
 - [x] Merged: fix: widen cardDiagram container to 48px (exercise-library.tsx)
 - [x] Fast-forward merge — no conflicts, 0 TypeScript errors
+
+## Round 84: Sync with GitHub repository
+- [x] Fetched 2 new commits from GitHub
+- [x] Merged: fix: reduce BodyDiagramInteractive scale from 1.3 to 0.6 so hands are not cut off (body-diagram.tsx)
+- [x] Merged: fix: merge 'Today's Workout' section title with day name into 'Today's [Day] Target Muscles' (index.tsx — removed cardEyebrow day label, merged into SectionTitle)
+- [x] Fast-forward merge — no conflicts, 0 TypeScript errors
