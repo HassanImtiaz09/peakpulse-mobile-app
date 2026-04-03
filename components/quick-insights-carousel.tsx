@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useState, useCallback } from "react";
 import {
   View,
   Text,
@@ -6,8 +6,13 @@ import {
   TouchableOpacity,
   Dimensions,
   StyleSheet,
-  Animated,
 } from "react-native";
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withTiming,
+  Easing,
+} from "react-native-reanimated";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useColors } from "@/hooks/use-colors";
@@ -15,6 +20,12 @@ import { useColors } from "@/hooks/use-colors";
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const CARD_WIDTH = SCREEN_WIDTH - 64;
 const CARD_GAP = 12;
+
+const DOT_INACTIVE_W = 6;
+const DOT_ACTIVE_W = 20;
+const DOT_H = 6;
+const DOT_RADIUS = 3;
+const DOT_TIMING = { duration: 250, easing: Easing.bezier(0.4, 0, 0.2, 1) };
 
 interface InsightCard {
   id: string;
@@ -36,6 +47,38 @@ interface QuickInsightsCarouselProps {
   volumeChange?: number | null;
   totalWorkouts?: number;
 }
+
+/* ─── Animated Dot ─────────────────────────────────────────────────────── */
+
+function AnimatedDot({
+  isActive,
+  accentColor,
+  inactiveColor,
+}: {
+  isActive: boolean;
+  accentColor: string;
+  inactiveColor: string;
+}) {
+  const width = useSharedValue(isActive ? DOT_ACTIVE_W : DOT_INACTIVE_W);
+
+  React.useEffect(() => {
+    width.value = withTiming(
+      isActive ? DOT_ACTIVE_W : DOT_INACTIVE_W,
+      DOT_TIMING,
+    );
+  }, [isActive]);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    width: width.value,
+    height: DOT_H,
+    borderRadius: DOT_RADIUS,
+    backgroundColor: isActive ? accentColor : inactiveColor,
+  }));
+
+  return <Animated.View style={animatedStyle} />;
+}
+
+/* ─── Carousel ─────────────────────────────────────────────────────────── */
 
 export function QuickInsightsCarousel({
   streakDays = 0,
@@ -257,20 +300,26 @@ export function QuickInsightsCarousel({
         onViewableItemsChanged={onViewableItemsChanged}
         viewabilityConfig={{ itemVisiblePercentThreshold: 60 }}
       />
-      {/* Pagination dots */}
-      <View style={{ flexDirection: "row", justifyContent: "center", gap: 6, marginTop: 14 }}>
+      {/* Animated pagination dots */}
+      <View style={styles.dotsRow}>
         {cards.map((card, i) => (
-          <View
+          <AnimatedDot
             key={card.id}
-            style={{
-              width: i === activeIndex ? 20 : 6,
-              height: 6,
-              borderRadius: 3,
-              backgroundColor: i === activeIndex ? card.accentColor : SF.border,
-            }}
+            isActive={i === activeIndex}
+            accentColor={card.accentColor}
+            inactiveColor={SF.border}
           />
         ))}
       </View>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  dotsRow: {
+    flexDirection: "row",
+    justifyContent: "center",
+    gap: 6,
+    marginTop: 14,
+  },
+});

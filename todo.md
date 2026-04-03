@@ -3117,3 +3117,10 @@
   - Removed web-only CSS `transition` property from carousel pagination dots
   - Fixed missing module imports: @/lib/safe-frame and @/lib/colors → correct paths
 - [x] 0 TypeScript errors after fixes
+
+## Round 89: Animated pagination dots
+- [x] Replace static pagination dots with Reanimated animated dots in Quick Insights carousel
+- [x] Smooth width transition using withTiming (250ms, bezier easing) when active index changes
+- [x] Write unit tests (23 tests, all passing)
+- [x] Verify TypeScript compiles (0 errors)
+- [x] Save checkpoint
