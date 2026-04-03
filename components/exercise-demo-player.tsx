@@ -49,7 +49,7 @@ const { width: SCREEN_W } = Dimensions.get("window");
 interface ExerciseDemoPlayerProps {
   /** Legacy gifUrl prop (ignored if gifAsset is provided) */
   gifUrl?: string;
-  /** Exercise image asset â CDN URL string or legacy require() number */
+  /** Exercise image asset Ã¢ÂÂ CDN URL string or legacy require() number */
   gifAsset?: number | string;
   cue?: string;
   height?: number;
@@ -124,7 +124,7 @@ export function ExerciseDemoPlayer({
     () => (exerciseName ? getExerciseDbGifUrl(exerciseName) : null),
     [exerciseName]
   );
-  const [useExerciseDb, setUseExerciseDb] = useState(!!exerciseDbGifUrl);
+  const [useExerciseDb, setUseExerciseDb] = useState(false);
 
   // Muscle info for mini diagram
   const exerciseInfo = useMemo(
@@ -132,13 +132,20 @@ export function ExerciseDemoPlayer({
     [exerciseName]
   );
 
-  // Resolve the image asset â prefer ExerciseDB animated GIF when toggled on
+  // Resolve the image asset - prefer MuscleWiki angleViews, ExerciseDB GIF only when toggled on
   const currentAsset = useMemo(() => {
-    if (useExerciseDb && exerciseDbGifUrl) {
-      return exerciseDbGifUrl; // Direct URL to animated GIF from ExerciseDB
+    // MuscleWiki angle views are the primary source
+    if (!useExerciseDb && hasMultipleAngles && angleViews[activeAngle]) {
+      return angleViews[activeAngle].gifUrl;
     }
+    if (!useExerciseDb && gifAsset) return gifAsset;
+    // ExerciseDB animated GIF only when explicitly toggled on
+    if (useExerciseDb && exerciseDbGifUrl) {
+      return exerciseDbGifUrl;
+    }
+    // Fallback chain
     if (hasMultipleAngles && angleViews[activeAngle]) {
-      return resolveGifAsset(angleViews[activeAngle].gifUrl);
+      return angleViews[activeAngle].gifUrl;
     }
     if (gifAsset) return gifAsset;
     if (gifUrl) return resolveGifAsset(gifUrl);
@@ -301,7 +308,7 @@ export function ExerciseDemoPlayer({
           {/* Badge */}
           <View style={styles.gifBadge}>
             <MaterialIcons name={useExerciseDb ? "gif" : "image"} size={16} color="#fff" />
-            <Text style={styles.gifBadgeText}>{useExerciseDb ? "Animated Demo" : "Exercise Guide"}</Text>
+            <Text style={styles.gifBadgeText}>{useExerciseDb ? "Animated GIF" : "MuscleWiki Video"}</Text>
           </View>
           {/* Muscle mini diagram overlay (bottom-left) */}
           {exerciseInfo && (
@@ -363,7 +370,7 @@ export function ExerciseDemoPlayer({
         </View>
       )}
 
-      {/* Angle focus card â shows the per-view coaching focus from exercise-data */}
+      {/* Angle focus card Ã¢ÂÂ shows the per-view coaching focus from exercise-data */}
       {hasMultipleAngles && angleViews[activeAngle]?.focus ? (
         <View style={styles.angleFocusCard}>
           {/* Section label row */}
@@ -394,7 +401,7 @@ export function ExerciseDemoPlayer({
             ]}
           >
             <MaterialIcons name="gif" size={14} color={useExerciseDb ? "#0A0E14" : "#B45309"} />
-            <Text style={[styles.sourceToggleTxt, useExerciseDb && styles.sourceToggleTxtActive]}>Animated GIF</Text>
+            <Text style={[styles.sourceToggleTxt, useExerciseDb && styles.sourceToggleTxtActive]}>ExerciseDB GIF</Text>
           </Pressable>
           <Pressable
             onPress={() => { setUseExerciseDb(false); if (Platform.OS !== "web") Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {}); }}
@@ -405,7 +412,7 @@ export function ExerciseDemoPlayer({
             ]}
           >
             <MaterialIcons name="image" size={14} color={!useExerciseDb ? "#0A0E14" : "#B45309"} />
-            <Text style={[styles.sourceToggleTxt, !useExerciseDb && styles.sourceToggleTxtActive]}>Multi-Angle</Text>
+            <Text style={[styles.sourceToggleTxt, !useExerciseDb && styles.sourceToggleTxtActive]}>MuscleWiki Video</Text>
           </Pressable>
         </View>
       )}
@@ -766,7 +773,7 @@ export function ExerciseDemoButton({
 }
 
 const styles = StyleSheet.create({
-  // ââ Section label pattern ââââââââââââââââââââââââââââââââââââââââââââââââââ
+  // Ã¢ÂÂÃ¢ÂÂ Section label pattern Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
   sectionLabelRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -787,7 +794,7 @@ const styles = StyleSheet.create({
     fontFamily: "DMSans_700Bold",
   },
 
-  // ââ Angle focus card âââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+  // Ã¢ÂÂÃ¢ÂÂ Angle focus card Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
   angleFocusCard: {
     marginTop: 10,
     backgroundColor: "#141A22",
@@ -803,7 +810,7 @@ const styles = StyleSheet.create({
     fontFamily: "DMSans_400Regular",
   },
 
-  // ââ Coaching cue section âââââââââââââââââââââââââââââââââââââââââââââââââââ
+  // Ã¢ÂÂÃ¢ÂÂ Coaching cue section Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
   cueSection: {
     marginTop: 12,
   },
