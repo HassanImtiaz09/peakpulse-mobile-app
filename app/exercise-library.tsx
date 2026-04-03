@@ -35,11 +35,18 @@ import type { MuscleGroup } from "@/components/body-diagram";
 import { GOLDEN_WORKOUT, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgrounds";
 import { C } from "@/constants/ui-colors";
 import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
-import { useExerciseSearch } from "@/lib/exercisedb-hooks";
-import { hasExerciseDBKey, type ExerciseDBExercise } from "@/lib/exercisedb";
-import { getExerciseDbGifUrl } from "@/lib/exercisedb-api";
-import { ActivityIndicator } from "react-native";
 type FilterMode = "all" | "favorites" | ExerciseInfo["category"];
+type EquipmentFilter = "all" | "gym" | "home" | "calisthenics";
+
+function classifyEquipment(equipment: string): EquipmentFilter[] {
+  const e = equipment.toLowerCase();
+  const tags: EquipmentFilter[] = [];
+  if (/machine|barbell|cable|ez bar|squat rack|press|hack squat|smith|leg press|lat pulldown|pec deck/.test(e)) tags.push("gym");
+  if (/dumbbell|kettlebell|band|bench/.test(e)) tags.push("home");
+  if (/bodyweight|pull-up bar|dip station|floor|none/.test(e)) tags.push("calisthenics");
+  if (tags.length === 0) tags.push("gym");
+  return tags;
+}
 
 export default function ExerciseLibraryScreen() {
   const router = useRouter();
@@ -48,31 +55,10 @@ export default function ExerciseLibraryScreen() {
 
   const [searchQuery, setSearchQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState<FilterMode>("all");
+  const [equipmentFilter, setEquipmentFilter] = useState<EquipmentFilter>("all");
 
   const allExercises = useMemo(() => getAllExercises(), []);
   const categories = useMemo(() => getCategories(), []);
-
-  // ExerciseDB API search — supplements local results when search has few matches
-  const { results: apiResults, loading: apiLoading, search: apiSearch } = useExerciseSearch("", 20);
-
-  // Trigger API search when local results are sparse
-  useEffect(() => {
-    if (searchQuery.trim().length >= 2 && hasExerciseDBKey()) {
-      apiSearch(searchQuery);
-    } else {
-      apiSearch("");
-    }
-  }, [searchQuery, apiSearch]);
-
-  // Convert API results to a display-compatible format
-  const apiExerciseCards = useMemo(() => {
-    if (!searchQuery.trim() || apiResults.length === 0) return [];
-    // Filter out exercises already in local DB to avoid duplicates
-    const localNames = new Set(allExercises.map(e => e.name.toLowerCase()));
-    return apiResults
-      .filter(e => !localNames.has(e.name.toLowerCase()))
-      .slice(0, 10);
-  }, [apiResults, searchQuery, allExercises]);
 
   const filteredExercises = useMemo(() => {
     let results: ExerciseInfo[];
@@ -94,8 +80,15 @@ export default function ExerciseLibraryScreen() {
       results = results.filter((ex) => ex.category === activeFilter);
     }
 
+    // Apply equipment sub-filter
+    if (equipmentFilter !== "all") {
+      results = results.filter((ex) =>
+        classifyEquipment(ex.equipment).includes(equipmentFilter)
+      );
+    }
+
     return results;
-  }, [searchQuery, activeFilter, allExercises, getFavoritesList]);
+  }, [searchQuery, activeFilter, equipmentFilter, allExercises, getFavoritesList]);
 
   const handleExercisePress = useCallback((exercise: ExerciseInfo | { name: string }) => {
     if (Platform.OS !== "web") {
@@ -180,27 +173,31 @@ export default function ExerciseLibraryScreen() {
           </View>
         </View>
 
-        {/* Preview Thumbnail — prefer ExerciseDB CDN GIF, fall back to local */}
+        {/* Preview Thumbnail - MuscleWiki OG image */}
         <View style={styles.cardGif}>
           {(() => {
-            const cdnGif = getExerciseDbGifUrl(item.name);
-            const localGif = item.angleViews[0]?.gifUrl;
-            const uri = cdnGif ?? localGif;
-            if (!uri || uri.endsWith(".mp4")) {
+            const videoUrl = item.angleViews[0]?.gifUrl ?? "";
+            const ogUrl = videoUrl.includes("musclewiki.com")
+              ? videoUrl
+                  .replace("/videos/branded/", "/")
+                  .replace(".mp4", ".jpg")
+                  .replace(/\/([^/]+)$/, "/og-$1")
+              : "";
+            if (ogUrl) {
               return (
-                <View style={[styles.gifPreview, { justifyContent: "center", alignItems: "center", backgroundColor: "rgba(245,158,11,0.06)" }]}>
-                  <MaterialIcons name="play-circle-outline" size={24} color={C.gold} />
-                </View>
+                <Image
+                  source={{ uri: ogUrl }}
+                  style={styles.gifPreview}
+                  contentFit="cover"
+                  cachePolicy="disk"
+                  transition={200}
+                />
               );
             }
             return (
-              <Image
-                source={{ uri }}
-                style={styles.gifPreview}
-                contentFit="cover"
-                cachePolicy="disk"
-                transition={200}
-              />
+              <View style={[styles.gifPreview, { justifyContent: "center", alignItems: "center", backgroundColor: "rgba(245,158,11,0.06)" }]}>
+                <MaterialIcons name="play-circle-outline" size={24} color={C.gold} />
+              </View>
             );
           })()}
         </View>
@@ -263,6 +260,7 @@ export default function ExerciseLibraryScreen() {
             <Pressable
               onPress={() => {
                 setActiveFilter(item.key as FilterMode);
+                  setEquipmentFilter("all");
                 if (Platform.OS !== "web") {
                   Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
                 }
@@ -293,6 +291,57 @@ export default function ExerciseLibraryScreen() {
         />
       </View>
 
+      {/* Equipment Sub-Filter (Gym / Home / Calisthenics) */}
+      {activeFilter !== "all" && activeFilter !== "favorites" && (
+        <View style={styles.filterRow}>
+          <FlatList
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            data={[
+              { key: "all" as EquipmentFilter, label: "All" },
+              { key: "gym" as EquipmentFilter, label: "Gym", icon: "fitness-center" as const },
+              { key: "home" as EquipmentFilter, label: "Home", icon: "home" as const },
+              { key: "calisthenics" as EquipmentFilter, label: "Calisthenics", icon: "self-improvement" as const },
+            ]}
+            keyExtractor={(item) => item.key}
+            contentContainerStyle={styles.filterContent}
+            renderItem={({ item }) => (
+              <Pressable
+                onPress={() => {
+                  setEquipmentFilter(item.key);
+                  if (Platform.OS !== "web") {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                  }
+                }}
+                style={({ pressed }) => [
+                  styles.filterChip,
+                  styles.equipChip,
+                  equipmentFilter === item.key && styles.equipChipActive,
+                  pressed && { opacity: 0.7 },
+                ]}
+              >
+                {"icon" in item && item.icon && (
+                  <MaterialIcons
+                    name={item.icon}
+                    size={12}
+                    color={equipmentFilter === item.key ? C.bg : C.gold}
+                    style={{ marginRight: 3 }}
+                  />
+                )}
+                <Text
+                  style={[
+                    styles.filterChipText,
+                    equipmentFilter === item.key && styles.equipChipTextActive,
+                  ]}
+                >
+                  {item.label}
+                </Text>
+              </Pressable>
+            )}
+          />
+        </View>
+      )}
+
       {/* Exercise List */}
       <FlatList
         data={filteredExercises}
@@ -300,59 +349,21 @@ export default function ExerciseLibraryScreen() {
         renderItem={renderExerciseCard}
         contentContainerStyle={[
           styles.listContent,
-          { paddingBottom: apiExerciseCards.length > 0 ? 8 : insets.bottom + 24 },
+          { paddingBottom: insets.bottom + 24 },
         ]}
         showsVerticalScrollIndicator={false}
         ListEmptyComponent={
-          apiLoading ? (
-            <View style={styles.emptyState}>
-              <ActivityIndicator color={C.gold} size="small" />
-              <Text style={styles.emptySubtitle}>Searching ExerciseDB...</Text>
-            </View>
-          ) : (
-            <View style={styles.emptyState}>
-              <MaterialIcons name="search-off" size={48} color={C.muted} />
-              <Text style={styles.emptyTitle}>No exercises found</Text>
-              <Text style={styles.emptySubtitle}>
-                {activeFilter === "favorites"
-                  ? "Tap the heart icon on any exercise to add it to your favorites"
-                  : "Try a different search term or filter"}
-              </Text>
-            </View>
-          )
+          <View style={styles.emptyState}>
+            <MaterialIcons name="search-off" size={48} color={C.muted} />
+            <Text style={styles.emptyTitle}>No exercises found</Text>
+            <Text style={styles.emptySubtitle}>
+              {activeFilter === "favorites"
+                ? "Tap the heart icon on any exercise to add it to your favorites"
+                : "Try a different search term or filter"}
+            </Text>
+          </View>
         }
-        ListFooterComponent={
-          apiExerciseCards.length > 0 ? (
-            <View style={{ paddingHorizontal: 0, paddingBottom: insets.bottom + 24 }}>
-              {/* API Results Section Header */}
-              <View style={{ flexDirection: "row", alignItems: "center", gap: 8, marginTop: 16, marginBottom: 10 }}>
-                <MaterialIcons name="cloud" size={14} color={C.gold} />
-                <Text style={{ color: C.gold, fontFamily: "DMSans_600SemiBold", fontSize: 12, letterSpacing: 0.5 }}>
-                  MORE FROM EXERCISEDB
-                </Text>
-                {apiLoading && <ActivityIndicator color={C.gold} size="small" />}
-              </View>
-              {/* API Exercise Cards */}
-              {apiExerciseCards.map((apiEx) => (
-                <Pressable
-                  key={apiEx.id}
-                  onPress={() => handleExercisePress({ name: apiEx.name })}
-                  style={({ pressed }) => [
-                    styles.exerciseCard,
-                    { marginBottom: 8 },
-                    pressed && { opacity: 0.7 },
-                  ]}
-                >
-                  {/* GIF Thumbnail */}
-                  <View style={styles.cardGif}>
-                    {getExerciseDbGifUrl(apiEx.name) ? (
-                      <Image
-                        source={{ uri: getExerciseDbGifUrl(apiEx.name)! }}
-                        style={styles.gifPreview}
-                        contentFit="cover"
-                        cachePolicy="disk"
-                        transition={200}
-                      />
+      />
                     ) : (
                       <View style={[styles.gifPreview, { justifyContent: "center", alignItems: "center", backgroundColor: "rgba(245,158,11,0.06)" }]}>
                         <MaterialIcons name="fitness-center" size={20} color={C.gold} />
@@ -641,5 +652,17 @@ const styles = StyleSheet.create({
     fontSize: 13,
     textAlign: "center",
     lineHeight: 20,
+  },
+  equipChip: {
+    borderWidth: 1,
+    borderColor: C.border2,
+    backgroundColor: C.dim,
+  },
+  equipChipActive: {
+    backgroundColor: C.gold,
+    borderColor: C.gold2,
+  },
+  equipChipTextActive: {
+    color: C.bg,
   },
 });
