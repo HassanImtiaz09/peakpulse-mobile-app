@@ -14,7 +14,7 @@ import { GOLDEN_MEALS, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgroun
 import { UI as SF } from "@/constants/ui-colors";
 import { useAiLimit } from "@/components/ai-limit-modal";
 import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
-// ââ Ingredient Matching ââââââââââââââââââââââââââââââââââââââââââ
+// ── Ingredient Matching ──────────────────────────────────────────
 interface IngredientMatch {
   ingredientName: string;
   ingredientAmount: string;
@@ -74,9 +74,6 @@ interface PrepRecipe {
   fat: number;
   prepTime: string;
   cookTime: string;
-  totalTime?: string;
-  difficulty?: "Easy" | "Medium" | "Advanced";
-  equipment?: string[];
   ingredients: { name: string; amount: string; fromPantry: boolean }[];
   instructions: string[];
   storageInstructions: string;
@@ -221,7 +218,7 @@ export default function MealPrepScreen() {
     await persistSaved(updated);
   }, [savedRecipes, persistSaved]);
 
-  // ââ Cook Now Handler ââââââââââââââââââââââââââââââââââââââââââ
+  // ── Cook Now Handler ──────────────────────────────────────────
   const handleCookNow = useCallback(async (recipe: PrepRecipe, cardKey: string) => {
     const multiplier = getScaleMultiplier(cardKey, recipe.servings);
     const matches = getIngredientMatches(recipe.ingredients, pantryItems);
@@ -303,113 +300,6 @@ export default function MealPrepScreen() {
     });
   }, [pantryItems]);
 
-
-// ââ Recipe Enrichment ââââââââââââââââââââââââââââââââââââââââââ
-// Parse duration from a step string, e.g. "(5 min)" or "(5-6 min)"
-function parseStepDuration(step: string): { text: string; duration: string | null } {
-  const match = step.match(/\(([\d]+(?:\s*-\s*[\d]+)?\s*(?:min|sec|hours?|hrs?|minutes?|seconds?))\)\s*$/i);
-  if (match) {
-    return { text: step.replace(match[0], "").trim(), duration: match[1].trim() };
-  }
-  // Also check for "X min" at the very end without parens
-  const altMatch = step.match(/([\d]+(?:\s*-\s*[\d]+)?\s*(?:min|sec|hours?|hrs?))\s*$/i);
-  if (altMatch && step.length > altMatch[0].length + 10) {
-    return { text: step.replace(altMatch[0], "").trim(), duration: altMatch[1].trim() };
-  }
-  return { text: step, duration: null };
-}
-
-// Compute total time from individual step durations
-function computeTotalTime(instructions: string[]): string | null {
-  let totalMin = 0;
-  let found = false;
-  for (const step of instructions) {
-    const { duration } = parseStepDuration(step);
-    if (duration) {
-      found = true;
-      const numMatch = duration.match(/(\d+)/);
-      if (numMatch) {
-        const val = parseInt(numMatch[1], 10);
-        if (duration.includes("sec")) {
-          totalMin += Math.ceil(val / 60);
-        } else if (duration.includes("hour") || duration.includes("hr")) {
-          totalMin += val * 60;
-        } else {
-          totalMin += val;
-        }
-      }
-    }
-  }
-  if (!found) return null;
-  if (totalMin >= 60) {
-    const hrs = Math.floor(totalMin / 60);
-    const mins = totalMin % 60;
-    return mins > 0 ? `${hrs}h ${mins}m` : `${hrs}h`;
-  }
-  return `${totalMin} min`;
-}
-
-// Guess difficulty based on step count and total time
-function guessDifficulty(instructions: string[], totalTimeStr: string | null): "Easy" | "Medium" | "Advanced" {
-  const stepCount = instructions.length;
-  let totalMin = 0;
-  if (totalTimeStr) {
-    const hrMatch = totalTimeStr.match(/(\d+)h/);
-    const minMatch = totalTimeStr.match(/(\d+)\s*m/);
-    if (hrMatch) totalMin += parseInt(hrMatch[1]) * 60;
-    if (minMatch) totalMin += parseInt(minMatch[1]);
-    if (!hrMatch && !minMatch) {
-      const numMatch = totalTimeStr.match(/(\d+)/);
-      if (numMatch) totalMin = parseInt(numMatch[1]);
-    }
-  }
-  if (stepCount <= 4 && totalMin <= 15) return "Easy";
-  if (stepCount >= 8 || totalMin >= 45) return "Advanced";
-  return "Medium";
-}
-
-// Detect equipment mentioned in instructions
-function detectEquipment(instructions: string[]): string[] {
-  const equipmentKeywords: Record<string, string> = {
-    "oven": "Oven",
-    "grill": "Grill",
-    "blender": "Blender",
-    "food processor": "Food Processor",
-    "cast iron": "Cast Iron Skillet",
-    "wok": "Wok",
-    "baking tray": "Baking Tray",
-    "baking sheet": "Baking Sheet",
-    "saucepan": "Saucepan",
-    "skillet": "Skillet",
-    "steamer": "Steamer",
-    "bamboo steamer": "Bamboo Steamer",
-    "thermometer": "Thermometer",
-    "mandoline": "Mandoline",
-    "mortar": "Mortar & Pestle",
-    "stand mixer": "Stand Mixer",
-    "hand mixer": "Hand Mixer",
-    "slow cooker": "Slow Cooker",
-    "pressure cooker": "Pressure Cooker",
-    "air fryer": "Air Fryer",
-    "whisk": "Whisk",
-    "rolling pin": "Rolling Pin",
-  };
-  const found = new Set<string>();
-  const allText = instructions.join(" ").toLowerCase();
-  for (const [kw, label] of Object.entries(equipmentKeywords)) {
-    if (allText.includes(kw)) found.add(label);
-  }
-  return Array.from(found);
-}
-
-// Enrich a raw AI-generated recipe with computed fields
-function enrichRecipe(recipe: PrepRecipe): PrepRecipe {
-  const totalTime = recipe.totalTime || computeTotalTime(recipe.instructions);
-  const difficulty = recipe.difficulty || guessDifficulty(recipe.instructions, totalTime);
-  const equipment = recipe.equipment?.length ? recipe.equipment : detectEquipment(recipe.instructions);
-  return { ...recipe, totalTime: totalTime ?? undefined, difficulty, equipment: equipment.length > 0 ? equipment : undefined };
-}
-
   async function generateRecipes() {
     if (expiringItems.length === 0 && pantryItems.length === 0) return;
     setLoading(true);
@@ -418,29 +308,16 @@ function enrichRecipe(recipe: PrepRecipe): PrepRecipe {
         ? expiringItems.map(i => `${i.name} (${i.category}, expires ${new Date(i.expiresAt!).toLocaleDateString()})`).join(", ")
         : "None expiring soon";
       const allStr = pantryItems.map(i => `${i.name} (${i.category})`).join(", ");
-      const result = await generatePrep.mutateAsync({
-        expiringItems: expiringStr,
-        allPantryItems: allStr,
-        servings,
-        detailHint: "IMPORTANT: For each recipe provide DETAILED from-scratch instructions. Each instruction step MUST include the exact duration in parentheses at the end, e.g. 'Dice the onion into 5mm cubes and saut\u00e9 in 1 tbsp olive oil over medium heat until translucent (5 min)'. Every ingredient MUST have exact amounts with units (grams, ml, tbsp, tsp, etc). Include cooking temperatures in \u00b0C. Describe techniques precisely (e.g. 'julienne', 'brunoise', 'fold gently'). Add equipment needed if special (e.g. 'cast iron skillet', 'blender'). Include resting times, carry-over cooking notes, and visual doneness cues (e.g. 'until golden brown', 'until internal temp reaches 74\u00b0C').",
-      });
-      // Post-process recipes to enrich with computed fields
-      const enriched = (result.recipes ?? []).map(enrichRecipe);
-      setRecipes(enriched);
+      const result = await generatePrep.mutateAsync({ expiringItems: expiringStr, allPantryItems: allStr, servings });
+      setRecipes(result.recipes ?? []);
       setTips(result.tips ?? []);
       setGenerated(true);
     } catch (e: any) {
-      if (e?.message?.includes?.("AI_LIMIT_EXCEEDED") || e?.message?.includes?.("rate limit")) {
-        showLimitModal(e.message);
-        setLoading(false);
-        return;
-      }
+      if (e?.message?.includes?.("AI_LIMIT_EXCEEDED") || e?.message?.includes?.("rate limit")) { showLimitModal(e.message); setLoading(false); return; }
       setRecipes([]);
       setTips(["Could not generate recipes. Try again."]);
       setGenerated(true);
-    } finally {
-      setLoading(false);
-    }
+    } finally { setLoading(false); }
   }
 
   const getDaysUntilExpiry = (date: string) => Math.ceil((new Date(date).getTime() - Date.now()) / (24 * 60 * 60 * 1000));
@@ -538,37 +415,20 @@ function enrichRecipe(recipe: PrepRecipe): PrepRecipe {
           <View style={styles.recipeHeader}>
             <View style={{ flex: 1 }}>
               <Text style={styles.recipeName}>{recipe.name}</Text>
-                <View style={styles.recipeMetaRow}>
-                    <View style={styles.recipeMeta}>
-                      <MaterialIcons name="schedule" size={11} color={SF.muted} />
-                      <Text style={styles.recipeMetaText}>Prep: {recipe.prepTime}</Text>
-                    </View>
-                    {recipe.cookTime && (
-                      <View style={styles.recipeMeta}>
-                        <MaterialIcons name="outdoor-grill" size={11} color={SF.muted} />
-                        <Text style={styles.recipeMetaText}>Cook: {recipe.cookTime}</Text>
-                      </View>
-                    )}
-                    {recipe.totalTime && (
-                      <View style={styles.recipeMeta}>
-                        <MaterialIcons name="timer" size={11} color={SF.orange} />
-                        <Text style={[styles.recipeMetaText, { color: SF.orange, fontFamily: "DMSans_700Bold" }]}>Total: {recipe.totalTime}</Text>
-                      </View>
-                    )}
-                    <View style={styles.recipeMeta}>
-                      <MaterialIcons name="local-fire-department" size={11} color={SF.orange} />
-                      <Text style={styles.recipeMetaText}>{scaledCal} kcal</Text>
-                    </View>
-                    <View style={styles.recipeMeta}>
-                      <MaterialIcons name="people" size={11} color={SF.muted} />
-                      <Text style={styles.recipeMetaText}>{customSrv} srv</Text>
-                    </View>
-                    {recipe.difficulty && (
-                      <View style={[styles.difficultyBadge, { backgroundColor: recipe.difficulty === "Easy" ? "rgba(34,197,94,0.12)" : recipe.difficulty === "Medium" ? "rgba(245,158,11,0.12)" : "rgba(239,68,68,0.12)" }]}>
-                        <Text style={[styles.difficultyText, { color: recipe.difficulty === "Easy" ? SF.green : recipe.difficulty === "Medium" ? SF.orange : SF.red }]}>{recipe.difficulty}</Text>
-                      </View>
-                    )}
-                  </View>
+              <View style={styles.recipeMetaRow}>
+                <View style={styles.recipeMeta}>
+                  <MaterialIcons name="schedule" size={11} color={SF.muted} />
+                  <Text style={styles.recipeMetaText}>{recipe.prepTime}</Text>
+                </View>
+                <View style={styles.recipeMeta}>
+                  <MaterialIcons name="local-fire-department" size={11} color={SF.orange} />
+                  <Text style={styles.recipeMetaText}>{scaledCal} kcal</Text>
+                </View>
+                <View style={styles.recipeMeta}>
+                  <MaterialIcons name="people" size={11} color={SF.muted} />
+                  <Text style={styles.recipeMetaText}>{customSrv} srv</Text>
+                </View>
+              </View>
             </View>
             <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
               <TouchableOpacity
@@ -654,32 +514,13 @@ function enrichRecipe(recipe: PrepRecipe): PrepRecipe {
               </View>
             ))}
 
-              <Text style={[styles.subHeading, { marginTop: 12 }]}>Instructions</Text>
-                {recipe.instructions.map((step, i) => {
-                  const parsed = parseStepDuration(step);
-                  return (
-                    <View key={i} style={styles.stepRow}>
-                      <View style={styles.stepNum}><Text style={styles.stepNumText}>{i + 1}</Text></View>
-                      <View style={styles.stepContent}>
-                        <Text style={styles.stepText}>{parsed.text}</Text>
-                        {parsed.duration && (
-                          <View style={styles.stepDurationBadge}>
-                            <MaterialIcons name="timer" size={10} color={SF.orange} />
-                            <Text style={styles.stepDurationText}>{parsed.duration}</Text>
-                          </View>
-                        )}
-                      </View>
-                    </View>
-                  );
-                })}
-                {/* Equipment needed */}
-                {recipe.equipment && recipe.equipment.length > 0 && (
-                  <View style={styles.equipmentRow}>
-                    <MaterialIcons name="build" size={13} color={SF.muted} />
-                    <Text style={styles.equipmentLabel}>Equipment: </Text>
-                    <Text style={styles.equipmentText}>{recipe.equipment.join(", ")}</Text>
-                  </View>
-                )}
+            <Text style={[styles.subHeading, { marginTop: 12 }]}>Instructions</Text>
+            {recipe.instructions.map((step, i) => (
+              <View key={i} style={styles.stepRow}>
+                <View style={styles.stepNum}><Text style={styles.stepNumText}>{i + 1}</Text></View>
+                <Text style={styles.stepText}>{step}</Text>
+              </View>
+            ))}
 
             {recipe.storageInstructions && (
               <View style={styles.storageRow}>
@@ -714,7 +555,7 @@ function enrichRecipe(recipe: PrepRecipe): PrepRecipe {
                       <Text style={[styles.cookNowIngText, m.status === "missing" && { color: SF.muted }]} numberOfLines={1}>
                         {scaleAmount(m.ingredientAmount, multiplier)} {m.ingredientName}
                       </Text>
-                      {m.pantryItem && <Text style={styles.cookNowPantryTag}>â pantry</Text>}
+                      {m.pantryItem && <Text style={styles.cookNowPantryTag}>✓ pantry</Text>}
                     </View>
                   ))}
                   {justCooked ? (
@@ -1051,55 +892,4 @@ const styles = StyleSheet.create({
   cookNowBtnText: { color: "#0A0E14", fontFamily: "DMSans_700Bold", fontSize: 14 },
   cookSuccessRow: { flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8, marginTop: 12, paddingVertical: 10, backgroundColor: "rgba(34,197,94,0.10)", borderRadius: 10 },
   cookSuccessText: { color: SF.green, fontSize: 12, fontFamily: "DMSans_700Bold" },
-  difficultyBadge: {
-    borderRadius: 6,
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-  },
-  difficultyText: {
-    fontSize: 9,
-    fontFamily: "DMSans_700Bold",
-  },
-  stepContent: {
-    flex: 1,
-    gap: 4,
-  },
-  stepDurationBadge: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 3,
-    alignSelf: "flex-start",
-    backgroundColor: "rgba(245,158,11,0.08)",
-    borderRadius: 6,
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderWidth: 1,
-    borderColor: "rgba(245,158,11,0.15)",
-    marginTop: 2,
-  },
-  stepDurationText: {
-    color: SF.orange,
-    fontSize: 10,
-    fontFamily: "DMSans_700Bold",
-  },
-  equipmentRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
-    marginTop: 10,
-    backgroundColor: "rgba(100,116,139,0.08)",
-    borderRadius: 8,
-    padding: 8,
-    flexWrap: "wrap",
-  },
-  equipmentLabel: {
-    color: SF.muted,
-    fontSize: 11,
-    fontFamily: "DMSans_700Bold",
-  },
-  equipmentText: {
-    color: SF.text,
-    fontSize: 11,
-    flex: 1,
-  },
 });
