@@ -123,63 +123,63 @@ function getFallbackWorkoutPlan(goal: string) {
 /** Build strict dietary restriction instructions for the AI prompt */
 function getDietaryRestrictions(preference: string): string {
   const restrictions: Record<string, string> = {
-    vegan: `STRICT VEGAN DIET Ã¢ÂÂ MANDATORY RULES:
-Ã¢ÂÂ¢ ABSOLUTELY NO animal products of any kind: no meat, poultry, fish, seafood, dairy, eggs, honey, gelatin, whey, casein, or any animal-derived ingredients.
-Ã¢ÂÂ¢ Every single meal and snack must be 100% plant-based.
-Ã¢ÂÂ¢ Use plant proteins: tofu, tempeh, seitan, legumes (lentils, chickpeas, black beans), edamame, quinoa, nuts, seeds.
-Ã¢ÂÂ¢ Use plant milks (oat, soy, almond), nutritional yeast, plant-based yogurt.
-Ã¢ÂÂ¢ If you include a meal that contains ANY animal product, the entire plan is invalid.`,
+    vegan: `STRICT VEGAN DIET ÃÂ¢ÃÂÃÂ MANDATORY RULES:
+ÃÂ¢ÃÂÃÂ¢ ABSOLUTELY NO animal products of any kind: no meat, poultry, fish, seafood, dairy, eggs, honey, gelatin, whey, casein, or any animal-derived ingredients.
+ÃÂ¢ÃÂÃÂ¢ Every single meal and snack must be 100% plant-based.
+ÃÂ¢ÃÂÃÂ¢ Use plant proteins: tofu, tempeh, seitan, legumes (lentils, chickpeas, black beans), edamame, quinoa, nuts, seeds.
+ÃÂ¢ÃÂÃÂ¢ Use plant milks (oat, soy, almond), nutritional yeast, plant-based yogurt.
+ÃÂ¢ÃÂÃÂ¢ If you include a meal that contains ANY animal product, the entire plan is invalid.`,
 
-    vegetarian: `STRICT VEGETARIAN DIET Ã¢ÂÂ MANDATORY RULES:
-Ã¢ÂÂ¢ NO meat, poultry, fish, or seafood of any kind.
-Ã¢ÂÂ¢ Dairy and eggs are permitted.
-Ã¢ÂÂ¢ Focus on diverse protein sources: eggs, Greek yogurt, cottage cheese, legumes, tofu, tempeh, nuts, seeds, quinoa.
-Ã¢ÂÂ¢ If you include a meal with meat, poultry, or fish, the entire plan is invalid.`,
+    vegetarian: `STRICT VEGETARIAN DIET ÃÂ¢ÃÂÃÂ MANDATORY RULES:
+ÃÂ¢ÃÂÃÂ¢ NO meat, poultry, fish, or seafood of any kind.
+ÃÂ¢ÃÂÃÂ¢ Dairy and eggs are permitted.
+ÃÂ¢ÃÂÃÂ¢ Focus on diverse protein sources: eggs, Greek yogurt, cottage cheese, legumes, tofu, tempeh, nuts, seeds, quinoa.
+ÃÂ¢ÃÂÃÂ¢ If you include a meal with meat, poultry, or fish, the entire plan is invalid.`,
 
-    halal: `STRICT HALAL DIET Ã¢ÂÂ MANDATORY RULES:
-Ã¢ÂÂ¢ ALL meat must be halal-certified (zabiha). Use only halal chicken, halal beef, halal lamb.
-Ã¢ÂÂ¢ ABSOLUTELY NO pork, bacon, ham, prosciutto, pepperoni, lard, or any pork-derived products.
-Ã¢ÂÂ¢ NO alcohol or alcohol-based ingredients (wine, beer, rum, vanilla extract with alcohol).
-Ã¢ÂÂ¢ NO gelatin unless specified as halal gelatin.
-Ã¢ÂÂ¢ Seafood (fish, shrimp) is generally permissible.
-Ã¢ÂÂ¢ If any meal contains pork or non-halal meat, the entire plan is invalid.`,
+    halal: `STRICT HALAL DIET ÃÂ¢ÃÂÃÂ MANDATORY RULES:
+ÃÂ¢ÃÂÃÂ¢ ALL meat must be halal-certified (zabiha). Use only halal chicken, halal beef, halal lamb.
+ÃÂ¢ÃÂÃÂ¢ ABSOLUTELY NO pork, bacon, ham, prosciutto, pepperoni, lard, or any pork-derived products.
+ÃÂ¢ÃÂÃÂ¢ NO alcohol or alcohol-based ingredients (wine, beer, rum, vanilla extract with alcohol).
+ÃÂ¢ÃÂÃÂ¢ NO gelatin unless specified as halal gelatin.
+ÃÂ¢ÃÂÃÂ¢ Seafood (fish, shrimp) is generally permissible.
+ÃÂ¢ÃÂÃÂ¢ If any meal contains pork or non-halal meat, the entire plan is invalid.`,
 
-    kosher: `STRICT KOSHER DIET Ã¢ÂÂ MANDATORY RULES:
-Ã¢ÂÂ¢ NO pork or shellfish.
-Ã¢ÂÂ¢ Do NOT mix meat and dairy in the same meal.
-Ã¢ÂÂ¢ Use only kosher-certified meats.
-Ã¢ÂÂ¢ Fish with fins and scales are permitted.
-Ã¢ÂÂ¢ Keep meat meals and dairy meals completely separate.`,
+    kosher: `STRICT KOSHER DIET ÃÂ¢ÃÂÃÂ MANDATORY RULES:
+ÃÂ¢ÃÂÃÂ¢ NO pork or shellfish.
+ÃÂ¢ÃÂÃÂ¢ Do NOT mix meat and dairy in the same meal.
+ÃÂ¢ÃÂÃÂ¢ Use only kosher-certified meats.
+ÃÂ¢ÃÂÃÂ¢ Fish with fins and scales are permitted.
+ÃÂ¢ÃÂÃÂ¢ Keep meat meals and dairy meals completely separate.`,
 
-    keto: `STRICT KETOGENIC DIET Ã¢ÂÂ MANDATORY RULES:
-Ã¢ÂÂ¢ Maximum 20-30g net carbs per day across ALL meals.
-Ã¢ÂÂ¢ Each meal should be: ~70-75% calories from fat, ~20-25% protein, ~5% carbs.
-Ã¢ÂÂ¢ NO bread, pasta, rice, potatoes, sugar, fruit juice, or high-carb fruits.
-Ã¢ÂÂ¢ ALLOWED: meat, fatty fish, eggs, butter, cheese, nuts, seeds, avocado, olive oil, coconut oil, low-carb vegetables (spinach, kale, broccoli, cauliflower, zucchini).
-Ã¢ÂÂ¢ Include net carb count for each meal.
-Ã¢ÂÂ¢ If any single meal exceeds 10g net carbs, the plan is invalid.`,
+    keto: `STRICT KETOGENIC DIET ÃÂ¢ÃÂÃÂ MANDATORY RULES:
+ÃÂ¢ÃÂÃÂ¢ Maximum 20-30g net carbs per day across ALL meals.
+ÃÂ¢ÃÂÃÂ¢ Each meal should be: ~70-75% calories from fat, ~20-25% protein, ~5% carbs.
+ÃÂ¢ÃÂÃÂ¢ NO bread, pasta, rice, potatoes, sugar, fruit juice, or high-carb fruits.
+ÃÂ¢ÃÂÃÂ¢ ALLOWED: meat, fatty fish, eggs, butter, cheese, nuts, seeds, avocado, olive oil, coconut oil, low-carb vegetables (spinach, kale, broccoli, cauliflower, zucchini).
+ÃÂ¢ÃÂÃÂ¢ Include net carb count for each meal.
+ÃÂ¢ÃÂÃÂ¢ If any single meal exceeds 10g net carbs, the plan is invalid.`,
 
-    paleo: `STRICT PALEO DIET Ã¢ÂÂ MANDATORY RULES:
-Ã¢ÂÂ¢ NO grains (wheat, rice, oats, corn), legumes (beans, lentils, peanuts), dairy, refined sugar, or processed foods.
-Ã¢ÂÂ¢ ALLOWED: meat, fish, eggs, vegetables, fruits, nuts (except peanuts), seeds, olive oil, coconut oil, sweet potatoes.
-Ã¢ÂÂ¢ Focus on whole, unprocessed foods only.`,
+    paleo: `STRICT PALEO DIET ÃÂ¢ÃÂÃÂ MANDATORY RULES:
+ÃÂ¢ÃÂÃÂ¢ NO grains (wheat, rice, oats, corn), legumes (beans, lentils, peanuts), dairy, refined sugar, or processed foods.
+ÃÂ¢ÃÂÃÂ¢ ALLOWED: meat, fish, eggs, vegetables, fruits, nuts (except peanuts), seeds, olive oil, coconut oil, sweet potatoes.
+ÃÂ¢ÃÂÃÂ¢ Focus on whole, unprocessed foods only.`,
 
-    pescatarian: `STRICT PESCATARIAN DIET Ã¢ÂÂ MANDATORY RULES:
-Ã¢ÂÂ¢ NO meat or poultry (chicken, beef, pork, lamb, turkey, etc.).
-Ã¢ÂÂ¢ Fish and seafood ARE allowed and should be the primary animal protein.
-Ã¢ÂÂ¢ Dairy and eggs are permitted.
-Ã¢ÂÂ¢ Include a variety of fish: salmon, tuna, cod, shrimp, sardines.`,
+    pescatarian: `STRICT PESCATARIAN DIET ÃÂ¢ÃÂÃÂ MANDATORY RULES:
+ÃÂ¢ÃÂÃÂ¢ NO meat or poultry (chicken, beef, pork, lamb, turkey, etc.).
+ÃÂ¢ÃÂÃÂ¢ Fish and seafood ARE allowed and should be the primary animal protein.
+ÃÂ¢ÃÂÃÂ¢ Dairy and eggs are permitted.
+ÃÂ¢ÃÂÃÂ¢ Include a variety of fish: salmon, tuna, cod, shrimp, sardines.`,
 
-    "gluten-free": `STRICT GLUTEN-FREE DIET Ã¢ÂÂ MANDATORY RULES:
-Ã¢ÂÂ¢ ABSOLUTELY NO wheat, barley, rye, or any gluten-containing grains.
-Ã¢ÂÂ¢ NO regular bread, pasta, flour tortillas, soy sauce (use tamari), beer, or most cereals.
-Ã¢ÂÂ¢ ALLOWED grains: rice, quinoa, oats (certified GF), buckwheat, millet, corn.
-Ã¢ÂÂ¢ Check all sauces and condiments for hidden gluten.`,
+    "gluten-free": `STRICT GLUTEN-FREE DIET ÃÂ¢ÃÂÃÂ MANDATORY RULES:
+ÃÂ¢ÃÂÃÂ¢ ABSOLUTELY NO wheat, barley, rye, or any gluten-containing grains.
+ÃÂ¢ÃÂÃÂ¢ NO regular bread, pasta, flour tortillas, soy sauce (use tamari), beer, or most cereals.
+ÃÂ¢ÃÂÃÂ¢ ALLOWED grains: rice, quinoa, oats (certified GF), buckwheat, millet, corn.
+ÃÂ¢ÃÂÃÂ¢ Check all sauces and condiments for hidden gluten.`,
 
-    "dairy-free": `STRICT DAIRY-FREE DIET Ã¢ÂÂ MANDATORY RULES:
-Ã¢ÂÂ¢ NO milk, cheese, butter, cream, yogurt, ice cream, whey, or casein.
-Ã¢ÂÂ¢ Use plant-based alternatives: oat milk, coconut cream, cashew cheese, vegan butter.
-Ã¢ÂÂ¢ Check all processed foods for hidden dairy ingredients.`,
+    "dairy-free": `STRICT DAIRY-FREE DIET ÃÂ¢ÃÂÃÂ MANDATORY RULES:
+ÃÂ¢ÃÂÃÂ¢ NO milk, cheese, butter, cream, yogurt, ice cream, whey, or casein.
+ÃÂ¢ÃÂÃÂ¢ Use plant-based alternatives: oat milk, coconut cream, cashew cheese, vegan butter.
+ÃÂ¢ÃÂÃÂ¢ Check all processed foods for hidden dairy ingredients.`,
   };
 
   const key = preference.toLowerCase().replace(/[\s_]+/g, "-");
@@ -202,7 +202,7 @@ export const appRouter = router({
   }),
 
   profile: router({
-    // Protected Ã¢ÂÂ only for logged-in users
+    // Protected ÃÂ¢ÃÂÃÂ only for logged-in users
     get: protectedProcedure.query(async ({ ctx }) => db.getUserProfile(ctx.user.id)),
     upsert: protectedProcedure
       .input(z.object({
@@ -213,7 +213,7 @@ export const appRouter = router({
         targetBodyFat: z.number().optional(), units: z.string().optional(), daysPerWeek: z.number().optional(),
       }))
       .mutation(async ({ ctx, input }) => db.upsertUserProfile(ctx.user.id, input)),
-    // Daily insight Ã¢ÂÂ works for guests too (no user-specific data needed)
+    // Daily insight ÃÂ¢ÃÂÃÂ works for guests too (no user-specific data needed)
     getDailyInsight: guestOrUserProcedure
       .input(z.object({ goal: z.string().optional() }).optional())
       .query(async ({ input }) => {
@@ -224,19 +224,19 @@ export const appRouter = router({
             { role: "user", content: `My goal is "${goal}". Give me a daily coaching tip.` },
           ],
         });
-        return { insight: response.choices[0].message.content ?? "Stay consistent Ã¢ÂÂ small daily actions compound into big results." };
+        return { insight: response.choices[0].message.content ?? "Stay consistent ÃÂ¢ÃÂÃÂ small daily actions compound into big results." };
       }),
   }),
 
   bodyScan: router({
-    // AI analysis Ã¢ÂÂ works for guests (no DB save for guests)
+    // AI analysis ÃÂ¢ÃÂÃÂ works for guests (no DB save for guests)
     analyze: guestOrUserProcedure
       .input(z.object({ photoUrl: z.string(), weightKg: z.number().optional(), heightCm: z.number().optional(), age: z.number().optional(), gender: z.string().optional() }))
       .mutation(async ({ ctx, input }) => {
         await checkAiLimit(ctx.user?.id, "bodyScan.analyze");
         const metricsNote = (input.weightKg && input.heightCm && input.age)
-          ? `User body metrics: weight ${input.weightKg}kg, height ${input.heightCm}cm, age ${input.age}, gender ${input.gender ?? 'male'}. Use these metrics alongside the photo to compute a more accurate body fat estimate using the BMI-based Deurenberg formula as a cross-check: BF% = (1.20 ÃÂ BMI) + (0.23 ÃÂ age) Ã¢ÂÂ (10.8 ÃÂ (gender=male?1:0)) Ã¢ÂÂ 5.4. Reconcile the formula result with the visual assessment from the photo and report the best estimate.`
-          : 'No body metrics provided Ã¢ÂÂ estimate from photo only.';
+          ? `User body metrics: weight ${input.weightKg}kg, height ${input.heightCm}cm, age ${input.age}, gender ${input.gender ?? 'male'}. Use these metrics alongside the photo to compute a more accurate body fat estimate using the BMI-based Deurenberg formula as a cross-check: BF% = (1.20 ÃÂÃÂ BMI) + (0.23 ÃÂÃÂ age) ÃÂ¢ÃÂÃÂ (10.8 ÃÂÃÂ (gender=male?1:0)) ÃÂ¢ÃÂÃÂ 5.4. Reconcile the formula result with the visual assessment from the photo and report the best estimate.`
+          : 'No body metrics provided ÃÂ¢ÃÂÃÂ estimate from photo only.';
         const prompt = `You are an expert fitness assessment AI and body composition specialist. Analyze this full-body photo and provide:\n${metricsNote}\n\nReturn JSON with:\n1. estimated_body_fat: best estimated body fat percentage (number, 1 decimal place)\n2. confidence_low: lower bound (number)\n3. confidence_high: upper bound (number)\n4. muscle_mass_estimate: "low"|"moderate"|"high"|"very_high"\n5. analysis_notes: 2-3 sentences about physique and how metrics influenced the estimate\n6. transformations: array of 5 objects for target BF levels [25,20,15,12,10], each with: target_bf, description, estimated_weeks, effort_level`;
         const aiResult = await invokeLLM({
           messages: [
@@ -272,11 +272,11 @@ export const appRouter = router({
                 ? `Show realistic body composition changes for fat GAIN to ${t.target_bf}% body fat: ${bfDesc}. The person should appear heavier with MORE subcutaneous fat on the torso, arms, thighs, and overall silhouette. Fat should accumulate naturally around the midsection, love handles, chest, and upper arms.`
                 : `Show realistic body composition changes for fat LOSS to ${t.target_bf}% body fat: ${bfDesc}. The person should appear leaner with LESS subcutaneous fat, more visible muscle definition on the torso, arms, and overall silhouette proportional to the fat reduction.`;
               const { url } = await generateImage({
-                prompt: `BODY FAT TRANSFORMATION IMAGE â ${directionWord} direction (current: ${analysis.estimated_body_fat}% â target: ${t.target_bf}% body fat).
+                prompt: `BODY FAT TRANSFORMATION IMAGE Ã¢ÂÂ ${directionWord} direction (current: ${analysis.estimated_body_fat}% Ã¢ÂÂ target: ${t.target_bf}% body fat).
 
 SUBJECT: The exact same ${genderHint} person shown in the reference photo, transformed to appear at ${t.target_bf}% body fat.
 
-FACE TRANSFORMATION â THIS IS MANDATORY, DO NOT SKIP OR COPY THE ORIGINAL FACE:
+FACE TRANSFORMATION Ã¢ÂÂ THIS IS MANDATORY, DO NOT SKIP OR COPY THE ORIGINAL FACE:
 You MUST fully regenerate the face to match ${t.target_bf}% body fat. Do NOT copy-paste or leave the original face unchanged.
 ${getFaceTransformationDesc(analysis.estimated_body_fat, t.target_bf)}
 The face must look like it naturally belongs on a body at ${t.target_bf}% body fat. A lean body (low BF%) must have a lean angular face. A heavier body (high BF%) must have a fuller rounder face. The face and body fat levels must be visually consistent with each other.
@@ -286,7 +286,7 @@ ${bodyChangeDesc}
 Target appearance: ${bfDesc}.
 
 IDENTITY PRESERVATION (CRITICAL):
-The person MUST be clearly recognisable as the same individual â same skin tone, hair color and style, eye color, nose shape, ear shape, and overall facial bone structure. Only the fat distribution and subcutaneous fat thickness should change, not the underlying skeletal structure or features.
+The person MUST be clearly recognisable as the same individual Ã¢ÂÂ same skin tone, hair color and style, eye color, nose shape, ear shape, and overall facial bone structure. Only the fat distribution and subcutaneous fat thickness should change, not the underlying skeletal structure or features.
 
 PHOTO REALISM:
 - Must look like a real photograph, not AI-generated or digitally manipulated
@@ -352,7 +352,7 @@ PHOTO REALISM:
   }),
 
   workoutPlan: router({
-    // AI generation Ã¢ÂÂ works for guests (no DB save for guests)
+    // AI generation ÃÂ¢ÃÂÃÂ works for guests (no DB save for guests)
     generate: guestOrUserProcedure
       .input(z.object({ goal: z.string(), workoutStyle: z.string(), daysPerWeek: z.number().default(4), fitnessLevel: z.string().default("intermediate") }))
       .mutation(async ({ ctx, input }) => {
@@ -381,12 +381,12 @@ PHOTO REALISM:
     getAllSessions: protectedProcedure.query(async ({ ctx }) => db.getRecentWorkoutSessions(ctx.user.id, 500)),
   }),
 
-  // Ã¢ÂÂÃ¢ÂÂ Dietary restriction enforcement helper Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+  // ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Dietary restriction enforcement helper ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ
   // Used by meal plan generation to give the LLM strict, non-negotiable rules
   // for each dietary preference instead of a vague "Diet: vegan" hint.
 
   mealPlan: router({
-    // AI generation Ã¢ÂÂ works for guests (no DB save for guests)
+    // AI generation ÃÂ¢ÃÂÃÂ works for guests (no DB save for guests)
     generate: guestOrUserProcedure
       .input(z.object({ goal: z.string(), dietaryPreference: z.string(), dailyCalories: z.number().optional(), weightKg: z.number().optional(), heightCm: z.number().optional(), age: z.number().optional(), gender: z.string().optional(), activityLevel: z.string().optional(), ramadanMode: z.boolean().optional(), region: z.string().optional(), cuisinePrefs: z.array(z.string()).optional(), preferenceHint: z.string().optional(), favouriteFoods: z.array(z.object({ name: z.string(), calories: z.number(), protein: z.number(), carbs: z.number(), fat: z.number() })).optional(), pastMealNames: z.array(z.string()).optional() }))
       .mutation(async ({ ctx, input }) => {
@@ -440,37 +440,37 @@ ${favFoodsNote}
 ${cuisineNote}
 ${regionCuisineNote}
 ${prefHintNote}${input.pastMealNames && input.pastMealNames.length > 0 ? `
-MEAL HISTORY Ã¢ÂÂ DO NOT REPEAT THESE DISHES (the user has had these recently):
+MEAL HISTORY ÃÂ¢ÃÂÃÂ DO NOT REPEAT THESE DISHES (the user has had these recently):
 ${input.pastMealNames.slice(0, 50).join(", ")}
 Generate COMPLETELY DIFFERENT meals from the ones listed above. Use different proteins, cooking methods, and flavour profiles.
 ` : ""}
-DIETARY RESTRICTIONS (MUST FOLLOW Ã¢ÂÂ NON-NEGOTIABLE):
+DIETARY RESTRICTIONS (MUST FOLLOW ÃÂ¢ÃÂÃÂ NON-NEGOTIABLE):
 ${dietaryRules}
 
 COMPLIANCE CHECK: Before finalizing, verify EVERY meal in the plan against the dietary restrictions above. If any meal violates the rules, replace it with a compliant alternative.
 
 Each day must include: ${isRamadan ? "suhoor, iftar, and evening snack (3 meals)" : "breakfast, lunch, dinner, and 1 snack (4 meals)"}. For each meal include: name (SHORT, 3-5 words), type, calories, protein, carbs, fat, prepTime, cookTime, photoQuery (2-3 word search term specific to that dish, e.g. "grilled salmon asparagus"), PLUS detailed recipe data:
-- "ingredients": array of objects with "name" and "amount" (EXACT measurements — grams, ml, tbsp, tsp, cups). EVERY ingredient must have a precise amount. Never use "some", "a pinch" without a measured equivalent. Include ALL ingredients needed (typically 5-10 per meal).
-- "instructions": array of 5-10 detailed step-by-step instructions, each ending with duration in parentheses e.g. "(5 min)". Include exact temperatures in °C, technique descriptions (dice, julienne, sauté), and visual doneness cues (golden brown, translucent, bubbling). Written clearly enough for a beginner.
+- "ingredients": array of objects with "name" and "amount" (EXACT measurements â grams, ml, tbsp, tsp, cups). EVERY ingredient must have a precise amount. Never use "some", "a pinch" without a measured equivalent. Include ALL ingredients needed (typically 5-10 per meal).
+- "instructions": array of 5-10 detailed step-by-step instructions, each ending with duration in parentheses e.g. "(5 min)". Include exact temperatures in Â°C, technique descriptions (dice, julienne, sautÃ©), and visual doneness cues (golden brown, translucent, bubbling). Written clearly enough for a beginner.
 - "servingSize": string describing one serving (e.g. "1 bowl (350g)", "2 slices (180g)").
 
 IMPORTANT: The "days" array MUST contain exactly 7 entries, one for each day of the week, using these EXACT day names in this order: "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday". Do NOT use abbreviations, numbers, or any other format.
 
-CRITICAL VARIETY REQUIREMENT Ã¢ÂÂ THIS IS THE MOST IMPORTANT RULE:
+CRITICAL VARIETY REQUIREMENT ÃÂ¢ÃÂÃÂ THIS IS THE MOST IMPORTANT RULE:
 1. Every single meal name across ALL 7 days MUST be completely unique. There must be ZERO repeated meal names in the entire plan.
-2. Each day MUST have its OWN set of meals Ã¢ÂÂ do NOT copy/paste the same meals from one day to another.
+2. Each day MUST have its OWN set of meals ÃÂ¢ÃÂÃÂ do NOT copy/paste the same meals from one day to another.
 3. Monday's breakfast MUST be different from Tuesday's breakfast, which MUST be different from Wednesday's breakfast, etc.
-4. Vary cooking methods (grilled, baked, stir-fried, steamed, raw, poached, roasted, sautÃÂ©ed), protein sources (chicken, fish, beef, tofu, eggs, lentils, beans), and cuisines across the week.
+4. Vary cooking methods (grilled, baked, stir-fried, steamed, raw, poached, roasted, sautÃÂÃÂ©ed), protein sources (chicken, fish, beef, tofu, eggs, lentils, beans), and cuisines across the week.
 5. Each meal's photoQuery MUST be specific to that exact dish (e.g., "grilled salmon asparagus" not just "dinner plate"). Every photoQuery must be different.
 6. SELF-CHECK: Before returning, count all meal names. If ANY two meals share the same name, replace one with a different recipe.
-7. The plan must contain exactly 7 day objects with DIFFERENT meals in each Ã¢ÂÂ the user should see completely new food every day.
+7. The plan must contain exactly 7 day objects with DIFFERENT meals in each ÃÂ¢ÃÂÃÂ the user should see completely new food every day.
 
 Return JSON: {"dailyCalories":${calories},"days":[{"day":"Monday","meals":[{"name":"Egg Avocado Toast","type":"breakfast","calories":420,"protein":28,"carbs":35,"fat":14,"prepTime":"5 min","cookTime":"8 min","servingSize":"1 plate (280g)","ingredients":[{"name":"large eggs","amount":"2 whole (120g)"},{"name":"ripe avocado","amount":"1/2 medium (75g)"},{"name":"whole wheat bread","amount":"2 slices (60g)"},{"name":"olive oil","amount":"1 tsp (5ml)"},{"name":"salt","amount":"1/4 tsp"},{"name":"black pepper","amount":"1/8 tsp"},{"name":"lemon juice","amount":"1 tsp (5ml)"}],"instructions":["Toast bread slices in toaster or under grill until golden and crisp (3 min)","Heat a non-stick pan over medium heat with 1 tsp olive oil. Crack eggs into pan and fry until whites are set but yolk is still runny (3-4 min)","While eggs cook, mash avocado in a small bowl with lemon juice, salt, and pepper using a fork until slightly chunky (1 min)","Spread mashed avocado evenly on both toast slices, top each with a fried egg, and season with an extra pinch of pepper (1 min)"],"photoQuery":"avocado egg toast"},...]},...all 7 days...],"insight":"tip"}`;
         // Use higher max_tokens to prevent truncation of 7-day meal plan JSON
         const llmCall = async (maxTokens: number, retryPrompt?: string) => {
           return invokeLLM({
             messages: [
-              { role: "system", content: "You are an expert registered dietitian and professional chef who STRICTLY adheres to dietary restrictions. The user's dietary preference is the HIGHEST PRIORITY constraint — it overrides all other considerations. If the user is vegan, every single ingredient must be plant-based. If halal, every meat must be halal-certified with zero pork products. If keto, total daily carbs must stay under 30g. NEVER include a food that violates the stated dietary restriction. Always respond with valid JSON matching the required schema. Keep meal names SHORT (3-5 words max). For EVERY meal, provide detailed from-scratch recipes with exact ingredient amounts (grams, ml, tbsp), 5-10 step-by-step cooking instructions with timing for each step in parentheses, cooking temperatures in °C, and visual doneness cues. Ingredient amounts and macros must be accurately calculated per serving." },
+              { role: "system", content: "You are an expert registered dietitian and professional chef who STRICTLY adheres to dietary restrictions. The user's dietary preference is the HIGHEST PRIORITY constraint â it overrides all other considerations. If the user is vegan, every single ingredient must be plant-based. If halal, every meat must be halal-certified with zero pork products. If keto, total daily carbs must stay under 30g. NEVER include a food that violates the stated dietary restriction. Always respond with valid JSON matching the required schema. Keep meal names SHORT (3-5 words max). For EVERY meal, provide detailed from-scratch recipes with exact ingredient amounts (grams, ml, tbsp), 5-10 step-by-step cooking instructions with timing for each step in parentheses, cooking temperatures in Â°C, and visual doneness cues. Ingredient amounts and macros must be accurately calculated per serving." },
               { role: "user", content: retryPrompt ?? prompt },
             ],
             response_format: { type: "json_object" },
@@ -484,7 +484,7 @@ Return JSON: {"dailyCalories":${calories},"days":[{"day":"Monday","meals":[{"nam
         try {
           planData = JSON.parse(rawContent);
         } catch {
-          // JSON truncated Ã¢ÂÂ retry with a more compact prompt
+          // JSON truncated ÃÂ¢ÃÂÃÂ retry with a more compact prompt
           console.warn("[MealPlan] First attempt truncated, retrying with compact prompt...");
           const compactPrompt = `Generate a 7-day meal plan as JSON. Target: ~${calories} kcal/day, ${input.dietaryPreference} diet, goal: ${input.goal.replace(/_/g, " ")}.
 ${isRamadan ? "Ramadan mode: suhoor, iftar, evening snack." : "Meals: breakfast, lunch, dinner, 1-2 snacks."}
@@ -503,7 +503,7 @@ Return: {"dailyCalories":${calories},"days":[{"day":"Monday","meals":[{"name":".
             planData = { dailyCalories: calories, days: [], insight: "Eat balanced meals and stay hydrated." };
           }
         }
-        // Validate that we got 7 days with meals Ã¢ÂÂ if not, the response was likely truncated
+        // Validate that we got 7 days with meals ÃÂ¢ÃÂÃÂ if not, the response was likely truncated
         if (!planData?.days || planData.days.length < 7 || planData.days.some((d: any) => !d.meals?.length)) {
           console.warn(`[MealPlan] Incomplete plan: ${planData?.days?.length ?? 0} days. Attempting compact retry...`);
           const compactRetryPrompt = `Generate a 7-day meal plan as compact JSON. ~${calories} kcal/day, ${input.dietaryPreference} diet.
@@ -525,7 +525,7 @@ Format: {"dailyCalories":${calories},"days":[{"day":"Monday","meals":[{"name":"E
             for (const meal of day.meals) {
               const key = (meal.name ?? "").toLowerCase().trim();
               if (key && seenMealNames.has(key)) {
-                // Duplicate found Ã¢ÂÂ append day name to make it unique and update photoQuery
+                // Duplicate found ÃÂ¢ÃÂÃÂ append day name to make it unique and update photoQuery
                 meal.name = `${meal.name} (${day.day} Special)`;
                 meal.photoQuery = `${meal.photoQuery || meal.name} ${day.day?.toLowerCase() || ""} style`.trim();
               }
@@ -538,7 +538,7 @@ Format: {"dailyCalories":${calories},"days":[{"day":"Monday","meals":[{"name":"E
           );
           const uniqueSignatures = new Set(daySignatures);
           if (uniqueSignatures.size < Math.min(planData.days.length, 3)) {
-            // Most days have identical meals Ã¢ÂÂ this is a critical failure
+            // Most days have identical meals ÃÂ¢ÃÂÃÂ this is a critical failure
             // Add day-specific suffixes to differentiate
             const dayThemes = ["Mediterranean", "Asian", "Latin", "Middle Eastern", "Nordic", "Indian", "American"];
             planData.days.forEach((day: any, idx: number) => {
@@ -587,7 +587,7 @@ Format: {"dailyCalories":${calories},"days":[{"day":"Monday","meals":[{"name":"E
         const calories = input.dailyCalories ?? 2000;
         const isRamadan = input.ramadanMode === true;
         const dietaryRules = getDietaryRestrictions(input.dietaryPreference);
-        const themeNote = input.theme ? `THEME FOR THIS DAY: ${input.theme}. All meals for this day should follow this theme Ã¢ÂÂ e.g., if the theme is "high-protein", maximise protein in every meal; if it's "Mediterranean", use Mediterranean ingredients and cooking styles; if it's "comfort food", use hearty comforting dishes while staying within calorie limits.` : "";
+        const themeNote = input.theme ? `THEME FOR THIS DAY: ${input.theme}. All meals for this day should follow this theme ÃÂ¢ÃÂÃÂ e.g., if the theme is "high-protein", maximise protein in every meal; if it's "Mediterranean", use Mediterranean ingredients and cooking styles; if it's "comfort food", use hearty comforting dishes while staying within calorie limits.` : "";
         const cuisineNote = input.cuisinePrefs && input.cuisinePrefs.length > 0
           ? `CUISINE PREFERENCES: Prioritise ${input.cuisinePrefs.map(c => c.replace(/_/g, " ")).join(", ")} cuisine(s).`
           : "";
@@ -600,8 +600,8 @@ USER PROFILE:
 ${input.region ? `- Region: ${input.region.replace(/_/g, " ")}` : ""}
 ${themeNote}
 ${cuisineNote}
-${input.pastMealNames && input.pastMealNames.length > 0 ? `\nMEAL HISTORY Ã¢ÂÂ DO NOT REPEAT THESE DISHES:\n${input.pastMealNames.slice(0, 30).join(", ")}\nGenerate COMPLETELY DIFFERENT meals from the above.\n` : ""}
-DIETARY RESTRICTIONS (MUST FOLLOW Ã¢ÂÂ NON-NEGOTIABLE):
+${input.pastMealNames && input.pastMealNames.length > 0 ? `\nMEAL HISTORY ÃÂ¢ÃÂÃÂ DO NOT REPEAT THESE DISHES:\n${input.pastMealNames.slice(0, 30).join(", ")}\nGenerate COMPLETELY DIFFERENT meals from the above.\n` : ""}
+DIETARY RESTRICTIONS (MUST FOLLOW ÃÂ¢ÃÂÃÂ NON-NEGOTIABLE):
 ${dietaryRules}
 
 Include: ${isRamadan ? "suhoor, iftar, and evening snack meals" : "breakfast, morning snack, lunch, afternoon snack, dinner (4-5 meals)"}. Each meal MUST have: name, type, calories, protein, carbs, fat, ingredients array, prepTime, instructions array (3-5 steps), photoQuery.
@@ -615,7 +615,6 @@ Return ONLY this structure: {"day":"${input.dayName}","meals":[{"name":"Meal Nam
             { role: "user", content: prompt },
           ],
           response_format: { type: "json_object" },
-          model: "flash-lite",
           max_tokens: 8192,
         });
         let dayData: any;
@@ -629,7 +628,6 @@ Return ONLY this structure: {"day":"${input.dayName}","meals":[{"name":"Meal Nam
                 { role: "user", content: `Generate 4 meals for ${input.dayName}. ~${calories} kcal total. ${input.dietaryPreference} diet. Return: {"day":"${input.dayName}","meals":[{"name":"Short Name","type":"breakfast","calories":400,"protein":30,"carbs":40,"fat":15,"ingredients":["item"],"prepTime":"10 min","instructions":["Cook"],"photoQuery":"dish name"}]}` },
               ],
               response_format: { type: "json_object" },
-              model: "flash-lite",
               max_tokens: 4096,
             });
             dayData = JSON.parse((retry.choices[0].message.content as string) ?? "{}");
@@ -680,7 +678,7 @@ Return ONLY this structure: {"day":"${input.dayName}","meals":[{"name":"Meal Nam
   }),
 
   mealPrep: router({
-    // AI generation — works for guests
+    // AI generation â works for guests
     generate: guestOrUserProcedure
       .input(z.object({ dietaryPreference: z.string(), servings: z.number().default(4), budget: z.string().default("moderate") }))
       .mutation(async ({ input }) => {
@@ -692,9 +690,9 @@ CRITICAL RECIPE DETAIL REQUIREMENTS:
 1. Each recipe MUST have 8-15 ingredients with EXACT measurements (e.g. "200g chicken breast", "2 tbsp olive oil", "1/2 tsp smoked paprika", "400ml coconut milk").
 2. Each recipe MUST have 6-12 detailed instruction steps written as if teaching someone who has never cooked before.
 3. Every instruction step MUST end with the duration in parentheses, e.g. "(5 min)" or "(2-3 min)".
-4. Instructions must include: exact temperatures in °C, specific techniques (dice, julienne, fold, sauté), visual/sensory doneness cues ("until golden brown", "until fragrant", "until internal temp reaches 74°C").
+4. Instructions must include: exact temperatures in Â°C, specific techniques (dice, julienne, fold, sautÃ©), visual/sensory doneness cues ("until golden brown", "until fragrant", "until internal temp reaches 74Â°C").
 5. Include prepTime AND cookTime as separate fields with realistic durations.
-6. Every ingredient must specify exact amounts with units — NEVER say "some", "a pinch", "to taste" without also giving a measured amount (e.g. "salt, to taste (1/2 tsp)").
+6. Every ingredient must specify exact amounts with units â NEVER say "some", "a pinch", "to taste" without also giving a measured amount (e.g. "salt, to taste (1/2 tsp)").
 7. Calorie and macro values must be accurate for the stated serving size and ingredient amounts.
 
 Return JSON:
@@ -716,14 +714,14 @@ Return JSON:
         {"name": "brown rice", "amount": "300g dry", "fromPantry": false}
       ],
       "instructions": [
-        "Preheat oven to 200°C and line a baking tray with parchment paper (2 min)",
+        "Preheat oven to 200Â°C and line a baking tray with parchment paper (2 min)",
         "Season chicken breasts with 1 tbsp olive oil, 1/2 tsp salt, 1/4 tsp black pepper, and dried herbs. Place on baking tray (3 min)",
-        "Roast chicken in preheated oven until internal temperature reaches 74°C and juices run clear (25 min)",
+        "Roast chicken in preheated oven until internal temperature reaches 74Â°C and juices run clear (25 min)",
         "Meanwhile, rinse brown rice and cook in 600ml water with a pinch of salt, covered, over medium heat (20 min)",
         "Rest chicken for 5 minutes on a cutting board, then slice into 1cm strips (5 min)",
         "Divide rice and chicken evenly into meal prep containers (3 min)"
       ],
-      "storageInstructions": "Refrigerate up to 4 days in airtight containers. Reheat in microwave 2-3 min or oven at 180°C for 10 min.",
+      "storageInstructions": "Refrigerate up to 4 days in airtight containers. Reheat in microwave 2-3 min or oven at 180Â°C for 10 min.",
       "mealType": "lunch"
     }
   ],
@@ -742,7 +740,7 @@ Generate 4-5 recipes. Respect dietary restrictions strictly. Ensure all macros a
         return prepData;
       }),
 
-    // Generate meal prep from expiring pantry items — with detailed from-scratch recipes
+    // Generate meal prep from expiring pantry items â with detailed from-scratch recipes
     fromExpiring: guestOrUserProcedure
       .input(z.object({ expiringItems: z.string(), allPantryItems: z.string(), servings: z.number().default(4), detailHint: z.string().optional() }))
       .mutation(async ({ input }) => {
@@ -754,13 +752,13 @@ ${input.allPantryItems}
 
 Create 3-5 batch-cooking recipes that PRIORITIZE using the expiring items. Each recipe must make ${input.servings} servings.
 
-CRITICAL RECIPE DETAIL REQUIREMENTS — FOLLOW EVERY ONE:
-1. INGREDIENTS: Each recipe MUST list ALL ingredients with EXACT measurements (grams, ml, tbsp, tsp, cups). Never use vague amounts like "some", "a handful", "to taste" — always give a precise measurement. If seasoning to taste, still provide a default amount, e.g. "salt, to taste (3/4 tsp)".
+CRITICAL RECIPE DETAIL REQUIREMENTS â FOLLOW EVERY ONE:
+1. INGREDIENTS: Each recipe MUST list ALL ingredients with EXACT measurements (grams, ml, tbsp, tsp, cups). Never use vague amounts like "some", "a handful", "to taste" â always give a precise measurement. If seasoning to taste, still provide a default amount, e.g. "salt, to taste (3/4 tsp)".
 2. INSTRUCTIONS: Each recipe MUST have 6-15 detailed, numbered instruction steps written clearly enough for a complete beginner.
 3. TIMING: EVERY instruction step MUST end with the time in parentheses, e.g. "(5 min)", "(2-3 min)", "(30 sec)". No step should be missing a duration.
-4. TEMPERATURES: Always specify exact cooking temperatures in °C (e.g. "Preheat oven to 200°C", "Heat oil over medium-high heat, about 190°C").
-5. TECHNIQUES: Describe techniques precisely — "dice into 1cm cubes", "mince finely", "slice into 3mm rounds", "fold gently to avoid deflating".
-6. DONENESS CUES: Include visual and sensory cues — "until golden brown on the underside", "until the onions are translucent and fragrant", "until internal temperature reaches 74°C".
+4. TEMPERATURES: Always specify exact cooking temperatures in Â°C (e.g. "Preheat oven to 200Â°C", "Heat oil over medium-high heat, about 190Â°C").
+5. TECHNIQUES: Describe techniques precisely â "dice into 1cm cubes", "mince finely", "slice into 3mm rounds", "fold gently to avoid deflating".
+6. DONENESS CUES: Include visual and sensory cues â "until golden brown on the underside", "until the onions are translucent and fragrant", "until internal temperature reaches 74Â°C".
 7. MACROS: Calorie and macro values (protein, carbs, fat) MUST be accurate for the stated ingredient amounts and serving count. Calculate per serving.
 8. EQUIPMENT: If a recipe needs specific equipment (blender, cast iron skillet, oven, etc.), mention it in the steps.
 9. STORAGE: Provide specific storage instructions with exact durations for fridge and freezer.
@@ -788,11 +786,11 @@ Return JSON:
         {"name": "black pepper", "amount": "1/4 tsp", "fromPantry": true}
       ],
       "instructions": [
-        "Preheat oven to 200°C / 400°F and line a large baking tray with parchment paper (2 min)",
+        "Preheat oven to 200Â°C / 400Â°F and line a large baking tray with parchment paper (2 min)",
         "Pat chicken breasts dry with paper towels, then butterfly them by slicing horizontally to create even thickness of about 2cm (3 min)",
         "Rub chicken with 1 tbsp olive oil, salt, pepper, and minced garlic. Ensure all surfaces are evenly coated (2 min)",
-        "Place chicken on prepared baking tray spaced 5cm apart. Roast in the center rack until the thickest part reaches 74°C on a meat thermometer and juices run clear (22-25 min)",
-        "Remove from oven and let rest on a cutting board loosely tented with foil — this lets the juices redistribute (5 min)",
+        "Place chicken on prepared baking tray spaced 5cm apart. Roast in the center rack until the thickest part reaches 74Â°C on a meat thermometer and juices run clear (22-25 min)",
+        "Remove from oven and let rest on a cutting board loosely tented with foil â this lets the juices redistribute (5 min)",
         "Slice chicken into 1cm strips or cube into bite-sized pieces as preferred (3 min)",
         "Divide evenly into ${input.servings} meal prep containers (2 min)"
       ],
@@ -815,7 +813,7 @@ Return JSON:
 
   
   mealLog: router({
-    // Photo calorie analysis Ã¢ÂÂ works for guests
+    // Photo calorie analysis ÃÂ¢ÃÂÃÂ works for guests
     analyzePhoto: guestOrUserProcedure
       .input(z.object({ photoUrl: z.string() }))
       .mutation(async ({ ctx, input }) => {
@@ -831,7 +829,7 @@ Return JSON:
         try { result = JSON.parse((response.choices[0].message.content as string) ?? "{}"); }
         catch { result = { foods: [], totalCalories: 0, totalProtein: 0, totalCarbs: 0, totalFat: 0, confidence: "low", notes: "Could not analyze" }; }
 
-        // Server-side macro recalculation: validate every food item with pÃÂ4 + cÃÂ4 + fÃÂ9
+        // Server-side macro recalculation: validate every food item with pÃÂÃÂ4 + cÃÂÃÂ4 + fÃÂÃÂ9
         if (result.foods && Array.isArray(result.foods)) {
           for (const food of result.foods) {
             const p = Number(food.protein) || 0;
@@ -855,7 +853,7 @@ Return JSON:
 
         return result;
       }),
-    // Logging to DB Ã¢ÂÂ only for authenticated users
+    // Logging to DB ÃÂ¢ÃÂÃÂ only for authenticated users
     log: protectedProcedure
       .input(z.object({ name: z.string(), mealType: z.string().optional(), calories: z.number().optional(), protein: z.number().optional(), carbs: z.number().optional(), fat: z.number().optional(), photoUrl: z.string().optional() }))
       .mutation(async ({ ctx, input }) => db.createMealLog(ctx.user.id, input)),
@@ -863,7 +861,7 @@ Return JSON:
   }),
 
   progress: router({
-    // Photo upload and analysis Ã¢ÂÂ works for guests (no DB save for guests)
+    // Photo upload and analysis ÃÂ¢ÃÂÃÂ works for guests (no DB save for guests)
     uploadPhoto: guestOrUserProcedure
       .input(z.object({ photoBase64: z.string(), note: z.string().optional(), isBaseline: z.boolean().optional(), weightKg: z.number().optional(), bodyFatPercent: z.number().optional() }))
       .mutation(async ({ ctx, input }) => {
@@ -898,7 +896,7 @@ Return JSON:
   }),
 
   workout: router({
-    // AI form analysis Ã¢ÂÂ works for guests
+    // AI form analysis ÃÂ¢ÃÂÃÂ works for guests
     // Uses Gemini File API resumable upload for video instead of raw base64 in body
     analyzeForm: guestOrUserProcedure
       .input(z.object({ exerciseName: z.string(), videoBase64: z.string().optional(), hasVideo: z.boolean().default(false) }))
@@ -995,7 +993,7 @@ Return JSON:
   }),
 
   mealSwap: router({
-    // AI-powered meal swap Ã¢ÂÂ generates 6 personalised calorie-equivalent alternatives
+    // AI-powered meal swap ÃÂ¢ÃÂÃÂ generates 6 personalised calorie-equivalent alternatives
     generate: guestOrUserProcedure
       .input(z.object({
         mealName: z.string(),
@@ -1074,7 +1072,7 @@ PROGRESS PHOTOS: ${progressSummary}
 Return a JSON coaching report with this exact structure:
 {
   "overallScore": 72,
-  "headline": "Solid foundation Ã¢ÂÂ time to sharpen your technique",
+  "headline": "Solid foundation ÃÂ¢ÃÂÃÂ time to sharpen your technique",
   "formAnalysis": {
     "summary": "2-3 sentence analysis of their form patterns across exercises",
     "topIssues": ["Issue 1 with specific correction", "Issue 2 with specific correction"],
@@ -1094,10 +1092,10 @@ Return a JSON coaching report with this exact structure:
     { "day": "Friday", "focus": "Technique refinement", "tip": "Specific actionable tip" }
   ],
   "personalizedTips": [
-    { "category": "Nutrition", "icon": "Ã°ÂÂ¥Â©", "tip": "Specific tip based on their goal and BF%" },
-    { "category": "Recovery", "icon": "Ã°ÂÂÂ´", "tip": "Specific recovery tip" },
-    { "category": "Form", "icon": "Ã°ÂÂÂ¯", "tip": "Most critical form fix" },
-    { "category": "Mindset", "icon": "Ã°ÂÂ§Â ", "tip": "Motivational insight specific to their progress" }
+    { "category": "Nutrition", "icon": "ÃÂ°ÃÂÃÂ¥ÃÂ©", "tip": "Specific tip based on their goal and BF%" },
+    { "category": "Recovery", "icon": "ÃÂ°ÃÂÃÂÃÂ´", "tip": "Specific recovery tip" },
+    { "category": "Form", "icon": "ÃÂ°ÃÂÃÂÃÂ¯", "tip": "Most critical form fix" },
+    { "category": "Mindset", "icon": "ÃÂ°ÃÂÃÂ§ÃÂ ", "tip": "Motivational insight specific to their progress" }
   ],
   "nextMilestone": {
     "title": "Milestone name",
@@ -1117,7 +1115,7 @@ Return a JSON coaching report with this exact structure:
         catch {
           result = {
             overallScore: 70,
-            headline: "Keep up the great work Ã¢ÂÂ consistency is your superpower",
+            headline: "Keep up the great work ÃÂ¢ÃÂÃÂ consistency is your superpower",
             formAnalysis: { summary: "You're building good habits. Focus on technique over weight.", topIssues: ["Ensure full range of motion on all exercises"], strengths: ["Consistent training frequency"], priorityExercise: "Squat", priorityReason: "Foundation of all lower body strength" },
             progressAnalysis: { summary: "Steady progress detected. Stay consistent with nutrition.", trend: "improving", estimatedWeeksToGoal: 12, weeklyBFLoss: 0.3 },
             weeklyPlan: [
@@ -1126,17 +1124,17 @@ Return a JSON coaching report with this exact structure:
               { day: "Friday", focus: "Full body", tip: "End the week strong" },
             ],
             personalizedTips: [
-              { category: "Nutrition", icon: "Ã°ÂÂ¥Â©", tip: "Hit your protein target every day Ã¢ÂÂ it's the #1 driver of muscle retention" },
-              { category: "Recovery", icon: "Ã°ÂÂÂ´", tip: "7-9 hours of sleep is non-negotiable for body composition" },
-              { category: "Form", icon: "Ã°ÂÂÂ¯", tip: "Record yourself once a week to catch form drift early" },
-              { category: "Mindset", icon: "Ã°ÂÂ§Â ", tip: "Progress is not always visible Ã¢ÂÂ trust the data, not the mirror" },
+              { category: "Nutrition", icon: "ÃÂ°ÃÂÃÂ¥ÃÂ©", tip: "Hit your protein target every day ÃÂ¢ÃÂÃÂ it's the #1 driver of muscle retention" },
+              { category: "Recovery", icon: "ÃÂ°ÃÂÃÂÃÂ´", tip: "7-9 hours of sleep is non-negotiable for body composition" },
+              { category: "Form", icon: "ÃÂ°ÃÂÃÂÃÂ¯", tip: "Record yourself once a week to catch form drift early" },
+              { category: "Mindset", icon: "ÃÂ°ÃÂÃÂ§ÃÂ ", tip: "Progress is not always visible ÃÂ¢ÃÂÃÂ trust the data, not the mirror" },
             ],
             nextMilestone: { title: "First Form Score 80+", description: "Achieving excellent form on a compound lift", estimatedDate: "2 weeks" },
           };
         }
         return result;
       }),
-    // AI Coach chat Ã¢ÂÂ conversational coaching
+    // AI Coach chat ÃÂ¢ÃÂÃÂ conversational coaching
     chat: guestOrUserProcedure
       .input(z.object({
         message: z.string(),
@@ -1169,13 +1167,13 @@ Return a JSON coaching report with this exact structure:
         const premiumInstructions = hasPremiumContext
           ? " You have access to their form check history, body scan data, and meal logs. Reference specific data points when giving advice. Track their form improvements over time and celebrate progress. If their nutrition doesn't align with their goal, mention it tactfully."
           : "";
-        const systemPrompt = `You are PeakPulse AI Coach Ã¢ÂÂ an elite, no-nonsense fitness coach. You give specific, evidence-based advice. You know the user's profile: ${profileContext}.${premiumInstructions} Keep responses concise (2-4 sentences max) and always end with one actionable next step.`;
+        const systemPrompt = `You are PeakPulse AI Coach ÃÂ¢ÃÂÃÂ an elite, no-nonsense fitness coach. You give specific, evidence-based advice. You know the user's profile: ${profileContext}.${premiumInstructions} Keep responses concise (2-4 sentences max) and always end with one actionable next step.`;
         const messages: any[] = [
           { role: "system", content: systemPrompt },
           ...(input.history ?? []),
           { role: "user", content: input.message },
         ];
-        const response = await invokeLLM({ messages, model: "flash-lite" });
+        const response = await invokeLLM({ messages, });
         return { reply: (response.choices[0].message.content as string) ?? "I'm here to help. What would you like to work on today?" };
       }),
   }),
@@ -1284,7 +1282,7 @@ Return a JSON coaching report with this exact structure:
         const cuisineNote = input.cuisinePrefs?.length
           ? `They prefer these cuisines: ${input.cuisinePrefs.join(", ")}. Incorporate dishes and flavours from these cuisines where possible.`
           : "";
-        const prompt = `You are an expert nutritionist and chef. The user has these items in their pantry/fridge:\n${input.pantryItems}\n\nTheir DAILY nutritional targets:\n- Calories: ${input.calorieGoal} kcal\n- Protein: ${input.proteinGoal}g\n- Carbs: ${input.carbsGoal}g\n- Fat: ${input.fatGoal}g\nFitness goal: ${input.fitnessGoal.replace(/_/g, " ")}.\n${dietNote}\n${regionNote}\n${cuisineNote}\n\nGenerate a COMPLETE daily meal plan (breakfast, lunch, dinner, and 1 snack) that:\n1. MAXIMISES use of pantry items Ã¢ÂÂ use as many as possible\n2. Meets the daily caloric and macro targets (total across all 4 meals should be close to the targets)\n3. Clearly marks which ingredients are FROM THE PANTRY and which NEED TO BE BOUGHT\n4. If the pantry is too limited for a full day, suggest meals that need minimal extra ingredients\n5. Provide accurate calorie and macro estimates for each meal\n6. Include practical cooking instructions\n\nReturn this exact JSON:\n{"dailyPlan":{"totalCalories":0,"totalProtein":0,"totalCarbs":0,"totalFat":0,"pantryItemsUsed":["item1","item2"],"additionalItemsNeeded":["item1","item2"],"meals":[{"mealType":"breakfast","name":"Meal Name","description":"Brief description","ingredients":[{"name":"Chicken Breast","fromPantry":true,"quantity":"150g"}],"calories":450,"protein":35,"carbs":40,"fat":15,"prepTime":"20 min","instructions":["Step 1","Step 2"]}]},"tips":"One practical tip about using their pantry items efficiently"}`;
+        const prompt = `You are an expert nutritionist and chef. The user has these items in their pantry/fridge:\n${input.pantryItems}\n\nTheir DAILY nutritional targets:\n- Calories: ${input.calorieGoal} kcal\n- Protein: ${input.proteinGoal}g\n- Carbs: ${input.carbsGoal}g\n- Fat: ${input.fatGoal}g\nFitness goal: ${input.fitnessGoal.replace(/_/g, " ")}.\n${dietNote}\n${regionNote}\n${cuisineNote}\n\nGenerate a COMPLETE daily meal plan (breakfast, lunch, dinner, and 1 snack) that:\n1. MAXIMISES use of pantry items ÃÂ¢ÃÂÃÂ use as many as possible\n2. Meets the daily caloric and macro targets (total across all 4 meals should be close to the targets)\n3. Clearly marks which ingredients are FROM THE PANTRY and which NEED TO BE BOUGHT\n4. If the pantry is too limited for a full day, suggest meals that need minimal extra ingredients\n5. Provide accurate calorie and macro estimates for each meal\n6. Include practical cooking instructions\n\nReturn this exact JSON:\n{"dailyPlan":{"totalCalories":0,"totalProtein":0,"totalCarbs":0,"totalFat":0,"pantryItemsUsed":["item1","item2"],"additionalItemsNeeded":["item1","item2"],"meals":[{"mealType":"breakfast","name":"Meal Name","description":"Brief description","ingredients":[{"name":"Chicken Breast","fromPantry":true,"quantity":"150g"}],"calories":450,"protein":35,"carbs":40,"fat":15,"prepTime":"20 min","instructions":["Step 1","Step 2"]}]},"tips":"One practical tip about using their pantry items efficiently"}`;
         const response = await invokeLLM({
           messages: [
             { role: "system", content: "You are an expert chef and nutritionist. Always respond with valid JSON only, no markdown. Be precise with calorie and macro estimates." },
@@ -1309,7 +1307,7 @@ Return a JSON coaching report with this exact structure:
           messages: [
             {
               role: "system",
-              content: `You are an expert at reading grocery store receipts. Analyze this receipt photo and extract every grocery item.\n\nFor each item, determine:\n- name: Clean product name (remove store codes, abbreviations)\n- quantity: Number of units purchased (default 1)\n- price: Price paid for this item (number, 0 if unreadable)\n- category: One of: produce, dairy, meat, seafood, grains, canned, frozen, beverages, snacks, condiments, bakery, other\n- estimatedExpiry: Estimated days until expiry based on product type (e.g. milk=7, bread=5, canned=365, produce=5, meat=3, frozen=90)\n\nAlso extract:\n- storeName: Name of the store (if visible)\n- total: Total amount on receipt\n- date: Receipt date (if visible, ISO format)\n\nReturn JSON:\n{\n  "items": [{ "name": "string", "quantity": number, "price": number, "category": "string", "estimatedExpiry": number }],\n  "storeName": "string or null",\n  "total": number,\n  "date": "string or null",\n  "itemCount": number\n}\n\nBe thorough Ã¢ÂÂ extract every line item. Clean up abbreviated names to be human-readable.`,
+              content: `You are an expert at reading grocery store receipts. Analyze this receipt photo and extract every grocery item.\n\nFor each item, determine:\n- name: Clean product name (remove store codes, abbreviations)\n- quantity: Number of units purchased (default 1)\n- price: Price paid for this item (number, 0 if unreadable)\n- category: One of: produce, dairy, meat, seafood, grains, canned, frozen, beverages, snacks, condiments, bakery, other\n- estimatedExpiry: Estimated days until expiry based on product type (e.g. milk=7, bread=5, canned=365, produce=5, meat=3, frozen=90)\n\nAlso extract:\n- storeName: Name of the store (if visible)\n- total: Total amount on receipt\n- date: Receipt date (if visible, ISO format)\n\nReturn JSON:\n{\n  "items": [{ "name": "string", "quantity": number, "price": number, "category": "string", "estimatedExpiry": number }],\n  "storeName": "string or null",\n  "total": number,\n  "date": "string or null",\n  "itemCount": number\n}\n\nBe thorough ÃÂ¢ÃÂÃÂ extract every line item. Clean up abbreviated names to be human-readable.`,
             },
             {
               role: "user",
@@ -1335,7 +1333,7 @@ Return a JSON coaching report with this exact structure:
   }),
 
   exerciseSwap: router({
-    // AI-powered exercise swap Ã¢ÂÂ generates alternatives targeting the same muscle group
+    // AI-powered exercise swap ÃÂ¢ÃÂÃÂ generates alternatives targeting the same muscle group
     generate: guestOrUserProcedure
       .input(z.object({
         exerciseName: z.string(),
@@ -1366,7 +1364,7 @@ Return JSON:
   }),
 
   mealSwapWithPantry: router({
-    // AI-powered meal swap using pantry items Ã¢ÂÂ generates alternatives from available ingredients
+    // AI-powered meal swap using pantry items ÃÂ¢ÃÂÃÂ generates alternatives from available ingredients
     generate: guestOrUserProcedure
       .input(z.object({
         mealName: z.string(),
@@ -1410,7 +1408,7 @@ Return JSON:
         try { result = JSON.parse((response.choices[0].message.content as string) ?? "{}"); }
         catch { result = { alternatives: [] }; }
         // Generate image URLs for each alternative using Unsplash
-        // Curated food photos for variety Ã¢ÂÂ each suggestion gets a unique image
+        // Curated food photos for variety ÃÂ¢ÃÂÃÂ each suggestion gets a unique image
         const FOOD_PHOTOS = [
           "photo-1512621776951-a57141f2eefd", // colorful salad bowl
           "photo-1490645935967-10de6ba17061", // plated meal
@@ -1434,7 +1432,7 @@ Return JSON:
       }),
   }),
 
-  // Guest data migration Ã¢ÂÂ imports AsyncStorage data from guest mode into authenticated account
+  // Guest data migration ÃÂ¢ÃÂÃÂ imports AsyncStorage data from guest mode into authenticated account
   migrateGuestData: protectedProcedure
     .input(z.object({
       key: z.string(),
@@ -1464,7 +1462,7 @@ Return JSON:
           case "@peakpulse_guest_profile":
           case "@peakpulse_onboarding_data":
           case "@peakpulse_preferences":
-            // Store as user metadata Ã¢ÂÂ the data is preserved for future use
+            // Store as user metadata ÃÂ¢ÃÂÃÂ the data is preserved for future use
             console.log(`[Migration] Stored ${input.key} (${JSON.stringify(input.data).length} bytes)`);
             break;
           default:
@@ -1477,7 +1475,7 @@ Return JSON:
       return { success: true };
     }),
   upload: router({
-    // Photo upload Ã¢ÂÂ works for guests (stored to S3 without user ID)
+    // Photo upload ÃÂ¢ÃÂÃÂ works for guests (stored to S3 without user ID)
     photo: guestOrUserProcedure
       .input(z.object({ base64: z.string(), mimeType: z.string().default("image/jpeg") }))
       .mutation(async ({ ctx, input }) => {
