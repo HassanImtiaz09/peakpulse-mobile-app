@@ -491,11 +491,11 @@ function getMealPlanPhotoUrl(meal: any): string {
   return MEAL_PHOTO_MAP[type] ?? MEAL_PHOTO_MAP.default;
 }
 
-const sanitizeMealName = (name: string): string =>
-  name
+const sanitizeMealName = (name: string | undefined | null): string =>
+  (name ?? "Meal")
     .replace(/[\u00b7\u2022\u2023\u25e6\u2043\u2219\u25cf\u25cb\u2013\u2014]/g, "")
     .replace(/\s{2,}/g, " ")
-    .trim();
+    .trim() || "Meal";
 
 const MEAL_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/OTOphPKaSpDPZRjp.jpg";
 const MEAL_TYPES = ["breakfast", "lunch", "dinner", "snack"];
@@ -3999,7 +3999,7 @@ function MealsScreenContent() {
                         {meal.ingredients?.length > 0 && (
                           <View style={{ gap: 4 }}>
                             <Text style={{ color: MMUTED, fontSize: 10, fontFamily: "DMSans_700Bold", letterSpacing: 1 }}>INGREDIENTS</Text>
-                            {meal.ingredients.map((ing: any, i: number) => (
+                            {(Array.isArray(meal.ingredients) ? meal.ingredients : []).map((ing: any, i: number) => (
                               <View key={i} style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
                                 <MaterialIcons
                                   name={ing.fromPantry ? "check-circle" : "shopping-cart"}
@@ -4020,7 +4020,7 @@ function MealsScreenContent() {
                         {meal.instructions?.length > 0 && (
                           <View style={{ gap: 6 }}>
                             <Text style={{ color: MMUTED, fontSize: 10, fontFamily: "DMSans_700Bold", letterSpacing: 1 }}>INSTRUCTIONS</Text>
-                            {meal.instructions.map((step: string, i: number) => (
+                            {(Array.isArray(meal.instructions) ? meal.instructions : []).map((step: string, i: number) => (
                               <View key={i} style={{ flexDirection: "row", alignItems: "flex-start", gap: 8 }}>
                                 <View style={{ width: 20, height: 20, borderRadius: 10, backgroundColor: "#F59E0B", alignItems: "center", justifyContent: "center", flexShrink: 0, marginTop: 1 }}>
                                   <Text style={{ color: MBG, fontSize: 10, fontFamily: "DMSans_700Bold" }}>{i + 1}</Text>
@@ -4509,7 +4509,7 @@ function MealPlanMealCard({ meal, onSwap, isFav, rating, onToggleFav, onRate, on
           </TouchableOpacity>
         )}
         <View style={{ backgroundColor: "rgba(0,0,0,0.7)", borderRadius: 8, paddingHorizontal: 10, paddingVertical: 4 }}>
-          <Text style={{ color: "#F59E0B", fontSize: 11, fontFamily: "SpaceMono_700Bold" }}>{meal.calories} kcal</Text>
+          <Text style={{ color: "#F59E0B", fontSize: 11, fontFamily: "SpaceMono_700Bold" }}>{meal.calories ?? 0} kcal</Text>
         </View>
       </View>
 
@@ -4551,9 +4551,9 @@ function MealPlanMealCard({ meal, onSwap, isFav, rating, onToggleFav, onRate, on
           </View>
         )}
         <View style={{ flexDirection: "row", gap: 12, marginBottom: 10 }}>
-          <Text style={{ color: "#3B82F6", fontSize: 12 }}>P: {meal.protein}g</Text>
-          <Text style={{ color: "#FDE68A", fontSize: 12 }}>C: {meal.carbs}g</Text>
-          <Text style={{ color: "#F59E0B", fontSize: 12 }}>F: {meal.fat}g</Text>
+          <Text style={{ color: "#3B82F6", fontSize: 12 }}>P: {meal.protein ?? 0}g</Text>
+          <Text style={{ color: "#FDE68A", fontSize: 12 }}>C: {meal.carbs ?? 0}g</Text>
+          <Text style={{ color: "#F59E0B", fontSize: 12 }}>F: {meal.fat ?? 0}g</Text>
           {meal.prepTime && (
             <View style={{ flexDirection: "row", alignItems: "center", gap: 2 }}>
               <MaterialIcons name="timer" size={11} color={MMUTED} />
@@ -4578,7 +4578,7 @@ function MealPlanMealCard({ meal, onSwap, isFav, rating, onToggleFav, onRate, on
             {meal.ingredients?.length > 0 && (
               <View style={{ backgroundColor: MBG, borderRadius: 12, padding: 12 }}>
                 <Text style={{ color: MMUTED, fontSize: 11, fontFamily: "DMSans_700Bold", letterSpacing: 1, marginBottom: 8 }}>INGREDIENTS</Text>
-                {meal.ingredients.map((ing: string, i: number) => (
+                {(Array.isArray(meal.ingredients) ? meal.ingredients : []).map((ing: string, i: number) => (
                   <View key={i} style={{ flexDirection: "row", alignItems: "flex-start", gap: 8, marginBottom: 4 }}>
                     <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: "#FDE68A", marginTop: 5 }} />
                     <Text style={{ color: "#F59E0B", fontSize: 13, flex: 1, lineHeight: 18 }}>{ing}</Text>
@@ -4589,7 +4589,7 @@ function MealPlanMealCard({ meal, onSwap, isFav, rating, onToggleFav, onRate, on
             {meal.instructions?.length > 0 && (
               <View style={{ backgroundColor: MBG, borderRadius: 12, padding: 12 }}>
                 <Text style={{ color: MMUTED, fontSize: 11, fontFamily: "DMSans_700Bold", letterSpacing: 1, marginBottom: 8 }}>PREP STEPS</Text>
-                {meal.instructions.map((step: string, i: number) => (
+                {(Array.isArray(meal.instructions) ? meal.instructions : []).map((step: string, i: number) => (
                   <View key={i} style={{ flexDirection: "row", alignItems: "flex-start", gap: 10, marginBottom: 8 }}>
                     <View style={{ width: 22, height: 22, borderRadius: 11, backgroundColor: "#F59E0B", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                       <Text style={{ color: MBG, fontSize: 11, fontFamily: "DMSans_700Bold" }}>{i + 1}</Text>

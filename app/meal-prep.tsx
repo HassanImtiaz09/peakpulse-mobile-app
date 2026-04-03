@@ -506,7 +506,7 @@ export default function MealPrepScreen() {
             {renderReviewSection(ratingId, recipe.name)}
 
             <Text style={[styles.subHeading, { marginTop: 10 }]}>Ingredients {multiplier !== 1 && <Text style={{ color: SF.orange }}>({customSrv} servings)</Text>}</Text>
-            {recipe.ingredients.map((ing, i) => (
+            {(Array.isArray(recipe.ingredients) ? recipe.ingredients : []).map((ing, i) => (
               <View key={i} style={styles.ingredientRow}>
                 <MaterialIcons name={ing.fromPantry ? "check-circle" : "shopping-cart"} size={14} color={ing.fromPantry ? SF.green : SF.muted} />
                 <Text style={styles.ingredientText}>{scaleAmount(ing.amount, multiplier)} {ing.name}</Text>
@@ -515,7 +515,7 @@ export default function MealPrepScreen() {
             ))}
 
             <Text style={[styles.subHeading, { marginTop: 12 }]}>Instructions</Text>
-            {recipe.instructions.map((step, i) => (
+            {(Array.isArray(recipe.instructions) ? recipe.instructions : []).map((step, i) => (
               <View key={i} style={styles.stepRow}>
                 <View style={styles.stepNum}><Text style={styles.stepNumText}>{i + 1}</Text></View>
                 <Text style={styles.stepText}>{step}</Text>

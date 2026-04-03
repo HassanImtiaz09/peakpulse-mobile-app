@@ -2999,4 +2999,13 @@
 - [x] Fetched latest from GitHub remote (commit 652cdb8)
 - [x] Merged: feat(meals): add curated photo database, detailed recipes with ingredients & durations (584 ins, 97 del)
 - [x] Verify TypeScript compiles (0 TS errors, 0 LSP errors, dev server running)
+- [x] Save checkpoint (version 93019b19)
+
+## Round 74: Fix "How to Prep This Meal" button crash
+- [x] Investigate the error when clicking 'How to Prep This Meal' button
+- [x] Root cause: sanitizeMealName crashes on undefined meal.name, plus unsafe .map() on non-array ingredients/instructions
+- [x] Fix sanitizeMealName in meals.tsx and plans.tsx to handle undefined/null
+- [x] Add Array.isArray safety to all ingredients.map and instructions.map calls (meals.tsx, plans.tsx, meal-prep.tsx)
+- [x] Add null safety to meal.calories, meal.protein, meal.carbs, meal.fat displays
+- [x] Test and verify TypeScript compiles (0 TS errors, 0 LSP errors)
 - [ ] Save checkpoint

@@ -48,11 +48,11 @@ const MUTED = "#64748B";
 const CREAM = "#FDE68A";
 
 // Sanitize meal names from AI — remove unicode bullets, dots, and other artifacts
-const sanitizeMealName = (name: string): string =>
-  name
+const sanitizeMealName = (name: string | undefined | null): string =>
+  (name ?? "Meal")
     .replace(/[\u00b7\u2022\u2023\u25e6\u2043\u2219\u25cf\u25cb\u2013\u2014]/g, "")
     .replace(/\s{2,}/g, " ")
-    .trim();
+    .trim() || "Meal";
 
 const MEAL_PHOTO_MAP: Record<string, string> = {
   breakfast: "https://images.unsplash.com/photo-1525351484163-7529414344d8?w=400&q=80",
@@ -1067,7 +1067,7 @@ function MealCard({ meal, onSwap }: { meal: any; onSwap?: () => void }) {
             {meal.ingredients?.length > 0 && (
               <View style={{ backgroundColor: BG, borderRadius: 12, padding: 12 }}>
                 <Text style={{ color: MUTED, fontSize: 11, fontFamily: "DMSans_700Bold", letterSpacing: 1, marginBottom: 8 }}>INGREDIENTS</Text>
-                {meal.ingredients.map((ing: string, i: number) => (
+                {(Array.isArray(meal.ingredients) ? meal.ingredients : []).map((ing: string, i: number) => (
                   <View key={i} style={{ flexDirection: "row", alignItems: "flex-start", gap: 8, marginBottom: 4 }}>
                     <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: CREAM, marginTop: 5 }} />
                     <Text style={{ color: GOLD, fontSize: 13, flex: 1, lineHeight: 18 }}>{ing}</Text>
@@ -1078,7 +1078,7 @@ function MealCard({ meal, onSwap }: { meal: any; onSwap?: () => void }) {
             {meal.instructions?.length > 0 && (
               <View style={{ backgroundColor: BG, borderRadius: 12, padding: 12 }}>
                 <Text style={{ color: MUTED, fontSize: 11, fontFamily: "DMSans_700Bold", letterSpacing: 1, marginBottom: 8 }}>PREP STEPS</Text>
-                {meal.instructions.map((step: string, i: number) => (
+                {(Array.isArray(meal.instructions) ? meal.instructions : []).map((step: string, i: number) => (
                   <View key={i} style={{ flexDirection: "row", alignItems: "flex-start", gap: 10, marginBottom: 8 }}>
                     <View style={{ width: 22, height: 22, borderRadius: 11, backgroundColor: GOLD, alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                       <Text style={{ color: BG, fontSize: 11, fontFamily: "DMSans_700Bold" }}>{i + 1}</Text>
