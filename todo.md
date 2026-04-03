@@ -3029,4 +3029,13 @@
 - [x] Merged: correct 27 MuscleWiki video URLs in exercise data (27 ins, 27 del)
 - [x] Merged: add Muscles Targeted diagram card and fix em-dash encoding (36 ins, 2 del)
 - [x] Verify TypeScript compiles (0 TS errors, 0 LSP errors, dev server running)
+- [x] Save checkpoint (version cd75a8a4)
+
+## Round 78: Sync with GitHub repository
+- [x] Fetched latest from GitHub remote (4 new commits)
+- [x] Merged: correct 28 video URLs, add Seated Calf Raise entry, remove bad alias (45 ins, 32 del)
+- [x] Merged: sync 20 registry entries with MuscleWiki audit results (20 ins, 20 del)
+- [x] Merged: remove redundant Muscles Targeted card, enlarge muscle overlay (8 ins, 41 del)
+- [x] Merged: add optional width/height props to MuscleSvgMini (6 ins, 2 del)
+- [x] Verify TypeScript compiles (0 TS errors, 0 LSP errors, dev server running)
 - [ ] Save checkpoint
