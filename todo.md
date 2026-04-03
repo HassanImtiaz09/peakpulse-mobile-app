@@ -3015,4 +3015,10 @@
 - [x] Merged: fix exercise demo angleViews with correct MuscleWiki front/side video URLs (248 ins, 247 del)
 - [x] Merged: fix MuscleWiki CDN URL pass-through in gif-resolver
 - [x] Verify TypeScript compiles (0 TS errors, 0 LSP errors, dev server running)
+- [x] Save checkpoint (version 3a79c79c)
+
+## Round 76: Sync with GitHub repository
+- [x] Fetched latest from GitHub remote (1 new commit)
+- [x] Merged: replace expo-image with expo-video VideoView for MP4 demo playback (76 ins, 33 del in exercise-demo-player.tsx)
+- [x] Verify TypeScript compiles (0 TS errors, 0 LSP errors, dev server running)
 - [ ] Save checkpoint
