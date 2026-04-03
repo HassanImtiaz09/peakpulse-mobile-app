@@ -39,13 +39,46 @@ type FilterMode = "all" | "favorites" | ExerciseInfo["category"];
 type EquipmentFilter = "all" | "gym" | "home" | "calisthenics";
 
 function classifyEquipment(equipment: string): EquipmentFilter[] {
-  const e = equipment.toLowerCase();
-  const tags: EquipmentFilter[] = [];
-  if (/machine|barbell|cable|ez bar|squat rack|press|hack squat|smith|leg press|lat pulldown|pec deck/.test(e)) tags.push("gym");
-  if (/dumbbell|kettlebell|band|bench/.test(e)) tags.push("home");
-  if (/bodyweight|pull-up bar|dip station|floor|none/.test(e)) tags.push("calisthenics");
-  if (tags.length === 0) tags.push("gym");
-  return tags;
+function classifyEquipment(equipment: string): EquipmentFilter[] {
+  const EQUIP_MAP: Record<string, EquipmentFilter[]> = {
+    "Barbell, Bench": ["gym"],
+    "Barbell, Incline Bench": ["gym"],
+    "Barbell, Decline Bench": ["gym"],
+    "Barbell, Squat Rack": ["gym"],
+    "Barbell": ["gym"],
+    "Barbell or Dumbbells": ["gym", "home"],
+    "Cable Machine": ["gym"],
+    "Cable Machine, Rope": ["gym"],
+    "T-Bar Machine": ["gym"],
+    "Leg Press Machine": ["gym"],
+    "Leg Curl Machine": ["gym"],
+    "Leg Extension Machine": ["gym"],
+    "Seated Calf Machine": ["gym"],
+    "Hack Squat Machine": ["gym"],
+    "Preacher Bench, Barbell": ["gym"],
+    "EZ Bar, Bench": ["gym"],
+    "Battle Ropes": ["gym"],
+    "Dumbbells": ["home"],
+    "Dumbbell": ["home"],
+    "Dumbbells, Bench": ["home", "gym"],
+    "Dumbbells, Incline Bench": ["home", "gym"],
+    "Dumbbell, Bench": ["home", "gym"],
+    "Dumbbell or Cable": ["home", "gym"],
+    "Dumbbell or Kettlebell": ["home"],
+    "Bench or Box, Dumbbells": ["home", "gym"],
+    "Kettlebell": ["home"],
+    "Bodyweight": ["calisthenics"],
+    "Bodyweight or Dumbbells": ["calisthenics", "home"],
+    "Bodyweight or Machine": ["calisthenics", "gym"],
+    "Bodyweight or Medicine Ball": ["calisthenics", "home"],
+    "Pull-Up Bar": ["calisthenics", "gym"],
+    "Dip Station": ["calisthenics", "gym"],
+    "Ab Wheel": ["home", "calisthenics"],
+    "Plyo Box": ["home", "calisthenics"],
+    "Jump Rope": ["home", "calisthenics"],
+    "Open Space": ["calisthenics"],
+  };
+  return EQUIP_MAP[equipment] || ["gym"];
 }
 
 export default function ExerciseLibraryScreen() {
