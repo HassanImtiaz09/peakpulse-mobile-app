@@ -3093,3 +3093,11 @@
 - [x] Write unit tests for all three features (23 tests, all passing)
 - [x] Verify TypeScript compiles (0 errors)
 - [x] Save checkpoint
+
+## Round 87: Sync with GitHub
+- [x] Merged 3 commits from GitHub (fast-forward, no conflicts):
+  - e195f28: Remove GIF player, use MuscleWiki video as default (exercise-detail.tsx)
+  - bb547c5: Trim exercise descriptions to 3 key steps and 1 common mistake (exercise-instructions.ts)
+  - 32acc3e: Fix Jumping Jack and High Knees video URLs (exercise-data.ts — 75 URL corrections)
+- [x] Fixed TS error: replaced undefined `Ionicons` with existing `MaterialIcons` import in exercise-detail.tsx
+- [x] 0 TypeScript errors after fix

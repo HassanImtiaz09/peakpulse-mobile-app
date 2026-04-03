@@ -117,7 +117,7 @@ export default function ExerciseDetailScreen() {
         <ScrollView style={styles.scrollView} contentContainerStyle={{ paddingBottom: insets.bottom + 24 }} showsVerticalScrollIndicator={false}>
           {/* Exercise Visual */}
           <View style={{ marginHorizontal: 16, marginTop: 12, height: 200, backgroundColor: "#1a1a2e", borderRadius: 12, alignItems: "center", justifyContent: "center" }}>
-            <Ionicons name="barbell-outline" size={48} color="#666" />
+            <MaterialIcons name="fitness-center" size={48} color="#666" />
             <Text style={{ color: "#666", marginTop: 8, fontSize: 14 }}>No demo video available</Text>
           </View>
 
