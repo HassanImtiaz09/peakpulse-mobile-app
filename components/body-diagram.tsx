@@ -226,7 +226,7 @@ export function BodyDiagramInteractive({
           data={side === "front" ? frontData : backData}
           gender="male"
           side={side}
-          scale={1.3}
+          scale={0.6}
           border={C.bodyStroke}
           colors={[C.secondaryLight, C.primary]}
         />
