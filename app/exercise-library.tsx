@@ -39,7 +39,6 @@ type FilterMode = "all" | "favorites" | ExerciseInfo["category"];
 type EquipmentFilter = "all" | "gym" | "home" | "calisthenics";
 
 function classifyEquipment(equipment: string): EquipmentFilter[] {
-function classifyEquipment(equipment: string): EquipmentFilter[] {
   const EQUIP_MAP: Record<string, EquipmentFilter[]> = {
     "Barbell, Bench": ["gym"],
     "Barbell, Incline Bench": ["gym"],

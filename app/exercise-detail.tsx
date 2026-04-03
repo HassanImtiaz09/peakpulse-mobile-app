@@ -27,7 +27,7 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import * as Haptics from "expo-haptics";
 import { ScreenContainer } from "@/components/screen-container";
 import EnhancedGifPlayer from "@/components/enhanced-gif-player";
-import ExerciseDemoPlayer from "@/components/exercise-demo-player";
+import { ExerciseDemoPlayer } from "@/components/exercise-demo-player";
 import { BodyDiagramInteractive } from "@/components/body-diagram";
 import { useFavorites } from "@/lib/favorites-context";
 import { getExerciseInfo, getAlternativeExercises } from "@/lib/exercise-data";
@@ -246,9 +246,7 @@ export default function ExerciseDetailScreen() {
               cue={exercise.cue}
               height={260}
               exerciseName={exercise.name}
-              angleViews={exercise.angleViews}
-              primaryMuscles={exercise.primaryMuscles}
-              secondaryMuscles={exercise.secondaryMuscles}
+
             />
           </View>
 

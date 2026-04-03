@@ -3046,4 +3046,10 @@
 - [x] Merged: fix(workout) pass gifAsset prop to ExerciseDemoPlayer for video playback (90 changes in active-workout.tsx)
 - [x] Fixed orphaned JSX code from bad merge in exercise-library.tsx (lines 367-408 removed)
 - [x] Verify TypeScript compiles (0 TS errors)
-- [ ] Save checkpoint
+- [x] Save checkpoint (version ca786065)
+
+## Round 80: Fix post-merge TypeScript errors
+- [x] Removed duplicate `classifyEquipment` function declaration in exercise-library.tsx (line 42 was duplicated)
+- [x] Fixed ExerciseDemoPlayer import in exercise-detail.tsx (changed default import to named import)
+- [x] Removed invalid props (angleViews, primaryMuscles, secondaryMuscles) from ExerciseDemoPlayer usage in exercise-detail.tsx
+- [x] Verify TypeScript compiles (0 TS errors, 0 LSP errors, dev server running)
