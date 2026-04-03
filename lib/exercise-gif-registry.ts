@@ -51,7 +51,7 @@ export const EXERCISE_GIFS: Record<string, string> = {
   "male-barbell-bench-press-front":
     mw("male-Barbell-barbell-bench-press-front"),
   "male-barbell-bench-press-side":
-    mw("male-Barbell-barbell-bench-press-side"),
+    mw("male-barbell-bench-press-side_KciuhbB"),
 
   "male-bodyweight-bench-dips-front":
     mw("male-Bodyweight-bench-dips-front"),
@@ -79,16 +79,16 @@ export const EXERCISE_GIFS: Record<string, string> = {
     mw("male-Dumbbells-dumbbell-decline-bench-press-side"),
 
   "male-dumbbell-incline-bench-press-front":
-    mw("male-Dumbbells-dumbbell-incline-bench-press-front"),
+    mw("male-dumbbell-incline-bench-press-front_q2q0T12"),
   "male-dumbbell-incline-bench-press-side":
-    mw("male-Dumbbells-dumbbell-incline-bench-press-side"),
+    mw("male-dumbbell-incline-bench-press-side_2HBfFN3"),
 
   // ── Back ───────────────────────────────────────────────────────────────────
 
   "male-Barbell-barbell-bent-over-row-front":
-    mw("male-Barbell-barbell-bent-over-row-front"),
+    mw("male-barbell-bent-over-row-front"),
   "male-Barbell-barbell-bent-over-row-side":
-    mw("male-Barbell-barbell-bent-over-row-side"),
+    mw("male-barbell-bent-over-row-side"),
 
   "male-Barbell-barbell-deadlift-front":
     mw("male-Barbell-barbell-deadlift-front"),
@@ -98,12 +98,12 @@ export const EXERCISE_GIFS: Record<string, string> = {
   "male-Barbell-barbell-romanian-deadlift-front":
     mw("male-Barbell-barbell-romanian-deadlift-front"),
   "male-Barbell-barbell-romanian-deadlift-side":
-    mw("male-Barbell-barbell-romanian-deadlift-side"),
+    mw("male-Barbell-barbell-romanian-deadlift-side_dnNh5UH"),
 
   "male-Barbell-barbell-sumo-deadlift-front":
-    mw("male-Barbell-barbell-sumo-deadlift-front"),
+    mw("male-Barbell-barbell-sumo-deadlift-front_hI2eO77"),
   "male-Barbell-barbell-sumo-deadlift-side":
-    mw("male-Barbell-barbell-sumo-deadlift-side"),
+    mw("male-Barbell-barbell-sumo-deadlift-side_5lcmI1F"),
 
   "male-Barbell-landmine-t-bar-rows-front":
     mw("male-Barbell-landmine-t-bar-rows-front"),
@@ -111,9 +111,9 @@ export const EXERCISE_GIFS: Record<string, string> = {
     mw("male-Barbell-landmine-t-bar-rows-side"),
 
   "male-Dumbbells-dumbbell-pendlay-row-front":
-    mw("male-Dumbbells-dumbbell-pendlay-row-front"),
+    mw("male-dumbbell-pendlay-row-front"),
   "male-Dumbbells-dumbbell-pendlay-row-side":
-    mw("male-Dumbbells-dumbbell-pendlay-row-side"),
+    mw("male-dumbbell-pendlay-row-side"),
 
   "male-barbell-stiff-leg-deadlift-front":
     mw("male-Barbell-barbell-stiff-leg-deadlift-front"),
@@ -121,14 +121,14 @@ export const EXERCISE_GIFS: Record<string, string> = {
     mw("male-Barbell-barbell-stiff-leg-deadlift-side"),
 
   "male-bodyweight-chin-ups-front":
-    mw("male-Bodyweight-chin-ups-front"),
+    mw("male-bodyweight-chinup-front"),
   "male-bodyweight-chin-ups-side":
-    mw("male-Bodyweight-chin-ups-side"),
+    mw("male-bodyweight-chinup-side"),
 
   "male-bodyweight-pull-ups-front":
-    mw("male-Bodyweight-pull-ups-front"),
+    mw("male-bodyweight-pullup-front"),
   "male-bodyweight-pull-ups-side":
-    mw("male-Bodyweight-pull-ups-side"),
+    mw("male-bodyweight-pullup-side"),
 
   "male-dumbbell-row-bilateral-front":
     mw("male-Dumbbells-dumbbell-row-bilateral-front"),
@@ -207,9 +207,9 @@ export const EXERCISE_GIFS: Record<string, string> = {
   // Note: this key was in the Biceps section in the original but maps to a leg curl —
   // retained for backward compat; the exercise-demos.ts may have mis-filed it.
   "male-Dumbbells-dumbbell-leg-curl-front":
-    mw("male-Dumbbells-dumbbell-leg-curl-front"),
+    mw("male-dumbbell-leg-curl-front"),
   "male-Dumbbells-dumbbell-leg-curl-side":
-    mw("male-Dumbbells-dumbbell-leg-curl-side"),
+    mw("male-dumbbell-leg-curl-side"),
 
   "male-Dumbbells-dumbbell-preacher-curl-front":
     mw("male-Dumbbells-dumbbell-preacher-curl-front"),
@@ -229,9 +229,9 @@ export const EXERCISE_GIFS: Record<string, string> = {
   // ── Triceps ────────────────────────────────────────────────────────────────
 
   "male-Bands-band-overhead-tricep-extension-front":
-    mw("male-Bands-band-overhead-tricep-extension-front"),
+    mw("male-Band-band-overhead-tricep-extension-front"),
   "male-Bands-band-overhead-tricep-extension-side":
-    mw("male-Bands-band-overhead-tricep-extension-side"),
+    mw("male-Band-band-overhead-tricep-extension-side"),
 
   "male-Bodyweight-bodyweight-tricep-extension-front":
     mw("male-Bodyweight-bodyweight-tricep-extension-front"),
@@ -261,9 +261,9 @@ export const EXERCISE_GIFS: Record<string, string> = {
     mw("male-Barbell-barbell-hip-thrust-side"),
 
   "male-Barbell-barbell-reverse-lunge-front":
-    mw("male-Barbell-barbell-reverse-lunge-front"),
+    mw("male-barbell-reverse-lunge-front"),
   "male-Barbell-barbell-reverse-lunge-side":
-    mw("male-Barbell-barbell-reverse-lunge-side"),
+    mw("male-barbell-reverse-lunge-side"),
 
   "male-Barbell-barbell-squat-front":
     mw("male-Barbell-barbell-squat-front"),
@@ -276,9 +276,9 @@ export const EXERCISE_GIFS: Record<string, string> = {
     mw("male-Bodyweight-walking-lunge-side"),
 
   "male-Kettlebells-kettlebell-seated-calf-raise-front":
-    mw("male-Kettlebells-kettlebell-seated-calf-raise-front"),
+    mw("male-machine-seated-calf-raise-front"),
   "male-Kettlebells-kettlebell-seated-calf-raise-side":
-    mw("male-Kettlebells-kettlebell-seated-calf-raise-side"),
+    mw("male-machine-seated-calf-raise-side"),
 
   "male-Kettlebells-kettlebell-step-up-front":
     mw("male-Kettlebells-kettlebell-step-up-front"),
@@ -299,9 +299,9 @@ export const EXERCISE_GIFS: Record<string, string> = {
   "male-bodyweight-forward-lunge-front_zb4K50d":
     mw("male-Bodyweight-forward-lunge-front"),
   "male-bodyweight-forward-lunge-front":
-    mw("male-Bodyweight-forward-lunge-front"),
+    mw("male-bodyweight-forward-lunge-front_zb4K50d"),
   "male-bodyweight-forward-lunge-side":
-    mw("male-Bodyweight-forward-lunge-side"),
+    mw("male-bodyweight-forward-lunge-side_4k0dfH0"),
 
   "male-bodyweight-glute-bridge-front":
     mw("male-Bodyweight-glute-bridge-front"),
@@ -341,9 +341,9 @@ export const EXERCISE_GIFS: Record<string, string> = {
     mw("male-Bodyweight-dead-bug-side"),
 
   "male-Bodyweight-elbow-side-plank-front":
-    mw("male-Bodyweight-elbow-side-plank-front"),
+    mw("male-bodyweight-elbow-side-plank-front"),
   "male-Bodyweight-elbow-side-plank-side":
-    mw("male-Bodyweight-elbow-side-plank-side"),
+    mw("male-bodyweight-elbow-side-plank-front"),
 
   "male-Bodyweight-floor-incline-leg-raise-front":
     mw("male-Bodyweight-floor-incline-leg-raise-front"),
@@ -351,9 +351,9 @@ export const EXERCISE_GIFS: Record<string, string> = {
     mw("male-Bodyweight-floor-incline-leg-raise-side"),
 
   "male-Bodyweight-mountain-climber-front":
-    mw("male-Bodyweight-mountain-climber-front"),
+    mw("male-bodyweight-mountain-climber-front"),
   "male-Bodyweight-mountain-climber-side":
-    mw("male-Bodyweight-mountain-climber-side"),
+    mw("male-bodyweight-mountain-climber-side"),
 
   "male-Bodyweight-situp-front":
     mw("male-Bodyweight-situp-front"),
@@ -366,9 +366,9 @@ export const EXERCISE_GIFS: Record<string, string> = {
     mw("male-Kettlebells-kettlebell-russian-twist-side"),
 
   "male-TRX-trx-ab-rollout-front":
-    mw("male-TRX-trx-ab-rollout-front"),
+    mw("male-trx-ab-rollout-front"),
   "male-TRX-trx-ab-rollout-side":
-    mw("male-TRX-trx-ab-rollout-side"),
+    mw("male-trx-ab-rollout-side"),
 
   "male-bodyweight-crunch-front":
     mw("male-Bodyweight-crunch-front"),
@@ -393,9 +393,9 @@ export const EXERCISE_GIFS: Record<string, string> = {
   // ── Cardio & Plyometrics ───────────────────────────────────────────────────
 
   "male-Bodyweight-burpee-front":
-    mw("male-Bodyweight-burpee-front"),
+    mw("male-bodyweight-burpee-front"),
   "male-Bodyweight-burpee-side":
-    mw("male-Bodyweight-burpee-side"),
+    mw("male-bodyweight-burpee-side"),
 
   "male-Cardio-cardio-jumping-jacks-front":
     mw("male-Cardio-cardio-jumping-jacks-front"),
@@ -418,9 +418,9 @@ export const EXERCISE_GIFS: Record<string, string> = {
     mw("male-Kettlebells-kettlebell-swing-side"),
 
   "male-Plyometrics-box-jump-front":
-    mw("male-Plyometrics-box-jump-front"),
+    mw("male-Bodyweight-box-jump-front"),
   "male-Plyometrics-box-jump-side":
-    mw("male-Plyometrics-box-jump-side"),
+    mw("male-Bodyweight-box-jump-side"),
 };
 
 // ---------------------------------------------------------------------------
