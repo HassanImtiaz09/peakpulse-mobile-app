@@ -1,5 +1,5 @@
 /**
- * Active Workout Screen — FIXED
+ * Active Workout Screen â FIXED
  *
  * Changes from original:
  * 1. All meaningful catch(() => {}) blocks now emit console.warn() in
@@ -7,12 +7,12 @@
  *    disappearing silently. Fire-and-forget analytics (Haptics, recordXxx,
  *    evaluateXxx) retain the empty catch because failures there are truly
  *    ignorable.
- * 2. AsyncStorage.multiGet() now has a .catch() handler — if storage is
+ * 2. AsyncStorage.multiGet() now has a .catch() handler â if storage is
  *    unavailable the UI falls back to "free" plan with no crash.
  * 3. saveSessionLocally() catch block now shows an Alert to guest users so
  *    they know their session was NOT saved, rather than silently losing data.
  * 4. preloadExerciseVideos() and preCacheWorkoutGifs() errors are now logged
- *    — they were the most likely source of invisible playback failures.
+ *    â they were the most likely source of invisible playback failures.
  * 5. autoCacheCurrentWorkout() failure is now logged.
  * 6. The outer catch in finishWorkout() that retries session logging now logs
  *    the original PR error so it can be diagnosed.
@@ -86,7 +86,7 @@ interface SetLog {
   completed: boolean;
 }
 
-// ── Demo Video Component ──────────────────────────────────────────────────────
+// ââ Demo Video Component ââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 function ExerciseDemoVideo({
   exerciseName,
   compact = false,
@@ -212,6 +212,7 @@ function ExerciseDemoVideo({
         />
       ) : (
         <ExerciseDemoPlayer
+          gifAsset={demo.gifAsset}
           gifUrl={demo.gifUrl}
           cue={demo.cue}
           height={compact ? 140 : 200}
@@ -226,7 +227,7 @@ function ExerciseDemoVideo({
   );
 }
 
-// ── Fullscreen Timer Modal ────────────────────────────────────────────────────
+// ââ Fullscreen Timer Modal ââââââââââââââââââââââââââââââââââââââââââââââââââââ
 function FullscreenTimerModal({
   visible,
   exercise,
@@ -283,7 +284,7 @@ function FullscreenTimerModal({
             }}
             onPress={onClose}
           >
-            <Text style={{ color: SF.fg, fontSize: 16 }}>✕</Text>
+            <Text style={{ color: SF.fg, fontSize: 16 }}>â</Text>
           </TouchableOpacity>
           <View style={{ alignItems: "center" }}>
             <Text
@@ -322,7 +323,7 @@ function FullscreenTimerModal({
                 fontSize: 13,
               }}
             >
-              ⏱ {formatTime(elapsedSeconds)}
+              â± {formatTime(elapsedSeconds)}
             </Text>
           </View>
         </View>
@@ -413,13 +414,13 @@ function FullscreenTimerModal({
                         fontSize: 12,
                       }}
                     >
-                      {i < completedSets ? "✓" : i + 1}
+                      {i < completedSets ? "â" : i + 1}
                     </Text>
                   </View>
                 ))}
               </View>
               <Text style={{ color: SF.muted, fontSize: 12, marginTop: 8 }}>
-                {completedSets}/{totalSets} sets · {exercise.reps} reps · Rest:{" "}
+                {completedSets}/{totalSets} sets Â· {exercise.reps} reps Â· Rest:{" "}
                 {exercise.rest}
               </Text>
             </View>
@@ -445,7 +446,7 @@ function FullscreenTimerModal({
                 }}
               >
                 {completedSets >= totalSets
-                  ? "✓ All Sets Done"
+                  ? "â All Sets Done"
                   : `Complete Set ${completedSets + 1}`}
               </Text>
             </TouchableOpacity>
@@ -471,6 +472,7 @@ function FullscreenTimerModal({
               EXERCISE DEMO
             </Text>
             <ExerciseDemoPlayer
+              gifAsset={demo.gifAsset}
               gifUrl={demo.gifUrl}
               cue={demo.cue}
               height={180}
@@ -493,7 +495,7 @@ function FullscreenTimerModal({
                 }}
               >
                 <Text style={{ color: SF.muted, fontSize: 12 }}>
-                  📋 {exercise.notes}
+                  ð {exercise.notes}
                 </Text>
               </View>
             )}
@@ -512,7 +514,7 @@ function FullscreenTimerModal({
             onPress={onClose}
           >
             <Text style={{ color: SF.muted, fontFamily: "DMSans_700Bold" }}>
-              ← Back to Full Workout
+              â Back to Full Workout
             </Text>
           </TouchableOpacity>
         </ScrollView>
@@ -521,7 +523,7 @@ function FullscreenTimerModal({
   );
 }
 
-// ── Main Screen ───────────────────────────────────────────────────────────────
+// ââ Main Screen âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 export default function ActiveWorkoutScreen() {
   useKeepAwake();
   const router = useRouter();
@@ -533,7 +535,7 @@ export default function ActiveWorkoutScreen() {
   try {
     dayData = params.dayData ? JSON.parse(params.dayData) : null;
   } catch (_) {
-    // Malformed JSON — will show empty workout
+    // Malformed JSON â will show empty workout
   }
 
   const exercises: Exercise[] = dayData?.exercises ?? [];
@@ -554,12 +556,12 @@ export default function ActiveWorkoutScreen() {
   const logSession = trpc.workoutPlan.logSession.useMutation({
     onSuccess: () => {
       Alert.alert(
-        "Workout Complete! 🎉",
+        "Workout Complete! ð",
         "Great job! Your session has been logged.",
         [
           { text: "Done", onPress: () => router.back() },
           {
-            text: "Share 📱",
+            text: "Share ð±",
             onPress: () =>
               router.replace({
                 pathname: "/share-workout" as any,
@@ -582,7 +584,7 @@ export default function ActiveWorkoutScreen() {
     loadRestTimerSettings().then(setRestSettings);
   }, []);
 
-  // FIX: preload errors now logged — were silently swallowed before.
+  // FIX: preload errors now logged â were silently swallowed before.
   // This was the most likely cause of exercise GIFs not loading during workouts.
   useEffect(() => {
     const nextIdx = currentExercise + 1;
@@ -654,7 +656,7 @@ export default function ActiveWorkoutScreen() {
         }
       })
       .catch((err) => {
-        // AsyncStorage unavailable — fall back to free plan so the screen works
+        // AsyncStorage unavailable â fall back to free plan so the screen works
         console.warn("[ActiveWorkout] failed to read subscription state:", err);
         setSubscription("free");
         setTrialDaysLeft(null);
@@ -756,11 +758,11 @@ export default function ActiveWorkoutScreen() {
         JSON.stringify(existing)
       );
     } catch (err) {
-      // FIX: was previously `catch {}` — data loss was completely invisible.
+      // FIX: was previously `catch {}` â data loss was completely invisible.
       console.warn("[ActiveWorkout] saveSessionLocally failed:", err);
       Alert.alert(
         "Save Failed",
-        "Your workout could not be saved locally — device storage may be full or unavailable. The session data has not been stored.",
+        "Your workout could not be saved locally â device storage may be full or unavailable. The session data has not been stored.",
         [{ text: "OK" }]
       );
     }
@@ -790,7 +792,7 @@ export default function ActiveWorkoutScreen() {
               completedAt: new Date().toISOString(),
             };
 
-            // Fire-and-forget analytics — OK to swallow
+            // Fire-and-forget analytics â OK to swallow
             recordWorkoutCompleted().catch(() => {});
             evaluateAndScheduleSmartReminders().catch(() => {});
 
@@ -799,7 +801,7 @@ export default function ActiveWorkoutScreen() {
               const newPRs = prResults.filter((r) => r.isNewPR);
               const prMessage =
                 newPRs.length > 0
-                  ? `\n\n🏆 ${newPRs.length} new PR${newPRs.length > 1 ? "s" : ""}! ${newPRs
+                  ? `\n\nð ${newPRs.length} new PR${newPRs.length > 1 ? "s" : ""}! ${newPRs
                       .map((p) => p.exercise)
                       .join(", ")}`
                   : "";
@@ -814,12 +816,12 @@ export default function ActiveWorkoutScreen() {
               } else {
                 await saveSessionLocally(sessionData);
                 Alert.alert(
-                  "Workout Complete! 🎉",
+                  "Workout Complete! ð",
                   `Great job! Your session has been logged locally.${prMessage}`,
                   [
                     { text: "Done", onPress: () => router.back() },
                     {
-                      text: "Share 📱",
+                      text: "Share ð±",
                       onPress: () =>
                         router.replace({
                           pathname: "/share-workout" as any,
@@ -837,7 +839,7 @@ export default function ActiveWorkoutScreen() {
                 );
               }
             } catch (prErr) {
-              // FIX: was `catch {}` — now logs the PR error for diagnosis before
+              // FIX: was `catch {}` â now logs the PR error for diagnosis before
               // falling through to the session-save fallback path.
               console.warn("[ActiveWorkout] logWorkoutPRs failed:", prErr);
 
@@ -851,7 +853,7 @@ export default function ActiveWorkoutScreen() {
               } else {
                 await saveSessionLocally(sessionData);
                 Alert.alert(
-                  "Workout Complete! 🎉",
+                  "Workout Complete! ð",
                   "Great job! Your session has been logged locally.",
                   [{ text: "Done", onPress: () => router.back() }]
                 );
@@ -871,7 +873,7 @@ export default function ActiveWorkoutScreen() {
     if (!hasAccess) {
       if (trialDaysLeft === null) {
         Alert.alert(
-          "🌟 Advanced Feature",
+          "ð Advanced Feature",
           "AI Coach and Form Check are Pro plan features. Start your 3-day free trial now?",
           [
             { text: "Not Now", style: "cancel" },
@@ -933,7 +935,7 @@ export default function ActiveWorkoutScreen() {
         </Text>
         <TouchableOpacity onPress={() => router.back()} style={{ marginTop: 16 }}>
           <Text style={{ color: SF.gold, fontFamily: "DMSans_700Bold" }}>
-            ← Go Back
+            â Go Back
           </Text>
         </TouchableOpacity>
       </ScreenContainer>
@@ -964,7 +966,7 @@ export default function ActiveWorkoutScreen() {
             justifyContent: "center",
           }}
         >
-          <Text style={{ color: SF.fg, fontSize: 16 }}>←</Text>
+          <Text style={{ color: SF.fg, fontSize: 16 }}>â</Text>
         </TouchableOpacity>
         <View style={{ flex: 1 }}>
           <Text
@@ -974,7 +976,7 @@ export default function ActiveWorkoutScreen() {
               fontFamily: "BebasNeue_400Regular",
             }}
           >
-            {dayData.day} — {dayData.focus}
+            {dayData.day} â {dayData.focus}
           </Text>
           <Text style={{ color: SF.muted, fontSize: 12 }}>
             {exercises.length} exercises
@@ -991,7 +993,7 @@ export default function ActiveWorkoutScreen() {
           <Text
             style={{ color: SF.gold2, fontFamily: "DMSans_700Bold", fontSize: 14 }}
           >
-            ⏱ {formatTime(elapsedSeconds)}
+            â± {formatTime(elapsedSeconds)}
           </Text>
         </View>
       </View>
@@ -1012,7 +1014,7 @@ export default function ActiveWorkoutScreen() {
           <Text
             style={{ color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 16 }}
           >
-            ▶ Start Workout
+            â¶ Start Workout
           </Text>
         </TouchableOpacity>
       )}
@@ -1036,7 +1038,7 @@ export default function ActiveWorkoutScreen() {
           <Text
             style={{ color: "#FED7AA", fontFamily: "DMSans_700Bold", fontSize: 14 }}
           >
-            🔄 Rest Timer
+            ð Rest Timer
           </Text>
           <Text
             style={{
@@ -1208,7 +1210,7 @@ export default function ActiveWorkoutScreen() {
                 </View>
                 <View style={{ alignItems: "flex-end" }}>
                   <Text style={{ color: SF.muted, fontSize: 12 }}>
-                    {exercise.sets} sets × {exercise.reps}
+                    {exercise.sets} sets Ã {exercise.reps}
                   </Text>
                   <Text style={{ color: SF.muted, fontSize: 11, marginTop: 2 }}>
                     Rest: {exercise.rest}
@@ -1258,7 +1260,7 @@ export default function ActiveWorkoutScreen() {
                   }}
                 >
                   <Text style={{ color: SF.muted, fontSize: 12 }}>
-                    💡 {exercise.notes}
+                    ð¡ {exercise.notes}
                   </Text>
                 </View>
               )}
@@ -1318,7 +1320,7 @@ export default function ActiveWorkoutScreen() {
                       fontSize: 13,
                     }}
                   >
-                    ⏱ Timer
+                    â± Timer
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -1607,7 +1609,7 @@ export default function ActiveWorkoutScreen() {
                         fontSize: 12,
                       }}
                     >
-                      {log.completed ? "✓" : "Done"}
+                      {log.completed ? "â" : "Done"}
                     </Text>
                   </TouchableOpacity>
                 </View>
@@ -1649,11 +1651,11 @@ export default function ActiveWorkoutScreen() {
                     fontSize: 13,
                   }}
                 >
-                  🎯 Form Check
+                  ð¯ Form Check
                 </Text>
                 {!isAdvancedOrTrial && (
                   <Text style={{ color: SF.muted, fontSize: 10, marginTop: 2 }}>
-                    Advanced · 3-day trial
+                    Advanced Â· 3-day trial
                   </Text>
                 )}
                 {trialDaysLeft !== null &&
@@ -1685,11 +1687,11 @@ export default function ActiveWorkoutScreen() {
                     fontSize: 13,
                   }}
                 >
-                  🤖 AI Coach
+                  ð¤ AI Coach
                 </Text>
                 {!isAdvancedOrTrial && (
                   <Text style={{ color: SF.muted, fontSize: 10, marginTop: 2 }}>
-                    Advanced · 3-day trial
+                    Advanced Â· 3-day trial
                   </Text>
                 )}
                 {trialDaysLeft !== null &&
@@ -1718,7 +1720,7 @@ export default function ActiveWorkoutScreen() {
                   onPress={() => setCurrentExercise(currentExercise - 1)}
                 >
                   <Text style={{ color: SF.muted, fontFamily: "DMSans_700Bold" }}>
-                    ← Previous
+                    â Previous
                   </Text>
                 </TouchableOpacity>
               )}
@@ -1736,7 +1738,7 @@ export default function ActiveWorkoutScreen() {
                   <Text
                     style={{ color: SF.fg, fontFamily: "DMSans_700Bold" }}
                   >
-                    Next →
+                    Next â
                   </Text>
                 </TouchableOpacity>
               ) : (
@@ -1753,7 +1755,7 @@ export default function ActiveWorkoutScreen() {
                   <Text
                     style={{ color: SF.bg, fontFamily: "DMSans_700Bold" }}
                   >
-                    🏁 Finish Workout
+                    ð Finish Workout
                   </Text>
                 </TouchableOpacity>
               )}
