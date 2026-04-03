@@ -149,8 +149,8 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "intermediate",
     cue: "High to low arc. Squeeze at bottom.",
     angleViews: [
-        { gifUrl: "https://media.musclewiki.com/media/uploads/videos/branded/male-cable-pec-fly-front.mp4", label: "Front View", focus: "Cables set high, hands cross at waist level for lower chest emphasis" },
-        { gifUrl: "https://media.musclewiki.com/media/uploads/videos/branded/male-cable-pec-fly-side.mp4", label: "Side View", focus: "Maintain forward lean, control the eccentric phase" }
+        { gifUrl: "https://media.musclewiki.com/media/uploads/videos/branded/male-cable-chestpress-front.mp4", label: "Front View", focus: "Cables set high, hands cross at waist level for lower chest emphasis" },
+        { gifUrl: "https://media.musclewiki.com/media/uploads/videos/branded/male-cable-chestpress-side.mp4", label: "Side View", focus: "Maintain forward lean, control the eccentric phase" }
       ],
   },
   {
@@ -221,8 +221,8 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "beginner",
     cue: "Lean back slightly. Pull bar to upper chest.",
     angleViews: [
-        { gifUrl: "https://media.musclewiki.com/media/uploads/videos/branded/male-Cable-cable-lat-pulldown-front.mp4", label: "Front View", focus: "Wide grip, pull bar to upper chest â not behind neck" },
-        { gifUrl: "https://media.musclewiki.com/media/uploads/videos/branded/male-Cable-cable-lat-pulldown-side.mp4", label: "Side View", focus: "Slight lean back (15-20Â°), chest up, squeeze shoulder blades" }
+        { gifUrl: "https://media.musclewiki.com/media/uploads/videos/branded/male-machine-pulldown-front.mp4", label: "Front View", focus: "Wide grip, pull bar to upper chest â not behind neck" },
+        { gifUrl: "https://media.musclewiki.com/media/uploads/videos/branded/male-machine-pulldown-side.mp4", label: "Side View", focus: "Slight lean back (15-20Â°), chest up, squeeze shoulder blades" }
       ],
   },
   {
@@ -263,8 +263,8 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "beginner",
     cue: "Sit tall. Pull handle to lower chest. Squeeze shoulder blades.",
     angleViews: [
-        { gifUrl: "https://media.musclewiki.com/media/uploads/videos/branded/male-Cable-cable-seated-row-front.mp4", label: "Front View", focus: "Elbows stay close to body, pull to belly button area" },
-        { gifUrl: "https://media.musclewiki.com/media/uploads/videos/branded/male-Cable-cable-seated-row-side.mp4", label: "Side View", focus: "Torso stays upright, don't lean back excessively â slight lean OK" }
+        { gifUrl: "https://media.musclewiki.com/media/uploads/videos/branded/male-machine-seated-cable-row-front.mp4", label: "Front View", focus: "Elbows stay close to body, pull to belly button area" },
+        { gifUrl: "https://media.musclewiki.com/media/uploads/videos/branded/male-machine-seated-cable-row-side.mp4", label: "Side View", focus: "Torso stays upright, don't lean back excessively â slight lean OK" }
       ],
   },
   {
@@ -377,8 +377,8 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "beginner",
     cue: "Pull rope to face. Externally rotate at end.",
     angleViews: [
-        { gifUrl: "https://media.musclewiki.com/media/uploads/videos/branded/male-Cable-cable-rope-face-pulls-front.mp4", label: "Front View", focus: "Pull to forehead level, hands end up beside ears" },
-        { gifUrl: "https://media.musclewiki.com/media/uploads/videos/branded/male-Cable-cable-rope-face-pulls-side.mp4", label: "Side View", focus: "External rotation at end â thumbs point back, squeeze rear delts" }
+        { gifUrl: "https://media.musclewiki.com/media/uploads/videos/branded/male-Machine-machine-face-pulls-front.mp4", label: "Front View", focus: "Pull to forehead level, hands end up beside ears" },
+        { gifUrl: "https://media.musclewiki.com/media/uploads/videos/branded/male-Machine-machine-face-pulls-side.mp4", label: "Side View", focus: "External rotation at end â thumbs point back, squeeze rear delts" }
       ],
   },
   {
@@ -829,8 +829,8 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "intermediate",
     cue: "Legs nearly straight. Hinge at hips. Feel hamstring stretch.",
     angleViews: [
-        { gifUrl: "https://media.musclewiki.com/media/uploads/videos/branded/male-Barbell-barbell-stiff-leg-deadlift-front.mp4", label: "Front View", focus: "Back stays flat, stop when hamstrings fully stretched" },
-        { gifUrl: "https://media.musclewiki.com/media/uploads/videos/branded/male-Barbell-barbell-stiff-leg-deadlift-side.mp4", label: "Side View", focus: "Minimal knee bend, hinge from hips, bar slides down legs" }
+        { gifUrl: "https://media.musclewiki.com/media/uploads/videos/branded/male-barbell-stiff-leg-deadlift-front.mp4", label: "Front View", focus: "Back stays flat, stop when hamstrings fully stretched" },
+        { gifUrl: "https://media.musclewiki.com/media/uploads/videos/branded/male-barbell-stiff-leg-deadlift-side.mp4", label: "Side View", focus: "Minimal knee bend, hinge from hips, bar slides down legs" }
       ],
   },
 
@@ -929,8 +929,8 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "intermediate",
     cue: "Lie flat. Raise legs to 90Â°. Lower slowly. Don't arch back.",
     angleViews: [
-        { gifUrl: "https://media.musclewiki.com/media/uploads/videos/branded/male-Bodyweight-floor-incline-leg-raise-front.mp4", label: "Front View", focus: "Legs together, hands under hips for support if needed" },
-        { gifUrl: "https://media.musclewiki.com/media/uploads/videos/branded/male-Bodyweight-floor-incline-leg-raise-side.mp4", label: "Side View", focus: "Lower back stays pressed to floor, legs raise to 90Â° then lower slowly" }
+        { gifUrl: "https://media.musclewiki.com/media/uploads/videos/branded/male-Bodyweight-laying-leg-raises-front.mp4", label: "Front View", focus: "Legs together, hands under hips for support if needed" },
+        { gifUrl: "https://media.musclewiki.com/media/uploads/videos/branded/male-Bodyweight-laying-leg-raises-side.mp4", label: "Side View", focus: "Lower back stays pressed to floor, legs raise to 90Â° then lower slowly" }
       ],
   },
   {
@@ -999,8 +999,8 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "intermediate",
     cue: "Rotate torso. Pull cable diagonally. Control the return.",
     angleViews: [
-        { gifUrl: "https://media.musclewiki.com/media/uploads/videos/branded/male-Cable-cable-woodchopper-front.mp4", label: "Front View", focus: "Rotate from core not arms, feet planted, hips face forward" },
-        { gifUrl: "https://media.musclewiki.com/media/uploads/videos/branded/male-Cable-cable-woodchopper-side.mp4", label: "Side View", focus: "Diagonal pull from high to low (or low to high), control eccentric" }
+        { gifUrl: "https://media.musclewiki.com/media/uploads/videos/branded/male-cable-woodchopper-front.mp4", label: "Front View", focus: "Rotate from core not arms, feet planted, hips face forward" },
+        { gifUrl: "https://media.musclewiki.com/media/uploads/videos/branded/male-cable-woodchopper-side.mp4", label: "Side View", focus: "Diagonal pull from high to low (or low to high), control eccentric" }
       ],
   },
 
@@ -1029,8 +1029,8 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "beginner",
     cue: "Jump feet out, arms up. Jump feet in, arms down.",
     angleViews: [
-        { gifUrl: "https://media.musclewiki.com/media/uploads/videos/branded/male-Cardio-cardio-jumping-jacks-front.mp4", label: "Front View", focus: "Arms fully overhead, feet wider than shoulders at peak" },
-        { gifUrl: "https://media.musclewiki.com/media/uploads/videos/branded/male-Cardio-cardio-jumping-jacks-side.mp4", label: "Side View", focus: "Land softly on balls of feet, maintain rhythm" }
+        { gifUrl: "https://media.musclewiki.com/media/uploads/videos/branded/male-Cardio-cardio-high-knees-front.mp4", label: "Front View", focus: "Arms fully overhead, feet wider than shoulders at peak" },
+        { gifUrl: "https://media.musclewiki.com/media/uploads/videos/branded/male-Cardio-cardio-high-knees-side.mp4", label: "Side View", focus: "Land softly on balls of feet, maintain rhythm" }
       ],
   },
   {
@@ -1099,8 +1099,8 @@ const EXERCISE_DB: ExerciseInfo[] = [
     difficulty: "beginner",
     cue: "Drive knees to hip height. Pump arms.",
     angleViews: [
-        { gifUrl: "https://media.musclewiki.com/media/uploads/videos/branded/male-Cardio-cardio-jumping-jacks-front.mp4", label: "Front View", focus: "Drive knees to hip height, pump arms in sync" },
-        { gifUrl: "https://media.musclewiki.com/media/uploads/videos/branded/male-Cardio-cardio-jumping-jacks-side.mp4", label: "Side View", focus: "Stay on balls of feet, maintain upright posture" }
+        { gifUrl: "https://media.musclewiki.com/media/uploads/videos/branded/male-Cardio-cardio-high-knees-front.mp4", label: "Front View", focus: "Drive knees to hip height, pump arms in sync" },
+        { gifUrl: "https://media.musclewiki.com/media/uploads/videos/branded/male-Cardio-cardio-high-knees-side.mp4", label: "Side View", focus: "Stay on balls of feet, maintain upright posture" }
       ],
   },
   {
