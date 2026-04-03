@@ -8,6 +8,8 @@ import {
   Dimensions,
   Platform,
   ScrollView,
+  ActivityIndicator,
+  Animated as RNAnimated,
 } from "react-native";
 import { Image } from "expo-image";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -36,6 +38,7 @@ import { FormCueOverlay, FormCueBadge } from "@/components/form-cue-overlay";
 import { hasFormTips } from "@/lib/form-cue-tips";
 
 import { VideoView, useVideoPlayer } from "expo-video";
+import { useEvent } from "expo";
 import type { VideoSource } from "expo-video";
 
 /** Check if a URL points to an MP4 video file */
@@ -155,13 +158,54 @@ export function ExerciseDemoPlayer({
   
   // --- MP4 Video Playback ---
   const isCurrentVideo = isVideoUrl(currentAsset);
+  const [videoRetryKey, setVideoRetryKey] = useState(0);
   const videoSource: VideoSource | null = isCurrentVideo
-    ? { uri: currentAsset as string, ...(Platform.OS !== "web" ? { useCaching: true } : {}) }
+    ? { uri: (currentAsset as string) + (videoRetryKey > 0 ? `#retry=${videoRetryKey}` : ""), ...(Platform.OS !== "web" ? { useCaching: true } : {}) }
     : null;
   const videoPlayer = useVideoPlayer(videoSource, (p) => {
     p.loop = true;
     p.play();
   });
+
+  // Track video player status for loading/error states
+  const { status: videoStatus, error: videoError } = useEvent(videoPlayer, "statusChange", {
+    status: videoPlayer.status,
+    error: undefined,
+  });
+
+  const videoIsLoading = isCurrentVideo && (videoStatus === "loading" || videoStatus === "idle");
+  const videoHasError = isCurrentVideo && videoStatus === "error";
+
+  // Animated shimmer for loading skeleton
+  const shimmerAnim = useRef(new RNAnimated.Value(0)).current;
+  useEffect(() => {
+    if (videoIsLoading) {
+      const loop = RNAnimated.loop(
+        RNAnimated.timing(shimmerAnim, {
+          toValue: 1,
+          duration: 1200,
+          useNativeDriver: true,
+        })
+      );
+      loop.start();
+      return () => loop.stop();
+    } else {
+      shimmerAnim.setValue(0);
+    }
+  }, [videoIsLoading]);
+
+  // Retry handler for video errors
+  const handleVideoRetry = useCallback(() => {
+    setVideoRetryKey((k) => k + 1);
+    if (Platform.OS !== "web") {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
+    }
+  }, []);
+
+  // Reset retry key when asset changes
+  useEffect(() => {
+    setVideoRetryKey(0);
+  }, [currentAsset]);
 
   // Reset video when asset changes
   useEffect(() => {
@@ -286,6 +330,48 @@ export function ExerciseDemoPlayer({
                 autoplay={true}
                 transition={200}
               />
+            )}
+            {/* Loading Skeleton Overlay */}
+            {videoIsLoading && (
+              <View style={styles.skeletonOverlay}>
+                <RNAnimated.View
+                  style={[
+                    styles.skeletonShimmer,
+                    {
+                      opacity: shimmerAnim.interpolate({
+                        inputRange: [0, 0.5, 1],
+                        outputRange: [0.3, 0.7, 0.3],
+                      }),
+                    },
+                  ]}
+                />
+                <View style={styles.skeletonContent}>
+                  <ActivityIndicator size="large" color="#F59E0B" />
+                  <Text style={styles.skeletonText}>Loading video...</Text>
+                  <View style={styles.skeletonBar} />
+                  <View style={[styles.skeletonBar, { width: "50%" }]} />
+                </View>
+              </View>
+            )}
+            {/* Error Fallback Overlay */}
+            {videoHasError && (
+              <View style={styles.errorOverlay}>
+                <MaterialIcons name="error-outline" size={40} color="#EF4444" />
+                <Text style={styles.errorTitle}>Video failed to load</Text>
+                <Text style={styles.errorSubtitle}>
+                  {videoError?.message || "The MuscleWiki video could not be loaded. Check your connection and try again."}
+                </Text>
+                <Pressable
+                  onPress={handleVideoRetry}
+                  style={({ pressed }) => [
+                    styles.retryButton,
+                    pressed && { opacity: 0.8, transform: [{ scale: 0.97 }] },
+                  ]}
+                >
+                  <MaterialIcons name="refresh" size={18} color="#0A0E14" />
+                  <Text style={styles.retryButtonText}>Retry</Text>
+                </Pressable>
+              </View>
             )}
             {/* Form Annotation Overlay */}
             {showAnnotations && annotations && (
@@ -637,6 +723,46 @@ export function ExerciseDemoPlayer({
                 cachePolicy="memory-disk"
                 transition={200}
               />
+            )}
+            {/* Fullscreen Loading Skeleton */}
+            {videoIsLoading && (
+              <View style={[styles.skeletonOverlay, { width: SCREEN_W, height: SCREEN_W }]}>
+                <RNAnimated.View
+                  style={[
+                    styles.skeletonShimmer,
+                    {
+                      opacity: shimmerAnim.interpolate({
+                        inputRange: [0, 0.5, 1],
+                        outputRange: [0.3, 0.7, 0.3],
+                      }),
+                    },
+                  ]}
+                />
+                <View style={styles.skeletonContent}>
+                  <ActivityIndicator size="large" color="#F59E0B" />
+                  <Text style={styles.skeletonText}>Loading video...</Text>
+                </View>
+              </View>
+            )}
+            {/* Fullscreen Error Fallback */}
+            {videoHasError && (
+              <View style={[styles.errorOverlay, { width: SCREEN_W, height: SCREEN_W }]}>
+                <MaterialIcons name="error-outline" size={48} color="#EF4444" />
+                <Text style={styles.errorTitle}>Video failed to load</Text>
+                <Text style={styles.errorSubtitle}>
+                  {videoError?.message || "The MuscleWiki video could not be loaded."}
+                </Text>
+                <Pressable
+                  onPress={handleVideoRetry}
+                  style={({ pressed }) => [
+                    styles.retryButton,
+                    pressed && { opacity: 0.8, transform: [{ scale: 0.97 }] },
+                  ]}
+                >
+                  <MaterialIcons name="refresh" size={18} color="#0A0E14" />
+                  <Text style={styles.retryButtonText}>Retry</Text>
+                </Pressable>
+              </View>
             )}
             {showAnnotations && annotations && (
               <FormAnnotationOverlay
@@ -1160,5 +1286,72 @@ const styles = StyleSheet.create({
   demoButtonText: {
     fontSize: 13,
     fontWeight: "600",
+  },
+  // — Loading skeleton overlay —
+  skeletonOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "#0A0E14",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 5,
+  },
+  skeletonShimmer: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "#1A1F28",
+  },
+  skeletonContent: {
+    alignItems: "center",
+    gap: 12,
+    zIndex: 1,
+  },
+  skeletonText: {
+    color: "#9BA1A6",
+    fontSize: 12,
+    fontWeight: "600",
+    letterSpacing: 0.5,
+  },
+  skeletonBar: {
+    width: "70%",
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: "#1E2530",
+  },
+  // — Error fallback overlay —
+  errorOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(10,14,20,0.92)",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 10,
+    paddingHorizontal: 24,
+    zIndex: 6,
+  },
+  errorTitle: {
+    color: "#F87171",
+    fontSize: 16,
+    fontWeight: "700",
+    textAlign: "center",
+  },
+  errorSubtitle: {
+    color: "#9BA1A6",
+    fontSize: 12,
+    lineHeight: 18,
+    textAlign: "center",
+    maxWidth: 260,
+  },
+  retryButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    marginTop: 6,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 10,
+    backgroundColor: "#F59E0B",
+  },
+  retryButtonText: {
+    color: "#0A0E14",
+    fontSize: 14,
+    fontWeight: "700",
   },
 });

@@ -3059,3 +3059,10 @@
 - [x] Merged: fix(demo-player) default to MuscleWiki video instead of ExerciseDB GIF (31 changes in exercise-demo-player.tsx)
 - [x] Fast-forward merge — no conflicts
 - [x] Verify TypeScript compiles (0 TS errors, 0 LSP errors, dev server running)
+
+## Round 82: Video loading skeleton and error fallback
+- [x] Add animated loading skeleton/placeholder while MuscleWiki videos buffer
+- [x] Add video error fallback with retry button when MuscleWiki URLs fail to load
+- [x] Write unit tests for loading and error states (23 tests, all passing)
+- [x] Verify TypeScript compiles (0 errors)
+- [x] Save checkpoint
