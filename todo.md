@@ -3021,4 +3021,12 @@
 - [x] Fetched latest from GitHub remote (1 new commit)
 - [x] Merged: replace expo-image with expo-video VideoView for MP4 demo playback (76 ins, 33 del in exercise-demo-player.tsx)
 - [x] Verify TypeScript compiles (0 TS errors, 0 LSP errors, dev server running)
+- [x] Save checkpoint (version 9c87ddf2)
+
+## Round 77: Sync with GitHub repository
+- [x] Fetched latest from GitHub remote (3 new commits)
+- [x] Merged: correct 34 MuscleWiki video filenames in exercise registry (34 ins, 34 del)
+- [x] Merged: correct 27 MuscleWiki video URLs in exercise data (27 ins, 27 del)
+- [x] Merged: add Muscles Targeted diagram card and fix em-dash encoding (36 ins, 2 del)
+- [x] Verify TypeScript compiles (0 TS errors, 0 LSP errors, dev server running)
 - [ ] Save checkpoint
