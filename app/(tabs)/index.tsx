@@ -591,7 +591,6 @@ function HomeScreenContent() {
                       <MaterialIcons name="spa" size={24} color="#22C55E" />
                     </View>
                     <View style={{ flex: 1 }}>
-                      <Text style={styles.cardEyebrow}>{(todayWorkout.day ?? "").toUpperCase()}</Text>
                       <Text style={[styles.workoutCardTitle, { color: "#22C55E" }]}>Rest & Recover</Text>
                       <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 12, marginTop: 2 }}>
                         Your muscles grow during rest. Try some light stretching today.
@@ -626,7 +625,7 @@ function HomeScreenContent() {
           ) : todayWorkout && !isRestDay ? (
             <StaggeredCard index={1}>
               <View style={styles.section}>
-                <SectionTitle title="Today's Workout" />
+                <SectionTitle title={`Today's ${todayWorkout?.day ?? new Date().toLocaleDateString("en-US", { weekday: "long" })} Target Muscles`} />
                 <TouchableOpacity
                   onPress={() => {
                     router.push({ pathname: "/active-workout", params: { dayData: JSON.stringify(todayWorkout) } } as any);
@@ -637,7 +636,6 @@ function HomeScreenContent() {
                 >
                   <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start" }}>
                     <View style={{ flex: 1 }}>
-                      <Text style={styles.cardEyebrow}>{(todayWorkout.day ?? "").toUpperCase()}</Text>
                       <Text style={styles.workoutCardTitle}>{todayWorkout.focus}</Text>
                       <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 12, marginTop: 4 }}>
                         {todayWorkout.exercises?.length ?? 0} exercises
@@ -672,7 +670,7 @@ function HomeScreenContent() {
           ) : (isPlanGenerating) ? (
             <StaggeredCard index={1}>
               <View style={styles.section}>
-                <SectionTitle title="Today's Workout" />
+                <SectionTitle title={`Today's ${new Date().toLocaleDateString("en-US", { weekday: "long" })} Target Muscles`} />
                 <View style={[styles.workoutCard, { alignItems: "center", justifyContent: "center", paddingVertical: 24 }]}>
                   <ActivityIndicator color="#F59E0B" size="small" />
                   <Text style={[styles.workoutCardTitle, { marginTop: 12 }]}>
