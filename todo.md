@@ -3053,3 +3053,9 @@
 - [x] Fixed ExerciseDemoPlayer import in exercise-detail.tsx (changed default import to named import)
 - [x] Removed invalid props (angleViews, primaryMuscles, secondaryMuscles) from ExerciseDemoPlayer usage in exercise-detail.tsx
 - [x] Verify TypeScript compiles (0 TS errors, 0 LSP errors, dev server running)
+
+## Round 81: Sync with GitHub repository
+- [x] Fetched latest from GitHub remote (1 new commit)
+- [x] Merged: fix(demo-player) default to MuscleWiki video instead of ExerciseDB GIF (31 changes in exercise-demo-player.tsx)
+- [x] Fast-forward merge — no conflicts
+- [x] Verify TypeScript compiles (0 TS errors, 0 LSP errors, dev server running)
