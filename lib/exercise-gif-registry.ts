@@ -49,7 +49,7 @@ export const EXERCISE_GIFS: Record<string, string> = {
 
   // Legacy lowercase key — kept so existing gif() calls still resolve
   "male-barbell-bench-press-front":
-    mw("male-Barbell-barbell-bench-press-front"),
+    mw("male-barbell-bench-press-front"),
   "male-barbell-bench-press-side":
     mw("male-barbell-bench-press-side_KciuhbB"),
 
@@ -64,19 +64,19 @@ export const EXERCISE_GIFS: Record<string, string> = {
     mw("male-Bodyweight-push-up-side"),
 
   "male-cable-pec-fly-front":
-    mw("male-Cable-cable-fly-front"),
+    mw("male-cable-pec-fly-front"),
   "male-cable-pec-fly-side":
-    mw("male-Cable-cable-fly-side"),
+    mw("male-cable-pec-fly-side"),
 
   "male-dumbbell-chest-fly-front":
-    mw("male-Dumbbells-dumbbell-chest-fly-front"),
+    mw("male-dumbbell-chest-fly-front"),
   "male-dumbbell-chest-fly-side":
-    mw("male-Dumbbells-dumbbell-chest-fly-side"),
+    mw("male-dumbbell-chest-fly-side"),
 
   "male-dumbbell-decline-bench-press-front":
-    mw("male-Dumbbells-dumbbell-decline-bench-press-front"),
+    mw("male-dumbbell-decline-bench-press-front"),
   "male-dumbbell-decline-bench-press-side":
-    mw("male-Dumbbells-dumbbell-decline-bench-press-side"),
+    mw("male-dumbbell-decline-bench-press-side"),
 
   "male-dumbbell-incline-bench-press-front":
     mw("male-dumbbell-incline-bench-press-front_q2q0T12"),
@@ -217,9 +217,9 @@ export const EXERCISE_GIFS: Record<string, string> = {
     mw("male-Dumbbells-dumbbell-preacher-curl-side"),
 
   "male-dumbbell-concentration-curl-front":
-    mw("male-Dumbbells-dumbbell-concentration-curl-front"),
+    mw("male-dumbbell-concentration-curl-front"),
   "male-dumbbell-concentration-curl-side":
-    mw("male-Dumbbells-dumbbell-concentration-curl-side"),
+    mw("male-dumbbell-concentration-curl-side"),
 
   "male-dumbbell-hammer-curl-front":
     mw("male-Dumbbells-dumbbell-hammer-curl-front"),
@@ -244,9 +244,9 @@ export const EXERCISE_GIFS: Record<string, string> = {
     mw("male-Kettlebells-kettlebell-skull-crusher-side"),
 
   "male-Machine-machine-tricep-pushdown-front":
-    mw("male-Cable-cable-tricep-pushdown-front"),
+    mw("male-Cables-cable-push-down-front"),
   "male-Machine-machine-tricep-pushdown-side":
-    mw("male-Cable-cable-tricep-pushdown-side"),
+    mw("male-Cables-cable-push-down-side"),
 
   // ── Legs ───────────────────────────────────────────────────────────────────
 
@@ -297,7 +297,7 @@ export const EXERCISE_GIFS: Record<string, string> = {
 
   // Key had a Manus artifact suffix (_zb4K50d) — stripped for correct MW URL
   "male-bodyweight-forward-lunge-front_zb4K50d":
-    mw("male-Bodyweight-forward-lunge-front"),
+    mw("male-bodyweight-forward-lunge-front_zb4K50d"),
   "male-bodyweight-forward-lunge-front":
     mw("male-bodyweight-forward-lunge-front_zb4K50d"),
   "male-bodyweight-forward-lunge-side":
@@ -309,9 +309,9 @@ export const EXERCISE_GIFS: Record<string, string> = {
     mw("male-Bodyweight-glute-bridge-side"),
 
   "male-dumbbell-goblet-squat-front":
-    mw("male-Dumbbells-dumbbell-goblet-squat-front"),
+    mw("male-dumbbell-goblet-squat-front"),
   "male-dumbbell-goblet-squat-side":
-    mw("male-Dumbbells-dumbbell-goblet-squat-side"),
+    mw("male-dumbbell-goblet-squat-side"),
 
   "male-machine-leg-extension-front":
     mw("male-Machine-machine-leg-extension-front"),
@@ -371,19 +371,19 @@ export const EXERCISE_GIFS: Record<string, string> = {
     mw("male-trx-ab-rollout-side"),
 
   "male-bodyweight-crunch-front":
-    mw("male-Bodyweight-crunch-front"),
+    mw("male-bodyweight-crunch-front"),
   "male-bodyweight-crunch-side":
-    mw("male-Bodyweight-crunch-side"),
+    mw("male-bodyweight-crunch-side"),
 
   "male-bodyweight-forearm-plank-front":
-    mw("male-Bodyweight-forearm-plank-front"),
+    mw("male-Medicine-Ball-plank-front"),
   "male-bodyweight-forearm-plank-side":
-    mw("male-Bodyweight-forearm-plank-side"),
+    mw("male-Medicine-Ball-plank-side"),
 
   "male-bodyweight-hanging-knee-raises-front":
-    mw("male-Bodyweight-hanging-knee-raises-front"),
+    mw("male-bodyweight-hanging-knee-raises-front"),
   "male-bodyweight-hanging-knee-raises-side":
-    mw("male-Bodyweight-hanging-knee-raises-side"),
+    mw("male-bodyweight-hanging-knee-raises-side"),
 
   "male-cable-woodchopper-front":
     mw("male-Cable-cable-woodchopper-front"),
