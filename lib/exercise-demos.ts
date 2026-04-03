@@ -2,13 +2,13 @@
  * Exercise Demo Library
  *
  * Maps common exercise names to CDN-hosted AI-generated exercise images.
- * Assets are served from manuscdn.com and cloudfront CDN — NOT local files.
+ * Assets are served from manuscdn.com and cloudfront CDN â NOT local files.
  *
  * Architecture:
- * - `gifAsset` field: resolved via EXERCISE_GIFS registry → CDN URL string
+ * - `gifAsset` field: resolved via EXERCISE_GIFS registry â CDN URL string
  * - `gifUrl` field: legacy, kept as empty string for backward compatibility
- * - Resolution chain: gif() → EXERCISE_GIFS[key] → CDN URL
- * - No local require() needed — Metro does not bundle these assets.
+ * - Resolution chain: gif() â EXERCISE_GIFS[key] â CDN URL
+ * - No local require() needed â Metro does not bundle these assets.
  *   The CDN URLs are fetched at runtime by expo-image / Image component.
  */
 
@@ -17,7 +17,7 @@ import { EXERCISE_GIFS } from "@/lib/exercise-gif-registry";
 export interface ExerciseDemo {
   /** Short cue text shown below the demo */
   cue: string;
-  /** Exercise image asset — CDN URL string or legacy require() number */
+  /** Exercise image asset â CDN URL string or legacy require() number */
   gifAsset: number | string;
   /** Legacy URL field for backward compatibility (empty string for CDN assets) */
   gifUrl: string;
@@ -34,11 +34,11 @@ function gif(key: string): number | string {
 }
 
 /**
- * Primary lookup map: normalised exercise name → demo
+ * Primary lookup map: normalised exercise name â demo
  * 77 local GIF assets covering 80+ exercise name variants.
  */
 const DEMO_MAP: Record<string, ExerciseDemo> = {
-  // ── Chest ─────────────────────────────────────────────────────────────────
+  // ââ Chest âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
   "bench press": {
     cue: "Keep shoulder blades retracted. Bar touches mid-chest.",
     gifAsset: gif("male-barbell-bench-press-front"),
@@ -104,7 +104,7 @@ const DEMO_MAP: Record<string, ExerciseDemo> = {
     gifAsset: gif("male-Dumbbells-dumbbell-weighted-dip-front"),
     gifUrl: "",
   },
-  // ── Back ──────────────────────────────────────────────────────────────────
+  // ââ Back ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
   "pull up": {
     cue: "Full hang at bottom. Drive elbows down to pull up.",
     gifAsset: gif("male-bodyweight-pull-ups-front"),
@@ -180,7 +180,7 @@ const DEMO_MAP: Record<string, ExerciseDemo> = {
     gifAsset: gif("male-Dumbbells-dumbbell-pendlay-row-front"),
     gifUrl: "",
   },
-  // ── Shoulders ─────────────────────────────────────────────────────────────
+  // ââ Shoulders âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
   "overhead press": {
     cue: "Brace core. Press bar in a straight line overhead.",
     gifAsset: gif("male-Barbell-barbell-overhead-press-front"),
@@ -241,7 +241,7 @@ const DEMO_MAP: Record<string, ExerciseDemo> = {
     gifAsset: gif("male-Dumbbells-dumbbell-shrug-front"),
     gifUrl: "",
   },
-  // ── Arms ──────────────────────────────────────────────────────────────────
+  // ââ Arms ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
   "bicep curl": {
     cue: "Elbows fixed at sides. Full range of motion.",
     gifAsset: gif("male-Dumbbells-dumbbell-curl-front"),
@@ -312,7 +312,7 @@ const DEMO_MAP: Record<string, ExerciseDemo> = {
     gifAsset: gif("male-Barbell-barbell-close-grip-bench-press-front"),
     gifUrl: "",
   },
-  // ── Legs ──────────────────────────────────────────────────────────────────
+  // ââ Legs ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
   "squat": {
     cue: "Feet shoulder-width. Knees track toes. Depth to parallel.",
     gifAsset: gif("male-Barbell-barbell-squat-front"),
@@ -428,7 +428,7 @@ const DEMO_MAP: Record<string, ExerciseDemo> = {
     gifAsset: gif("male-Kettlebells-kettlebell-step-up-front"),
     gifUrl: "",
   },
-  // ── Core ──────────────────────────────────────────────────────────────────
+  // ââ Core ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
   "plank": {
     cue: "Straight line from head to heels. Don\u2019t let hips sag.",
     gifAsset: gif("male-bodyweight-forearm-plank-front"),
@@ -489,7 +489,7 @@ const DEMO_MAP: Record<string, ExerciseDemo> = {
     gifAsset: gif("male-cable-woodchopper-front"),
     gifUrl: "",
   },
-  // ── Cardio / HIIT ─────────────────────────────────────────────────────────
+  // ââ Cardio / HIIT âââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
   "burpee": {
     cue: "Explosive jump at top. Chest to floor at bottom.",
     gifAsset: gif("male-Bodyweight-burpee-front"),
@@ -518,11 +518,6 @@ const DEMO_MAP: Record<string, ExerciseDemo> = {
   "jump rope": {
     cue: "Wrists drive the rope. Light on feet.",
     gifAsset: gif("male-Cardio-jump-rope-front"),
-    gifUrl: "",
-  },
-  "high knees": {
-    cue: "Drive knees to hip height. Pump arms.",
-    gifAsset: gif("high-knees"),
     gifUrl: "",
   },
   "sprint": {
@@ -579,7 +574,7 @@ export function getExerciseDemo(exerciseName: string): ExerciseDemo {
 }
 
 /**
- * Reverse-lookup: exercise name → EXERCISE_GIFS registry key.
+ * Reverse-lookup: exercise name â EXERCISE_GIFS registry key.
  * Returns the registry key (e.g. "male-barbell-bench-press-front") that
  * the DEMO_MAP entry for this exercise uses via gif().
  * Falls back to "male-bodyweight-push-up-front" if no match.
