@@ -32,7 +32,7 @@ import { loadMealPreferences, toggleFavourite, rateMeal, isFavourite, getMealRat
 import { saveMealPlanToHistory, getPastMealNames, updatePhotoCacheFromPlan, applyCachedPhotos, isWeeklyRefreshNeeded, markWeeklyRefreshDone, loadPinnedMeals, togglePinnedMeal, applyPinnedMeals, cleanupPinnedMeals } from "@/lib/meal-history";
 
 
-// NanoBanana design tokens Ã¢ÂÂ Meals uses mint/teal accent
+// NanoBanana design tokens ÃÂ¢ÃÂÃÂ Meals uses mint/teal accent
 const MBG = "#0A0E14";
 const MSURFACE = "#111827";
 const MSURFACE2 = "#1E293B";
@@ -140,16 +140,16 @@ function normalizeMealPlanDays(plan: any): any {
     Asian: [
       { name: "Teriyaki Chicken Rice Bowl", type: "lunch", calories: 480, protein: 32, carbs: 52, fat: 14, photoQuery: "teriyaki chicken rice",
         ingredients: ["150g chicken thigh (boneless)", "80g jasmine rice (dry)", "60g broccoli florets", "1 medium carrot (50g, julienned)", "2 tbsp (30ml) soy sauce", "1 tbsp (15ml) mirin", "1 tbsp (15g) honey", "1 tsp sesame oil", "1 tsp cornstarch + 1 tbsp water", "5g sesame seeds", "1 spring onion (sliced)"],
-        instructions: ["Cook 80g jasmine rice in 160ml water — bring to boil, cover, simmer 12 min. Rest 5 min (17 min)", "Make teriyaki sauce: whisk soy sauce, mirin, honey, and cornstarch slurry in a small bowl (1 min)", "Cut chicken into 2cm pieces. Heat sesame oil in a pan over medium-high. Cook chicken 5-6 min, turning, until golden (6 min)", "Pour teriyaki sauce over chicken, stir 1-2 min until glossy and thick. Add broccoli and carrot, toss to coat, cook 2 min (4 min)", "Serve over rice. Top with sesame seeds and sliced spring onion (1 min)"] },
+        instructions: ["Cook 80g jasmine rice in 160ml water â bring to boil, cover, simmer 12 min. Rest 5 min (17 min)", "Make teriyaki sauce: whisk soy sauce, mirin, honey, and cornstarch slurry in a small bowl (1 min)", "Cut chicken into 2cm pieces. Heat sesame oil in a pan over medium-high. Cook chicken 5-6 min, turning, until golden (6 min)", "Pour teriyaki sauce over chicken, stir 1-2 min until glossy and thick. Add broccoli and carrot, toss to coat, cook 2 min (4 min)", "Serve over rice. Top with sesame seeds and sliced spring onion (1 min)"] },
       { name: "Miso Soup with Tofu & Seaweed", type: "breakfast", calories: 180, protein: 12, carbs: 14, fat: 6, photoQuery: "miso soup tofu",
         ingredients: ["2 tbsp (36g) white miso paste", "100g silken tofu (cubed 1.5cm)", "5g dried wakame seaweed", "500ml dashi stock (or water + 1 tsp dashi powder)", "1 spring onion (finely sliced)", "1 tsp soy sauce (optional)"],
-        instructions: ["Heat dashi stock in a saucepan until simmering — do not boil (3 min)", "Add dried wakame; let rehydrate in the hot stock for 2 min (2 min)", "Add tofu cubes gently. Heat through 1 min (1 min)", "Remove pot from heat. Dissolve miso paste in a ladle of the hot stock, then stir back into the pot. Do NOT boil after adding miso (1 min)", "Serve in bowls, garnish with sliced spring onion (30 sec)"] },
+        instructions: ["Heat dashi stock in a saucepan until simmering â do not boil (3 min)", "Add dried wakame; let rehydrate in the hot stock for 2 min (2 min)", "Add tofu cubes gently. Heat through 1 min (1 min)", "Remove pot from heat. Dissolve miso paste in a ladle of the hot stock, then stir back into the pot. Do NOT boil after adding miso (1 min)", "Serve in bowls, garnish with sliced spring onion (30 sec)"] },
       { name: "Salmon Poke Bowl", type: "dinner", calories: 440, protein: 34, carbs: 42, fat: 16, photoQuery: "salmon poke bowl",
         ingredients: ["150g sushi-grade salmon (cubed 2cm)", "80g sushi rice (dry)", "1/2 avocado (60g, sliced)", "50g edamame beans (shelled)", "30g cucumber (sliced)", "1 tbsp (15ml) soy sauce", "1 tsp sesame oil", "1 tsp rice vinegar", "5g pickled ginger", "5g sesame seeds", "1 sheet nori (torn)"],
         instructions: ["Cook sushi rice per packet instructions (usually 12 min + 10 min rest). Season with rice vinegar while warm (22 min)", "Marinate salmon cubes in soy sauce and sesame oil for 10 min (10 min, runs parallel)", "Cook edamame in boiling water 3 min, drain and cool (3 min)", "Build bowl: rice base, arrange salmon, avocado slices, edamame, cucumber in sections (2 min)", "Top with pickled ginger, sesame seeds, and torn nori strips (1 min)"] },
       { name: "Edamame with Sea Salt", type: "snack", calories: 190, protein: 16, carbs: 14, fat: 8, photoQuery: "edamame beans",
         ingredients: ["150g frozen edamame (in pods)", "1/2 tsp flaky sea salt", "Pinch of chili flakes (optional)"],
-        instructions: ["Bring a pot of water to a rolling boil. Add frozen edamame pods (2 min)", "Boil 4 min until bright green and tender (4 min)", "Drain and toss with sea salt and optional chili flakes (30 sec)", "Serve warm — squeeze pods to pop out the beans (eat immediately)"] },
+        instructions: ["Bring a pot of water to a rolling boil. Add frozen edamame pods (2 min)", "Boil 4 min until bright green and tender (4 min)", "Drain and toss with sea salt and optional chili flakes (30 sec)", "Serve warm â squeeze pods to pop out the beans (eat immediately)"] },
     ],
     Indian: [
       { name: "Chicken Tikka Masala with Basmati", type: "dinner", calories: 520, protein: 36, carbs: 48, fat: 18, photoQuery: "chicken tikka masala curry",
@@ -168,7 +168,7 @@ function normalizeMealPlanDays(plan: any): any {
     Latin: [
       { name: "Chicken Burrito Bowl", type: "lunch", calories: 510, protein: 38, carbs: 48, fat: 16, photoQuery: "burrito bowl chicken",
         ingredients: ["150g chicken breast", "80g long grain rice (dry)", "80g canned black beans (drained)", "1/2 avocado (60g)", "40g sweetcorn", "30g tomato salsa", "20g cheddar cheese (grated)", "1 tsp cumin", "1 tsp smoked paprika", "1/2 lime (juice)", "1 tbsp (15ml) oil", "Fresh coriander (5g)", "Salt and pepper"],
-        instructions: ["Cook rice in 160ml water — boil, cover, simmer 12 min. Stir in lime juice and a pinch of salt when done (12 min)", "Season chicken with cumin, paprika, salt, pepper. Heat oil in a pan over medium-high. Cook 6 min per side until 74\u00b0C internal (12 min)", "Warm black beans and sweetcorn in a small saucepan or microwave (2 min)", "Slice chicken into strips. Build bowl: rice base, chicken, beans, sweetcorn in sections (2 min)", "Top with sliced avocado, salsa, grated cheese, and coriander (1 min)"] },
+        instructions: ["Cook rice in 160ml water â boil, cover, simmer 12 min. Stir in lime juice and a pinch of salt when done (12 min)", "Season chicken with cumin, paprika, salt, pepper. Heat oil in a pan over medium-high. Cook 6 min per side until 74\u00b0C internal (12 min)", "Warm black beans and sweetcorn in a small saucepan or microwave (2 min)", "Slice chicken into strips. Build bowl: rice base, chicken, beans, sweetcorn in sections (2 min)", "Top with sliced avocado, salsa, grated cheese, and coriander (1 min)"] },
       { name: "Huevos Rancheros", type: "breakfast", calories: 380, protein: 20, carbs: 34, fat: 16, photoQuery: "huevos rancheros breakfast",
         ingredients: ["2 large eggs", "2 small corn tortillas (50g)", "100g canned chopped tomatoes", "60g canned black beans (drained)", "1/2 jalape\u00f1o (sliced, optional)", "1/4 onion (30g, diced)", "1 clove garlic (minced)", "1/2 tsp cumin", "1 tsp (5ml) oil", "20g cheddar (grated)", "Fresh coriander (5g)", "1/2 lime (wedge)"],
         instructions: ["Heat oil in a skillet over medium heat. Cook onion and garlic 3 min until soft. Add cumin, stir 30 sec (3.5 min)", "Add chopped tomatoes, black beans, and jalape\u00f1o. Simmer 5 min until slightly thickened (5 min)", "Make 2 wells in the sauce. Crack an egg into each. Cover and cook on low 4-5 min until whites set (5 min)", "Warm tortillas in a dry pan 20 sec each side (1 min)", "Place tortillas on a plate, spoon the eggs and sauce on top. Add grated cheese, coriander, and lime (1 min)"] },
@@ -196,16 +196,16 @@ function normalizeMealPlanDays(plan: any): any {
     Turkish: [
       { name: "Turkish Eggs (Cilbir) with Yogurt", type: "breakfast", calories: 350, protein: 20, carbs: 22, fat: 20, photoQuery: "cilbir turkish eggs yogurt",
         ingredients: ["2 large eggs", "120g thick Greek yogurt", "1 clove garlic (minced)", "20g butter", "1 tsp Aleppo pepper (pul biber) or paprika", "1 tsp white vinegar", "1 slice sourdough bread (50g, toasted)", "Fresh dill (5g)", "Flaky salt"],
-        instructions: ["Mix Greek yogurt with minced garlic and a pinch of salt in a bowl. Spread onto a plate, making a well in the centre (1 min)", "Bring a pot of water to a gentle simmer. Add white vinegar. Create a whirlpool and poach eggs one at a time — 3 min each for runny yolks (6 min)", "Melt butter in a small pan over medium heat. Add Aleppo pepper, swirl 30 sec until butter turns red — remove from heat immediately (1 min)", "Place poached eggs on the yogurt bed. Drizzle the spiced butter over everything (30 sec)", "Garnish with fresh dill and flaky salt. Serve with toasted sourdough for dipping (1 min)"] },
+        instructions: ["Mix Greek yogurt with minced garlic and a pinch of salt in a bowl. Spread onto a plate, making a well in the centre (1 min)", "Bring a pot of water to a gentle simmer. Add white vinegar. Create a whirlpool and poach eggs one at a time â 3 min each for runny yolks (6 min)", "Melt butter in a small pan over medium heat. Add Aleppo pepper, swirl 30 sec until butter turns red â remove from heat immediately (1 min)", "Place poached eggs on the yogurt bed. Drizzle the spiced butter over everything (30 sec)", "Garnish with fresh dill and flaky salt. Serve with toasted sourdough for dipping (1 min)"] },
       { name: "Lamb Kebab with Bulgur Salad", type: "lunch", calories: 490, protein: 36, carbs: 38, fat: 20, photoQuery: "lamb kebab bulgur",
         ingredients: ["180g minced lamb", "60g bulgur wheat (dry)", "1/2 onion (40g, grated)", "10g parsley (chopped)", "1 tsp cumin", "1/2 tsp sumac", "1 medium tomato (80g, diced)", "1/4 cucumber (40g, diced)", "1 tbsp (15ml) olive oil", "1 tbsp lemon juice", "Fresh mint (5g)", "Salt and pepper"],
         instructions: ["Soak bulgur in 120ml boiling water. Cover, let stand 15 min until tender (15 min)", "Combine lamb, grated onion, half the parsley, cumin, salt and pepper. Knead 2 min until sticky. Shape into 4 oval kebabs around flat skewers (4 min)", "Grill kebabs over high heat (or under a broiler) 4-5 min per side until browned and cooked through (10 min)", "Fluff bulgur with a fork. Add diced tomato, cucumber, remaining parsley, mint, olive oil, lemon juice, and sumac. Toss (2 min)", "Plate bulgur salad with kebabs alongside (1 min)"] },
       { name: "Grilled Chicken Adana with Rice", type: "dinner", calories: 480, protein: 38, carbs: 40, fat: 16, photoQuery: "adana kebab chicken",
-        ingredients: ["150g chicken mince or finely diced breast", "80g basmati rice (dry)", "1/2 onion (40g, grated)", "1 red pepper (roasted, from jar — 50g)", "1 tsp paprika", "1/2 tsp chili flakes", "1/2 tsp cumin", "1 tbsp (15ml) olive oil", "40g tomato (grilled)", "Fresh parsley (5g)", "Salt and pepper"],
+        ingredients: ["150g chicken mince or finely diced breast", "80g basmati rice (dry)", "1/2 onion (40g, grated)", "1 red pepper (roasted, from jar â 50g)", "1 tsp paprika", "1/2 tsp chili flakes", "1/2 tsp cumin", "1 tbsp (15ml) olive oil", "40g tomato (grilled)", "Fresh parsley (5g)", "Salt and pepper"],
         instructions: ["Cook basmati rice: rinse, 160ml water, boil, cover, simmer 12 min. Rest 5 min (17 min)", "Mix chicken mince with grated onion, paprika, chili flakes, cumin, salt, pepper. Knead until smooth (2 min)", "Shape mixture into flat sausage shapes on metal skewers (or form into patties) (2 min)", "Grill over high heat 4 min per side until charred edges and cooked through (8 min)", "Halve a tomato, brush with oil and grill cut-side down 2 min alongside the chicken (2 min)", "Plate rice, lay Adana kebab on top with grilled tomato and roasted pepper. Garnish with parsley (1 min)"] },
       { name: "Roasted Chickpeas (Leblebi)", type: "snack", calories: 200, protein: 10, carbs: 28, fat: 6, photoQuery: "roasted chickpeas",
         ingredients: ["200g canned chickpeas (drained, rinsed, patted very dry)", "1 tbsp (15ml) olive oil", "1/2 tsp cumin", "1/2 tsp paprika", "1/4 tsp garlic powder", "Pinch of cayenne", "1/2 tsp flaky salt"],
-        instructions: ["Preheat oven to 200\u00b0C. Pat chickpeas as dry as possible with paper towels — the drier, the crunchier (2 min)", "Toss chickpeas with olive oil, cumin, paprika, garlic powder, and cayenne on a baking tray. Spread in a single layer (1 min)", "Roast 25-30 min, shaking the tray halfway through, until golden and crunchy (30 min)", "Remove from oven, sprinkle with flaky salt immediately. Let cool 5 min — they crisp further as they cool (5 min)"] },
+        instructions: ["Preheat oven to 200\u00b0C. Pat chickpeas as dry as possible with paper towels â the drier, the crunchier (2 min)", "Toss chickpeas with olive oil, cumin, paprika, garlic powder, and cayenne on a baking tray. Spread in a single layer (1 min)", "Roast 25-30 min, shaking the tray halfway through, until golden and crunchy (30 min)", "Remove from oven, sprinkle with flaky salt immediately. Let cool 5 min â they crisp further as they cool (5 min)"] },
     ],
     Nordic: [
       { name: "Smoked Salmon on Rye with Cream Cheese", type: "breakfast", calories: 340, protein: 24, carbs: 28, fat: 14, photoQuery: "smoked salmon rye bread",
@@ -230,7 +230,7 @@ function normalizeMealPlanDays(plan: any): any {
   daySignatures.forEach((sig: string, idx: number) => {
     if (!sig) return;
     if (seenSigs.has(sig) && normalized[idx].meals?.length > 0) {
-      // This day is a duplicate â replace with themed alternatives
+      // This day is a duplicate Ã¢ÂÂ replace with themed alternatives
       const theme = themeKeys[themeIdx % themeKeys.length];
       themeIdx++;
       const pool = VARIETY_POOLS[theme];
@@ -265,12 +265,12 @@ function normalizeMealPlanDays(plan: any): any {
 
 
 // ============================================================================================
-// CURATED MEAL PHOTO DATABASE — Local mapping of meal names to accurate food photographs.
+// CURATED MEAL PHOTO DATABASE â Local mapping of meal names to accurate food photographs.
 // This eliminates reliance on AI-generated images. Every URL points to a verified Unsplash
 // photo that visually matches the dish name. Lookup is case-insensitive via getMealPlanPhotoUrl.
 // ============================================================================================
 const CURATED_MEAL_PHOTOS: Record<string, string> = {
-  // ── BREAKFAST ──────────────────────────────────────────────────────────────────
+  // ââ BREAKFAST ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
   "berry yogurt parfait":            "https://images.unsplash.com/photo-1488477181946-6428a0291777?w=600&q=80",
   "overnight oats with chia & berries": "https://images.unsplash.com/photo-1517673132405-a56a62b18caf?w=600&q=80",
   "overnight oats with banana":      "https://images.unsplash.com/photo-1517673132405-a56a62b18caf?w=600&q=80",
@@ -296,7 +296,7 @@ const CURATED_MEAL_PHOTOS: Record<string, string> = {
   "banana protein pancakes":         "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=600&q=80",
   "cottage cheese & fruit plate":    "https://images.unsplash.com/photo-1490474418585-ba9bad8fd0ea?w=600&q=80",
 
-  // ── LUNCH ─────────────────────────────────────────────────────────────────────
+  // ââ LUNCH âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
   "grilled chicken quinoa bowl":     "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&q=80",
   "chicken shawarma rice bowl":      "https://images.unsplash.com/photo-1529006557810-274b9b2fc783?w=600&q=80",
   "tofu & edamame buddha bowl":      "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=600&q=80",
@@ -320,7 +320,7 @@ const CURATED_MEAL_PHOTOS: Record<string, string> = {
   "sushi roll platter":              "https://images.unsplash.com/photo-1553621042-f6e147245754?w=600&q=80",
   "vietnamese pho":                  "https://images.unsplash.com/photo-1569058242253-92a9c755a0ec?w=600&q=80",
 
-  // ── DINNER ────────────────────────────────────────────────────────────────────
+  // ââ DINNER ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
   "pan-seared salmon & asparagus":   "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=600&q=80",
   "lamb kofta with tabbouleh":       "https://images.unsplash.com/photo-1529042410759-befb1204b468?w=600&q=80",
   "chickpea & spinach curry":        "https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=600&q=80",
@@ -356,7 +356,7 @@ const CURATED_MEAL_PHOTOS: Record<string, string> = {
   "mapo tofu with rice":             "https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=600&q=80",
   "doner kebab plate":               "https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?w=600&q=80",
 
-  // ── SNACKS ────────────────────────────────────────────────────────────────────
+  // ââ SNACKS ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
   "protein snack board":             "https://images.unsplash.com/photo-1505576399279-565b52d4ac71?w=600&q=80",
   "dates & almonds":                 "https://images.unsplash.com/photo-1559181567-c3190bfa4cfe?w=600&q=80",
   "dates & almonds (30g each)":      "https://images.unsplash.com/photo-1559181567-c3190bfa4cfe?w=600&q=80",
@@ -392,7 +392,7 @@ const MEAL_PHOTO_MAP: Record<string, string> = {
   default: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&q=80",
 };
 
-// Keyword-matched food photos for intelligent fallback Ã¢ÂÂ matches meal description to appropriate image
+// Keyword-matched food photos for intelligent fallback ÃÂ¢ÃÂÃÂ matches meal description to appropriate image
 const FOOD_KEYWORD_PHOTOS: Array<{ keywords: string[]; url: string }> = [
   { keywords: ["chicken", "grilled chicken", "roast chicken", "poultry"], url: "https://images.unsplash.com/photo-1598103442097-8b74394b95c6?w=400&q=80" },
   { keywords: ["salmon", "fish", "seafood", "tuna", "cod", "shrimp", "prawn", "sea bass", "trout", "tilapia"], url: "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=400&q=80" },
@@ -447,7 +447,7 @@ function getMealPlanPhotoUrl(meal: any): string {
   // 1. If the meal already has an AI-generated or cached photoUrl, use it
   if (meal.photoUrl) return meal.photoUrl;
 
-  // 2. Check CURATED_MEAL_PHOTOS — exact name match (case-insensitive)
+  // 2. Check CURATED_MEAL_PHOTOS â exact name match (case-insensitive)
   const mealNameLower = (meal.name ?? "").toLowerCase().trim();
   if (mealNameLower && CURATED_MEAL_PHOTOS[mealNameLower]) {
     return CURATED_MEAL_PHOTOS[mealNameLower];
@@ -480,7 +480,7 @@ function getMealPlanPhotoUrl(meal: any): string {
     }
     if (bestMatch) return bestMatch.url;
 
-    // Hash-based fallback — deterministic so the same meal always gets the same image
+    // Hash-based fallback â deterministic so the same meal always gets the same image
     const hashKey = (meal.name ?? searchText).toLowerCase().trim();
     const idx = hashString(hashKey) % FOOD_PHOTO_POOL.length;
     return FOOD_PHOTO_POOL[idx];
@@ -671,7 +671,7 @@ const DIET_RECIPES: Record<string, Record<string, DefaultRecipe>> = {
       steps: [
         "In a mason jar or bowl, combine 60g oats, 200ml oat milk, chia seeds, vanilla extract, and cinnamon. Stir well to combine (1 min)",
         "Cover and refrigerate for at least 6 hours or overnight. The oats and chia will absorb the liquid and thicken (6-8 hrs)",
-        "In the morning, stir the mixture — add a splash more oat milk if too thick (30 sec)",
+        "In the morning, stir the mixture â add a splash more oat milk if too thick (30 sec)",
         "Top with mixed berries and drizzle maple syrup over the top (30 sec)",
         "Eat cold or microwave for 90 sec if you prefer warm oats (0-2 min)"
       ],
@@ -682,7 +682,7 @@ const DIET_RECIPES: Record<string, Record<string, DefaultRecipe>> = {
       time: "25 min",
       ingredients: ["150g firm tofu (pressed and cubed 2cm)", "80g brown rice (dry weight)", "80g frozen edamame beans (shelled)", "80g broccoli florets", "1/2 ripe avocado (60g)", "1 tbsp (15ml) soy sauce or tamari", "1 tsp sesame oil", "1 tbsp (15ml) rice vinegar", "1 tsp maple syrup", "5g sesame seeds", "1 tbsp (15ml) vegetable oil"],
       steps: [
-        "Cook 80g brown rice in 200ml water — bring to boil, reduce heat, cover and simmer 20 min until tender. Rest 5 min (25 min)",
+        "Cook 80g brown rice in 200ml water â bring to boil, reduce heat, cover and simmer 20 min until tender. Rest 5 min (25 min)",
         "Press tofu between paper towels with a heavy object for 10 min to remove moisture. Cut into 2cm cubes (10 min, runs parallel)",
         "Heat vegetable oil in a non-stick pan over medium-high heat. Pan-fry tofu cubes 3-4 min per side until golden and crispy. Add soy sauce in the last minute (8 min)",
         "Steam or boil edamame and broccoli together for 4 min until bright green and tender-crisp (4 min)",
@@ -700,7 +700,7 @@ const DIET_RECIPES: Record<string, Record<string, DefaultRecipe>> = {
         "Heat vegetable oil in a large pan over medium heat. Add cumin seeds and cook 30 sec until fragrant. Add diced onion and cook 5 min until softened (5.5 min)",
         "Add minced garlic and grated ginger, stir for 1 min until aromatic. Add curry paste and turmeric, stir 30 sec (1.5 min)",
         "Pour in coconut milk, stir to combine. Add drained chickpeas and bring to a gentle simmer. Cook 10 min, stirring occasionally (10 min)",
-        "Add spinach in handfuls, stirring each batch until wilted — about 2 min total. Season with salt (2 min)",
+        "Add spinach in handfuls, stirring each batch until wilted â about 2 min total. Season with salt (2 min)",
         "Serve curry over fluffed basmati rice. Garnish with fresh coriander leaves (1 min)"
       ],
       calories: 460, protein: 18, carbs: 56, fat: 18
@@ -714,7 +714,7 @@ const DIET_RECIPES: Record<string, Record<string, DefaultRecipe>> = {
         "Cut cucumber into similar-sized sticks. Slice bell pepper into strips (1 min)",
         "Spoon 60g hummus into a small bowl or ramekin (15 sec)",
         "Arrange vegetable sticks around the hummus. Add rice cakes alongside if using (1 min)",
-        "Serve immediately — keeps in an airtight container for up to 4 hours (15 sec)"
+        "Serve immediately â keeps in an airtight container for up to 4 hours (15 sec)"
       ],
       calories: 190, protein: 8, carbs: 20, fat: 10
     },
@@ -725,7 +725,7 @@ const DIET_RECIPES: Record<string, Record<string, DefaultRecipe>> = {
       time: "12 min",
       ingredients: ["3 large eggs", "40g fresh spinach", "30g feta cheese (crumbled)", "1 tsp (5ml) olive oil", "1 slice wholegrain bread (40g, toasted)", "Salt and black pepper to taste", "Pinch of nutmeg"],
       steps: [
-        "Crack 3 eggs into a bowl. Season with salt, pepper, and a pinch of nutmeg. Whisk with a fork until just combined — don't over-beat (1 min)",
+        "Crack 3 eggs into a bowl. Season with salt, pepper, and a pinch of nutmeg. Whisk with a fork until just combined â don't over-beat (1 min)",
         "Heat olive oil in a 22cm non-stick pan over medium heat. Add spinach and cook 1-2 min, stirring until wilted. Remove and set aside (2 min)",
         "Wipe the pan, add a tiny drizzle more oil. Pour in the whisked eggs, tilting the pan to spread evenly. Cook without stirring for 1 min until edges set (1 min)",
         "Gently lift edges with a spatula, tilt pan to let uncooked egg flow underneath. Cook 2 more min until mostly set but still slightly glossy on top (2 min)",
@@ -768,7 +768,7 @@ const DIET_RECIPES: Record<string, Record<string, DefaultRecipe>> = {
       ingredients: ["200g Greek yogurt (full fat or 0%)", "1 tsp (7g) raw honey", "20g walnuts (roughly chopped, about 5 halves)", "Pinch of cinnamon (optional)"],
       steps: [
         "Spoon 200g Greek yogurt into a bowl (15 sec)",
-        "Roughly chop 20g walnuts — about 5 walnut halves broken into pieces (30 sec)",
+        "Roughly chop 20g walnuts â about 5 walnut halves broken into pieces (30 sec)",
         "Scatter walnuts over the yogurt (15 sec)",
         "Drizzle 1 tsp honey in a thin stream. Dust with cinnamon if desired (30 sec)"
       ],
@@ -783,7 +783,7 @@ const DIET_RECIPES: Record<string, Record<string, DefaultRecipe>> = {
       steps: [
         "Place 3 bacon rashers in a cold non-stick pan. Turn heat to medium. Cook 3-4 min per side until crispy to your liking, flipping once (8 min)",
         "Remove bacon to a plate lined with kitchen paper. Keep 1 tsp of the rendered bacon fat in the pan (30 sec)",
-        "Add 10g butter to the pan over medium-low heat. Crack 3 eggs into the pan. Scramble gently with a spatula, making large curds — remove from heat while still slightly wet (they'll finish cooking from residual heat) (3 min)",
+        "Add 10g butter to the pan over medium-low heat. Crack 3 eggs into the pan. Scramble gently with a spatula, making large curds â remove from heat while still slightly wet (they'll finish cooking from residual heat) (3 min)",
         "Halve the avocado, remove pit, and slice or scoop 75g onto the plate (30 sec)",
         "Plate scrambled eggs alongside bacon and avocado. Season with salt, pepper, and chili flakes if desired (30 sec)"
       ],
@@ -811,7 +811,7 @@ const DIET_RECIPES: Record<string, Record<string, DefaultRecipe>> = {
         "Heat olive oil in a heavy cast-iron skillet over high heat until just beginning to smoke (2 min)",
         "Lay steak away from you into the hot pan. Do not move it. Sear 4 min for a deep golden crust. Flip once (4 min)",
         "Add butter, crushed garlic, rosemary, and thyme to the pan. Tilt pan slightly and baste steak with the foaming butter using a spoon for 3 min. For medium-rare, internal temp should read 52-54\u00b0C (3 min)",
-        "Transfer steak to a cutting board. Rest for 5 min — this allows juices to redistribute (5 min)",
+        "Transfer steak to a cutting board. Rest for 5 min â this allows juices to redistribute (5 min)",
         "While steak rests, use the same pan (reduce heat to medium). Add green beans with a pinch of salt, saut\u00e9 4-5 min tossing frequently until tender-crisp and slightly blistered (5 min)",
         "Slice steak against the grain. Plate alongside green beans, spooning any resting juices over the top (1 min)"
       ],
@@ -847,7 +847,7 @@ const DIET_RECIPES: Record<string, Record<string, DefaultRecipe>> = {
     lunch: {
       title: "Turkey Lettuce Wraps",
       time: "18 min",
-      ingredients: ["200g lean ground turkey", "1 tbsp (15ml) coconut aminos (soy-free alternative)", "1 tbsp (15ml) fresh lime juice", "2 cloves garlic (minced)", "10g fresh ginger (grated)", "8 large butter lettuce leaves", "1 medium carrot (60g, julienned)", "1/4 cup fresh herbs (coriander, mint, basil — 15g total)", "1 tbsp (15ml) avocado oil", "1/2 tsp fish sauce (optional)", "Pinch of red pepper flakes"],
+      ingredients: ["200g lean ground turkey", "1 tbsp (15ml) coconut aminos (soy-free alternative)", "1 tbsp (15ml) fresh lime juice", "2 cloves garlic (minced)", "10g fresh ginger (grated)", "8 large butter lettuce leaves", "1 medium carrot (60g, julienned)", "1/4 cup fresh herbs (coriander, mint, basil â 15g total)", "1 tbsp (15ml) avocado oil", "1/2 tsp fish sauce (optional)", "Pinch of red pepper flakes"],
       steps: [
         "Heat avocado oil in a large skillet over medium-high heat until shimmering (1 min)",
         "Add minced garlic and grated ginger, stir for 30 sec until fragrant. Add ground turkey, breaking it up with a wooden spoon (30 sec)",
@@ -874,7 +874,7 @@ const DIET_RECIPES: Record<string, Record<string, DefaultRecipe>> = {
     snack: {
       title: "Apple Slices with Almond Butter",
       time: "3 min",
-      ingredients: ["1 medium apple (150g — Gala, Fuji, or Granny Smith)", "2 tbsp (32g) almond butter (no added sugar)", "1/4 tsp ground cinnamon"],
+      ingredients: ["1 medium apple (150g â Gala, Fuji, or Granny Smith)", "2 tbsp (32g) almond butter (no added sugar)", "1/4 tsp ground cinnamon"],
       steps: [
         "Wash the apple. Cut into quarters, remove core, then slice each quarter into 3 wedges (12 slices total) (1 min)",
         "Spoon 2 tbsp almond butter into a small bowl for dipping (15 sec)",
@@ -1372,7 +1372,7 @@ function MealsScreenContent() {
     // Only trigger once, and only if no plan exists
     if (aiMealPlan || autoGenTriggeredRef.current || regenerating || autoGeneratingPlan) return;
     autoGenTriggeredRef.current = true;
-    // Check if onboarding is complete Ã¢ÂÂ only auto-generate after onboarding
+    // Check if onboarding is complete ÃÂ¢ÃÂÃÂ only auto-generate after onboarding
     AsyncStorage.getItem("@onboarding_complete").then(val => {
       if (val !== "true") return;
       // Double-check storage hasn't been populated in the meantime
@@ -1384,7 +1384,7 @@ function MealsScreenContent() {
             return;
           } catch {}
         }
-        // No plan exists Ã¢ÂÂ auto-generate
+        // No plan exists ÃÂ¢ÃÂÃÂ auto-generate
         autoGenRef.current = true;
         setAutoGeneratingPlan(true);
         regenerateMealPlan.mutate({
@@ -1410,7 +1410,7 @@ function MealsScreenContent() {
     weeklyRefreshRef.current = true;
     isWeeklyRefreshNeeded().then(needed => {
       if (!needed) return;
-      // It's a new week Ã¢ÂÂ auto-regenerate the meal plan
+      // It's a new week ÃÂ¢ÃÂÃÂ auto-regenerate the meal plan
       autoGenRef.current = true;
       setAutoGeneratingPlan(true);
       regenerateMealPlan.mutate({
@@ -1428,7 +1428,7 @@ function MealsScreenContent() {
     }).catch(() => {});
   }, [aiMealPlan, localProfile]);
 
-  // Ã¢ÂÂÃ¢ÂÂ AI Meal Image Generation Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+  // ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ AI Meal Image Generation ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ
   const generateMealImages = trpc.mealImages.generateBatch.useMutation();
 
   const triggerMealImageGeneration = useCallback(async (plan: any) => {
@@ -1477,7 +1477,7 @@ function MealsScreenContent() {
       // Update the persistent photo cache so images survive app restarts
       updatePhotoCacheFromPlan(updatedPlan).catch(() => {});
     } catch (e) {
-      // Silently fail Ã¢ÂÂ fallback images will be used
+      // Silently fail ÃÂ¢ÃÂÃÂ fallback images will be used
       console.warn("Meal image generation failed:", e);
     } finally {
       setGeneratingImages(false);
@@ -1592,7 +1592,7 @@ function MealsScreenContent() {
     }
   }, [pantryItems, calorieGoal, macroTargets, userDietaryPref, userGoal, localProfile]);
 
-  // Ã¢ÂÂÃ¢ÂÂ Pantry Expiry Alerts Ã¢ÂÂ schedule notifications when items are expiring Ã¢ÂÂÃ¢ÂÂ
+  // ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Pantry Expiry Alerts ÃÂ¢ÃÂÃÂ schedule notifications when items are expiring ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ
   React.useEffect(() => {
     if (pantryItems.length === 0) return;
     const now = new Date();
@@ -1609,7 +1609,7 @@ function MealsScreenContent() {
     }
   }, [pantryItems]);
 
-  // Ã¢ÂÂÃ¢ÂÂ Generate "Use It Up" meal suggestions for expiring items Ã¢ÂÂÃ¢ÂÂ
+  // ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Generate "Use It Up" meal suggestions for expiring items ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ
   const handleUseItUpSuggestions = React.useCallback(async () => {
     const expiring = getExpiringItems(3);
     if (expiring.length === 0) return;
@@ -1637,7 +1637,7 @@ function MealsScreenContent() {
     setGeneratingExpiryMeals(false);
   }, [pantryItems, getExpiringItems, userDietaryPref, userGoal]);
 
-  // Ã¢ÂÂÃ¢ÂÂ Pantry Shopping List Ã¢ÂÂ compile "need to buy" items from daily plan Ã¢ÂÂÃ¢ÂÂ
+  // ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Pantry Shopping List ÃÂ¢ÃÂÃÂ compile "need to buy" items from daily plan ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ
   const handleCreatePantryShoppingList = React.useCallback(() => {
     if (!pantryDailyPlan?.dailyPlan) return;
     const needToBuy: { name: string; quantity?: string }[] = [];
@@ -1657,7 +1657,7 @@ function MealsScreenContent() {
           const key = (ing.name || "").toLowerCase();
           if (key && !seen.has(key)) {
             seen.add(key);
-            needToBuy.push({ name: ing.name, quantity: ing.quantity });
+            needToBuy.push({ name: ing.name, quantity: ing.amount || ing.quantity });
           }
         }
       }
@@ -1679,7 +1679,7 @@ function MealsScreenContent() {
   const sharePantryShoppingList = React.useCallback(async () => {
     const unchecked = pantryShoppingList.filter(i => !i.checked);
     const items = unchecked.length > 0 ? unchecked : pantryShoppingList;
-    const text = `PeakPulse Shopping List\n\n${items.map(i => `\u25a1 ${i.name}${i.quantity ? " Ã¢ÂÂ " + i.quantity : ""}`).join("\n")}`;
+    const text = `PeakPulse Shopping List\n\n${items.map(i => `\u25a1 ${i.name}${i.quantity ? " ÃÂ¢ÃÂÃÂ " + i.quantity : ""}`).join("\n")}`;
     await Clipboard.setStringAsync(text);
     Alert.alert("\u2705 Copied!", `${items.length} items copied to clipboard. Paste anywhere to share.`);
   }, [pantryShoppingList]);
@@ -1750,7 +1750,7 @@ function MealsScreenContent() {
       if (match) {
         if (match.quantity && match.quantity > 1) {
           await updatePantryItem(match.id, { quantity: match.quantity - 1 });
-          deducted.push(`${match.name} (qty: ${match.quantity} Ã¢ÂÂ ${match.quantity - 1})`);
+          deducted.push(`${match.name} (qty: ${match.quantity} ÃÂ¢ÃÂÃÂ ${match.quantity - 1})`);
         } else {
           await removePantryItem(match.id);
           deducted.push(`${match.name} (removed)`);
@@ -1823,7 +1823,7 @@ function MealsScreenContent() {
     // Include past meal names so AI avoids repeating dishes
     if (pastMealNames.length > 0) base.pastMealNames = pastMealNames;
 
-    // Explicit variety instruction â tell the AI to generate unique meals per day
+    // Explicit variety instruction Ã¢ÂÂ tell the AI to generate unique meals per day
     base.varietyHint = "IMPORTANT: Each day of the week MUST have completely different meals. Do NOT repeat the same dishes across different days. Vary cuisines, cooking methods, and ingredients across the week. At most 1-2 dishes may appear twice in the entire week. Each day should feel like a fresh menu.";
 
     // If cuisines selected, reinforce them in the hint
@@ -2074,7 +2074,7 @@ function MealsScreenContent() {
       .slice(0, 5);
   }, [mealName, favourites]);
 
-  // 1B: Parallax scroll value for Meals hero Ã¢ÂÂ MUST be above early return to avoid hooks ordering violation
+  // 1B: Parallax scroll value for Meals hero ÃÂ¢ÃÂÃÂ MUST be above early return to avoid hooks ordering violation
   const mealScrollY = useSharedValue(0);
   const mealHeroImgStyle = useAnimatedStyle(() => ({
     transform: [{ translateY: interpolate(mealScrollY.value, [0, 200], [0, 100], Extrapolation.CLAMP) }],
@@ -2166,7 +2166,7 @@ function MealsScreenContent() {
         </ReAnimated.View>
       </View>
 
-      {/* Daily Summary Card Ã¢ÂÂ compact */}
+      {/* Daily Summary Card ÃÂ¢ÃÂÃÂ compact */}
       <View style={{ marginHorizontal: 16, marginTop: -16, backgroundColor: MSURFACE, borderRadius: 20, padding: 14, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)", shadowColor: "#000", shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.4, shadowRadius: 8, zIndex: 10 }}>
         <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
           <Text style={{ color: MMUTED, fontSize: 10, fontFamily: "DMSans_700Bold", textTransform: "uppercase" }}>Today's Nutrition</Text>
@@ -2183,7 +2183,7 @@ function MealsScreenContent() {
         </View>
       </View>
 
-      {/* Ã¢ÂÂÃ¢ÂÂ Tab Segmented Control Ã¢ÂÂÃ¢ÂÂ */}
+      {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Tab Segmented Control ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
       <View style={{ flexDirection: "row", marginHorizontal: 16, marginTop: 12, backgroundColor: MSURFACE, borderRadius: 12, padding: 3, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}>
         {["Tracker", "Meal Plan", "Pantry"].map((tab, i) => (
           <TouchableOpacity
@@ -2212,7 +2212,7 @@ function MealsScreenContent() {
           />
         }
       >
-        {/* Ã¢ÂÂÃ¢ÂÂ Log Meal Dropdown Button Ã¢ÂÂÃ¢ÂÂ */}
+        {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Log Meal Dropdown Button ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
         <View style={{ marginTop: 16, marginBottom: 12, zIndex: 20 }}>
           <TouchableOpacity
             style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8, backgroundColor: "#F59E0B", borderRadius: 14, paddingVertical: 12 }}
@@ -2256,7 +2256,7 @@ function MealsScreenContent() {
           )}
         </View>
 
-        {/* Ã¢ÂÂÃ¢ÂÂ Manual Log Panel Ã¢ÂÂÃ¢ÂÂ */}
+        {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Manual Log Panel ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
         {logMethod === "manual" && (
           <View style={{ backgroundColor: MSURFACE, borderRadius: 16, padding: 16, marginBottom: 16, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}>
             <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
@@ -2385,7 +2385,7 @@ function MealsScreenContent() {
           </View>
         )}
 
-        {/* Ã¢ÂÂÃ¢ÂÂ AI Scan Panel Ã¢ÂÂÃ¢ÂÂ */}
+        {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ AI Scan Panel ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
         {logMethod === "ai-scan" && (
           <View style={{ backgroundColor: MSURFACE, borderRadius: 16, padding: 16, marginBottom: 16, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}>
             <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
@@ -2576,7 +2576,7 @@ function MealsScreenContent() {
           </View>
         )}
 
-        {/* Ã¢ÂÂÃ¢ÂÂ Day Meal Tiles (Breakfast, Lunch, Dinner, Snack) Ã¢ÂÂÃ¢ÂÂ */}
+        {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Day Meal Tiles (Breakfast, Lunch, Dinner, Snack) ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
         <View style={{ marginBottom: 16 }}>
           <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
             <Text style={{ color: MFG, fontFamily: "DMSans_700Bold", fontSize: 16 }}>Today's Meals</Text>
@@ -2678,7 +2678,7 @@ function MealsScreenContent() {
           </View>
         </View>
 
-        {/* Ã¢ÂÂÃ¢ÂÂ Inline Nutrition Chart (7-day) Ã¢ÂÂÃ¢ÂÂ */}
+        {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Inline Nutrition Chart (7-day) ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
         {chartData.length > 0 && (
           <View style={{ backgroundColor: MSURFACE, borderRadius: 16, padding: 14, marginBottom: 16, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}>
             <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
@@ -2710,7 +2710,7 @@ function MealsScreenContent() {
           </View>
         )}
 
-        {/* Ã¢ÂÂÃ¢ÂÂ Water Intake Ã¢ÂÂÃ¢ÂÂ */}
+        {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Water Intake ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
         <View style={{ backgroundColor: MSURFACE, borderRadius: 16, padding: 14, marginBottom: 16, borderWidth: 1, borderColor: "rgba(59,130,246,0.15)" }}>
           <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
             <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
@@ -2747,7 +2747,7 @@ function MealsScreenContent() {
           </View>
         </View>
 
-        {/* Ã¢ÂÂÃ¢ÂÂ Quick Add from Saved Foods Ã¢ÂÂÃ¢ÂÂ */}
+        {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Quick Add from Saved Foods ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
         {favourites.length > 0 && (
           <View style={{ marginBottom: 12 }}>
             <Text style={{ color: MMUTED, fontSize: 10, fontFamily: "DMSans_700Bold", letterSpacing: 1, marginBottom: 8 }}>QUICK ADD FROM SAVED FOODS</Text>
@@ -2766,7 +2766,7 @@ function MealsScreenContent() {
           </View>
         )}
 
-        {/* Ã¢ÂÂÃ¢ÂÂ Meal Gallery + Pantry + Favourites Links Ã¢ÂÂÃ¢ÂÂ */}
+        {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Meal Gallery + Pantry + Favourites Links ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
         <View style={{ flexDirection: "row", gap: 8, marginBottom: 16 }}>
           <TouchableOpacity
             style={{ flex: 1, flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 4, backgroundColor: MSURFACE, borderRadius: 12, paddingVertical: 10, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}
@@ -2791,7 +2791,7 @@ function MealsScreenContent() {
           </TouchableOpacity>
         </View>
 
-        {/* Ã¢ÂÂÃ¢ÂÂ Favourites Expanded Ã¢ÂÂÃ¢ÂÂ */}
+        {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Favourites Expanded ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
         {showFavourites && (
           <View style={{ backgroundColor: MSURFACE, borderRadius: 16, padding: 14, marginBottom: 16, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}>
             <Text style={{ color: MFG, fontFamily: "DMSans_700Bold", fontSize: 14, marginBottom: 10 }}>Saved Foods</Text>
@@ -2831,7 +2831,7 @@ function MealsScreenContent() {
         )}
 
 
-        {/* Ã¢ÂÂÃ¢ÂÂ Today's Log Ã¢ÂÂÃ¢ÂÂ */}
+        {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Today's Log ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
         <Text style={{ color: MFG, fontFamily: "DMSans_700Bold", fontSize: 15, marginBottom: 10 }}>
           Today's Log {meals.length > 0 ? `(${meals.length})` : ""}
         </Text>
@@ -2883,7 +2883,7 @@ function MealsScreenContent() {
           ))
         )}
 
-        {/* Ã¢ÂÂÃ¢ÂÂ Shopping List (collapsible) Ã¢ÂÂÃ¢ÂÂ */}
+        {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Shopping List (collapsible) ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
         {aiMealPlan?.days && aiMealPlan.days.length > 0 && (() => {
           const ingredientMap: Record<string, { count: number; sources: string[] }> = {};
           for (const day of aiMealPlan.days) {
@@ -2972,7 +2972,7 @@ function MealsScreenContent() {
       </ScrollView>
       )}
 
-      {/* Ã¢ÂÂÃ¢ÂÂ Meal Plan Tab Ã¢ÂÂÃ¢ÂÂ */}
+      {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Meal Plan Tab ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
       {nutritionTab === 1 && (
         <ScrollView contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 120 }} showsVerticalScrollIndicator={false}
           refreshControl={
@@ -3200,7 +3200,7 @@ function MealsScreenContent() {
                 </View>
               )}
 
-              {/* Ã¢ÂÂÃ¢ÂÂ AI Image Generation Progress Ã¢ÂÂÃ¢ÂÂ */}
+              {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ AI Image Generation Progress ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
               {generatingImages && (
                 <View style={{ flexDirection: "row", alignItems: "center", gap: 8, backgroundColor: "rgba(59,130,246,0.08)", borderRadius: 12, padding: 10, borderWidth: 1, borderColor: "rgba(59,130,246,0.15)" }}>
                   <ActivityIndicator size="small" color="#3B82F6" />
@@ -3213,7 +3213,7 @@ function MealsScreenContent() {
                 </View>
               )}
 
-              {/* Ã¢ÂÂÃ¢ÂÂ Calendar Overview Toggle Ã¢ÂÂÃ¢ÂÂ */}
+              {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Calendar Overview Toggle ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
               <TouchableOpacity
                 style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6, backgroundColor: showCalendarOverview ? "rgba(245,158,11,0.12)" : "rgba(59,130,246,0.08)", borderRadius: 12, paddingVertical: 10, borderWidth: 1, borderColor: showCalendarOverview ? "rgba(245,158,11,0.25)" : "rgba(59,130,246,0.15)" }}
                 onPress={() => setShowCalendarOverview(!showCalendarOverview)}
@@ -3222,7 +3222,7 @@ function MealsScreenContent() {
                 <Text style={{ color: showCalendarOverview ? "#F59E0B" : "#3B82F6", fontFamily: "DMSans_700Bold", fontSize: 12 }}>{showCalendarOverview ? "Hide Week Overview" : "Week Overview"}</Text>
               </TouchableOpacity>
 
-              {/* Ã¢ÂÂÃ¢ÂÂ Calendar Overview Grid Ã¢ÂÂÃ¢ÂÂ */}
+              {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Calendar Overview Grid ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
               {showCalendarOverview && aiMealPlan?.days && (
                 <View style={{ gap: 6 }}>
                   {WEEK_DAYS_FULL.map((dayName, idx) => {
@@ -3296,7 +3296,7 @@ function MealsScreenContent() {
                 </View>
               )}
 
-              {/* Ã¢ÂÂÃ¢ÂÂ Weekly Day Selector Bar Ã¢ÂÂÃ¢ÂÂ */}
+              {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Weekly Day Selector Bar ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
               <View style={{ flexDirection: "row", gap: 4, marginTop: 4 }}>
                 {WEEK_DAYS_SHORT.map((day, idx) => {
                   const isToday = (() => { const jsDay = new Date().getDay(); return idx === (jsDay === 0 ? 6 : jsDay - 1); })();
@@ -3314,7 +3314,7 @@ function MealsScreenContent() {
                 })}
               </View>
 
-              {/* Ã¢ÂÂÃ¢ÂÂ Selected Day Meals Ã¢ÂÂÃ¢ÂÂ */}
+              {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Selected Day Meals ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
               {selectedDayData ? (
                 <View style={{ gap: 10 }}>
                   <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
@@ -3595,7 +3595,7 @@ function MealsScreenContent() {
         </ScrollView>
       )}
 
-      {/* Ã¢ÂÂÃ¢ÂÂ Pantry Tab Ã¢ÂÂÃ¢ÂÂ */}
+      {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Pantry Tab ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
       {nutritionTab === 2 && (
         <ScrollView contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 120 }} showsVerticalScrollIndicator={false}
           refreshControl={
@@ -3988,6 +3988,8 @@ function MealsScreenContent() {
                       <Text style={{ color: "#FDE68A", fontSize: 11 }}>C: {meal.carbs}g</Text>
                       <Text style={{ color: "#FBBF24", fontSize: 11 }}>F: {meal.fat}g</Text>
                       {meal.prepTime && <Text style={{ color: MMUTED, fontSize: 11 }}>{meal.prepTime}</Text>}
+                          {meal.cookTime && <Text style={{ color: MMUTED, fontSize: 11 }}>{meal.cookTime} cook</Text>}
+                          {meal.servingSize && <Text style={{ color: MMUTED, fontSize: 11 }}>{meal.servingSize}</Text>}
                     </View>
 
                     {isExpanded && (
@@ -4007,7 +4009,7 @@ function MealsScreenContent() {
                                   color={ing.fromPantry ? "#22C55E" : "#F59E0B"}
                                 />
                                 <Text style={{ color: ing.fromPantry ? "#4ADE80" : "#FDE68A", fontSize: 12 }}>
-                                  {ing.name}{ing.quantity ? ` Ã¢ÂÂ ${ing.quantity}` : ""}
+                                  {ing.name}{ing.quantity ? ` ÃÂ¢ÃÂÃÂ ${ing.quantity}` : ""}
                                 </Text>
                                 <Text style={{ color: MMUTED, fontSize: 10 }}>
                                   {ing.fromPantry ? "(pantry)" : "(buy)"}
@@ -4025,7 +4027,10 @@ function MealsScreenContent() {
                                 <View style={{ width: 20, height: 20, borderRadius: 10, backgroundColor: "#F59E0B", alignItems: "center", justifyContent: "center", flexShrink: 0, marginTop: 1 }}>
                                   <Text style={{ color: MBG, fontSize: 10, fontFamily: "DMSans_700Bold" }}>{i + 1}</Text>
                                 </View>
-                                <Text style={{ color: MFG, fontSize: 12, flex: 1, lineHeight: 18 }}>{step}</Text>
+                                <View style={{ flex: 1 }}>
+                          <Text style={{ color: MFG, fontSize: 12, lineHeight: 18 }}>{(() => { const m = step.match(/\(([\d]+(?:\s*-\s*[\d]+)?\s*(?:min|sec|hours?|hrs?|minutes?|seconds?))\)\s*$/i); return m ? step.replace(m[0], '').trim() : step; })()}</Text>
+                          {(() => { const m = step.match(/\(([\d]+(?:\s*-\s*[\d]+)?\s*(?:min|sec|hours?|hrs?|minutes?|seconds?))\)\s*$/i); return m ? <View style={{ flexDirection: "row", alignItems: "center", gap: 3, marginTop: 3, backgroundColor: "rgba(245,158,11,0.12)", paddingHorizontal: 6, paddingVertical: 2, borderRadius: 8, alignSelf: "flex-start" }}><MaterialIcons name="timer" size={10} color={MGOLD} /><Text style={{ color: MGOLD, fontSize: 10 }}>{m[1]}</Text></View> : null; })()}
+                        </View>
                               </View>
                             ))}
                           </View>
