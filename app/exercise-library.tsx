@@ -364,48 +364,6 @@ export default function ExerciseLibraryScreen() {
           </View>
         }
       />
-                    ) : (
-                      <View style={[styles.gifPreview, { justifyContent: "center", alignItems: "center", backgroundColor: "rgba(245,158,11,0.06)" }]}>
-                        <MaterialIcons name="fitness-center" size={20} color={C.gold} />
-                      </View>
-                    )}
-                  </View>
-
-                  {/* Info */}
-                  <View style={styles.cardInfo}>
-                    <Text style={styles.cardName} numberOfLines={1}>
-                      {apiEx.name.replace(/\b\w/g, c => c.toUpperCase())}
-                    </Text>
-                    <View style={styles.cardMeta}>
-                      <View style={styles.categoryBadge}>
-                        <Text style={styles.categoryBadgeText}>{apiEx.bodyPart}</Text>
-                      </View>
-                    </View>
-                    <Text style={styles.cardEquipment} numberOfLines={1}>
-                      {apiEx.equipment}
-                    </Text>
-                    <View style={styles.cardMuscles}>
-                      <View style={styles.muscleTag}>
-                        <Text style={styles.muscleTagText}>{apiEx.target}</Text>
-                      </View>
-                      {apiEx.secondaryMuscles.slice(0, 2).map((m) => (
-                        <View key={m} style={styles.muscleTag}>
-                          <Text style={styles.muscleTagText}>{m}</Text>
-                        </View>
-                      ))}
-                    </View>
-                  </View>
-
-                  {/* API Badge */}
-                  <View style={{ paddingHorizontal: 6, paddingVertical: 2, borderRadius: 4, backgroundColor: "rgba(245,158,11,0.1)" }}>
-                    <Text style={{ color: C.gold, fontFamily: "DMSans_500Medium", fontSize: 8 }}>API</Text>
-                  </View>
-                </Pressable>
-              ))}
-            </View>
-          ) : null
-        }
-      />
     </View>
     </ImageBackground>
   );

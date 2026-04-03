@@ -3038,4 +3038,12 @@
 - [x] Merged: remove redundant Muscles Targeted card, enlarge muscle overlay (8 ins, 41 del)
 - [x] Merged: add optional width/height props to MuscleSvgMini (6 ins, 2 del)
 - [x] Verify TypeScript compiles (0 TS errors, 0 LSP errors, dev server running)
+- [x] Save checkpoint (version 946c55f1)
+
+## Round 79: Sync with GitHub repository
+- [x] Fetched latest from GitHub remote (2 new commits)
+- [x] Merged: feat(library) replace ExerciseDB with MuscleWiki thumbnails, add Gym/Home/Calisthenics sub-filters (205 changes in exercise-library.tsx)
+- [x] Merged: fix(workout) pass gifAsset prop to ExerciseDemoPlayer for video playback (90 changes in active-workout.tsx)
+- [x] Fixed orphaned JSX code from bad merge in exercise-library.tsx (lines 367-408 removed)
+- [x] Verify TypeScript compiles (0 TS errors)
 - [ ] Save checkpoint
