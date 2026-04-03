@@ -1,5 +1,5 @@
 /**
- * R1/R6: "Explore" Grid — Categorized feature tiles
+ * R1/R6: "Explore" Grid â Categorized feature tiles
  * Replaces the old 6-tile grid with a comprehensive, categorized grid
  * that surfaces ALL app features including My Pantry, Wearables, Social, Challenges, etc.
  */
@@ -30,46 +30,42 @@ interface TileCategory {
 
 const CATEGORIES: TileCategory[] = [
   {
+    title: "Wearables & Tracking",
+    icon: "watch",
+    tiles: [
+      { icon: "watch", label: "Wearables", route: "/wearable-sync", color: "#06B6D4", bgColor: "rgba(6,182,212,0.12)", feature: "wearable_sync", tier: "basic" },
+      { icon: "show-chart", label: "Health Trends", route: "/health-trends", color: "#3B82F6", bgColor: "rgba(59,130,246,0.12)", feature: "health_trends", tier: "basic" },
+      { icon: "notifications-active", label: "AI Reminders", route: "/notification-settings", color: "#F59E0B", bgColor: "rgba(245,158,11,0.12)", feature: "ai_reminders", tier: "basic" },
+    ],
+  },
+  {
+    title: "Premium AI Features",
+    icon: "auto-awesome",
+    tiles: [
+      { icon: "smart-toy", label: "AI Coach", route: "/(tabs)/ai-coach", color: "#7C3AED", bgColor: "rgba(124,58,237,0.15)", feature: "ai_coach", tier: "pro", badge: "PRO" },
+      { icon: "center-focus-strong", label: "Form Check", route: "/form-checker", color: "#DB2777", bgColor: "rgba(219,39,119,0.15)", feature: "form_checker", tier: "pro", badge: "PRO" },
+      { icon: "camera-alt", label: "Body Scan", route: "/(tabs)/scan", color: "#0891B2", bgColor: "rgba(8,145,178,0.15)", feature: "body_scan", tier: "pro", badge: "PRO" },
+      { icon: "record-voice-over", label: "Voice Coach", route: "/voice-coach-settings", color: "#C026D3", bgColor: "rgba(192,38,211,0.15)", feature: "voice_coach", tier: "pro", badge: "PRO" },
+    ],
+  },
+  {
     title: "Training",
     icon: "fitness-center",
     tiles: [
-      { icon: "bar-chart", label: "Analytics", route: "/workout-analytics", color: "#3B82F6", bgColor: "rgba(59,130,246,0.12)" },
+      { icon: "bar-chart", label: "Analytics", route: "/workout/analytics", color: "#3B82F6", bgColor: "rgba(59,130,246,0.12)" },
       { icon: "emoji-events", label: "Records", route: "/personal-records", color: "#22C55E", bgColor: "rgba(34,197,94,0.12)" },
-      { icon: "calendar-today", label: "Calendar", route: "/workout-calendar", color: "#F59E0B", bgColor: "rgba(245,158,11,0.12)" },
-      { icon: "view-list", label: "Templates", route: "/workout-templates", color: "#8B5CF6", bgColor: "rgba(139,92,246,0.12)" },
-      { icon: "center-focus-strong", label: "Form Check", route: "/form-checker", color: "#EC4899", bgColor: "rgba(236,72,153,0.12)", feature: "form_checker", tier: "pro", badge: "PRO" },
+      { icon: "calendar-today", label: "Calendar", route: "/workout/calendar", color: "#F59E0B", bgColor: "rgba(245,158,11,0.12)" },
+      { icon: "view-list", label: "Templates", route: "/workout/templates", color: "#8B5CF6", bgColor: "rgba(139,92,246,0.12)" },
       { icon: "check-circle", label: "Check-In", route: "/daily-checkin", color: "#14B8A6", bgColor: "rgba(20,184,166,0.12)" },
       { icon: "accessibility-new", label: "By Muscle", route: "/browse-by-muscle", color: "#F59E0B", bgColor: "rgba(245,158,11,0.12)" },
     ],
   },
   {
-    title: "Nutrition",
-    icon: "restaurant",
-    tiles: [
-      { icon: "kitchen", label: "My Pantry", route: "/pantry", color: "#F97316", bgColor: "rgba(249,115,22,0.12)" },
-      { icon: "photo-library", label: "Meal Timeline", route: "/meal-timeline", color: "#06B6D4", bgColor: "rgba(6,182,212,0.12)" },
-      { icon: "auto-awesome", label: "Meal Prep", route: "/meal-prep", color: "#A855F7", bgColor: "rgba(168,85,247,0.12)" },
-      { icon: "receipt-long", label: "Scan Receipt", route: "/scan-receipt", color: "#10B981", bgColor: "rgba(16,185,129,0.12)" },
-    ],
-  },
-  {
-    title: "AI & Insights",
-    icon: "smart-toy",
-    tiles: [
-      { icon: "smart-toy", label: "AI Coach", route: "/(tabs)/ai-coach", color: "#A855F7", bgColor: "rgba(168,85,247,0.12)", feature: "ai_coaching", tier: "pro", badge: "PRO" },
-      { icon: "camera-alt", label: "Body Scan", route: "/(tabs)/scan", color: "#22D3EE", bgColor: "rgba(34,211,238,0.12)", feature: "body_scan", tier: "basic" },
-      { icon: "show-chart", label: "Health Trends", route: "/health-trends", color: "#3B82F6", bgColor: "rgba(59,130,246,0.12)" },
-      { icon: "notifications-active", label: "AI Reminders", route: "/notification-settings", color: "#F59E0B", bgColor: "rgba(245,158,11,0.12)" },
-    ],
-  },
-  {
-    title: "Progress & Goals",
+    title: "Progress",
     icon: "trending-up",
     tiles: [
-      { icon: "trending-up", label: "Progress", route: "/progress-photos", color: "#10B981", bgColor: "rgba(16,185,129,0.12)", feature: "progress_photos", tier: "basic" },
-      { icon: "flag", label: "Weekly Goals", route: "/weekly-goals", color: "#EF4444", bgColor: "rgba(239,68,68,0.12)" },
-      { icon: "bar-chart", label: "Summary", route: "/weekly-summary", color: "#6366F1", bgColor: "rgba(99,102,241,0.12)" },
-      { icon: "watch", label: "Wearables", route: "/wearable-sync", color: "#22D3EE", bgColor: "rgba(34,211,238,0.12)", feature: "wearable_sync", tier: "basic", badge: "BASIC" },
+      { icon: "trending-up", label: "Progress Photos", route: "/progress-photos", color: "#10B981", bgColor: "rgba(16,185,129,0.12)", feature: "progress_photos", tier: "basic" },
+      { icon: "bar-chart", label: "Weekly Summary", route: "/weekly-summary", color: "#6366F1", bgColor: "rgba(99,102,241,0.12)" },
       { icon: "star", label: "Achievements", route: "/achievements", color: "#FBBF24", bgColor: "rgba(251,191,36,0.12)" },
     ],
   },
@@ -78,8 +74,8 @@ const CATEGORIES: TileCategory[] = [
     icon: "people",
     tiles: [
       { icon: "people", label: "Social Circle", route: "/social-circle", color: "#3B82F6", bgColor: "rgba(59,130,246,0.12)" },
-      { icon: "group", label: "Community", route: "/social-feed", color: "#8B5CF6", bgColor: "rgba(139,92,246,0.12)", feature: "social_feed", tier: "pro", badge: "PRO" },
-      { icon: "bolt", label: "7-Day Challenge", route: "/challenge-onboarding", color: "#F59E0B", bgColor: "rgba(245,158,11,0.12)", feature: "challenges", tier: "pro", badge: "PRO" },
+      { icon: "group", label: "Community", route: "/social-feed", color: "#8B5CF6", bgColor: "rgba(139,92,246,0.12)", feature: "social_feed", tier: "basic" },
+      { icon: "bolt", label: "7-Day Challenge", route: "/challenge-onboarding", color: "#F59E0B", bgColor: "rgba(245,158,11,0.12)", feature: "challenges", tier: "basic" },
       { icon: "sports-martial-arts", label: "Challenges", route: "/challenge", color: "#EF4444", bgColor: "rgba(239,68,68,0.12)" },
       { icon: "groups", label: "Group Goals", route: "/group-goals", color: "#14B8A6", bgColor: "rgba(20,184,166,0.12)" },
       { icon: "card-giftcard", label: "Refer a Friend", route: "/referral", color: "#EC4899", bgColor: "rgba(236,72,153,0.12)" },
@@ -87,10 +83,10 @@ const CATEGORIES: TileCategory[] = [
   },
   {
     title: "More",
-    icon: "more-horiz",
+    icon: "explore",
     tiles: [
       { icon: "location-on", label: "Find Gym", route: "/gym-finder", color: "#EF4444", bgColor: "rgba(239,68,68,0.12)" },
-      { icon: "workspace-premium", label: "Upgrade Plan", route: "/subscription", color: "#F59E0B", bgColor: "rgba(245,158,11,0.12)" },
+      { icon: "workspace-premium", label: "Upgrade Plan", route: "/paywall", color: "#F59E0B", bgColor: "rgba(245,158,11,0.12)" },
     ],
   },
 ];
@@ -167,7 +163,7 @@ export function ExploreGrid({ onPaywall }: ExploreGridProps) {
                       ]}>
                         <Text style={[
                           styles.tileBadgeText,
-                          tile.badge === "PRO" ? { color: "#A855F7" } : { color: "#F59E0B" },
+                          tile.badge === "PRO" ? { color: "#7C3AED" } : { color: "#F59E0B" },
                         ]}>{tile.badge}</Text>
                       </View>
                     )}
@@ -282,9 +278,9 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   tileBadgePro: {
-    backgroundColor: "rgba(168,85,247,0.15)",
+    backgroundColor: "rgba(124,58,237,0.18)",
     borderWidth: 1,
-    borderColor: "rgba(168,85,247,0.3)",
+    borderColor: "rgba(124,58,237,0.4)",
   },
   tileBadgeBasic: {
     backgroundColor: "rgba(245,158,11,0.12)",
@@ -295,6 +291,15 @@ const styles = StyleSheet.create({
     fontFamily: "DMSans_700Bold",
     fontSize: 7,
     letterSpacing: 0.8,
+  },
+  tilePremium: {
+    borderWidth: 1.5,
+    borderColor: "rgba(139,92,246,0.35)",
+    shadowColor: "#8B5CF6",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 3,
   },
   iconCircle: {
     width: 44,
