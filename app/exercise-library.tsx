@@ -525,7 +525,7 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   cardDiagram: {
-    width: 44,
+    width: 48,
     alignItems: "center",
   },
   cardInfo: {
