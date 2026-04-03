@@ -3008,4 +3008,11 @@
 - [x] Add Array.isArray safety to all ingredients.map and instructions.map calls (meals.tsx, plans.tsx, meal-prep.tsx)
 - [x] Add null safety to meal.calories, meal.protein, meal.carbs, meal.fat displays
 - [x] Test and verify TypeScript compiles (0 TS errors, 0 LSP errors)
+- [x] Save checkpoint (version af8b0783)
+
+## Round 75: Sync with GitHub repository
+- [x] Fetched latest from GitHub remote (2 new commits)
+- [x] Merged: fix exercise demo angleViews with correct MuscleWiki front/side video URLs (248 ins, 247 del)
+- [x] Merged: fix MuscleWiki CDN URL pass-through in gif-resolver
+- [x] Verify TypeScript compiles (0 TS errors, 0 LSP errors, dev server running)
 - [ ] Save checkpoint
