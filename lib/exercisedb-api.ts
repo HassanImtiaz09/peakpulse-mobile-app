@@ -6,7 +6,7 @@
  * as multi-frame animated, and hosted on our CDN for reliable delivery.
  *
  * Each GIF shows a clear anatomical illustration performing the exercise
- * with highlighted target muscles — gender-neutral (anatomical style).
+ * with highlighted target muscles â gender-neutral (anatomical style).
  *
  * Coverage: 75 unique animated GIFs covering 104+ exercise name variants.
  */
@@ -14,7 +14,7 @@
 /**
  * CDN-hosted animated GIF mapping.
  * Key = ExerciseDB exercise ID, Value = full CDN URL.
- * Every GIF is verified animated (12 frames, 100ms/frame, 180×180).
+ * Every GIF is verified animated (12 frames, 100ms/frame, 180Ã180).
  */
 const CDN_GIFS: Record<string, string> = {
   "0CXGHya": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/hiqAQxyzuxjdjHwV.gif",  // cable cross-over
@@ -96,11 +96,11 @@ const CDN_GIFS: Record<string, string> = {
 };
 
 /**
- * Hardcoded mapping: normalised exercise name → ExerciseDB exercise ID.
+ * Hardcoded mapping: normalised exercise name â ExerciseDB exercise ID.
  * All IDs have verified animated GIFs on our CDN (76 unique GIFs, 104+ name variants).
  */
 const EXERCISE_ID_MAP: Record<string, string> = {
-  // ── Chest ──────────────────────────────────────────────────────────────────
+  // ââ Chest ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
   "bench press":              "EIeI8Vf",   // barbell bench press
   "barbell bench press":      "EIeI8Vf",
   "dumbbell bench press":     "SpYC0Kp",   // dumbbell bench press
@@ -119,7 +119,7 @@ const EXERCISE_ID_MAP: Record<string, string> = {
   "dip":                      "9WTm7dq",   // chest dip
   "chest dip":                "9WTm7dq",
 
-  // ── Back ───────────────────────────────────────────────────────────────────
+  // ââ Back âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
   "deadlift":                 "hrVQWvE",   // barbell straight leg deadlift
   "barbell row":              "eZyBC3j",   // barbell bent over row
   "barbell bent over row":    "eZyBC3j",
@@ -137,7 +137,7 @@ const EXERCISE_ID_MAP: Record<string, string> = {
   "tbar row":                 "BgljGjd",   // lever reverse t-bar row
   "single arm dumbbell row":  "BJ0Hz5L",   // dumbbell bent over row (closest)
 
-  // ── Shoulders ──────────────────────────────────────────────────────────────
+  // ââ Shoulders ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
   "overhead press":           "PzQanLE",   // cable shoulder press
   "military press":           "PzQanLE",
   "shoulder press":           "PzQanLE",
@@ -151,7 +151,7 @@ const EXERCISE_ID_MAP: Record<string, string> = {
   "upright row":              "cALKspW",   // cable upright row
   "shrug":                    "dG7tG5y",   // barbell shrug
 
-  // ── Arms ───────────────────────────────────────────────────────────────────
+  // ââ Arms âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
   "barbell curl":             "NbVPDMW",   // dumbbell biceps curl (closest)
   "bicep curl":               "NbVPDMW",
   "dumbbell curl":            "NbVPDMW",
@@ -166,7 +166,7 @@ const EXERCISE_ID_MAP: Record<string, string> = {
   "tricep dip":               "9WTm7dq",   // chest dip (same movement)
   "dumbbell kickback":        "W6PxUkg",   // dumbbell kickback
 
-  // ── Legs ───────────────────────────────────────────────────────────────────
+  // ââ Legs âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
   "squat":                    "LIlE5Tn",   // jump squat (dynamic, good demo)
   "barbell squat":            "LIlE5Tn",
   "front squat":              "Y7YcmIJ",   // barbell bench front squat
@@ -187,7 +187,7 @@ const EXERCISE_ID_MAP: Record<string, string> = {
   "sumo deadlift":            "KgI0tqW",   // barbell sumo deadlift
   "stiff leg deadlift":       "5eLRITT",   // dumbbell stiff leg deadlift
 
-  // ── Core ───────────────────────────────────────────────────────────────────
+  // ââ Core âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
   "plank":                    "VBAWRPG",   // weighted front plank
   "russian twist":            "XVDdcoj",   // russian twist
   "hanging leg raise":        "I3tsCnC",   // hanging leg raise
@@ -202,7 +202,7 @@ const EXERCISE_ID_MAP: Record<string, string> = {
   "cable woodchop":           "fhZQPlV",   // cable twist (up-down)
   "dead bug":                 "VBAWRPG",   // weighted front plank (closest)
 
-  // ── Full Body / Cardio ─────────────────────────────────────────────────────
+  // ââ Full Body / Cardio âââââââââââââââââââââââââââââââââââââââââââââââââââââ
   "burpee":                   "u4bAmKp",   // mountain climber (closest dynamic)
   "power clean":              "SGY8Zui",   // barbell clean and press
   "clean and jerk":           "SGY8Zui",
@@ -214,7 +214,6 @@ const EXERCISE_ID_MAP: Record<string, string> = {
   "rowing machine":           "vpQaQkH",   // ski ergometer (closest)
   "jump rope":                "e1e76I2",   // jump rope
   "jumping jack":             "e1e76I2",   // jump rope (closest)
-  "high knees":               "ealLwvX",   // high knee against wall
   "sprint":                   "oLrKqDH",   // run
   "run":                      "oLrKqDH",   // run
 };
