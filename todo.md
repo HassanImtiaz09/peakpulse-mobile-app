@@ -3006,4 +3006,10 @@
 - [x] Merged: feat(meal-prep): add detailed from-scratch recipes with step durations and equipment (238 ins, 28 del)
 - [x] Fixed TS error: added detailHint to fromExpiring server endpoint input schema
 - [x] Verify TypeScript compiles (0 TS errors)
+- [x] Save checkpoint (version 381fb902)
+
+## Round 73: Sync with GitHub repository
+- [x] Fetched latest from GitHub remote (4 new commits: 800a39c, 6b891bc, 657f0b6, e921d56)
+- [x] Merged: fix body fat image generation, overhaul AI prompts for detailed recipes, enhance meal card UI, remove flash-lite model override (358 ins, 213 del across meals.tsx and routers.ts)
+- [x] Verify TypeScript compiles (0 TS errors, 0 LSP errors, dev server running)
 - [ ] Save checkpoint
