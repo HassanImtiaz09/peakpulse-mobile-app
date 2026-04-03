@@ -35,12 +35,21 @@ import {
 import { FormCueOverlay, FormCueBadge } from "@/components/form-cue-overlay";
 import { hasFormTips } from "@/lib/form-cue-tips";
 
+import { VideoView, useVideoPlayer } from "expo-video";
+import type { VideoSource } from "expo-video";
+
+/** Check if a URL points to an MP4 video file */
+function isVideoUrl(url: string | number | undefined): url is string {
+  if (typeof url !== "string") return false;
+  return url.endsWith(".mp4") || url.endsWith(".webm") || url.endsWith(".mov");
+}
+
 const { width: SCREEN_W } = Dimensions.get("window");
 
 interface ExerciseDemoPlayerProps {
   /** Legacy gifUrl prop (ignored if gifAsset is provided) */
   gifUrl?: string;
-  /** Exercise image asset — CDN URL string or legacy require() number */
+  /** Exercise image asset â CDN URL string or legacy require() number */
   gifAsset?: number | string;
   cue?: string;
   height?: number;
@@ -123,7 +132,7 @@ export function ExerciseDemoPlayer({
     [exerciseName]
   );
 
-  // Resolve the image asset — prefer ExerciseDB animated GIF when toggled on
+  // Resolve the image asset â prefer ExerciseDB animated GIF when toggled on
   const currentAsset = useMemo(() => {
     if (useExerciseDb && exerciseDbGifUrl) {
       return exerciseDbGifUrl; // Direct URL to animated GIF from ExerciseDB
@@ -135,6 +144,24 @@ export function ExerciseDemoPlayer({
     if (gifUrl) return resolveGifAsset(gifUrl);
     return resolveGifAsset("");
   }, [useExerciseDb, exerciseDbGifUrl, hasMultipleAngles, angleViews, activeAngle, gifAsset, gifUrl]);
+
+  
+  // --- MP4 Video Playback ---
+  const isCurrentVideo = isVideoUrl(currentAsset);
+  const videoSource: VideoSource | null = isCurrentVideo
+    ? { uri: currentAsset as string, ...(Platform.OS !== "web" ? { useCaching: true } : {}) }
+    : null;
+  const videoPlayer = useVideoPlayer(videoSource, (p) => {
+    p.loop = true;
+    p.play();
+  });
+
+  // Reset video when asset changes
+  useEffect(() => {
+    if (videoPlayer && isCurrentVideo) {
+      videoPlayer.play();
+    }
+  }, [currentAsset, isCurrentVideo]);
 
   // Cleanup speech on unmount
   useEffect(() => {
@@ -230,19 +257,29 @@ export function ExerciseDemoPlayer({
               },
             ]}
           >
-            <Image
-              key={`img-${activeAngle}-${currentAsset}`}
-              source={
-                typeof currentAsset === "string"
-                  ? { uri: currentAsset }
-                  : currentAsset
-              }
-              style={StyleSheet.absoluteFill}
-              contentFit="contain"
-              cachePolicy="memory-disk"
-              autoplay={true}
-              transition={200}
-            />
+            {isCurrentVideo && videoPlayer ? (
+              <VideoView
+                player={videoPlayer}
+                style={StyleSheet.absoluteFill}
+                contentFit="contain"
+                nativeControls={false}
+                allowsFullscreen={false}
+              />
+            ) : (
+              <Image
+                key={`img-${activeAngle}-${currentAsset}`}
+                source={
+                  typeof currentAsset === "string"
+                    ? { uri: currentAsset }
+                    : currentAsset
+                }
+                style={StyleSheet.absoluteFill}
+                contentFit="contain"
+                cachePolicy="memory-disk"
+                autoplay={true}
+                transition={200}
+              />
+            )}
             {/* Form Annotation Overlay */}
             {showAnnotations && annotations && (
               <FormAnnotationOverlay
@@ -326,7 +363,7 @@ export function ExerciseDemoPlayer({
         </View>
       )}
 
-      {/* Angle focus card — shows the per-view coaching focus from exercise-data */}
+      {/* Angle focus card â shows the per-view coaching focus from exercise-data */}
       {hasMultipleAngles && angleViews[activeAngle]?.focus ? (
         <View style={styles.angleFocusCard}>
           {/* Section label row */}
@@ -338,7 +375,7 @@ export function ExerciseDemoPlayer({
               color="#F59E0B"
             />
             <Text style={styles.sectionLabelText}>
-              {angleViews[activeAngle].label.toUpperCase()} — WHAT TO CHECK
+              {angleViews[activeAngle].label.toUpperCase()} â WHAT TO CHECK
             </Text>
           </View>
           <Text style={styles.angleFocusText}>{angleViews[activeAngle].focus}</Text>
@@ -575,19 +612,25 @@ export function ExerciseDemoPlayer({
             onPress={canShowFormCues ? toggleFormCues : undefined}
             style={styles.fullscreenImageContainer}
           >
-            <Image
-              key={`fs-${activeAngle}-${currentAsset}`}
-              source={
-                typeof currentAsset === "string"
-                  ? { uri: currentAsset }
-                  : currentAsset
-              }
-              autoplay={true}
-              style={{ width: SCREEN_W, height: SCREEN_W }}
-              contentFit="contain"
-              cachePolicy="memory-disk"
-              transition={200}
-            />
+            {isCurrentVideo && videoPlayer ? (
+              <VideoView
+                player={videoPlayer}
+                style={{ width: SCREEN_W, height: SCREEN_W }}
+                contentFit="contain"
+                nativeControls={false}
+                allowsFullscreen={false}
+              />
+            ) : (
+              <Image
+                key={`fs-${activeAngle}-${currentAsset}`}
+                source={typeof currentAsset === "string" ? { uri: currentAsset } : currentAsset}
+                autoplay={true}
+                style={{ width: SCREEN_W, height: SCREEN_W }}
+                contentFit="contain"
+                cachePolicy="memory-disk"
+                transition={200}
+              />
+            )}
             {showAnnotations && annotations && (
               <FormAnnotationOverlay
                 annotation={annotations}
@@ -723,7 +766,7 @@ export function ExerciseDemoButton({
 }
 
 const styles = StyleSheet.create({
-  // ── Section label pattern ──────────────────────────────────────────────────
+  // ââ Section label pattern ââââââââââââââââââââââââââââââââââââââââââââââââââ
   sectionLabelRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -744,7 +787,7 @@ const styles = StyleSheet.create({
     fontFamily: "DMSans_700Bold",
   },
 
-  // ── Angle focus card ───────────────────────────────────────────────────────
+  // ââ Angle focus card âââââââââââââââââââââââââââââââââââââââââââââââââââââââ
   angleFocusCard: {
     marginTop: 10,
     backgroundColor: "#141A22",
@@ -760,7 +803,7 @@ const styles = StyleSheet.create({
     fontFamily: "DMSans_400Regular",
   },
 
-  // ── Coaching cue section ───────────────────────────────────────────────────
+  // ââ Coaching cue section âââââââââââââââââââââââââââââââââââââââââââââââââââ
   cueSection: {
     marginTop: 12,
   },
