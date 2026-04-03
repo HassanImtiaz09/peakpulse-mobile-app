@@ -28,12 +28,14 @@ import {
   getAllExercises,
   getCategories,
   searchExercises,
+  getExerciseInfo,
   type ExerciseInfo,
 } from "@/lib/exercise-data";
 import type { MuscleGroup } from "@/components/body-diagram";
 
 import { GOLDEN_WORKOUT, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgrounds";
 import { C } from "@/constants/ui-colors";
+import { useRecentlyViewed } from "@/hooks/use-recently-viewed";
 import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
 type FilterMode = "all" | "favorites" | ExerciseInfo["category"];
 type EquipmentFilter = "all" | "gym" | "home" | "calisthenics";
@@ -92,6 +94,14 @@ export default function ExerciseLibraryScreen() {
   const allExercises = useMemo(() => getAllExercises(), []);
   const categories = useMemo(() => getCategories(), []);
 
+  // Recently viewed exercises
+  const { recentNames, addRecent, clearRecent, loaded: recentLoaded } = useRecentlyViewed();
+  const recentExercises = useMemo(() => {
+    return recentNames
+      .map((name) => getExerciseInfo(name))
+      .filter((ex): ex is NonNullable<typeof ex> => ex != null);
+  }, [recentNames]);
+
   const filteredExercises = useMemo(() => {
     let results: ExerciseInfo[];
 
@@ -126,8 +136,9 @@ export default function ExerciseLibraryScreen() {
     if (Platform.OS !== "web") {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
     }
+    addRecent(exercise.name);
     router.push({ pathname: "/exercise-detail", params: { name: exercise.name } } as any);
-  }, [router]);
+  }, [router, addRecent]);
 
   const handleFavoritePress = useCallback((exerciseName: string) => {
     toggleFavorite(exerciseName);
@@ -370,6 +381,77 @@ export default function ExerciseLibraryScreen() {
                 </Text>
               </Pressable>
             )}
+          />
+        </View>
+      )}
+
+      {/* Recently Viewed Section */}
+      {recentExercises.length > 0 && !searchQuery.trim() && activeFilter === "all" && (
+        <View style={styles.recentSection}>
+          <View style={styles.recentHeader}>
+            <View style={styles.recentHeaderLeft}>
+              <MaterialIcons name="history" size={14} color={C.gold} />
+              <Text style={styles.recentTitle}>Recently Viewed</Text>
+            </View>
+            <Pressable
+              onPress={() => {
+                clearRecent();
+                if (Platform.OS !== "web") {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                }
+              }}
+              style={({ pressed }) => [pressed && { opacity: 0.6 }]}
+              hitSlop={8}
+            >
+              <Text style={styles.recentClear}>Clear</Text>
+            </Pressable>
+          </View>
+          <FlatList
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            data={recentExercises}
+            keyExtractor={(item) => `recent-${item.key}`}
+            contentContainerStyle={styles.recentList}
+            renderItem={({ item }) => {
+              const videoUrl = item.angleViews[0]?.gifUrl ?? "";
+              const ogUrl = videoUrl.includes("musclewiki.com")
+                ? videoUrl
+                    .replace("/videos/branded/", "/")
+                    .replace(".mp4", ".jpg")
+                    .replace(/\/([^/]+)$/, "/og-$1")
+                : "";
+              return (
+                <Pressable
+                  onPress={() => handleExercisePress(item)}
+                  style={({ pressed }) => [
+                    styles.recentCard,
+                    pressed && { opacity: 0.7, transform: [{ scale: 0.97 }] },
+                  ]}
+                >
+                  <View style={styles.recentCardImage}>
+                    {ogUrl ? (
+                      <Image
+                        source={{ uri: ogUrl }}
+                        style={styles.recentCardImg}
+                        contentFit="cover"
+                        cachePolicy="disk"
+                        transition={200}
+                      />
+                    ) : (
+                      <View style={[styles.recentCardImg, { justifyContent: "center", alignItems: "center", backgroundColor: "rgba(245,158,11,0.06)" }]}>
+                        <MaterialIcons name="play-circle-outline" size={20} color={C.gold} />
+                      </View>
+                    )}
+                  </View>
+                  <Text style={styles.recentCardName} numberOfLines={2}>
+                    {item.name}
+                  </Text>
+                  <Text style={styles.recentCardMeta} numberOfLines={1}>
+                    {formatCategory(item.category)}
+                  </Text>
+                </Pressable>
+              );
+            }}
           />
         </View>
       )}
@@ -654,5 +736,64 @@ const styles = StyleSheet.create({
   },
   equipChipTextActive: {
     color: C.bg,
+  },
+  // — Recently Viewed section —
+  recentSection: {
+    marginTop: 12,
+    marginBottom: 4,
+  },
+  recentHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 16,
+    marginBottom: 8,
+  },
+  recentHeaderLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+  },
+  recentTitle: {
+    color: C.fg,
+    fontFamily: "DMSans_600SemiBold",
+    fontSize: 14,
+  },
+  recentClear: {
+    color: C.muted,
+    fontFamily: "DMSans_500Medium",
+    fontSize: 11,
+  },
+  recentList: {
+    paddingHorizontal: 16,
+    gap: 10,
+  },
+  recentCard: {
+    width: 100,
+    gap: 4,
+  },
+  recentCardImage: {
+    width: 100,
+    height: 72,
+    borderRadius: 10,
+    overflow: "hidden",
+    backgroundColor: C.surface,
+    borderWidth: 1,
+    borderColor: C.border,
+  },
+  recentCardImg: {
+    width: "100%",
+    height: "100%",
+  },
+  recentCardName: {
+    color: C.fg,
+    fontFamily: "DMSans_600SemiBold",
+    fontSize: 11,
+    lineHeight: 14,
+  },
+  recentCardMeta: {
+    color: C.muted,
+    fontFamily: "DMSans_400Regular",
+    fontSize: 9,
   },
 });

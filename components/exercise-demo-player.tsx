@@ -207,6 +207,33 @@ export function ExerciseDemoPlayer({
     setVideoRetryKey(0);
   }, [currentAsset]);
 
+  // --- Playback Speed Control ---
+  const SPEED_OPTIONS = [0.5, 1, 2] as const;
+  const [speedIndex, setSpeedIndex] = useState(1); // default 1x
+  const currentSpeed = SPEED_OPTIONS[speedIndex];
+
+  const cycleSpeed = useCallback(() => {
+    setSpeedIndex((prev) => {
+      const next = (prev + 1) % SPEED_OPTIONS.length;
+      if (videoPlayer) {
+        videoPlayer.playbackRate = SPEED_OPTIONS[next];
+        videoPlayer.preservesPitch = true;
+      }
+      return next;
+    });
+    if (Platform.OS !== "web") {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+    }
+  }, [videoPlayer]);
+
+  // Reset speed when asset changes
+  useEffect(() => {
+    setSpeedIndex(1);
+    if (videoPlayer) {
+      videoPlayer.playbackRate = 1;
+    }
+  }, [currentAsset]);
+
   // Reset video when asset changes
   useEffect(() => {
     if (videoPlayer && isCurrentVideo) {
@@ -409,6 +436,18 @@ export function ExerciseDemoPlayer({
                 {getAngleShortLabel(angleViews[activeAngle].label)}
               </Text>
             </View>
+          )}
+          {/* Speed control button (inline) */}
+          {isCurrentVideo && !videoIsLoading && !videoHasError && (
+            <Pressable
+              onPress={cycleSpeed}
+              style={({ pressed }) => [
+                styles.speedButton,
+                pressed && { opacity: 0.7, transform: [{ scale: 0.95 }] },
+              ]}
+            >
+              <Text style={styles.speedButtonText}>{currentSpeed}x</Text>
+            </Pressable>
           )}
           {/* Expand button */}
           <Pressable
@@ -818,6 +857,41 @@ export function ExerciseDemoPlayer({
               <Text style={styles.fullscreenAudioCueText} numberOfLines={2}>
                 {audioCues.cues[currentCueIndex].text}
               </Text>
+            </View>
+          )}
+
+          {/* Speed control in fullscreen */}
+          {isCurrentVideo && !videoIsLoading && !videoHasError && (
+            <View style={styles.fullscreenSpeedRow}>
+              {SPEED_OPTIONS.map((speed, i) => (
+                <Pressable
+                  key={speed}
+                  onPress={() => {
+                    setSpeedIndex(i);
+                    if (videoPlayer) {
+                      videoPlayer.playbackRate = speed;
+                      videoPlayer.preservesPitch = true;
+                    }
+                    if (Platform.OS !== "web") {
+                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                    }
+                  }}
+                  style={({ pressed }) => [
+                    styles.fullscreenSpeedBtn,
+                    speedIndex === i && styles.fullscreenSpeedBtnActive,
+                    pressed && { opacity: 0.7 },
+                  ]}
+                >
+                  <Text
+                    style={[
+                      styles.fullscreenSpeedTxt,
+                      speedIndex === i && styles.fullscreenSpeedTxtActive,
+                    ]}
+                  >
+                    {speed}x
+                  </Text>
+                </Pressable>
+              ))}
             </View>
           )}
 
@@ -1353,5 +1427,51 @@ const styles = StyleSheet.create({
     color: "#0A0E14",
     fontSize: 14,
     fontWeight: "700",
+  },
+  // — Playback speed control (inline) —
+  speedButton: {
+    position: "absolute",
+    bottom: 8,
+    right: 40,
+    backgroundColor: "rgba(0,0,0,0.7)",
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: "rgba(245,158,11,0.4)",
+  },
+  speedButtonText: {
+    color: "#F59E0B",
+    fontSize: 11,
+    fontWeight: "700",
+    fontFamily: "DMSans_700Bold",
+  },
+  // — Playback speed control (fullscreen) —
+  fullscreenSpeedRow: {
+    flexDirection: "row",
+    justifyContent: "center",
+    gap: 8,
+    marginTop: 12,
+  },
+  fullscreenSpeedBtn: {
+    paddingHorizontal: 16,
+    paddingVertical: 6,
+    borderRadius: 8,
+    backgroundColor: "rgba(255,255,255,0.1)",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.15)",
+  },
+  fullscreenSpeedBtnActive: {
+    backgroundColor: "#F59E0B",
+    borderColor: "#F59E0B",
+  },
+  fullscreenSpeedTxt: {
+    color: "#9BA1A6",
+    fontSize: 13,
+    fontWeight: "700",
+    fontFamily: "DMSans_700Bold",
+  },
+  fullscreenSpeedTxtActive: {
+    color: "#0A0E14",
   },
 });

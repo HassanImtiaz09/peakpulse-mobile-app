@@ -3083,3 +3083,13 @@
 - [x] Fetched 1 new commit from GitHub
 - [x] Merged: fix: correct MuscleWiki video URLs for broken/inaccurate exercise videos (exercise-data.ts — 18 URL corrections)
 - [x] Fast-forward merge — no conflicts, 0 TypeScript errors
+
+## Round 86: Video speed control, URL validator, Recently Viewed
+- [x] Add video playback speed control (0.5x / 1x / 2x) to ExerciseDemoPlayer
+- [x] Add speed control to both inline and fullscreen modes
+- [x] Create bulk video URL validator script (ping MuscleWiki URLs, flag 404s)
+- [x] Add "Recently Viewed" section to exercise library
+- [x] Persist recently viewed exercises with AsyncStorage
+- [x] Write unit tests for all three features (23 tests, all passing)
+- [x] Verify TypeScript compiles (0 errors)
+- [x] Save checkpoint
