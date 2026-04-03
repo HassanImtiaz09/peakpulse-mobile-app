@@ -17,7 +17,7 @@ import { useFavorites } from "@/lib/favorites-context";
 import { getExerciseInfo } from "@/lib/exercise-data";
 import { resolveGifAsset } from "@/lib/gif-resolver";
 import { getExerciseDbGifUrl, hasExerciseDbGif } from "@/lib/exercisedb-api";
-import { MuscleSvgMini } from "@/components/muscle-svg-diagram";
+import { MuscleSvgMini, MuscleSvgDiagram } from "@/components/muscle-svg-diagram";
 import { getFormAnnotations, hasFormAnnotations } from "@/lib/form-annotations";
 import {
   getAudioCues,
@@ -375,12 +375,33 @@ export function ExerciseDemoPlayer({
               color="#F59E0B"
             />
             <Text style={styles.sectionLabelText}>
-              {angleViews[activeAngle].label.toUpperCase()} â WHAT TO CHECK
+              {angleViews[activeAngle].label.toUpperCase()} - WHAT TO CHECK
             </Text>
           </View>
           <Text style={styles.angleFocusText}>{angleViews[activeAngle].focus}</Text>
         </View>
       ) : null}
+
+      {/* Muscles Targeted card - matches daily exercise tab */}
+      {exerciseInfo && (
+        <View style={styles.muscleTargetCard}>
+          <View style={styles.sectionLabelRow}>
+            <View style={styles.sectionAccentBar} />
+            <MaterialIcons name="accessibility-new" size={12} color="#F59E0B" />
+            <Text style={styles.sectionLabelText}>MUSCLES TARGETED</Text>
+          </View>
+          <View style={styles.muscleTargetBody}>
+            <MuscleSvgDiagram
+              primary={exerciseInfo.primaryMuscles}
+              secondary={exerciseInfo.secondaryMuscles}
+              width={100}
+              height={150}
+              showLabels={true}
+              showToggle={true}
+            />
+          </View>
+        </View>
+      )}
 
       {/* GIF Source Toggle: ExerciseDB animated vs static images */}
       {exerciseDbGifUrl && (
@@ -846,6 +867,19 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0.55)",
     borderRadius: 8,
     padding: 3,
+  },
+  muscleTargetCard: {
+    backgroundColor: "rgba(245,158,11,0.08)",
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "rgba(245,158,11,0.18)",
+    padding: 12,
+    marginTop: 8,
+    marginBottom: 4,
+  },
+  muscleTargetBody: {
+    alignItems: "center",
+    marginTop: 8,
   },
   sourceToggleRow: {
     flexDirection: "row" as const,
