@@ -3078,3 +3078,8 @@
 - [x] Merged: fix: reduce BodyDiagramInteractive scale from 1.3 to 0.6 so hands are not cut off (body-diagram.tsx)
 - [x] Merged: fix: merge 'Today's Workout' section title with day name into 'Today's [Day] Target Muscles' (index.tsx — removed cardEyebrow day label, merged into SectionTitle)
 - [x] Fast-forward merge — no conflicts, 0 TypeScript errors
+
+## Round 85: Sync with GitHub repository
+- [x] Fetched 1 new commit from GitHub
+- [x] Merged: fix: correct MuscleWiki video URLs for broken/inaccurate exercise videos (exercise-data.ts — 18 URL corrections)
+- [x] Fast-forward merge — no conflicts, 0 TypeScript errors
