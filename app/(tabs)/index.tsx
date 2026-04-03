@@ -74,7 +74,7 @@ const APP_LOGO = "https://files.manuscdn.com/user_upload_by_module/session_file/
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 const AnimatedView = Animated.View;
 
-// ── Staggered animation wrapper ────────────────────────────────────────
+// ââ Staggered animation wrapper ââââââââââââââââââââââââââââââââââââââââ
 function StaggeredCard({ index, children }: { index: number; children: React.ReactNode }) {
   const opacity = useSharedValue(0);
   const translateY = useSharedValue(20);
@@ -89,7 +89,7 @@ function StaggeredCard({ index, children }: { index: number; children: React.Rea
   return <AnimatedView style={animStyle}>{children}</AnimatedView>;
 }
 
-// ── Section title with gold accent bar ─────────────────────────────────
+// ââ Section title with gold accent bar âââââââââââââââââââââââââââââââââ
 function SectionTitle({ title, rightElement }: { title: string; rightElement?: React.ReactNode }) {
   return (
     <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
@@ -102,7 +102,7 @@ function SectionTitle({ title, rightElement }: { title: string; rightElement?: R
   );
 }
 
-// ── Compact Goal Ring ──────────────────────────────────────────────────
+// ââ Compact Goal Ring ââââââââââââââââââââââââââââââââââââââââââââââââââ
 function GoalRing({ value, label, percentage, color }: { value: string; label: string; percentage: number; color: string }) {
   const R = 22;
   const circumference = 2 * Math.PI * R;
@@ -165,14 +165,14 @@ function HomeScreenContent() {
   const { displayName: savedDisplayName, profilePhotoUri } = useUserProfile();
   const displayName = savedDisplayName?.split(" ")[0] ?? user?.name?.split(" ")[0] ?? guestProfile?.name?.split(" ")[0] ?? "Athlete";
 
-  // ── Server-side data ─────
+  // ââ Server-side data âââââ
   const { data: profile } = trpc.profile.get.useQuery(undefined, { enabled: isAuthenticated });
   const { data: workoutPlan } = trpc.workoutPlan.getActive.useQuery(undefined, { enabled: isAuthenticated });
   const { data: mealPlan } = trpc.mealPlan.getActive.useQuery(undefined, { enabled: isAuthenticated });
 
   const { totalCalories: todayCalories, calorieGoal, meals: todayMeals, setCalorieGoal, macroTargets } = useCalories();
 
-  // ── Smart day matching: find today's workout from the schedule ──
+  // ââ Smart day matching: find today's workout from the schedule ââ
   const todayWorkout = useMemo(() => {
     const plan = workoutPlan ?? localWorkoutPlan;
     if (!plan?.schedule?.length) return null;
@@ -185,7 +185,7 @@ function HomeScreenContent() {
     return match ?? plan.schedule[0];
   }, [workoutPlan, localWorkoutPlan]);
 
-  // ── Rest day detection ──
+  // ââ Rest day detection ââ
   const isRestDay = useMemo(() => {
     if (!todayWorkout) return false;
     const focus = (todayWorkout.focus ?? "").toLowerCase();
@@ -193,7 +193,7 @@ function HomeScreenContent() {
     return focus.includes("rest") || focus.includes("recovery") || focus.includes("off") || exercises.length === 0;
   }, [todayWorkout]);
 
-  // ── Stretching suggestions for rest days ──
+  // ââ Stretching suggestions for rest days ââ
   const STRETCHING_ROUTINES = [
     { name: "Full Body Stretch", duration: "15 min", icon: "self-improvement" as const, description: "Gentle stretches for all major muscle groups" },
     { name: "Foam Rolling", duration: "10 min", icon: "sports-gymnastics" as const, description: "Myofascial release for tight muscles" },
@@ -273,7 +273,7 @@ function HomeScreenContent() {
     checkLocalPlan();
   }, [workoutPlan]);
 
-  // ── Onboarding guard ─────
+  // ââ Onboarding guard âââââ
   useEffect(() => {
     if (authLoading || guestLoading) return;
     if (isAuthenticated) {
@@ -292,7 +292,7 @@ function HomeScreenContent() {
     else if (profile !== undefined) setOnboardingChecked(true);
   }, [profile, isAuthenticated, authLoading]);
 
-  // ── Load analytics data ─────
+  // ââ Load analytics data âââââ
   useEffect(() => {
     if (!canUse) return;
     (async () => {
@@ -344,7 +344,7 @@ function HomeScreenContent() {
     })();
   }, [canUse, wearableData.stats.steps, wearableData.stats.totalCaloriesBurnt]);
 
-  // ── Load discovery prompt (R2) ─────
+  // ââ Load discovery prompt (R2) âââââ
   useEffect(() => {
     if (!canUse) return;
     getNextPrompt().then(p => setDiscoveryPrompt(p));
@@ -356,7 +356,7 @@ function HomeScreenContent() {
     }
   }, [canUse]);
 
-  // ── Pull-to-refresh handler ─────
+  // ââ Pull-to-refresh handler âââââ
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     try {
@@ -466,7 +466,7 @@ function HomeScreenContent() {
     return <View style={{ flex: 1, backgroundColor: SF.bg }} />;
   }
 
-  // ── Welcome / not logged in ────────────────────────────────────────────
+  // ââ Welcome / not logged in ââââââââââââââââââââââââââââââââââââââââââââ
   if (!canUse) {
     return (
       <View style={{ flex: 1, backgroundColor: SF.bg }}>
@@ -490,7 +490,7 @@ function HomeScreenContent() {
     else setPaywallFeature({ name: feature.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase()), icon, tier, desc });
   };
 
-  // ── Main Dashboard (R1: 6 Focused Sections) ─────────────────────────
+  // ââ Main Dashboard (R1: 6 Focused Sections) âââââââââââââââââââââââââ
   return (
     <>
       <PaywallModal visible={!!paywallFeature} onClose={() => setPaywallFeature(null)}
@@ -513,9 +513,9 @@ function HomeScreenContent() {
             />
           }
         >
-          {/* ═══════════════════════════════════════════════════════════
+          {/* âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
               SECTION 1: Hero Greeting + Date
-              ═══════════════════════════════════════════════════════════ */}
+              âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */}
           <View style={styles.heroSection}>
             <View style={styles.heroTopBar}>
               <TouchableOpacity onPress={() => router.push("/user-guide" as any)} style={{ padding: 4 }} {...a11yButton(A11Y_LABELS.menuButton)}>
@@ -564,7 +564,7 @@ function HomeScreenContent() {
             </View>
           </View>
 
-          {/* ── R2: Discovery Banner (contextual feature prompt) ── */}
+          {/* ââ R2: Discovery Banner (contextual feature prompt) ââ */}
           {discoveryPrompt && (
             <StaggeredCard index={0}>
               <DiscoveryBanner
@@ -577,11 +577,11 @@ function HomeScreenContent() {
             </StaggeredCard>
           )}
 
-          {/* ═══════════════════════════════════════════════════════════
+          {/* âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
               SECTION 2: Today's Workout Card with CTA (or Rest Day Recovery Card)
-              ═══════════════════════════════════════════════════════════ */}
+              âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */}
           {todayWorkout && isRestDay ? (
-            /* ── REST DAY RECOVERY CARD ── */
+            /* ââ REST DAY RECOVERY CARD ââ */
             <StaggeredCard index={1}>
               <View style={styles.section}>
                 <SectionTitle title="Recovery Day" />
@@ -625,7 +625,7 @@ function HomeScreenContent() {
           ) : todayWorkout && !isRestDay ? (
             <StaggeredCard index={1}>
               <View style={styles.section}>
-                <SectionTitle title={`Today's ${todayWorkout?.day ?? new Date().toLocaleDateString("en-US", { weekday: "long" })} Target Muscles`} />
+                <SectionTitle title="Today's Target Muscles" />
                 <TouchableOpacity
                   onPress={() => {
                     router.push({ pathname: "/active-workout", params: { dayData: JSON.stringify(todayWorkout) } } as any);
@@ -670,7 +670,7 @@ function HomeScreenContent() {
           ) : (isPlanGenerating) ? (
             <StaggeredCard index={1}>
               <View style={styles.section}>
-                <SectionTitle title={`Today's ${new Date().toLocaleDateString("en-US", { weekday: "long" })} Target Muscles`} />
+                <SectionTitle title="Today's Target Muscles" />
                 <View style={[styles.workoutCard, { alignItems: "center", justifyContent: "center", paddingVertical: 24 }]}>
                   <ActivityIndicator color="#F59E0B" size="small" />
                   <Text style={[styles.workoutCardTitle, { marginTop: 12 }]}>
@@ -709,9 +709,9 @@ function HomeScreenContent() {
             </StaggeredCard>
           )}
 
-          {/* ═══════════════════════════════════════════════════════════
+          {/* âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
               SECTION 2b: Last 3 Sessions
-              ═══════════════════════════════════════════════════════════ */}
+              âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */}
           {recentSessions.length > 0 && (
             <StaggeredCard index={1}>
               <View style={styles.section}>
@@ -754,9 +754,9 @@ function HomeScreenContent() {
             </StaggeredCard>
           )}
 
-          {/* ═══════════════════════════════════════════════════════════
+          {/* âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
               SECTION 3: Daily Progress (Calories + Macros in one compact row)
-              ═══════════════════════════════════════════════════════════ */}
+              âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */}
           {calorieGoal > 0 && (
             <StaggeredCard index={2}>
               <TouchableOpacity
@@ -840,7 +840,7 @@ function HomeScreenContent() {
                       </View>
                       <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
                         <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 11 }}>Activity: {tdeeBreakdown.activityLabel}</Text>
-                        <Text style={{ color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 13 }}>× {tdeeBreakdown.activityMultiplier}</Text>
+                        <Text style={{ color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 13 }}>Ã {tdeeBreakdown.activityMultiplier}</Text>
                       </View>
                       <View style={{ height: 1, backgroundColor: SF.border }} />
                       <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
@@ -857,7 +857,7 @@ function HomeScreenContent() {
                         <Text style={{ color: SF.gold, fontFamily: "DMSans_700Bold", fontSize: 15 }}>{tdeeBreakdown.adjustedTdee} kcal</Text>
                       </View>
                       <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 9, textAlign: "center", marginTop: 2 }}>
-                        Mifflin-St Jeor equation · {tdeeBreakdown.inputs.weightKg}kg · {tdeeBreakdown.inputs.heightCm}cm · {tdeeBreakdown.inputs.age}y · {tdeeBreakdown.inputs.gender}
+                        Mifflin-St Jeor equation Â· {tdeeBreakdown.inputs.weightKg}kg Â· {tdeeBreakdown.inputs.heightCm}cm Â· {tdeeBreakdown.inputs.age}y Â· {tdeeBreakdown.inputs.gender}
                       </Text>
                     </View>
                   </View>
@@ -866,56 +866,96 @@ function HomeScreenContent() {
             </StaggeredCard>
           )}
 
-          {/* ═══════════════════════════════════════════════════════════
-              SECTION 4: Weekly Goals (compact rings)
-              ═══════════════════════════════════════════════════════════ */}
-          {goalsEnabled && goalProgress && (
-            <StaggeredCard index={3}>
-              <View style={styles.section}>
-                <SectionTitle
-                  title="Weekly Goals"
-                  rightElement={
-                    <TouchableOpacity onPress={() => router.push("/weekly-goals" as any)} style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
-                      <Text style={{ color: SF.orange, fontFamily: "DMSans_600SemiBold", fontSize: 12 }}>Edit</Text>
-                      <MaterialIcons name="chevron-right" size={14} color={SF.orange} />
-                    </TouchableOpacity>
-                  }
-                />
-                <View style={styles.goalsCard}>
-                  <View style={{ flexDirection: "row", justifyContent: "space-around" }}>
-                    <GoalRing
-                      value={`${goalProgress.steps.current}`}
-                      label="Steps"
-                      percentage={goalProgress.steps.percentage}
-                      color="#10B981"
-                    />
-                    <GoalRing
-                      value={`${goalProgress.calories.current}`}
-                      label="Calories"
-                      percentage={goalProgress.calories.percentage}
-                      color="#F59E0B"
-                    />
-                    <GoalRing
-                      value={`${goalProgress.workouts.current}/${goalProgress.workouts.target}`}
-                      label="Workouts"
-                      percentage={goalProgress.workouts.percentage}
-                      color="#EF4444"
-                    />
-                  </View>
-                  <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", marginTop: 10, gap: 4 }}>
-                    <MaterialIcons name="schedule" size={11} color={SF.muted} />
-                    <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 10 }}>
-                      {goalProgress.daysRemaining} day{goalProgress.daysRemaining !== 1 ? "s" : ""} remaining
+          {/* âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+          {/* ______________________________________________________________________________________
+              SECTION 4: Progress Tracker (consecutive engagement)
+          ________________________________________________________________________________________ */}
+          <StaggeredCard index={3}>
+            <View style={styles.section}>
+              <SectionTitle title="Progress Tracker" />
+              <View style={{
+                backgroundColor: SF.surface,
+                borderRadius: 20,
+                padding: 20,
+                marginHorizontal: 20,
+                borderWidth: 1,
+                borderColor: SF.border,
+              }}>
+                {/* Streak flame header */}
+                <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", marginBottom: 16 }}>
+                  <Text style={{ fontSize: 40 }}>{streakData && streakData.currentStreak > 0 ? "\u{1F525}" : "\u{1F4AA}"}</Text>
+                  <View style={{ marginLeft: 12 }}>
+                    <Text style={{ fontSize: 32, fontWeight: "800", color: streakData && streakData.currentStreak > 0 ? "#F97316" : SF.text }}>
+                      {streakData ? streakData.currentStreak : 0}
+                    </Text>
+                    <Text style={{ fontSize: 13, color: SF.secondaryText, fontWeight: "600" }}>
+                      week streak
                     </Text>
                   </View>
                 </View>
-              </View>
-            </StaggeredCard>
-          )}
 
-          {/* ═══════════════════════════════════════════════════════════
+                {/* Streak dots - last 7 weeks */}
+                <View style={{ flexDirection: "row", justifyContent: "center", gap: 8, marginBottom: 16 }}>
+                  {Array.from({ length: 7 }).map((_, i) => {
+                    const weeksDone = streakData ? streakData.currentStreak : 0;
+                    const filled = i < Math.min(weeksDone, 7);
+                    return (
+                      <View
+                        key={i}
+                        style={{
+                          width: 36,
+                          height: 36,
+                          borderRadius: 18,
+                          backgroundColor: filled ? "#F97316" : SF.inputBg,
+                          alignItems: "center",
+                          justifyContent: "center",
+                          borderWidth: filled ? 0 : 1,
+                          borderColor: SF.border,
+                        }}
+                      >
+                        <Text style={{ fontSize: 12, fontWeight: "700", color: filled ? "#fff" : SF.secondaryText }}>
+                          W{i + 1}
+                        </Text>
+                      </View>
+                    );
+                  })}
+                </View>
+
+                {/* Stats row */}
+                <View style={{ flexDirection: "row", justifyContent: "space-between", paddingTop: 12, borderTopWidth: 1, borderTopColor: SF.border }}>
+                  <View style={{ alignItems: "center", flex: 1 }}>
+                    <Text style={{ fontSize: 18, fontWeight: "700", color: SF.text }}>
+                      {streakData ? streakData.longestStreak : 0}
+                    </Text>
+                    <Text style={{ fontSize: 11, color: SF.secondaryText, fontWeight: "500" }}>Best Streak</Text>
+                  </View>
+                  <View style={{ width: 1, backgroundColor: SF.border }} />
+                  <View style={{ alignItems: "center", flex: 1 }}>
+                    <Text style={{ fontSize: 18, fontWeight: "700", color: SF.text }}>
+                      {streakData ? streakData.totalWeeksCompleted : 0}
+                    </Text>
+                    <Text style={{ fontSize: 11, color: SF.secondaryText, fontWeight: "500" }}>Weeks Completed</Text>
+                  </View>
+                  <View style={{ width: 1, backgroundColor: SF.border }} />
+                  <View style={{ alignItems: "center", flex: 1 }}>
+                    <Text style={{ fontSize: 18, fontWeight: "700", color: SF.text }}>
+                      {streakData ? streakData.milestones.length : 0}
+                    </Text>
+                    <Text style={{ fontSize: 11, color: SF.secondaryText, fontWeight: "500" }}>Milestones</Text>
+                  </View>
+                </View>
+
+                {/* Motivational message */}
+                <Text style={{ textAlign: "center", fontSize: 13, color: SF.secondaryText, fontStyle: "italic", marginTop: 14 }}>
+                  {streakData && streakData.currentStreak >= 4 ? "You're on fire! Keep the momentum going!" :
+                   streakData && streakData.currentStreak >= 2 ? "Great consistency! Building strong habits." :
+                   "Start your streak — log a workout today!"}
+                </Text>
+              </View>
+            </View>
+          </StaggeredCard>
               SECTION 5: Quick Insights Carousel (R6)
-              ═══════════════════════════════════════════════════════════ */}
+              âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */}
           <StaggeredCard index={4}>
             <View style={styles.section}>
               <SectionTitle title="Quick Insights" />
@@ -929,9 +969,9 @@ function HomeScreenContent() {
             />
           </StaggeredCard>
 
-          {/* ═══════════════════════════════════════════════════════════
+          {/* âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
               SECTION 6: Explore More Grid
-              ═══════════════════════════════════════════════════════════ */}
+              âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */}
           <StaggeredCard index={5}>
             <View style={styles.section}>
               <SectionTitle title="Explore" />
@@ -943,9 +983,9 @@ function HomeScreenContent() {
             />
           </StaggeredCard>
 
-          {/* ═══════════════════════════════════════════════════════════
+          {/* âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
               MORE SECTIONS TOGGLE
-              ═══════════════════════════════════════════════════════════ */}
+              âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */}
           <StaggeredCard index={6}>
             <TouchableOpacity
               onPress={() => { setShowMore(!showMore); if (Platform.OS !== "web") Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); }}
@@ -964,9 +1004,9 @@ function HomeScreenContent() {
           </StaggeredCard>
 
           {showMore && (<>
-          {/* ═══════════════════════════════════════════════════════════
+          {/* âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
               SECTION 7: Wearable Metrics Panel (compact)
-              ═══════════════════════════════════════════════════════════ */}
+              âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */}
           <StaggeredCard index={6}>
             <View style={styles.section}>
               <SectionTitle
@@ -1018,9 +1058,9 @@ function HomeScreenContent() {
             </View>
           </StaggeredCard>
 
-          {/* ═══════════════════════════════════════════════════════════
+          {/* âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
               SECTION 8: Muscle Balance Heatmap
-              ═══════════════════════════════════════════════════════════ */}
+              âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */}
           {muscleReport && muscleReport.entries.length > 0 && (
             <StaggeredCard index={7}>
               <View style={styles.section}>
@@ -1064,9 +1104,9 @@ function HomeScreenContent() {
             </StaggeredCard>
           )}
 
-          {/* ═══════════════════════════════════════════════════════════
+          {/* âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
               SECTION 9: Personal Records
-              ═══════════════════════════════════════════════════════════ */}
+              âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */}
           {prSummary && prSummary.topLifts.length > 0 && (
             <StaggeredCard index={8}>
               <View style={styles.section}>
@@ -1113,9 +1153,9 @@ function HomeScreenContent() {
             </StaggeredCard>
           )}
 
-          {/* ═══════════════════════════════════════════════════════════
+          {/* âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
               SECTION 10: Tips & Tricks
-              ═══════════════════════════════════════════════════════════ */}
+              âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */}
           <StaggeredCard index={9}>
             <View style={styles.section}>
               <SectionTitle title="Tip of the Day" />
@@ -1140,9 +1180,9 @@ function HomeScreenContent() {
             </View>
           </StaggeredCard>
 
-          {/* ═══════════════════════════════════════════════════════════
+          {/* âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
               SECTION 11: Premium Feature Promotions
-              ═══════════════════════════════════════════════════════════ */}
+              âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */}
           <StaggeredCard index={10}>
             <View style={styles.section}>
               <PremiumFeatureBanner
@@ -1176,9 +1216,9 @@ function HomeScreenContent() {
             </View>
           </StaggeredCard>
 
-          {/* ═══════════════════════════════════════════════════════════
+          {/* âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
               SECTION 12: My Pantry Quick Access
-              ═══════════════════════════════════════════════════════════ */}
+              âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */}
           <StaggeredCard index={11}>
             <View style={styles.section}>
               <SectionTitle
@@ -1245,9 +1285,9 @@ function HomeScreenContent() {
             </View>
           </StaggeredCard>
 
-          {/* ═══════════════════════════════════════════════════════════
+          {/* âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
               SECTION 13: Social & Challenges
-              ═══════════════════════════════════════════════════════════ */}
+              âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */}
           <StaggeredCard index={12}>
             <View style={styles.section}>
               <SectionTitle
@@ -1329,7 +1369,7 @@ function HomeScreenContent() {
           </StaggeredCard>
           </>)}
 
-          {/* ── No plans CTA ── */}
+          {/* ââ No plans CTA ââ */}
           {!workoutPlan && !mealPlan && (
             <StaggeredCard index={6}>
               <View style={styles.section}>
@@ -1346,12 +1386,12 @@ function HomeScreenContent() {
             </StaggeredCard>
           )}
 
-          {/* ── Trial / Guest banners ── */}
+          {/* ââ Trial / Guest banners ââ */}
           {isTrialActive && (
             <View style={styles.trialBanner}>
               <MaterialIcons name="hourglass-top" size={20} color={SF.gold} />
               <View style={{ flex: 1 }}>
-                <Text style={styles.trialBannerTitle}>Pro Trial — {daysLeftInTrial} day{daysLeftInTrial !== 1 ? "s" : ""} left</Text>
+                <Text style={styles.trialBannerTitle}>Pro Trial â {daysLeftInTrial} day{daysLeftInTrial !== 1 ? "s" : ""} left</Text>
                 <Text style={styles.trialBannerSub}>Enjoying all Pro features. Subscribe to keep access.</Text>
               </View>
               <TouchableOpacity style={styles.trialBannerBtn} onPress={() => router.push("/subscription" as any)} {...a11yButton("Subscribe to Pro")}>
@@ -1387,12 +1427,12 @@ function HomeScreenContent() {
           )}
         </Animated.ScrollView>
 
-        {/* ═══════════════════════════════════════════════════════════
+        {/* âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
             R5: Floating "Start Workout" Button
-            ═══════════════════════════════════════════════════════════ */}
+            âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */}
         <FloatingStartWorkout />
 
-        {/* ═══ STREAK CELEBRATION OVERLAY ═══ */}
+        {/* âââ STREAK CELEBRATION OVERLAY âââ */}
         {showStreakCelebration && (
           <StreakCelebration
             streakDays={streakData?.currentStreak ?? 7}
@@ -1404,9 +1444,9 @@ function HomeScreenContent() {
   );
 }
 
-/* ────────────────────────────────────────────────────────────────────────
-   Streak Celebration Component — Fire-burst animation overlay
-   ──────────────────────────────────────────────────────────────────────── */
+/* ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+   Streak Celebration Component â Fire-burst animation overlay
+   ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
 function StreakCelebration({ streakDays, onDismiss }: { streakDays: number; onDismiss: () => void }) {
   const opacity = useSharedValue(0);
   const scale = useSharedValue(0.3);
