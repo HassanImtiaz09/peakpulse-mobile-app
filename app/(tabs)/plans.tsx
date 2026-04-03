@@ -47,7 +47,7 @@ const FG = "#F1F5F9";
 const MUTED = "#64748B";
 const CREAM = "#FDE68A";
 
-// Sanitize meal names from AI — remove unicode bullets, dots, and other artifacts
+// Sanitize meal names from AI â remove unicode bullets, dots, and other artifacts
 const sanitizeMealName = (name: string | undefined | null): string =>
   (name ?? "Meal")
     .replace(/[\u00b7\u2022\u2023\u25e6\u2043\u2219\u25cf\u25cb\u2013\u2014]/g, "")
@@ -104,6 +104,32 @@ const DIETARY_PREFS = [
 const DAYS_OPTIONS = [3, 4, 5, 6];
 
 const DAY_NAMES = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+const AI_TIPS = [
+  "For muscle building, aim for progressive overload — gradually increase weight or reps each week.",
+  "Rest 60–90 seconds between sets for hypertrophy, 2–3 minutes for strength.",
+  "Compound movements like squats and deadlifts recruit the most muscle fibres per rep.",
+  "Protein intake of 1.6–2.2g per kg of bodyweight supports optimal muscle recovery.",
+  "Sleep 7–9 hours — most muscle repair and growth hormone release happens during deep sleep.",
+  "Warm up with 5–10 minutes of light cardio to reduce injury risk and improve performance.",
+  "Track your workouts to see progress — what gets measured gets improved.",
+  "Deload every 4–6 weeks by reducing volume or intensity to prevent overtraining.",
+  "Mind-muscle connection matters — focus on the target muscle during each rep.",
+  "Stay hydrated: aim for 2–3 litres of water daily, more on training days.",
+  "Don’t skip leg day — lower body training boosts testosterone and overall strength.",
+  "Eccentric (lowering) phase should be slow and controlled for maximum muscle tension.",
+  "Consistency beats perfection — showing up regularly matters more than the perfect programme.",
+  "Stretch after workouts to improve flexibility and reduce next-day soreness.",
+  "Fuel your workout with carbs 1–2 hours before training for sustained energy.",
+];
+
+function getRotatingTip(): string {
+  const today = new Date();
+  const dayOfYear = Math.floor((today.getTime() - new Date(today.getFullYear(), 0, 0).getTime()) / 86400000);
+  const hourBlock = Math.floor(today.getHours() / 6); // changes 4x per day
+  return AI_TIPS[(dayOfYear * 4 + hourBlock) % AI_TIPS.length];
+}
+
 
 function getTodayDayName(): string {
   return DAY_NAMES[new Date().getDay()];
@@ -242,7 +268,7 @@ function PlansScreenContent() {
   }, [workoutPlan, todayName]);
 
 
-  // ── Exercise Swap Handler ──
+  // ââ Exercise Swap Handler ââ
   const handleExerciseSwap = useCallback(async (exercise: any, dayFocus: string) => {
     setSwapExModal({ exercise, dayFocus });
     setSwapExAlts([]);
@@ -275,7 +301,7 @@ function PlansScreenContent() {
     }));
     const updatedPlan = { ...workoutPlan, schedule: updatedSchedule };
     if (isAuthenticated) {
-      // For authenticated users, we'd need a server update — for now update local state
+      // For authenticated users, we'd need a server update â for now update local state
       setLocalWorkoutPlan(updatedPlan);
     } else {
       setLocalWorkoutPlan(updatedPlan);
@@ -287,7 +313,7 @@ function PlansScreenContent() {
   }, [swapExModal, workoutPlan, isAuthenticated]);
 
 
-  // ── Pull-to-refresh handler ─────
+  // ââ Pull-to-refresh handler âââââ
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     try {
@@ -317,7 +343,7 @@ function PlansScreenContent() {
     }
   }, [isAuthenticated, refetchWorkout]);
 
-  // Parallax — MUST be above early return to avoid hooks ordering violation
+  // Parallax â MUST be above early return to avoid hooks ordering violation
   const scrollY = useSharedValue(0);
   const heroImageStyle = useAnimatedStyle(() => ({
     transform: [{ translateY: interpolate(scrollY.value, [0, 200], [0, 100], Extrapolation.CLAMP) }],
@@ -329,7 +355,7 @@ function PlansScreenContent() {
     scrollY.value = event.nativeEvent.contentOffset.y;
   }, []);
 
-  // Workout progress stats — MUST be above early return to avoid hooks ordering violation
+  // Workout progress stats â MUST be above early return to avoid hooks ordering violation
   const workoutStats = useMemo(() => {
     if (!workoutPlan?.schedule) return null;
     const schedule = workoutPlan.schedule;
@@ -362,7 +388,7 @@ function PlansScreenContent() {
 
   return (
     <View style={{ flex: 1, backgroundColor: BG }}>
-      {/* Hero Header — NanoBanana flat dark */}
+      {/* Hero Header â NanoBanana flat dark */}
       <View style={{ backgroundColor: BG, paddingTop: 56, paddingHorizontal: 20, paddingBottom: 12 }}>
         <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
           <TouchableOpacity onPress={() => router.back()} style={{ padding: 4 }}>
@@ -465,14 +491,14 @@ function PlansScreenContent() {
               </>
             ) : (
               <>
-                {/* ── Plan Summary Bar ── */}
+                {/* ââ Plan Summary Bar ââ */}
                 <View style={{ backgroundColor: SURFACE, borderRadius: 14, padding: 14, marginBottom: 12, borderWidth: 1, borderColor: "rgba(30,41,59,0.6)", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
                   <View style={{ flex: 1 }}>
                     <View style={{ flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 4 }}>
                       <View style={{ backgroundColor: "rgba(34,197,94,0.15)", borderRadius: 6, paddingHorizontal: 8, paddingVertical: 2 }}>
                         <Text style={{ color: "#4ADE80", fontSize: 10, fontFamily: "DMSans_700Bold" }}>ACTIVE</Text>
                       </View>
-                      <Text style={{ color: MUTED, fontSize: 11 }}>{goalLabel} · {styleLabel} · {daysPerWeek}x/wk</Text>
+                      <Text style={{ color: MUTED, fontSize: 11 }}>{goalLabel} Â· {styleLabel} Â· {daysPerWeek}x/wk</Text>
                     </View>
                     <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
                       {workoutStats && (
@@ -510,24 +536,55 @@ function PlansScreenContent() {
                 )}
 
                 {/* AI Insight */}
-                {workoutPlan.insight && (
+                {(
                   <View style={{ backgroundColor: GOLD_DIM, borderRadius: 12, padding: 12, marginBottom: 14, borderWidth: 1, borderColor: GOLD_BORDER }}>
                     <View style={{ flexDirection: "row", gap: 8, alignItems: "flex-start" }}>
                       <MaterialIcons name="auto-awesome" size={14} color={GOLD} style={{ marginTop: 2 }} />
-                      <Text style={{ color: CREAM, fontSize: 12, lineHeight: 18, flex: 1 }}>{String(workoutPlan.insight)}</Text>
+                      <Text style={{ color: CREAM, fontSize: 12, lineHeight: 18, flex: 1 }}>{getRotatingTip()}</Text>
                     </View>
                   </View>
                 )}
 
-                {/* ── TODAY'S WORKOUT (highlighted) ── */}
+                {/* Premium Features — Highlighted */}
+                <View style={{ gap: 10, marginBottom: 14 }}>
+                <TouchableOpacity
+                  style={{ backgroundColor: "rgba(139,92,246,0.12)", borderRadius: 16, padding: 16, borderWidth: 1, borderColor: "rgba(139,92,246,0.3)", flexDirection: "row", alignItems: "center", gap: 12 }}
+                  onPress={() => router.push("/form-checker" as any)}
+                >
+                  <View style={{ width: 44, height: 44, borderRadius: 12, backgroundColor: "#8B5CF6", alignItems: "center", justifyContent: "center" }}>
+                    <MaterialIcons name="center-focus-strong" size={22} color="#fff" />
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <Text style={{ color: "#C4B5FD", fontFamily: "DMSans_700Bold", fontSize: 15 }}>AI Form Check</Text>
+                    <Text style={{ color: "rgba(196,181,253,0.6)", fontFamily: "DMSans_400Regular", fontSize: 12, marginTop: 2 }}>Record a set for AI form analysis</Text>
+                  </View>
+                  <MaterialIcons name="chevron-right" size={20} color="#8B5CF6" />
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={{ backgroundColor: "rgba(6,182,212,0.12)", borderRadius: 16, padding: 16, borderWidth: 1, borderColor: "rgba(6,182,212,0.3)", flexDirection: "row", alignItems: "center", gap: 12 }}
+                  onPress={() => router.push("/ai-coach" as any)}
+                >
+                  <View style={{ width: 44, height: 44, borderRadius: 12, backgroundColor: "#06B6D4", alignItems: "center", justifyContent: "center" }}>
+                    <MaterialIcons name="psychology" size={22} color="#fff" />
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <Text style={{ color: "#67E8F9", fontFamily: "DMSans_700Bold", fontSize: 15 }}>Personalised AI Coach</Text>
+                    <Text style={{ color: "rgba(103,232,249,0.6)", fontFamily: "DMSans_400Regular", fontSize: 12, marginTop: 2 }}>Get tailored guidance for your workout plan</Text>
+                  </View>
+                  <MaterialIcons name="chevron-right" size={20} color="#06B6D4" />
+                </TouchableOpacity>
+                </View>
+
+                {/* ââ TODAY'S WORKOUT (highlighted) ââ */}
                 {todayWorkout && (
                   <>
                     <View style={{ flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 10 }}>
                       <MaterialIcons name="today" size={16} color={GOLD} />
-                      <Text style={{ color: GOLD, fontFamily: "DMSans_700Bold", fontSize: 15 }}>Today — {todayName}</Text>
+                      <Text style={{ color: GOLD, fontFamily: "DMSans_700Bold", fontSize: 15 }}>Today â {todayName}</Text>
                     </View>
 
-                    {/* Body Diagram — Today's Target Muscles (uses same react-native-body-highlighter as Library) */}
+                    {/* Body Diagram â Today's Target Muscles (uses same react-native-body-highlighter as Library) */}
                     {todayMuscles.primary.length > 0 && !todayWorkout.isRest && (
                       <View style={{ backgroundColor: GOLD_DIM, borderRadius: 16, padding: 14, marginBottom: 12, borderWidth: 1, borderColor: GOLD_BORDER, alignItems: "center" }}>
                         <Text style={{ color: CREAM, fontFamily: "DMSans_700Bold", fontSize: 12, marginBottom: 8, letterSpacing: 0.5 }}>TODAY'S TARGET MUSCLES</Text>
@@ -554,7 +611,7 @@ function PlansScreenContent() {
                   </>
                 )}
 
-                {/* ── REST OF THE WEEK ── */}
+                {/* ââ REST OF THE WEEK ââ */}
                 {otherWorkoutDays.length > 0 && (
                   <>
                     <View style={{ flexDirection: "row", alignItems: "center", gap: 8, marginTop: 8, marginBottom: 10 }}>
@@ -576,34 +633,6 @@ function PlansScreenContent() {
                   </>
                 )}
 
-                {/* AI Form Check CTA */}
-                <TouchableOpacity
-                  style={{ backgroundColor: GOLD_DIM, borderRadius: 16, padding: 16, marginTop: 8, borderWidth: 1, borderColor: GOLD_BORDER, flexDirection: "row", alignItems: "center", gap: 14 }}
-                  onPress={() => router.push("/form-checker" as any)}
-                >
-                  <View style={{ width: 44, height: 44, borderRadius: 12, backgroundColor: GOLD, alignItems: "center", justifyContent: "center" }}>
-                    <MaterialIcons name="center-focus-strong" size={22} color={BG} />
-                  </View>
-                  <View style={{ flex: 1 }}>
-                    <Text style={{ color: FG, fontFamily: "DMSans_700Bold", fontSize: 15 }}>AI Form Check</Text>
-                    <Text style={{ color: MUTED, fontFamily: "DMSans_400Regular", fontSize: 12, marginTop: 2 }}>Record a set for AI form analysis</Text>
-                  </View>
-                  <MaterialIcons name="chevron-right" size={20} color={GOLD} />
-                </TouchableOpacity>
-
-                {/* Premium Feature Teasers */}
-                <View style={{ gap: 8, marginTop: 10 }}>
-                  <PremiumFeatureTeaser
-                    feature="ai_coaching"
-                    text="Get personalised AI Coach guidance for your workout plan"
-                    requiredTier="pro"
-                  />
-                  <PremiumFeatureTeaser
-                    feature="form_checker"
-                    text="Unlock AI Form Check to perfect your exercise technique"
-                    requiredTier="pro"
-                  />
-                </View>
 
                 {/* Customize / Regenerate (collapsible) */}
                 <TouchableOpacity
@@ -669,7 +698,7 @@ function PlansScreenContent() {
           </View>
       </Animated.ScrollView>
 
-      {/* ── Exercise Swap Modal ── */}
+      {/* ââ Exercise Swap Modal ââ */}
       <Modal visible={!!swapExModal} transparent animationType="slide" onRequestClose={() => setSwapExModal(null)} statusBarTranslucent>
         <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.85)", justifyContent: "flex-end" }}>
           <View style={{ backgroundColor: SURFACE, borderTopLeftRadius: 24, borderTopRightRadius: 24, maxHeight: "80%", paddingBottom: 40 }}>
@@ -735,7 +764,7 @@ function PlansScreenContent() {
         </View>
       </Modal>
 
-      {/* ── Local Muscle-Based Swap Sheet ── */}
+      {/* ââ Local Muscle-Based Swap Sheet ââ */}
       <ExerciseSwapSheet
         visible={localSwapVisible}
         exerciseName={localSwapExName}
@@ -776,7 +805,7 @@ function OptionChip({ iconName, label, selected, onPress }: { iconName: string; 
 function MacroCard({ label, value, unit, color }: any) {
   return (
     <View style={{ flex: 1, backgroundColor: SURFACE, borderRadius: 10, padding: 8, alignItems: "center", borderWidth: 1, borderColor: color + "30" }}>
-      <Text style={{ color, fontFamily: "SpaceMono_700Bold", fontSize: 14 }}>{value ?? "—"}</Text>
+      <Text style={{ color, fontFamily: "SpaceMono_700Bold", fontSize: 14 }}>{value ?? "â"}</Text>
       <Text style={{ color: MUTED, fontSize: 9, marginTop: 1 }}>{unit}</Text>
       <Text style={{ color: MUTED, fontSize: 9, marginTop: 1 }}>{label}</Text>
     </View>
@@ -840,32 +869,11 @@ function WorkoutDayCard({ day, onPress, isCompleted, onToggleComplete, isToday, 
 
       {expanded && !day.isRest && (
         <View style={{ paddingHorizontal: 14, paddingBottom: 14, gap: 10 }}>
-          {/* Muscle Diagram for this day's exercises — uses same body-highlighter as Library */}
-          {(() => {
-            const allPrimary = new Set<string>();
-            const allSecondary = new Set<string>();
-            (day.exercises ?? []).forEach((ex: any) => {
-              const info = getExerciseInfo(ex.name ?? "");
-              if (info) {
-                info.primaryMuscles.forEach((m: string) => allPrimary.add(m));
-                info.secondaryMuscles.forEach((m: string) => allSecondary.add(m));
-              }
-            });
-            const pArr = Array.from(allPrimary) as any[];
-            const sArr = Array.from(allSecondary).filter((m) => !allPrimary.has(m)) as any[];
-            if (pArr.length === 0) return null;
-            return (
-              <View style={{ alignItems: "center", backgroundColor: "rgba(245,158,11,0.04)", borderRadius: 12, paddingVertical: 10, borderWidth: 1, borderColor: "rgba(245,158,11,0.1)" }}>
-                <Text style={{ color: GOLD, fontSize: 10, fontWeight: "700", letterSpacing: 1.2, marginBottom: 6 }}>TARGETED MUSCLES</Text>
-                <BodyDiagram primary={pArr} secondary={sArr} width={120} height={160} showLabels={true} showBothViews={true} />
-              </View>
-            );
-          })()}
           <TouchableOpacity
             style={{ backgroundColor: GOLD, borderRadius: 12, paddingVertical: 10, alignItems: "center", marginBottom: 4 }}
             onPress={onPress}
           >
-            <Text style={{ color: BG, fontFamily: "DMSans_700Bold", fontSize: 13 }}>START WORKOUT →</Text>
+            <Text style={{ color: BG, fontFamily: "DMSans_700Bold", fontSize: 13 }}>START WORKOUT â</Text>
           </TouchableOpacity>
           {day.exercises?.map((ex: any, idx: number) => (
             <ExercisePreviewCard key={idx} exercise={ex} isToday={isToday} onSwap={onExerciseSwap ? () => onExerciseSwap(ex, day.focus ?? day.day) : undefined} />
@@ -876,7 +884,7 @@ function WorkoutDayCard({ day, onPress, isCompleted, onToggleComplete, isToday, 
       {expanded && day.isRest && (
         <View style={{ paddingHorizontal: 14, paddingBottom: 14 }}>
           <Text style={{ color: CREAM, fontFamily: "DMSans_400Regular", fontSize: 13, lineHeight: 18 }}>
-            Rest day — focus on recovery, stretching, and light movement. Your muscles grow during rest!
+            Rest day â focus on recovery, stretching, and light movement. Your muscles grow during rest!
           </Text>
         </View>
       )}
@@ -904,11 +912,6 @@ function ExercisePreviewCard({ exercise, onSwap, isToday }: { exercise: any; onS
               >
                 {done && <MaterialIcons name="check" size={16} color="#fff" />}
               </TouchableOpacity>
-            )}
-            {exInfo && (
-              <View style={{ marginTop: 2 }}>
-                <BodyDiagramInline primary={exInfo.primaryMuscles} secondary={exInfo.secondaryMuscles} />
-              </View>
             )}
             <View style={{ flex: 1 }}>
               <Text style={{ color: done ? "#10B981" : FG, fontFamily: "DMSans_700Bold", fontSize: 14, textDecorationLine: done ? "line-through" : "none" }}>{exercise.name}</Text>
