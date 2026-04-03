@@ -312,9 +312,13 @@ export function MuscleSvgDiagram({
 export function MuscleSvgMini({
   primary,
   secondary = [],
+  width = 40,
+  height = 60,
 }: {
   primary: MuscleGroup[];
   secondary?: MuscleGroup[];
+  width?: number;
+  height?: number;
 }) {
   const allMuscles = [...primary, ...secondary];
   const side = hasFrontMuscles(allMuscles) ? "front" : "back";
@@ -325,8 +329,8 @@ export function MuscleSvgMini({
         side={side}
         primary={primary}
         secondary={secondary}
-        width={40}
-        height={60}
+        width={width}
+        height={height}
       />
     </View>
   );
