@@ -888,7 +888,7 @@ function HomeScreenContent() {
                     <Text style={{ fontSize: 32, fontWeight: "800", color: streakData && streakData.currentStreak > 0 ? "#F97316" : SF.text }}>
                       {streakData ? streakData.currentStreak : 0}
                     </Text>
-                    <Text style={{ fontSize: 13, color: SF.secondaryText, fontWeight: "600" }}>
+                    <Text style={{ fontSize: 13, color: SF.muted, fontWeight: "600" }}>
                       week streak
                     </Text>
                   </View>
@@ -906,14 +906,14 @@ function HomeScreenContent() {
                           width: 36,
                           height: 36,
                           borderRadius: 18,
-                          backgroundColor: filled ? "#F97316" : SF.inputBg,
+                          backgroundColor: filled ? "#F97316" : SF.surface,
                           alignItems: "center",
                           justifyContent: "center",
                           borderWidth: filled ? 0 : 1,
                           borderColor: SF.border,
                         }}
                       >
-                        <Text style={{ fontSize: 12, fontWeight: "700", color: filled ? "#fff" : SF.secondaryText }}>
+                        <Text style={{ fontSize: 12, fontWeight: "700", color: filled ? "#fff" : SF.muted }}>
                           W{i + 1}
                         </Text>
                       </View>
@@ -927,26 +927,26 @@ function HomeScreenContent() {
                     <Text style={{ fontSize: 18, fontWeight: "700", color: SF.text }}>
                       {streakData ? streakData.longestStreak : 0}
                     </Text>
-                    <Text style={{ fontSize: 11, color: SF.secondaryText, fontWeight: "500" }}>Best Streak</Text>
+                    <Text style={{ fontSize: 11, color: SF.muted, fontWeight: "500" }}>Best Streak</Text>
                   </View>
                   <View style={{ width: 1, backgroundColor: SF.border }} />
                   <View style={{ alignItems: "center", flex: 1 }}>
                     <Text style={{ fontSize: 18, fontWeight: "700", color: SF.text }}>
                       {streakData ? streakData.totalWeeksCompleted : 0}
                     </Text>
-                    <Text style={{ fontSize: 11, color: SF.secondaryText, fontWeight: "500" }}>Weeks Completed</Text>
+                    <Text style={{ fontSize: 11, color: SF.muted, fontWeight: "500" }}>Weeks Completed</Text>
                   </View>
                   <View style={{ width: 1, backgroundColor: SF.border }} />
                   <View style={{ alignItems: "center", flex: 1 }}>
                     <Text style={{ fontSize: 18, fontWeight: "700", color: SF.text }}>
                       {streakData ? streakData.milestones.length : 0}
                     </Text>
-                    <Text style={{ fontSize: 11, color: SF.secondaryText, fontWeight: "500" }}>Milestones</Text>
+                    <Text style={{ fontSize: 11, color: SF.muted, fontWeight: "500" }}>Milestones</Text>
                   </View>
                 </View>
 
                 {/* Motivational message */}
-                <Text style={{ textAlign: "center", fontSize: 13, color: SF.secondaryText, fontStyle: "italic", marginTop: 14 }}>
+                <Text style={{ textAlign: "center", fontSize: 13, color: SF.muted, fontStyle: "italic", marginTop: 14 }}>
                   {streakData && streakData.currentStreak >= 4 ? "You're on fire! Keep the momentum going!" :
                    streakData && streakData.currentStreak >= 2 ? "Great consistency! Building strong habits." :
                    "Start your streak — log a workout today!"}
@@ -954,8 +954,7 @@ function HomeScreenContent() {
               </View>
             </View>
           </StaggeredCard>
-              SECTION 5: Quick Insights Carousel (R6)
-              âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */}
+          {/* SECTION 5: Quick Insights Carousel (R6) */}
           <StaggeredCard index={4}>
             <View style={styles.section}>
               <SectionTitle title="Quick Insights" />

@@ -3101,3 +3101,19 @@
   - 32acc3e: Fix Jumping Jack and High Knees video URLs (exercise-data.ts — 75 URL corrections)
 - [x] Fixed TS error: replaced undefined `Ionicons` with existing `MaterialIcons` import in exercise-detail.tsx
 - [x] 0 TypeScript errors after fix
+
+## Round 88: Sync with GitHub
+- [x] Merged 11 commits from GitHub (fast-forward, no conflicts):
+  - 683d3dd–6638b91: Remove High Knees exercise from all data files (no MuscleWiki video)
+  - 53e6749: Rotate AI tips, remove duplicate body diagrams, move premium features to top
+  - b11dec1: Remove Water Intake, move Today's Log to top, Log a Meal below it
+  - 55bf6ab: Home tab: replace Weekly Goals with Progress Tracker, fix header day name
+  - b09266b: Revamp Quick Insights carousel with emojis, accent colors, pagination dots
+  - a1e07f1: Revamp Explore grid: Wearables first, remove Nutrition, highlight premium AI features
+- [x] Fixed 10 post-merge TS errors:
+  - SF.secondaryText → SF.muted (7 occurrences across index.tsx and carousel)
+  - SF.inputBg → SF.surface (1 occurrence in index.tsx)
+  - Broken em-dash comment encoding in index.tsx (1 error)
+  - Removed web-only CSS `transition` property from carousel pagination dots
+  - Fixed missing module imports: @/lib/safe-frame and @/lib/colors → correct paths
+- [x] 0 TypeScript errors after fixes

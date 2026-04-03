@@ -10,8 +10,7 @@ import {
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import { useSafeAreaFrame } from "@/lib/safe-frame";
-import { useColors } from "@/lib/colors";
+import { useColors } from "@/hooks/use-colors";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const CARD_WIDTH = SCREEN_WIDTH - 64;
@@ -185,7 +184,7 @@ export function QuickInsightsCarousel({
               <Text style={{ fontSize: 22 }}>{item.emoji}</Text>
             </View>
             <View>
-              <Text style={{ fontSize: 13, fontWeight: "600", color: SF.secondaryText, textTransform: "uppercase", letterSpacing: 0.5 }}>
+              <Text style={{ fontSize: 13, fontWeight: "600", color: SF.muted, textTransform: "uppercase", letterSpacing: 0.5 }}>
                 {item.title}
               </Text>
               <Text style={{ fontSize: 22, fontWeight: "800", color: item.accentColor }}>
@@ -210,7 +209,7 @@ export function QuickInsightsCarousel({
         </View>
 
         {/* Subtitle */}
-        <Text style={{ fontSize: 14, lineHeight: 20, color: SF.secondaryText, marginBottom: 16 }}>
+        <Text style={{ fontSize: 14, lineHeight: 20, color: SF.muted, marginBottom: 16 }}>
           {item.subtitle}
         </Text>
 
@@ -268,7 +267,6 @@ export function QuickInsightsCarousel({
               height: 6,
               borderRadius: 3,
               backgroundColor: i === activeIndex ? card.accentColor : SF.border,
-              transition: "width 0.2s",
             }}
           />
         ))}
