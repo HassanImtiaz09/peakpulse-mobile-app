@@ -1,13 +1,13 @@
 /**
- * Exercise Detail Screen — FIXED
+ * Exercise Detail Screen â FIXED
  *
  * Changes from original:
  * 1. Alternative exercise GIF thumbnails now have onError handlers.
- *    Previously a broken/missing GIF URL rendered a blank 56×56 box.
+ *    Previously a broken/missing GIF URL rendered a blank 56Ã56 box.
  *    Now they fall back to a dumbbell placeholder icon.
  * 2. Added `altGifErrors` state (Set<string>) so each card tracks its own
  *    broken-image state independently.
- * 3. The `useState` import is added (was missing — original used only `useMemo`).
+ * 3. The `useState` import is added (was missing â original used only `useMemo`).
  * 4. No other logic or styling changed.
  */
 
@@ -27,6 +27,7 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import * as Haptics from "expo-haptics";
 import { ScreenContainer } from "@/components/screen-container";
 import EnhancedGifPlayer from "@/components/enhanced-gif-player";
+import ExerciseDemoPlayer from "@/components/exercise-demo-player";
 import { BodyDiagramInteractive } from "@/components/body-diagram";
 import { useFavorites } from "@/lib/favorites-context";
 import { getExerciseInfo, getAlternativeExercises } from "@/lib/exercise-data";
@@ -41,8 +42,6 @@ import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABEL
 import { searchExercisesByName, type ExerciseDBExercise } from "@/lib/exercisedb";
 import { ActivityIndicator } from "react-native";
 import { getExerciseInstructions } from "@/lib/exercise-instructions";
-import { getStockVideoUrl, getStockVideoEntry } from "@/lib/exercise-stock-videos";
-import { ExerciseStockVideoPlayer } from "@/components/exercise-stock-video-player";
 
 export default function ExerciseDetailScreen() {
   const { name } = useLocalSearchParams<{ name: string }>();
@@ -63,10 +62,10 @@ export default function ExerciseDetailScreen() {
   );
 
   // FIX: Track which alternative GIF thumbnails failed to load.
-  // Previously a broken URL rendered a blank box — now shows a fallback icon.
+  // Previously a broken URL rendered a blank box â now shows a fallback icon.
   const [altGifErrors, setAltGifErrors] = useState<Set<string>>(new Set());
 
-  // ExerciseDB API fallback — fetch exercise data when not in local DB
+  // ExerciseDB API fallback â fetch exercise data when not in local DB
   const [apiExercise, setApiExercise] = useState<ExerciseDBExercise | null>(null);
   const [apiLoading, setApiLoading] = useState(false);
 
@@ -240,30 +239,18 @@ export default function ExerciseDetailScreen() {
         contentContainerStyle={{ paddingBottom: insets.bottom + 24 }}
         showsVerticalScrollIndicator={false}
       >
-        {/* Exercise Demo — Stock Video (if available) or GIF fallback */}
-        <View style={styles.section}>
-          {getStockVideoUrl(exercise.name) ? (
-            <View>
-              <ExerciseStockVideoPlayer
-                videoUrl={getStockVideoUrl(exercise.name)!}
-                exerciseName={exercise.name}
-                height={260}
-                initialSpeed={0.25}
-              />
-              {getStockVideoEntry(exercise.name) && (
-                <Text style={styles.videoCredit}>
-                  Video: {getStockVideoEntry(exercise.name)!.credit}
-                </Text>
-              )}
-            </View>
-          ) : (
-            <EnhancedGifPlayer
-              exerciseKey={getRegistryKeyForExercise(exercise.name)}
+          {/* Exercise Demo - MuscleWiki Video */}
+          <View style={styles.section}>
+            <ExerciseDemoPlayer
+              gifAsset={exercise.angleViews[0]?.gifUrl}
+              cue={exercise.cue}
+              height={260}
               exerciseName={exercise.name}
-              height={240}
+              angleViews={exercise.angleViews}
+              primaryMuscles={exercise.primaryMuscles}
+              secondaryMuscles={exercise.secondaryMuscles}
             />
-          )}
-        </View>
+          </View>
 
         {/* Body Diagram + Info Row */}
         <View style={styles.infoRow}>
@@ -348,7 +335,7 @@ export default function ExerciseDetailScreen() {
           <Text style={styles.cueText}>{exercise.cue}</Text>
         </View>
 
-        {/* HOW TO PERFORM — Step-by-step instructions */}
+        {/* HOW TO PERFORM â Step-by-step instructions */}
         {instructions && (
           <View style={styles.instructionsCard}>
             <View style={styles.cueHeader}>
@@ -753,7 +740,7 @@ const styles = StyleSheet.create({
     fontSize: 9,
     textTransform: "capitalize",
   },
-  // ── HOW TO PERFORM styles ──────────────────────────────────────────────
+  // ââ HOW TO PERFORM styles ââââââââââââââââââââââââââââââââââââââââââââââ
   instructionsCard: {
     marginHorizontal: 16,
     marginTop: 12,
