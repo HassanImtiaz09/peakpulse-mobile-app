@@ -1,13 +1,13 @@
 /**
- * Exercise Detail Screen â FIXED
+ * Exercise Detail Screen Ã¢ÂÂ FIXED
  *
  * Changes from original:
  * 1. Alternative exercise GIF thumbnails now have onError handlers.
- *    Previously a broken/missing GIF URL rendered a blank 56Ã56 box.
+ *    Previously a broken/missing GIF URL rendered a blank 56ÃÂ56 box.
  *    Now they fall back to a dumbbell placeholder icon.
  * 2. Added `altGifErrors` state (Set<string>) so each card tracks its own
  *    broken-image state independently.
- * 3. The `useState` import is added (was missing â original used only `useMemo`).
+ * 3. The `useState` import is added (was missing Ã¢ÂÂ original used only `useMemo`).
  * 4. No other logic or styling changed.
  */
 
@@ -26,7 +26,6 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import * as Haptics from "expo-haptics";
 import { ScreenContainer } from "@/components/screen-container";
-import EnhancedGifPlayer from "@/components/enhanced-gif-player";
 import { ExerciseDemoPlayer } from "@/components/exercise-demo-player";
 import { BodyDiagramInteractive } from "@/components/body-diagram";
 import { useFavorites } from "@/lib/favorites-context";
@@ -62,10 +61,10 @@ export default function ExerciseDetailScreen() {
   );
 
   // FIX: Track which alternative GIF thumbnails failed to load.
-  // Previously a broken URL rendered a blank box â now shows a fallback icon.
+  // Previously a broken URL rendered a blank box Ã¢ÂÂ now shows a fallback icon.
   const [altGifErrors, setAltGifErrors] = useState<Set<string>>(new Set());
 
-  // ExerciseDB API fallback â fetch exercise data when not in local DB
+  // ExerciseDB API fallback Ã¢ÂÂ fetch exercise data when not in local DB
   const [apiExercise, setApiExercise] = useState<ExerciseDBExercise | null>(null);
   const [apiLoading, setApiLoading] = useState(false);
 
@@ -116,12 +115,10 @@ export default function ExerciseDetailScreen() {
         </View>
 
         <ScrollView style={styles.scrollView} contentContainerStyle={{ paddingBottom: insets.bottom + 24 }} showsVerticalScrollIndicator={false}>
-          {/* GIF from CDN or ExerciseDB API */}
-          <View style={{ marginHorizontal: 16, marginTop: 12 }}>
-            <EnhancedGifPlayer
-              exerciseName={apiExercise.name}
-              height={240}
-            />
+          {/* Exercise Visual */}
+          <View style={{ marginHorizontal: 16, marginTop: 12, height: 200, backgroundColor: "#1a1a2e", borderRadius: 12, alignItems: "center", justifyContent: "center" }}>
+            <Ionicons name="barbell-outline" size={48} color="#666" />
+            <Text style={{ color: "#666", marginTop: 8, fontSize: 14 }}>No demo video available</Text>
           </View>
 
           {/* Quick Info */}
@@ -333,7 +330,7 @@ export default function ExerciseDetailScreen() {
           <Text style={styles.cueText}>{exercise.cue}</Text>
         </View>
 
-        {/* HOW TO PERFORM â Step-by-step instructions */}
+        {/* HOW TO PERFORM Ã¢ÂÂ Step-by-step instructions */}
         {instructions && (
           <View style={styles.instructionsCard}>
             <View style={styles.cueHeader}>
@@ -738,7 +735,7 @@ const styles = StyleSheet.create({
     fontSize: 9,
     textTransform: "capitalize",
   },
-  // ââ HOW TO PERFORM styles ââââââââââââââââââââââââââââââââââââââââââââââ
+  // Ã¢ÂÂÃ¢ÂÂ HOW TO PERFORM styles Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
   instructionsCard: {
     marginHorizontal: 16,
     marginTop: 12,
