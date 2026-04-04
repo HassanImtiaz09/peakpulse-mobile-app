@@ -34,38 +34,44 @@ async function checkAiLimit(userId: number | undefined, endpoint: string): Promi
 
 function getBFDescription(bf: number): string {
   const descriptions: Record<number, string> = {
-    5: "extremely lean, stage-ready competition physique with full muscle separation and prominent veins, and a chiseled angular face with razor-sharp jawline",
-    8: "very lean athletic physique with clear muscle definition and visible abs, and angular facial features with prominent cheekbones",
-    10: "a very lean physique with excellent muscle definition, visible vascularity, a chiseled jaw, and angular facial features",
-    12: "a lean athletic physique with clear muscle separation, visible abs, a sharp jawline, and prominent cheekbones",
-    15: "an athletic build with visible muscle definition especially in the arms and shoulders, defined jawline, and emerging cheekbone visibility",
-    18: "fit average build with moderate muscle tone and healthy proportions, and a slightly leaner face",
-    20: "an average healthy build with some muscle tone visible, and a slightly leaner face",
-    25: "a slightly softer physique with minimal visible muscle definition, and a naturally full face",
+    5: "extremely lean, competition-ready physique: paper-thin skin with full muscle striations visible on chest, shoulders, and quads; deep separation between every muscle group; highly visible vascularity across arms, forearms, and lower abs; razor-sharp intercostal and serratus definition; virtually zero subcutaneous fat anywhere on the torso",
+    8: "very lean physique: clearly visible six-pack abs with deep grooves between each segment; visible oblique lines forming a V-taper; pronounced muscle striations on chest and shoulders; prominent vascularity on arms and forearms; visible separation between quad muscles; minimal subcutaneous fat on torso and limbs",
+    10: "lean, athletic physique: well-defined six-pack abs clearly visible without flexing; noticeable V-lines at the hip; visible muscle separation on arms and shoulders; moderate vascularity on forearms and biceps; chest has clear upper/lower definition; obliques visible but not deeply striated; a thin layer of subcutaneous fat softens extreme definition",
+    12: "lean build with visible abs: upper four abs clearly defined, lower two faintly visible; some muscle separation on arms and shoulders when relaxed; V-taper visible at hips; chest shows good shape but less defined separation; arms show muscle contour but minimal vascularity; a light layer of fat across the torso slightly softens muscle edges",
+    15: "athletic, fit build: faint ab outline visible especially in good lighting; arm and shoulder muscles visibly toned and shaped; chest has good fullness but no visible separation between pecs; moderate V-taper; a noticeable but thin fat layer covers the midsection; obliques are not visible; legs show muscle shape but no separation lines",
+    18: "fit-average build: no visible ab definition; torso appears smooth with an even layer of subcutaneous fat; arms and shoulders show general muscle shape beneath a soft layer; chest is full but undefined; waist has some soft tissue but no pronounced love handles; overall the body looks healthy and moderately active but without visible muscularity",
+    20: "average build: no muscle definition visible; the midsection carries a noticeable layer of soft tissue creating a smooth, rounded torso; chest is soft with no visible pec outline; arms appear full but without visible muscle contour; mild love handles may be present; the body appears healthy but not actively trained",
+    25: "softer physique: significant subcutaneous fat layer across the entire torso creating a rounded, smooth appearance; visible softness around the midsection and lower back; chest and arms appear full and soft; pronounced love handles; the waist-to-hip transition is smooth with no V-taper; face appears naturally fuller with rounded contours",
+    30: "heavy-set build: thick layer of fat covering the torso; pronounced belly that extends forward; chest appears rounded and soft; arms are thick with no visible muscle definition; love handles are prominent; the chin area carries extra fullness; overall the body carries significant extra weight distributed across all areas",
   };
   const keys = Object.keys(descriptions).map(Number).sort((a, b) => a - b);
   const closest = keys.reduce((a, b) => Math.abs(b - bf) < Math.abs(a - bf) ? b : a);
   return descriptions[closest];
 }
 
-/** Get face transformation description based on target body fat percentage */
 function getFaceTransformationDesc(currentBf: number, targetBf: number): string {
-  const bfDrop = currentBf - targetBf;
-
-  if (bfDrop <= 3) {
-    return "The face should show subtle changes: very slightly more defined jawline and minimally reduced facial puffiness, while maintaining the same overall facial structure and identity.";
+  // Use absolute target BF to describe the face, not just the delta.
+  // This ensures each BF level always gets the same face description regardless of starting point.
+  if (targetBf <= 8) {
+    return "FACE at " + targetBf + "% BF: The face must appear extremely lean — sharp, angular jawline with zero softness under the chin; very prominent cheekbones with visible hollowing beneath them; temples slightly concave; neck appears thin and sinewy. The skin looks taut and tight across all facial bones. Despite the extreme leanness, the person must be clearly recognisable as the same individual from the reference photo (same eyes, nose shape, brow structure, skin tone, hair).";
   }
-
-  if (bfDrop <= 7) {
-    return "The face should show noticeable fat reduction: a more defined jawline with reduced softness under the chin, slightly more visible cheekbones, and less overall facial puffiness. The facial structure and features must remain recognisably the same person.";
+  if (targetBf <= 10) {
+    return "FACE at " + targetBf + "% BF: The face must appear very lean — well-defined jawline with a sharp angle, no visible softness under the chin; cheekbones are prominent with slight shadowing beneath them; the face has an angular, athletic look. Neck appears lean. The person must be clearly recognisable as the same individual from the reference photo.";
   }
-
-  if (bfDrop <= 12) {
-    return "The face should show significant fat loss: a clearly defined, angular jawline, prominent cheekbones with visible contour, noticeably reduced double chin or under-chin fat, and a leaner overall facial appearance. Facial features must still be recognisably the same person.";
+  if (targetBf <= 12) {
+    return "FACE at " + targetBf + "% BF: The face must appear lean — clearly defined jawline with minimal softness, cheekbones visible but not hollowed; the face has a fit, healthy look with some angular definition. Very slight fullness under the chin is acceptable. The person must be clearly recognisable as the same individual from the reference photo.";
   }
-
-  // bfDrop > 12 — dramatic transformation
-  return "The face should show dramatic fat loss transformation: a sharp, chiseled jawline, very prominent cheekbones with strong angular definition, virtually no under-chin fat, visible facial muscle definition, and a much leaner overall head shape. Despite the dramatic change, the person must still be recognisably the same individual (same eyes, nose shape, skin tone, hair).";
+  if (targetBf <= 15) {
+    return "FACE at " + targetBf + "% BF: The face has a healthy, athletic appearance — the jawline is visible but not sharply defined; cheekbones have some definition but the face retains a natural fullness; a small amount of softness under the chin and along the jaw. The person must be clearly recognisable as the same individual from the reference photo.";
+  }
+  if (targetBf <= 18) {
+    return "FACE at " + targetBf + "% BF: The face appears average and healthy — a soft but visible jawline; cheeks are naturally full without appearing puffy; moderate softness under the chin; the face looks neither lean nor heavy, just naturally proportioned. The person must be clearly recognisable as the same individual from the reference photo.";
+  }
+  if (targetBf <= 20) {
+    return "FACE at " + targetBf + "% BF: The face appears slightly soft — the jawline is present but obscured by a thin layer of fat; cheeks are full and rounded; noticeable softness under the chin; the face has a healthy, relaxed look with no angular definition. The person must be clearly recognisable as the same individual from the reference photo.";
+  }
+  // 25%+
+  return "FACE at " + targetBf + "% BF: The face appears noticeably full and rounded — the jawline is soft and not clearly defined; cheeks are full and prominent; visible double-chin or significant under-chin softness; the face has a wider, rounder appearance overall. The person must be clearly recognisable as the same individual from the reference photo.";
 }
 
 function getFallbackWorkoutPlan(goal: string) {
@@ -249,23 +255,34 @@ export const appRouter = router({
           for (let attempt = 0; attempt < maxRetries; attempt++) {
             try {
               const bfDesc = getBFDescription(t.target_bf);
-              const genderHint = input.gender ?? 'male';
-              const { url } = await generateImage({
-                prompt: `Realistic fitness transformation photo of the same ${genderHint} person shown in the reference image. The person should now appear at approximately ${t.target_bf}% body fat with ${bfDesc}.
+                const genderHint = input.gender || "male";
+                const faceDesc = getFaceTransformationDesc(analysis.estimated_body_fat, t.target_bf);
+                const bfLabel = t.target_bf + "% body fat";
+                const allTargets = (analysis.transformations || []).map((x: any) => x.target_bf + "%").join(", ");
 
-FACE TRANSFORMATION (CRITICAL — do NOT skip):
-${getFaceTransformationDesc(analysis.estimated_body_fat, t.target_bf)}
+                const { url } = await generateImage({
+                  prompt: `TASK: Edit the reference photo to show what this EXACT same ${genderHint} person would realistically look like at ${bfLabel}. This is one image in a series showing body fat levels [${allTargets}], so consistency between images is critical.
 
-BODY TRANSFORMATION:
-Show realistic body composition changes for ${t.target_bf}% body fat: ${bfDesc}. Include visible changes to the torso, arms, and overall silhouette proportional to the fat loss.
+BODY COMPOSITION (${bfLabel}): ${bfDesc}
 
-IDENTITY PRESERVATION:
-The transformed person MUST be clearly recognisable as the same individual — same skin tone, hair color/style, eye color, nose shape, and overall facial proportions. Only the fat distribution should change, not the underlying bone structure or features.
+${faceDesc}
 
-REALISM:
-The transformation should look like a real photograph, not AI-generated. Match the lighting, background, and photo style of the original image. Show the full body from head to mid-thigh in a natural standing pose. Avoid uncanny valley effects.`,
-                originalImages: [{ url: input.photoUrl, mimeType: "image/jpeg" }],
-              });
+MANDATORY CONSISTENCY RULES:
+- The person MUST be immediately recognisable as the SAME individual in the reference photo across ALL body fat variations.
+- Preserve EXACTLY: skin tone/complexion, hair color, hair style, hair length, eye color, nose shape, ear shape, brow structure, lip shape, and any distinguishing features (moles, scars, tattoos, facial hair).
+- Preserve EXACTLY: the pose, camera angle, framing (head-to-mid-thigh), background, lighting direction, and photo style from the reference image.
+- The ONLY thing that should change between body fat levels is the amount and distribution of subcutaneous fat on the body and face.
+- Do NOT change muscle size/shape — only change fat layer thickness. Lower BF reveals more of the same underlying muscle; higher BF covers it with more fat.
+
+PROGRESSION LOGIC FOR ${bfLabel}:
+- Lower BF% = less subcutaneous fat = more visible bone structure in face, more visible muscle separation on body, thinner limbs, more visible veins.
+- Higher BF% = more subcutaneous fat = softer/rounder face, smoother body contours, less visible muscle definition, thicker midsection.
+- Fat reduces GRADUALLY and proportionally: face gets leaner AS body gets leaner, not independently.
+- At ${bfLabel} specifically, BOTH the face AND body must reflect this exact fat level — neither should appear leaner or fatter than the other.
+
+REALISM: The result must look like an unedited real photograph. Match the exact lighting, shadows, background, and image quality of the reference. No artificial smoothing, no HDR effects, no gym/dramatic lighting unless present in the original.`,
+                  originalImages: [{ url: input.photoUrl, mimeType: "image/jpeg" }],
+                });
               imageUrl = url ?? null;
               break; // Success, exit retry loop
             } catch (err: any) {
