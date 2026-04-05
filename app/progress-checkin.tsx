@@ -12,6 +12,7 @@ import { ScreenContainer } from "@/components/screen-container";
 import { useAuth } from "@/hooks/use-auth";
 import { trpc } from "@/lib/trpc";
 import { useColors } from "@/hooks/use-colors";
+import { ScreenErrorBoundary } from "@/components/error-boundary";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -154,6 +155,7 @@ export default function ProgressCheckinScreen() {
 
   if (step === "upload") {
     return (
+      <ScreenErrorBoundary screenName="progress-checkin">
       <ScreenContainer>
         <ScrollView contentContainerStyle={{ padding: 20, paddingBottom: 40 }}>
           {/* Baseline info card */}
@@ -211,6 +213,7 @@ export default function ProgressCheckinScreen() {
           </TouchableOpacity>
         </ScrollView>
       </ScreenContainer>
+      </ScreenErrorBoundary>
     );
   }
 
