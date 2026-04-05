@@ -19,6 +19,7 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { GOLDEN_PRIMARY, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgrounds";
 import { UI as SF } from "@/constants/ui-colors";
 import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
+import { ScreenErrorBoundary } from "@/components/error-boundary";
 const { width: W } = Dimensions.get("window");
 
 const FREE_FEATURES = [
@@ -93,6 +94,7 @@ export default function SubscriptionPlansScreen() {
     : 0;
 
   return (
+    <ScreenErrorBoundary screenName="subscription-plans">
     <ImageBackground source={{ uri: GOLDEN_PRIMARY }} style={{ flex: 1 }} resizeMode="cover">
     <ScreenContainer containerClassName="bg-[#0A0500]" edges={["top", "left", "right"]}>
       <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
@@ -254,6 +256,7 @@ export default function SubscriptionPlansScreen() {
       </ScrollView>
     </ScreenContainer>
     </ImageBackground>
+    </ScreenErrorBoundary>
   );
 }
 
