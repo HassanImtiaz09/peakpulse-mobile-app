@@ -23,10 +23,10 @@ import { ScreenErrorBoundary } from "@/components/error-boundary";
 const { width: W } = Dimensions.get("window");
 
 const FREE_FEATURES = [
-  "AI Workout Plan (1 per month)",
-  "AI Meal Plan (1 per month)",
-  "Basic Body Scan (3 per month)",
-  "Progress Photos (3 per month)",
+  "AI Workout Plans (2 per month)",
+  "AI Meal Plans (2 per month)",
+  "Basic Body Scan (5 per month)",
+  "Progress Photos (4 per month)",
   "Calorie Tracker",
 ];
 
