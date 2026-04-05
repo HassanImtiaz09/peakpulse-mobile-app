@@ -25,6 +25,7 @@ import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABEL
 import { useExerciseSearch } from "@/lib/exercisedb-hooks";
 import { hasExerciseDBKey, type ExerciseDBExercise } from "@/lib/exercisedb";
 import { getExerciseDbGifUrl } from "@/lib/exercisedb-api";
+import { ScreenErrorBoundary } from "@/components/error-boundary";
 
 // ── Theme ────────────────────────────────────────────────────────────────────
 interface SelectedExercise {
@@ -221,6 +222,7 @@ export default function CreateWorkoutScreen() {
     const suggestion = getRepSuggestion(item.name, goal, level);
 
     return (
+      <ScreenErrorBoundary screenName="create-workout">
       <TouchableOpacity
         onPress={() => toggleExercise(item)}
         style={{
@@ -265,6 +267,7 @@ export default function CreateWorkoutScreen() {
           {selected && <MaterialIcons name="check" size={16} color="#0A0E14" />}
         </View>
       </TouchableOpacity>
+      </ScreenErrorBoundary>
     );
   }, [isSelected, goal, level, toggleExercise]);
 
