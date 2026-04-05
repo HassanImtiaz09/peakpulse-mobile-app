@@ -47,6 +47,7 @@ import { notifyChallengeInvitation } from "@/lib/social-notifications";
 import { getTotalUnreadCount } from "@/lib/chat-service";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
+import { ScreenErrorBoundary } from "@/components/error-boundary";
 
 const HERO_BG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/golden-challenge-bg-2DXBpSZwN3LCroCHSRyD4K.webp";
 
@@ -117,6 +118,7 @@ export default function ChallengeScreen() {
     fetchUnread();
     const interval = setInterval(fetchUnread, 5000);
     return () => clearInterval(interval);
+  <ScreenErrorBoundary screenName="challenge">
   }, []);
 
   const handleCreateChallenge = async () => {
@@ -240,6 +242,7 @@ export default function ChallengeScreen() {
           </TouchableOpacity>
         )}
       </View>
+  </ScreenErrorBoundary>
     );
   };
 
