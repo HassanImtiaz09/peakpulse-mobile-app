@@ -18,6 +18,7 @@ import { FeatureGate } from "@/components/feature-gate";
 import { useSubscription } from "@/hooks/use-subscription";
 import { useAiLimit } from "@/components/ai-limit-modal";
 import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
+import { ScreenErrorBoundary } from "@/components/error-boundary";
 
 const WORKOUT_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/PZcnawJwIZkQHTEM.jpg";
 
@@ -210,6 +211,7 @@ export default function FormCheckerScreen() {
   // Gate form checker behind Advanced tier
   if (!hasFormCheckAccess) {
     return (
+      <ScreenErrorBoundary screenName="form-checker">
       <View style={{ flex: 1, backgroundColor: "#0A0E14" }}>
         <View style={{ backgroundColor: "#0A0E14", paddingTop: 56, paddingHorizontal: 20, paddingBottom: 16 }}>
           <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
@@ -224,6 +226,7 @@ export default function FormCheckerScreen() {
           <View style={{ height: 400 }} />
         </FeatureGate>
       </View>
+      </ScreenErrorBoundary>
     );
   }
 
