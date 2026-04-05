@@ -22,6 +22,7 @@ import { FeatureGate } from "@/components/feature-gate";
 import { getSeedPosts, getCurrentWeeklyChallenge, WEEKLY_CHALLENGE_TEMPLATES, type SeedPost } from "@/lib/social-feed-seeds";
 import { EmptyState, EMPTY_STATES } from "@/components/empty-state";
 import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
+import { ScreenErrorBoundary } from "@/components/error-boundary";
 
 const HERO_BG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/golden-social-bg-6XESYMXaHwooBovbKXUgYi.webp";
 
@@ -208,6 +209,7 @@ export default function SocialFeedScreen() {
   );
 
   return (
+    <ScreenErrorBoundary screenName="social-feed">
     <FeatureGate feature="social_feed" message="Join the PeakPulse community, share progress, and compete in challenges. Available on Pro plan.">
     <ScreenContainer edges={["top", "left", "right"]} containerClassName="bg-black">
       {/* Hero */}
@@ -462,6 +464,7 @@ export default function SocialFeedScreen() {
       </Modal>
     </ScreenContainer>
     </FeatureGate>
+    </ScreenErrorBoundary>
   );
 }
 
