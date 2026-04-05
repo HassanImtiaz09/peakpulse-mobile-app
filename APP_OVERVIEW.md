@@ -1,4 +1,4 @@
-# PeakPulse AI — Comprehensive App Overview
+# PeakPulse AI â Comprehensive App Overview
 
 **Version:** 1.0.0  
 **Platform:** iOS, Android, Web (via Expo / React Native)  
@@ -87,14 +87,14 @@ Presents authentication options: Continue with Google, Continue with Email, or S
 ### Post-Authentication Setup
 After authentication or guest selection, users complete a profile setup flow:
 
-1. **Personal Details** — Name, age, height, weight, gender
-2. **Fitness Goal** — Build muscle, lose fat, maintain, or athletic performance
-3. **Workout Style** — Gym, home, mix, or calisthenics
-4. **Dietary Preferences** — Omnivore, halal, vegan, vegetarian, keto, or paleo
-5. **Body Scan** (optional) — Take a full-body photo for AI body fat estimation
-6. **Transformation Preview** — AI generates body transformation images at different body fat percentages (10%, 12%, 15%, 20%, 25%)
-7. **Target Selection** — User picks their preferred body composition target
-8. **Plan Generation** — AI automatically generates personalised workout and meal plans
+1. **Personal Details** â Name, age, height, weight, gender
+2. **Fitness Goal** â Build muscle, lose fat, maintain, or athletic performance
+3. **Workout Style** â Gym, home, mix, or calisthenics
+4. **Dietary Preferences** â Omnivore, halal, vegan, vegetarian, keto, or paleo
+5. **Body Scan** (optional) â Take a full-body photo for AI body fat estimation
+6. **Transformation Preview** â AI generates body transformation images at different body fat percentages (10%, 12%, 15%, 20%, 25%)
+7. **Target Selection** â User picks their preferred body composition target
+8. **Plan Generation** â AI automatically generates personalised workout and meal plans
 
 ### Onboarding Summary Screen
 After completing setup, users see a summary of their generated AI workout plan, meal recommendations, and a before/after target photo comparison. This is followed by a subscription plan selection screen (Free Trial / Basic / Advanced) and a first-time dashboard tutorial overlay.
@@ -123,19 +123,19 @@ The Dashboard serves as the app's command centre, providing an at-a-glance overv
 
 ### Dashboard Components
 
-**Hero Section** — Personalised greeting with the user's name, current streak count, and XP level. Animated SVG progress rings display daily targets for calories, steps, water, and protein.
+**Hero Section** â Personalised greeting with the user's name, current streak count, and XP level. Animated SVG progress rings display daily targets for calories, steps, water, and protein.
 
-**AI Daily Insight** — A rotating card that provides AI-generated fitness tips, motivational messages, and personalised recommendations based on the user's activity history. Tips rotate every 5 minutes.
+**AI Daily Insight** â A rotating card that provides AI-generated fitness tips, motivational messages, and personalised recommendations based on the user's activity history. Tips rotate every 5 minutes.
 
-**Body Fat Estimate Card** — Shows the latest BF% from the most recent body scan with a comparison to the user's target. Tapping opens the full body scan history.
+**Body Fat Estimate Card** â Shows the latest BF% from the most recent body scan with a comparison to the user's target. Tapping opens the full body scan history.
 
-**Today's Workout Preview** — A compact card showing today's scheduled workout from the AI-generated plan, with a "Start Workout" button for immediate access.
+**Today's Workout Preview** â A compact card showing today's scheduled workout from the AI-generated plan, with a "Start Workout" button for immediate access.
 
-**Calorie Progress Bar** — Real-time calorie tracking showing consumed vs. target (calculated using the Mifflin-St Jeor TDEE formula based on user profile data).
+**Calorie Progress Bar** â Real-time calorie tracking showing consumed vs. target (calculated using the Mifflin-St Jeor TDEE formula based on user profile data).
 
-**Wearable Data Display** — Steps, calories burned, heart rate, and sleep data synced from connected wearable devices.
+**Wearable Data Display** â Steps, calories burned, heart rate, and sleep data synced from connected wearable devices.
 
-**Quick Action Grid** — 12 shortcut buttons providing one-tap access to key features:
+**Quick Action Grid** â 12 shortcut buttons providing one-tap access to key features:
 
 | Quick Action | Destination |
 |-------------|-------------|
@@ -152,17 +152,17 @@ The Dashboard serves as the app's command centre, providing an at-a-glance overv
 | AI Reminders | Notification settings |
 | 7-Day Challenge | Guided challenge |
 
-**Muscle Balance Heatmap** — A colour-coded body diagram showing which muscle groups are over-exercised (red), optimally trained (green), or under-exercised (blue) based on recent workout history. Configurable time window (7, 14, or 30 days).
+**Muscle Balance Heatmap** â A colour-coded body diagram showing which muscle groups are over-exercised (red), optimally trained (green), or under-exercised (blue) based on recent workout history. Configurable time window (7, 14, or 30 days).
 
-**Suggested Exercises** — AI-generated exercise recommendations based on muscle balance analysis, prioritising under-exercised muscle groups.
+**Suggested Exercises** â AI-generated exercise recommendations based on muscle balance analysis, prioritising under-exercised muscle groups.
 
-**Personal Records** — Recent PRs with trend direction indicators showing progress on key lifts.
+**Personal Records** â Recent PRs with trend direction indicators showing progress on key lifts.
 
-**Trend Charts** — Weekly muscle balance evolution displayed as SVG line charts with smooth Catmull-Rom curves.
+**Trend Charts** â Weekly muscle balance evolution displayed as SVG line charts with smooth Catmull-Rom curves.
 
-**Streak & Gamification** — Current workout streak, XP points, and milestone celebrations with shareable achievement cards.
+**Streak & Gamification** â Current workout streak, XP points, and milestone celebrations with shareable achievement cards.
 
-**Trial Status Banner** — For trial users, shows remaining days and an upgrade CTA. For expired trials, shows an upgrade prompt.
+**Trial Status Banner** â For trial users, shows remaining days and an upgrade CTA. For expired trials, shows an upgrade prompt.
 
 ---
 
@@ -172,24 +172,24 @@ The AI Body Scan feature uses the device camera and server-side AI to estimate b
 
 ### How It Works
 
-1. **Photo Capture** — User takes a full-body photo using the device camera or selects from gallery
-2. **AI Analysis** — The photo is uploaded to S3 and sent to the server's built-in LLM for multimodal analysis
-3. **BF% Estimation** — AI estimates current body fat percentage using the photo combined with user metrics (weight, height, age, gender)
-4. **Transformation Previews** — AI generates body transformation images at 5 target BF% levels (10%, 12%, 15%, 20%, 25%)
-5. **Target Selection** — User selects their preferred target, which is saved to their profile
-6. **Plan Integration** — The selected target informs AI workout and meal plan generation
+1. **Photo Capture** â User takes a full-body photo using the device camera or selects from gallery
+2. **AI Analysis** â The photo is uploaded to S3 and sent to the server's built-in LLM for multimodal analysis
+3. **BF% Estimation** â AI estimates current body fat percentage using the photo combined with user metrics (weight, height, age, gender)
+4. **Transformation Previews** â AI generates body transformation images at 5 target BF% levels (10%, 12%, 15%, 20%, 25%)
+5. **Target Selection** â User selects their preferred target, which is saved to their profile
+6. **Plan Integration** â The selected target informs AI workout and meal plan generation
 
 ### Additional Features
 
-**Fullscreen Preview** — Tapping any transformation card opens a fullscreen modal with pinch-to-zoom and before/after swipe comparison.
+**Fullscreen Preview** â Tapping any transformation card opens a fullscreen modal with pinch-to-zoom and before/after swipe comparison.
 
-**Progress Comparison** — A dedicated comparison screen with a drag-to-reveal slider between any two scan dates, showing stats differences (weight, body fat, measurements).
+**Progress Comparison** â A dedicated comparison screen with a drag-to-reveal slider between any two scan dates, showing stats differences (weight, body fat, measurements).
 
-**Collage Export** — Branded side-by-side collage (first + latest photo) with weight and BF% delta overlays, exportable to camera roll and shareable via the system share sheet.
+**Collage Export** â Branded side-by-side collage (first + latest photo) with weight and BF% delta overlays, exportable to camera roll and shareable via the system share sheet.
 
-**Timeline Scrubber** — Select any two months to compare, driving the comparison slider with the selected photos and stats overlay.
+**Timeline Scrubber** â Select any two months to compare, driving the comparison slider with the selected photos and stats overlay.
 
-**Transformation Reminder** — Post-onboarding screen showing initial photo vs. AI target body image as ongoing motivation.
+**Transformation Reminder** â Post-onboarding screen showing initial photo vs. AI target body image as ongoing motivation.
 
 ---
 
@@ -208,13 +208,13 @@ Workout plans are generated by the server-side LLM based on:
 
 ### Plan Display
 
-**Summary Header** — Compact badge row showing current goal, style, and training days.
+**Summary Header** â Compact badge row showing current goal, style, and training days.
 
-**Today's Workout (Hero)** — The current day's workout is highlighted with a gold border accent, showing all exercises with sets, reps, and rest periods.
+**Today's Workout (Hero)** â The current day's workout is highlighted with a gold border accent, showing all exercises with sets, reps, and rest periods.
 
-**Other Days** — Remaining days displayed in a collapsible "Other Days" section below.
+**Other Days** â Remaining days displayed in a collapsible "Other Days" section below.
 
-**Exercise Cards** — Each exercise card displays:
+**Exercise Cards** â Each exercise card displays:
 - Exercise name and target muscle group
 - Sets x reps with weight recommendations
 - Animated GIF demonstration (locally bundled, 77 exercises)
@@ -227,14 +227,14 @@ Workout plans are generated by the server-side LLM based on:
 
 Tapping "Start Workout" launches an immersive exercise-by-exercise session tracker:
 
-- **Exercise Timer** — Configurable rest intervals per exercise type (compound: 90s, isolation: 60s, cardio: 30s, stretching: 45s)
-- **GIF Demo** — Locally bundled animated GIF showing proper form with fullscreen modal
-- **Set Tracking** — Log completed sets with weight and reps
-- **Muscle Diagram** — Inline body diagram showing targeted muscles
-- **Video Preloading** — Next exercise's assets are preloaded during rest periods
-- **PR Detection** — Automatic personal record detection and notification
-- **Session Summary** — Workout duration, exercises completed, estimated calories burned
-- **Health Write-Back** — Completed workouts are logged to Apple Health / Health Connect
+- **Exercise Timer** â Configurable rest intervals per exercise type (compound: 90s, isolation: 60s, cardio: 30s, stretching: 45s)
+- **GIF Demo** â Locally bundled animated GIF showing proper form with fullscreen modal
+- **Set Tracking** â Log completed sets with weight and reps
+- **Muscle Diagram** â Inline body diagram showing targeted muscles
+- **Video Preloading** â Next exercise's assets are preloaded during rest periods
+- **PR Detection** â Automatic personal record detection and notification
+- **Session Summary** â Workout duration, exercises completed, estimated calories burned
+- **Health Write-Back** â Completed workouts are logged to Apple Health / Health Connect
 
 ### Custom Workout Builder
 
@@ -272,9 +272,9 @@ Meal plans are generated by the server-side LLM based on:
 
 ### 7-Day Meal Plan Display
 
-**Day Selector** — Browse all 7 days of the AI-generated meal plan with a horizontal day picker.
+**Day Selector** â Browse all 7 days of the AI-generated meal plan with a horizontal day picker.
 
-**Meal Cards** — Each meal (breakfast, lunch, dinner, snacks) shows:
+**Meal Cards** â Each meal (breakfast, lunch, dinner, snacks) shows:
 - Meal name with unique AI-fetched food photo
 - Calorie and macro breakdown (protein, carbs, fat)
 - Expandable "How to Prep" section with step-by-step cooking instructions
@@ -289,26 +289,26 @@ Tapping any meal opens the AI Meal Swap feature:
 
 ### Meal Logging
 
-**Manual Entry** — Log meals with name, calories, and macros via a form.
+**Manual Entry** â Log meals with name, calories, and macros via a form.
 
-**AI Photo Scanner** — Take a photo of any meal for AI-powered calorie estimation:
+**AI Photo Scanner** â Take a photo of any meal for AI-powered calorie estimation:
 - Camera or gallery picker via expo-image-picker
 - Photo uploaded to S3, analysed by server-side LLM
 - Returns detected food items with portions, calories, macros, health score (1-10), and meal type
 - Portion size adjustment slider (0.25x to 3.0x) with preset buttons
 - One-tap "Log This Meal" saves to calorie tracker
 
-**Barcode Scanner** — Scan product barcodes for nutritional information lookup.
+**Barcode Scanner** â Scan product barcodes for nutritional information lookup.
 
 ### Food Diary
 
-**Daily Overview** — Day's meals displayed as tiles (breakfast, lunch, snack, dinner) with calorie totals.
+**Daily Overview** â Day's meals displayed as tiles (breakfast, lunch, snack, dinner) with calorie totals.
 
-**Calorie Progress** — Real-time progress bar showing consumed vs. target calories.
+**Calorie Progress** â Real-time progress bar showing consumed vs. target calories.
 
-**Macro Tracking** — Protein, carbs, and fat tracked against daily targets.
+**Macro Tracking** â Protein, carbs, and fat tracked against daily targets.
 
-**Nutrition Charts** — Inline mini bar charts with link to full nutrition analytics screen showing weekly/monthly trends.
+**Nutrition Charts** â Inline mini bar charts with link to full nutrition analytics screen showing weekly/monthly trends.
 
 ### Meal Photo Timeline
 
@@ -328,19 +328,19 @@ AI-generated batch cooking plans based on dietary preferences with:
 
 ### Pantry Inventory
 
-**Manual Entry** — Add items with name, quantity, unit, category, and optional expiry date.
+**Manual Entry** â Add items with name, quantity, unit, category, and optional expiry date.
 
-**AI Scan** — Photograph pantry/fridge for AI vision-based item identification.
+**AI Scan** â Photograph pantry/fridge for AI vision-based item identification.
 
-**Receipt Scanner** — Scan grocery receipts to automatically extract items, quantities, prices, and categories. Batch "Add to Pantry" with auto-calculated expiry dates.
+**Receipt Scanner** â Scan grocery receipts to automatically extract items, quantities, prices, and categories. Batch "Add to Pantry" with auto-calculated expiry dates.
 
-**Categories** — Proteins, Dairy, Grains & Carbs, Vegetables, Fruits, Condiments & Spices, Oils & Fats, Beverages, Other.
+**Categories** â Proteins, Dairy, Grains & Carbs, Vegetables, Fruits, Condiments & Spices, Oils & Fats, Beverages, Other.
 
-**Expiry Tracking** — Visual warnings for items expiring within 3 days.
+**Expiry Tracking** â Visual warnings for items expiring within 3 days.
 
-**AI Meal Suggestions** — Server endpoint analyses pantry contents vs. nutritional needs and generates 4-6 meal suggestions using available ingredients.
+**AI Meal Suggestions** â Server endpoint analyses pantry contents vs. nutritional needs and generates 4-6 meal suggestions using available ingredients.
 
-**Smart Shopping Suggestions** — AI suggests 5-8 items prioritised by nutritional impact, versatility, and cost.
+**Smart Shopping Suggestions** â AI suggests 5-8 items prioritised by nutritional impact, versatility, and cost.
 
 ### Shopping List
 
@@ -360,15 +360,15 @@ The Profile tab serves as the user's personal hub for managing their account, tr
 
 ### Progress Photos
 
-**Photo Grid** — Chronological grid of all progress photos with timestamps and notes.
+**Photo Grid** â Chronological grid of all progress photos with timestamps and notes.
 
-**Camera Capture** — Take new progress photos with the device camera.
+**Camera Capture** â Take new progress photos with the device camera.
 
-**AI Commentary** — AI compares each new photo with the baseline, providing commentary on muscle gains, fat loss, and posture changes.
+**AI Commentary** â AI compares each new photo with the baseline, providing commentary on muscle gains, fat loss, and posture changes.
 
-**Before/After Comparison** — Drag-to-reveal slider between first and latest photo.
+**Before/After Comparison** â Drag-to-reveal slider between first and latest photo.
 
-**Collage Export** — Branded side-by-side collage with weight and BF% delta overlays.
+**Collage Export** â Branded side-by-side collage with weight and BF% delta overlays.
 
 ### Settings Screen
 
@@ -388,13 +388,13 @@ The Profile tab serves as the user's personal hub for managing their account, tr
 
 ### Gym Finder
 
-**Map View** — Interactive map showing nearby gyms using device location and OpenStreetMap/Overpass API.
+**Map View** â Interactive map showing nearby gyms using device location and OpenStreetMap/Overpass API.
 
-**Gym Cards** — Name, distance, phone, website, and operating hours.
+**Gym Cards** â Name, distance, phone, website, and operating hours.
 
-**Radius Filter** — 1km, 2km, 5km, or 10km search radius.
+**Radius Filter** â 1km, 2km, 5km, or 10km search radius.
 
-**Actions** — Open in Maps app or call gym directly.
+**Actions** â Open in Maps app or call gym directly.
 
 ---
 
@@ -404,30 +404,30 @@ The Profile tab serves as the user's personal hub for managing their account, tr
 
 A persistent floating action button (golden sparkle icon) appears in the bottom-right corner on all screens (hidden during onboarding and subscription flows).
 
-**Greeting Bubble** — Appears 1.5 seconds after app launch with a contextual greeting based on local data (streak, workouts, time of day, scans, meals, goal). Auto-hides after 5 seconds. Over 150 greeting templates.
+**Greeting Bubble** â Appears 1.5 seconds after app launch with a contextual greeting based on local data (streak, workouts, time of day, scans, meals, goal). Auto-hides after 5 seconds. Over 150 greeting templates.
 
-**Chat Dialog** — Expandable chat interface (85% screen height) with:
+**Chat Dialog** â Expandable chat interface (85% screen height) with:
 - Message history
 - Text input
 - Quick action buttons
 - Premium upgrade banner for free users
 
-**Navigation Intent Classifier** — Keyword matching routes users to 12+ screens from chat (meals, plans, scan, form check, calendar, settings, profile, coach, compare, share, subscription, notifications).
+**Navigation Intent Classifier** â Keyword matching routes users to 12+ screens from chat (meals, plans, scan, form check, calendar, settings, profile, coach, compare, share, subscription, notifications).
 
-**Premium AI Coaching** — Premium users get full-context AI coaching with personalised insights. Free users get template-based greetings.
+**Premium AI Coaching** â Premium users get full-context AI coaching with personalised insights. Free users get template-based greetings.
 
 ### Dedicated AI Coach Screen
 
 A full-screen AI coaching experience with two tabs:
 
-**Insights Tab** — AI-generated analysis covering:
+**Insights Tab** â AI-generated analysis covering:
 - Form analysis from recent workouts
 - Progress insights based on body scan and workout history
 - Personalised tips based on track record
 - Weekly plan recommendations
 - Milestone celebrations
 
-**Chat Tab** — Conversational AI coach with full context awareness of the user's fitness data, goals, and history.
+**Chat Tab** â Conversational AI coach with full context awareness of the user's fitness data, goals, and history.
 
 ---
 
@@ -437,11 +437,11 @@ A full-screen AI coaching experience with two tabs:
 
 A comprehensive, searchable exercise database with 77+ exercises covering all major muscle groups.
 
-**Search & Filter** — Text search with category filters (Upper Body, Lower Body, Core, Cardio, etc.) and muscle group filters.
+**Search & Filter** â Text search with category filters (Upper Body, Lower Body, Core, Cardio, etc.) and muscle group filters.
 
-**Favourites** — Heart icon on each exercise card with count badge filter. Favourites persist across app restarts via AsyncStorage.
+**Favourites** â Heart icon on each exercise card with count badge filter. Favourites persist across app restarts via AsyncStorage.
 
-**Exercise Cards** — Each card displays:
+**Exercise Cards** â Each card displays:
 - Exercise name
 - Target muscle group badge
 - Inline anatomical body diagram highlighting targeted muscles
@@ -449,21 +449,21 @@ A comprehensive, searchable exercise database with 77+ exercises covering all ma
 
 ### Exercise Detail Screen
 
-**Animated GIF Player** — Locally bundled GIF demonstrations using expo-image with:
+**Animated GIF Player** â Locally bundled GIF demonstrations using expo-image with:
 - Front/side angle toggle (multi-view demonstrations)
 - Fullscreen modal with pinch-to-zoom
 - Favourite toggle with haptic feedback
 - "Exercise Guide" badge
 
-**Interactive Muscle Diagram** — Professional anatomical SVG body diagram (react-native-body-highlighter) with:
+**Interactive Muscle Diagram** â Professional anatomical SVG body diagram (react-native-body-highlighter) with:
 - Front/back toggle
 - Primary muscles highlighted in gold, secondary in amber
 - Muscle label chips with colour-coded dots
 - All 17 muscle group types mapped
 
-**Form Cues** — Key technique points for proper exercise execution.
+**Form Cues** â Key technique points for proper exercise execution.
 
-**Alternative Exercises** — 3-5 alternatives targeting the same muscle group, each with GIF thumbnail and cue text.
+**Alternative Exercises** â 3-5 alternatives targeting the same muscle group, each with GIF thumbnail and cue text.
 
 ### Exercise Demo Assets
 
@@ -490,17 +490,17 @@ All 77 exercise demonstrations are bundled as locally optimised GIF files (18 MB
 
 A community feed where users can share progress, achievements, and workout completions. Seeded with AI-generated example posts (clearly labelled) until real users populate the feed.
 
-**Weekly Challenges** — Community challenges with leaderboards (e.g., log 5 workouts, hit protein goal 7 days).
+**Weekly Challenges** â Community challenges with leaderboards (e.g., log 5 workouts, hit protein goal 7 days).
 
 ### Social Circle
 
-**Friend System** — Add friends via unique circle invite codes with smart store redirect links.
+**Friend System** â Add friends via unique circle invite codes with smart store redirect links.
 
-**Leaderboard** — Ranked by 5 metrics (streak, steps, calories, workouts, distance) with podium display.
+**Leaderboard** â Ranked by 5 metrics (streak, steps, calories, workouts, distance) with podium display.
 
-**Friend Challenges** — 7-day duels (steps or calories) with daily progress tracking, winner announcement, and celebration UI.
+**Friend Challenges** â 7-day duels (steps or calories) with daily progress tracking, winner announcement, and celebration UI.
 
-**Activity Feed** — Real-time feed of friend activities (workouts, meals, achievements).
+**Activity Feed** â Real-time feed of friend activities (workouts, meals, achievements).
 
 ### Group Goals
 
@@ -508,7 +508,7 @@ Collaborative fitness goals with friend groups, tracking collective progress tow
 
 ### Referral Programme
 
-**Invite System** — Unique referral links with smart store redirect.
+**Invite System** â Unique referral links with smart store redirect.
 
 **Discount Tiers:**
 
@@ -521,11 +521,11 @@ Collaborative fitness goals with friend groups, tracking collective progress tow
 
 ### Social Sharing
 
-**Branded Templates** — 3 shareable card designs (Streak, Session Complete, Milestone) with PeakPulse branding.
+**Branded Templates** â 3 shareable card designs (Streak, Session Complete, Milestone) with PeakPulse branding.
 
-**Share Targets** — Instagram Stories, TikTok, Facebook, WhatsApp via system share sheet.
+**Share Targets** â Instagram Stories, TikTok, Facebook, WhatsApp via system share sheet.
 
-**Workout Calendar Export** — Monthly workout summary card rendered as a shareable image.
+**Workout Calendar Export** â Monthly workout summary card rendered as a shareable image.
 
 ---
 
@@ -579,7 +579,8 @@ Exportable health reports with user name, date range, summary stats, daily break
 | Progress Photos | No | Yes | Yes |
 | Wearable Sync | No | Yes | Yes |
 | Form Checker | No | No | Yes |
-| Social Feed & Challenges | No | No | Yes |
+| Social Feed (read-only) | No | Yes | Yes |
+| Challenges & Leaderboards | No | No | Yes |
 | 7-Day Challenge | No | No | Yes |
 | AI Coach (Full) | No | No | Yes |
 
@@ -587,8 +588,8 @@ Exportable health reports with user name, date range, summary stats, daily break
 
 | Plan | Monthly | Annual (Save 30%) |
 |------|---------|-------------------|
-| **Basic** | £5.99/mo | £4.19/mo (£50.28/yr) |
-| **Advanced** | £11.99/mo | £8.49/mo (£101.88/yr) |
+| **Basic** | Â£5.99/mo | Â£4.19/mo (Â£50.28/yr) |
+| **Advanced** | Â£11.99/mo | Â£8.49/mo (Â£101.88/yr) |
 
 ### 7-Day Free Trial
 
@@ -643,16 +644,16 @@ Fasting-aware meal timing and prayer-time workout scheduling for users with hala
 ### Local-First Architecture
 
 PeakPulse AI is designed with a local-first approach:
-- **Guest Mode** — Full app functionality without any account or cloud storage
-- **AsyncStorage** — All user data (profile, plans, meals, progress, settings) persisted locally
-- **Offline Workouts** — Last generated plan cached for offline access
-- **Local GIF Assets** — Exercise demonstrations bundled in-app (no network required)
+- **Guest Mode** â Full app functionality without any account or cloud storage
+- **AsyncStorage** â All user data (profile, plans, meals, progress, settings) persisted locally
+- **Offline Workouts** â Last generated plan cached for offline access
+- **Local GIF Assets** â Exercise demonstrations bundled in-app (no network required)
 
 ### Cloud Features (Authenticated Users)
 
-- **PostgreSQL Database** — Cross-device data sync for profiles, plans, and progress
-- **S3 File Storage** — Secure storage for progress photos and body scan images
-- **Server-Side AI** — LLM processing for body scan analysis, plan generation, and meal suggestions
+- **PostgreSQL Database** â Cross-device data sync for profiles, plans, and progress
+- **S3 File Storage** â Secure storage for progress photos and body scan images
+- **Server-Side AI** â LLM processing for body scan analysis, plan generation, and meal suggestions
 
 ### Data Disclaimer
 
@@ -717,4 +718,4 @@ The login screen displays the app logo with a fire/light burst effect, "PeakPuls
 
 ---
 
-*PeakPulse AI — Precision Performance. Your AI-powered fitness companion.*
+*PeakPulse AI â Precision Performance. Your AI-powered fitness companion.*
