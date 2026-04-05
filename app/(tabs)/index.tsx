@@ -620,6 +620,68 @@ function HomeScreenContent() {
           )}
 
           {/* âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+
+          {/* ─── NEXT BEST ACTION ─── */}
+          {/* Contextual CTA that adapts based on user's current status */}
+          <View style={[styles.section, { marginTop: 4 }]}>
+            <View style={{
+              marginHorizontal: 20, borderRadius: 20,
+              backgroundColor: SF.surface, borderWidth: 1, borderColor: SF.border,
+              overflow: "hidden",
+            }}>
+              <View style={{ height: 3, backgroundColor: "#8B5CF6" }} />
+              <TouchableOpacity
+                style={{ padding: 20, flexDirection: "row", alignItems: "center", gap: 16 }}
+                activeOpacity={0.85}
+                onPress={() => {
+                  // Priority: progress check-in due > workout > meal logging > explore
+                  const daysSinceProgress = lastProgressDate
+                    ? Math.floor((Date.now() - new Date(lastProgressDate).getTime()) / 86400000)
+                    : 999;
+                  if (daysSinceProgress >= 7) {
+                    router.push("/progress-checkin" as any);
+                  } else if (workoutPlan) {
+                    router.push("/active-workout" as any);
+                  } else {
+                    router.push("/(tabs)/scan" as any);
+                  }
+                }}
+              >
+                <View style={{
+                  width: 52, height: 52, borderRadius: 16,
+                  backgroundColor: "rgba(139,92,246,0.12)", borderWidth: 1,
+                  borderColor: "rgba(139,92,246,0.25)",
+                  alignItems: "center", justifyContent: "center",
+                }}>
+                  <MaterialIcons
+                    name={
+                      lastProgressDate && Math.floor((Date.now() - new Date(lastProgressDate).getTime()) / 86400000) >= 7
+                        ? "add-a-photo"
+                        : workoutPlan ? "fitness-center" : "center-focus-strong"
+                    }
+                    size={24}
+                    color="#8B5CF6"
+                  />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={{ color: SF.fg, fontSize: 16, fontFamily: "DMSans_700Bold", marginBottom: 2 }}>
+                    {lastProgressDate && Math.floor((Date.now() - new Date(lastProgressDate).getTime()) / 86400000) >= 7
+                      ? "Time for a Progress Check-In"
+                      : workoutPlan ? "Start Today's Workout"
+                      : "Take Your Body Scan"}
+                  </Text>
+                  <Text style={{ color: SF.muted, fontSize: 13, fontFamily: "DMSans_400Regular" }}>
+                    {lastProgressDate && Math.floor((Date.now() - new Date(lastProgressDate).getTime()) / 86400000) >= 7
+                      ? "Track your transformation with a new photo"
+                      : workoutPlan ? "Your plan is ready — let's go"
+                      : "See your AI body composition analysis"}
+                  </Text>
+                </View>
+                <MaterialIcons name="chevron-right" size={24} color={SF.muted} />
+              </TouchableOpacity>
+            </View>
+          </View>
+
               SECTION 2: Today's Workout Card with CTA (or Rest Day Recovery Card)
               âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */}
           {todayWorkout && isRestDay ? (
@@ -747,51 +809,6 @@ function HomeScreenContent() {
                     </View>
                   </View>
                 </TouchableOpacity>
-              </View>
-            </StaggeredCard>
-          )}
-
-          {/* âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
-              SECTION 2b: Last 3 Sessions
-              âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */}
-          {recentSessions.length > 0 && (
-            <StaggeredCard index={1}>
-              <View style={styles.section}>
-                <SectionTitle title="Recent Sessions" />
-                {recentSessions.map((session, i) => {
-                  const w = session.workout;
-                  const dateStr = w.startDate ? new Date(w.startDate).toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" }) : "";
-                  const durationMin = w.durationMinutes ?? 0;
-                  const completedExercises = w.completedExercisesJson ? JSON.parse(w.completedExercisesJson) : [];
-                  const exCount = Array.isArray(completedExercises) ? completedExercises.length : 0;
-                  return (
-                    <View
-                      key={`session-${i}`}
-                      style={{
-                        flexDirection: "row", alignItems: "center", gap: 12,
-                        paddingVertical: 12,
-                        borderTopWidth: i > 0 ? 1 : 0, borderTopColor: SF.border,
-                      }}
-                    >
-                      <View style={{ width: 40, height: 40, borderRadius: 12, backgroundColor: "rgba(245,158,11,0.1)", alignItems: "center", justifyContent: "center" }}>
-                        <MaterialIcons name="fitness-center" size={18} color={SF.gold} />
-                      </View>
-                      <View style={{ flex: 1 }}>
-                        <Text style={{ color: SF.fg, fontFamily: "DMSans_600SemiBold", fontSize: 13 }}>
-                          {w.focus ?? w.dayName ?? `Session ${i + 1}`}
-                        </Text>
-                        <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 11, marginTop: 1 }}>
-                          {dateStr}{durationMin > 0 ? ` \u00B7 ${durationMin} min` : ""} \u00B7 {exCount} exercises
-                        </Text>
-                      </View>
-                      {w.completedAt && (
-                        <View style={{ width: 24, height: 24, borderRadius: 12, backgroundColor: "rgba(34,197,94,0.15)", alignItems: "center", justifyContent: "center" }}>
-                          <MaterialIcons name="check" size={14} color="#22C55E" />
-                        </View>
-                      )}
-                    </View>
-                  );
-                })}
               </View>
             </StaggeredCard>
           )}
@@ -989,92 +1006,6 @@ function HomeScreenContent() {
 
           {/* âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
           {/* ______________________________________________________________________________________
-              SECTION 4: Progress Tracker (consecutive engagement)
-          ________________________________________________________________________________________ */}
-          <StaggeredCard index={3}>
-            <View style={styles.section}>
-              <SectionTitle title="Progress Tracker" />
-              <View style={{
-                backgroundColor: SF.surface,
-                borderRadius: 20,
-                padding: 20,
-                marginHorizontal: 20,
-                borderWidth: 1,
-                borderColor: SF.border,
-              }}>
-                {/* Streak flame header */}
-                <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", marginBottom: 16 }}>
-                  <Text style={{ fontSize: 40 }}>{streakData && streakData.currentStreak > 0 ? "\u{1F525}" : "\u{1F4AA}"}</Text>
-                  <View style={{ marginLeft: 12 }}>
-                    <Text style={{ fontSize: 32, fontWeight: "800", color: streakData && streakData.currentStreak > 0 ? "#F97316" : SF.text }}>
-                      {streakData ? streakData.currentStreak : 0}
-                    </Text>
-                    <Text style={{ fontSize: 13, color: SF.muted, fontWeight: "600" }}>
-                      week streak
-                    </Text>
-                  </View>
-                </View>
-
-                {/* Streak dots - last 7 weeks */}
-                <View style={{ flexDirection: "row", justifyContent: "center", gap: 8, marginBottom: 16 }}>
-                  {Array.from({ length: 7 }).map((_, i) => {
-                    const weeksDone = streakData ? streakData.currentStreak : 0;
-                    const filled = i < Math.min(weeksDone, 7);
-                    return (
-                      <View
-                        key={i}
-                        style={{
-                          width: 36,
-                          height: 36,
-                          borderRadius: 18,
-                          backgroundColor: filled ? "#F97316" : SF.surface,
-                          alignItems: "center",
-                          justifyContent: "center",
-                          borderWidth: filled ? 0 : 1,
-                          borderColor: SF.border,
-                        }}
-                      >
-                        <Text style={{ fontSize: 12, fontWeight: "700", color: filled ? "#fff" : SF.muted }}>
-                          W{i + 1}
-                        </Text>
-                      </View>
-                    );
-                  })}
-                </View>
-
-                {/* Stats row */}
-                <View style={{ flexDirection: "row", justifyContent: "space-between", paddingTop: 12, borderTopWidth: 1, borderTopColor: SF.border }}>
-                  <View style={{ alignItems: "center", flex: 1 }}>
-                    <Text style={{ fontSize: 18, fontWeight: "700", color: SF.text }}>
-                      {streakData ? streakData.longestStreak : 0}
-                    </Text>
-                    <Text style={{ fontSize: 11, color: SF.muted, fontWeight: "500" }}>Best Streak</Text>
-                  </View>
-                  <View style={{ width: 1, backgroundColor: SF.border }} />
-                  <View style={{ alignItems: "center", flex: 1 }}>
-                    <Text style={{ fontSize: 18, fontWeight: "700", color: SF.text }}>
-                      {streakData ? streakData.totalWeeksCompleted : 0}
-                    </Text>
-                    <Text style={{ fontSize: 11, color: SF.muted, fontWeight: "500" }}>Weeks Completed</Text>
-                  </View>
-                  <View style={{ width: 1, backgroundColor: SF.border }} />
-                  <View style={{ alignItems: "center", flex: 1 }}>
-                    <Text style={{ fontSize: 18, fontWeight: "700", color: SF.text }}>
-                      {streakData ? streakData.milestones.length : 0}
-                    </Text>
-                    <Text style={{ fontSize: 11, color: SF.muted, fontWeight: "500" }}>Milestones</Text>
-                  </View>
-                </View>
-
-                {/* Motivational message */}
-                <Text style={{ textAlign: "center", fontSize: 13, color: SF.muted, fontStyle: "italic", marginTop: 14 }}>
-                  {streakData && streakData.currentStreak >= 4 ? "You're on fire! Keep the momentum going!" :
-                   streakData && streakData.currentStreak >= 2 ? "Great consistency! Building strong habits." :
-                   "Start your streak — log a workout today!"}
-                </Text>
-              </View>
-            </View>
-          </StaggeredCard>
           {/* SECTION 5: Quick Insights Carousel (R6) */}
           <StaggeredCard index={4}>
             <View style={styles.section}>
@@ -1125,369 +1056,6 @@ function HomeScreenContent() {
 
           {showMore && (<>
           {/* âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
-              SECTION 7: Wearable Metrics Panel (compact)
-              âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */}
-          <StaggeredCard index={6}>
-            <View style={styles.section}>
-              <SectionTitle
-                title="Wearable Health"
-                rightElement={
-                  <TouchableOpacity onPress={() => router.push("/wearable-settings" as any)} style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
-                    <Text style={{ color: SF.orange, fontFamily: "DMSans_600SemiBold", fontSize: 12 }}>Details</Text>
-                    <MaterialIcons name="chevron-right" size={14} color={SF.orange} />
-                  </TouchableOpacity>
-                }
-              />
-              {wearableData.isConnected ? (
-                <View style={styles.wearableRow}>
-                  <View style={styles.wearableMetric}>
-                    <MaterialIcons name="directions-walk" size={18} color="#22C55E" />
-                    <Text style={[styles.wearableValue, { color: "#22C55E" }]}>{wearableData.stats.steps.toLocaleString()}</Text>
-                    <Text style={styles.wearableLabel}>Steps</Text>
-                  </View>
-                  <View style={styles.wearableMetric}>
-                    <MaterialIcons name="favorite" size={18} color="#EF4444" />
-                    <Text style={[styles.wearableValue, { color: "#EF4444" }]}>{wearableData.stats.heartRate}</Text>
-                    <Text style={styles.wearableLabel}>BPM</Text>
-                  </View>
-                  <View style={styles.wearableMetric}>
-                    <MaterialIcons name="local-fire-department" size={18} color="#F59E0B" />
-                    <Text style={[styles.wearableValue, { color: "#F59E0B" }]}>{wearableData.stats.totalCaloriesBurnt}</Text>
-                    <Text style={styles.wearableLabel}>Cal</Text>
-                  </View>
-                  <View style={styles.wearableMetric}>
-                    <MaterialIcons name="bedtime" size={18} color="#8B5CF6" />
-                    <Text style={[styles.wearableValue, { color: "#8B5CF6" }]}>{wearableData.stats.sleepHours.toFixed(1)}h</Text>
-                    <Text style={styles.wearableLabel}>Sleep</Text>
-                  </View>
-                </View>
-              ) : (
-                <TouchableOpacity
-                  style={styles.wearableConnectCard}
-                  onPress={() => router.push("/wearable-settings" as any)}
-                  activeOpacity={0.85}
-                >
-                  <MaterialIcons name="watch" size={28} color={SF.gold} />
-                  <View style={{ flex: 1, marginLeft: 14 }}>
-                    <Text style={{ color: SF.fg, fontFamily: "DMSans_600SemiBold", fontSize: 14 }}>Connect Your Wearable</Text>
-                    <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 12, marginTop: 2 }}>Sync Apple Health, Google Fit, Fitbit & more</Text>
-                  </View>
-                  <MaterialIcons name="chevron-right" size={20} color={SF.gold} />
-                </TouchableOpacity>
-              )}
-            </View>
-          </StaggeredCard>
-
-          {/* âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
-              SECTION 8: Muscle Balance Heatmap
-              âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */}
-          {muscleReport && muscleReport.entries.length > 0 && (
-            <StaggeredCard index={7}>
-              <View style={styles.section}>
-                <SectionTitle
-                  title="Muscle Balance"
-                  rightElement={
-                    <TouchableOpacity onPress={() => router.push("/muscle-balance" as any)} style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
-                      <Text style={{ color: SF.orange, fontFamily: "DMSans_600SemiBold", fontSize: 12 }}>Full Report</Text>
-                      <MaterialIcons name="chevron-right" size={14} color={SF.orange} />
-                    </TouchableOpacity>
-                  }
-                />
-                <View style={styles.heatmapCard}>
-                  <BodyDiagramInteractive
-                    primary={muscleReport.overExercised.concat(muscleReport.optimal) as MuscleGroup[]}
-                    secondary={muscleReport.underExercised as MuscleGroup[]}
-                  />
-                  {/* Summary chips */}
-                  <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 6, marginTop: 12, justifyContent: "center" }}>
-                    {muscleReport.overExercised.length > 0 && (
-                      <View style={[styles.balanceChip, { backgroundColor: "rgba(239,68,68,0.12)", borderColor: "rgba(239,68,68,0.25)" }]}>
-                        <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: "#EF4444" }} />
-                        <Text style={[styles.balanceChipText, { color: "#EF4444" }]}>{muscleReport.overExercised.length} over</Text>
-                      </View>
-                    )}
-                    {muscleReport.optimal.length > 0 && (
-                      <View style={[styles.balanceChip, { backgroundColor: "rgba(34,197,94,0.12)", borderColor: "rgba(34,197,94,0.25)" }]}>
-                        <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: "#22C55E" }} />
-                        <Text style={[styles.balanceChipText, { color: "#22C55E" }]}>{muscleReport.optimal.length} optimal</Text>
-                      </View>
-                    )}
-                    {muscleReport.underExercised.length > 0 && (
-                      <View style={[styles.balanceChip, { backgroundColor: "rgba(59,130,246,0.12)", borderColor: "rgba(59,130,246,0.25)" }]}>
-                        <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: "#3B82F6" }} />
-                        <Text style={[styles.balanceChipText, { color: "#3B82F6" }]}>{muscleReport.underExercised.length} under</Text>
-                      </View>
-                    )}
-                  </View>
-                </View>
-              </View>
-            </StaggeredCard>
-          )}
-
-          {/* âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
-              SECTION 9: Personal Records
-              âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */}
-          {prSummary && prSummary.topLifts.length > 0 && (
-            <StaggeredCard index={8}>
-              <View style={styles.section}>
-                <SectionTitle
-                  title="Personal Records"
-                  rightElement={
-                    <TouchableOpacity onPress={() => router.push("/personal-records" as any)} style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
-                      <Text style={{ color: SF.orange, fontFamily: "DMSans_600SemiBold", fontSize: 12 }}>All PRs</Text>
-                      <MaterialIcons name="chevron-right" size={14} color={SF.orange} />
-                    </TouchableOpacity>
-                  }
-                />
-                <View style={styles.prCard}>
-                  {prSummary.topLifts.slice(0, 4).map((lift, i) => (
-                    <View key={lift.exercise + i} style={[styles.prRow, i < Math.min(prSummary.topLifts.length, 4) - 1 && { borderBottomWidth: 1, borderBottomColor: SF.border }]}>
-                      <View style={styles.prRank}>
-                        <Text style={styles.prRankText}>{i + 1}</Text>
-                      </View>
-                      <View style={{ flex: 1 }}>
-                        <Text style={styles.prExercise}>{lift.exercise.replace(/\b\w/g, c => c.toUpperCase())}</Text>
-                        <Text style={styles.prDate}>{new Date(lift.date).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</Text>
-                      </View>
-                      <View style={{ alignItems: "flex-end" }}>
-                        <Text style={styles.prWeight}>{lift.weight} kg</Text>
-                        {prSummary.recentPRs.find(r => r.exercise === lift.exercise) && (
-                          <View style={styles.prNewBadge}>
-                            <Text style={styles.prNewBadgeText}>NEW</Text>
-                          </View>
-                        )}
-                      </View>
-                    </View>
-                  ))}
-                  {prSummary.totalExercisesTracked > 4 && (
-                    <TouchableOpacity
-                      onPress={() => router.push("/personal-records" as any)}
-                      style={styles.prSeeAll}
-                    >
-                      <Text style={styles.prSeeAllText}>See all {prSummary.totalExercisesTracked} exercises</Text>
-                      <MaterialIcons name="arrow-forward" size={14} color={SF.gold} />
-                    </TouchableOpacity>
-                  )}
-                </View>
-              </View>
-            </StaggeredCard>
-          )}
-
-          {/* âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
-              SECTION 10: Tips & Tricks
-              âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */}
-          <StaggeredCard index={9}>
-            <View style={styles.section}>
-              <SectionTitle title="Tip of the Day" />
-              <View style={styles.tipCard}>
-                <View style={styles.tipIconBox}>
-                  <MaterialIcons name={TIPS_AND_TRICKS[tipIndex].icon as any} size={22} color={SF.gold} />
-                </View>
-                <Text style={styles.tipText}>{TIPS_AND_TRICKS[tipIndex].tip}</Text>
-                <TouchableOpacity
-                  onPress={() => {
-                    const next = (tipIndex + 1) % TIPS_AND_TRICKS.length;
-                    setTipIndex(next);
-                    if (Platform.OS !== "web") Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                  }}
-                  style={styles.tipNextBtn}
-                  {...a11yButton("Next tip", "Show another fitness tip")}
-                >
-                  <MaterialIcons name="refresh" size={16} color={SF.gold} />
-                  <Text style={{ color: SF.gold, fontFamily: "DMSans_600SemiBold", fontSize: 12, marginLeft: 4 }}>Next Tip</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </StaggeredCard>
-
-          {/* âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
-              SECTION 11: Premium Feature Promotions
-              âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */}
-          <StaggeredCard index={10}>
-            <View style={styles.section}>
-              <PremiumFeatureBanner
-                feature="ai_body_scan"
-                title="AI Body Transformation"
-                description="See your future physique with AI-powered body visualisation. Upload a photo and watch yourself transform."
-                icon="auto-awesome"
-                accentColor="#8B5CF6"
-                requiredTier="pro"
-              />
-              <View style={{ height: 10 }} />
-              <PremiumFeatureBanner
-                feature="ai_meal_plan"
-                title="Smart Meal Plans"
-                description="Get personalised meal plans based on your goals, dietary preferences, and calorie targets."
-                icon="restaurant-menu"
-                accentColor="#22C55E"
-                requiredTier="basic"
-                compact
-              />
-              <View style={{ height: 10 }} />
-              <PremiumFeatureBanner
-                feature="wearable_sync"
-                title="Wearable Integration"
-                description="Sync with Apple Health, Google Fit, Fitbit, Garmin and more for complete health tracking."
-                icon="watch"
-                accentColor="#3B82F6"
-                requiredTier="basic"
-                compact
-              />
-            </View>
-          </StaggeredCard>
-
-          {/* âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
-              SECTION 12: My Pantry Quick Access
-              âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */}
-          <StaggeredCard index={11}>
-            <View style={styles.section}>
-              <SectionTitle
-                title="My Pantry"
-                rightElement={
-                  <TouchableOpacity onPress={() => router.push("/pantry" as any)} style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
-                    <Text style={{ color: SF.orange, fontFamily: "DMSans_600SemiBold", fontSize: 12 }}>Open</Text>
-                    <MaterialIcons name="chevron-right" size={14} color={SF.orange} />
-                  </TouchableOpacity>
-                }
-              />
-              <TouchableOpacity
-                style={styles.pantryCard}
-                onPress={() => router.push("/pantry" as any)}
-                activeOpacity={0.85}
-              >
-                <View style={{ flexDirection: "row", alignItems: "center", gap: 14 }}>
-                  <View style={[styles.pantryIconBox, { backgroundColor: "rgba(249,115,22,0.12)" }]}>
-                    <MaterialIcons name="kitchen" size={26} color="#F97316" />
-                  </View>
-                  <View style={{ flex: 1 }}>
-                    <Text style={{ color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 16 }}>
-                      {pantryItems.length} Items
-                    </Text>
-                    <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 12, marginTop: 2 }}>
-                      {(() => {
-                        const expiring = getExpiringItems(3);
-                        if (expiring.length > 0) return `${expiring.length} expiring soon`;
-                        if (pantryItems.length === 0) return "Add items to get AI meal suggestions";
-                        return "Tap for AI meal suggestions";
-                      })()}
-                    </Text>
-                  </View>
-                  <MaterialIcons name="chevron-right" size={22} color={SF.muted} />
-                </View>
-                {/* Quick action row */}
-                <View style={{ flexDirection: "row", gap: 8, marginTop: 14 }}>
-                  <TouchableOpacity
-                    style={styles.pantryQuickBtn}
-                    onPress={() => router.push("/barcode-scanner" as any)}
-                    {...a11yButton("Scan barcode", "Add pantry items by scanning barcode")}
-                  >
-                    <MaterialIcons name="qr-code-scanner" size={14} color={SF.gold} />
-                    <Text style={styles.pantryQuickBtnText}>Scan Barcode</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={styles.pantryQuickBtn}
-                    onPress={() => router.push("/scan-receipt" as any)}
-                    {...a11yButton("Scan receipt", "Add pantry items from a receipt photo")}
-                  >
-                    <MaterialIcons name="receipt-long" size={14} color={SF.gold} />
-                    <Text style={styles.pantryQuickBtnText}>Scan Receipt</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={styles.pantryQuickBtn}
-                    onPress={() => router.push("/meal-prep" as any)}
-                    {...a11yButton("Meal prep", "Get AI meal prep suggestions")}
-                  >
-                    <MaterialIcons name="auto-awesome" size={14} color={SF.gold} />
-                    <Text style={styles.pantryQuickBtnText}>Meal Prep</Text>
-                  </TouchableOpacity>
-                </View>
-              </TouchableOpacity>
-            </View>
-          </StaggeredCard>
-
-          {/* âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
-              SECTION 13: Social & Challenges
-              âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */}
-          <StaggeredCard index={12}>
-            <View style={styles.section}>
-              <SectionTitle
-                title="Social & Challenges"
-                rightElement={
-                  <TouchableOpacity onPress={() => router.push("/social-circle" as any)} style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
-                    <Text style={{ color: SF.orange, fontFamily: "DMSans_600SemiBold", fontSize: 12 }}>My Circle</Text>
-                    <MaterialIcons name="chevron-right" size={14} color={SF.orange} />
-                  </TouchableOpacity>
-                }
-              />
-              <View style={styles.socialCard}>
-                {/* Circle stats row */}
-                <View style={{ flexDirection: "row", gap: 10, marginBottom: 14 }}>
-                  <TouchableOpacity
-                    style={styles.socialStatBox}
-                    onPress={() => router.push("/social-circle" as any)}
-                    activeOpacity={0.8}
-                  >
-                    <MaterialIcons name="people" size={20} color="#3B82F6" />
-                    <Text style={[styles.socialStatValue, { color: "#3B82F6" }]}>
-                      {socialCircle ? socialCircle.friends.length : 0}
-                    </Text>
-                    <Text style={styles.socialStatLabel}>Friends</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={styles.socialStatBox}
-                    onPress={() => router.push("/challenge" as any)}
-                    activeOpacity={0.8}
-                  >
-                    <MaterialIcons name="bolt" size={20} color="#F59E0B" />
-                    <Text style={[styles.socialStatValue, { color: "#F59E0B" }]}>
-                      {activeChallenges.length}
-                    </Text>
-                    <Text style={styles.socialStatLabel}>Active Duels</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={styles.socialStatBox}
-                    onPress={() => router.push("/group-goals" as any)}
-                    activeOpacity={0.8}
-                  >
-                    <MaterialIcons name="groups" size={20} color="#14B8A6" />
-                    <Text style={[styles.socialStatValue, { color: "#14B8A6" }]}>
-                      {socialCircle ? getActiveFriendsCount(socialCircle.friends) : 0}
-                    </Text>
-                    <Text style={styles.socialStatLabel}>Active</Text>
-                  </TouchableOpacity>
-                </View>
-                {/* Quick action buttons */}
-                <View style={{ flexDirection: "row", gap: 8 }}>
-                  <TouchableOpacity
-                    style={[styles.socialActionBtn, { flex: 1 }]}
-                    onPress={() => gatedNav("/social-feed", "social_feed", "group", "pro", "Join the PeakPulse community, share progress, and compete in challenges.")}
-                  >
-                    <MaterialIcons name="group" size={16} color="#8B5CF6" />
-                    <Text style={[styles.socialActionBtnText, { color: "#8B5CF6" }]}>Community</Text>
-                    <View style={styles.proBadge}><Text style={styles.proBadgeText}>PRO</Text></View>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={[styles.socialActionBtn, { flex: 1 }]}
-                    onPress={() => gatedNav("/challenge-onboarding", "challenges", "bolt", "pro", "Unlock 7-day fitness challenges and leaderboards.")}
-                  >
-                    <MaterialIcons name="emoji-events" size={16} color="#F59E0B" />
-                    <Text style={[styles.socialActionBtnText, { color: "#F59E0B" }]}>7-Day Challenge</Text>
-                    <View style={styles.proBadge}><Text style={styles.proBadgeText}>PRO</Text></View>
-                  </TouchableOpacity>
-                </View>
-                {/* Invite CTA */}
-                <TouchableOpacity
-                  style={styles.socialInviteBtn}
-                  onPress={() => router.push("/social-circle" as any)}
-                  activeOpacity={0.85}
-                >
-                  <MaterialIcons name="person-add" size={16} color={SF.gold} />
-                  <Text style={{ color: SF.gold, fontFamily: "DMSans_600SemiBold", fontSize: 13, marginLeft: 8 }}>Invite Friends to Your Circle</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </StaggeredCard>
-          </>)}
 
 
           {/* ______________________ Progress Check-In ______________________ */}
