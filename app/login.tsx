@@ -8,6 +8,7 @@ import { startOAuthLogin } from "@/constants/oauth";
 import { useGuestAuth } from "@/lib/guest-auth";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { C } from "@/constants/ui-colors";
+import { ScreenErrorBoundary } from "@/components/error-boundary";
 
 type AuthMode = "choose" | "email";
 
@@ -50,6 +51,7 @@ export default function LoginScreen() {
   }
 
   return (
+    <ScreenErrorBoundary screenName="login">
     <View style={{ flex: 1, backgroundColor: C.bg }}>
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : undefined}>
         <ScrollView
@@ -262,5 +264,6 @@ export default function LoginScreen() {
         </ScrollView>
       </KeyboardAvoidingView>
     </View>
+    </ScreenErrorBoundary>
   );
 }
