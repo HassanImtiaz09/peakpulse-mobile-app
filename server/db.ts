@@ -3,6 +3,7 @@ import { drizzle } from "drizzle-orm/mysql2";
 import {
   InsertUser, users, userProfiles, InsertUserProfile,
   bodyScans, fitnessPlans, progressPhotos, mealLogs, workoutSessions, aiUsage,
+  userGoals, progressCheckins,
 } from "../drizzle/schema";
 import { ENV } from "./_core/env";
 
@@ -248,6 +249,71 @@ export async function enforceAiLimit(userId: number, plan: string, endpoint: str
     throw new Error(`AI_LIMIT_EXCEEDED:${plan}:${limit}:${count}`);
   }
   await incrementAiUsage(userId, endpoint);
+}
+
+
+
+// ─── User Goals (Target Transformation) ──────────────────────────────────────
+
+export async function saveUserGoal(userId: number, data: {
+  targetBodyFat: number;
+  imageUrl?: string;
+  description?: string;
+  originalPhotoUrl?: string;
+  originalBodyFat?: number;
+}) {
+  const db = await getDb();
+  if (!db) return null;
+  // Deactivate previous goals
+  await db.update(userGoals).set({ isActive: false }).where(eq(userGoals.userId, userId));
+  // Insert new active goal
+  const [result] = await db.insert(userGoals).values({ userId, ...data });
+  return result.insertId;
+}
+
+export async function getActiveUserGoal(userId: number) {
+  const db = await getDb();
+  if (!db) return null;
+  const result = await db.select().from(userGoals)
+    .where(and(eq(userGoals.userId, userId), eq(userGoals.isActive, true)))
+    .orderBy(desc(userGoals.createdAt))
+    .limit(1);
+  return result[0] ?? null;
+}
+
+// ─── Progress Check-ins ──────────────────────────────────────────────────────
+
+export async function saveProgressCheckin(userId: number, data: {
+  photoUrl: string;
+  weightKg?: number;
+  bodyFatEstimate?: number;
+  progressRating?: string;
+  summary?: string;
+  analysisJson?: string;
+}) {
+  const db = await getDb();
+  if (!db) return null;
+  const [result] = await db.insert(progressCheckins).values({ userId, ...data });
+  return result.insertId;
+}
+
+export async function getProgressCheckins(userId: number, limit = 20) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(progressCheckins)
+    .where(eq(progressCheckins.userId, userId))
+    .orderBy(desc(progressCheckins.createdAt))
+    .limit(limit);
+}
+
+export async function getLatestProgressCheckin(userId: number) {
+  const db = await getDb();
+  if (!db) return null;
+  const result = await db.select().from(progressCheckins)
+    .where(eq(progressCheckins.userId, userId))
+    .orderBy(desc(progressCheckins.createdAt))
+    .limit(1);
+  return result[0] ?? null;
 }
 
 export function getSamplePostsForGuests() {
