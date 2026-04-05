@@ -17,6 +17,7 @@ import {
   type ReportMetricKey,
 } from "@/lib/health-report-generator";
 import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
+import { ScreenErrorBoundary } from "@/components/error-boundary";
 
 const DASHBOARD_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/PZcnawJwIZkQHTEM.jpg";
 
@@ -377,6 +378,7 @@ export default function HealthTrendsScreen() {
   );
 
   return (
+    <ScreenErrorBoundary screenName="health-trends">
     <View style={{ flex: 1, backgroundColor: "#0A0E14" }}>
       {/* Hero Header */}
       <ImageBackground source={{ uri: DASHBOARD_BG }} style={{ height: 150 }} resizeMode="cover">
@@ -713,5 +715,6 @@ export default function HealthTrendsScreen() {
         </View>
       </ScrollView>
     </View>
+    </ScreenErrorBoundary>
   );
 }
