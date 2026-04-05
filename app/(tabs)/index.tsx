@@ -173,6 +173,8 @@ function HomeScreenContent() {
   const { data: profile } = trpc.profile.get.useQuery(undefined, { enabled: isAuthenticated });
   const { data: workoutPlan } = trpc.workoutPlan.getActive.useQuery(undefined, { enabled: isAuthenticated });
   const { data: mealPlan } = trpc.mealPlan.getActive.useQuery(undefined, { enabled: isAuthenticated });
+  const { data: serverGoal } = trpc.goals.active.useQuery(undefined, { enabled: isAuthenticated });
+  const { data: serverLatestCheckin } = trpc.progressCheckin.latest.useQuery(undefined, { enabled: isAuthenticated });
 
   const { totalCalories: todayCalories, calorieGoal, meals: todayMeals, setCalorieGoal, macroTargets } = useCalories();
 
@@ -328,8 +330,15 @@ function HomeScreenContent() {
         setPrSummary(summary);
         // Load body scan goal data for home visualization
         try {
+        // Server-first: use serverGoal if available, else local storage
+        if (serverGoal) {
+          setTargetTransform({ target_bf: serverGoal.targetBodyFat, imageUrl: serverGoal.imageUrl || "", description: serverGoal.description || undefined });
+          if (serverGoal.originalPhotoUrl) setOriginalScanPhoto(serverGoal.originalPhotoUrl);
+          if (serverGoal.originalBodyFat) setOriginalBodyFat(serverGoal.originalBodyFat);
+        } else {
           const targetRaw = await AsyncStorage.getItem("target_transformation");
           if (targetRaw) setTargetTransform(JSON.parse(targetRaw));
+        }
           const scanHistoryRaw = await AsyncStorage.getItem("body_scan_history");
           if (scanHistoryRaw) {
             const scans = JSON.parse(scanHistoryRaw);
@@ -348,8 +357,12 @@ function HomeScreenContent() {
               setOriginalBodyFat(guestScan.estimated_body_fat || null);
             }
           }
+        if (serverLatestCheckin) {
+          setLastProgressDate(new Date(serverLatestCheckin.createdAt).toISOString());
+        } else {
           const lastProgress = await AsyncStorage.getItem("last_progress_photo_date");
           if (lastProgress) setLastProgressDate(lastProgress);
+        }
         } catch (e) { /* silently fail */ }
         // Load last 3 workout sessions
         try {
