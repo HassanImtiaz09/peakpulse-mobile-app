@@ -5,13 +5,13 @@ import {
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
-import * as FileSystem from "expo-file-system-legacy";
+import * as FileSystem from "expo-file-system/legacy";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ScreenContainer } from "@/components/screen-container";
 import { useAuth } from "@/hooks/use-auth";
 import { trpc } from "@/lib/trpc";
-import { useColors } from "@/lib/colors";
+import { useColors } from "@/hooks/use-colors";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -44,7 +44,7 @@ export default function ProgressCheckinScreen() {
   const [previousWeight, setPreviousWeight] = useState<string | null>(null);
 
   const uploadPhoto = trpc.upload.photo.useMutation();
-  const analyzeProgress = trpc.bodyScan.analyzeProgress.useMutation();
+  const analyzeProgress = trpc.progress.analyzeProgress.useMutation();
 
   // Load baseline data on mount
   useEffect(() => {
@@ -154,19 +154,19 @@ export default function ProgressCheckinScreen() {
 
   if (step === "upload") {
     return (
-      <ScreenContainer title="Progress Check-In" showBack>
+      <ScreenContainer>
         <ScrollView contentContainerStyle={{ padding: 20, paddingBottom: 40 }}>
           {/* Baseline info card */}
           {baselinePhoto && targetImageUrl && (
             <View style={{ flexDirection: "row", backgroundColor: SF.surface, borderRadius: 16, padding: 12, marginBottom: 24, borderWidth: 1, borderColor: SF.border }}>
               <Image source={{ uri: baselinePhoto }} style={{ width: 56, height: 72, borderRadius: 10 }} resizeMode="cover" />
               <View style={{ flex: 1, marginLeft: 12, justifyContent: "center" }}>
-                <Text style={{ fontSize: 12, fontWeight: "600", color: SF.secondaryText }}>Your journey</Text>
+                <Text style={{ fontSize: 12, fontWeight: "600", color: SF.muted }}>Your journey</Text>
                 <Text style={{ fontSize: 14, fontWeight: "700", color: SF.text, marginTop: 2 }}>
                   {baselineBodyFat ? `${baselineBodyFat}%` : "Start"} \u{2192} {targetBodyFat ? `${targetBodyFat}%` : "Goal"} body fat
                 </Text>
                 {previousWeight && (
-                  <Text style={{ fontSize: 11, color: SF.secondaryText, marginTop: 2 }}>Last weigh-in: {previousWeight} kg</Text>
+                  <Text style={{ fontSize: 11, color: SF.muted, marginTop: 2 }}>Last weigh-in: {previousWeight} kg</Text>
                 )}
               </View>
               <Image source={{ uri: targetImageUrl }} style={{ width: 56, height: 72, borderRadius: 10, borderWidth: 1, borderColor: "rgba(16,185,129,0.3)" }} resizeMode="cover" />
@@ -176,7 +176,7 @@ export default function ProgressCheckinScreen() {
           <Text style={{ fontSize: 22, fontWeight: "800", color: SF.text, textAlign: "center", marginBottom: 8 }}>
             Take a Progress Photo
           </Text>
-          <Text style={{ fontSize: 14, color: SF.secondaryText, textAlign: "center", marginBottom: 32, lineHeight: 20 }}>
+          <Text style={{ fontSize: 14, color: SF.muted, textAlign: "center", marginBottom: 32, lineHeight: 20 }}>
             Stand in the same position as your initial scan for the most accurate comparison.
           </Text>
 
@@ -201,12 +201,12 @@ export default function ProgressCheckinScreen() {
             style={{ backgroundColor: SF.surface, borderRadius: 16, padding: 20, flexDirection: "row", alignItems: "center", borderWidth: 1, borderColor: SF.border }}
             activeOpacity={0.85}
           >
-            <View style={{ width: 48, height: 48, borderRadius: 14, backgroundColor: SF.inputBg, alignItems: "center", justifyContent: "center" }}>
+            <View style={{ width: 48, height: 48, borderRadius: 14, backgroundColor: SF.surface, alignItems: "center", justifyContent: "center" }}>
               <MaterialIcons name="photo-library" size={24} color={SF.text} />
             </View>
             <View style={{ marginLeft: 16 }}>
               <Text style={{ fontSize: 16, fontWeight: "700", color: SF.text }}>Choose from Gallery</Text>
-              <Text style={{ fontSize: 12, color: SF.secondaryText }}>Select an existing photo</Text>
+              <Text style={{ fontSize: 12, color: SF.muted }}>Select an existing photo</Text>
             </View>
           </TouchableOpacity>
         </ScrollView>
@@ -216,7 +216,7 @@ export default function ProgressCheckinScreen() {
 
   if (step === "metrics") {
     return (
-      <ScreenContainer title="Progress Check-In" showBack>
+      <ScreenContainer>
         <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} style={{ flex: 1 }}>
           <ScrollView contentContainerStyle={{ padding: 20, paddingBottom: 40 }}>
             {/* Photo preview */}
@@ -239,13 +239,13 @@ export default function ProgressCheckinScreen() {
             <Text style={{ fontSize: 18, fontWeight: "700", color: SF.text, marginBottom: 4 }}>
               Enter Your Metrics
             </Text>
-            <Text style={{ fontSize: 13, color: SF.secondaryText, marginBottom: 20 }}>
+            <Text style={{ fontSize: 13, color: SF.muted, marginBottom: 20 }}>
               Adding your weight helps AI provide more accurate progress insights.
             </Text>
 
             {/* Weight input */}
             <View style={{ backgroundColor: SF.surface, borderRadius: 16, padding: 16, borderWidth: 1, borderColor: SF.border, marginBottom: 16 }}>
-              <Text style={{ fontSize: 12, fontWeight: "600", color: SF.secondaryText, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 8 }}>
+              <Text style={{ fontSize: 12, fontWeight: "600", color: SF.muted, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 8 }}>
                 Current Weight (kg)
               </Text>
               <View style={{ flexDirection: "row", alignItems: "center" }}>
@@ -259,9 +259,9 @@ export default function ProgressCheckinScreen() {
                   onChangeText={setCurrentWeight}
                   keyboardType="decimal-pad"
                   placeholder={previousWeight || "e.g. 75.5"}
-                  placeholderTextColor={SF.secondaryText}
+                  placeholderTextColor={SF.muted}
                 />
-                <Text style={{ fontSize: 16, color: SF.secondaryText, fontWeight: "600" }}>kg</Text>
+                <Text style={{ fontSize: 16, color: SF.muted, fontWeight: "600" }}>kg</Text>
               </View>
             </View>
 
@@ -287,7 +287,7 @@ export default function ProgressCheckinScreen() {
 
             {/* Skip weight */}
             <TouchableOpacity onPress={submitAnalysis} style={{ alignItems: "center", marginTop: 12 }}>
-              <Text style={{ fontSize: 13, color: SF.secondaryText }}>Skip weight and analyse photo only</Text>
+              <Text style={{ fontSize: 13, color: SF.muted }}>Skip weight and analyse photo only</Text>
             </TouchableOpacity>
           </ScrollView>
         </KeyboardAvoidingView>
@@ -297,11 +297,11 @@ export default function ProgressCheckinScreen() {
 
   if (step === "analyzing") {
     return (
-      <ScreenContainer title="Progress Check-In" showBack>
+      <ScreenContainer>
         <View style={{ flex: 1, alignItems: "center", justifyContent: "center", padding: 40 }}>
           <ActivityIndicator size="large" color="#10B981" />
           <Text style={{ fontSize: 18, fontWeight: "700", color: SF.text, marginTop: 20 }}>Analysing Your Progress</Text>
-          <Text style={{ fontSize: 13, color: SF.secondaryText, marginTop: 8, textAlign: "center" }}>
+          <Text style={{ fontSize: 13, color: SF.muted, marginTop: 8, textAlign: "center" }}>
             AI is comparing your photo against your baseline and goal...
           </Text>
         </View>
@@ -311,7 +311,7 @@ export default function ProgressCheckinScreen() {
 
   // ────── RESULTS ──────
   return (
-    <ScreenContainer title="Progress Report" showBack>
+    <ScreenContainer>
       <ScrollView contentContainerStyle={{ padding: 20, paddingBottom: 40 }}>
         {/* Summary card */}
         {analysisResult && (
@@ -335,19 +335,19 @@ export default function ProgressCheckinScreen() {
                   {analysisResult.bodyFatEstimate && (
                     <View style={{ alignItems: "center" }}>
                       <Text style={{ fontSize: 24, fontWeight: "800", color: "#10B981" }}>{analysisResult.bodyFatEstimate}%</Text>
-                      <Text style={{ fontSize: 11, color: SF.secondaryText }}>Est. Body Fat</Text>
+                      <Text style={{ fontSize: 11, color: SF.muted }}>Est. Body Fat</Text>
                     </View>
                   )}
                   {currentWeight && (
                     <View style={{ alignItems: "center" }}>
                       <Text style={{ fontSize: 24, fontWeight: "800", color: SF.text }}>{currentWeight}</Text>
-                      <Text style={{ fontSize: 11, color: SF.secondaryText }}>Weight (kg)</Text>
+                      <Text style={{ fontSize: 11, color: SF.muted }}>Weight (kg)</Text>
                     </View>
                   )}
                   {targetBodyFat && (
                     <View style={{ alignItems: "center" }}>
                       <Text style={{ fontSize: 24, fontWeight: "800", color: "#8B5CF6" }}>{targetBodyFat}%</Text>
-                      <Text style={{ fontSize: 11, color: SF.secondaryText }}>Target BF</Text>
+                      <Text style={{ fontSize: 11, color: SF.muted }}>Target BF</Text>
                     </View>
                   )}
                 </View>
@@ -356,10 +356,10 @@ export default function ProgressCheckinScreen() {
                 {baselineBodyFat && targetBodyFat && analysisResult.bodyFatEstimate && (
                   <View style={{ marginBottom: 16 }}>
                     <View style={{ flexDirection: "row", justifyContent: "space-between", marginBottom: 4 }}>
-                      <Text style={{ fontSize: 10, color: SF.secondaryText }}>Start: {baselineBodyFat}%</Text>
+                      <Text style={{ fontSize: 10, color: SF.muted }}>Start: {baselineBodyFat}%</Text>
                       <Text style={{ fontSize: 10, color: "#10B981" }}>Goal: {targetBodyFat}%</Text>
                     </View>
-                    <View style={{ height: 8, backgroundColor: SF.inputBg, borderRadius: 4, overflow: "hidden" }}>
+                    <View style={{ height: 8, backgroundColor: SF.surface, borderRadius: 4, overflow: "hidden" }}>
                       <View style={{
                         height: "100%",
                         borderRadius: 4,
@@ -378,7 +378,7 @@ export default function ProgressCheckinScreen() {
               {analysisResult.details.map((d, i) => (
                 <View key={i} style={{ flexDirection: "row", marginBottom: 8 }}>
                   <MaterialIcons name="check-circle" size={16} color="#10B981" style={{ marginTop: 2 }} />
-                  <Text style={{ fontSize: 13, color: SF.secondaryText, marginLeft: 8, flex: 1, lineHeight: 19 }}>{d}</Text>
+                  <Text style={{ fontSize: 13, color: SF.muted, marginLeft: 8, flex: 1, lineHeight: 19 }}>{d}</Text>
                 </View>
               ))}
             </View>
@@ -389,7 +389,7 @@ export default function ProgressCheckinScreen() {
               {analysisResult.improvements.map((imp, i) => (
                 <View key={i} style={{ flexDirection: "row", marginBottom: 8 }}>
                   <MaterialIcons name="trending-up" size={16} color="#F59E0B" style={{ marginTop: 2 }} />
-                  <Text style={{ fontSize: 13, color: SF.secondaryText, marginLeft: 8, flex: 1, lineHeight: 19 }}>{imp}</Text>
+                  <Text style={{ fontSize: 13, color: SF.muted, marginLeft: 8, flex: 1, lineHeight: 19 }}>{imp}</Text>
                 </View>
               ))}
             </View>
@@ -416,7 +416,7 @@ export default function ProgressCheckinScreen() {
               onPress={() => { setSelectedImage(null); setCurrentWeight(""); setAnalysisResult(null); setStep("upload"); }}
               style={{ alignItems: "center", paddingVertical: 10 }}
             >
-              <Text style={{ fontSize: 13, color: SF.secondaryText }}>Take Another Photo</Text>
+              <Text style={{ fontSize: 13, color: SF.muted }}>Take Another Photo</Text>
             </TouchableOpacity>
           </>
         )}

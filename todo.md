@@ -3124,3 +3124,18 @@
 - [x] Write unit tests (23 tests, all passing)
 - [x] Verify TypeScript compiles (0 errors)
 - [x] Save checkpoint
+
+## Round 90: Sync with GitHub
+- [x] Merged 4 commits from GitHub (fast-forward, no conflicts):
+  - e68a91e: Fix body composition image inconsistency: rewrite BF descriptions, face transform logic
+  - 18975a8: Home: add goal visualization section, replace Ready to Transform with Progress Check-In tracker
+  - 3bc7c0b: Add progress check-in screen: photo upload, weight input, AI comparison to baseline and goal
+  - 9a65025: Enhance analyzeProgress: accept weight, baseline BF, target BF for goal-aware progress analysis
+- [x] Fixed 16 post-merge TS errors:
+  - SF.secondaryText → SF.muted (across index.tsx and progress-checkin.tsx)
+  - SF.inputBg → SF.surface (across index.tsx and progress-checkin.tsx)
+  - expo-file-system-legacy → expo-file-system/legacy (correct import path)
+  - @/lib/colors → @/hooks/use-colors (correct module path)
+  - trpc.bodyScan.analyzeProgress → trpc.progress.analyzeProgress (correct router path)
+  - Removed unsupported title/showBack props from ScreenContainer
+- [x] 0 TypeScript errors after fixes

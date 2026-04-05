@@ -919,7 +919,7 @@ function HomeScreenContent() {
                   <View style={{ flexDirection: "row" }}>
                     {/* Current / Original photo */}
                     <View style={{ flex: 1, alignItems: "center", padding: 12 }}>
-                      <Text style={{ fontSize: 10, fontWeight: "700", color: SF.secondaryText, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 6 }}>
+                      <Text style={{ fontSize: 10, fontWeight: "700", color: SF.muted, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 6 }}>
                         Starting Point
                       </Text>
                       {originalScanPhoto ? (
@@ -929,12 +929,12 @@ function HomeScreenContent() {
                           resizeMode="cover"
                         />
                       ) : (
-                        <View style={{ width: "100%", height: 160, borderRadius: 12, backgroundColor: SF.inputBg, alignItems: "center", justifyContent: "center" }}>
-                          <MaterialIcons name="person" size={40} color={SF.secondaryText} />
+                        <View style={{ width: "100%", height: 160, borderRadius: 12, backgroundColor: SF.surface, alignItems: "center", justifyContent: "center" }}>
+                          <MaterialIcons name="person" size={40} color={SF.muted} />
                         </View>
                       )}
                       {originalBodyFat && (
-                        <Text style={{ fontSize: 12, fontWeight: "600", color: SF.secondaryText, marginTop: 6 }}>
+                        <Text style={{ fontSize: 12, fontWeight: "600", color: SF.muted, marginTop: 6 }}>
                           {originalBodyFat}% body fat
                         </Text>
                       )}
@@ -1501,7 +1501,7 @@ function HomeScreenContent() {
                       <Text style={{ fontSize: 16, fontWeight: "700", color: SF.text }}>
                         Track Your Progress
                       </Text>
-                      <Text style={{ fontSize: 12, color: SF.secondaryText, marginTop: 2 }}>
+                      <Text style={{ fontSize: 12, color: SF.muted, marginTop: 2 }}>
                         {lastProgressDate
                           ? `Last check-in: ${new Date(lastProgressDate).toLocaleDateString("en-GB", { day: "numeric", month: "short" })}`
                           : "Take your first progress photo"}
@@ -1518,17 +1518,17 @@ function HomeScreenContent() {
                   </View>
 
                   {/* Info text */}
-                  <Text style={{ fontSize: 13, lineHeight: 19, color: SF.secondaryText, marginBottom: 16 }}>
+                  <Text style={{ fontSize: 13, lineHeight: 19, color: SF.muted, marginBottom: 16 }}>
                     Upload a progress photo with your current weight and AI will compare against your starting point{targetTransform ? ` and ${targetTransform.target_bf}% body fat goal` : ""} to track your transformation.
                   </Text>
 
                   {/* Mini before/target preview if available */}
                   {originalScanPhoto && targetTransform?.imageUrl && (
-                    <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8, marginBottom: 16, padding: 10, backgroundColor: SF.inputBg, borderRadius: 12 }}>
+                    <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8, marginBottom: 16, padding: 10, backgroundColor: SF.surface, borderRadius: 12 }}>
                       <Image source={{ uri: originalScanPhoto }} style={{ width: 44, height: 56, borderRadius: 8 }} resizeMode="cover" />
                       <View style={{ alignItems: "center" }}>
-                        <MaterialIcons name="trending-flat" size={16} color={SF.secondaryText} />
-                        <Text style={{ fontSize: 9, color: SF.secondaryText, fontWeight: "600" }}>NOW</Text>
+                        <MaterialIcons name="trending-flat" size={16} color={SF.muted} />
+                        <Text style={{ fontSize: 9, color: SF.muted, fontWeight: "600" }}>NOW</Text>
                       </View>
                       <View style={{ width: 2, height: 30, backgroundColor: SF.border }} />
                       <View style={{ alignItems: "center" }}>
