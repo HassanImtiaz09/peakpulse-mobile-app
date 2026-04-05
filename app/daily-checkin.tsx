@@ -20,6 +20,7 @@ import { trpc } from "@/lib/trpc";
 import { useGuestAuth } from "@/lib/guest-auth";
 import { useAiLimit } from "@/components/ai-limit-modal";
 import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
+import { ScreenErrorBoundary } from "@/components/error-boundary";
 
 const HERO_BG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/golden-challenge-bg-2DXBpSZwN3LCroCHSRyD4K.webp";
 
@@ -240,6 +241,7 @@ export default function DailyCheckInScreen() {
   const trendIcon = analysisResult?.trend === "improving" ? "📈" : analysisResult?.trend === "declining" ? "📉" : "➡️";
 
   return (
+    <ScreenErrorBoundary screenName="daily-checkin">
     <ScreenContainer edges={["top", "left", "right"]} containerClassName="bg-black">
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Hero */}
@@ -473,6 +475,7 @@ export default function DailyCheckInScreen() {
         </View>
       </ScrollView>
     </ScreenContainer>
+    </ScreenErrorBoundary>
   );
 }
 
