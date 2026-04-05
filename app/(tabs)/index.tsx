@@ -158,6 +158,10 @@ function HomeScreenContent() {
   const [refreshing, setRefreshing] = useState(false);
   const [recentSessions, setRecentSessions] = useState<WorkoutLogEntry[]>([]);
   const [showStreakCelebration, setShowStreakCelebration] = useState(false);
+  const [targetTransform, setTargetTransform] = useState<{target_bf: number; imageUrl: string; description?: string} | null>(null);
+  const [originalScanPhoto, setOriginalScanPhoto] = useState<string | null>(null);
+  const [originalBodyFat, setOriginalBodyFat] = useState<number | null>(null);
+  const [lastProgressDate, setLastProgressDate] = useState<string | null>(null);
   const streakCelebrationOpacity = useSharedValue(0);
   const streakCelebrationScale = useSharedValue(0.5);
 
@@ -322,6 +326,31 @@ function HomeScreenContent() {
         }
         const summary = await getPRSummary();
         setPrSummary(summary);
+        // Load body scan goal data for home visualization
+        try {
+          const targetRaw = await AsyncStorage.getItem("target_transformation");
+          if (targetRaw) setTargetTransform(JSON.parse(targetRaw));
+          const scanHistoryRaw = await AsyncStorage.getItem("body_scan_history");
+          if (scanHistoryRaw) {
+            const scans = JSON.parse(scanHistoryRaw);
+            if (scans.length > 0) {
+              const firstScan = scans[0];
+              setOriginalScanPhoto(firstScan.photoUrl || null);
+              setOriginalBodyFat(firstScan.estimatedBodyFat || null);
+            }
+          }
+          // Check for guest scan data too
+          if (!scanHistoryRaw) {
+            const guestRaw = await AsyncStorage.getItem("guest_scan");
+            if (guestRaw) {
+              const guestScan = JSON.parse(guestRaw);
+              setOriginalScanPhoto(guestScan.uploadedPhotoUrl || null);
+              setOriginalBodyFat(guestScan.estimated_body_fat || null);
+            }
+          }
+          const lastProgress = await AsyncStorage.getItem("last_progress_photo_date");
+          if (lastProgress) setLastProgressDate(lastProgress);
+        } catch (e) { /* silently fail */ }
         // Load last 3 workout sessions
         try {
           const logs = await loadWorkoutLogs();
@@ -866,6 +895,85 @@ function HomeScreenContent() {
             </StaggeredCard>
           )}
 
+
+          {/* ______________________________________________________________________________________
+              SECTION 3b: Your Goal Visualization (AI body transformation from onboarding)
+          ________________________________________________________________________________________ */}
+          {targetTransform && targetTransform.imageUrl && (
+            <StaggeredCard index={3}>
+              <View style={styles.section}>
+                <SectionTitle title="Your Goal" />
+                <TouchableOpacity
+                  activeOpacity={0.85}
+                  onPress={() => router.push("/(tabs)/scan" as any)}
+                  style={{
+                    marginHorizontal: 20,
+                    borderRadius: 20,
+                    overflow: "hidden",
+                    backgroundColor: SF.surface,
+                    borderWidth: 1.5,
+                    borderColor: "rgba(139,92,246,0.3)",
+                  }}
+                >
+                  {/* Before / After comparison */}
+                  <View style={{ flexDirection: "row" }}>
+                    {/* Current / Original photo */}
+                    <View style={{ flex: 1, alignItems: "center", padding: 12 }}>
+                      <Text style={{ fontSize: 10, fontWeight: "700", color: SF.secondaryText, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 6 }}>
+                        Starting Point
+                      </Text>
+                      {originalScanPhoto ? (
+                        <Image
+                          source={{ uri: originalScanPhoto }}
+                          style={{ width: "100%", height: 160, borderRadius: 12 }}
+                          resizeMode="cover"
+                        />
+                      ) : (
+                        <View style={{ width: "100%", height: 160, borderRadius: 12, backgroundColor: SF.inputBg, alignItems: "center", justifyContent: "center" }}>
+                          <MaterialIcons name="person" size={40} color={SF.secondaryText} />
+                        </View>
+                      )}
+                      {originalBodyFat && (
+                        <Text style={{ fontSize: 12, fontWeight: "600", color: SF.secondaryText, marginTop: 6 }}>
+                          {originalBodyFat}% body fat
+                        </Text>
+                      )}
+                    </View>
+
+                    {/* Arrow */}
+                    <View style={{ justifyContent: "center", paddingHorizontal: 4 }}>
+                      <MaterialIcons name="arrow-forward" size={24} color="#8B5CF6" />
+                    </View>
+
+                    {/* Target AI image */}
+                    <View style={{ flex: 1, alignItems: "center", padding: 12 }}>
+                      <Text style={{ fontSize: 10, fontWeight: "700", color: "#8B5CF6", textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 6 }}>
+                        Your Target
+                      </Text>
+                      <Image
+                        source={{ uri: targetTransform.imageUrl }}
+                        style={{ width: "100%", height: 160, borderRadius: 12, borderWidth: 1.5, borderColor: "rgba(139,92,246,0.25)" }}
+                        resizeMode="cover"
+                      />
+                      <Text style={{ fontSize: 12, fontWeight: "700", color: "#8B5CF6", marginTop: 6 }}>
+                        {targetTransform.target_bf}% body fat
+                      </Text>
+                    </View>
+                  </View>
+
+                  {/* Motivational footer */}
+                  <View style={{ paddingHorizontal: 16, paddingBottom: 14, paddingTop: 4, alignItems: "center" }}>
+                    <Text style={{ fontSize: 13, fontWeight: "600", color: SF.text, textAlign: "center" }}>
+                      {originalBodyFat && targetTransform.target_bf
+                        ? `${Math.abs(originalBodyFat - targetTransform.target_bf).toFixed(1)}% body fat to go — you’ve got this!`
+                        : "Tap to view your full transformation journey"}
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+              </View>
+            </StaggeredCard>
+          )}
+
           {/* âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
           {/* ______________________________________________________________________________________
               SECTION 4: Progress Tracker (consecutive engagement)
@@ -1368,22 +1476,93 @@ function HomeScreenContent() {
           </StaggeredCard>
           </>)}
 
-          {/* ââ No plans CTA ââ */}
-          {!workoutPlan && !mealPlan && (
-            <StaggeredCard index={6}>
-              <View style={styles.section}>
-                <View style={styles.ctaCard}>
-                  <MaterialIcons name="rocket-launch" size={40} color={SF.gold} style={{ marginBottom: 12 }} />
-                  <Text style={styles.ctaTitle}>Ready to Transform?</Text>
-                  <Text style={styles.ctaSub}>Start with an AI Body Scan to analyse your physique, then get a personalised workout and meal plan.</Text>
-                  <TouchableOpacity style={styles.ctaBtn} onPress={() => router.push("/(tabs)/scan" as any)} {...a11yButton("Start AI Body Scan", "Analyse your physique with AI")}>
-                    <Text style={styles.ctaBtnText}>Start AI Body Scan</Text>
-                    <MaterialIcons name="arrow-forward" size={16} color={SF.bg} />
+
+          {/* ______________________ Progress Check-In ______________________ */}
+          <StaggeredCard index={6}>
+            <View style={styles.section}>
+              <SectionTitle title="Progress Check-In" />
+              <View style={{
+                marginHorizontal: 20,
+                borderRadius: 20,
+                backgroundColor: SF.surface,
+                borderWidth: 1,
+                borderColor: SF.border,
+                overflow: "hidden",
+              }}>
+                {/* Top accent */}
+                <View style={{ height: 3, backgroundColor: "#10B981" }} />
+                <View style={{ padding: 20 }}>
+                  {/* Header with icon */}
+                  <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 14 }}>
+                    <View style={{ width: 48, height: 48, borderRadius: 16, backgroundColor: "rgba(16,185,129,0.12)", alignItems: "center", justifyContent: "center" }}>
+                      <MaterialIcons name="photo-camera" size={24} color="#10B981" />
+                    </View>
+                    <View style={{ marginLeft: 14, flex: 1 }}>
+                      <Text style={{ fontSize: 16, fontWeight: "700", color: SF.text }}>
+                        Track Your Progress
+                      </Text>
+                      <Text style={{ fontSize: 12, color: SF.secondaryText, marginTop: 2 }}>
+                        {lastProgressDate
+                          ? `Last check-in: ${new Date(lastProgressDate).toLocaleDateString("en-GB", { day: "numeric", month: "short" })}`
+                          : "Take your first progress photo"}
+                      </Text>
+                    </View>
+                    {lastProgressDate && (() => {
+                      const daysSince = Math.floor((Date.now() - new Date(lastProgressDate).getTime()) / 86400000);
+                      return daysSince >= 7 ? (
+                        <View style={{ backgroundColor: "rgba(239,68,68,0.12)", paddingHorizontal: 10, paddingVertical: 4, borderRadius: 10 }}>
+                          <Text style={{ fontSize: 10, fontWeight: "700", color: "#EF4444" }}>DUE</Text>
+                        </View>
+                      ) : null;
+                    })()}
+                  </View>
+
+                  {/* Info text */}
+                  <Text style={{ fontSize: 13, lineHeight: 19, color: SF.secondaryText, marginBottom: 16 }}>
+                    Upload a progress photo with your current weight and AI will compare against your starting point{targetTransform ? ` and ${targetTransform.target_bf}% body fat goal` : ""} to track your transformation.
+                  </Text>
+
+                  {/* Mini before/target preview if available */}
+                  {originalScanPhoto && targetTransform?.imageUrl && (
+                    <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8, marginBottom: 16, padding: 10, backgroundColor: SF.inputBg, borderRadius: 12 }}>
+                      <Image source={{ uri: originalScanPhoto }} style={{ width: 44, height: 56, borderRadius: 8 }} resizeMode="cover" />
+                      <View style={{ alignItems: "center" }}>
+                        <MaterialIcons name="trending-flat" size={16} color={SF.secondaryText} />
+                        <Text style={{ fontSize: 9, color: SF.secondaryText, fontWeight: "600" }}>NOW</Text>
+                      </View>
+                      <View style={{ width: 2, height: 30, backgroundColor: SF.border }} />
+                      <View style={{ alignItems: "center" }}>
+                        <MaterialIcons name="flag" size={14} color="#10B981" />
+                        <Text style={{ fontSize: 9, color: "#10B981", fontWeight: "600" }}>GOAL</Text>
+                      </View>
+                      <Image source={{ uri: targetTransform.imageUrl }} style={{ width: 44, height: 56, borderRadius: 8, borderWidth: 1, borderColor: "rgba(16,185,129,0.3)" }} resizeMode="cover" />
+                    </View>
+                  )}
+
+                  {/* CTA button */}
+                  <TouchableOpacity
+                    style={{
+                      backgroundColor: "#10B981",
+                      paddingVertical: 13,
+                      borderRadius: 14,
+                      alignItems: "center",
+                      flexDirection: "row",
+                      justifyContent: "center",
+                      gap: 8,
+                    }}
+                    onPress={() => router.push("/progress-checkin" as any)}
+                    activeOpacity={0.85}
+                  >
+                    <MaterialIcons name="add-a-photo" size={18} color="#fff" />
+                    <Text style={{ fontSize: 14, fontWeight: "700", color: "#fff" }}>
+                      {lastProgressDate ? "Log Progress Photo" : "Take First Progress Photo"}
+                    </Text>
                   </TouchableOpacity>
                 </View>
               </View>
-            </StaggeredCard>
-          )}
+            </View>
+          </StaggeredCard>
+
 
           {/* ââ Trial / Guest banners ââ */}
           {isTrialActive && (
