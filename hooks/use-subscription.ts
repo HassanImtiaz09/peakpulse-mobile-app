@@ -51,7 +51,7 @@ const DEFAULT_STATE: FullSubscriptionState = {
 
 /**
  * Feature tier matrix — defines which tier each feature requires.
- * "free"  = available to all users (manual logging, exercise library, basic calorie, timer, 1 free AI plan, 3 calorie scans/day)
+ * "free"  = available to all users (manual logging, exercise library, basic calorie, timer, 2 AI plans/mo, 5 body scans/mo, 4 progress photos/mo)
  * "basic" = requires Basic or Pro subscription (unlimited AI plans, analytics, voice coaching, progress photos, basic body scan, offline mode, PR tracking)
  * "pro"   = requires Pro subscription only (wearable sync, AI coach chat, form checker, social, challenges, meal prep, unlimited photos, priority AI)
  */
