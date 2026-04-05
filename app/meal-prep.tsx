@@ -14,6 +14,7 @@ import { GOLDEN_MEALS, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgroun
 import { UI as SF } from "@/constants/ui-colors";
 import { useAiLimit } from "@/components/ai-limit-modal";
 import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
+import { ScreenErrorBoundary } from "@/components/error-boundary";
 // ── Ingredient Matching ──────────────────────────────────────────
 interface IngredientMatch {
   ingredientName: string;
@@ -341,6 +342,7 @@ export default function MealPrepScreen() {
   const renderStars = (recipeId: string, recipeName: string) => {
     const current = ratings[recipeId]?.rating ?? 0;
     return (
+      <ScreenErrorBoundary screenName="meal-prep">
       <View style={styles.starsRow}>
         {[1, 2, 3, 4, 5].map(star => (
           <TouchableOpacity key={star} onPress={() => setRecipeRating(recipeId, recipeName, star === current ? 0 : star)} activeOpacity={0.6}>
@@ -349,6 +351,7 @@ export default function MealPrepScreen() {
         ))}
         {current > 0 && <Text style={styles.ratingText}>{current}/5</Text>}
       </View>
+      </ScreenErrorBoundary>
     );
   };
 
