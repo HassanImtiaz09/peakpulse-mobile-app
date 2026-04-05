@@ -47,16 +47,25 @@ export default function ProgressCheckinScreen() {
   const uploadPhoto = trpc.upload.photo.useMutation();
   const analyzeProgress = trpc.progress.analyzeProgress.useMutation();
   const checkinSave = trpc.progressCheckin.save.useMutation();
+  const { data: serverGoal } = trpc.goals.active.useQuery(undefined, { enabled: isAuthenticated });
 
   // Load baseline data on mount
   useEffect(() => {
     (async () => {
       try {
-        const targetRaw = await AsyncStorage.getItem("target_transformation");
-        if (targetRaw) {
+        // Server-first: prefer server goal data for authenticated users
+        if (serverGoal) {
+          setTargetTransformation({ target_bf: serverGoal.targetBodyFat, imageUrl: serverGoal.imageUrl || "" });
+          setBaselinePhoto(serverGoal.originalPhotoUrl || null);
+          setBaselineBodyFat(serverGoal.originalBodyFat || null);
+          setTargetBodyFat(serverGoal.targetBodyFat);
+        } else {
+          const targetRaw = await AsyncStorage.getItem("target_transformation");
+          if (targetRaw) {
           const target = JSON.parse(targetRaw);
           setTargetBodyFat(target.target_bf);
           setTargetImageUrl(target.imageUrl);
+          }
         }
         const scanHistoryRaw = await AsyncStorage.getItem("body_scan_history");
         if (scanHistoryRaw) {
