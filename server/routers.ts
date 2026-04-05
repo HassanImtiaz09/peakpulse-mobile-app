@@ -1412,6 +1412,60 @@ Return JSON:
         return { url };
       }),
   }),
+
+  // ─── User Goals & Progress Persistence ───────────────────────────────────────
+  goals: router({
+    /** Save/update the user's target transformation goal */
+    save: protectedProcedure
+      .input(z.object({
+        targetBodyFat: z.number(),
+        imageUrl: z.string().optional(),
+        description: z.string().optional(),
+        originalPhotoUrl: z.string().optional(),
+        originalBodyFat: z.number().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const id = await db.saveUserGoal(ctx.user!.id, input);
+        return { success: true, id };
+      }),
+
+    /** Get the user's current active goal */
+    active: protectedProcedure
+      .query(async ({ ctx }) => {
+        return db.getActiveUserGoal(ctx.user!.id);
+      }),
+  }),
+
+  progressCheckin: router({
+    /** Save a progress check-in result */
+    save: protectedProcedure
+      .input(z.object({
+        photoUrl: z.string(),
+        weightKg: z.number().optional(),
+        bodyFatEstimate: z.number().optional(),
+        progressRating: z.string().optional(),
+        summary: z.string().optional(),
+        analysisJson: z.string().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const id = await db.saveProgressCheckin(ctx.user!.id, input);
+        return { success: true, id };
+      }),
+
+    /** Get progress check-in history */
+    list: protectedProcedure
+      .input(z.object({ limit: z.number().default(20) }).optional())
+      .query(async ({ ctx, input }) => {
+        return db.getProgressCheckins(ctx.user!.id, input?.limit ?? 20);
+      }),
+
+    /** Get the most recent check-in */
+    latest: protectedProcedure
+      .query(async ({ ctx }) => {
+        return db.getLatestProgressCheckin(ctx.user!.id);
+      }),
+  }),
+
 });
 
 export type AppRouter = typeof appRouter;
