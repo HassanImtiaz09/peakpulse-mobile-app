@@ -194,7 +194,7 @@ export async function getUserSubscription(userId: number) {
 
 /** Monthly AI call limits per subscription tier */
 export const AI_CALL_LIMITS: Record<string, number> = {
-  free: 5,
+  free: 10,
   basic: 30,
   pro: Infinity,
 };
