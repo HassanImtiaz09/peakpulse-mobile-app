@@ -182,6 +182,7 @@ function ScanScreenContent() {
   const updateProfile = trpc.profile.upsert.useMutation();
   const generateWorkoutPlan = trpc.workoutPlan.generate.useMutation();
   const generateMealPlan = trpc.mealPlan.generate.useMutation();
+  const goalsSave = trpc.goals.save.useMutation();
 
   async function pickImage(useCamera: boolean) {
     try {
@@ -268,6 +269,16 @@ function ScanScreenContent() {
     }
     if (isAuthenticated) {
       await updateProfile.mutateAsync({ targetBodyFat: bf });
+      // Persist goal server-side so it survives app reinstall / device change
+      try {
+        await goalsSave.mutateAsync({
+          targetBodyFat: bf,
+          imageUrl: matchingTransform?.imageUrl ?? undefined,
+          description: matchingTransform?.description ?? undefined,
+          originalPhotoUrl: scan?.photoUrl ?? uploadedPhotoUrl ?? undefined,
+          originalBodyFat: scan?.estimatedBodyFat ?? undefined,
+        });
+      } catch { /* best-effort; AsyncStorage is the fallback */ }
     } else {
       const existing = await AsyncStorage.getItem("@guest_profile") ?? "{}";
       const profile = JSON.parse(existing);
