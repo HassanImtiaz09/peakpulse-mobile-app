@@ -23,6 +23,7 @@ import {
 import { C } from "@/constants/ui-colors";
 import { EmptyState, EMPTY_STATES } from "@/components/empty-state";
 import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
+import { ScreenErrorBoundary } from "@/components/error-boundary";
 
 const { width: SCREEN_W } = Dimensions.get("window");
 const CHART_W = SCREEN_W - 48;
@@ -116,6 +117,7 @@ export default function WorkoutAnalyticsScreen() {
   }
 
   return (
+    <ScreenErrorBoundary screenName="workout-analytics">
     <ScreenContainer>
       {/* Header */}
       <View style={s.header}>
@@ -387,6 +389,7 @@ export default function WorkoutAnalyticsScreen() {
         )}
       </ScrollView>
     </ScreenContainer>
+    </ScreenErrorBoundary>
   );
 }
 
