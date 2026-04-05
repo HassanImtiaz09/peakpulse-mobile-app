@@ -752,20 +752,70 @@ Return ONLY this structure: {"day":"${input.dayName}","meals":[{"name":"Meal Nam
         return { id: photoId, photoUrl: url };
       }),
     analyzeProgress: guestOrUserProcedure
-      .input(z.object({ currentPhotoUrl: z.string(), baselinePhotoUrl: z.string().optional() }))
+      .input(z.object({
+        currentPhotoUrl: z.string(),
+        baselinePhotoUrl: z.string().optional(),
+        weightKg: z.number().optional(),
+        baselineBodyFat: z.number().optional(),
+        targetBodyFat: z.number().optional(),
+      }))
       .mutation(async ({ input }) => {
+        const metricsContext: string[] = [];
+        if (input.weightKg) metricsContext.push(`Current weight: ${input.weightKg} kg.`);
+        if (input.baselineBodyFat) metricsContext.push(`Starting body fat (from onboarding scan): ${input.baselineBodyFat}%.`);
+        if (input.targetBodyFat) metricsContext.push(`Target body fat goal: ${input.targetBodyFat}%.`);
+        const metricsNote = metricsContext.length > 0
+          ? `\nUser metrics: ${metricsContext.join(" ")}\nUse these to contextualise your analysis and rate progress toward their goal.`
+          : "";
+
+        const systemPrompt = `You are an expert fitness coach and body composition analyst. Analyze the progress photo(s) provided and return a JSON object with:
+1. "summary": 1-2 sentence overall assessment of current physique and progress
+2. "bodyFatEstimate": estimated current body fat percentage (number, 1 decimal place) based on visual assessment
+3. "details": array of 3-4 specific observations about the physique (muscle development, fat distribution, posture, symmetry)
+4. "improvements": array of 2-3 areas that need work or have improved since baseline
+5. "recommendation": 1-2 sentence actionable recommendation for the next 2-4 weeks
+6. "progressRating": one of "Excellent Progress", "Good Progress", "Steady Progress", "Just Getting Started", or "Keep Pushing"
+${metricsNote}
+${input.baselinePhotoUrl ? "The first image is the BASELINE photo from their initial scan. The second image is their CURRENT progress photo. Compare them carefully — note visible changes in fat distribution, muscle definition, body proportions, and face leanness." : "Analyze this single progress photo. Estimate body composition and provide constructive feedback."}`;
+
         const messages: any[] = [
-          { role: "system", content: `You are an expert fitness coach analyzing progress photos. Return JSON: {"summary":"1-2 sentence assessment","details":["observation1","observation2","observation3","recommendation"],"improvements":["area1"],"recommendations":["rec1"]}` },
+          { role: "system", content: systemPrompt },
         ];
+
         if (input.baselinePhotoUrl) {
-          messages.push({ role: "user", content: [{ type: "text", text: "Compare these progress photos (first=baseline, second=current). Analyze changes." }, { type: "image_url", image_url: { url: input.baselinePhotoUrl } }, { type: "image_url", image_url: { url: input.currentPhotoUrl } }] });
+          messages.push({
+            role: "user",
+            content: [
+              { type: "text", text: "Compare my baseline photo (first) with my current progress photo (second). How am I progressing toward my goal?" },
+              { type: "image_url", image_url: { url: input.baselinePhotoUrl } },
+              { type: "image_url", image_url: { url: input.currentPhotoUrl } },
+            ],
+          });
         } else {
-          messages.push({ role: "user", content: [{ type: "text", text: "Analyze this progress photo." }, { type: "image_url", image_url: { url: input.currentPhotoUrl } }] });
+          messages.push({
+            role: "user",
+            content: [
+              { type: "text", text: "Analyze my current progress photo and give me feedback." },
+              { type: "image_url", image_url: { url: input.currentPhotoUrl } },
+            ],
+          });
         }
+
         const response = await invokeLLM({ messages, response_format: { type: "json_object" } });
+
         let result: any;
-        try { result = JSON.parse((response.choices[0].message.content as string) ?? "{}"); }
-        catch { result = { summary: "Great progress! Keep up the consistent work.", details: ["Visible improvements in overall physique", "Posture appears improved", "Muscle tone developing well", "Continue current training approach"], improvements: ["Core strength"], recommendations: ["Increase protein intake"] }; }
+        try {
+          result = JSON.parse((response.choices[0].message.content as string));
+        } catch {
+          result = {
+            summary: "Great progress! Keep up the consistent work.",
+            bodyFatEstimate: null,
+            details: ["Visible improvements in overall physique", "Posture appears improved", "Muscle tone developing well"],
+            improvements: ["Continue current training approach", "Focus on nutrition consistency"],
+            recommendation: "Stay consistent with your current plan. Consider increasing protein intake for better recovery.",
+            progressRating: "Steady Progress",
+          };
+        }
         return result;
       }),
     getAll: protectedProcedure.query(async ({ ctx }) => db.getProgressPhotos(ctx.user.id)),
