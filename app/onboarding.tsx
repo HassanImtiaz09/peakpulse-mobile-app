@@ -111,6 +111,7 @@ import { ACTIVITY_LEVELS, calculateTDEEBreakdown, calculateMacros, saveTDEEBreak
 import { UI as SF } from "@/constants/ui-colors";
 import { useAiLimit } from "@/components/ai-limit-modal";
 import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
+import { ScreenErrorBoundary } from "@/components/error-boundary";
 
 /** Wrapper to keep existing call sites working — returns just the adjusted TDEE number. */
 function calculateTDEE(
@@ -406,6 +407,7 @@ export default function OnboardingScreen() {
   // ── Fullscreen image preview modal ──────────────────────────────────────
   if (previewImage) {
     return (
+      <ScreenErrorBoundary screenName="onboarding">
       <View style={{ flex: 1, backgroundColor: "#000" }}>
         <Image source={{ uri: previewImage }} style={{ flex: 1, width: "100%" }} resizeMode="contain" />
         <View style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, justifyContent: "flex-end", paddingBottom: 60, paddingHorizontal: 24 }}>
@@ -440,6 +442,7 @@ export default function OnboardingScreen() {
           </TouchableOpacity>
         </View>
       </View>
+      </ScreenErrorBoundary>
     );
   }
 
