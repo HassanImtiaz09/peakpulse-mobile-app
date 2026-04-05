@@ -121,3 +121,31 @@ export type FitnessPlan = typeof fitnessPlans.$inferSelect;
 export type ProgressPhoto = typeof progressPhotos.$inferSelect;
 export type MealLog = typeof mealLogs.$inferSelect;
 export type WorkoutSession = typeof workoutSessions.$inferSelect;
+
+
+// ── User Goals (target transformation from body scan) ────────────────────────
+export const userGoals = mysqlTable("user_goals", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  targetBodyFat: float("targetBodyFat").notNull(),
+  imageUrl: text("imageUrl"),
+  description: text("description"),
+  originalPhotoUrl: text("originalPhotoUrl"),
+  originalBodyFat: float("originalBodyFat"),
+  isActive: boolean("isActive").default(true).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+// ── Progress Check-ins (AI-analysed progress photos) ─────────────────────────
+export const progressCheckins = mysqlTable("progress_checkins", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  photoUrl: text("photoUrl").notNull(),
+  weightKg: float("weightKg"),
+  bodyFatEstimate: float("bodyFatEstimate"),
+  progressRating: varchar("progressRating", { length: 20 }),
+  summary: text("summary"),
+  analysisJson: text("analysisJson"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
