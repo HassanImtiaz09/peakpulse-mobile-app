@@ -587,8 +587,8 @@ Exportable health reports with user name, date range, summary stats, daily break
 
 | Plan | Monthly | Annual (Save 30%) |
 |------|---------|-------------------|
-| **Basic** | £4.99/mo | £3.49/mo (£41.88/yr) |
-| **Advanced** | £9.99/mo | £6.99/mo (£83.88/yr) |
+| **Basic** | £5.99/mo | £4.19/mo (£50.28/yr) |
+| **Advanced** | £11.99/mo | £8.49/mo (£101.88/yr) |
 
 ### 7-Day Free Trial
 
