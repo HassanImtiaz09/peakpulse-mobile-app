@@ -46,6 +46,7 @@ export default function ProgressCheckinScreen() {
 
   const uploadPhoto = trpc.upload.photo.useMutation();
   const analyzeProgress = trpc.progress.analyzeProgress.useMutation();
+  const checkinSave = trpc.progressCheckin.save.useMutation();
 
   // Load baseline data on mount
   useEffect(() => {
@@ -143,6 +144,20 @@ export default function ProgressCheckinScreen() {
         bodyFatEstimate: (result as any).bodyFatEstimate || null,
       });
       await AsyncStorage.setItem("progress_checkin_history", JSON.stringify(history));
+
+      // Persist check-in server-side for data durability
+      if (isAuthenticated) {
+        try {
+          await checkinSave.mutateAsync({
+            photoUrl: url,
+            weightKg: currentWeight ? parseFloat(currentWeight) : undefined,
+            bodyFatEstimate: (result as any).bodyFatEstimate ?? undefined,
+            progressRating: (result as any).progressRating ?? undefined,
+            summary: (result as any).summary ?? undefined,
+            analysisJson: JSON.stringify(result),
+          });
+        } catch { /* best-effort; AsyncStorage is the fallback */ }
+      }
 
       setStep("results");
     } catch (e: any) {
