@@ -1,1 +1,128 @@
-LyoqCiAqIFNlcnZlci1zaWRlIHN1YnNjcmlwdGlvbiB2ZXJpZmljYXRpb24gZm9yIHByZW1pdW0gZmVhdHVyZXMuCiAqCiAqIFZhbGlkYXRlcyB0aGF0IHRoZSB1c2VyJ3Mgc3Vic2NyaXB0aW9uIHRpZXIgYWxsb3dzIGFjY2VzcyB0byB0aGUKICogcmVxdWVzdGVkIGZlYXR1cmUsIHByZXZlbnRpbmcgY2xpZW50LXNpZGUgYnlwYXNzIG9mIHBheXdhbGxzLgogKi8KCmltcG9ydCB7IFRSUENFcnJvciB9IGZyb20gIkB0cnBjL3NlcnZlciI7CgovLyDilIDilIAgVGllciBkZWZpbml0aW9ucyDilIDilIAKCmV4cG9ydCB0eXBlIFN1YnNjcmlwdGlvblRpZXIgPSAiZnJlZSIgfCAiYmFzaWMiIHwgInBybyIgfCAiZWxpdGUiOwoKY29uc3QgVElFUl9SQU5LOiBSZWNvcmQ8U3Vic2NyaXB0aW9uVGllciwgbnVtYmVyPiA9IHsKICBmcmVlOiAwLAogIGJhc2ljOiAxLAogIHBybzogMiwKICBlbGl0ZTogMywKfTsKCi8qKgogKiBGZWF0dXJlLXRvLW1pbmltdW0tdGllciBtYXBwaW5nLgogKiBVcGRhdGUgdGhpcyB3aGVuIGFkZGluZyBuZXcgcHJlbWl1bSBmZWF0dXJlcy4KICovCmV4cG9ydCBjb25zdCBGRUFUVVJFX1JFUVVJUkVNRU5UUzogUmVjb3JkPHN0cmluZywgU3Vic2NyaXB0aW9uVGllcj4gPSB7CiAgLy8gRnJlZSBmZWF0dXJlcwogIGJhc2ljX3RyYWNraW5nOiAiZnJlZSIsCiAgd29ya291dF9sb2c6ICJmcmVlIiwKICBtZWFsX2xvZzogImZyZWUiLAoKICAvLyBCYXNpYyB0aWVyCiAgYWlfY29hY2hfYmFzaWM6ICJiYXNpYyIsCiAgd2VhcmFibGVfc3luYzogImJhc2ljIiwKICBzb2NpYWxfZmVlZDogImJhc2ljIiwKICBjdXN0b21fbWVhbHM6ICJiYXNpYyIsCgogIC8vIFBybyB0aWVyCiAgYWlfcGxhbl9nZW5lcmF0aW9uOiAicHJvIiwKICBib2R5X3NjYW46ICJwcm8iLAogIGFkdmFuY2VkX2FuYWx5dGljczogInBybyIsCiAgbnV0cml0aW9uX2luc2lnaHRzOiAicHJvIiwKICB3b3Jrb3V0X2FpX3N1Z2dlc3Rpb25zOiAicHJvIiwKCiAgLy8gRWxpdGUgdGllcgogIHVubGltaXRlZF9haTogImVsaXRlIiwKICBwZXJzb25hbF9jb2FjaGluZzogImVsaXRlIiwKICBwcmlvcml0eV9zdXBwb3J0OiAiZWxpdGUiLAogIGJvZHlfc2Nhbl91bmxpbWl0ZWQ6ICJlbGl0ZSIsCn07CgovKioKICogQ2hlY2sgaWYgYSBzdWJzY3JpcHRpb24gdGllciBoYXMgYWNjZXNzIHRvIGEgZmVhdHVyZS4KICovCmV4cG9ydCBmdW5jdGlvbiB0aWVySGFzQWNjZXNzKAogIHVzZXJUaWVyOiBTdWJzY3JpcHRpb25UaWVyLAogIGZlYXR1cmU6IHN0cmluZywKKTogYm9vbGVhbiB7CiAgY29uc3QgcmVxdWlyZWRUaWVyID0gRkVBVFVSRV9SRVFVSVJFTUVOVFNbZmVhdHVyZV07CiAgaWYgKCFyZXF1aXJlZFRpZXIpIHsKICAgIC8vIFVua25vd24gZmVhdHVyZXMgZGVmYXVsdCB0byByZXF1aXJpbmcgcHJvIHRpZXIgZm9yIHNhZmV0eQogICAgY29uc29sZS53YXJuKGBbU3Vic2NyaXB0aW9uR3VhcmRdIFVua25vd24gZmVhdHVyZTogJHtmZWF0dXJlfSwgZGVmYXVsdGluZyB0byBwcm9gKTsKICAgIHJldHVybiBUSUVSX1JBTktbdXNlclRpZXJdID49IFRJRVJfUkFOSy5wcm87CiAgfQogIHJldHVybiBUSUVSX1JBTktbdXNlclRpZXJdID49IFRJRVJfUkFOS1tyZXF1aXJlZFRpZXJdOwp9CgovKioKICogdFJQQyBndWFyZCDigJQgdGhyb3dzIGlmIHVzZXIgbGFja3MgdGhlIHJlcXVpcmVkIHN1YnNjcmlwdGlvbiB0aWVyLgogKgogKiBVc2FnZSBpbiBhIHRSUEMgcHJvY2VkdXJlOgogKiAgIGFzc2VydFN1YnNjcmlwdGlvbihjdHgudXNlclRpZXIsICdhaV9wbGFuX2dlbmVyYXRpb24nKTsKICovCmV4cG9ydCBmdW5jdGlvbiBhc3NlcnRTdWJzY3JpcHRpb24oCiAgdXNlclRpZXI6IFN1YnNjcmlwdGlvblRpZXIgfCB1bmRlZmluZWQsCiAgZmVhdHVyZTogc3RyaW5nLAopOiB2b2lkIHsKICBjb25zdCB0aWVyID0gdXNlclRpZXIgPz8gImZyZWUiOwogIGlmICghdGllckhhc0FjY2Vzcyh0aWVyLCBmZWF0dXJlKSkgewogICAgY29uc3QgcmVxdWlyZWQgPSBGRUFUVVJFX1JFUVVJUkVNRU5UU1tmZWF0dXJlXSA/PyAicHJvIjsKICAgIHRocm93IG5ldyBUUlBDRXJyb3IoewogICAgICBjb2RlOiAiRk9SQklEREVOIiwKICAgICAgbWVzc2FnZTogYFRoaXMgZmVhdHVyZSByZXF1aXJlcyBhICR7cmVxdWlyZWR9IHN1YnNjcmlwdGlvbiBvciBoaWdoZXIuYCwKICAgIH0pOwogIH0KfQoKLyoqCiAqIFZlcmlmeSBzdWJzY3JpcHRpb24gc3RhdHVzIGZyb20gdGhlIHN0b3JlIHJlY2VpcHQgKEFwcGxlL0dvb2dsZSkuCiAqCiAqIEluIHByb2R1Y3Rpb24sIHRoaXMgc2hvdWxkIHZhbGlkYXRlIHRoZSByZWNlaXB0IHdpdGggQXBwbGUncyAvdmVyaWZ5UmVjZWlwdAogKiBvciBHb29nbGUgUGxheSBEZXZlbG9wZXIgQVBJLiBGb3Igbm93LCB0aGlzIHRydXN0cyB0aGUgZGF0YWJhc2UgdGllcgogKiBhbmQgbG9ncyBhIHdhcm5pbmcg4oCUIHJlcGxhY2Ugd2l0aCByZWFsIHZhbGlkYXRpb24gYmVmb3JlIHN0b3JlIGxhdW5jaC4KICoKICogQHBhcmFtIHVzZXJJZCAtIFRoZSB1c2VyIElEIHRvIHZlcmlmeQogKiBAcGFyYW0gZGJUaWVyIC0gVGhlIHRpZXIgc3RvcmVkIGluIHRoZSBkYXRhYmFzZQogKiBAcmV0dXJucyBUaGUgdmVyaWZpZWQgdGllciAoY3VycmVudGx5IHRydXN0cyBEQiwgbG9ncyB3YXJuaW5nKQogKi8KZXhwb3J0IGFzeW5jIGZ1bmN0aW9uIHZlcmlmeVN1YnNjcmlwdGlvblJlY2VpcHQoCiAgdXNlcklkOiBzdHJpbmcsCiAgZGJUaWVyOiBTdWJzY3JpcHRpb25UaWVyLAopOiBQcm9taXNlPFN1YnNjcmlwdGlvblRpZXI+IHsKICAvLyBUT0RPOiBJbXBsZW1lbnQgcmVhbCByZWNlaXB0IHZhbGlkYXRpb24gd2l0aCBBcHBsZS9Hb29nbGUgQVBJcwogIC8vIEZvciBub3csIHRydXN0IHRoZSBkYXRhYmFzZSBidXQgbG9nIGZvciBhdWRpdCB0cmFpbAogIGlmIChkYlRpZXIgIT09ICJmcmVlIikgewogICAgY29uc29sZS5pbmZvKAogICAgICBgW1N1YnNjcmlwdGlvbkd1YXJkXSBVc2VyICR7dXNlcklkfSBoYXMgJHtkYlRpZXJ9IHRpZXIg4oCUIHJlY2VpcHQgdmFsaWRhdGlvbiBwZW5kaW5nIHN0b3JlIGludGVncmF0aW9uYCwKICAgICk7CiAgfQogIHJldHVybiBkYlRpZXI7Cn0KCi8qKgogKiBNaWRkbGV3YXJlLXN0eWxlIGd1YXJkIGZvciBFeHByZXNzIHJvdXRlcyAobm9uLXRSUEMpLgogKi8KZXhwb3J0IGZ1bmN0aW9uIHJlcXVpcmVTdWJzY3JpcHRpb24oZmVhdHVyZTogc3RyaW5nKSB7CiAgcmV0dXJuIChyZXE6IGFueSwgcmVzOiBhbnksIG5leHQ6IGFueSkgPT4gewogICAgY29uc3QgdXNlclRpZXI6IFN1YnNjcmlwdGlvblRpZXIgPSByZXEudXNlclRpZXIgPz8gImZyZWUiOwogICAgaWYgKCF0aWVySGFzQWNjZXNzKHVzZXJUaWVyLCBmZWF0dXJlKSkgewogICAgICBjb25zdCByZXF1aXJlZCA9IEZFQVRVUkVfUkVRVUlSRU1FTlRTW2ZlYXR1cmVdID8/ICJwcm8iOwogICAgICByZXR1cm4gcmVzLnN0YXR1cyg0MDMpLmpzb24oewogICAgICAgIGVycm9yOiAiU3Vic2NyaXB0aW9uIHJlcXVpcmVkIiwKICAgICAgICByZXF1aXJlZFRpZXI6IHJlcXVpcmVkLAogICAgICAgIGN1cnJlbnRUaWVyOiB1c2VyVGllciwKICAgICAgfSk7CiAgICB9CiAgICBuZXh0KCk7CiAgfTsKfQo=
+/**
+ * Server-side subscription verification for premium features.
+ *
+ * Validates that the user's subscription tier allows access to the
+ * requested feature, preventing client-side bypass of paywalls.
+ */
+
+import { TRPCError } from "@trpc/server";
+
+// ── Tier definitions ──
+
+export type SubscriptionTier = "free" | "basic" | "pro" | "elite";
+
+const TIER_RANK: Record<SubscriptionTier, number> = {
+  free: 0,
+  basic: 1,
+  pro: 2,
+  elite: 3,
+};
+
+/**
+ * Feature-to-minimum-tier mapping.
+ * Update this when adding new premium features.
+ */
+export const FEATURE_REQUIREMENTS: Record<string, SubscriptionTier> = {
+  // Free features
+  basic_tracking: "free",
+  workout_log: "free",
+  meal_log: "free",
+
+  // Basic tier
+  ai_coach_basic: "basic",
+  wearable_sync: "basic",
+  social_feed: "basic",
+  custom_meals: "basic",
+
+  // Pro tier
+  ai_plan_generation: "pro",
+  body_scan: "pro",
+  advanced_analytics: "pro",
+  nutrition_insights: "pro",
+  workout_ai_suggestions: "pro",
+
+  // Elite tier
+  unlimited_ai: "elite",
+  personal_coaching: "elite",
+  priority_support: "elite",
+  body_scan_unlimited: "elite",
+};
+
+/**
+ * Check if a subscription tier has access to a feature.
+ */
+export function tierHasAccess(
+  userTier: SubscriptionTier,
+  feature: string,
+): boolean {
+  const requiredTier = FEATURE_REQUIREMENTS[feature];
+  if (!requiredTier) {
+    // Unknown features default to requiring pro tier for safety
+    console.warn(`[SubscriptionGuard] Unknown feature: ${feature}, defaulting to pro`);
+    return TIER_RANK[userTier] >= TIER_RANK.pro;
+  }
+  return TIER_RANK[userTier] >= TIER_RANK[requiredTier];
+}
+
+/**
+ * tRPC guard — throws if user lacks the required subscription tier.
+ *
+ * Usage in a tRPC procedure:
+ *   assertSubscription(ctx.userTier, 'ai_plan_generation');
+ */
+export function assertSubscription(
+  userTier: SubscriptionTier | undefined,
+  feature: string,
+): void {
+  const tier = userTier ?? "free";
+  if (!tierHasAccess(tier, feature)) {
+    const required = FEATURE_REQUIREMENTS[feature] ?? "pro";
+    throw new TRPCError({
+      code: "FORBIDDEN",
+      message: `This feature requires a ${required} subscription or higher.`,
+    });
+  }
+}
+
+/**
+ * Verify subscription status from the store receipt (Apple/Google).
+ *
+ * In production, this should validate the receipt with Apple's /verifyReceipt
+ * or Google Play Developer API. For now, this trusts the database tier
+ * and logs a warning — replace with real validation before store launch.
+ *
+ * @param userId - The user ID to verify
+ * @param dbTier - The tier stored in the database
+ * @returns The verified tier (currently trusts DB, logs warning)
+ */
+export async function verifySubscriptionReceipt(
+  userId: string,
+  dbTier: SubscriptionTier,
+): Promise<SubscriptionTier> {
+  // TODO: Implement real receipt validation with Apple/Google APIs
+  // For now, trust the database but log for audit trail
+  if (dbTier !== "free") {
+    console.info(
+      `[SubscriptionGuard] User ${userId} has ${dbTier} tier — receipt validation pending store integration`,
+    );
+  }
+  return dbTier;
+}
+
+/**
+ * Middleware-style guard for Express routes (non-tRPC).
+ */
+export function requireSubscription(feature: string) {
+  return (req: any, res: any, next: any) => {
+    const userTier: SubscriptionTier = req.userTier ?? "free";
+    if (!tierHasAccess(userTier, feature)) {
+      const required = FEATURE_REQUIREMENTS[feature] ?? "pro";
+      return res.status(403).json({
+        error: "Subscription required",
+        requiredTier: required,
+        currentTier: userTier,
+      });
+    }
+    next();
+  };
+}

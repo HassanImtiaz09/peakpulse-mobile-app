@@ -1,1 +1,131 @@
-LyoqCiAqIEZpbGUgdXBsb2FkIHNpemUgYW5kIHR5cGUgdmFsaWRhdGlvbi4KICogRW5mb3JjZXMgbGltaXRzIGJlZm9yZSBzZW5kaW5nIGRhdGEgdG8gdGhlIHNlcnZlci4KICovCgppbXBvcnQgeyBBbGVydCwgUGxhdGZvcm0gfSBmcm9tICJyZWFjdC1uYXRpdmUiOwoKLy8g4pSA4pSAIFNpemUgbGltaXRzIChpbiBieXRlcykg4pSA4pSACgpleHBvcnQgY29uc3QgVVBMT0FEX0xJTUlUUyA9IHsKICAvKiogUHJvZmlsZSBwaG90byAvIGF2YXRhciAqLwogIHByb2ZpbGVQaG90bzogNSAqIDEwMjQgKiAxMDI0LCAvLyA1IE1CCiAgLyoqIFByb2dyZXNzIGNoZWNrLWluIHBob3RvICovCiAgcHJvZ3Jlc3NQaG90bzogMTAgKiAxMDI0ICogMTAyNCwgLy8gMTAgTUIKICAvKiogQm9keSBzY2FuIGltYWdlICovCiAgYm9keVNjYW46IDE1ICogMTAyNCAqIDEwMjQsIC8vIDE1IE1CCiAgLyoqIE1lYWwgLyBmb29kIHBob3RvICovCiAgbWVhbFBob3RvOiA4ICogMTAyNCAqIDEwMjQsIC8vIDggTUIKICAvKiogR2VuZXJpYyBpbWFnZSB1cGxvYWQgKi8KICBnZW5lcmljSW1hZ2U6IDEwICogMTAyNCAqIDEwMjQsIC8vIDEwIE1CCn0gYXMgY29uc3Q7CgpleHBvcnQgdHlwZSBVcGxvYWRDYXRlZ29yeSA9IGtleW9mIHR5cGVvZiBVUExPQURfTElNSVRTOwoKLy8g4pSA4pSAIEFsbG93ZWQgTUlNRSB0eXBlcyDilIDilIAKCmNvbnN0IEFMTE9XRURfSU1BR0VfVFlQRVMgPSBuZXcgU2V0KFsKICAiaW1hZ2UvanBlZyIsCiAgImltYWdlL3BuZyIsCiAgImltYWdlL3dlYnAiLAogICJpbWFnZS9oZWljIiwKICAiaW1hZ2UvaGVpZiIsCl0pOwoKLy8g4pSA4pSAIEZvcm1hdHRpbmcgaGVscGVycyDilIDilIAKCmZ1bmN0aW9uIGZvcm1hdEZpbGVTaXplKGJ5dGVzOiBudW1iZXIpOiBzdHJpbmcgewogIGlmIChieXRlcyA8IDEwMjQpIHJldHVybiBgJHtieXRlc30gQmA7CiAgaWYgKGJ5dGVzIDwgMTAyNCAqIDEwMjQpIHJldHVybiBgJHsoYnl0ZXMgLyAxMDI0KS50b0ZpeGVkKDEpfSBLQmA7CiAgcmV0dXJuIGAkeyhieXRlcyAvICgxMDI0ICogMTAyNCkpLnRvRml4ZWQoMSl9IE1CYDsKfQoKLy8g4pSA4pSAIFZhbGlkYXRpb24g4pSA4pSACgpleHBvcnQgaW50ZXJmYWNlIFVwbG9hZFZhbGlkYXRpb25SZXN1bHQgewogIHZhbGlkOiBib29sZWFuOwogIGVycm9yPzogc3RyaW5nOwp9CgovKioKICogVmFsaWRhdGUgYSBmaWxlIGJlZm9yZSB1cGxvYWRpbmcuCiAqIENoZWNrcyBzaXplIGxpbWl0IGFuZCBNSU1FIHR5cGUuCiAqLwpleHBvcnQgZnVuY3Rpb24gdmFsaWRhdGVVcGxvYWQoCiAgZmlsZTogeyB1cmk6IHN0cmluZzsgZmlsZVNpemU/OiBudW1iZXI7IHR5cGU/OiBzdHJpbmc7IGZpbGVOYW1lPzogc3RyaW5nIH0sCiAgY2F0ZWdvcnk6IFVwbG9hZENhdGVnb3J5LAopOiBVcGxvYWRWYWxpZGF0aW9uUmVzdWx0IHsKICBjb25zdCBtYXhTaXplID0gVVBMT0FEX0xJTUlUU1tjYXRlZ29yeV07CgogIC8vIENoZWNrIGZpbGUgc2l6ZQogIGlmIChmaWxlLmZpbGVTaXplICYmIGZpbGUuZmlsZVNpemUgPiBtYXhTaXplKSB7CiAgICByZXR1cm4gewogICAgICB2YWxpZDogZmFsc2UsCiAgICAgIGVycm9yOiBgRmlsZSBpcyB0b28gbGFyZ2UgKCR7Zm9ybWF0RmlsZVNpemUoZmlsZS5maWxlU2l6ZSl9KS4gTWF4aW11bSBzaXplIGlzICR7Zm9ybWF0RmlsZVNpemUobWF4U2l6ZSl9LmAsCiAgICB9OwogIH0KCiAgLy8gQ2hlY2sgTUlNRSB0eXBlCiAgY29uc3QgbWltZVR5cGUgPSBmaWxlLnR5cGUgPz8gZ3Vlc3NNaW1lRnJvbU5hbWUoZmlsZS5maWxlTmFtZSA/PyBmaWxlLnVyaSk7CiAgaWYgKG1pbWVUeXBlICYmICFBTExPV0VEX0lNQUdFX1RZUEVTLmhhcyhtaW1lVHlwZS50b0xvd2VyQ2FzZSgpKSkgewogICAgcmV0dXJuIHsKICAgICAgdmFsaWQ6IGZhbHNlLAogICAgICBlcnJvcjogYFVuc3VwcG9ydGVkIGZpbGUgdHlwZSAiJHttaW1lVHlwZX0iLiBBY2NlcHRlZCBmb3JtYXRzOiBKUEVHLCBQTkcsIFdlYlAsIEhFSUMuYCwKICAgIH07CiAgfQoKICByZXR1cm4geyB2YWxpZDogdHJ1ZSB9Owp9CgovKioKICogVmFsaWRhdGUgYW5kIHNob3cgYWxlcnQgaWYgaW52YWxpZC4gUmV0dXJucyB0cnVlIGlmIGZpbGUgaXMgT0suCiAqLwpleHBvcnQgZnVuY3Rpb24gdmFsaWRhdGVVcGxvYWRXaXRoQWxlcnQoCiAgZmlsZTogeyB1cmk6IHN0cmluZzsgZmlsZVNpemU/OiBudW1iZXI7IHR5cGU/OiBzdHJpbmc7IGZpbGVOYW1lPzogc3RyaW5nIH0sCiAgY2F0ZWdvcnk6IFVwbG9hZENhdGVnb3J5LAopOiBib29sZWFuIHsKICBjb25zdCByZXN1bHQgPSB2YWxpZGF0ZVVwbG9hZChmaWxlLCBjYXRlZ29yeSk7CiAgaWYgKCFyZXN1bHQudmFsaWQgJiYgcmVzdWx0LmVycm9yKSB7CiAgICBBbGVydC5hbGVydCgiVXBsb2FkIEVycm9yIiwgcmVzdWx0LmVycm9yKTsKICAgIHJldHVybiBmYWxzZTsKICB9CiAgcmV0dXJuIHRydWU7Cn0KCi8qKgogKiBHdWVzcyBNSU1FIHR5cGUgZnJvbSBmaWxlIGV4dGVuc2lvbi4KICovCmZ1bmN0aW9uIGd1ZXNzTWltZUZyb21OYW1lKG5hbWU6IHN0cmluZyk6IHN0cmluZyB8IHVuZGVmaW5lZCB7CiAgY29uc3QgZXh0ID0gbmFtZS5zcGxpdCgiLiIpLnBvcCgpPy50b0xvd2VyQ2FzZSgpOwogIHN3aXRjaCAoZXh0KSB7CiAgICBjYXNlICJqcGciOgogICAgY2FzZSAianBlZyI6CiAgICAgIHJldHVybiAiaW1hZ2UvanBlZyI7CiAgICBjYXNlICJwbmciOgogICAgICByZXR1cm4gImltYWdlL3BuZyI7CiAgICBjYXNlICJ3ZWJwIjoKICAgICAgcmV0dXJuICJpbWFnZS93ZWJwIjsKICAgIGNhc2UgImhlaWMiOgogICAgICByZXR1cm4gImltYWdlL2hlaWMiOwogICAgY2FzZSAiaGVpZiI6CiAgICAgIHJldHVybiAiaW1hZ2UvaGVpZiI7CiAgICBkZWZhdWx0OgogICAgICByZXR1cm4gdW5kZWZpbmVkOwogIH0KfQoKLyoqCiAqIFNlcnZlci1zaWRlIHZhbGlkYXRpb24gKGZvciBFeHByZXNzIC8gdFJQQyByb3V0ZXMpLgogKiBUaHJvd3MgYSBkZXNjcmlwdGl2ZSBlcnJvciBpZiB0aGUgZmlsZSBleGNlZWRzIGxpbWl0cy4KICovCmV4cG9ydCBmdW5jdGlvbiBhc3NlcnRVcGxvYWRTaXplKAogIHNpemVJbkJ5dGVzOiBudW1iZXIsCiAgY2F0ZWdvcnk6IFVwbG9hZENhdGVnb3J5LAopOiB2b2lkIHsKICBjb25zdCBtYXhTaXplID0gVVBMT0FEX0xJTUlUU1tjYXRlZ29yeV07CiAgaWYgKHNpemVJbkJ5dGVzID4gbWF4U2l6ZSkgewogICAgdGhyb3cgbmV3IEVycm9yKAogICAgICBgRmlsZSBzaXplICR7Zm9ybWF0RmlsZVNpemUoc2l6ZUluQnl0ZXMpfSBleGNlZWRzIHRoZSAke2Zvcm1hdEZpbGVTaXplKG1heFNpemUpfSBsaW1pdCBmb3IgJHtjYXRlZ29yeX0uYCwKICAgICk7CiAgfQp9Cg==
+/**
+ * File upload size and type validation.
+ * Enforces limits before sending data to the server.
+ */
+
+import { Alert, Platform } from "react-native";
+
+// ── Size limits (in bytes) ──
+
+export const UPLOAD_LIMITS = {
+  /** Profile photo / avatar */
+  profilePhoto: 5 * 1024 * 1024, // 5 MB
+  /** Progress check-in photo */
+  progressPhoto: 10 * 1024 * 1024, // 10 MB
+  /** Body scan image */
+  bodyScan: 15 * 1024 * 1024, // 15 MB
+  /** Meal / food photo */
+  mealPhoto: 8 * 1024 * 1024, // 8 MB
+  /** Generic image upload */
+  genericImage: 10 * 1024 * 1024, // 10 MB
+} as const;
+
+export type UploadCategory = keyof typeof UPLOAD_LIMITS;
+
+// ── Allowed MIME types ──
+
+const ALLOWED_IMAGE_TYPES = new Set([
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+  "image/heic",
+  "image/heif",
+]);
+
+// ── Formatting helpers ──
+
+function formatFileSize(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+// ── Validation ──
+
+export interface UploadValidationResult {
+  valid: boolean;
+  error?: string;
+}
+
+/**
+ * Validate a file before uploading.
+ * Checks size limit and MIME type.
+ */
+export function validateUpload(
+  file: { uri: string; fileSize?: number; type?: string; fileName?: string },
+  category: UploadCategory,
+): UploadValidationResult {
+  const maxSize = UPLOAD_LIMITS[category];
+
+  // Check file size
+  if (file.fileSize && file.fileSize > maxSize) {
+    return {
+      valid: false,
+      error: `File is too large (${formatFileSize(file.fileSize)}). Maximum size is ${formatFileSize(maxSize)}.`,
+    };
+  }
+
+  // Check MIME type
+  const mimeType = file.type ?? guessMimeFromName(file.fileName ?? file.uri);
+  if (mimeType && !ALLOWED_IMAGE_TYPES.has(mimeType.toLowerCase())) {
+    return {
+      valid: false,
+      error: `Unsupported file type "${mimeType}". Accepted formats: JPEG, PNG, WebP, HEIC.`,
+    };
+  }
+
+  return { valid: true };
+}
+
+/**
+ * Validate and show alert if invalid. Returns true if file is OK.
+ */
+export function validateUploadWithAlert(
+  file: { uri: string; fileSize?: number; type?: string; fileName?: string },
+  category: UploadCategory,
+): boolean {
+  const result = validateUpload(file, category);
+  if (!result.valid && result.error) {
+    Alert.alert("Upload Error", result.error);
+    return false;
+  }
+  return true;
+}
+
+/**
+ * Guess MIME type from file extension.
+ */
+function guessMimeFromName(name: string): string | undefined {
+  const ext = name.split(".").pop()?.toLowerCase();
+  switch (ext) {
+    case "jpg":
+    case "jpeg":
+      return "image/jpeg";
+    case "png":
+      return "image/png";
+    case "webp":
+      return "image/webp";
+    case "heic":
+      return "image/heic";
+    case "heif":
+      return "image/heif";
+    default:
+      return undefined;
+  }
+}
+
+/**
+ * Server-side validation (for Express / tRPC routes).
+ * Throws a descriptive error if the file exceeds limits.
+ */
+export function assertUploadSize(
+  sizeInBytes: number,
+  category: UploadCategory,
+): void {
+  const maxSize = UPLOAD_LIMITS[category];
+  if (sizeInBytes > maxSize) {
+    throw new Error(
+      `File size ${formatFileSize(sizeInBytes)} exceeds the ${formatFileSize(maxSize)} limit for ${category}.`,
+    );
+  }
+}

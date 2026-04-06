@@ -1,1 +1,152 @@
-LyoqCiAqIFNpbXBsZSBpbi1tZW1vcnkgc2xpZGluZy13aW5kb3cgcmF0ZSBsaW1pdGVyIGZvciBBUEkgZW5kcG9pbnRzLgogKiBEZXNpZ25lZCBmb3Igc2luZ2xlLXByb2Nlc3MgZGVwbG95bWVudHMgKEV4cG8gZGV2IHNlcnZlciAvIHNtYWxsIFZQUykuCiAqIEZvciBtdWx0aS1pbnN0YW5jZSBwcm9kdWN0aW9uLCBzd2FwIHRvIFJlZGlzLWJhY2tlZCBpbXBsZW1lbnRhdGlvbi4KICovCgppbnRlcmZhY2UgUmF0ZUxpbWl0RW50cnkgewogIHRpbWVzdGFtcHM6IG51bWJlcltdOwp9CgppbnRlcmZhY2UgUmF0ZUxpbWl0Q29uZmlnIHsKICAvKiogTWF4aW11bSBudW1iZXIgb2YgcmVxdWVzdHMgYWxsb3dlZCBpbiB0aGUgd2luZG93ICovCiAgbWF4UmVxdWVzdHM6IG51bWJlcjsKICAvKiogV2luZG93IGR1cmF0aW9uIGluIG1pbGxpc2Vjb25kcyAqLwogIHdpbmRvd01zOiBudW1iZXI7Cn0KCmNvbnN0IHN0b3JlcyA9IG5ldyBNYXA8c3RyaW5nLCBNYXA8c3RyaW5nLCBSYXRlTGltaXRFbnRyeT4+KCk7CgpmdW5jdGlvbiBnZXRTdG9yZShuYW1lOiBzdHJpbmcpOiBNYXA8c3RyaW5nLCBSYXRlTGltaXRFbnRyeT4gewogIGlmICghc3RvcmVzLmhhcyhuYW1lKSkgc3RvcmVzLnNldChuYW1lLCBuZXcgTWFwKCkpOwogIHJldHVybiBzdG9yZXMuZ2V0KG5hbWUpITsKfQoKLyoqCiAqIENoZWNrIGFuZCBjb25zdW1lIGEgcmF0ZS1saW1pdCB0b2tlbi4KICogUmV0dXJucyB7IGFsbG93ZWQsIHJlbWFpbmluZywgcmV0cnlBZnRlck1zIH0uCiAqLwpleHBvcnQgZnVuY3Rpb24gY2hlY2tSYXRlTGltaXQoCiAga2V5OiBzdHJpbmcsCiAgY29uZmlnOiBSYXRlTGltaXRDb25maWcsCiAgc3RvcmVOYW1lID0gImRlZmF1bHQiLAopOiB7IGFsbG93ZWQ6IGJvb2xlYW47IHJlbWFpbmluZzogbnVtYmVyOyByZXRyeUFmdGVyTXM6IG51bWJlciB9IHsKICBjb25zdCBzdG9yZSA9IGdldFN0b3JlKHN0b3JlTmFtZSk7CiAgY29uc3Qgbm93ID0gRGF0ZS5ub3coKTsKICBjb25zdCB3aW5kb3dTdGFydCA9IG5vdyAtIGNvbmZpZy53aW5kb3dNczsKCiAgbGV0IGVudHJ5ID0gc3RvcmUuZ2V0KGtleSk7CiAgaWYgKCFlbnRyeSkgewogICAgZW50cnkgPSB7IHRpbWVzdGFtcHM6IFtdIH07CiAgICBzdG9yZS5zZXQoa2V5LCBlbnRyeSk7CiAgfQoKICAvLyBQcnVuZSB0aW1lc3RhbXBzIG91dHNpZGUgdGhlIGN1cnJlbnQgd2luZG93CiAgZW50cnkudGltZXN0YW1wcyA9IGVudHJ5LnRpbWVzdGFtcHMuZmlsdGVyKCh0KSA9PiB0ID4gd2luZG93U3RhcnQpOwoKICBpZiAoZW50cnkudGltZXN0YW1wcy5sZW5ndGggPj0gY29uZmlnLm1heFJlcXVlc3RzKSB7CiAgICBjb25zdCBvbGRlc3RJbldpbmRvdyA9IGVudHJ5LnRpbWVzdGFtcHNbMF07CiAgICBjb25zdCByZXRyeUFmdGVyTXMgPSBvbGRlc3RJbldpbmRvdyArIGNvbmZpZy53aW5kb3dNcyAtIG5vdzsKICAgIHJldHVybiB7CiAgICAgIGFsbG93ZWQ6IGZhbHNlLAogICAgICByZW1haW5pbmc6IDAsCiAgICAgIHJldHJ5QWZ0ZXJNczogTWF0aC5tYXgocmV0cnlBZnRlck1zLCAwKSwKICAgIH07CiAgfQoKICBlbnRyeS50aW1lc3RhbXBzLnB1c2gobm93KTsKICByZXR1cm4gewogICAgYWxsb3dlZDogdHJ1ZSwKICAgIHJlbWFpbmluZzogY29uZmlnLm1heFJlcXVlc3RzIC0gZW50cnkudGltZXN0YW1wcy5sZW5ndGgsCiAgICByZXRyeUFmdGVyTXM6IDAsCiAgfTsKfQoKLy8g4pSA4pSAIFByZS1jb25maWd1cmVkIGxpbWl0ZXJzIGZvciBQZWFrUHVsc2UgQUkgZW5kcG9pbnRzIOKUgOKUgAoKLyoqIEFJIGNoYXQgLyBjb2FjaCBlbmRwb2ludHM6IDIwIHJlcXVlc3RzIHBlciBtaW51dGUgcGVyIHVzZXIgKi8KZXhwb3J0IGNvbnN0IEFJX0NIQVRfTElNSVQ6IFJhdGVMaW1pdENvbmZpZyA9IHsKICBtYXhSZXF1ZXN0czogMjAsCiAgd2luZG93TXM6IDYwXzAwMCwKfTsKCi8qKiBBSSBwbGFuIGdlbmVyYXRpb246IDUgcmVxdWVzdHMgcGVyIG1pbnV0ZSBwZXIgdXNlciAqLwpleHBvcnQgY29uc3QgQUlfUExBTl9MSU1JVDogUmF0ZUxpbWl0Q29uZmlnID0gewogIG1heFJlcXVlc3RzOiA1LAogIHdpbmRvd01zOiA2MF8wMDAsCn07CgovKiogQUkgYm9keSBzY2FuIGFuYWx5c2lzOiAzIHJlcXVlc3RzIHBlciBtaW51dGUgcGVyIHVzZXIgKi8KZXhwb3J0IGNvbnN0IEFJX1NDQU5fTElNSVQ6IFJhdGVMaW1pdENvbmZpZyA9IHsKICBtYXhSZXF1ZXN0czogMywKICB3aW5kb3dNczogNjBfMDAwLAp9OwoKLyoqIEdlbmVyYWwgQVBJOiAxMjAgcmVxdWVzdHMgcGVyIG1pbnV0ZSBwZXIgdXNlciAqLwpleHBvcnQgY29uc3QgR0VORVJBTF9BUElfTElNSVQ6IFJhdGVMaW1pdENvbmZpZyA9IHsKICBtYXhSZXF1ZXN0czogMTIwLAogIHdpbmRvd01zOiA2MF8wMDAsCn07CgovKioKICogRXhwcmVzcy1zdHlsZSBtaWRkbGV3YXJlIGhlbHBlci4KICogVXNhZ2U6IGFwcC51c2UoJy9hcGkvYWknLCByYXRlTGltaXRNaWRkbGV3YXJlKEFJX0NIQVRfTElNSVQpKQogKi8KZXhwb3J0IGZ1bmN0aW9uIHJhdGVMaW1pdE1pZGRsZXdhcmUoY29uZmlnOiBSYXRlTGltaXRDb25maWcsIHN0b3JlTmFtZT86IHN0cmluZykgewogIHJldHVybiAocmVxOiBhbnksIHJlczogYW55LCBuZXh0OiBhbnkpID0+IHsKICAgIC8vIFVzZSB1c2VySWQgZnJvbSBhdXRoIGNvbnRleHQsIGZhbGwgYmFjayB0byBJUAogICAgY29uc3Qga2V5ID0gcmVxLnVzZXJJZCA/PyByZXEuaXAgPz8gImFub255bW91cyI7CiAgICBjb25zdCByZXN1bHQgPSBjaGVja1JhdGVMaW1pdChrZXksIGNvbmZpZywgc3RvcmVOYW1lKTsKCiAgICByZXMuc2V0SGVhZGVyKCJYLVJhdGVMaW1pdC1MaW1pdCIsIGNvbmZpZy5tYXhSZXF1ZXN0cyk7CiAgICByZXMuc2V0SGVhZGVyKCJYLVJhdGVMaW1pdC1SZW1haW5pbmciLCByZXN1bHQucmVtYWluaW5nKTsKCiAgICBpZiAoIXJlc3VsdC5hbGxvd2VkKSB7CiAgICAgIHJlcy5zZXRIZWFkZXIoIlJldHJ5LUFmdGVyIiwgTWF0aC5jZWlsKHJlc3VsdC5yZXRyeUFmdGVyTXMgLyAxMDAwKSk7CiAgICAgIHJldHVybiByZXMuc3RhdHVzKDQyOSkuanNvbih7CiAgICAgICAgZXJyb3I6ICJUb28gbWFueSByZXF1ZXN0cyIsCiAgICAgICAgcmV0cnlBZnRlck1zOiByZXN1bHQucmV0cnlBZnRlck1zLAogICAgICB9KTsKICAgIH0KCiAgICBuZXh0KCk7CiAgfTsKfQoKLyoqCiAqIHRSUEMtY29tcGF0aWJsZSByYXRlIGxpbWl0IGNoZWNrLgogKiBUaHJvd3MgVFJQQ0Vycm9yIGlmIGxpbWl0IGV4Y2VlZGVkLgogKiBVc2FnZSBpbnNpZGUgYSB0UlBDIHByb2NlZHVyZToKICogICBhc3NlcnRSYXRlTGltaXQoY3R4LnVzZXJJZCwgQUlfQ0hBVF9MSU1JVCwgJ2FpLWNoYXQnKTsKICovCmV4cG9ydCBmdW5jdGlvbiBhc3NlcnRSYXRlTGltaXQoCiAgdXNlcklkOiBzdHJpbmcsCiAgY29uZmlnOiBSYXRlTGltaXRDb25maWcsCiAgc3RvcmVOYW1lPzogc3RyaW5nLAopIHsKICBjb25zdCByZXN1bHQgPSBjaGVja1JhdGVMaW1pdCh1c2VySWQsIGNvbmZpZywgc3RvcmVOYW1lKTsKICBpZiAoIXJlc3VsdC5hbGxvd2VkKSB7CiAgICAvLyBJbXBvcnQgZHluYW1pY2FsbHkgdG8gYXZvaWQgY291cGxpbmcgdGhpcyBtb2R1bGUgdG8gdFJQQwogICAgY29uc3QgeyBUUlBDRXJyb3IgfSA9IHJlcXVpcmUoIkB0cnBjL3NlcnZlciIpOwogICAgdGhyb3cgbmV3IFRSUENFcnJvcih7CiAgICAgIGNvZGU6ICJUT09fTUFOWV9SRVFVRVNUUyIsCiAgICAgIG1lc3NhZ2U6IGBSYXRlIGxpbWl0IGV4Y2VlZGVkLiBUcnkgYWdhaW4gaW4gJHtNYXRoLmNlaWwocmVzdWx0LnJldHJ5QWZ0ZXJNcyAvIDEwMDApfXNgLAogICAgfSk7CiAgfQogIHJldHVybiByZXN1bHQ7Cn0KCi8vIOKUgOKUgCBQZXJpb2RpYyBjbGVhbnVwIHRvIHByZXZlbnQgbWVtb3J5IGxlYWtzIOKUgOKUgApjb25zdCBDTEVBTlVQX0lOVEVSVkFMID0gNSAqIDYwXzAwMDsgLy8gNSBtaW51dGVzCgpzZXRJbnRlcnZhbCgoKSA9PiB7CiAgY29uc3Qgbm93ID0gRGF0ZS5ub3coKTsKICBmb3IgKGNvbnN0IFssIHN0b3JlXSBvZiBzdG9yZXMpIHsKICAgIGZvciAoY29uc3QgW2tleSwgZW50cnldIG9mIHN0b3JlKSB7CiAgICAgIC8vIFJlbW92ZSBlbnRyaWVzIHdpdGggbm8gcmVjZW50IHRpbWVzdGFtcHMKICAgICAgaWYgKGVudHJ5LnRpbWVzdGFtcHMubGVuZ3RoID09PSAwIHx8IGVudHJ5LnRpbWVzdGFtcHNbZW50cnkudGltZXN0YW1wcy5sZW5ndGggLSAxXSA8IG5vdyAtIDMwMF8wMDApIHsKICAgICAgICBzdG9yZS5kZWxldGUoa2V5KTsKICAgICAgfQogICAgfQogIH0KfSwgQ0xFQU5VUF9JTlRFUlZBTCk7Cg==
+/**
+ * Simple in-memory sliding-window rate limiter for API endpoints.
+ * Designed for single-process deployments (Expo dev server / small VPS).
+ * For multi-instance production, swap to Redis-backed implementation.
+ */
+
+interface RateLimitEntry {
+  timestamps: number[];
+}
+
+interface RateLimitConfig {
+  /** Maximum number of requests allowed in the window */
+  maxRequests: number;
+  /** Window duration in milliseconds */
+  windowMs: number;
+}
+
+const stores = new Map<string, Map<string, RateLimitEntry>>();
+
+function getStore(name: string): Map<string, RateLimitEntry> {
+  if (!stores.has(name)) stores.set(name, new Map());
+  return stores.get(name)!;
+}
+
+/**
+ * Check and consume a rate-limit token.
+ * Returns { allowed, remaining, retryAfterMs }.
+ */
+export function checkRateLimit(
+  key: string,
+  config: RateLimitConfig,
+  storeName = "default",
+): { allowed: boolean; remaining: number; retryAfterMs: number } {
+  const store = getStore(storeName);
+  const now = Date.now();
+  const windowStart = now - config.windowMs;
+
+  let entry = store.get(key);
+  if (!entry) {
+    entry = { timestamps: [] };
+    store.set(key, entry);
+  }
+
+  // Prune timestamps outside the current window
+  entry.timestamps = entry.timestamps.filter((t) => t > windowStart);
+
+  if (entry.timestamps.length >= config.maxRequests) {
+    const oldestInWindow = entry.timestamps[0];
+    const retryAfterMs = oldestInWindow + config.windowMs - now;
+    return {
+      allowed: false,
+      remaining: 0,
+      retryAfterMs: Math.max(retryAfterMs, 0),
+    };
+  }
+
+  entry.timestamps.push(now);
+  return {
+    allowed: true,
+    remaining: config.maxRequests - entry.timestamps.length,
+    retryAfterMs: 0,
+  };
+}
+
+// ── Pre-configured limiters for PeakPulse AI endpoints ──
+
+/** AI chat / coach endpoints: 20 requests per minute per user */
+export const AI_CHAT_LIMIT: RateLimitConfig = {
+  maxRequests: 20,
+  windowMs: 60_000,
+};
+
+/** AI plan generation: 5 requests per minute per user */
+export const AI_PLAN_LIMIT: RateLimitConfig = {
+  maxRequests: 5,
+  windowMs: 60_000,
+};
+
+/** AI body scan analysis: 3 requests per minute per user */
+export const AI_SCAN_LIMIT: RateLimitConfig = {
+  maxRequests: 3,
+  windowMs: 60_000,
+};
+
+/** General API: 120 requests per minute per user */
+export const GENERAL_API_LIMIT: RateLimitConfig = {
+  maxRequests: 120,
+  windowMs: 60_000,
+};
+
+/**
+ * Express-style middleware helper.
+ * Usage: app.use('/api/ai', rateLimitMiddleware(AI_CHAT_LIMIT))
+ */
+export function rateLimitMiddleware(config: RateLimitConfig, storeName?: string) {
+  return (req: any, res: any, next: any) => {
+    // Use userId from auth context, fall back to IP
+    const key = req.userId ?? req.ip ?? "anonymous";
+    const result = checkRateLimit(key, config, storeName);
+
+    res.setHeader("X-RateLimit-Limit", config.maxRequests);
+    res.setHeader("X-RateLimit-Remaining", result.remaining);
+
+    if (!result.allowed) {
+      res.setHeader("Retry-After", Math.ceil(result.retryAfterMs / 1000));
+      return res.status(429).json({
+        error: "Too many requests",
+        retryAfterMs: result.retryAfterMs,
+      });
+    }
+
+    next();
+  };
+}
+
+/**
+ * tRPC-compatible rate limit check.
+ * Throws TRPCError if limit exceeded.
+ * Usage inside a tRPC procedure:
+ *   assertRateLimit(ctx.userId, AI_CHAT_LIMIT, 'ai-chat');
+ */
+export function assertRateLimit(
+  userId: string,
+  config: RateLimitConfig,
+  storeName?: string,
+) {
+  const result = checkRateLimit(userId, config, storeName);
+  if (!result.allowed) {
+    // Import dynamically to avoid coupling this module to tRPC
+    const { TRPCError } = require("@trpc/server");
+    throw new TRPCError({
+      code: "TOO_MANY_REQUESTS",
+      message: `Rate limit exceeded. Try again in ${Math.ceil(result.retryAfterMs / 1000)}s`,
+    });
+  }
+  return result;
+}
+
+// ── Periodic cleanup to prevent memory leaks ──
+const CLEANUP_INTERVAL = 5 * 60_000; // 5 minutes
+
+setInterval(() => {
+  const now = Date.now();
+  for (const [, store] of stores) {
+    for (const [key, entry] of store) {
+      // Remove entries with no recent timestamps
+      if (entry.timestamps.length === 0 || entry.timestamps[entry.timestamps.length - 1] < now - 300_000) {
+        store.delete(key);
+      }
+    }
+  }
+}, CLEANUP_INTERVAL);

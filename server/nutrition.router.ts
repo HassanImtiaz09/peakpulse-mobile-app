@@ -4,7 +4,6 @@ import { db, invokeLLM, generateImage, storagePut, checkAiLimit, getDietaryRestr
 
 export const nutritionRouter = router({
   mealPlan: router({
-  mealPlan: router({
     // AI generation — works for guests (no DB save for guests)
     generate: guestOrUserProcedure
       .input(z.object({ goal: z.string(), dietaryPreference: z.string(), dailyCalories: z.number().optional(), weightKg: z.number().optional(), heightCm: z.number().optional(), age: z.number().optional(), gender: z.string().optional(), activityLevel: z.string().optional(), ramadanMode: z.boolean().optional(), region: z.string().optional(), cuisinePrefs: z.array(z.string()).optional(), preferenceHint: z.string().optional(), favouriteFoods: z.array(z.object({ name: z.string(), calories: z.number(), protein: z.number(), carbs: z.number(), fat: z.number() })).optional(), pastMealNames: z.array(z.string()).optional() }))
@@ -256,10 +255,8 @@ Return ONLY this structure: {"day":"${input.dayName}","meals":[{"name":"Meal Nam
         if (!dayData.day) dayData.day = input.dayName;
         return dayData;
       }),
-  }),
 
   }),
-  mealImages: router({
   mealImages: router({
     // Generate AI images for meals in a meal plan
     generateBatch: guestOrUserProcedure
@@ -295,10 +292,8 @@ Return ONLY this structure: {"day":"${input.dayName}","meals":[{"name":"Meal Nam
         }
         return { images: results };
       }),
-  }),
 
   }),
-  mealPrep: router({
   mealPrep: router({
     // AI generation — works for guests
     generate: guestOrUserProcedure
@@ -322,10 +317,8 @@ Return ONLY this structure: {"day":"${input.dayName}","meals":[{"name":"Meal Nam
         catch { data = { recipes: [], tips: ["Check your pantry for items expiring soon."] }; }
         return data;
       }),
-  }),
 
   }),
-  mealLog: router({
   mealLog: router({
     // Photo calorie analysis — works for guests
     analyzePhoto: guestOrUserProcedure
@@ -372,10 +365,8 @@ Return ONLY this structure: {"day":"${input.dayName}","meals":[{"name":"Meal Nam
       .input(z.object({ name: z.string(), mealType: z.string().optional(), calories: z.number().optional(), protein: z.number().optional(), carbs: z.number().optional(), fat: z.number().optional(), photoUrl: z.string().optional() }))
       .mutation(async ({ ctx, input }) => db.createMealLog(ctx.user.id, input)),
     getToday: protectedProcedure.query(async ({ ctx }) => db.getTodayMealLogs(ctx.user.id)),
-  }),
 
   }),
-  mealSwap: router({
   mealSwap: router({
     // AI-powered meal swap — generates 6 personalised calorie-equivalent alternatives
     generate: guestOrUserProcedure
@@ -408,10 +399,8 @@ Return ONLY this structure: {"day":"${input.dayName}","meals":[{"name":"Meal Nam
         catch { result = { alternatives: [] }; }
         return { alternatives: result.alternatives ?? [] };
       }),
-  }),
 
   }),
-  mealSwapWithPantry: router({
   mealSwapWithPantry: router({
     // AI-powered meal swap using pantry items — generates alternatives from available ingredients
     generate: guestOrUserProcedure
@@ -479,7 +468,6 @@ Return JSON:
         });
         return { alternatives, dailyCalorieTarget: input.dailyCalorieTarget, remainingCalories: input.remainingCalories };
       }),
-  }),
 
   // Guest data migration — imports AsyncStorage data from guest mode into authenticated account
   migrateGuestData: protectedProcedure
@@ -524,7 +512,6 @@ Return JSON:
       return { success: true };
     }),
   }),
-  pantry: router({
   pantry: router({
     // AI meal suggestions based on pantry items
     suggestMeals: guestOrUserProcedure
@@ -643,10 +630,8 @@ Return JSON:
         catch { result = { dailyPlan: null }; }
         return result;
       }),
-  }),
 
   }),
-  receipt: router({
   receipt: router({
     /** Scan a grocery receipt photo and extract items using built-in LLM */
     scan: guestOrUserProcedure
@@ -680,7 +665,6 @@ Return JSON:
         result.itemCount = result.items.length;
         return result;
       }),
-  }),
 
   }),
 });

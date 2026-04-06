@@ -118,7 +118,6 @@ export default function ChallengeScreen() {
     fetchUnread();
     const interval = setInterval(fetchUnread, 5000);
     return () => clearInterval(interval);
-  <ScreenErrorBoundary screenName="challenge">
   }, []);
 
   const handleCreateChallenge = async () => {
@@ -242,7 +241,6 @@ export default function ChallengeScreen() {
           </TouchableOpacity>
         )}
       </View>
-  </ScreenErrorBoundary>
     );
   };
 

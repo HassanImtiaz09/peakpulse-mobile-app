@@ -342,7 +342,8 @@ function getSamplePostsData() {
  * meal logs, workout sessions, AI usage, goals, progress check-ins.
  */
 export async function deleteUserAccount(userId: number): Promise<void> {
-  const d = db();
+  const d = await getDb();
+  if (!d) throw new Error("Database not available");
   // Delete from all child tables first (foreign key order)
   await d.delete(progressCheckins).where(eq(progressCheckins.userId, userId));
   await d.delete(userGoals).where(eq(userGoals.userId, userId));

@@ -23,7 +23,7 @@ export default function OAuthCallback() {
   const [status, setStatus] = useState<"processing" | "success" | "error">("processing");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [showMigration, setShowMigration] = useState(false);
-  const migrateMutation = trpc.migrateGuestData.useMutation();
+  const migrateMutation = trpc.mealSwapWithPantry.migrateGuestData.useMutation();
 
   useEffect(() => {
     const handleCallback = async () => {

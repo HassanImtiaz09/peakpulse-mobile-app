@@ -2176,14 +2176,14 @@ function MealsScreenContent() {
               marginBottom: 12, borderWidth: 1, borderColor: "rgba(20,184,166,0.25)",
             }}
           >
-            <Ionicons name="grid" size={18} color="#14B8A6" />
+            <MaterialIcons name="grid-view" size={18} color="#14B8A6" />
             <Text style={{ color: "#14B8A6", fontFamily: "DMSans_600SemiBold", fontSize: 14, marginLeft: 8 }}>
               Nutrition Hub
             </Text>
             <Text style={{ color: "#64748B", fontFamily: "DMSans_400Regular", fontSize: 12, marginLeft: 6 }}>
               All food tools in one place
             </Text>
-            <Ionicons name="chevron-forward" size={16} color="#64748B" style={{ marginLeft: "auto" as any }} />
+            <MaterialIcons name="chevron-right" size={16} color="#64748B" style={{ marginLeft: "auto" as any }} />
           </TouchableOpacity>
 
           {/* Daily Summary Card ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ compact */}

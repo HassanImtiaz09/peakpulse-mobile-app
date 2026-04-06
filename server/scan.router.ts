@@ -4,7 +4,6 @@ import { db, invokeLLM, generateImage, storagePut, checkAiLimit, getBFDescriptio
 
 export const scanRouter = router({
   bodyScan: router({
-  bodyScan: router({
     // AI analysis — works for guests (no DB save for guests)
     analyze: guestOrUserProcedure
       .input(z.object({ photoUrl: z.string(), weightKg: z.number().optional(), heightCm: z.number().optional(), age: z.number().optional(), gender: z.string().optional() }))
@@ -122,10 +121,8 @@ REALISM: The result must look like an unedited real photograph. Match the exact 
         transformations: s.transformationsJson ? JSON.parse(s.transformationsJson) : [],
       }));
     }),
-  }),
 
   }),
-  progress: router({
   progress: router({
     // Photo upload and analysis — works for guests (no DB save for guests)
     uploadPhoto: guestOrUserProcedure
@@ -210,9 +207,6 @@ ${input.baselinePhotoUrl ? "The first image is the BASELINE photo from their ini
       }),
     getAll: protectedProcedure.query(async ({ ctx }) => db.getProgressPhotos(ctx.user.id)),
   }),
-
-  }),
-  goals: router({
   goals: router({
     /** Save/update the user's target transformation goal */
     save: protectedProcedure
@@ -233,10 +227,8 @@ ${input.baselinePhotoUrl ? "The first image is the BASELINE photo from their ini
       .query(async ({ ctx }) => {
         return db.getActiveUserGoal(ctx.user!.id);
       }),
-  }),
 
   }),
-  progressCheckin: router({
   progressCheckin: router({
     /** Save a progress check-in result */
     save: protectedProcedure
@@ -264,12 +256,6 @@ ${input.baselinePhotoUrl ? "The first image is the BASELINE photo from their ini
     latest: protectedProcedure
       .query(async ({ ctx }) => {
         return db.getLatestProgressCheckin(ctx.user!.id);
-      }),
-  }),
-
-});
-
-export type AppRouter = typeof appRouter;
-
+       }),
   }),
 });

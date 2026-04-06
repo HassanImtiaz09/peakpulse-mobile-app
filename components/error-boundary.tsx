@@ -6,6 +6,7 @@ import { UI, SF } from "@/constants/ui-colors";
 interface Props {
   children: ReactNode;
   fallbackScreen?: string;
+  screenName?: string;
 }
 
 interface State {
@@ -20,3 +21,6 @@ export class ErrorBoundary extends Component<Props, State> {
   handleRetry = () => { this.setState({ hasError: false, error: null }); };
   render() { return this.state.hasError ? null : this.props.children; }
 }
+
+/** Alias for backward compatibility with screens that import ScreenErrorBoundary */
+export const ScreenErrorBoundary = ErrorBoundary;

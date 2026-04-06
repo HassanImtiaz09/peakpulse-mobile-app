@@ -1,9 +1,8 @@
 import { z } from "zod";
 import { router, protectedProcedure, publicProcedure, guestOrUserProcedure } from "./_core/trpc";
-import { db, invokeLLM, checkAiLimit, getFallbackWorkoutPlan, randomSuffix } from "./helpers";
+import { db, invokeLLM, checkAiLimit, getFallbackWorkoutPlan, randomSuffix, uploadVideoToGeminiFileAPI } from "./helpers";
 
 export const workoutRouter = router({
-  workoutPlan: router({
   workoutPlan: router({
     // AI generation — works for guests (no DB save for guests)
     generate: guestOrUserProcedure
@@ -32,14 +31,12 @@ export const workoutRouter = router({
       .mutation(async ({ ctx, input }) => db.createWorkoutSession(ctx.user.id, { planId: input.planId, dayName: input.dayName, focus: input.focus, completedExercisesJson: JSON.stringify(input.completedExercises ?? []), durationMinutes: input.durationMinutes })),
     getRecentSessions: protectedProcedure.query(async ({ ctx }) => db.getRecentWorkoutSessions(ctx.user.id, 10)),
     getAllSessions: protectedProcedure.query(async ({ ctx }) => db.getRecentWorkoutSessions(ctx.user.id, 500)),
-  }),
 
   // ── Dietary restriction enforcement helper ──────────────────────────
   // Used by meal plan generation to give the LLM strict, non-negotiable rules
   // for each dietary preference instead of a vague "Diet: vegan" hint.
 
   }),
-  workout: router({
   workout: router({
     // AI form analysis — works for guests
     // Uses Gemini File API resumable upload for video instead of raw base64 in body
@@ -76,10 +73,8 @@ export const workoutRouter = router({
         catch { result = { score: 65, grade: "good", exerciseName: input.exerciseName, positives: ["Good effort on the exercise"], corrections: ["Focus on controlled movement throughout"], feedback: ["Keep practising and your form will improve with each session."] }; }
         return result;
       }),
-  }),
 
   }),
-  exerciseSwap: router({
   exerciseSwap: router({
     // AI-powered exercise swap — generates alternatives targeting the same muscle group
     generate: guestOrUserProcedure
@@ -109,10 +104,8 @@ Return JSON:
         catch { result = { alternatives: [] }; }
         return { alternatives: result.alternatives ?? [] };
       }),
-  }),
 
   }),
-  dailyCheckIn: router({
   dailyCheckIn: router({
     // AI body fat assessment from photo
     assessPhoto: guestOrUserProcedure
@@ -132,7 +125,6 @@ Return JSON:
       .mutation(async ({ ctx, input }) => {
         return db.createProgressPhoto(ctx.user.id, { photoUrl: input.photoUrl ?? "", note: input.notes });
       }),
-  }),
 
   }),
 });

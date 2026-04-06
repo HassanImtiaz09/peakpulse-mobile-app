@@ -682,7 +682,7 @@ function HomeScreenContent() {
             </View>
           </View>
 
-              SECTION 2: Today's Workout Card with CTA (or Rest Day Recovery Card)
+              {/* SECTION 2: Today's Workout Card with CTA (or Rest Day Recovery Card)
               âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */}
           {todayWorkout && isRestDay ? (
             /* ââ REST DAY RECOVERY CARD ââ */
@@ -1055,7 +1055,7 @@ function HomeScreenContent() {
           </StaggeredCard>
 
           {showMore && (<>
-          {/* âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+          {/* âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */}
 
 
           {/* ______________________ Progress Check-In ______________________ */}
@@ -1143,9 +1143,9 @@ function HomeScreenContent() {
               </View>
             </View>
           </StaggeredCard>
+          </>)}
 
-
-          {/* ââ Trial / Guest banners ââ */}
+          {/* ── Trial / Guest banners ── */}
           {isTrialActive && (
             <View style={styles.trialBanner}>
               <MaterialIcons name="hourglass-top" size={20} color={SF.gold} />

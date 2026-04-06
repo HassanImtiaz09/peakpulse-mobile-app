@@ -55,7 +55,7 @@ export default function ProgressCheckinScreen() {
       try {
         // Server-first: prefer server goal data for authenticated users
         if (serverGoal) {
-          setTargetTransformation({ target_bf: serverGoal.targetBodyFat, imageUrl: serverGoal.imageUrl || "" });
+          setTargetBodyFat(serverGoal.targetBodyFat); setTargetImageUrl(serverGoal.imageUrl || "");
           setBaselinePhoto(serverGoal.originalPhotoUrl || null);
           setBaselineBodyFat(serverGoal.originalBodyFat || null);
           setTargetBodyFat(serverGoal.targetBodyFat);

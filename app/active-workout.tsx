@@ -634,7 +634,6 @@ export default function ActiveWorkoutScreen() {
       });
     }
     return () => clearPreloadCache();
-  <ScreenErrorBoundary screenName="active-workout">
   }, [workoutStarted]);
 
   // FIX: AsyncStorage.multiGet now has a .catch() handler.
@@ -725,7 +724,6 @@ export default function ActiveWorkoutScreen() {
     const current = getSetLogs(exerciseIndex);
     const updated = current.map((s, i) =>
       i === setIndex ? { ...s, [field]: value } : s
-  </ScreenErrorBoundary>
     );
     setSetLogs((prev) => ({ ...prev, [exerciseIndex]: updated }));
   }

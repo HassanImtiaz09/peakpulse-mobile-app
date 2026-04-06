@@ -1,1 +1,155 @@
-LyoqCiAqIEluLWFwcCByZXZpZXcgcHJvbXB0IG1hbmFnZXIuCiAqCiAqIFVzZXMgZXhwby1zdG9yZS1yZXZpZXcgdG8gdHJpZ2dlciB0aGUgbmF0aXZlIHJldmlldyBkaWFsb2cKICogYXQgc3RyYXRlZ2ljIG1vbWVudHMgKGFmdGVyIGNvbXBsZXRpbmcgd29ya291dHMsIGhpdHRpbmcgbWlsZXN0b25lcywgZXRjLikuCiAqCiAqIFJlc3BlY3RzIEFwcGxlICYgR29vZ2xlIGd1aWRlbGluZXM6CiAqIC0gRG9uJ3QgcHJvbXB0IHRvbyBmcmVxdWVudGx5CiAqIC0gRG9uJ3QgcHJvbXB0IG9uIGZpcnN0IGxhdW5jaAogKiAtIExldCB0aGUgT1MgZGVjaWRlIHdoZXRoZXIgdG8gYWN0dWFsbHkgc2hvdyB0aGUgZGlhbG9nCiAqLwoKaW1wb3J0ICogYXMgU3RvcmVSZXZpZXcgZnJvbSAiZXhwby1zdG9yZS1yZXZpZXciOwppbXBvcnQgQXN5bmNTdG9yYWdlIGZyb20gIkByZWFjdC1uYXRpdmUtYXN5bmMtc3RvcmFnZS9hc3luYy1zdG9yYWdlIjsKaW1wb3J0IHsgUGxhdGZvcm0gfSBmcm9tICJyZWFjdC1uYXRpdmUiOwoKY29uc3QgU1RPUkFHRV9LRVlTID0gewogIGxhc3RQcm9tcHREYXRlOiAicHBfcmV2aWV3X2xhc3RfcHJvbXB0IiwKICBwcm9tcHRDb3VudDogInBwX3Jldmlld19wcm9tcHRfY291bnQiLAogIHNlc3Npb25BY3Rpb25zOiAicHBfcmV2aWV3X3Nlc3Npb25fYWN0aW9ucyIsCiAgaW5zdGFsbERhdGU6ICJwcF9yZXZpZXdfaW5zdGFsbF9kYXRlIiwKfTsKCi8qKiBNaW5pbXVtIGRheXMgYmV0d2VlbiByZXZpZXcgcHJvbXB0cyAqLwpjb25zdCBNSU5fREFZU19CRVRXRUVOX1BST01QVFMgPSA0NTsKCi8qKiBNaW5pbXVtIGRheXMgYWZ0ZXIgaW5zdGFsbCBiZWZvcmUgZmlyc3QgcHJvbXB0ICovCmNvbnN0IE1JTl9EQVlTX0FGVEVSX0lOU1RBTEwgPSAzOwoKLyoqIE1heGltdW0gbnVtYmVyIG9mIGxpZmV0aW1lIHByb21wdHMgKi8KY29uc3QgTUFYX0xJRkVUSU1FX1BST01QVFMgPSA0OwoKLyoqIE51bWJlciBvZiBwb3NpdGl2ZSBhY3Rpb25zIGluIGEgc2Vzc2lvbiBiZWZvcmUgY29uc2lkZXJpbmcgYSBwcm9tcHQgKi8KY29uc3QgQUNUSU9OU19USFJFU0hPTEQgPSAzOwoKLy8g4pSA4pSAIFRyaWdnZXIgRXZlbnRzIOKUgOKUgAoKZXhwb3J0IHR5cGUgUmV2aWV3VHJpZ2dlciA9CiAgfCAid29ya291dF9jb21wbGV0ZWQiCiAgfCAiZ29hbF9hY2hpZXZlZCIKICB8ICJzdHJlYWtfbWlsZXN0b25lIgogIHwgInBsYW5fZ2VuZXJhdGVkIgogIHwgImJvZHlfc2Nhbl9pbXByb3ZlZCIKICB8ICJ3ZWVrbHlfc3VtbWFyeV9wb3NpdGl2ZSI7CgovKioKICogUmVjb3JkIGEgcG9zaXRpdmUgdXNlciBhY3Rpb24uIFdoZW4gZW5vdWdoIHBvc2l0aXZlIGFjdGlvbnMgYWNjdW11bGF0ZQogKiBpbiBhIHNlc3Npb24sIHRoZSBuZXh0IGNhbGwgd2l0aCBzaG91bGRQcm9tcHQ9dHJ1ZSBtYXkgdHJpZ2dlciB0aGUgZGlhbG9nLgogKi8KZXhwb3J0IGFzeW5jIGZ1bmN0aW9uIHJlY29yZFBvc2l0aXZlQWN0aW9uKHRyaWdnZXI6IFJldmlld1RyaWdnZXIpOiBQcm9taXNlPHZvaWQ+IHsKICB0cnkgewogICAgY29uc3QgcmF3ID0gYXdhaXQgQXN5bmNTdG9yYWdlLmdldEl0ZW0oU1RPUkFHRV9LRVlTLnNlc3Npb25BY3Rpb25zKTsKICAgIGNvbnN0IGNvdW50ID0gcmF3ID8gcGFyc2VJbnQocmF3LCAxMCkgKyAxIDogMTsKICAgIGF3YWl0IEFzeW5jU3RvcmFnZS5zZXRJdGVtKFNUT1JBR0VfS0VZUy5zZXNzaW9uQWN0aW9ucywgY291bnQudG9TdHJpbmcoKSk7CiAgfSBjYXRjaCB7CiAgICAvLyBOb24tY3JpdGljYWwg4oCUIHNpbGVudGx5IGlnbm9yZQogIH0KfQoKLyoqCiAqIEF0dGVtcHQgdG8gc2hvdyB0aGUgbmF0aXZlIGluLWFwcCByZXZpZXcgZGlhbG9nLgogKiBSZXNwZWN0cyByYXRlIGxpbWl0cyBhbmQgZ3VpZGVsaW5lcy4gVGhlIE9TIG1heSBzdGlsbCBkZWNpZGUgbm90IHRvIHNob3cgaXQuCiAqCiAqIENhbGwgdGhpcyBhZnRlciBwb3NpdGl2ZSBtb21lbnRzICh3b3Jrb3V0IGNvbXBsZXRpb24sIGdvYWwgaGl0LCBldGMuKQogKi8KZXhwb3J0IGFzeW5jIGZ1bmN0aW9uIG1heWJlUmVxdWVzdFJldmlldyh0cmlnZ2VyOiBSZXZpZXdUcmlnZ2VyKTogUHJvbWlzZTxib29sZWFuPiB7CiAgdHJ5IHsKICAgIC8vIENoZWNrIHBsYXRmb3JtIHN1cHBvcnQKICAgIGlmIChQbGF0Zm9ybS5PUyA9PT0gIndlYiIpIHJldHVybiBmYWxzZTsKICAgIGNvbnN0IGlzQXZhaWxhYmxlID0gYXdhaXQgU3RvcmVSZXZpZXcuaXNBdmFpbGFibGVBc3luYygpOwogICAgaWYgKCFpc0F2YWlsYWJsZSkgcmV0dXJuIGZhbHNlOwoKICAgIC8vIFJlY29yZCB0aGUgYWN0aW9uCiAgICBhd2FpdCByZWNvcmRQb3NpdGl2ZUFjdGlvbih0cmlnZ2VyKTsKCiAgICAvLyBDaGVjayBpZiBlbm91Z2ggcG9zaXRpdmUgYWN0aW9ucyBoYXZlIG9jY3VycmVkIHRoaXMgc2Vzc2lvbgogICAgY29uc3QgYWN0aW9uc1JhdyA9IGF3YWl0IEFzeW5jU3RvcmFnZS5nZXRJdGVtKFNUT1JBR0VfS0VZUy5zZXNzaW9uQWN0aW9ucyk7CiAgICBjb25zdCBzZXNzaW9uQWN0aW9ucyA9IGFjdGlvbnNSYXcgPyBwYXJzZUludChhY3Rpb25zUmF3LCAxMCkgOiAwOwogICAgaWYgKHNlc3Npb25BY3Rpb25zIDwgQUNUSU9OU19USFJFU0hPTEQpIHJldHVybiBmYWxzZTsKCiAgICAvLyBDaGVjayBpbnN0YWxsIGRhdGUgKGRvbid0IHByb21wdCBuZXcgdXNlcnMpCiAgICBjb25zdCBpbnN0YWxsRGF0ZVJhdyA9IGF3YWl0IEFzeW5jU3RvcmFnZS5nZXRJdGVtKFNUT1JBR0VfS0VZUy5pbnN0YWxsRGF0ZSk7CiAgICBpZiAoIWluc3RhbGxEYXRlUmF3KSB7CiAgICAgIC8vIEZpcnN0IHRpbWUg4oCUIHJlY29yZCBpbnN0YWxsIGRhdGUKICAgICAgYXdhaXQgQXN5bmNTdG9yYWdlLnNldEl0ZW0oU1RPUkFHRV9LRVlTLmluc3RhbGxEYXRlLCBEYXRlLm5vdygpLnRvU3RyaW5nKCkpOwogICAgICByZXR1cm4gZmFsc2U7CiAgICB9CiAgICBjb25zdCBkYXlzU2luY2VJbnN0YWxsID0gKERhdGUubm93KCkgLSBwYXJzZUludChpbnN0YWxsRGF0ZVJhdywgMTApKSAvIDg2XzQwMF8wMDA7CiAgICBpZiAoZGF5c1NpbmNlSW5zdGFsbCA8IE1JTl9EQVlTX0FGVEVSX0lOU1RBTEwpIHJldHVybiBmYWxzZTsKCiAgICAvLyBDaGVjayBsaWZldGltZSBwcm9tcHQgY291bnQKICAgIGNvbnN0IGNvdW50UmF3ID0gYXdhaXQgQXN5bmNTdG9yYWdlLmdldEl0ZW0oU1RPUkFHRV9LRVlTLnByb21wdENvdW50KTsKICAgIGNvbnN0IGxpZmV0aW1lUHJvbXB0cyA9IGNvdW50UmF3ID8gcGFyc2VJbnQoY291bnRSYXcsIDEwKSA6IDA7CiAgICBpZiAobGlmZXRpbWVQcm9tcHRzID49IE1BWF9MSUZFVElNRV9QUk9NUFRTKSByZXR1cm4gZmFsc2U7CgogICAgLy8gQ2hlY2sgdGltZSBzaW5jZSBsYXN0IHByb21wdAogICAgY29uc3QgbGFzdFJhdyA9IGF3YWl0IEFzeW5jU3RvcmFnZS5nZXRJdGVtKFNUT1JBR0VfS0VZUy5sYXN0UHJvbXB0RGF0ZSk7CiAgICBpZiAobGFzdFJhdykgewogICAgICBjb25zdCBkYXlzU2luY2VMYXN0UHJvbXB0ID0gKERhdGUubm93KCkgLSBwYXJzZUludChsYXN0UmF3LCAxMCkpIC8gODZfNDAwXzAwMDsKICAgICAgaWYgKGRheXNTaW5jZUxhc3RQcm9tcHQgPCBNSU5fREFZU19CRVRXRUVOX1BST01QVFMpIHJldHVybiBmYWxzZTsKICAgIH0KCiAgICAvLyBBbGwgY2hlY2tzIHBhc3NlZCDigJQgcmVxdWVzdCByZXZpZXcKICAgIGF3YWl0IFN0b3JlUmV2aWV3LnJlcXVlc3RSZXZpZXcoKTsKCiAgICAvLyBVcGRhdGUgdHJhY2tpbmcKICAgIGF3YWl0IEFzeW5jU3RvcmFnZS5zZXRJdGVtKFNUT1JBR0VfS0VZUy5sYXN0UHJvbXB0RGF0ZSwgRGF0ZS5ub3coKS50b1N0cmluZygpKTsKICAgIGF3YWl0IEFzeW5jU3RvcmFnZS5zZXRJdGVtKFNUT1JBR0VfS0VZUy5wcm9tcHRDb3VudCwgKGxpZmV0aW1lUHJvbXB0cyArIDEpLnRvU3RyaW5nKCkpOwogICAgYXdhaXQgQXN5bmNTdG9yYWdlLnNldEl0ZW0oU1RPUkFHRV9LRVlTLnNlc3Npb25BY3Rpb25zLCAiMCIpOyAvLyBSZXNldCBzZXNzaW9uIGNvdW50ZXIKCiAgICByZXR1cm4gdHJ1ZTsKICB9IGNhdGNoIHsKICAgIHJldHVybiBmYWxzZTsKICB9Cn0KCi8qKgogKiBSZWNvcmQgaW5zdGFsbCBkYXRlIG9uIGZpcnN0IGFwcCBsYXVuY2guCiAqIENhbGwgdGhpcyBvbmNlIGluIHRoZSByb290IGxheW91dC4KICovCmV4cG9ydCBhc3luYyBmdW5jdGlvbiBpbml0UmV2aWV3VHJhY2tpbmcoKTogUHJvbWlzZTx2b2lkPiB7CiAgdHJ5IHsKICAgIGNvbnN0IGV4aXN0aW5nID0gYXdhaXQgQXN5bmNTdG9yYWdlLmdldEl0ZW0oU1RPUkFHRV9LRVlTLmluc3RhbGxEYXRlKTsKICAgIGlmICghZXhpc3RpbmcpIHsKICAgICAgYXdhaXQgQXN5bmNTdG9yYWdlLnNldEl0ZW0oU1RPUkFHRV9LRVlTLmluc3RhbGxEYXRlLCBEYXRlLm5vdygpLnRvU3RyaW5nKCkpOwogICAgfQogICAgLy8gUmVzZXQgc2Vzc2lvbiBhY3Rpb24gY291bnRlciBvbiBlYWNoIGFwcCBsYXVuY2gKICAgIGF3YWl0IEFzeW5jU3RvcmFnZS5zZXRJdGVtKFNUT1JBR0VfS0VZUy5zZXNzaW9uQWN0aW9ucywgIjAiKTsKICB9IGNhdGNoIHsKICAgIC8vIE5vbi1jcml0aWNhbAogIH0KfQoKLyoqCiAqIENoZWNrIGlmIHRoZSBhcHAgaGFzIGEgc3RvcmUgcGFnZSAodXNlZnVsIGZvciBzaG93aW5nICJSYXRlIFVzIiBpbiBzZXR0aW5ncykuCiAqLwpleHBvcnQgYXN5bmMgZnVuY3Rpb24gaGFzU3RvcmVSZXZpZXdBY3Rpb24oKTogUHJvbWlzZTxib29sZWFuPiB7CiAgaWYgKFBsYXRmb3JtLk9TID09PSAid2ViIikgcmV0dXJuIGZhbHNlOwogIHJldHVybiBTdG9yZVJldmlldy5oYXNBY3Rpb24oKTsKfQoKLyoqCiAqIE9wZW4gdGhlIHN0b3JlIHBhZ2UgZGlyZWN0bHkgKGZvciBhICJSYXRlIFVzIiBidXR0b24gaW4gc2V0dGluZ3MpLgogKi8KZXhwb3J0IGZ1bmN0aW9uIG9wZW5TdG9yZUxpc3RpbmcoKTogdm9pZCB7CiAgY29uc3Qgc3RvcmVVcmwgPSBQbGF0Zm9ybS5zZWxlY3QoewogICAgaW9zOiAiaHR0cHM6Ly9hcHBzLmFwcGxlLmNvbS9hcHAvcGVha3B1bHNlLWFpL2lkX1BMQUNFSE9MREVSIiwKICAgIGFuZHJvaWQ6ICJodHRwczovL3BsYXkuZ29vZ2xlLmNvbS9zdG9yZS9hcHBzL2RldGFpbHM/aWQ9Y29tLnBlYWtwdWxzZWFpLmFwcCIsCiAgfSk7CiAgaWYgKHN0b3JlVXJsKSB7CiAgICAvLyBVc2UgTGlua2luZyB0byBvcGVuLCBpbXBvcnRlZCBsYXppbHkgdG8ga2VlcCB0aGlzIG1vZHVsZSBsaWdodHdlaWdodAogICAgY29uc3QgeyBMaW5raW5nIH0gPSByZXF1aXJlKCJyZWFjdC1uYXRpdmUiKTsKICAgIExpbmtpbmcub3BlblVSTChzdG9yZVVybCk7CiAgfQp9Cg==
+/**
+ * In-app review prompt manager.
+ *
+ * Uses expo-store-review to trigger the native review dialog
+ * at strategic moments (after completing workouts, hitting milestones, etc.).
+ *
+ * Respects Apple & Google guidelines:
+ * - Don't prompt too frequently
+ * - Don't prompt on first launch
+ * - Let the OS decide whether to actually show the dialog
+ */
+
+import * as StoreReview from "expo-store-review";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Platform } from "react-native";
+
+const STORAGE_KEYS = {
+  lastPromptDate: "pp_review_last_prompt",
+  promptCount: "pp_review_prompt_count",
+  sessionActions: "pp_review_session_actions",
+  installDate: "pp_review_install_date",
+};
+
+/** Minimum days between review prompts */
+const MIN_DAYS_BETWEEN_PROMPTS = 45;
+
+/** Minimum days after install before first prompt */
+const MIN_DAYS_AFTER_INSTALL = 3;
+
+/** Maximum number of lifetime prompts */
+const MAX_LIFETIME_PROMPTS = 4;
+
+/** Number of positive actions in a session before considering a prompt */
+const ACTIONS_THRESHOLD = 3;
+
+// ── Trigger Events ──
+
+export type ReviewTrigger =
+  | "workout_completed"
+  | "goal_achieved"
+  | "streak_milestone"
+  | "plan_generated"
+  | "body_scan_improved"
+  | "weekly_summary_positive";
+
+/**
+ * Record a positive user action. When enough positive actions accumulate
+ * in a session, the next call with shouldPrompt=true may trigger the dialog.
+ */
+export async function recordPositiveAction(trigger: ReviewTrigger): Promise<void> {
+  try {
+    const raw = await AsyncStorage.getItem(STORAGE_KEYS.sessionActions);
+    const count = raw ? parseInt(raw, 10) + 1 : 1;
+    await AsyncStorage.setItem(STORAGE_KEYS.sessionActions, count.toString());
+  } catch {
+    // Non-critical — silently ignore
+  }
+}
+
+/**
+ * Attempt to show the native in-app review dialog.
+ * Respects rate limits and guidelines. The OS may still decide not to show it.
+ *
+ * Call this after positive moments (workout completion, goal hit, etc.)
+ */
+export async function maybeRequestReview(trigger: ReviewTrigger): Promise<boolean> {
+  try {
+    // Check platform support
+    if (Platform.OS === "web") return false;
+    const isAvailable = await StoreReview.isAvailableAsync();
+    if (!isAvailable) return false;
+
+    // Record the action
+    await recordPositiveAction(trigger);
+
+    // Check if enough positive actions have occurred this session
+    const actionsRaw = await AsyncStorage.getItem(STORAGE_KEYS.sessionActions);
+    const sessionActions = actionsRaw ? parseInt(actionsRaw, 10) : 0;
+    if (sessionActions < ACTIONS_THRESHOLD) return false;
+
+    // Check install date (don't prompt new users)
+    const installDateRaw = await AsyncStorage.getItem(STORAGE_KEYS.installDate);
+    if (!installDateRaw) {
+      // First time — record install date
+      await AsyncStorage.setItem(STORAGE_KEYS.installDate, Date.now().toString());
+      return false;
+    }
+    const daysSinceInstall = (Date.now() - parseInt(installDateRaw, 10)) / 86_400_000;
+    if (daysSinceInstall < MIN_DAYS_AFTER_INSTALL) return false;
+
+    // Check lifetime prompt count
+    const countRaw = await AsyncStorage.getItem(STORAGE_KEYS.promptCount);
+    const lifetimePrompts = countRaw ? parseInt(countRaw, 10) : 0;
+    if (lifetimePrompts >= MAX_LIFETIME_PROMPTS) return false;
+
+    // Check time since last prompt
+    const lastRaw = await AsyncStorage.getItem(STORAGE_KEYS.lastPromptDate);
+    if (lastRaw) {
+      const daysSinceLastPrompt = (Date.now() - parseInt(lastRaw, 10)) / 86_400_000;
+      if (daysSinceLastPrompt < MIN_DAYS_BETWEEN_PROMPTS) return false;
+    }
+
+    // All checks passed — request review
+    await StoreReview.requestReview();
+
+    // Update tracking
+    await AsyncStorage.setItem(STORAGE_KEYS.lastPromptDate, Date.now().toString());
+    await AsyncStorage.setItem(STORAGE_KEYS.promptCount, (lifetimePrompts + 1).toString());
+    await AsyncStorage.setItem(STORAGE_KEYS.sessionActions, "0"); // Reset session counter
+
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Record install date on first app launch.
+ * Call this once in the root layout.
+ */
+export async function initReviewTracking(): Promise<void> {
+  try {
+    const existing = await AsyncStorage.getItem(STORAGE_KEYS.installDate);
+    if (!existing) {
+      await AsyncStorage.setItem(STORAGE_KEYS.installDate, Date.now().toString());
+    }
+    // Reset session action counter on each app launch
+    await AsyncStorage.setItem(STORAGE_KEYS.sessionActions, "0");
+  } catch {
+    // Non-critical
+  }
+}
+
+/**
+ * Check if the app has a store page (useful for showing "Rate Us" in settings).
+ */
+export async function hasStoreReviewAction(): Promise<boolean> {
+  if (Platform.OS === "web") return false;
+  return StoreReview.hasAction();
+}
+
+/**
+ * Open the store page directly (for a "Rate Us" button in settings).
+ */
+export function openStoreListing(): void {
+  const storeUrl = Platform.select({
+    ios: "https://apps.apple.com/app/peakpulse-ai/id_PLACEHOLDER",
+    android: "https://play.google.com/store/apps/details?id=com.peakpulseai.app",
+  });
+  if (storeUrl) {
+    // Use Linking to open, imported lazily to keep this module lightweight
+    const { Linking } = require("react-native");
+    Linking.openURL(storeUrl);
+  }
+}

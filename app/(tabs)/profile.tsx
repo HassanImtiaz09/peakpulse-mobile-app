@@ -95,6 +95,7 @@ function ProfileScreenContent() {
 
   const { data: profile, refetch: refetchProfile } = trpc.profile.get.useQuery(undefined, { enabled: isAuthenticated });
 
+  const deleteAccount = trpc.auth.deleteAccount.useMutation();
   const upsertProfile = trpc.profile.upsert.useMutation({
     onSuccess: () => { refetchProfile(); setEditing(false); Alert.alert("Saved!", "Profile updated successfully."); },
     onError: (e) => Alert.alert("Error", e.message),
@@ -566,7 +567,7 @@ function ProfileScreenContent() {
                       style: "destructive",
                       onPress: async () => {
                         try {
-                          await trpc.auth.deleteAccount.mutate();
+                          await deleteAccount.mutateAsync();
                           await AsyncStorage.clear();
                           router.replace("/login" as any);
                         } catch (e) {

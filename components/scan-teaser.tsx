@@ -59,7 +59,7 @@ export function ScanTeaser({ currentStep, totalSteps }: ScanTeaserProps) {
       ]}
     >
       <LinearGradient
-        colors={["rgba(245,158,11,0.08)", "rgba(245,158,11,0.02)"]}
+        colors={["rgba(245,158,11,0.08)", "rgba(245,158,11,0.02)"] as const}
         style={styles.gradient}
       >
         {/* Blurred preview thumbnails */}
@@ -100,7 +100,7 @@ export function ScanTeaser({ currentStep, totalSteps }: ScanTeaserProps) {
 
         {/* Mini progress bar */}
         <View style={styles.progressTrack}>
-          <View style={[styles.progressFill, { width: progressPct + "%" }]} />
+          <View style={[styles.progressFill, { width: `${progressPct}%` as any }]} />
         </View>
         <Text style={styles.progressText}>{progressPct}% complete</Text>
       </LinearGradient>

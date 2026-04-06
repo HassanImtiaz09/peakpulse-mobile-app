@@ -2,10 +2,9 @@ import { z } from "zod";
 import { COOKIE_NAME } from "../shared/const.js";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { router, protectedProcedure, publicProcedure, guestOrUserProcedure } from "./_core/trpc";
-import { db, storagePut, randomSuffix } from "./helpers";
+import { db, storagePut, randomSuffix, invokeLLM } from "./helpers";
 
 export const authRouter = router({
-  auth: router({
   auth: router({
     me: publicProcedure.query((opts) => opts.ctx.user),
     logout: publicProcedure.mutation(({ ctx }) => {
@@ -22,10 +21,8 @@ export const authRouter = router({
       ctx.res.clearCookie(COOKIE_NAME, { ...cookieOptions, maxAge: -1 });
       return { success: true } as const;
     }),
-  }),
 
   }),
-  profile: router({
   profile: router({
     // Protected â only for logged-in users
     get: protectedProcedure.query(async ({ ctx }) => db.getUserProfile(ctx.user.id)),
@@ -51,10 +48,8 @@ export const authRouter = router({
         });
         return { insight: response.choices[0].message.content ?? "Stay consistent â small daily actions compound into big results." };
       }),
-  }),
 
   }),
-  upload: router({
   upload: router({
     // Photo upload â works for guests (stored to S3 without user ID)
     photo: guestOrUserProcedure
@@ -66,7 +61,6 @@ export const authRouter = router({
         const { url } = await storagePut(key, buffer, input.mimeType);
         return { url };
       }),
-  }),
 
   // âââ User Goals & Progress Persistence âââââââââââââââââââââââââââââââââââââââ
   }),

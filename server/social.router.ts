@@ -4,7 +4,6 @@ import { db, invokeLLM, checkAiLimit, randomSuffix } from "./helpers";
 
 export const socialRouter = router({
   social: router({
-  social: router({
     // Get community feed posts
     getFeed: guestOrUserProcedure
       .input(z.object({ limit: z.number().default(20), offset: z.number().default(0) }))
@@ -26,10 +25,8 @@ export const socialRouter = router({
       .mutation(async ({ ctx, input }) => {
         return db.likePost(ctx.user.id, input.postId);
       }),
-  }),
 
   }),
-  subscription: router({
   subscription: router({
     getPlans: publicProcedure.query(() => ({
       plans: [
@@ -42,10 +39,8 @@ export const socialRouter = router({
       const sub = await db.getUserSubscription(ctx.user.id);
       return sub ?? { plan: "free", expiresAt: null };
     }),
-  }),
 
   }),
-  aiCoach: router({
   aiCoach: router({
     // Comprehensive AI coach analysis: form history + progress + personalised tips
     getInsights: guestOrUserProcedure
@@ -196,6 +191,5 @@ Return a JSON coaching report with this exact structure:
         const response = await invokeLLM({ messages, model: "flash-lite" });
         return { reply: (response.choices[0].message.content as string) ?? "I'm here to help. What would you like to work on today?" };
       }),
-  }),
   }),
 });

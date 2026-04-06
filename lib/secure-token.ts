@@ -1,1 +1,120 @@
-LyoqCiAqIFNlY3VyZSB0b2tlbiBzdG9yYWdlIHVzaW5nIGV4cG8tc2VjdXJlLXN0b3JlIHdpdGggQXN5bmNTdG9yYWdlIGZhbGxiYWNrLgogKgogKiBPbiBuYXRpdmUgKGlPUy9BbmRyb2lkKSwgdG9rZW5zIGFyZSBzdG9yZWQgaW4gdGhlIGRldmljZSBrZXljaGFpbiAvIGtleXN0b3JlCiAqIHZpYSBleHBvLXNlY3VyZS1zdG9yZSwgd2hpY2ggZW5jcnlwdHMgZGF0YSBhdCByZXN0LgogKgogKiBPbiB3ZWIsIGZhbGxzIGJhY2sgdG8gQXN5bmNTdG9yYWdlIChsb2NhbFN0b3JhZ2UpIHNpbmNlIHNlY3VyZS1zdG9yZQogKiBpcyBub3QgYXZhaWxhYmxlIOKAlCBhY2NlcHRhYmxlIGZvciBkZXYvcHJldmlldyBidXQgTk9UIGZvciBwcm9kdWN0aW9uIHdlYi4KICovCgppbXBvcnQgeyBQbGF0Zm9ybSB9IGZyb20gInJlYWN0LW5hdGl2ZSI7CmltcG9ydCAqIGFzIFNlY3VyZVN0b3JlIGZyb20gImV4cG8tc2VjdXJlLXN0b3JlIjsKaW1wb3J0IEFzeW5jU3RvcmFnZSBmcm9tICJAcmVhY3QtbmF0aXZlLWFzeW5jLXN0b3JhZ2UvYXN5bmMtc3RvcmFnZSI7Cgpjb25zdCBUT0tFTl9LRVkgPSAicHBfYXV0aF90b2tlbiI7CmNvbnN0IFJFRlJFU0hfVE9LRU5fS0VZID0gInBwX3JlZnJlc2hfdG9rZW4iOwpjb25zdCBHVUVTVF9JRF9LRVkgPSAicHBfZ3Vlc3RfaWQiOwoKY29uc3QgaXNOYXRpdmUgPSBQbGF0Zm9ybS5PUyA9PT0gImlvcyIgfHwgUGxhdGZvcm0uT1MgPT09ICJhbmRyb2lkIjsKCi8vIOKUgOKUgCBMb3ctbGV2ZWwgaGVscGVycyDilIDilIAKCmFzeW5jIGZ1bmN0aW9uIHNlY3VyZVNldChrZXk6IHN0cmluZywgdmFsdWU6IHN0cmluZyk6IFByb21pc2U8dm9pZD4gewogIGlmIChpc05hdGl2ZSkgewogICAgYXdhaXQgU2VjdXJlU3RvcmUuc2V0SXRlbUFzeW5jKGtleSwgdmFsdWUsIHsKICAgICAga2V5Y2hhaW5BY2Nlc3NpYmxlOiBTZWN1cmVTdG9yZS5XSEVOX1VOTE9DS0VEX1RISVNfREVWSUNFX09OTFksCiAgICB9KTsKICB9IGVsc2UgewogICAgYXdhaXQgQXN5bmNTdG9yYWdlLnNldEl0ZW0oa2V5LCB2YWx1ZSk7CiAgfQp9Cgphc3luYyBmdW5jdGlvbiBzZWN1cmVHZXQoa2V5OiBzdHJpbmcpOiBQcm9taXNlPHN0cmluZyB8IG51bGw+IHsKICBpZiAoaXNOYXRpdmUpIHsKICAgIHJldHVybiBTZWN1cmVTdG9yZS5nZXRJdGVtQXN5bmMoa2V5KTsKICB9CiAgcmV0dXJuIEFzeW5jU3RvcmFnZS5nZXRJdGVtKGtleSk7Cn0KCmFzeW5jIGZ1bmN0aW9uIHNlY3VyZURlbGV0ZShrZXk6IHN0cmluZyk6IFByb21pc2U8dm9pZD4gewogIGlmIChpc05hdGl2ZSkgewogICAgYXdhaXQgU2VjdXJlU3RvcmUuZGVsZXRlSXRlbUFzeW5jKGtleSk7CiAgfSBlbHNlIHsKICAgIGF3YWl0IEFzeW5jU3RvcmFnZS5yZW1vdmVJdGVtKGtleSk7CiAgfQp9CgovLyDilIDilIAgUHVibGljIEFQSSDilIDilIAKCi8qKiBTdG9yZSB0aGUgcHJpbWFyeSBhdXRoIHRva2VuIHNlY3VyZWx5ICovCmV4cG9ydCBhc3luYyBmdW5jdGlvbiBzYXZlQXV0aFRva2VuKHRva2VuOiBzdHJpbmcpOiBQcm9taXNlPHZvaWQ+IHsKICBhd2FpdCBzZWN1cmVTZXQoVE9LRU5fS0VZLCB0b2tlbik7Cn0KCi8qKiBSZXRyaWV2ZSB0aGUgcHJpbWFyeSBhdXRoIHRva2VuICovCmV4cG9ydCBhc3luYyBmdW5jdGlvbiBnZXRBdXRoVG9rZW4oKTogUHJvbWlzZTxzdHJpbmcgfCBudWxsPiB7CiAgcmV0dXJuIHNlY3VyZUdldChUT0tFTl9LRVkpOwp9CgovKiogU3RvcmUgYSByZWZyZXNoIHRva2VuIHNlY3VyZWx5ICovCmV4cG9ydCBhc3luYyBmdW5jdGlvbiBzYXZlUmVmcmVzaFRva2VuKHRva2VuOiBzdHJpbmcpOiBQcm9taXNlPHZvaWQ+IHsKICBhd2FpdCBzZWN1cmVTZXQoUkVGUkVTSF9UT0tFTl9LRVksIHRva2VuKTsKfQoKLyoqIFJldHJpZXZlIHRoZSByZWZyZXNoIHRva2VuICovCmV4cG9ydCBhc3luYyBmdW5jdGlvbiBnZXRSZWZyZXNoVG9rZW4oKTogUHJvbWlzZTxzdHJpbmcgfCBudWxsPiB7CiAgcmV0dXJuIHNlY3VyZUdldChSRUZSRVNIX1RPS0VOX0tFWSk7Cn0KCi8qKiBTdG9yZSB0aGUgZ3Vlc3Qgc2Vzc2lvbiBJRCBzZWN1cmVseSAqLwpleHBvcnQgYXN5bmMgZnVuY3Rpb24gc2F2ZUd1ZXN0SWQoZ3Vlc3RJZDogc3RyaW5nKTogUHJvbWlzZTx2b2lkPiB7CiAgYXdhaXQgc2VjdXJlU2V0KEdVRVNUX0lEX0tFWSwgZ3Vlc3RJZCk7Cn0KCi8qKiBSZXRyaWV2ZSB0aGUgZ3Vlc3Qgc2Vzc2lvbiBJRCAqLwpleHBvcnQgYXN5bmMgZnVuY3Rpb24gZ2V0R3Vlc3RJZCgpOiBQcm9taXNlPHN0cmluZyB8IG51bGw+IHsKICByZXR1cm4gc2VjdXJlR2V0KEdVRVNUX0lEX0tFWSk7Cn0KCi8qKiBDbGVhciBhbGwgYXV0aC1yZWxhdGVkIHRva2VucyAodXNlZCBvbiBsb2dvdXQgLyBhY2NvdW50IGRlbGV0aW9uKSAqLwpleHBvcnQgYXN5bmMgZnVuY3Rpb24gY2xlYXJBbGxUb2tlbnMoKTogUHJvbWlzZTx2b2lkPiB7CiAgYXdhaXQgUHJvbWlzZS5hbGwoWwogICAgc2VjdXJlRGVsZXRlKFRPS0VOX0tFWSksCiAgICBzZWN1cmVEZWxldGUoUkVGUkVTSF9UT0tFTl9LRVkpLAogICAgc2VjdXJlRGVsZXRlKEdVRVNUX0lEX0tFWSksCiAgXSk7Cn0KCi8qKgogKiBNaWdyYXRlIHRva2VucyBmcm9tIEFzeW5jU3RvcmFnZSB0byBTZWN1cmVTdG9yZSAob25lLXRpbWUpLgogKiBDYWxsIHRoaXMgb24gYXBwIHN0YXJ0dXAgdG8gbW92ZSBhbnkgbGVnYWN5IHRva2Vucy4KICovCmV4cG9ydCBhc3luYyBmdW5jdGlvbiBtaWdyYXRlVG9rZW5zVG9TZWN1cmVTdG9yZSgpOiBQcm9taXNlPHZvaWQ+IHsKICBpZiAoIWlzTmF0aXZlKSByZXR1cm47IC8vIE9ubHkgbWlncmF0ZSBvbiBuYXRpdmUKCiAgY29uc3QgbGVnYWN5S2V5cyA9IFsKICAgIHsgbGVnYWN5OiAiYXV0aF90b2tlbiIsIHNlY3VyZTogVE9LRU5fS0VZIH0sCiAgICB7IGxlZ2FjeTogInJlZnJlc2hfdG9rZW4iLCBzZWN1cmU6IFJFRlJFU0hfVE9LRU5fS0VZIH0sCiAgICB7IGxlZ2FjeTogImd1ZXN0X2lkIiwgc2VjdXJlOiBHVUVTVF9JRF9LRVkgfSwKICBdOwoKICBmb3IgKGNvbnN0IHsgbGVnYWN5LCBzZWN1cmUgfSBvZiBsZWdhY3lLZXlzKSB7CiAgICB0cnkgewogICAgICBjb25zdCBleGlzdGluZyA9IGF3YWl0IEFzeW5jU3RvcmFnZS5nZXRJdGVtKGxlZ2FjeSk7CiAgICAgIGlmIChleGlzdGluZykgewogICAgICAgIC8vIENoZWNrIGlmIGFscmVhZHkgbWlncmF0ZWQKICAgICAgICBjb25zdCBpblNlY3VyZSA9IGF3YWl0IFNlY3VyZVN0b3JlLmdldEl0ZW1Bc3luYyhzZWN1cmUpOwogICAgICAgIGlmICghaW5TZWN1cmUpIHsKICAgICAgICAgIGF3YWl0IFNlY3VyZVN0b3JlLnNldEl0ZW1Bc3luYyhzZWN1cmUsIGV4aXN0aW5nLCB7CiAgICAgICAgICAgIGtleWNoYWluQWNjZXNzaWJsZTogU2VjdXJlU3RvcmUuV0hFTl9VTkxPQ0tFRF9USElTX0RFVklDRV9PTkxZLAogICAgICAgICAgfSk7CiAgICAgICAgfQogICAgICAgIC8vIFJlbW92ZSBmcm9tIEFzeW5jU3RvcmFnZSBhZnRlciBzdWNjZXNzZnVsIG1pZ3JhdGlvbgogICAgICAgIGF3YWl0IEFzeW5jU3RvcmFnZS5yZW1vdmVJdGVtKGxlZ2FjeSk7CiAgICAgIH0KICAgIH0gY2F0Y2ggewogICAgICAvLyBTaWxlbnQgZmFpbCDigJQgbmV4dCBsYXVuY2ggd2lsbCByZXRyeQogICAgfQogIH0KfQo=
+/**
+ * Secure token storage using expo-secure-store with AsyncStorage fallback.
+ *
+ * On native (iOS/Android), tokens are stored in the device keychain / keystore
+ * via expo-secure-store, which encrypts data at rest.
+ *
+ * On web, falls back to AsyncStorage (localStorage) since secure-store
+ * is not available — acceptable for dev/preview but NOT for production web.
+ */
+
+import { Platform } from "react-native";
+import * as SecureStore from "expo-secure-store";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+const TOKEN_KEY = "pp_auth_token";
+const REFRESH_TOKEN_KEY = "pp_refresh_token";
+const GUEST_ID_KEY = "pp_guest_id";
+
+const isNative = Platform.OS === "ios" || Platform.OS === "android";
+
+// ── Low-level helpers ──
+
+async function secureSet(key: string, value: string): Promise<void> {
+  if (isNative) {
+    await SecureStore.setItemAsync(key, value, {
+      keychainAccessible: SecureStore.WHEN_UNLOCKED_THIS_DEVICE_ONLY,
+    });
+  } else {
+    await AsyncStorage.setItem(key, value);
+  }
+}
+
+async function secureGet(key: string): Promise<string | null> {
+  if (isNative) {
+    return SecureStore.getItemAsync(key);
+  }
+  return AsyncStorage.getItem(key);
+}
+
+async function secureDelete(key: string): Promise<void> {
+  if (isNative) {
+    await SecureStore.deleteItemAsync(key);
+  } else {
+    await AsyncStorage.removeItem(key);
+  }
+}
+
+// ── Public API ──
+
+/** Store the primary auth token securely */
+export async function saveAuthToken(token: string): Promise<void> {
+  await secureSet(TOKEN_KEY, token);
+}
+
+/** Retrieve the primary auth token */
+export async function getAuthToken(): Promise<string | null> {
+  return secureGet(TOKEN_KEY);
+}
+
+/** Store a refresh token securely */
+export async function saveRefreshToken(token: string): Promise<void> {
+  await secureSet(REFRESH_TOKEN_KEY, token);
+}
+
+/** Retrieve the refresh token */
+export async function getRefreshToken(): Promise<string | null> {
+  return secureGet(REFRESH_TOKEN_KEY);
+}
+
+/** Store the guest session ID securely */
+export async function saveGuestId(guestId: string): Promise<void> {
+  await secureSet(GUEST_ID_KEY, guestId);
+}
+
+/** Retrieve the guest session ID */
+export async function getGuestId(): Promise<string | null> {
+  return secureGet(GUEST_ID_KEY);
+}
+
+/** Clear all auth-related tokens (used on logout / account deletion) */
+export async function clearAllTokens(): Promise<void> {
+  await Promise.all([
+    secureDelete(TOKEN_KEY),
+    secureDelete(REFRESH_TOKEN_KEY),
+    secureDelete(GUEST_ID_KEY),
+  ]);
+}
+
+/**
+ * Migrate tokens from AsyncStorage to SecureStore (one-time).
+ * Call this on app startup to move any legacy tokens.
+ */
+export async function migrateTokensToSecureStore(): Promise<void> {
+  if (!isNative) return; // Only migrate on native
+
+  const legacyKeys = [
+    { legacy: "auth_token", secure: TOKEN_KEY },
+    { legacy: "refresh_token", secure: REFRESH_TOKEN_KEY },
+    { legacy: "guest_id", secure: GUEST_ID_KEY },
+  ];
+
+  for (const { legacy, secure } of legacyKeys) {
+    try {
+      const existing = await AsyncStorage.getItem(legacy);
+      if (existing) {
+        // Check if already migrated
+        const inSecure = await SecureStore.getItemAsync(secure);
+        if (!inSecure) {
+          await SecureStore.setItemAsync(secure, existing, {
+            keychainAccessible: SecureStore.WHEN_UNLOCKED_THIS_DEVICE_ONLY,
+          });
+        }
+        // Remove from AsyncStorage after successful migration
+        await AsyncStorage.removeItem(legacy);
+      }
+    } catch {
+      // Silent fail — next launch will retry
+    }
+  }
+}
