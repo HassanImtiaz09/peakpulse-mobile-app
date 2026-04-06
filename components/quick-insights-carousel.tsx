@@ -6,7 +6,9 @@ import {
   TouchableOpacity,
   Dimensions,
   StyleSheet,
+  Platform,
 } from "react-native";
+import * as Haptics from "expo-haptics";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -181,10 +183,17 @@ export function QuickInsightsCarousel({
     },
   ];
 
+  const handleCardPress = useCallback((route: string) => {
+    if (Platform.OS !== "web") {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    }
+    router.push(route as any);
+  }, [router]);
+
   const renderCard = ({ item, index }: { item: InsightCard; index: number }) => (
     <TouchableOpacity
       activeOpacity={0.85}
-      onPress={() => router.push(item.route as any)}
+      onPress={() => handleCardPress(item.route)}
       style={{
         width: CARD_WIDTH,
         marginRight: CARD_GAP,
@@ -258,7 +267,7 @@ export function QuickInsightsCarousel({
 
         {/* CTA button */}
         <TouchableOpacity
-          onPress={() => router.push(item.route as any)}
+          onPress={() => handleCardPress(item.route)}
           style={{
             backgroundColor: item.accentColor + "14",
             paddingVertical: 10,
@@ -281,7 +290,13 @@ export function QuickInsightsCarousel({
 
   const onViewableItemsChanged = useRef(({ viewableItems }: any) => {
     if (viewableItems.length > 0) {
-      setActiveIndex(viewableItems[0].index || 0);
+      const newIndex = viewableItems[0].index || 0;
+      setActiveIndex((prev: number) => {
+        if (prev !== newIndex && Platform.OS !== "web") {
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        }
+        return newIndex;
+      });
     }
   }).current;
 

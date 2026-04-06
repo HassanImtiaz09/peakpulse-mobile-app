@@ -3167,3 +3167,9 @@
   - Fixed massive mojibake in exercise-data.ts (2,567 sequences), meals.tsx (1,777), exercise-demo-player.tsx (162)
 - [x] Verify TypeScript compiles (0 errors)
 - [x] Save checkpoint
+
+## Round 93: Haptic feedback for Command Palette and Quick Insights carousel
+- [x] Add haptic feedback to Command Palette (Medium impact on open, Light on item select, Light on clear search)
+- [x] Add haptic feedback to Quick Insights carousel (Light impact on page change, Light on card/CTA tap)
+- [x] Verify TypeScript compiles (0 errors)
+- [x] Save checkpoint

@@ -112,6 +112,9 @@ export function CommandPalette({ visible, onClose }: CommandPaletteProps) {
   useEffect(() => {
     if (visible) {
       setQuery("");
+      if (Platform.OS !== "web") {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+      }
       setTimeout(() => inputRef.current?.focus(), 200);
     }
   }, [visible]);
@@ -185,7 +188,12 @@ export function CommandPalette({ visible, onClose }: CommandPaletteProps) {
               onSubmitEditing={() => results[0] && handleSelect(results[0])}
             />
             {query.length > 0 && (
-              <TouchableOpacity onPress={() => setQuery("")}>
+              <TouchableOpacity onPress={() => {
+                if (Platform.OS !== "web") {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                }
+                setQuery("");
+              }}>
                 <Ionicons name="close-circle" size={20} color={SF.muted} />
               </TouchableOpacity>
             )}
