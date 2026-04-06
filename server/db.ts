@@ -191,7 +191,7 @@ export async function getUserSubscription(userId: number) {
   return { plan: "free" as const, expiresAt: null };
 }
 
-// ── AI Usage Metering ─────────────────────────────────────────────────────────
+// ââ AI Usage Metering âââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 
 /** Monthly AI call limits per subscription tier */
 export const AI_CALL_LIMITS: Record<string, number> = {
@@ -253,7 +253,7 @@ export async function enforceAiLimit(userId: number, plan: string, endpoint: str
 
 
 
-// ─── User Goals (Target Transformation) ──────────────────────────────────────
+// âââ User Goals (Target Transformation) ââââââââââââââââââââââââââââââââââââââ
 
 export async function saveUserGoal(userId: number, data: {
   targetBodyFat: number;
@@ -281,7 +281,7 @@ export async function getActiveUserGoal(userId: number) {
   return result[0] ?? null;
 }
 
-// ─── Progress Check-ins ──────────────────────────────────────────────────────
+// âââ Progress Check-ins ââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 
 export async function saveProgressCheckin(userId: number, data: {
   photoUrl: string;
@@ -322,15 +322,37 @@ export function getSamplePostsForGuests() {
 
 function getSamplePostsData() {
   return [
-    { id: 1, userId: 0, userName: "Alex M.", userAvatar: "💪", type: "progress", caption: "6 weeks in — down 8kg and feeling incredible! The AI meal plan made all the difference. My energy levels are through the roof 🚀", weightKg: 78, bodyFatPercent: 16, likes: 124, createdAt: new Date(Date.now() - 2 * 3600000).toISOString() },
-    { id: 2, userId: 0, userName: "Sarah K.", userAvatar: "🏃", type: "achievement", caption: "Just completed my first 5K run after starting the beginner plan! Never thought I'd get here. 8 weeks ago I could barely run for 5 minutes 😭💪", achievement: "First 5K Run Completed", likes: 241, createdAt: new Date(Date.now() - 5 * 3600000).toISOString() },
-    { id: 3, userId: 0, userName: "James T.", userAvatar: "🎯", type: "progress", caption: "Body fat down from 24% to 18% in 10 weeks. The AI form checker caught my squat form was off — fixed it and my knees stopped hurting. Consistency is everything!", bodyFatPercent: 18, weightKg: 85, likes: 183, createdAt: new Date(Date.now() - 24 * 3600000).toISOString() },
-    { id: 4, userId: 0, userName: "Priya R.", userAvatar: "🌟", type: "challenge", caption: "Day 30 of the 30-day squat challenge — COMPLETED! 🎉 Started at 50 bodyweight squats, now doing 100 with 20kg. Who's joining the next one?", achievement: "30-Day Squat Challenge Champion", likes: 358, createdAt: new Date(Date.now() - 48 * 3600000).toISOString() },
-    { id: 5, userId: 0, userName: "Marcus L.", userAvatar: "🔥", type: "progress", caption: "The halal meal plan has been a game changer during Ramadan. Lost 5kg while eating food I actually enjoy and keeping my energy up for fasting. This app actually understands my lifestyle 🙏", weightKg: 82, bodyFatPercent: 20, likes: 219, createdAt: new Date(Date.now() - 72 * 3600000).toISOString() },
-    { id: 6, userId: 0, userName: "Emma W.", userAvatar: "✨", type: "achievement", caption: "Hit my target body fat percentage after 12 weeks! The AI body scan was spot on from day one and the weekly progress photos kept me accountable. Best investment I've made 💫", bodyFatPercent: 22, likes: 447, createdAt: new Date(Date.now() - 96 * 3600000).toISOString() },
-    { id: 7, userId: 0, userName: "Tariq A.", userAvatar: "🏋️", type: "progress", caption: "Calisthenics plan is absolutely brutal but the results speak for themselves. First muscle-up achieved today after 8 weeks of training! The AI progression is perfectly calibrated 💪", bodyFatPercent: 12, likes: 312, createdAt: new Date(Date.now() - 120 * 3600000).toISOString() },
-    { id: 8, userId: 0, userName: "Yuki N.", userAvatar: "🌸", type: "challenge", caption: "Completed the 10K steps daily challenge for 21 days straight! My Fitbit sync with PeakPulse made tracking effortless. Starting the 7-day plank streak next 🎯", achievement: "21-Day Step Streak", likes: 189, createdAt: new Date(Date.now() - 144 * 3600000).toISOString() },
-    { id: 9, userId: 0, userName: "David O.", userAvatar: "⚡", type: "progress", caption: "Home workout plan — no gym, no excuses. Down 12kg in 14 weeks using just bodyweight and resistance bands. The AI adapted the plan when I told it I only had 30 mins per day. Incredible 🏠", weightKg: 88, bodyFatPercent: 19, likes: 276, createdAt: new Date(Date.now() - 168 * 3600000).toISOString() },
-    { id: 10, userId: 0, userName: "Layla H.", userAvatar: "🌙", type: "achievement", caption: "Vegan meal plan + strength training = best decision ever. 6 months in, strongest I've ever been. The AI meal prep feature saves me 3 hours every Sunday 🌱💚", achievement: "6-Month Vegan Fitness Journey", likes: 523, createdAt: new Date(Date.now() - 192 * 3600000).toISOString() },
+    { id: 1, userId: 0, userName: "Alex M.", userAvatar: "ðª", type: "progress", caption: "6 weeks in â down 8kg and feeling incredible! The AI meal plan made all the difference. My energy levels are through the roof ð", weightKg: 78, bodyFatPercent: 16, likes: 124, createdAt: new Date(Date.now() - 2 * 3600000).toISOString() },
+    { id: 2, userId: 0, userName: "Sarah K.", userAvatar: "ð", type: "achievement", caption: "Just completed my first 5K run after starting the beginner plan! Never thought I'd get here. 8 weeks ago I could barely run for 5 minutes ð­ðª", achievement: "First 5K Run Completed", likes: 241, createdAt: new Date(Date.now() - 5 * 3600000).toISOString() },
+    { id: 3, userId: 0, userName: "James T.", userAvatar: "ð¯", type: "progress", caption: "Body fat down from 24% to 18% in 10 weeks. The AI form checker caught my squat form was off â fixed it and my knees stopped hurting. Consistency is everything!", bodyFatPercent: 18, weightKg: 85, likes: 183, createdAt: new Date(Date.now() - 24 * 3600000).toISOString() },
+    { id: 4, userId: 0, userName: "Priya R.", userAvatar: "ð", type: "challenge", caption: "Day 30 of the 30-day squat challenge â COMPLETED! ð Started at 50 bodyweight squats, now doing 100 with 20kg. Who's joining the next one?", achievement: "30-Day Squat Challenge Champion", likes: 358, createdAt: new Date(Date.now() - 48 * 3600000).toISOString() },
+    { id: 5, userId: 0, userName: "Marcus L.", userAvatar: "ð¥", type: "progress", caption: "The halal meal plan has been a game changer during Ramadan. Lost 5kg while eating food I actually enjoy and keeping my energy up for fasting. This app actually understands my lifestyle ð", weightKg: 82, bodyFatPercent: 20, likes: 219, createdAt: new Date(Date.now() - 72 * 3600000).toISOString() },
+    { id: 6, userId: 0, userName: "Emma W.", userAvatar: "â¨", type: "achievement", caption: "Hit my target body fat percentage after 12 weeks! The AI body scan was spot on from day one and the weekly progress photos kept me accountable. Best investment I've made ð«", bodyFatPercent: 22, likes: 447, createdAt: new Date(Date.now() - 96 * 3600000).toISOString() },
+    { id: 7, userId: 0, userName: "Tariq A.", userAvatar: "ðï¸", type: "progress", caption: "Calisthenics plan is absolutely brutal but the results speak for themselves. First muscle-up achieved today after 8 weeks of training! The AI progression is perfectly calibrated ðª", bodyFatPercent: 12, likes: 312, createdAt: new Date(Date.now() - 120 * 3600000).toISOString() },
+    { id: 8, userId: 0, userName: "Yuki N.", userAvatar: "ð¸", type: "challenge", caption: "Completed the 10K steps daily challenge for 21 days straight! My Fitbit sync with PeakPulse made tracking effortless. Starting the 7-day plank streak next ð¯", achievement: "21-Day Step Streak", likes: 189, createdAt: new Date(Date.now() - 144 * 3600000).toISOString() },
+    { id: 9, userId: 0, userName: "David O.", userAvatar: "â¡", type: "progress", caption: "Home workout plan â no gym, no excuses. Down 12kg in 14 weeks using just bodyweight and resistance bands. The AI adapted the plan when I told it I only had 30 mins per day. Incredible ð ", weightKg: 88, bodyFatPercent: 19, likes: 276, createdAt: new Date(Date.now() - 168 * 3600000).toISOString() },
+    { id: 10, userId: 0, userName: "Layla H.", userAvatar: "ð", type: "achievement", caption: "Vegan meal plan + strength training = best decision ever. 6 months in, strongest I've ever been. The AI meal prep feature saves me 3 hours every Sunday ð±ð", achievement: "6-Month Vegan Fitness Journey", likes: 523, createdAt: new Date(Date.now() - 192 * 3600000).toISOString() },
   ];
+}
+
+/**
+ * Delete a user account and ALL associated data.
+ * Required by Apple App Store (5.1.1v) and Google Play (User Data policy).
+ * Cascades across: profiles, body scans, fitness plans, progress photos,
+ * meal logs, workout sessions, AI usage, goals, progress check-ins.
+ */
+export async function deleteUserAccount(userId: number): Promise<void> {
+  const d = db();
+  // Delete from all child tables first (foreign key order)
+  await d.delete(progressCheckins).where(eq(progressCheckins.userId, userId));
+  await d.delete(userGoals).where(eq(userGoals.userId, userId));
+  await d.delete(aiUsage).where(eq(aiUsage.userId, userId));
+  await d.delete(workoutSessions).where(eq(workoutSessions.userId, userId));
+  await d.delete(mealLogs).where(eq(mealLogs.userId, userId));
+  await d.delete(progressPhotos).where(eq(progressPhotos.userId, userId));
+  await d.delete(fitnessPlans).where(eq(fitnessPlans.userId, userId));
+  await d.delete(bodyScans).where(eq(bodyScans.userId, userId));
+  await d.delete(userProfiles).where(eq(userProfiles.userId, userId));
+  // Finally delete the user record
+  await d.delete(users).where(eq(users.id, userId));
 }
