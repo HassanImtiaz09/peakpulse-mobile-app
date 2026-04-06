@@ -24,7 +24,7 @@ export const authRouter = router({
 
   }),
   profile: router({
-    // Protected â only for logged-in users
+    // Protected — only for logged-in users
     get: protectedProcedure.query(async ({ ctx }) => db.getUserProfile(ctx.user.id)),
     upsert: protectedProcedure
       .input(z.object({
@@ -35,7 +35,7 @@ export const authRouter = router({
         targetBodyFat: z.number().optional(), units: z.string().optional(), daysPerWeek: z.number().optional(),
       }))
       .mutation(async ({ ctx, input }) => db.upsertUserProfile(ctx.user.id, input)),
-    // Daily insight â works for guests too (no user-specific data needed)
+    // Daily insight — works for guests too (no user-specific data needed)
     getDailyInsight: guestOrUserProcedure
       .input(z.object({ goal: z.string().optional() }).optional())
       .query(async ({ input }) => {
@@ -46,12 +46,12 @@ export const authRouter = router({
             { role: "user", content: `My goal is "${goal}". Give me a daily coaching tip.` },
           ],
         });
-        return { insight: response.choices[0].message.content ?? "Stay consistent â small daily actions compound into big results." };
+        return { insight: response.choices[0].message.content ?? "Stay consistent — small daily actions compound into big results." };
       }),
 
   }),
   upload: router({
-    // Photo upload â works for guests (stored to S3 without user ID)
+    // Photo upload — works for guests (stored to S3 without user ID)
     photo: guestOrUserProcedure
       .input(z.object({ base64: z.string(), mimeType: z.string().default("image/jpeg") }))
       .mutation(async ({ ctx, input }) => {
@@ -62,6 +62,6 @@ export const authRouter = router({
         return { url };
       }),
 
-  // âââ User Goals & Progress Persistence âââââââââââââââââââââââââââââââââââââââ
+  // ─── User Goals & Progress Persistence ───────────────────────────────────────
   }),
 });

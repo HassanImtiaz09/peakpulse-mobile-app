@@ -24,17 +24,17 @@ export interface ExerciseFormTips {
   tips: FormTip[];
 }
 
-// ââ Form Tip Data ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ── Form Tip Data ──────────────────────────────────────────────────────────
 
 const FORM_TIPS: Record<string, ExerciseFormTips> = {
-  // ââ CHEST ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+  // ── CHEST ────────────────────────────────────────────────────────────────
   "bench press": {
     name: "Bench Press",
     tips: [
       { text: "Retract shoulder blades into bench", category: "form" },
       { text: "Bar touches mid-chest, not neck", category: "form" },
       { text: "Drive through heels for stability", category: "form" },
-      { text: "Don't flare elbows to 90Â°", category: "mistake" },
+      { text: "Don't flare elbows to 90°", category: "mistake" },
       { text: "Inhale down, exhale pressing up", category: "breathing" },
     ],
   },
@@ -42,7 +42,7 @@ const FORM_TIPS: Record<string, ExerciseFormTips> = {
     name: "Dumbbell Bench Press",
     tips: [
       { text: "Squeeze shoulder blades together", category: "form" },
-      { text: "Lower to chest level, elbows at 45Â°", category: "form" },
+      { text: "Lower to chest level, elbows at 45°", category: "form" },
       { text: "Don't clank dumbbells at top", category: "mistake" },
       { text: "Exhale as you press up", category: "breathing" },
     ],
@@ -50,7 +50,7 @@ const FORM_TIPS: Record<string, ExerciseFormTips> = {
   "incline bench press": {
     name: "Incline Bench Press",
     tips: [
-      { text: "Set bench to 30-45Â° angle", category: "form" },
+      { text: "Set bench to 30-45° angle", category: "form" },
       { text: "Bar path to upper chest", category: "form" },
       { text: "Don't let butt lift off bench", category: "mistake" },
       { text: "Inhale lowering, exhale pressing", category: "breathing" },
@@ -59,7 +59,7 @@ const FORM_TIPS: Record<string, ExerciseFormTips> = {
   "incline dumbbell press": {
     name: "Incline Dumbbell Press",
     tips: [
-      { text: "30-45Â° incline, feet flat", category: "form" },
+      { text: "30-45° incline, feet flat", category: "form" },
       { text: "Press in slight arc, not straight up", category: "form" },
       { text: "Don't overarch lower back", category: "mistake" },
       { text: "Exhale at the top of press", category: "breathing" },
@@ -79,7 +79,7 @@ const FORM_TIPS: Record<string, ExerciseFormTips> = {
     tips: [
       { text: "Hands shoulder-width apart", category: "form" },
       { text: "Keep elbows tucked close to body", category: "form" },
-      { text: "Don't go too narrow â wrist strain", category: "safety" },
+      { text: "Don't go too narrow — wrist strain", category: "safety" },
       { text: "Exhale pressing up", category: "breathing" },
     ],
   },
@@ -151,14 +151,14 @@ const FORM_TIPS: Record<string, ExerciseFormTips> = {
     tips: [
       { text: "Elbows at shoulder height on pads", category: "form" },
       { text: "Squeeze chest, don't push with arms", category: "form" },
-      { text: "Don't go too far back â shoulder strain", category: "safety" },
+      { text: "Don't go too far back — shoulder strain", category: "safety" },
       { text: "Exhale squeezing together", category: "breathing" },
     ],
   },
   "dip": {
     name: "Dip",
     tips: [
-      { text: "Lean forward 30Â° for chest focus", category: "form" },
+      { text: "Lean forward 30° for chest focus", category: "form" },
       { text: "Lower until upper arms parallel", category: "form" },
       { text: "Stop if shoulders hurt", category: "safety" },
       { text: "Exhale pressing up", category: "breathing" },
@@ -167,18 +167,18 @@ const FORM_TIPS: Record<string, ExerciseFormTips> = {
   "chest dip": {
     name: "Chest Dip",
     tips: [
-      { text: "Lean forward 30Â° for chest focus", category: "form" },
+      { text: "Lean forward 30° for chest focus", category: "form" },
       { text: "Lower until upper arms parallel", category: "form" },
       { text: "Stop if shoulders hurt", category: "safety" },
       { text: "Exhale pressing up", category: "breathing" },
     ],
   },
 
-  // ââ BACK âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+  // ── BACK ─────────────────────────────────────────────────────────────────
   "deadlift": {
     name: "Deadlift",
     tips: [
-      { text: "Keep back flat â no rounding", category: "form" },
+      { text: "Keep back flat — no rounding", category: "form" },
       { text: "Bar stays close to shins/thighs", category: "form" },
       { text: "Drive hips back, not down", category: "form" },
       { text: "Don't jerk the bar off floor", category: "mistake" },
@@ -188,7 +188,7 @@ const FORM_TIPS: Record<string, ExerciseFormTips> = {
   "barbell row": {
     name: "Barbell Row",
     tips: [
-      { text: "Hinge at hips, back at 45Â°", category: "form" },
+      { text: "Hinge at hips, back at 45°", category: "form" },
       { text: "Pull bar to lower chest/navel", category: "form" },
       { text: "Don't use momentum to swing up", category: "mistake" },
       { text: "Exhale pulling, inhale lowering", category: "breathing" },
@@ -197,7 +197,7 @@ const FORM_TIPS: Record<string, ExerciseFormTips> = {
   "barbell bent over row": {
     name: "Barbell Bent Over Row",
     tips: [
-      { text: "Hinge at hips, back at 45Â°", category: "form" },
+      { text: "Hinge at hips, back at 45°", category: "form" },
       { text: "Pull bar to lower chest/navel", category: "form" },
       { text: "Don't round your lower back", category: "mistake" },
       { text: "Exhale pulling, inhale lowering", category: "breathing" },
@@ -226,7 +226,7 @@ const FORM_TIPS: Record<string, ExerciseFormTips> = {
     tips: [
       { text: "Underhand grip, shoulder width", category: "form" },
       { text: "Pull chin over bar, squeeze biceps", category: "form" },
-      { text: "Don't half-rep â full ROM", category: "mistake" },
+      { text: "Don't half-rep — full ROM", category: "mistake" },
       { text: "Exhale pulling up", category: "breathing" },
     ],
   },
@@ -235,14 +235,14 @@ const FORM_TIPS: Record<string, ExerciseFormTips> = {
     tips: [
       { text: "Underhand grip, shoulder width", category: "form" },
       { text: "Pull chin over bar, squeeze biceps", category: "form" },
-      { text: "Don't half-rep â full ROM", category: "mistake" },
+      { text: "Don't half-rep — full ROM", category: "mistake" },
       { text: "Exhale pulling up", category: "breathing" },
     ],
   },
   "lat pulldown": {
     name: "Lat Pulldown",
     tips: [
-      { text: "Slight lean back (10-15Â°)", category: "form" },
+      { text: "Slight lean back (10-15°)", category: "form" },
       { text: "Pull bar to upper chest", category: "form" },
       { text: "Don't pull behind neck", category: "safety" },
       { text: "Exhale pulling down", category: "breathing" },
@@ -289,7 +289,7 @@ const FORM_TIPS: Record<string, ExerciseFormTips> = {
     tips: [
       { text: "Back parallel to floor each rep", category: "form" },
       { text: "Bar returns to floor between reps", category: "form" },
-      { text: "Don't use momentum â reset each rep", category: "mistake" },
+      { text: "Don't use momentum — reset each rep", category: "mistake" },
       { text: "Brace core, exhale pulling", category: "breathing" },
     ],
   },
@@ -312,7 +312,7 @@ const FORM_TIPS: Record<string, ExerciseFormTips> = {
     ],
   },
 
-  // ââ SHOULDERS ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+  // ── SHOULDERS ────────────────────────────────────────────────────────────
   "overhead press": {
     name: "Overhead Press",
     tips: [
@@ -325,7 +325,7 @@ const FORM_TIPS: Record<string, ExerciseFormTips> = {
   "military press": {
     name: "Military Press",
     tips: [
-      { text: "Strict form â no leg drive", category: "form" },
+      { text: "Strict form — no leg drive", category: "form" },
       { text: "Bar clears face, then straight up", category: "form" },
       { text: "Don't lean back excessively", category: "mistake" },
       { text: "Exhale pressing overhead", category: "breathing" },
@@ -354,7 +354,7 @@ const FORM_TIPS: Record<string, ExerciseFormTips> = {
     tips: [
       { text: "Slight elbow bend, raise to shoulder", category: "form" },
       { text: "Lead with elbows, not hands", category: "form" },
-      { text: "Don't shrug â keep shoulders down", category: "mistake" },
+      { text: "Don't shrug — keep shoulders down", category: "mistake" },
       { text: "Exhale raising, inhale lowering", category: "breathing" },
     ],
   },
@@ -415,19 +415,19 @@ const FORM_TIPS: Record<string, ExerciseFormTips> = {
   "shrug": {
     name: "Shrug",
     tips: [
-      { text: "Straight up â don't roll shoulders", category: "form" },
+      { text: "Straight up — don't roll shoulders", category: "form" },
       { text: "Hold at top for 1-2 seconds", category: "form" },
       { text: "Don't bend elbows to cheat", category: "mistake" },
       { text: "Exhale shrugging up", category: "breathing" },
     ],
   },
 
-  // ââ ARMS âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+  // ── ARMS ─────────────────────────────────────────────────────────────────
   "barbell curl": {
     name: "Barbell Curl",
     tips: [
       { text: "Elbows pinned to sides", category: "form" },
-      { text: "Full ROM â extend and squeeze", category: "form" },
+      { text: "Full ROM — extend and squeeze", category: "form" },
       { text: "Don't swing body to curl", category: "mistake" },
       { text: "Exhale curling up", category: "breathing" },
     ],
@@ -444,7 +444,7 @@ const FORM_TIPS: Record<string, ExerciseFormTips> = {
   "dumbbell curl": {
     name: "Dumbbell Curl",
     tips: [
-      { text: "Alternate or both â elbows fixed", category: "form" },
+      { text: "Alternate or both — elbows fixed", category: "form" },
       { text: "Supinate wrist at top for peak", category: "form" },
       { text: "Don't swing the weight", category: "mistake" },
       { text: "Exhale curling up", category: "breathing" },
@@ -453,7 +453,7 @@ const FORM_TIPS: Record<string, ExerciseFormTips> = {
   "hammer curl": {
     name: "Hammer Curl",
     tips: [
-      { text: "Neutral grip â thumbs up position", category: "form" },
+      { text: "Neutral grip — thumbs up position", category: "form" },
       { text: "Elbows stay at sides throughout", category: "form" },
       { text: "Don't swing body forward", category: "mistake" },
       { text: "Exhale curling up", category: "breathing" },
@@ -527,7 +527,7 @@ const FORM_TIPS: Record<string, ExerciseFormTips> = {
     tips: [
       { text: "Stay upright for tricep focus", category: "form" },
       { text: "Lower until upper arms parallel", category: "form" },
-      { text: "Don't go too deep â shoulder strain", category: "safety" },
+      { text: "Don't go too deep — shoulder strain", category: "safety" },
       { text: "Exhale pressing up", category: "breathing" },
     ],
   },
@@ -541,11 +541,11 @@ const FORM_TIPS: Record<string, ExerciseFormTips> = {
     ],
   },
 
-  // ââ LEGS âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+  // ── LEGS ─────────────────────────────────────────────────────────────────
   "squat": {
     name: "Squat",
     tips: [
-      { text: "Feet shoulder-width, toes out 30Â°", category: "form" },
+      { text: "Feet shoulder-width, toes out 30°", category: "form" },
       { text: "Hip crease below knee level", category: "form" },
       { text: "Don't let knees cave inward", category: "mistake" },
       { text: "Brace core, exhale standing up", category: "breathing" },
@@ -591,7 +591,7 @@ const FORM_TIPS: Record<string, ExerciseFormTips> = {
     name: "Leg Press",
     tips: [
       { text: "Feet shoulder-width, mid-platform", category: "form" },
-      { text: "Lower until 90Â° knee angle", category: "form" },
+      { text: "Lower until 90° knee angle", category: "form" },
       { text: "Don't lock knees fully at top", category: "safety" },
       { text: "Exhale pressing, keep back flat", category: "breathing" },
     ],
@@ -636,7 +636,7 @@ const FORM_TIPS: Record<string, ExerciseFormTips> = {
     name: "Seated Calf Raise",
     tips: [
       { text: "Pad on lower thighs, balls of feet", category: "form" },
-      { text: "Full ROM â stretch and squeeze", category: "form" },
+      { text: "Full ROM — stretch and squeeze", category: "form" },
       { text: "Don't bounce at the bottom", category: "mistake" },
       { text: "Exhale rising up", category: "breathing" },
     ],
@@ -653,7 +653,7 @@ const FORM_TIPS: Record<string, ExerciseFormTips> = {
   "lunge": {
     name: "Lunge",
     tips: [
-      { text: "Long step, both knees at 90Â°", category: "form" },
+      { text: "Long step, both knees at 90°", category: "form" },
       { text: "Front knee tracks over toes", category: "form" },
       { text: "Don't let knee pass toes", category: "mistake" },
       { text: "Exhale stepping back up", category: "breathing" },
@@ -671,7 +671,7 @@ const FORM_TIPS: Record<string, ExerciseFormTips> = {
   "reverse lunge": {
     name: "Reverse Lunge",
     tips: [
-      { text: "Step back, lower until 90Â° angles", category: "form" },
+      { text: "Step back, lower until 90° angles", category: "form" },
       { text: "Keep torso upright throughout", category: "form" },
       { text: "Don't let front knee cave in", category: "mistake" },
       { text: "Exhale stepping forward", category: "breathing" },
@@ -689,7 +689,7 @@ const FORM_TIPS: Record<string, ExerciseFormTips> = {
   "glute bridge": {
     name: "Glute Bridge",
     tips: [
-      { text: "Feet flat, knees at 90Â° at top", category: "form" },
+      { text: "Feet flat, knees at 90° at top", category: "form" },
       { text: "Squeeze glutes hard at top", category: "form" },
       { text: "Don't hyperextend lower back", category: "mistake" },
       { text: "Exhale lifting hips", category: "breathing" },
@@ -698,7 +698,7 @@ const FORM_TIPS: Record<string, ExerciseFormTips> = {
   "sumo deadlift": {
     name: "Sumo Deadlift",
     tips: [
-      { text: "Wide stance, toes pointed out 45Â°", category: "form" },
+      { text: "Wide stance, toes pointed out 45°", category: "form" },
       { text: "Chest up, push knees out", category: "form" },
       { text: "Don't let knees cave inward", category: "mistake" },
       { text: "Brace core, exhale at lockout", category: "breathing" },
@@ -714,7 +714,7 @@ const FORM_TIPS: Record<string, ExerciseFormTips> = {
     ],
   },
 
-  // ââ CORE âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+  // ── CORE ─────────────────────────────────────────────────────────────────
   "plank": {
     name: "Plank",
     tips: [
@@ -727,9 +727,9 @@ const FORM_TIPS: Record<string, ExerciseFormTips> = {
   "russian twist": {
     name: "Russian Twist",
     tips: [
-      { text: "Lean back 45Â°, feet off floor", category: "form" },
+      { text: "Lean back 45°, feet off floor", category: "form" },
       { text: "Rotate from torso, not just arms", category: "form" },
-      { text: "Don't rush â control each twist", category: "mistake" },
+      { text: "Don't rush — control each twist", category: "mistake" },
       { text: "Exhale each side", category: "breathing" },
     ],
   },
@@ -747,7 +747,7 @@ const FORM_TIPS: Record<string, ExerciseFormTips> = {
     tips: [
       { text: "Kneel, rope behind head", category: "form" },
       { text: "Crunch down, bring elbows to knees", category: "form" },
-      { text: "Don't pull with arms â use abs", category: "mistake" },
+      { text: "Don't pull with arms — use abs", category: "mistake" },
       { text: "Exhale crunching down", category: "breathing" },
     ],
   },
@@ -833,7 +833,7 @@ const FORM_TIPS: Record<string, ExerciseFormTips> = {
     ],
   },
 
-  // ââ FULL BODY / CARDIO ââââââââââââââââââââââââââââââââââââââââââââââââââ
+  // ── FULL BODY / CARDIO ──────────────────────────────────────────────────
   "burpee": {
     name: "Burpee",
     tips: [
@@ -856,8 +856,8 @@ const FORM_TIPS: Record<string, ExerciseFormTips> = {
     name: "Clean and Jerk",
     tips: [
       { text: "Clean to shoulders, then jerk overhead", category: "form" },
-      { text: "Split or power jerk â lock out", category: "form" },
-      { text: "Don't press out â it's a jerk", category: "mistake" },
+      { text: "Split or power jerk — lock out", category: "form" },
+      { text: "Don't press out — it's a jerk", category: "mistake" },
       { text: "Brace core for each phase", category: "breathing" },
     ],
   },
@@ -866,7 +866,7 @@ const FORM_TIPS: Record<string, ExerciseFormTips> = {
     tips: [
       { text: "Wide grip, explosive pull overhead", category: "form" },
       { text: "Catch in overhead squat position", category: "form" },
-      { text: "Don't muscle it up â use hips", category: "mistake" },
+      { text: "Don't muscle it up — use hips", category: "mistake" },
       { text: "Brace core throughout", category: "breathing" },
     ],
   },
@@ -884,7 +884,7 @@ const FORM_TIPS: Record<string, ExerciseFormTips> = {
     tips: [
       { text: "Hip hinge, not a squat", category: "form" },
       { text: "Snap hips forward, arms follow", category: "form" },
-      { text: "Don't lift with arms â use hips", category: "mistake" },
+      { text: "Don't lift with arms — use hips", category: "mistake" },
       { text: "Sharp exhale at top of swing", category: "breathing" },
     ],
   },
@@ -953,7 +953,7 @@ const FORM_TIPS: Record<string, ExerciseFormTips> = {
   },
 };
 
-// ââ Public API ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ── Public API ──────────────────────────────────────────────────────────────
 
 /**
  * Get form tips for an exercise by name.

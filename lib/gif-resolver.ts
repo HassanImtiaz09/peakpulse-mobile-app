@@ -7,7 +7,7 @@
 
 import { EXERCISE_GIFS, SIDE_VIEW_GIFS } from "@/lib/exercise-gif-registry";
 
-// Build a reverse lookup: key â CDN URL string
+// Build a reverse lookup: key → CDN URL string
 const KEY_TO_URL: Record<string, string> = {};
 
 // Pre-build the lookup from the EXERCISE_GIFS keys
@@ -27,7 +27,7 @@ const FALLBACK_ASSET = EXERCISE_GIFS["male-bodyweight-push-up-front"] || "";
 /**
  * Extract the filename stem from a MuscleWiki/ExerciseDB URL.
  * e.g., "https://api.musclewiki.com/stream/videos/branded/male-barbell-bench-press-front.mp4"
- *       â "male-barbell-bench-press-front"
+ *       → "male-barbell-bench-press-front"
  */
 function extractStem(url: string): string {
   if (!url) return "";
@@ -43,7 +43,7 @@ function extractStem(url: string): string {
 /**
  * Extract a normalised side-view key from a URL.
  * e.g., "https://d2xsxph8kpxj0f.cloudfront.net/.../side-barbell-bench-press-7VJGMpqMVBNhKxPbTUMnM5.png"
- *       â "side-barbell-bench-press"
+ *       → "side-barbell-bench-press"
  */
 function extractSideKey(url: string): string | null {
   const stem = extractStem(url);

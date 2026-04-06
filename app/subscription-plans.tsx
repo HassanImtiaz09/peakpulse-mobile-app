@@ -45,7 +45,7 @@ const BASIC_FEATURES = [
 const ADVANCED_FEATURES = [
   "Everything in Basic",
   "AI Form Checker (unlimited)",
-  "AI Coach â personalised insights",
+  "AI Coach — personalised insights",
   "Unlimited Progress Photos",
   "Advanced Body Scan + BF% tracking",
   "Real-time Form Analysis",
@@ -101,9 +101,9 @@ export default function SubscriptionPlansScreen() {
       <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
         {/* Header */}
         <View style={styles.header}>
-          <Text style={styles.badge}>â¡ UNLOCK YOUR POTENTIAL</Text>
+          <Text style={styles.badge}>⚡ UNLOCK YOUR POTENTIAL</Text>
           <Text style={styles.title}>Choose Your{"\n"}PeakPulse Plan</Text>
-          <Text style={styles.subtitle}>Start with a 14-day free trial â no credit card required.</Text>
+          <Text style={styles.subtitle}>Start with a 14-day free trial — no credit card required.</Text>
         </View>
 
         {/* Billing toggle */}
@@ -132,7 +132,7 @@ export default function SubscriptionPlansScreen() {
           >
             <View style={styles.planHeader}>
               <View>
-                <Text style={styles.planName}>ð Free Trial</Text>
+                <Text style={styles.planName}>🔥🎁 Free Trial</Text>
                 <Text style={styles.planPrice}>14 days free</Text>
                 <Text style={styles.planPriceSub}>Full Pro access, no card needed</Text>
               </View>
@@ -151,7 +151,7 @@ export default function SubscriptionPlansScreen() {
             </View>
             {selectedPlan === "free" && (
               <View style={styles.selectedBanner}>
-                <Text style={styles.selectedBannerText}>â Selected â No card required</Text>
+                <Text style={styles.selectedBannerText}>✓ Selected — No card required</Text>
               </View>
             )}
           </TouchableOpacity>
@@ -165,13 +165,13 @@ export default function SubscriptionPlansScreen() {
         >
           <View style={styles.planHeader}>
             <View>
-              <Text style={styles.planName}>ðª Basic</Text>
+              <Text style={styles.planName}>🔥💪 Basic</Text>
               <Text style={styles.planPrice}>
-                Â£{billing === "monthly" ? PRICES.basic.monthly : PRICES.basic.annual}
+                £{billing === "monthly" ? PRICES.basic.monthly : PRICES.basic.annual}
                 <Text style={styles.planPricePer}>/mo</Text>
               </Text>
               {billing === "annual" && (
-                <Text style={styles.planPriceSub}>Billed Â£{(PRICES.basic.annual * 12).toFixed(2)}/year</Text>
+                <Text style={styles.planPriceSub}>Billed £{(PRICES.basic.annual * 12).toFixed(2)}/year</Text>
               )}
             </View>
             <View style={[styles.radio, selectedPlan === "basic" && styles.radioSelected]}>
@@ -188,7 +188,7 @@ export default function SubscriptionPlansScreen() {
           </View>
           {selectedPlan === "basic" && (
             <View style={[styles.selectedBanner, { backgroundColor: "rgba(20,184,166,0.15)" }]}>
-              <Text style={[styles.selectedBannerText, { color: SF.teal }]}>â Selected</Text>
+              <Text style={[styles.selectedBannerText, { color: SF.teal }]}>✓ Selected</Text>
             </View>
           )}
         </TouchableOpacity>
@@ -200,17 +200,17 @@ export default function SubscriptionPlansScreen() {
           activeOpacity={0.85}
         >
           <View style={styles.popularBadge}>
-            <Text style={styles.popularBadgeText}>â­ MOST POPULAR</Text>
+            <Text style={styles.popularBadgeText}>⭐ MOST POPULAR</Text>
           </View>
           <View style={styles.planHeader}>
             <View>
-              <Text style={[styles.planName, { color: SF.gold }]}>â¡ Advanced</Text>
+              <Text style={[styles.planName, { color: SF.gold }]}>⚡ Advanced</Text>
               <Text style={[styles.planPrice, { color: SF.gold }]}>
-                Â£{billing === "monthly" ? PRICES.pro.monthly : PRICES.pro.annual}
+                £{billing === "monthly" ? PRICES.pro.monthly : PRICES.pro.annual}
                 <Text style={[styles.planPricePer, { color: SF.gold2 }]}>/mo</Text>
               </Text>
               {billing === "annual" && (
-                <Text style={styles.planPriceSub}>Billed Â£{(PRICES.pro.annual * 12).toFixed(2)}/year</Text>
+                <Text style={styles.planPriceSub}>Billed £{(PRICES.pro.annual * 12).toFixed(2)}/year</Text>
               )}
             </View>
             <View style={[styles.radio, selectedPlan === "pro" && styles.radioSelectedGold]}>
@@ -227,7 +227,7 @@ export default function SubscriptionPlansScreen() {
           </View>
           {selectedPlan === "pro" && (
             <View style={styles.selectedBanner}>
-              <Text style={styles.selectedBannerText}>â Selected â Best Value</Text>
+              <Text style={styles.selectedBannerText}>✓ Selected — Best Value</Text>
             </View>
           )}
         </TouchableOpacity>
@@ -240,18 +240,18 @@ export default function SubscriptionPlansScreen() {
             ) : (
               <Text style={styles.ctaBtnText}>
                 {selectedPlan === "free"
-                  ? "Start 14-Day Free Trial â"
-                  : `Subscribe to ${selectedPlan === "basic" ? "Basic" : "Advanced"} â`}
+                  ? "Start 14-Day Free Trial →"
+                  : `Subscribe to ${selectedPlan === "basic" ? "Basic" : "Advanced"} →`}
               </Text>
             )}
           </TouchableOpacity>
           {selectedPlan !== "free" && (
             <Text style={styles.ctaNote}>
-              Â£{price.toFixed(2)}/mo Â· Cancel anytime Â· Secure payment
+              £{price.toFixed(2)}/mo · Cancel anytime · Secure payment
             </Text>
           )}
           <TouchableOpacity onPress={handleSkip} style={styles.skipBtn}>
-            <Text style={styles.skipText}>Skip for now â continue with free plan</Text>
+            <Text style={styles.skipText}>Skip for now — continue with free plan</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>

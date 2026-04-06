@@ -47,7 +47,7 @@ const FG = "#F1F5F9";
 const MUTED = "#64748B";
 const CREAM = "#FDE68A";
 
-// Sanitize meal names from AI â remove unicode bullets, dots, and other artifacts
+// Sanitize meal names from AI — remove unicode bullets, dots, and other artifacts
 const sanitizeMealName = (name: string | undefined | null): string =>
   (name ?? "Meal")
     .replace(/[\u00b7\u2022\u2023\u25e6\u2043\u2219\u25cf\u25cb\u2013\u2014]/g, "")
@@ -268,7 +268,7 @@ function PlansScreenContent() {
   }, [workoutPlan, todayName]);
 
 
-  // ââ Exercise Swap Handler ââ
+  // ── Exercise Swap Handler ──
   const handleExerciseSwap = useCallback(async (exercise: any, dayFocus: string) => {
     setSwapExModal({ exercise, dayFocus });
     setSwapExAlts([]);
@@ -301,7 +301,7 @@ function PlansScreenContent() {
     }));
     const updatedPlan = { ...workoutPlan, schedule: updatedSchedule };
     if (isAuthenticated) {
-      // For authenticated users, we'd need a server update â for now update local state
+      // For authenticated users, we'd need a server update — for now update local state
       setLocalWorkoutPlan(updatedPlan);
     } else {
       setLocalWorkoutPlan(updatedPlan);
@@ -313,7 +313,7 @@ function PlansScreenContent() {
   }, [swapExModal, workoutPlan, isAuthenticated]);
 
 
-  // ââ Pull-to-refresh handler âââââ
+  // ── Pull-to-refresh handler ─────
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     try {
@@ -343,7 +343,7 @@ function PlansScreenContent() {
     }
   }, [isAuthenticated, refetchWorkout]);
 
-  // Parallax â MUST be above early return to avoid hooks ordering violation
+  // Parallax — MUST be above early return to avoid hooks ordering violation
   const scrollY = useSharedValue(0);
   const heroImageStyle = useAnimatedStyle(() => ({
     transform: [{ translateY: interpolate(scrollY.value, [0, 200], [0, 100], Extrapolation.CLAMP) }],
@@ -355,7 +355,7 @@ function PlansScreenContent() {
     scrollY.value = event.nativeEvent.contentOffset.y;
   }, []);
 
-  // Workout progress stats â MUST be above early return to avoid hooks ordering violation
+  // Workout progress stats — MUST be above early return to avoid hooks ordering violation
   const workoutStats = useMemo(() => {
     if (!workoutPlan?.schedule) return null;
     const schedule = workoutPlan.schedule;
@@ -388,7 +388,7 @@ function PlansScreenContent() {
 
   return (
     <View style={{ flex: 1, backgroundColor: BG }}>
-      {/* Hero Header â NanoBanana flat dark */}
+      {/* Hero Header — NanoBanana flat dark */}
       <View style={{ backgroundColor: BG, paddingTop: 56, paddingHorizontal: 20, paddingBottom: 12 }}>
         <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
           <TouchableOpacity onPress={() => router.back()} style={{ padding: 4 }}>
@@ -491,14 +491,14 @@ function PlansScreenContent() {
               </>
             ) : (
               <>
-                {/* ââ Plan Summary Bar ââ */}
+                {/* ── Plan Summary Bar ── */}
                 <View style={{ backgroundColor: SURFACE, borderRadius: 14, padding: 14, marginBottom: 12, borderWidth: 1, borderColor: "rgba(30,41,59,0.6)", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
                   <View style={{ flex: 1 }}>
                     <View style={{ flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 4 }}>
                       <View style={{ backgroundColor: "rgba(34,197,94,0.15)", borderRadius: 6, paddingHorizontal: 8, paddingVertical: 2 }}>
                         <Text style={{ color: "#4ADE80", fontSize: 10, fontFamily: "DMSans_700Bold" }}>ACTIVE</Text>
                       </View>
-                      <Text style={{ color: MUTED, fontSize: 11 }}>{goalLabel} Â· {styleLabel} Â· {daysPerWeek}x/wk</Text>
+                      <Text style={{ color: MUTED, fontSize: 11 }}>{goalLabel} · {styleLabel} · {daysPerWeek}x/wk</Text>
                     </View>
                     <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
                       {workoutStats && (
@@ -576,15 +576,15 @@ function PlansScreenContent() {
                 </TouchableOpacity>
                 </View>
 
-                {/* ââ TODAY'S WORKOUT (highlighted) ââ */}
+                {/* ── TODAY'S WORKOUT (highlighted) ── */}
                 {todayWorkout && (
                   <>
                     <View style={{ flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 10 }}>
                       <MaterialIcons name="today" size={16} color={GOLD} />
-                      <Text style={{ color: GOLD, fontFamily: "DMSans_700Bold", fontSize: 15 }}>Today â {todayName}</Text>
+                      <Text style={{ color: GOLD, fontFamily: "DMSans_700Bold", fontSize: 15 }}>Today — {todayName}</Text>
                     </View>
 
-                    {/* Body Diagram â Today's Target Muscles (uses same react-native-body-highlighter as Library) */}
+                    {/* Body Diagram — Today's Target Muscles (uses same react-native-body-highlighter as Library) */}
                     {todayMuscles.primary.length > 0 && !todayWorkout.isRest && (
                       <View style={{ backgroundColor: GOLD_DIM, borderRadius: 16, padding: 14, marginBottom: 12, borderWidth: 1, borderColor: GOLD_BORDER, alignItems: "center" }}>
                         <Text style={{ color: CREAM, fontFamily: "DMSans_700Bold", fontSize: 12, marginBottom: 8, letterSpacing: 0.5 }}>TODAY'S TARGET MUSCLES</Text>
@@ -611,7 +611,7 @@ function PlansScreenContent() {
                   </>
                 )}
 
-                {/* ââ REST OF THE WEEK ââ */}
+                {/* ── REST OF THE WEEK ── */}
                 {otherWorkoutDays.length > 0 && (
                   <>
                     <View style={{ flexDirection: "row", alignItems: "center", gap: 8, marginTop: 8, marginBottom: 10 }}>
@@ -698,7 +698,7 @@ function PlansScreenContent() {
           </View>
       </Animated.ScrollView>
 
-      {/* ââ Exercise Swap Modal ââ */}
+      {/* ── Exercise Swap Modal ── */}
       <Modal visible={!!swapExModal} transparent animationType="slide" onRequestClose={() => setSwapExModal(null)} statusBarTranslucent>
         <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.85)", justifyContent: "flex-end" }}>
           <View style={{ backgroundColor: SURFACE, borderTopLeftRadius: 24, borderTopRightRadius: 24, maxHeight: "80%", paddingBottom: 40 }}>
@@ -764,7 +764,7 @@ function PlansScreenContent() {
         </View>
       </Modal>
 
-      {/* ââ Local Muscle-Based Swap Sheet ââ */}
+      {/* ── Local Muscle-Based Swap Sheet ── */}
       <ExerciseSwapSheet
         visible={localSwapVisible}
         exerciseName={localSwapExName}
@@ -805,7 +805,7 @@ function OptionChip({ iconName, label, selected, onPress }: { iconName: string; 
 function MacroCard({ label, value, unit, color }: any) {
   return (
     <View style={{ flex: 1, backgroundColor: SURFACE, borderRadius: 10, padding: 8, alignItems: "center", borderWidth: 1, borderColor: color + "30" }}>
-      <Text style={{ color, fontFamily: "SpaceMono_700Bold", fontSize: 14 }}>{value ?? "â"}</Text>
+      <Text style={{ color, fontFamily: "SpaceMono_700Bold", fontSize: 14 }}>{value ?? "—"}</Text>
       <Text style={{ color: MUTED, fontSize: 9, marginTop: 1 }}>{unit}</Text>
       <Text style={{ color: MUTED, fontSize: 9, marginTop: 1 }}>{label}</Text>
     </View>
@@ -873,7 +873,7 @@ function WorkoutDayCard({ day, onPress, isCompleted, onToggleComplete, isToday, 
             style={{ backgroundColor: GOLD, borderRadius: 12, paddingVertical: 10, alignItems: "center", marginBottom: 4 }}
             onPress={onPress}
           >
-            <Text style={{ color: BG, fontFamily: "DMSans_700Bold", fontSize: 13 }}>START WORKOUT â</Text>
+            <Text style={{ color: BG, fontFamily: "DMSans_700Bold", fontSize: 13 }}>START WORKOUT →</Text>
           </TouchableOpacity>
           {day.exercises?.map((ex: any, idx: number) => (
             <ExercisePreviewCard key={idx} exercise={ex} isToday={isToday} onSwap={onExerciseSwap ? () => onExerciseSwap(ex, day.focus ?? day.day) : undefined} />
@@ -884,7 +884,7 @@ function WorkoutDayCard({ day, onPress, isCompleted, onToggleComplete, isToday, 
       {expanded && day.isRest && (
         <View style={{ paddingHorizontal: 14, paddingBottom: 14 }}>
           <Text style={{ color: CREAM, fontFamily: "DMSans_400Regular", fontSize: 13, lineHeight: 18 }}>
-            Rest day â focus on recovery, stretching, and light movement. Your muscles grow during rest!
+            Rest day — focus on recovery, stretching, and light movement. Your muscles grow during rest!
           </Text>
         </View>
       )}

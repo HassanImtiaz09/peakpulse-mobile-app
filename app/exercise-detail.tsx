@@ -1,13 +1,13 @@
 /**
- * Exercise Detail Screen Ã¢ÂÂ FIXED
+ * Exercise Detail Screen — FIXED
  *
  * Changes from original:
  * 1. Alternative exercise GIF thumbnails now have onError handlers.
- *    Previously a broken/missing GIF URL rendered a blank 56ÃÂ56 box.
+ *    Previously a broken/missing GIF URL rendered a blank 56×56 box.
  *    Now they fall back to a dumbbell placeholder icon.
  * 2. Added `altGifErrors` state (Set<string>) so each card tracks its own
  *    broken-image state independently.
- * 3. The `useState` import is added (was missing Ã¢ÂÂ original used only `useMemo`).
+ * 3. The `useState` import is added (was missing — original used only `useMemo`).
  * 4. No other logic or styling changed.
  */
 
@@ -61,10 +61,10 @@ export default function ExerciseDetailScreen() {
   );
 
   // FIX: Track which alternative GIF thumbnails failed to load.
-  // Previously a broken URL rendered a blank box Ã¢ÂÂ now shows a fallback icon.
+  // Previously a broken URL rendered a blank box — now shows a fallback icon.
   const [altGifErrors, setAltGifErrors] = useState<Set<string>>(new Set());
 
-  // ExerciseDB API fallback Ã¢ÂÂ fetch exercise data when not in local DB
+  // ExerciseDB API fallback — fetch exercise data when not in local DB
   const [apiExercise, setApiExercise] = useState<ExerciseDBExercise | null>(null);
   const [apiLoading, setApiLoading] = useState(false);
 
@@ -330,7 +330,7 @@ export default function ExerciseDetailScreen() {
           <Text style={styles.cueText}>{exercise.cue}</Text>
         </View>
 
-        {/* HOW TO PERFORM Ã¢ÂÂ Step-by-step instructions */}
+        {/* HOW TO PERFORM — Step-by-step instructions */}
         {instructions && (
           <View style={styles.instructionsCard}>
             <View style={styles.cueHeader}>
@@ -735,7 +735,7 @@ const styles = StyleSheet.create({
     fontSize: 9,
     textTransform: "capitalize",
   },
-  // Ã¢ÂÂÃ¢ÂÂ HOW TO PERFORM styles Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+  // ── HOW TO PERFORM styles ──────────────────────────────────────────────
   instructionsCard: {
     marginHorizontal: 16,
     marginTop: 12,

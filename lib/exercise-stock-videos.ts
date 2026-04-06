@@ -1,5 +1,5 @@
 /**
- * exercise-stock-videos.ts â Maps exercise names to free stock video URLs.
+ * exercise-stock-videos.ts — Maps exercise names to free stock video URLs.
  *
  * All videos are sourced from Pexels.com under the Pexels License (free for
  * personal and commercial use, attribution appreciated).
@@ -23,11 +23,11 @@ export interface StockVideoEntry {
 }
 
 /**
- * Map of exercise names (lowercase) â stock video info.
+ * Map of exercise names (lowercase) → stock video info.
  * Keys must match the `key` field from exercise-data.ts.
  */
 const STOCK_VIDEO_MAP: Record<string, StockVideoEntry> = {
-  // ââ CHEST âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+  // ── CHEST ─────────────────────────────────────────────────────────────────
   "bench press": {
     url: "https://videos.pexels.com/video-files/29569377/12727679_360_640_60fps.mp4",
     credit: "JULLIAN PRODUCTION / Pexels",
@@ -64,7 +64,7 @@ const STOCK_VIDEO_MAP: Record<string, StockVideoEntry> = {
     sourceUrl: "https://www.pexels.com/video/a-man-working-out-inside-the-gym-5319434/",
   },
 
-  // ââ BACK ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+  // ── BACK ──────────────────────────────────────────────────────────────────
   "bent over row": {
     url: "https://videos.pexels.com/video-files/5319764/5319764-sd_360_640_25fps.mp4",
     credit: "Tima Miroshnichenko / Pexels",
@@ -72,7 +72,7 @@ const STOCK_VIDEO_MAP: Record<string, StockVideoEntry> = {
   },
   "lat pulldown": {
     url: "https://videos.pexels.com/video-files/35585700/15079784_360_640_30fps.mp4",
-    credit: "khezez | Ø®Ø²Ø§Ø² / Pexels",
+    credit: "khezez | خزاز / Pexels",
     sourceUrl: "https://www.pexels.com/video/intense-gym-workout-back-pull-exercises-35585700/",
   },
   "pull up": {
@@ -82,7 +82,7 @@ const STOCK_VIDEO_MAP: Record<string, StockVideoEntry> = {
   },
   "seated cable row": {
     url: "https://videos.pexels.com/video-files/35585654/15079802_360_640_30fps.mp4",
-    credit: "khezez | Ø®Ø²Ø§Ø² / Pexels",
+    credit: "khezez | خزاز / Pexels",
     sourceUrl: "https://www.pexels.com/video/man-exercising-on-cable-machine-in-gym-35585654/",
   },
   "deadlift": {
@@ -91,7 +91,7 @@ const STOCK_VIDEO_MAP: Record<string, StockVideoEntry> = {
     sourceUrl: "https://www.pexels.com/video/man-lifting-weights-in-a-gym-12890962/",
   },
 
-  // ââ SHOULDERS âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+  // ── SHOULDERS ─────────────────────────────────────────────────────────────
   "dumbbell shoulder press": {
     url: "https://videos.pexels.com/video-files/4367541/4367541-hd_1920_1080_30fps.mp4",
     credit: "Pavel Danilyuk / Pexels",
@@ -123,7 +123,7 @@ const STOCK_VIDEO_MAP: Record<string, StockVideoEntry> = {
     sourceUrl: "https://www.pexels.com/video/a-man-working-out-in-the-gym-4921622/",
   },
 
-  // ââ ARMS ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+  // ── ARMS ──────────────────────────────────────────────────────────────────
   "bicep curl": {
     url: "https://videos.pexels.com/video-files/6547801/6547801-sd_360_640_24fps.mp4",
     credit: "Andres Ayrton / Pexels",
@@ -151,12 +151,12 @@ const STOCK_VIDEO_MAP: Record<string, StockVideoEntry> = {
   },
   "skull crusher": {
     url: "https://videos.pexels.com/video-files/35585835/15079952_360_640_30fps.mp4",
-    credit: "khezez | Ø®Ø²Ø§Ø² / Pexels",
+    credit: "khezez | خزاز / Pexels",
     sourceUrl: "https://www.pexels.com/video/man-performing-tricep-exercises-in-gym-35585835/",
   },
   "tricep extension": {
     url: "https://videos.pexels.com/video-files/35585834/15079882_360_640_30fps.mp4",
-    credit: "khezez | Ø®Ø²Ø§Ø² / Pexels",
+    credit: "khezez | خزاز / Pexels",
     sourceUrl: "https://www.pexels.com/video/man-exercising-with-cable-machine-in-gym-35585834/",
   },
   "dip": {
@@ -165,7 +165,7 @@ const STOCK_VIDEO_MAP: Record<string, StockVideoEntry> = {
     sourceUrl: "https://www.pexels.com/video/dynamic-workout-man-exercising-on-parallel-bars-34568748/",
   },
 
-  // ââ LEGS ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+  // ── LEGS ──────────────────────────────────────────────────────────────────
   "squat": {
     url: "https://videos.pexels.com/video-files/4921641/4921641-sd_356_640_25fps.mp4",
     credit: "Antoni Shkraba Studio / Pexels",
@@ -188,7 +188,7 @@ const STOCK_VIDEO_MAP: Record<string, StockVideoEntry> = {
   },
   "lunge": {
     url: "https://videos.pexels.com/video-files/35585589/15079340_360_640_30fps.mp4",
-    credit: "khezez | Ø®Ø²Ø§Ø² / Pexels",
+    credit: "khezez | خزاز / Pexels",
     sourceUrl: "https://www.pexels.com/video/intense-workout-routine-in-modern-gym-setting-35585589/",
   },
   "reverse lunge": {
@@ -198,7 +198,7 @@ const STOCK_VIDEO_MAP: Record<string, StockVideoEntry> = {
   },
   "leg extension": {
     url: "https://videos.pexels.com/video-files/35585537/15079511_360_640_30fps.mp4",
-    credit: "khezez | Ø®Ø²Ø§Ø² / Pexels",
+    credit: "khezez | خزاز / Pexels",
     sourceUrl: "https://www.pexels.com/video/intense-leg-workout-on-gym-machine-35585537/",
   },
   "hip thrust": {
@@ -227,7 +227,7 @@ const STOCK_VIDEO_MAP: Record<string, StockVideoEntry> = {
     sourceUrl: "https://www.pexels.com/video/a-woman-step-up-and-down-over-a-wooden-box-6739974/",
   },
 
-  // ââ CORE ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+  // ── CORE ──────────────────────────────────────────────────────────────────
   "crunch": {
     url: "https://videos.pexels.com/video-files/8893543/8893543-sd_338_640_24fps.mp4",
     credit: "Jill Burrow / Pexels",
@@ -284,7 +284,7 @@ const STOCK_VIDEO_MAP: Record<string, StockVideoEntry> = {
     sourceUrl: "https://www.pexels.com/video/woman-exercising-outdoors-5025787/",
   },
 
-  // ââ CARDIO / FULL BODY ââââââââââââââââââââââââââââââââââââââââââââââââââââ
+  // ── CARDIO / FULL BODY ────────────────────────────────────────────────────
   "burpee": {
     url: "https://videos.pexels.com/video-files/8026934/8026934-sd_338_640_25fps.mp4",
     credit: "MART PRODUCTION / Pexels",
@@ -322,7 +322,7 @@ const STOCK_VIDEO_MAP: Record<string, StockVideoEntry> = {
   },
 };
 
-// ââ EXERCISES USING GIF FALLBACK (no accurate Pexels match found) âââââââââââ
+// ── EXERCISES USING GIF FALLBACK (no accurate Pexels match found) ───────────
 // These 18 exercises will use the CDN GIF player (EnhancedGifPlayer):
 // - arnold press, cable fly, chin up, close grip bench press, decline bench press
 // - dumbbell row, hammer curl, leg curl, leg press, leg raise

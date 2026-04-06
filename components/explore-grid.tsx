@@ -1,5 +1,5 @@
 /**
- * R1/R6: "Explore" Grid â Categorized feature tiles
+ * R1/R6: "Explore" Grid — Categorized feature tiles
  * Replaces the old 6-tile grid with a comprehensive, categorized grid
  * that surfaces ALL app features including My Pantry, Wearables, Social, Challenges, etc.
  */

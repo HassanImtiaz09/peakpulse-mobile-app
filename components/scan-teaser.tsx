@@ -1,5 +1,5 @@
 /**
- * ScanTeaser â shows a blurred/partial preview of what the AI body scan
+ * ScanTeaser — shows a blurred/partial preview of what the AI body scan
  * can produce, motivating users to complete onboarding.
  *
  * Displays during onboarding setup steps (4-8) as a floating card
@@ -16,7 +16,7 @@ import { SF } from "@/constants/ui-colors";
 
 const { width: SCREEN_W } = Dimensions.get("window");
 
-// Sample transformation preview (generic silhouette â not real user data)
+// Sample transformation preview (generic silhouette — not real user data)
 const SAMPLE_BEFORE = "https://files.manuscdn.com/user_upload_by_me/user_upload_6801a1cfee1ca5.79453994.png";
 const SAMPLE_AFTER = "https://files.manuscdn.com/user_upload_by_me/user_upload_6801a1cfee1ca5.79453994.png";
 

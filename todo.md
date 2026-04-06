@@ -3157,3 +3157,13 @@
 - [x] Installed expo-linear-gradient and expo-store-review
 - [x] Restored todo.md (removed by GitHub commit)
 - [x] 0 TypeScript errors
+
+## Round 92: Fix strange symbols and encoding issues
+- [x] Scan all source files for broken encoding, garbled text, and strange symbols
+- [x] Fix all identified encoding issues across 26 files (11,826+ mojibake sequences fixed)
+  - Fixed double-encoded em-dashes (Ã¢ÂÂ → —) across 19 files
+  - Fixed broken emoji sequences (partially decoded 4-byte UTF-8) in 4 files
+  - Fixed box-drawing chars, degree symbols, multiplication signs in exercise-detail.tsx
+  - Fixed massive mojibake in exercise-data.ts (2,567 sequences), meals.tsx (1,777), exercise-demo-player.tsx (162)
+- [x] Verify TypeScript compiles (0 errors)
+- [x] Save checkpoint

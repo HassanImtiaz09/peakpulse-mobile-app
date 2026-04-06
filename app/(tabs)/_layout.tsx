@@ -9,7 +9,7 @@ import { CommandPalette } from "@/components/command-palette";
 import { useAuth } from "@/hooks/use-auth";
 import { useGuestAuth } from "@/lib/guest-auth";
 
-// R4: Simplified 4-tab navigation â Home, Train, Nutrition, Profile
+// R4: Simplified 4-tab navigation — Home, Train, Nutrition, Profile
 const TAB_ICONS: Record<string, { icon: keyof typeof MaterialIcons.glyphMap; label: string }> = {
   index: { icon: "dashboard", label: "Home" },
   plans: { icon: "fitness-center", label: "Train" },
@@ -99,7 +99,7 @@ export default function TabLayout() {
       <Tabs.Screen name="plans" options={{ title: "Train" }} />
       <Tabs.Screen name="meals" options={{ title: "Nutrition" }} />
       <Tabs.Screen name="profile" options={{ title: "Profile" }} />
-      {/* Hidden tabs â still routable but not shown in tab bar */}
+      {/* Hidden tabs — still routable but not shown in tab bar */}
       <Tabs.Screen name="scan" options={{ href: null }} />
       <Tabs.Screen name="ai-coach" options={{ href: null }} />
     </Tabs>

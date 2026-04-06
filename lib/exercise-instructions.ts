@@ -1,5 +1,5 @@
 /**
- * Exercise Instructions â Concise Step-by-Step Form Scripts
+ * Exercise Instructions – Concise Step-by-Step Form Scripts
  *
  * Trimmed to core essentials: 3 key steps, 1 common mistake, breathing pattern.
  */
@@ -17,44 +17,44 @@ const INSTRUCTIONS: Record<string, ExerciseInstruction> = {
   "bench press": {
     steps: [
       "Lie flat on the bench with feet firmly on the floor. Grip the bar slightly wider than shoulder-width.",
-      "Unrack the bar and lower it in a controlled arc to your mid-chest, keeping elbows at about 45ÃÂ°.",
+      "Unrack the bar and lower it in a controlled arc to your mid-chest, keeping elbows at about 45Â°.",
       "Keep your glutes on the bench and maintain tension throughout the movement.",
     ],
-    avoid: ["Flaring elbows to 90ÃÂ° Ã¢ÂÂ increases shoulder injury risk"],
+    avoid: ["Flaring elbows to 90Â° — increases shoulder injury risk"],
     breathing: "Inhale as you lower the bar, exhale as you press up.",
   },
   "push up": {
     steps: [
       "Start in a high plank position with hands slightly wider than shoulder-width.",
-      "Lower your body until your chest nearly touches the floor, elbows at 45ÃÂ°.",
+      "Lower your body until your chest nearly touches the floor, elbows at 45Â°.",
       "Push back up to the starting position by fully extending your arms.",
     ],
-    avoid: ["Sagging hips or piking up Ã¢ÂÂ maintain a rigid plank"],
+    avoid: ["Sagging hips or piking up — maintain a rigid plank"],
     breathing: "Inhale on the way down, exhale as you push up.",
   },
   "dumbbell fly": {
     steps: [
       "Lie on a flat bench holding dumbbells above your chest with a slight bend in your elbows.",
-      "Maintain the same elbow angle throughout Ã¢ÂÂ don't straighten or bend further.",
+      "Maintain the same elbow angle throughout — don't straighten or bend further.",
       "Squeeze your chest to bring the dumbbells back together above your chest.",
     ],
-    avoid: ["Going too heavy Ã¢ÂÂ this is an isolation movement"],
+    avoid: ["Going too heavy — this is an isolation movement"],
     breathing: "Inhale as you open your arms, exhale as you squeeze them together.",
   },
   "incline bench press": {
     steps: [
-      "Set the bench to 30Ã¢ÂÂ45ÃÂ° incline. Grip the bar slightly wider than shoulder-width.",
+      "Set the bench to 30–45Â° incline. Grip the bar slightly wider than shoulder-width.",
       "Lower the bar to your upper chest just below the collarbone.",
       "Press the bar up and slightly back until arms are fully extended.",
     ],
-    avoid: ["Setting the incline too steep (above 45ÃÂ°) Ã¢ÂÂ shifts work to shoulders"],
+    avoid: ["Setting the incline too steep (above 45Â°) — shifts work to shoulders"],
     breathing: "Inhale as you lower, exhale as you press.",
   },
   "incline dumbbell press": {
     steps: [
-      "Set bench to 30Ã¢ÂÂ45ÃÂ°. Hold dumbbells at chest level with palms facing forward.",
+      "Set bench to 30–45Â°. Hold dumbbells at chest level with palms facing forward.",
       "Press the dumbbells up and slightly inward until they nearly touch at the top.",
-      "Lower them back slowly to chest level, keeping elbows at about 45ÃÂ°.",
+      "Lower them back slowly to chest level, keeping elbows at about 45Â°.",
     ],
     avoid: ["Clanking dumbbells together at the top"],
     breathing: "Inhale on the descent, exhale on the press.",
@@ -97,18 +97,18 @@ const INSTRUCTIONS: Record<string, ExerciseInstruction> = {
   },
   "chest dip": {
     steps: [
-      "Grip the bars and lean your torso forward about 30ÃÂ° throughout the movement.",
+      "Grip the bars and lean your torso forward about 30Â° throughout the movement.",
       "Keep elbows flared slightly outward to emphasize the chest.",
       "Press back up, squeezing your chest at the top.",
     ],
-    avoid: ["Staying too upright Ã¢ÂÂ that shifts emphasis to triceps"],
+    avoid: ["Staying too upright — that shifts emphasis to triceps"],
     breathing: "Inhale on the descent, exhale on the press.",
   },
   "pull up": {
     steps: [
       "Hang from the bar with an overhand grip slightly wider than shoulder-width.",
       "Pull yourself up until your chin clears the bar.",
-      "Lower yourself slowly to a full hang Ã¢ÂÂ control the descent.",
+      "Lower yourself slowly to a full hang — control the descent.",
     ],
     avoid: ["Kipping or swinging to get your chin over the bar"],
     breathing: "Exhale as you pull up, inhale as you lower.",
@@ -126,18 +126,18 @@ const INSTRUCTIONS: Record<string, ExerciseInstruction> = {
     steps: [
       "Sit with thighs secured under the pads. Grip the bar wider than shoulder-width.",
       "Squeeze your shoulder blades together at the bottom of the movement.",
-      "Return the bar up slowly with control Ã¢ÂÂ don't let it yank your arms up.",
+      "Return the bar up slowly with control — don't let it yank your arms up.",
     ],
-    avoid: ["Pulling the bar behind your neck Ã¢ÂÂ stresses the shoulders"],
+    avoid: ["Pulling the bar behind your neck — stresses the shoulders"],
     breathing: "Exhale as you pull down, inhale as you release up.",
   },
   "bent over row": {
     steps: [
-      "Stand with feet hip-width apart. Hinge at the hips until your torso is roughly 45ÃÂ° to the floor.",
+      "Stand with feet hip-width apart. Hinge at the hips until your torso is roughly 45Â° to the floor.",
       "Pull the bar to your lower chest/upper abdomen, driving elbows back.",
       "Lower the bar with control to full arm extension.",
     ],
-    avoid: ["Rounding your lower back Ã¢ÂÂ keep it neutral"],
+    avoid: ["Rounding your lower back — keep it neutral"],
     breathing: "Exhale as you row up, inhale as you lower.",
   },
   "dumbbell row": {
@@ -153,7 +153,7 @@ const INSTRUCTIONS: Record<string, ExerciseInstruction> = {
     steps: [
       "Sit with feet on the platform, knees slightly bent. Grab the V-handle.",
       "Squeeze your shoulder blades together at the end of the pull.",
-      "Extend your arms forward slowly Ã¢ÂÂ don't let the weight stack pull you forward.",
+      "Extend your arms forward slowly — don't let the weight stack pull you forward.",
     ],
     avoid: ["Rounding your back as you reach forward"],
     breathing: "Exhale as you pull, inhale as you extend.",
@@ -162,7 +162,7 @@ const INSTRUCTIONS: Record<string, ExerciseInstruction> = {
     steps: [
       "Stand with feet hip-width apart, bar over mid-foot. Grip the bar just outside your knees.",
       "Drive through your feet to stand up, keeping the bar close to your body.",
-      "Reverse the movement to lower the bar Ã¢ÂÂ hinge at the hips first, then bend knees.",
+      "Reverse the movement to lower the bar — hinge at the hips first, then bend knees.",
     ],
     avoid: ["Rounding your lower back at any point"],
     breathing: "Brace and inhale before the pull, exhale at lockout.",
@@ -173,16 +173,16 @@ const INSTRUCTIONS: Record<string, ExerciseInstruction> = {
       "Pull the bar to your chest, squeezing your back muscles.",
       "Lower with control to full arm extension.",
     ],
-    avoid: ["Standing too upright Ã¢ÂÂ maintain the hip hinge"],
+    avoid: ["Standing too upright — maintain the hip hinge"],
     breathing: "Exhale as you row, inhale as you lower.",
   },
   "pendlay row": {
     steps: [
       "Set up like a deadlift with torso parallel to the floor. Bar starts on the ground each rep.",
       "Explosively row the bar to your lower chest.",
-      "Lower the bar back to the floor with control Ã¢ÂÂ full stop between reps.",
+      "Lower the bar back to the floor with control — full stop between reps.",
     ],
-    avoid: ["Lifting your torso during the row Ã¢ÂÂ stay parallel"],
+    avoid: ["Lifting your torso during the row — stay parallel"],
     breathing: "Brace before each rep, exhale as you row.",
   },
   "overhead press": {
@@ -191,7 +191,7 @@ const INSTRUCTIONS: Record<string, ExerciseInstruction> = {
       "Move your head slightly back as the bar passes, then push it forward once the bar is overhead.",
       "Lower the bar back to your collarbone with control.",
     ],
-    avoid: ["Excessive back lean Ã¢ÂÂ keep your core braced"],
+    avoid: ["Excessive back lean — keep your core braced"],
     breathing: "Inhale at the bottom, exhale as you press overhead.",
   },
   "dumbbell shoulder press": {
@@ -200,14 +200,14 @@ const INSTRUCTIONS: Record<string, ExerciseInstruction> = {
       "Press both dumbbells overhead until arms are fully extended.",
       "Lower them back to shoulder height with control.",
     ],
-    avoid: ["Flaring your rib cage Ã¢ÂÂ keep core tight"],
+    avoid: ["Flaring your rib cage — keep core tight"],
     breathing: "Exhale as you press, inhale as you lower.",
   },
   "lateral raise": {
     steps: [
       "Stand with dumbbells at your sides, slight bend in your elbows.",
-      "Lead with your elbows, not your hands Ã¢ÂÂ imagine pouring water from a pitcher.",
-      "Lower slowly Ã¢ÂÂ don't just drop the weight.",
+      "Lead with your elbows, not your hands — imagine pouring water from a pitcher.",
+      "Lower slowly — don't just drop the weight.",
     ],
     avoid: ["Using momentum by swinging your body"],
     breathing: "Exhale as you raise, inhale as you lower.",
@@ -218,7 +218,7 @@ const INSTRUCTIONS: Record<string, ExerciseInstruction> = {
       "Raise one or both arms straight in front of you to shoulder height.",
       "Hold briefly at the top, then lower with control.",
     ],
-    avoid: ["Swinging the weight Ã¢ÂÂ use strict form"],
+    avoid: ["Swinging the weight — use strict form"],
     breathing: "Exhale as you raise, inhale as you lower.",
   },
   "face pull": {
@@ -227,7 +227,7 @@ const INSTRUCTIONS: Record<string, ExerciseInstruction> = {
       "Finish with your hands beside your ears, elbows high and back.",
       "Squeeze your rear delts and upper back, then return slowly.",
     ],
-    avoid: ["Using too much weight Ã¢ÂÂ this is a precision movement"],
+    avoid: ["Using too much weight — this is a precision movement"],
     breathing: "Exhale as you pull, inhale as you return.",
   },
   "rear delt fly": {
@@ -245,16 +245,16 @@ const INSTRUCTIONS: Record<string, ExerciseInstruction> = {
       "Finish with arms fully extended overhead, palms forward.",
       "Reverse the rotation as you lower back to the starting position.",
     ],
-    avoid: ["Rushing the rotation Ã¢ÂÂ it should be smooth and continuous"],
+    avoid: ["Rushing the rotation — it should be smooth and continuous"],
     breathing: "Exhale as you press and rotate, inhale as you lower.",
   },
   "upright row": {
     steps: [
       "Stand holding a barbell or dumbbells with a narrow grip in front of your thighs.",
-      "Lead with your elbows Ã¢ÂÂ they should always be higher than your hands.",
+      "Lead with your elbows — they should always be higher than your hands.",
       "Lower with control.",
     ],
-    avoid: ["Pulling too high (above chest) Ã¢ÂÂ can cause shoulder impingement"],
+    avoid: ["Pulling too high (above chest) — can cause shoulder impingement"],
     breathing: "Exhale as you pull up, inhale as you lower.",
   },
   "shrug": {
@@ -263,7 +263,7 @@ const INSTRUCTIONS: Record<string, ExerciseInstruction> = {
       "Hold the top position for a moment, squeezing your traps.",
       "Lower slowly to the starting position.",
     ],
-    avoid: ["Rolling your shoulders Ã¢ÂÂ just go straight up and down"],
+    avoid: ["Rolling your shoulders — just go straight up and down"],
     breathing: "Exhale as you shrug up, inhale as you lower.",
   },
   "bicep curl": {
@@ -279,7 +279,7 @@ const INSTRUCTIONS: Record<string, ExerciseInstruction> = {
     steps: [
       "Stand with feet shoulder-width apart, gripping the barbell with an underhand grip.",
       "Curl the bar up to shoulder height, squeezing your biceps.",
-      "Lower the bar slowly Ã¢ÂÂ resist gravity on the way down.",
+      "Lower the bar slowly — resist gravity on the way down.",
     ],
     avoid: ["Leaning back to swing the weight up"],
     breathing: "Exhale as you curl, inhale as you lower.",
@@ -297,7 +297,7 @@ const INSTRUCTIONS: Record<string, ExerciseInstruction> = {
     steps: [
       "Sit at a preacher bench with your upper arms resting flat on the pad.",
       "Curl the weight up, keeping your upper arms pressed against the pad.",
-      "Lower slowly to near-full extension Ã¢ÂÂ don't hyperextend at the bottom.",
+      "Lower slowly to near-full extension — don't hyperextend at the bottom.",
     ],
     avoid: ["Lifting your elbows off the pad"],
     breathing: "Exhale as you curl, inhale as you lower.",
@@ -315,7 +315,7 @@ const INSTRUCTIONS: Record<string, ExerciseInstruction> = {
     steps: [
       "Stand facing a cable machine with a straight bar or rope attachment at head height.",
       "Squeeze your triceps at the bottom.",
-      "Let the handle return slowly to the starting position Ã¢ÂÂ don't let your elbows drift forward.",
+      "Let the handle return slowly to the starting position — don't let your elbows drift forward.",
     ],
     avoid: ["Flaring your elbows out"],
     breathing: "Exhale as you push down, inhale as you return.",
@@ -341,7 +341,7 @@ const INSTRUCTIONS: Record<string, ExerciseInstruction> = {
   "skull crusher": {
     steps: [
       "Lie on a flat bench holding an EZ bar or dumbbells with arms extended over your chest.",
-      "Keep your upper arms perpendicular to the floor Ã¢ÂÂ only your forearms move.",
+      "Keep your upper arms perpendicular to the floor — only your forearms move.",
       "Extend back to the starting position.",
     ],
     avoid: ["Letting your elbows flare outward"],
@@ -353,7 +353,7 @@ const INSTRUCTIONS: Record<string, ExerciseInstruction> = {
       "Lower the bar to your lower chest, keeping elbows tucked close to your body.",
       "Press the bar back up to full extension.",
     ],
-    avoid: ["Gripping too narrow Ã¢ÂÂ shoulder-width is sufficient"],
+    avoid: ["Gripping too narrow — shoulder-width is sufficient"],
     breathing: "Inhale as you lower, exhale as you press.",
   },
   "squat": {
@@ -362,7 +362,7 @@ const INSTRUCTIONS: Record<string, ExerciseInstruction> = {
       "Descend until your hip crease is at or below your knee level (parallel or deeper).",
       "Drive through your whole foot to stand back up, keeping your chest tall.",
     ],
-    avoid: ["Letting your knees cave inward Ã¢ÂÂ push them out over your toes"],
+    avoid: ["Letting your knees cave inward — push them out over your toes"],
     breathing: "Inhale and brace at the top, hold through the descent, exhale as you stand.",
   },
   "front squat": {
@@ -371,7 +371,7 @@ const INSTRUCTIONS: Record<string, ExerciseInstruction> = {
       "Squat down, keeping your torso as upright as possible.",
       "Drive up through your feet to return to standing.",
     ],
-    avoid: ["Letting your elbows drop Ã¢ÂÂ the bar will roll forward"],
+    avoid: ["Letting your elbows drop — the bar will roll forward"],
     breathing: "Inhale and brace before descending, exhale as you stand.",
   },
   "goblet squat": {
@@ -398,13 +398,13 @@ const INSTRUCTIONS: Record<string, ExerciseInstruction> = {
       "Your front knee should be over your ankle, not past your toes.",
       "Push off your front foot to return to the starting position.",
     ],
-    avoid: ["Taking too short a step Ã¢ÂÂ your knee will go past your toes"],
+    avoid: ["Taking too short a step — your knee will go past your toes"],
     breathing: "Inhale as you step and lower, exhale as you push back.",
   },
   "leg press": {
     steps: [
       "Sit in the leg press machine with your back flat against the pad.",
-      "Release the safety catches. Lower the platform until your knees are at about 90ÃÂ°.",
+      "Release the safety catches. Lower the platform until your knees are at about 90Â°.",
       "Press the platform back up without fully locking your knees at the top.",
     ],
     avoid: ["Letting your lower back round off the pad at the bottom"],
@@ -423,9 +423,9 @@ const INSTRUCTIONS: Record<string, ExerciseInstruction> = {
     steps: [
       "Sit in the machine with your back against the pad. Adjust the ankle pad to sit on your lower shins.",
       "Squeeze your quads at the top for a moment.",
-      "Lower slowly Ã¢ÂÂ don't let the weight stack slam down.",
+      "Lower slowly — don't let the weight stack slam down.",
     ],
-    avoid: ["Using too much weight Ã¢ÂÂ this stresses the knee joint"],
+    avoid: ["Using too much weight — this stresses the knee joint"],
     breathing: "Exhale as you extend, inhale as you lower.",
   },
   "romanian deadlift": {
@@ -434,7 +434,7 @@ const INSTRUCTIONS: Record<string, ExerciseInstruction> = {
       "Lower the bar along your legs until you feel a deep stretch in your hamstrings.",
       "Drive your hips forward to return to standing, squeezing your glutes at the top.",
     ],
-    avoid: ["Rounding your lower back Ã¢ÂÂ keep it neutral throughout"],
+    avoid: ["Rounding your lower back — keep it neutral throughout"],
     breathing: "Inhale as you hinge down, exhale as you stand.",
   },
   "hip thrust": {
@@ -449,7 +449,7 @@ const INSTRUCTIONS: Record<string, ExerciseInstruction> = {
   "glute bridge": {
     steps: [
       "Lie on your back with knees bent and feet flat on the floor, hip-width apart.",
-      "Squeeze your glutes at the top Ã¢ÂÂ your body should form a straight line from shoulders to knees.",
+      "Squeeze your glutes at the top — your body should form a straight line from shoulders to knees.",
       "Lower your hips back to the floor with control.",
     ],
     avoid: ["Pushing through your toes instead of your heels"],
@@ -461,7 +461,7 @@ const INSTRUCTIONS: Record<string, ExerciseInstruction> = {
       "Hold the top position for a moment.",
       "Lower your heels below the platform level for a full stretch.",
     ],
-    avoid: ["Bouncing at the bottom Ã¢ÂÂ use a full, controlled range"],
+    avoid: ["Bouncing at the bottom — use a full, controlled range"],
     breathing: "Exhale as you rise, inhale as you lower.",
   },
   "hack squat": {
@@ -479,7 +479,7 @@ const INSTRUCTIONS: Record<string, ExerciseInstruction> = {
       "Bring your other foot up, then step back down with the same foot.",
       "Keep your torso upright throughout.",
     ],
-    avoid: ["Pushing off your back foot Ã¢ÂÂ let the front leg do the work"],
+    avoid: ["Pushing off your back foot — let the front leg do the work"],
     breathing: "Exhale as you step up, inhale as you step down.",
   },
   "reverse lunge": {
@@ -488,16 +488,16 @@ const INSTRUCTIONS: Record<string, ExerciseInstruction> = {
       "Keep your front shin roughly vertical.",
       "Push off your back foot to return to standing.",
     ],
-    avoid: ["Leaning forward Ã¢ÂÂ keep your torso upright"],
+    avoid: ["Leaning forward — keep your torso upright"],
     breathing: "Inhale as you step back, exhale as you return.",
   },
   "sumo deadlift": {
     steps: [
-      "Stand with a wide stance, toes pointed out about 30Ã¢ÂÂ45ÃÂ°. Grip the bar inside your knees.",
+      "Stand with a wide stance, toes pointed out about 30–45Â°. Grip the bar inside your knees.",
       "Drive through your feet, pushing the floor apart, to stand up.",
       "Lock out with hips fully extended.",
     ],
-    avoid: ["Letting your knees cave inward Ã¢ÂÂ push them out over your toes"],
+    avoid: ["Letting your knees cave inward — push them out over your toes"],
     breathing: "Brace and inhale before the pull, exhale at lockout.",
   },
   "stiff leg deadlift": {
@@ -506,17 +506,17 @@ const INSTRUCTIONS: Record<string, ExerciseInstruction> = {
       "Lower the bar along your legs until you feel a maximal hamstring stretch.",
       "Return to standing by driving your hips forward.",
     ],
-    avoid: ["Rounding your back Ã¢ÂÂ maintain a neutral spine"],
+    avoid: ["Rounding your back — maintain a neutral spine"],
     breathing: "Inhale as you lower, exhale as you stand.",
   },
   "plank": {
     steps: [
       "Start in a forearm plank position with elbows directly under your shoulders.",
-      "Engage your core, glutes, and quads Ã¢ÂÂ don't let your hips sag or pike.",
+      "Engage your core, glutes, and quads — don't let your hips sag or pike.",
       "Hold the position for the prescribed duration.",
     ],
-    avoid: ["Sagging hips Ã¢ÂÂ squeeze your glutes to maintain alignment"],
-    breathing: "Breathe steadily throughout Ã¢ÂÂ don't hold your breath.",
+    avoid: ["Sagging hips — squeeze your glutes to maintain alignment"],
+    breathing: "Breathe steadily throughout — don't hold your breath.",
   },
   "side plank": {
     steps: [
@@ -525,13 +525,13 @@ const INSTRUCTIONS: Record<string, ExerciseInstruction> = {
       "Hold the position, keeping your core engaged.",
     ],
     avoid: ["Letting your hips drop toward the floor"],
-    breathing: "Breathe steadily Ã¢ÂÂ don't hold your breath.",
+    breathing: "Breathe steadily — don't hold your breath.",
   },
   "crunch": {
     steps: [
       "Lie on your back with knees bent and feet flat. Place hands behind your head or across your chest.",
       "Squeeze your abs at the top of the movement.",
-      "Lower back down slowly Ã¢ÂÂ don't just drop.",
+      "Lower back down slowly — don't just drop.",
     ],
     avoid: ["Pulling on your neck with your hands"],
     breathing: "Exhale as you crunch up, inhale as you lower.",
@@ -549,7 +549,7 @@ const INSTRUCTIONS: Record<string, ExerciseInstruction> = {
     steps: [
       "Sit on the floor with knees bent and feet slightly elevated.",
       "Hold a weight at your chest and rotate your torso to one side.",
-      "Rotate to the other side Ã¢ÂÂ that's one rep.",
+      "Rotate to the other side — that's one rep.",
     ],
     avoid: ["Rounding your back"],
     breathing: "Exhale as you rotate to each side.",
@@ -557,28 +557,28 @@ const INSTRUCTIONS: Record<string, ExerciseInstruction> = {
   "mountain climber": {
     steps: [
       "Start in a high plank position with hands under your shoulders.",
-      "Keep your hips level Ã¢ÂÂ don't let them bounce up and down.",
+      "Keep your hips level — don't let them bounce up and down.",
       "Maintain a fast, controlled pace.",
     ],
     avoid: ["Piking your hips up high"],
-    breathing: "Breathe rhythmically Ã¢ÂÂ exhale every 2Ã¢ÂÂ3 steps.",
+    breathing: "Breathe rhythmically — exhale every 2–3 steps.",
   },
   "leg raise": {
     steps: [
       "Lie flat on your back with legs straight and hands under your glutes for support.",
       "Keeping legs straight, raise them until they're perpendicular to the floor.",
-      "Lower them slowly back down Ã¢ÂÂ stop just before they touch the floor.",
+      "Lower them slowly back down — stop just before they touch the floor.",
     ],
-    avoid: ["Arching your lower back off the floor Ã¢ÂÂ press it down"],
+    avoid: ["Arching your lower back off the floor — press it down"],
     breathing: "Exhale as you raise, inhale as you lower.",
   },
   "hanging leg raise": {
     steps: [
       "Hang from a pull-up bar with an overhand grip, arms fully extended.",
       "Raise your legs in front of you until they're parallel to the floor (or higher).",
-      "Lower them slowly with control Ã¢ÂÂ no swinging.",
+      "Lower them slowly with control — no swinging.",
     ],
-    avoid: ["Swinging your body Ã¢ÂÂ keep it controlled"],
+    avoid: ["Swinging your body — keep it controlled"],
     breathing: "Exhale as you raise your legs, inhale as you lower.",
   },
   "ab wheel rollout": {
@@ -587,13 +587,13 @@ const INSTRUCTIONS: Record<string, ExerciseInstruction> = {
       "Roll the wheel forward, extending your body as far as you can while maintaining a flat back.",
       "Engage your core to pull the wheel back to the starting position.",
     ],
-    avoid: ["Letting your hips sag Ã¢ÂÂ maintain a straight line"],
+    avoid: ["Letting your hips sag — maintain a straight line"],
     breathing: "Inhale as you roll out, exhale as you pull back.",
   },
   "bicycle crunch": {
     steps: [
-      "Lie on your back with hands behind your head and legs raised, knees at 90ÃÂ°.",
-      "Switch sides in a pedaling motion Ã¢ÂÂ left elbow to right knee.",
+      "Lie on your back with hands behind your head and legs raised, knees at 90Â°.",
+      "Switch sides in a pedaling motion — left elbow to right knee.",
       "Keep your shoulder blades off the floor throughout.",
     ],
     avoid: ["Pulling on your neck"],
@@ -601,7 +601,7 @@ const INSTRUCTIONS: Record<string, ExerciseInstruction> = {
   },
   "dead bug": {
     steps: [
-      "Lie on your back with arms extended toward the ceiling and knees at 90ÃÂ°.",
+      "Lie on your back with arms extended toward the ceiling and knees at 90Â°.",
       "Return to the starting position, then repeat on the other side.",
       "Keep your lower back pressed firmly into the floor throughout.",
     ],
@@ -614,7 +614,7 @@ const INSTRUCTIONS: Record<string, ExerciseInstruction> = {
       "Pull the handle diagonally across your body to your opposite hip, rotating your torso.",
       "Return slowly to the starting position.",
     ],
-    avoid: ["Using your arms to pull Ã¢ÂÂ the power comes from your core rotation"],
+    avoid: ["Using your arms to pull — the power comes from your core rotation"],
     breathing: "Exhale as you chop down, inhale as you return.",
   },
   "burpee": {
@@ -632,8 +632,8 @@ const INSTRUCTIONS: Record<string, ExerciseInstruction> = {
       "Jump back to the starting position.",
       "Maintain a steady, rhythmic pace.",
     ],
-    avoid: ["Landing flat-footed Ã¢ÂÂ stay on the balls of your feet"],
-    breathing: "Breathe rhythmically Ã¢ÂÂ inhale on the out, exhale on the in.",
+    avoid: ["Landing flat-footed — stay on the balls of your feet"],
+    breathing: "Breathe rhythmically — inhale on the out, exhale on the in.",
   },
   "box jump": {
     steps: [
@@ -648,9 +648,9 @@ const INSTRUCTIONS: Record<string, ExerciseInstruction> = {
     steps: [
       "Stand with feet wider than shoulder-width, kettlebell on the floor in front of you.",
       "Explosively drive your hips forward to swing the kettlebell to chest height.",
-      "Let the kettlebell swing back between your legs and repeat Ã¢ÂÂ it's a hip hinge, not a squat.",
+      "Let the kettlebell swing back between your legs and repeat — it's a hip hinge, not a squat.",
     ],
-    avoid: ["Squatting instead of hinging Ã¢ÂÂ push your hips back"],
+    avoid: ["Squatting instead of hinging — push your hips back"],
     breathing: "Exhale sharply as you drive your hips forward.",
   },
   "battle rope": {
@@ -659,16 +659,16 @@ const INSTRUCTIONS: Record<string, ExerciseInstruction> = {
       "Keep your core braced and maintain an athletic stance.",
       "Vary patterns: alternating waves, double slams, circles.",
     ],
-    avoid: ["Standing too upright Ã¢ÂÂ maintain a slight squat"],
-    breathing: "Breathe rhythmically Ã¢ÂÂ don't hold your breath.",
+    avoid: ["Standing too upright — maintain a slight squat"],
+    breathing: "Breathe rhythmically — don't hold your breath.",
   },
   "jump rope": {
     steps: [
       "Hold the rope handles at hip height with elbows close to your body.",
-      "Jump just high enough to clear the rope Ã¢ÂÂ about 1 inch off the ground.",
+      "Jump just high enough to clear the rope — about 1 inch off the ground.",
       "Land softly on the balls of your feet.",
     ],
-    avoid: ["Jumping too high Ã¢ÂÂ wastes energy"],
+    avoid: ["Jumping too high — wastes energy"],
     breathing: "Breathe naturally and rhythmically.",
   },
   "sprint": {
@@ -677,8 +677,8 @@ const INSTRUCTIONS: Record<string, ExerciseInstruction> = {
       "Land on the balls of your feet with a slight forward lean.",
       "Maintain maximum effort for the prescribed distance or time.",
     ],
-    avoid: ["Heel striking Ã¢ÂÂ stay on your forefoot"],
-    breathing: "Breathe naturally Ã¢ÂÂ don't try to control it during max effort.",
+    avoid: ["Heel striking — stay on your forefoot"],
+    breathing: "Breathe naturally — don't try to control it during max effort.",
   },
 };
 

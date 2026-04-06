@@ -1,5 +1,5 @@
 /**
- * Progress Dashboard â Unified view of weight, body fat, and check-in trends.
+ * Progress Dashboard — Unified view of weight, body fat, and check-in trends.
  *
  * Aggregates data from:
  *   - Server: progressCheckin.list (for authenticated users)
@@ -31,7 +31,7 @@ const CHART_W = W - 80;
 const CHART_H = 160;
 const PAD = { top: 20, right: 16, bottom: 24, left: 44 };
 
-// âââ Mini Line Chart âââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ─── Mini Line Chart ─────────────────────────────────────────────────────────
 function TrendLine({
   data,
   label,
@@ -120,7 +120,7 @@ function TrendLine({
         {yTicks.map((tick, i) => (
           <G key={"yl" + i}>
             <Circle cx={0} cy={0} r={0}>
-              {/* Placeholder â RN SVG text positioning via foreignObject is unreliable */}
+              {/* Placeholder — RN SVG text positioning via foreignObject is unreliable */}
             </Circle>
           </G>
         ))}
@@ -165,7 +165,7 @@ function TrendLine({
   );
 }
 
-// âââ Main Screen âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ─── Main Screen ─────────────────────────────────────────────────────────────
 export default function ProgressDashboard() {
   const router = useRouter();
   const { isAuthenticated } = useAuth();
@@ -185,7 +185,7 @@ export default function ProgressDashboard() {
     });
   }, []);
 
-  // Merge data â prefer server, fall back to local
+  // Merge data — prefer server, fall back to local
   const checkins = useMemo(() => {
     if (serverCheckins && serverCheckins.length > 0) {
       return serverCheckins.map((c: any) => ({
@@ -332,7 +332,7 @@ export default function ProgressDashboard() {
   );
 }
 
-// âââ Styles ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ─── Styles ──────────────────────────────────────────────────────────────────
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: SF.bg },
   header: {

@@ -98,7 +98,7 @@ async function loadTodayWorkoutData(): Promise<any | null> {
 function useNotificationDeepLink(ready: boolean) {
   const router = useRouter();
 
-  /** Handle a notification response â navigate based on type or url */
+  /** Handle a notification response — navigate based on type or url */
   const handleNotificationResponse = useCallback(async (data: Record<string, any> | undefined, delay = 0) => {
     if (!data) return;
     // Explicit URL takes priority
@@ -114,7 +114,7 @@ function useNotificationDeepLink(ready: boolean) {
         if (todayData) {
           router.push({ pathname: "/active-workout", params: { dayData: JSON.stringify(todayData) } } as any);
         } else {
-          // No plan found â go to plans tab
+          // No plan found — go to plans tab
           router.push("/(tabs)/plans" as any);
         }
       };

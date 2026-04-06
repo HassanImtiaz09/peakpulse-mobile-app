@@ -328,9 +328,9 @@ function ProfileScreenContent() {
             gender={gender}
             height={height}
             weight={weight}
-            goal={GOALS.find(g => g.key === goal)?.label ?? "â"}
-            workoutStyle={WORKOUT_STYLES.find(w => w.key === workoutStyle)?.label ?? "â"}
-            dietaryPref={DIETARY_PREFS.find(d => d.key === dietaryPref)?.label ?? "â"}
+            goal={GOALS.find(g => g.key === goal)?.label ?? "—"}
+            workoutStyle={WORKOUT_STYLES.find(w => w.key === workoutStyle)?.label ?? "—"}
+            dietaryPref={DIETARY_PREFS.find(d => d.key === dietaryPref)?.label ?? "—"}
             daysPerWeek={daysPerWeek}
             bodyFat={profile?.currentBodyFat?.toString() ?? null}
             targetBF={profile?.targetBodyFat?.toString() ?? null}
@@ -350,7 +350,7 @@ function ProfileScreenContent() {
           />
           <PremiumFeatureTeaser
             feature="body_scan"
-            text="AI Body Scan â track your physique transformation with AI"
+            text="AI Body Scan — track your physique transformation with AI"
             requiredTier="basic"
           />
           <PremiumFeatureTeaser
@@ -363,10 +363,10 @@ function ProfileScreenContent() {
         {/* Stats Row */}
         {profile && (
           <View style={{ flexDirection: "row", gap: 8, paddingHorizontal: 20, marginBottom: 20 }}>
-            <StatBox label="Height" value={profile.heightCm ? `${profile.heightCm}cm` : "â"} />
-            <StatBox label="Weight" value={profile.weightKg ? `${profile.weightKg}kg` : "â"} />
-            <StatBox label="Body Fat" value={profile.currentBodyFat ? `${profile.currentBodyFat}%` : "â"} />
-            <StatBox label="Target BF" value={profile.targetBodyFat ? `${profile.targetBodyFat}%` : "â"} />
+            <StatBox label="Height" value={profile.heightCm ? `${profile.heightCm}cm` : "—"} />
+            <StatBox label="Weight" value={profile.weightKg ? `${profile.weightKg}kg` : "—"} />
+            <StatBox label="Body Fat" value={profile.currentBodyFat ? `${profile.currentBodyFat}%` : "—"} />
+            <StatBox label="Target BF" value={profile.targetBodyFat ? `${profile.targetBodyFat}%` : "—"} />
           </View>
         )}
 
@@ -507,14 +507,14 @@ function ProfileScreenContent() {
           </CollapsibleSection>
 
           <CollapsibleSection title="Social & Community" count={4}>
-            <FeatureLink icon="group" label="Social Feed" onPress={() => gatedNav("/social-feed", "social_feed", "group", "pro", "Join the PeakPulse community, share progress, and compete in challenges â Pro plan only.")} />
+            <FeatureLink icon="group" label="Social Feed" onPress={() => gatedNav("/social-feed", "social_feed", "group", "pro", "Join the PeakPulse community, share progress, and compete in challenges — Pro plan only.")} />
             <FeatureLink icon="bolt" label="7-Day Challenge" onPress={() => gatedNav("/challenge-onboarding", "challenges", "bolt", "pro", "Unlock 7-day fitness challenges and leaderboards with a Pro plan.")} />
-            <FeatureLink icon="card-giftcard" label="Refer a Friend" onPress={() => gatedNav("/referral", "referral", "card-giftcard", "basic", "Refer friends and earn rewards â available on Basic and Pro plans.")} />
-            <FeatureLink icon="watch" label="Wearable Sync" onPress={() => gatedNav("/wearable-sync", "wearable_sync", "watch", "basic", "Sync your fitness wearable (Apple Watch, Fitbit, Garmin) with PeakPulse â Basic plan and above.")} />
+            <FeatureLink icon="card-giftcard" label="Refer a Friend" onPress={() => gatedNav("/referral", "referral", "card-giftcard", "basic", "Refer friends and earn rewards — available on Basic and Pro plans.")} />
+            <FeatureLink icon="watch" label="Wearable Sync" onPress={() => gatedNav("/wearable-sync", "wearable_sync", "watch", "basic", "Sync your fitness wearable (Apple Watch, Fitbit, Garmin) with PeakPulse — Basic plan and above.")} />
           </CollapsibleSection>
 
           <CollapsibleSection title="Settings & Preferences" count={5}>
-            <FeatureLink icon="notifications" label="Notifications" onPress={() => gatedNav("/notification-preferences", "notification_preferences", "notifications", "basic", "Customise your workout and meal reminder times â available on Basic and Pro plans.")} />
+            <FeatureLink icon="notifications" label="Notifications" onPress={() => gatedNav("/notification-preferences", "notification_preferences", "notifications", "basic", "Customise your workout and meal reminder times — available on Basic and Pro plans.")} />
             <FeatureLink icon="auto-awesome" label="Smart Reminders" onPress={() => router.push("/smart-reminders" as any)} />
             <FeatureLink icon="settings" label="App Settings" onPress={() => router.push("/settings" as any)} {...a11yButton(A11Y_LABELS.settingsButton)} />
             <FeatureLink icon="feedback" label="Send Feedback" onPress={() => router.push("/feedback" as any)} />
@@ -533,7 +533,7 @@ function ProfileScreenContent() {
                   <MaterialIcons name="workspace-premium" size={20} color={FG} />
                   <View>
                     <Text style={{ color: FG, fontFamily: "DMSans_700Bold", fontSize: 14 }}>Upgrade to Pro</Text>
-                    <Text style={{ color: CREAM, fontSize: 12, marginTop: 2 }}>Unlock all AI features from Â£5.99/mo</Text>
+                    <Text style={{ color: CREAM, fontSize: 12, marginTop: 2 }}>Unlock all AI features from £5.99/mo</Text>
                   </View>
                 </View>
                 <MaterialIcons name="chevron-right" size={20} color={FG} />
@@ -541,7 +541,7 @@ function ProfileScreenContent() {
             </>
           )}
 
-          {/* Guest mode â upgrade CTA */}
+          {/* Guest mode — upgrade CTA */}
           {isGuest && (
             <TouchableOpacity
               style={{ backgroundColor: GOLD, borderRadius: 16, paddingVertical: 14, alignItems: "center", marginBottom: 10, shadowColor: GOLD, shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.4, shadowRadius: 8, flexDirection: "row", justifyContent: "center", gap: 8 }}
@@ -694,7 +694,7 @@ const THEME_OPTIONS: Array<{ key: ThemePreference; label: string; icon: keyof ty
   { key: "dark", label: "Dark", icon: "dark-mode", desc: "Always dark" },
 ];
 
-// ââ Subscription Status Card ââââââââââââââââââââââââââââââââââââââââââââââ
+// ── Subscription Status Card ──────────────────────────────────────────────
 function SubscriptionStatusCard({
   tier,
   billingCycle,
@@ -744,7 +744,7 @@ function SubscriptionStatusCard({
         <View style={{ flexDirection: "row", alignItems: "center", gap: 8, backgroundColor: `${ICE}15`, borderRadius: 10, padding: 10, marginBottom: 8, borderWidth: 1, borderColor: `${ICE}30` }}>
           <MaterialIcons name="timer" size={16} color={ICE} />
           <Text style={{ color: ICE, fontFamily: "DMSans_600SemiBold", fontSize: 12, flex: 1 }}>
-            Free trial active â {daysLeftInTrial} day{daysLeftInTrial !== 1 ? "s" : ""} remaining
+            Free trial active — {daysLeftInTrial} day{daysLeftInTrial !== 1 ? "s" : ""} remaining
           </Text>
         </View>
       )}
@@ -774,7 +774,7 @@ function SubscriptionStatusCard({
   );
 }
 
-// ââ Personal Info Summary Card âââââââââââââââââââââââââââââââââââââââââââ
+// ── Personal Info Summary Card ───────────────────────────────────────────
 function PersonalInfoCard({
   name,
   email,
@@ -838,7 +838,7 @@ function PersonalInfoCard({
   );
 }
 
-// ââ Photo Options Modal âââââââââââââââââââââââââââââââââââââââââââââââââ
+// ── Photo Options Modal ─────────────────────────────────────────────────
 function PhotoOptionsModal({
   visible,
   onClose,

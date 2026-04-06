@@ -28,7 +28,7 @@ export interface SubscriptionState {
   isBasic: boolean;
   isPro: boolean;
   isPaid: boolean;
-  /** Effective Pro access â true if tier is pro OR trial is active */
+  /** Effective Pro access — true if tier is pro OR trial is active */
   hasProAccess: boolean;
 }
 
@@ -50,19 +50,19 @@ const DEFAULT_STATE: FullSubscriptionState = {
 };
 
 /**
- * Feature tier matrix â defines which tier each feature requires.
+ * Feature tier matrix — defines which tier each feature requires.
  * "free"  = available to all users (manual logging, exercise library, basic calorie, timer, 2 AI plans/mo, 5 body scans/mo, 4 progress photos/mo)
  * "basic" = requires Basic or Pro subscription (unlimited AI plans, analytics, voice coaching, progress photos, basic body scan, offline mode, PR tracking)
  * "pro"   = requires Pro subscription only (wearable sync, AI coach chat, form checker, social, challenges, meal prep, unlimited photos, priority AI)
  */
 export const FEATURE_TIERS: Record<string, SubscriptionTier> = {
-  // Free features â available to all users
+  // Free features — available to all users
   calorie_estimator: "free",
   gym_finder: "free",
   daily_checkin: "free",
   tips_tricks: "free",
   onboarding: "free",
-  // Basic features â unlocked with Basic or Pro
+  // Basic features — unlocked with Basic or Pro
   ai_meal_plans: "basic",
   ai_workout_plans: "basic",
   meal_swap_ai: "basic",
@@ -76,7 +76,7 @@ export const FEATURE_TIERS: Record<string, SubscriptionTier> = {
   pr_tracking: "basic",
   wearable_sync: "basic",  // moved from Pro
   social_feed: "basic",    // moved from Pro (read-only)
-  // Pro features â unlocked with Pro only
+  // Pro features — unlocked with Pro only
   form_checker: "pro",
   challenges: "pro",
   ai_coaching: "pro",
@@ -143,7 +143,7 @@ export function useSubscription(): FullSubscriptionState & {
       if (rawSub) {
         const saved = JSON.parse(rawSub);
         if (saved.expiresAt && new Date(saved.expiresAt) < new Date()) {
-          // Subscription expired â clean up
+          // Subscription expired — clean up
           await AsyncStorage.removeItem(SUBSCRIPTION_KEY);
         } else {
           tier = saved.tier ?? "free";
@@ -178,7 +178,7 @@ export function useSubscription(): FullSubscriptionState & {
     expiresAt.setMonth(expiresAt.getMonth() + months);
     const data = { tier, billingCycle, expiresAt: expiresAt.toISOString() };
     await AsyncStorage.setItem(SUBSCRIPTION_KEY, JSON.stringify(data));
-    // Cancel trial reminders â user has subscribed, no longer needs the nudge
+    // Cancel trial reminders — user has subscribed, no longer needs the nudge
     cancelTrialReminders().catch(() => {});
     await load();
   }, [load]);
@@ -191,7 +191,7 @@ export function useSubscription(): FullSubscriptionState & {
   const startTrial = useCallback(async (durationDays: number = TRIAL_DURATION_DAYS) => {
     // Only allow starting a trial if one has never been used
     const existing = await AsyncStorage.getItem(TRIAL_KEY);
-    if (existing) return; // Trial already used â do not reset
+    if (existing) return; // Trial already used — do not reset
     const startDate = new Date().toISOString();
     // Store duration so computeTrialState can use the correct end date
     const trialData = { startDate, durationDays };

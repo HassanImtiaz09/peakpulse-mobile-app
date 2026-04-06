@@ -1,5 +1,5 @@
 /**
- * Body Diagram Component â Detailed Anatomical Model
+ * Body Diagram Component — Detailed Anatomical Model
  *
  * Uses react-native-body-highlighter for professional anatomical SVG body diagrams
  * with accurate muscle group highlighting. Supports front and back views,
@@ -95,7 +95,7 @@ function buildBodyData(
   const data: ExtendedBodyPart[] = [];
   const seen = new Set<Slug>();
 
-  // Primary muscles â intensity 2 (brighter)
+  // Primary muscles — intensity 2 (brighter)
   for (const m of primary) {
     const slugs = side === "front" ? MUSCLE_TO_SLUGS[m]?.front : MUSCLE_TO_SLUGS[m]?.back;
     if (!slugs) continue;
@@ -107,7 +107,7 @@ function buildBodyData(
     }
   }
 
-  // Secondary muscles â intensity 1 (dimmer)
+  // Secondary muscles — intensity 1 (dimmer)
   for (const m of secondary) {
     const slugs = side === "front" ? MUSCLE_TO_SLUGS[m]?.front : MUSCLE_TO_SLUGS[m]?.back;
     if (!slugs) continue;

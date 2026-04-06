@@ -52,7 +52,7 @@ const { width: SCREEN_W } = Dimensions.get("window");
 interface ExerciseDemoPlayerProps {
   /** Legacy gifUrl prop (ignored if gifAsset is provided) */
   gifUrl?: string;
-  /** Exercise image asset Ã¢ÂÂ CDN URL string or legacy require() number */
+  /** Exercise image asset — CDN URL string or legacy require() number */
   gifAsset?: number | string;
   cue?: string;
   height?: number;
@@ -495,7 +495,7 @@ export function ExerciseDemoPlayer({
         </View>
       )}
 
-      {/* Angle focus card Ã¢ÂÂ shows the per-view coaching focus from exercise-data */}
+      {/* Angle focus card — shows the per-view coaching focus from exercise-data */}
       {hasMultipleAngles && angleViews[activeAngle]?.focus ? (
         <View style={styles.angleFocusCard}>
           {/* Section label row */}
@@ -973,7 +973,7 @@ export function ExerciseDemoButton({
 }
 
 const styles = StyleSheet.create({
-  // Ã¢ÂÂÃ¢ÂÂ Section label pattern Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+  // ── Section label pattern ──────────────────────────────────────────────────
   sectionLabelRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -994,7 +994,7 @@ const styles = StyleSheet.create({
     fontFamily: "DMSans_700Bold",
   },
 
-  // Ã¢ÂÂÃ¢ÂÂ Angle focus card Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+  // ── Angle focus card ───────────────────────────────────────────────────────
   angleFocusCard: {
     marginTop: 10,
     backgroundColor: "#141A22",
@@ -1010,7 +1010,7 @@ const styles = StyleSheet.create({
     fontFamily: "DMSans_400Regular",
   },
 
-  // Ã¢ÂÂÃ¢ÂÂ Coaching cue section Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+  // ── Coaching cue section ───────────────────────────────────────────────────
   cueSection: {
     marginTop: 12,
   },

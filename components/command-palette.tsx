@@ -10,7 +10,7 @@ import * as Haptics from "expo-haptics";
 
 const { height: SCREEN_H } = Dimensions.get("window");
 
-// ââ Command registry âââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ── Command registry ───────────────────────────────────────────────────
 
 export interface CommandItem {
   id: string;
@@ -54,7 +54,7 @@ const COMMANDS: CommandItem[] = [
   { id: "notifications", label: "Notifications", description: "Manage alerts", icon: "notifications", route: "/notification-preferences", keywords: ["notifications", "alerts", "reminders"], category: "navigate" },
 ];
 
-// ââ Fuzzy search ââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ── Fuzzy search ────────────────────────────────────────────────────────
 
 function fuzzyMatch(query: string, item: CommandItem): number {
   const q = query.toLowerCase().trim();
@@ -89,7 +89,7 @@ function fuzzyMatch(query: string, item: CommandItem): number {
   return 0;
 }
 
-// ââ Category icons & colors ââââââââââââââââââââââââââââââââââââââââââââ
+// ── Category icons & colors ────────────────────────────────────────────
 
 const CATEGORY_META: Record<string, { label: string; color: string }> = {
   navigate: { label: "Screen", color: "#6366F1" },
@@ -97,7 +97,7 @@ const CATEGORY_META: Record<string, { label: string; color: string }> = {
   tool: { label: "Tool", color: "#F59E0B" },
 };
 
-// ââ Component ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ── Component ──────────────────────────────────────────────────────────
 
 interface CommandPaletteProps {
   visible: boolean;
