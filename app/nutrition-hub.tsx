@@ -139,7 +139,9 @@ function DailySummaryBanner() {
   const remaining = Math.max(0, goal - cals);
 
   return (
-    <View style={styles.summaryBanner}>
+    <View style={styles.summaryBanner}
+        accessibilityRole="summary"
+        accessibilityLabel="Daily calorie summary">
       <View style={styles.summaryLeft}>
         <Text style={styles.summaryLabel}>Today</Text>
         <Text style={styles.summaryCals}>{cals.toLocaleString()} kcal</Text>
@@ -192,7 +194,9 @@ function NutritionHubContent() {
       >
         {/* Header */}
         <View style={styles.header}>
-          <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
+          <TouchableOpacity onPress={() => router.back()}
+            accessibilityRole="button"
+            accessibilityLabel="Go back" style={styles.backBtn}>
             <Ionicons name="arrow-back" size={24} color={SF.fg} />
           </TouchableOpacity>
           <View>
