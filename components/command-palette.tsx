@@ -10,7 +10,7 @@ import * as Haptics from "expo-haptics";
 
 const { height: SCREEN_H } = Dimensions.get("window");
 
-// ── Command registry ───────────────────────────────────────────────────
+// ââ Command registry âââââââââââââââââââââââââââââââââââââââââââââââââââ
 
 export interface CommandItem {
   id: string;
@@ -54,7 +54,7 @@ const COMMANDS: CommandItem[] = [
   { id: "notifications", label: "Notifications", description: "Manage alerts", icon: "notifications", route: "/notification-preferences", keywords: ["notifications", "alerts", "reminders"], category: "navigate" },
 ];
 
-// ── Fuzzy search ────────────────────────────────────────────────────────
+// ââ Fuzzy search ââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 
 function fuzzyMatch(query: string, item: CommandItem): number {
   const q = query.toLowerCase().trim();
@@ -89,7 +89,7 @@ function fuzzyMatch(query: string, item: CommandItem): number {
   return 0;
 }
 
-// ── Category icons & colors ────────────────────────────────────────────
+// ââ Category icons & colors ââââââââââââââââââââââââââââââââââââââââââââ
 
 const CATEGORY_META: Record<string, { label: string; color: string }> = {
   navigate: { label: "Screen", color: "#6366F1" },
@@ -97,7 +97,7 @@ const CATEGORY_META: Record<string, { label: string; color: string }> = {
   tool: { label: "Tool", color: "#F59E0B" },
 };
 
-// ── Component ──────────────────────────────────────────────────────────
+// ââ Component ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 
 interface CommandPaletteProps {
   visible: boolean;
@@ -161,14 +161,19 @@ export function CommandPalette({ visible, onClose }: CommandPaletteProps) {
   );
 
   return (
-    <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
-      <TouchableOpacity style={styles.backdrop} activeOpacity={1} onPress={onClose}>
+    <Modal accessibilityViewIsModal={true}
+        visible={visible} transparent animationType="fade" onRequestClose={onClose}>
+      <TouchableOpacity style={styles.backdrop} activeOpacity={1} onPress={onClose}
+            accessibilityRole="button"
+            accessibilityLabel="Close command palette">
         <View style={styles.palette} onStartShouldSetResponder={() => true}>
           {/* Search input */}
           <View style={styles.searchRow}>
             <Ionicons name="search" size={20} color={SF.muted} />
             <TextInput
-              ref={inputRef}
+              accessibilityLabel="Search commands"
+          accessibilityRole="search"
+          ref={inputRef}
               style={styles.searchInput}
               placeholder="Search screens, tools, actions..."
               placeholderTextColor={SF.muted}
