@@ -52,20 +52,7 @@ import {
   DMSans_800ExtraBold,
   DMSans_900Black,
 } from "@expo-google-fonts/dm-sans";
-import {
-  Outfit_300Light,
-  Outfit_400Regular,
-  Outfit_500Medium,
-  Outfit_600SemiBold,
-  Outfit_700Bold,
-  Outfit_800ExtraBold,
-  Outfit_900Black,
-} from "@expo-google-fonts/outfit";
 import { BebasNeue_400Regular } from "@expo-google-fonts/bebas-neue";
-import {
-  SpaceMono_400Regular,
-  SpaceMono_700Bold,
-} from "@expo-google-fonts/space-mono";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -111,7 +98,7 @@ async function loadTodayWorkoutData(): Promise<any | null> {
 function useNotificationDeepLink(ready: boolean) {
   const router = useRouter();
 
-  /** Handle a notification response — navigate based on type or url */
+  /** Handle a notification response â navigate based on type or url */
   const handleNotificationResponse = useCallback(async (data: Record<string, any> | undefined, delay = 0) => {
     if (!data) return;
     // Explicit URL takes priority
@@ -127,7 +114,7 @@ function useNotificationDeepLink(ready: boolean) {
         if (todayData) {
           router.push({ pathname: "/active-workout", params: { dayData: JSON.stringify(todayData) } } as any);
         } else {
-          // No plan found — go to plans tab
+          // No plan found â go to plans tab
           router.push("/(tabs)/plans" as any);
         }
       };
@@ -205,18 +192,7 @@ export default function RootLayout() {
     DMSans_600SemiBold,
     DMSans_700Bold,
     DMSans_800ExtraBold,
-    DMSans_900Black,
-    Outfit_300Light,
-    Outfit_400Regular,
-    Outfit_500Medium,
-    Outfit_600SemiBold,
-    Outfit_700Bold,
-    Outfit_800ExtraBold,
-    Outfit_900Black,
-    BebasNeue_400Regular,
-    SpaceMono_400Regular,
-    SpaceMono_700Bold,
-  });
+    DMSans_900Black,    BebasNeue_400Regular,  });
 
   const initialInsets = initialWindowMetrics?.insets ?? DEFAULT_WEB_INSETS;
   const initialFrame = initialWindowMetrics?.frame ?? DEFAULT_WEB_FRAME;
