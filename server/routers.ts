@@ -1,12 +1,12 @@
 /**
- * App Router — Composes domain-specific routers into the unified tRPC API.
+ * App Router â Composes domain-specific routers into the unified tRPC API.
  *
  * Each domain router lives in its own file for better separation of concerns:
- *   - auth.router.ts     → auth, profile, upload
- *   - scan.router.ts     → bodyScan, progress, goals, progressCheckin
- *   - workout.router.ts  → workoutPlan, workout, exerciseSwap, dailyCheckIn
- *   - nutrition.router.ts → mealPlan, mealImages, mealPrep, mealLog, mealSwap, etc.
- *   - social.router.ts   → social, subscription, aiCoach
+ *   - auth.router.ts     â auth, profile, upload
+ *   - scan.router.ts     â bodyScan, progress, goals, progressCheckin
+ *   - workout.router.ts  â workoutPlan, workout, exerciseSwap, dailyCheckIn
+ *   - nutrition.router.ts â mealPlan, mealImages, mealPrep, mealLog, mealSwap, etc.
+ *   - social.router.ts   â social, subscription, aiCoach
  *
  * Shared helpers (getUserPlan, checkAiLimit, etc.) are in helpers.ts.
  */
@@ -17,6 +17,7 @@ import { scanRouter } from "./scan.router";
 import { workoutRouter } from "./workout.router";
 import { nutritionRouter } from "./nutrition.router";
 import { socialRouter } from "./social.router";
+import { progressHistoryRouter } from "./progress-history.router";
 
 export const appRouter = router({
   // Health check
@@ -25,7 +26,7 @@ export const appRouter = router({
   // System routes (built-in)
   system: systemRouter,
 
-  // ─── Domain Routers (merged) ───────────────────────────────────────────────
+  // âââ Domain Routers (merged) âââââââââââââââââââââââââââââââââââââââââââââââ
   // Auth & Profile
   ...authRouter._def.procedures,
 
