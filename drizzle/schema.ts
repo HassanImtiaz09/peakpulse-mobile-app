@@ -110,6 +110,21 @@ export const aiUsage = mysqlTable("ai_usage", {
   callCount: int("callCount").default(0).notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
+
+// ── Progress Entries (manual weight / body-fat logging) ──────────────────────
+export const progressEntries = mysqlTable("progress_entries", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  weightKg: float("weightKg"),
+  bodyFatPercent: float("bodyFatPercent"),
+  note: text("note"),
+  /** Where this entry came from: manual | checkin | scan */
+  source: varchar("source", { length: 20 }).default("manual").notNull(),
+  /** Allow the user to pick a date (defaults to now) */
+  recordedAt: timestamp("recordedAt").defaultNow().notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
 export type AiUsage = typeof aiUsage.$inferSelect;
 
 export type User = typeof users.$inferSelect;
@@ -123,7 +138,7 @@ export type MealLog = typeof mealLogs.$inferSelect;
 export type WorkoutSession = typeof workoutSessions.$inferSelect;
 
 
-// ── User Goals (target transformation from body scan) ────────────────────────
+// ââ User Goals (target transformation from body scan) ââââââââââââââââââââââââ
 export const userGoals = mysqlTable("user_goals", {
   id: int("id").autoincrement().primaryKey(),
   userId: int("userId").notNull(),
@@ -137,7 +152,7 @@ export const userGoals = mysqlTable("user_goals", {
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
 
-// ── Progress Check-ins (AI-analysed progress photos) ─────────────────────────
+// ââ Progress Check-ins (AI-analysed progress photos) âââââââââââââââââââââââââ
 export const progressCheckins = mysqlTable("progress_checkins", {
   id: int("id").autoincrement().primaryKey(),
   userId: int("userId").notNull(),
@@ -149,3 +164,6 @@ export const progressCheckins = mysqlTable("progress_checkins", {
   analysisJson: text("analysisJson"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
+
+export type ProgressEntry = typeof progressEntries.$inferSelect;
+export type InsertProgressEntry = typeof progressEntries.$inferInsert;
