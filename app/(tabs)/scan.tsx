@@ -27,6 +27,7 @@ import { recordProgressPhotoTaken } from "@/lib/feature-discovery";
 import { useAiLimit } from "@/components/ai-limit-modal";
 import { ErrorBoundary } from "@/components/error-boundary";
 import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
+import ScanLoadingOverlay from "@/components/scan-loading-overlay";
 
 const SCAN_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/OdDCyHFnLhvyAyWV.jpg";
 
@@ -298,7 +299,7 @@ function ScanScreenContent() {
         await generateWorkoutPlan.mutateAsync({ workoutStyle, daysPerWeek, goal: "lose_fat" });
         await generateMealPlan.mutateAsync({ dietaryPreference: dietaryPref, goal: "lose_fat", dailyCalories: 2000 });
       } else {
-        // Guest mode — save prefs locally AND generate real AI plans
+        // Guest mode â save prefs locally AND generate real AI plans
         const existing = await AsyncStorage.getItem("@guest_profile") ?? "{}";
         const profile = JSON.parse(existing);
         await AsyncStorage.setItem("@guest_profile", JSON.stringify({
@@ -350,7 +351,7 @@ function ScanScreenContent() {
 
   const scan = isAuthenticated ? (latestScan ?? analyzeScan.data) : guestScanData;
 
-  // ── Fullscreen Transformation Preview Modal ──
+  // ââ Fullscreen Transformation Preview Modal ââ
   function TransformationPreviewModal() {
     if (!previewModal?.visible) return null;
     const { imageUrl, bf, beforeUrl } = previewModal;
@@ -366,7 +367,7 @@ function ScanScreenContent() {
           {/* Header */}
           <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingHorizontal: 20, paddingTop: 56, paddingBottom: 12 }}>
             <TouchableOpacity onPress={() => setPreviewModal(null)} style={{ backgroundColor: "#FFFFFF20", borderRadius: 20, width: 40, height: 40, alignItems: "center", justifyContent: "center" }}>
-              <Text style={{ color: FG, fontSize: 18 }}>✕</Text>
+              <Text style={{ color: FG, fontSize: 18 }}>â</Text>
             </TouchableOpacity>
             <Text style={{ color: FG, fontFamily: "BebasNeue_400Regular", fontSize: 18 }}>{bf}% Body Fat Goal</Text>
             <View style={{ width: 40 }} />
@@ -502,7 +503,7 @@ function ScanScreenContent() {
     );
   }
 
-  // 1B: Parallax scroll value for Scan hero — MUST be above early return to avoid hooks ordering violation
+  // 1B: Parallax scroll value for Scan hero â MUST be above early return to avoid hooks ordering violation
   const scrollY = useSharedValue(0);
   const heroImgStyle = useAnimatedStyle(() => ({
     transform: [{ translateY: interpolate(scrollY.value, [0, 200], [0, 100], Extrapolation.CLAMP) }],
@@ -524,7 +525,7 @@ function ScanScreenContent() {
               style={{ backgroundColor: "#F59E0B", borderRadius: 16, paddingVertical: 14, paddingHorizontal: 32, shadowColor: "#F59E0B", shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.5, shadowRadius: 12 }}
               onPress={() => router.push("/login" as any)}
             >
-              <Text style={{ color: FG, fontFamily: "BebasNeue_400Regular", fontSize: 16 }}>Get Started →</Text>
+              <Text style={{ color: FG, fontFamily: "BebasNeue_400Regular", fontSize: 16 }}>Get Started â</Text>
             </TouchableOpacity>
           </View>
         </ImageBackground>
@@ -537,14 +538,14 @@ function ScanScreenContent() {
       {/* Fullscreen Preview Modal */}
       <TransformationPreviewModal />
 
-      {/* Feature gate for body scan — shows upgrade overlay for free users */}
+      {/* Feature gate for body scan â shows upgrade overlay for free users */}
       {!hasBodyScanAccess && (
         <FeatureGate feature="body_scan" message="AI Body Scan analyzes your physique and tracks body composition changes over time. Upgrade to Basic or higher to unlock.">
           <View style={{ height: 400 }} />
         </FeatureGate>
       )}
 
-      {/* Hero Header — NanoBanana ice-blue, no background image */}
+      {/* Hero Header â NanoBanana ice-blue, no background image */}
       <View style={{ backgroundColor: BG, paddingTop: 56, paddingHorizontal: 20, paddingBottom: 16 }}>
         <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
           <TouchableOpacity onPress={() => router.back()} style={{ padding: 4 }}>
@@ -570,7 +571,7 @@ function ScanScreenContent() {
           <MaterialIcons name="chevron-right" size={20} color={ICE} />
         </TouchableOpacity>
 
-        {/* ── STEP: Upload ── */}
+        {/* ââ STEP: Upload ââ */}
         {step === "upload" && (
           <View style={{ paddingHorizontal: 20 }}>
             {selectedImage ? (
@@ -584,7 +585,7 @@ function ScanScreenContent() {
                   style={{ position: "absolute", top: 12, right: 12, backgroundColor: "rgba(100,116,139,0.56)", borderRadius: 20, paddingHorizontal: 12, paddingVertical: 6 }}
                   onPress={() => setSelectedImage(null)}
                 >
-                  <Text style={{ color: FG, fontFamily: "DMSans_700Bold", fontSize: 12 }}>✕ Remove</Text>
+                  <Text style={{ color: FG, fontFamily: "DMSans_700Bold", fontSize: 12 }}>â Remove</Text>
                 </TouchableOpacity>
               </View>
             ) : (
@@ -630,14 +631,15 @@ function ScanScreenContent() {
                 onPress={() => setStep("results")}
               >
                 <Text style={{ color: ICE, fontFamily: "DMSans_700Bold", fontSize: 12, marginBottom: 8 }}>LAST SCAN RESULTS</Text>
-                <Text style={{ color: MUTED, fontSize: 12 }}>Tap to view transformations →</Text>
+                <Text style={{ color: MUTED, fontSize: 12 }}>Tap to view transformations â</Text>
               </TouchableOpacity>
             )}
           </View>
         )}
 
-        {/* ── STEP: Analyzing ── */}
+        {/* ââ STEP: Analyzing ââ */}
         {step === "analyzing" && (
+          <ScanLoadingOverlay phase="analyzing" />
           <View style={{ paddingHorizontal: 20, alignItems: "center", paddingTop: 60 }}>
             <View style={{ width: 100, height: 100, borderRadius: 50, backgroundColor: ICE_DIM, alignItems: "center", justifyContent: "center", marginBottom: 24 }}>
               <ActivityIndicator size="large" color={ICE} />
@@ -661,7 +663,7 @@ function ScanScreenContent() {
           </View>
         )}
 
-        {/* ── STEP: Results ── */}
+        {/* ââ STEP: Results ââ */}
         {step === "results" && scan && (
           <View style={{ paddingHorizontal: 20 }}>
             {/* Body Fat Result */}
@@ -713,7 +715,7 @@ function ScanScreenContent() {
                 }}
               >
                 <View style={{ flexDirection: "row", gap: 12 }}>
-                  {/* Tappable image — opens fullscreen preview */}
+                  {/* Tappable image â opens fullscreen preview */}
                   <TouchableOpacity
                     onPress={() => {
                       if (t.imageUrl) {
@@ -785,7 +787,7 @@ function ScanScreenContent() {
                     onPress={() => selectTargetAndProceed(t.target_bf)}
                   >
                     <Text style={{ color: selectedTransform === t.target_bf ? BG : ICE, fontFamily: "DMSans_700Bold", fontSize: 13 }}>
-                      {selectedTransform === t.target_bf ? "Selected — Create Plan" : "Select This Goal"}
+                      {selectedTransform === t.target_bf ? "Selected â Create Plan" : "Select This Goal"}
                     </Text>
                   </TouchableOpacity>
                 </View>
@@ -799,7 +801,7 @@ function ScanScreenContent() {
               <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}><MaterialIcons name="photo-camera" size={14} color={ICE} /><Text style={{ color: ICE, fontFamily: "DMSans_600SemiBold", fontSize: 14 }}>New Scan</Text></View>
             </TouchableOpacity>
 
-            {/* ── PROGRESS TRACKING SECTION ── */}
+            {/* ââ PROGRESS TRACKING SECTION ââ */}
             {targetTransformation && (
               <View style={{ marginTop: 24 }}>
                 <TouchableOpacity
@@ -870,7 +872,7 @@ function ScanScreenContent() {
                       </TouchableOpacity>
                     </View>
 
-                    {/* ── BEFORE & AFTER COMPARISON ── */}
+                    {/* ââ BEFORE & AFTER COMPARISON ââ */}
                     {progressPhotos.length >= 2 && (
                       <View style={{ backgroundColor: SURFACE, borderRadius: 18, padding: 16, borderWidth: 1, borderColor: ICE_BORDER }}>
                         <View style={{ flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 14 }}>
@@ -878,7 +880,7 @@ function ScanScreenContent() {
                           <Text style={{ color: FG, fontFamily: "DMSans_700Bold", fontSize: 14 }}>Before & After</Text>
                         </View>
                         <View style={{ flexDirection: "row", gap: 8 }}>
-                          {/* BEFORE — first photo */}
+                          {/* BEFORE â first photo */}
                           <View style={{ flex: 1, alignItems: "center" }}>
                             <View style={{ position: "relative", width: "100%" }}>
                               <Image
@@ -894,7 +896,7 @@ function ScanScreenContent() {
                               {new Date(progressPhotos[0].date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
                             </Text>
                           </View>
-                          {/* AFTER — latest photo */}
+                          {/* AFTER â latest photo */}
                           <View style={{ flex: 1, alignItems: "center" }}>
                             <View style={{ position: "relative", width: "100%" }}>
                               <Image
@@ -1000,7 +1002,7 @@ function ScanScreenContent() {
           </View>
         )}
 
-        {/* ── STEP: Goal Setup ── */}
+        {/* ââ STEP: Goal Setup ââ */}
         {step === "goal_setup" && (
           <View style={{ paddingHorizontal: 20 }}>
             {/* Selected Goal Banner */}
@@ -1082,13 +1084,14 @@ function ScanScreenContent() {
               style={{ borderRadius: 16, paddingVertical: 12, alignItems: "center" }}
               onPress={() => setStep("results")}
             >
-              <Text style={{ color: MUTED, fontSize: 14 }}>← Back to results</Text>
+              <Text style={{ color: MUTED, fontSize: 14 }}>â Back to results</Text>
             </TouchableOpacity>
           </View>
         )}
 
-        {/* ── STEP: Generating ── */}
+        {/* ââ STEP: Generating ââ */}
         {step === "generating" && (
+          <ScanLoadingOverlay phase="generating" />
           <View style={{ paddingHorizontal: 20, alignItems: "center", paddingTop: 60 }}>
             <View style={{ width: 100, height: 100, borderRadius: 50, backgroundColor: ICE_DIM, alignItems: "center", justifyContent: "center", marginBottom: 24 }}>
               <ActivityIndicator size="large" color={ICE} />
@@ -1113,7 +1116,7 @@ function ScanScreenContent() {
         )}
       </ReAnimated.ScrollView>
 
-      {/* ── SHARE PROGRESS OVERLAY ── */}
+      {/* ââ SHARE PROGRESS OVERLAY ââ */}
       {showShareOverlay && progressPhotos.length >= 2 && (
         <Modal visible={showShareOverlay} animationType="slide" transparent>
           <ShareProgressOverlay
@@ -1130,7 +1133,7 @@ function ScanScreenContent() {
         </Modal>
       )}
 
-      {/* ── FULL-SCREEN BEFORE/AFTER SLIDER ── */}
+      {/* ââ FULL-SCREEN BEFORE/AFTER SLIDER ââ */}
       {showSliderComparison && progressPhotos.length >= 2 && (
         <Modal visible={showSliderComparison} animationType="fade" transparent={false}>
           <BeforeAfterSlider
@@ -1146,7 +1149,7 @@ function ScanScreenContent() {
   );
 }
 
-/* ── Before/After Slider Component ── */
+/* ââ Before/After Slider Component ââ */
 function BeforeAfterSlider({
   beforeUri, afterUri, beforeDate, afterDate, onClose,
 }: {
@@ -1276,7 +1279,7 @@ function BeforeAfterSlider({
   );
 }
 
-/* ── Share Progress Overlay ── */
+/* ââ Share Progress Overlay ââ */
 function ShareProgressOverlay({
   beforeUri, afterUri, beforeDate, afterDate,
   bodyFatStart, bodyFatCurrent, bodyFatTarget, daysElapsed, onClose,
