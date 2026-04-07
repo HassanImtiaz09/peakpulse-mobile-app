@@ -49,6 +49,8 @@ import { getHistoricalMeals } from "@/lib/calorie-context";
 import { UI as SF } from "@/constants/ui-colors";
 import { ErrorBoundary } from "@/components/error-boundary";
 import { a11yButton, a11yHeader, a11yImage, a11yProgress, A11Y_LABELS } from "@/lib/accessibility";
+import TransformationCard from "@/components/transformation-card";
+import ProgressPhotoGallery from "@/components/progress-photo-gallery";
 
 const AT_DASHBOARD_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/PZcnawJwIZkQHTEM.jpg";
 
@@ -74,7 +76,7 @@ const APP_LOGO = "https://files.manuscdn.com/user_upload_by_module/session_file/
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 const AnimatedView = Animated.View;
 
-// ── Staggered animation wrapper ────────────────────────────────────────
+// ââ Staggered animation wrapper ââââââââââââââââââââââââââââââââââââââââ
 function StaggeredCard({ index, children }: { index: number; children: React.ReactNode }) {
   const opacity = useSharedValue(0);
   const translateY = useSharedValue(20);
@@ -89,7 +91,7 @@ function StaggeredCard({ index, children }: { index: number; children: React.Rea
   return <AnimatedView style={animStyle}>{children}</AnimatedView>;
 }
 
-// ── Section title with gold accent bar ─────────────────────────────────
+// ââ Section title with gold accent bar âââââââââââââââââââââââââââââââââ
 function SectionTitle({ title, rightElement }: { title: string; rightElement?: React.ReactNode }) {
   return (
     <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
@@ -102,7 +104,7 @@ function SectionTitle({ title, rightElement }: { title: string; rightElement?: R
   );
 }
 
-// ── Compact Goal Ring ──────────────────────────────────────────────────
+// ââ Compact Goal Ring ââââââââââââââââââââââââââââââââââââââââââââââââââ
 function GoalRing({ value, label, percentage, color }: { value: string; label: string; percentage: number; color: string }) {
   const R = 22;
   const circumference = 2 * Math.PI * R;
@@ -169,7 +171,7 @@ function HomeScreenContent() {
   const { displayName: savedDisplayName, profilePhotoUri } = useUserProfile();
   const displayName = savedDisplayName?.split(" ")[0] ?? user?.name?.split(" ")[0] ?? guestProfile?.name?.split(" ")[0] ?? "Athlete";
 
-  // ── Server-side data ─────
+  // ââ Server-side data âââââ
   const { data: profile } = trpc.profile.get.useQuery(undefined, { enabled: isAuthenticated });
   const { data: workoutPlan } = trpc.workoutPlan.getActive.useQuery(undefined, { enabled: isAuthenticated });
   const { data: mealPlan } = trpc.mealPlan.getActive.useQuery(undefined, { enabled: isAuthenticated });
@@ -178,7 +180,7 @@ function HomeScreenContent() {
 
   const { totalCalories: todayCalories, calorieGoal, meals: todayMeals, setCalorieGoal, macroTargets } = useCalories();
 
-  // ── Smart day matching: find today's workout from the schedule ──
+  // ââ Smart day matching: find today's workout from the schedule ââ
   const todayWorkout = useMemo(() => {
     const plan = workoutPlan ?? localWorkoutPlan;
     if (!plan?.schedule?.length) return null;
@@ -191,7 +193,7 @@ function HomeScreenContent() {
     return match ?? plan.schedule[0];
   }, [workoutPlan, localWorkoutPlan]);
 
-  // ── Rest day detection ──
+  // ââ Rest day detection ââ
   const isRestDay = useMemo(() => {
     if (!todayWorkout) return false;
     const focus = (todayWorkout.focus ?? "").toLowerCase();
@@ -199,7 +201,7 @@ function HomeScreenContent() {
     return focus.includes("rest") || focus.includes("recovery") || focus.includes("off") || exercises.length === 0;
   }, [todayWorkout]);
 
-  // ── Stretching suggestions for rest days ──
+  // ââ Stretching suggestions for rest days ââ
   const STRETCHING_ROUTINES = [
     { name: "Full Body Stretch", duration: "15 min", icon: "self-improvement" as const, description: "Gentle stretches for all major muscle groups" },
     { name: "Foam Rolling", duration: "10 min", icon: "sports-gymnastics" as const, description: "Myofascial release for tight muscles" },
@@ -279,7 +281,7 @@ function HomeScreenContent() {
     checkLocalPlan();
   }, [workoutPlan]);
 
-  // ── Onboarding guard ─────
+  // ââ Onboarding guard âââââ
   useEffect(() => {
     if (authLoading || guestLoading) return;
     if (isAuthenticated) {
@@ -298,7 +300,7 @@ function HomeScreenContent() {
     else if (profile !== undefined) setOnboardingChecked(true);
   }, [profile, isAuthenticated, authLoading]);
 
-  // ── Load analytics data ─────
+  // ââ Load analytics data âââââ
   useEffect(() => {
     if (!canUse) return;
     (async () => {
@@ -386,7 +388,7 @@ function HomeScreenContent() {
     })();
   }, [canUse, wearableData.stats.steps, wearableData.stats.totalCaloriesBurnt]);
 
-  // ── Load discovery prompt (R2) ─────
+  // ââ Load discovery prompt (R2) âââââ
   useEffect(() => {
     if (!canUse) return;
     getNextPrompt().then(p => setDiscoveryPrompt(p));
@@ -398,7 +400,7 @@ function HomeScreenContent() {
     }
   }, [canUse]);
 
-  // ── Pull-to-refresh handler ─────
+  // ââ Pull-to-refresh handler âââââ
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     try {
@@ -508,7 +510,7 @@ function HomeScreenContent() {
     return <View style={{ flex: 1, backgroundColor: SF.bg }} />;
   }
 
-  // ── Welcome / not logged in ────────────────────────────────────────────
+  // ââ Welcome / not logged in ââââââââââââââââââââââââââââââââââââââââââââ
   if (!canUse) {
     return (
       <View style={{ flex: 1, backgroundColor: SF.bg }}>
@@ -532,7 +534,7 @@ function HomeScreenContent() {
     else setPaywallFeature({ name: feature.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase()), icon, tier, desc });
   };
 
-  // ── Main Dashboard (R1: 6 Focused Sections) ─────────────────────────
+  // ââ Main Dashboard (R1: 6 Focused Sections) âââââââââââââââââââââââââ
   return (
     <>
       <PaywallModal visible={!!paywallFeature} onClose={() => setPaywallFeature(null)}
@@ -555,9 +557,9 @@ function HomeScreenContent() {
             />
           }
         >
-          {/* ═══════════════════════════════════════════════════════════
+          {/* âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
               SECTION 1: Hero Greeting + Date
-              ═══════════════════════════════════════════════════════════ */}
+              âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */}
           <View style={styles.heroSection}>
             <View style={styles.heroTopBar}>
               <TouchableOpacity onPress={() => router.push("/user-guide" as any)} style={{ padding: 4 }} {...a11yButton(A11Y_LABELS.menuButton)}>
@@ -606,7 +608,7 @@ function HomeScreenContent() {
             </View>
           </View>
 
-          {/* ── R2: Discovery Banner (contextual feature prompt) ── */}
+          {/* ââ R2: Discovery Banner (contextual feature prompt) ââ */}
           {discoveryPrompt && (
             <StaggeredCard index={0}>
               <DiscoveryBanner
@@ -619,9 +621,9 @@ function HomeScreenContent() {
             </StaggeredCard>
           )}
 
-          {/* ═══════════════════════════════════════════════════════════
+          {/* âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 
-          {/* ─── NEXT BEST ACTION ─── */}
+          {/* âââ NEXT BEST ACTION âââ */}
           {/* Contextual CTA that adapts based on user's current status */}
           <View style={[styles.section, { marginTop: 4 }]}>
             <View style={{
@@ -673,7 +675,7 @@ function HomeScreenContent() {
                   <Text style={{ color: SF.muted, fontSize: 13, fontFamily: "DMSans_400Regular" }}>
                     {lastProgressDate && Math.floor((Date.now() - new Date(lastProgressDate).getTime()) / 86400000) >= 7
                       ? "Track your transformation with a new photo"
-                      : workoutPlan ? "Your plan is ready — let's go"
+                      : workoutPlan ? "Your plan is ready â let's go"
                       : "See your AI body composition analysis"}
                   </Text>
                 </View>
@@ -683,9 +685,9 @@ function HomeScreenContent() {
           </View>
 
               {/* SECTION 2: Today's Workout Card with CTA (or Rest Day Recovery Card)
-              ═══════════════════════════════════════════════════════════ */}
+              âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */}
           {todayWorkout && isRestDay ? (
-            /* ── REST DAY RECOVERY CARD ── */
+            /* ââ REST DAY RECOVERY CARD ââ */
             <StaggeredCard index={1}>
               <View style={styles.section}>
                 <SectionTitle title="Recovery Day" />
@@ -813,9 +815,9 @@ function HomeScreenContent() {
             </StaggeredCard>
           )}
 
-          {/* ═══════════════════════════════════════════════════════════
+          {/* âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
               SECTION 3: Daily Progress (Calories + Macros in one compact row)
-              ═══════════════════════════════════════════════════════════ */}
+              âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */}
           {calorieGoal > 0 && (
             <StaggeredCard index={2}>
               <TouchableOpacity
@@ -899,7 +901,7 @@ function HomeScreenContent() {
                       </View>
                       <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
                         <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 11 }}>Activity: {tdeeBreakdown.activityLabel}</Text>
-                        <Text style={{ color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 13 }}>× {tdeeBreakdown.activityMultiplier}</Text>
+                        <Text style={{ color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 13 }}>Ã {tdeeBreakdown.activityMultiplier}</Text>
                       </View>
                       <View style={{ height: 1, backgroundColor: SF.border }} />
                       <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
@@ -916,7 +918,7 @@ function HomeScreenContent() {
                         <Text style={{ color: SF.gold, fontFamily: "DMSans_700Bold", fontSize: 15 }}>{tdeeBreakdown.adjustedTdee} kcal</Text>
                       </View>
                       <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 9, textAlign: "center", marginTop: 2 }}>
-                        Mifflin-St Jeor equation · {tdeeBreakdown.inputs.weightKg}kg · {tdeeBreakdown.inputs.heightCm}cm · {tdeeBreakdown.inputs.age}y · {tdeeBreakdown.inputs.gender}
+                        Mifflin-St Jeor equation Â· {tdeeBreakdown.inputs.weightKg}kg Â· {tdeeBreakdown.inputs.heightCm}cm Â· {tdeeBreakdown.inputs.age}y Â· {tdeeBreakdown.inputs.gender}
                       </Text>
                     </View>
                   </View>
@@ -995,7 +997,7 @@ function HomeScreenContent() {
                   <View style={{ paddingHorizontal: 16, paddingBottom: 14, paddingTop: 4, alignItems: "center" }}>
                     <Text style={{ fontSize: 13, fontWeight: "600", color: SF.text, textAlign: "center" }}>
                       {originalBodyFat && targetTransform.target_bf
-                        ? `${Math.abs(originalBodyFat - targetTransform.target_bf).toFixed(1)}% body fat to go — you’ve got this!`
+                        ? `${Math.abs(originalBodyFat - targetTransform.target_bf).toFixed(1)}% body fat to go â youâve got this!`
                         : "Tap to view your full transformation journey"}
                     </Text>
                   </View>
@@ -1004,8 +1006,19 @@ function HomeScreenContent() {
             </StaggeredCard>
           )}
 
-          {/* ═══════════════════════════════════════════════════════════
+          {/* âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
           {/* ______________________________________________________________________________________
+
+          {/* SECTION: Transformation Goal + Progress Photos */}
+          <StaggeredCard index={4.5}>
+            <View style={styles.section}>
+              <TransformationCard />
+              <ProgressPhotoGallery
+                startBodyFat={serverGoal?.originalBodyFat ?? undefined}
+                targetBodyFat={serverGoal?.targetBodyFat ?? undefined}
+              />
+            </View>
+          </StaggeredCard>
           {/* SECTION 5: Quick Insights Carousel (R6) */}
           <StaggeredCard index={4}>
             <View style={styles.section}>
@@ -1020,9 +1033,9 @@ function HomeScreenContent() {
             />
           </StaggeredCard>
 
-          {/* ═══════════════════════════════════════════════════════════
+          {/* âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
               SECTION 6: Explore More Grid
-              ═══════════════════════════════════════════════════════════ */}
+              âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */}
           <StaggeredCard index={5}>
             <View style={styles.section}>
               <SectionTitle title="Explore" />
@@ -1034,9 +1047,9 @@ function HomeScreenContent() {
             />
           </StaggeredCard>
 
-          {/* ═══════════════════════════════════════════════════════════
+          {/* âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
               MORE SECTIONS TOGGLE
-              ═══════════════════════════════════════════════════════════ */}
+              âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */}
           <StaggeredCard index={6}>
             <TouchableOpacity
               onPress={() => { setShowMore(!showMore); if (Platform.OS !== "web") Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); }}
@@ -1055,7 +1068,7 @@ function HomeScreenContent() {
           </StaggeredCard>
 
           {showMore && (<>
-          {/* ═══════════════════════════════════════════════════════════ */}
+          {/* âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */}
 
 
           {/* ______________________ Progress Check-In ______________________ */}
@@ -1145,12 +1158,12 @@ function HomeScreenContent() {
           </StaggeredCard>
           </>)}
 
-          {/* ── Trial / Guest banners ── */}
+          {/* ââ Trial / Guest banners ââ */}
           {isTrialActive && (
             <View style={styles.trialBanner}>
               <MaterialIcons name="hourglass-top" size={20} color={SF.gold} />
               <View style={{ flex: 1 }}>
-                <Text style={styles.trialBannerTitle}>Pro Trial — {daysLeftInTrial} day{daysLeftInTrial !== 1 ? "s" : ""} left</Text>
+                <Text style={styles.trialBannerTitle}>Pro Trial â {daysLeftInTrial} day{daysLeftInTrial !== 1 ? "s" : ""} left</Text>
                 <Text style={styles.trialBannerSub}>Enjoying all Pro features. Subscribe to keep access.</Text>
               </View>
               <TouchableOpacity style={styles.trialBannerBtn} onPress={() => router.push("/subscription" as any)} {...a11yButton("Subscribe to Pro")}>
@@ -1186,12 +1199,12 @@ function HomeScreenContent() {
           )}
         </Animated.ScrollView>
 
-        {/* ═══════════════════════════════════════════════════════════
+        {/* âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
             R5: Floating "Start Workout" Button
-            ═══════════════════════════════════════════════════════════ */}
+            âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */}
         <FloatingStartWorkout />
 
-        {/* ═══ STREAK CELEBRATION OVERLAY ═══ */}
+        {/* âââ STREAK CELEBRATION OVERLAY âââ */}
         {showStreakCelebration && (
           <StreakCelebration
             streakDays={streakData?.currentStreak ?? 7}
@@ -1203,9 +1216,9 @@ function HomeScreenContent() {
   );
 }
 
-/* ────────────────────────────────────────────────────────────────────────
-   Streak Celebration Component — Fire-burst animation overlay
-   ──────────────────────────────────────────────────────────────────────── */
+/* ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+   Streak Celebration Component â Fire-burst animation overlay
+   ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
 function StreakCelebration({ streakDays, onDismiss }: { streakDays: number; onDismiss: () => void }) {
   const opacity = useSharedValue(0);
   const scale = useSharedValue(0.3);
