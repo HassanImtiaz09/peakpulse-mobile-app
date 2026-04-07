@@ -1,5 +1,5 @@
 /**
- * Progress Dashboard — Unified view of weight, body fat, and check-in trends.
+ * Progress Dashboard â Unified view of weight, body fat, and check-in trends.
  *
  * Aggregates data from:
  *   - Server: progressCheckin.list (for authenticated users)
@@ -19,19 +19,19 @@ import {
 import { useRouter } from "expo-router";
 import Svg, { Path, Circle, Line, Rect, G } from "react-native-svg";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { UI as SF } from "@/constants/ui-colors";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/hooks/use-auth";
 import { ScreenErrorBoundary } from "@/components/error-boundary";
+import ProgressGraph from "@/components/progress-graph";
 
 const { width: W } = Dimensions.get("window");
 const CHART_W = W - 80;
 const CHART_H = 160;
 const PAD = { top: 20, right: 16, bottom: 24, left: 44 };
 
-// ─── Mini Line Chart ─────────────────────────────────────────────────────────
+// âââ Mini Line Chart âââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 function TrendLine({
   data,
   label,
@@ -120,7 +120,7 @@ function TrendLine({
         {yTicks.map((tick, i) => (
           <G key={"yl" + i}>
             <Circle cx={0} cy={0} r={0}>
-              {/* Placeholder — RN SVG text positioning via foreignObject is unreliable */}
+              {/* Placeholder â RN SVG text positioning via foreignObject is unreliable */}
             </Circle>
           </G>
         ))}
@@ -165,11 +165,11 @@ function TrendLine({
   );
 }
 
-// ─── Main Screen ─────────────────────────────────────────────────────────────
+// âââ Main Screen âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 export default function ProgressDashboard() {
   const router = useRouter();
   const { isAuthenticated } = useAuth();
-  const [localHistory, setLocalHistory] = useState<any[]>([]);
+  
 
   // Server queries
   const { data: serverCheckins } = trpc.progressCheckin.list.useQuery(
@@ -179,13 +179,9 @@ export default function ProgressDashboard() {
   const { data: serverGoal } = trpc.goals.active.useQuery(undefined, { enabled: isAuthenticated });
 
   // Load local history as fallback
-  useEffect(() => {
-    AsyncStorage.getItem("progress_checkin_history").then((raw) => {
-      if (raw) setLocalHistory(JSON.parse(raw));
-    });
-  }, []);
+  
 
-  // Merge data — prefer server, fall back to local
+  // Merge data â prefer server, fall back to local
   const checkins = useMemo(() => {
     if (serverCheckins && serverCheckins.length > 0) {
       return serverCheckins.map((c: any) => ({
@@ -259,7 +255,14 @@ export default function ProgressDashboard() {
           </View>
 
           {/* Weight Trend */}
-          <View style={styles.section}>
+          
+        {/* ── Combined Progress Graph ── */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Progress Over Time</Text>
+          <ProgressGraph targetBodyFat={targetBf ?? undefined} />
+        </View>
+
+<View style={styles.section}>
             <TrendLine data={weightData} label="Weight" unit=" kg" color="#3B82F6" />
           </View>
 
@@ -332,7 +335,7 @@ export default function ProgressDashboard() {
   );
 }
 
-// ─── Styles ──────────────────────────────────────────────────────────────────
+// âââ Styles ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: SF.bg },
   header: {
