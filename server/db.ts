@@ -3,8 +3,7 @@ import { drizzle } from "drizzle-orm/mysql2";
 import {
   InsertUser, users, userProfiles, InsertUserProfile,
   bodyScans, fitnessPlans, progressPhotos, mealLogs, workoutSessions, aiUsage,
-  userGoals, progressCheckins,
-} from "../drizzle/schema";
+  userGoals, progressCheckins,, progressEntries, progressCheckins} from "../drizzle/schema";
 import { ENV } from "./_core/env";
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -191,7 +190,7 @@ export async function getUserSubscription(userId: number) {
   return { plan: "free" as const, expiresAt: null };
 }
 
-// ── AI Usage Metering ─────────────────────────────────────────────────────────
+// ââ AI Usage Metering âââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 
 /** Monthly AI call limits per subscription tier */
 export const AI_CALL_LIMITS: Record<string, number> = {
@@ -253,7 +252,7 @@ export async function enforceAiLimit(userId: number, plan: string, endpoint: str
 
 
 
-// ─── User Goals (Target Transformation) ──────────────────────────────────────
+// âââ User Goals (Target Transformation) ââââââââââââââââââââââââââââââââââââââ
 
 export async function saveUserGoal(userId: number, data: {
   targetBodyFat: number;
@@ -281,7 +280,7 @@ export async function getActiveUserGoal(userId: number) {
   return result[0] ?? null;
 }
 
-// ─── Progress Check-ins ──────────────────────────────────────────────────────
+// âââ Progress Check-ins ââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 
 export async function saveProgressCheckin(userId: number, data: {
   photoUrl: string;
@@ -322,16 +321,16 @@ export function getSamplePostsForGuests() {
 
 function getSamplePostsData() {
   return [
-    { id: 1, userId: 0, userName: "Alex M.", userAvatar: "🔥💪", type: "progress", caption: "6 weeks in — down 8kg and feeling incredible! The AI meal plan made all the difference. My energy levels are through the roof 🔥🚀", weightKg: 78, bodyFatPercent: 16, likes: 124, createdAt: new Date(Date.now() - 2 * 3600000).toISOString() },
-    { id: 2, userId: 0, userName: "Sarah K.", userAvatar: "🔥🏃", type: "achievement", caption: "Just completed my first 5K run after starting the beginner plan! Never thought I'd get here. 8 weeks ago I could barely run for 5 minutes 🔥😭🔥💪", achievement: "First 5K Run Completed", likes: 241, createdAt: new Date(Date.now() - 5 * 3600000).toISOString() },
-    { id: 3, userId: 0, userName: "James T.", userAvatar: "🔥🎯", type: "progress", caption: "Body fat down from 24% to 18% in 10 weeks. The AI form checker caught my squat form was off — fixed it and my knees stopped hurting. Consistency is everything!", bodyFatPercent: 18, weightKg: 85, likes: 183, createdAt: new Date(Date.now() - 24 * 3600000).toISOString() },
-    { id: 4, userId: 0, userName: "Priya R.", userAvatar: "🔥🌟", type: "challenge", caption: "Day 30 of the 30-day squat challenge — COMPLETED! 🔥🎉 Started at 50 bodyweight squats, now doing 100 with 20kg. Who's joining the next one?", achievement: "30-Day Squat Challenge Champion", likes: 358, createdAt: new Date(Date.now() - 48 * 3600000).toISOString() },
-    { id: 5, userId: 0, userName: "Marcus L.", userAvatar: "🔥🔥", type: "progress", caption: "The halal meal plan has been a game changer during Ramadan. Lost 5kg while eating food I actually enjoy and keeping my energy up for fasting. This app actually understands my lifestyle 🔥🙏", weightKg: 82, bodyFatPercent: 20, likes: 219, createdAt: new Date(Date.now() - 72 * 3600000).toISOString() },
-    { id: 6, userId: 0, userName: "Emma W.", userAvatar: "✨", type: "achievement", caption: "Hit my target body fat percentage after 12 weeks! The AI body scan was spot on from day one and the weekly progress photos kept me accountable. Best investment I've made 🔥💫", bodyFatPercent: 22, likes: 447, createdAt: new Date(Date.now() - 96 * 3600000).toISOString() },
-    { id: 7, userId: 0, userName: "Tariq A.", userAvatar: "🔥🏋️", type: "progress", caption: "Calisthenics plan is absolutely brutal but the results speak for themselves. First muscle-up achieved today after 8 weeks of training! The AI progression is perfectly calibrated 🔥💪", bodyFatPercent: 12, likes: 312, createdAt: new Date(Date.now() - 120 * 3600000).toISOString() },
-    { id: 8, userId: 0, userName: "Yuki N.", userAvatar: "🔥🌸", type: "challenge", caption: "Completed the 10K steps daily challenge for 21 days straight! My Fitbit sync with PeakPulse made tracking effortless. Starting the 7-day plank streak next 🔥🎯", achievement: "21-Day Step Streak", likes: 189, createdAt: new Date(Date.now() - 144 * 3600000).toISOString() },
-    { id: 9, userId: 0, userName: "David O.", userAvatar: "⚡", type: "progress", caption: "Home workout plan — no gym, no excuses. Down 12kg in 14 weeks using just bodyweight and resistance bands. The AI adapted the plan when I told it I only had 30 mins per day. Incredible 🔥🏠", weightKg: 88, bodyFatPercent: 19, likes: 276, createdAt: new Date(Date.now() - 168 * 3600000).toISOString() },
-    { id: 10, userId: 0, userName: "Layla H.", userAvatar: "🔥🌙", type: "achievement", caption: "Vegan meal plan + strength training = best decision ever. 6 months in, strongest I've ever been. The AI meal prep feature saves me 3 hours every Sunday 🔥🌱🔥💚", achievement: "6-Month Vegan Fitness Journey", likes: 523, createdAt: new Date(Date.now() - 192 * 3600000).toISOString() },
+    { id: 1, userId: 0, userName: "Alex M.", userAvatar: "ð¥ðª", type: "progress", caption: "6 weeks in â down 8kg and feeling incredible! The AI meal plan made all the difference. My energy levels are through the roof ð¥ð", weightKg: 78, bodyFatPercent: 16, likes: 124, createdAt: new Date(Date.now() - 2 * 3600000).toISOString() },
+    { id: 2, userId: 0, userName: "Sarah K.", userAvatar: "ð¥ð", type: "achievement", caption: "Just completed my first 5K run after starting the beginner plan! Never thought I'd get here. 8 weeks ago I could barely run for 5 minutes ð¥ð­ð¥ðª", achievement: "First 5K Run Completed", likes: 241, createdAt: new Date(Date.now() - 5 * 3600000).toISOString() },
+    { id: 3, userId: 0, userName: "James T.", userAvatar: "ð¥ð¯", type: "progress", caption: "Body fat down from 24% to 18% in 10 weeks. The AI form checker caught my squat form was off â fixed it and my knees stopped hurting. Consistency is everything!", bodyFatPercent: 18, weightKg: 85, likes: 183, createdAt: new Date(Date.now() - 24 * 3600000).toISOString() },
+    { id: 4, userId: 0, userName: "Priya R.", userAvatar: "ð¥ð", type: "challenge", caption: "Day 30 of the 30-day squat challenge â COMPLETED! ð¥ð Started at 50 bodyweight squats, now doing 100 with 20kg. Who's joining the next one?", achievement: "30-Day Squat Challenge Champion", likes: 358, createdAt: new Date(Date.now() - 48 * 3600000).toISOString() },
+    { id: 5, userId: 0, userName: "Marcus L.", userAvatar: "ð¥ð¥", type: "progress", caption: "The halal meal plan has been a game changer during Ramadan. Lost 5kg while eating food I actually enjoy and keeping my energy up for fasting. This app actually understands my lifestyle ð¥ð", weightKg: 82, bodyFatPercent: 20, likes: 219, createdAt: new Date(Date.now() - 72 * 3600000).toISOString() },
+    { id: 6, userId: 0, userName: "Emma W.", userAvatar: "â¨", type: "achievement", caption: "Hit my target body fat percentage after 12 weeks! The AI body scan was spot on from day one and the weekly progress photos kept me accountable. Best investment I've made ð¥ð«", bodyFatPercent: 22, likes: 447, createdAt: new Date(Date.now() - 96 * 3600000).toISOString() },
+    { id: 7, userId: 0, userName: "Tariq A.", userAvatar: "ð¥ðï¸", type: "progress", caption: "Calisthenics plan is absolutely brutal but the results speak for themselves. First muscle-up achieved today after 8 weeks of training! The AI progression is perfectly calibrated ð¥ðª", bodyFatPercent: 12, likes: 312, createdAt: new Date(Date.now() - 120 * 3600000).toISOString() },
+    { id: 8, userId: 0, userName: "Yuki N.", userAvatar: "ð¥ð¸", type: "challenge", caption: "Completed the 10K steps daily challenge for 21 days straight! My Fitbit sync with PeakPulse made tracking effortless. Starting the 7-day plank streak next ð¥ð¯", achievement: "21-Day Step Streak", likes: 189, createdAt: new Date(Date.now() - 144 * 3600000).toISOString() },
+    { id: 9, userId: 0, userName: "David O.", userAvatar: "â¡", type: "progress", caption: "Home workout plan â no gym, no excuses. Down 12kg in 14 weeks using just bodyweight and resistance bands. The AI adapted the plan when I told it I only had 30 mins per day. Incredible ð¥ð ", weightKg: 88, bodyFatPercent: 19, likes: 276, createdAt: new Date(Date.now() - 168 * 3600000).toISOString() },
+    { id: 10, userId: 0, userName: "Layla H.", userAvatar: "ð¥ð", type: "achievement", caption: "Vegan meal plan + strength training = best decision ever. 6 months in, strongest I've ever been. The AI meal prep feature saves me 3 hours every Sunday ð¥ð±ð¥ð", achievement: "6-Month Vegan Fitness Journey", likes: 523, createdAt: new Date(Date.now() - 192 * 3600000).toISOString() },
   ];
 }
 
@@ -356,4 +355,88 @@ export async function deleteUserAccount(userId: number): Promise<void> {
   await d.delete(userProfiles).where(eq(userProfiles.userId, userId));
   // Finally delete the user record
   await d.delete(users).where(eq(users.id, userId));
+}
+
+
+// ── Progress Entries (manual weight / body-fat logging) ──────────────────────
+
+export async function saveProgressEntry(
+  userId: number,
+  data: {
+    weightKg?: number | null;
+    bodyFatPercent?: number | null;
+    note?: string | null;
+    source?: string;
+    recordedAt?: Date;
+  },
+) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(progressEntries).values({
+    userId,
+    weightKg: data.weightKg ?? null,
+    bodyFatPercent: data.bodyFatPercent ?? null,
+    note: data.note ?? null,
+    source: data.source ?? "manual",
+    recordedAt: data.recordedAt ?? new Date(),
+  });
+  return result[0].insertId;
+}
+
+export async function getProgressEntries(userId: number, limit = 100) {
+  const db = await getDb();
+  if (!db) return [];
+  return db
+    .select()
+    .from(progressEntries)
+    .where(eq(progressEntries.userId, userId))
+    .orderBy(desc(progressEntries.recordedAt))
+    .limit(limit);
+}
+
+export async function deleteProgressEntry(id: number, userId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db
+    .delete(progressEntries)
+    .where(and(eq(progressEntries.id, id), eq(progressEntries.userId, userId)));
+}
+
+/**
+ * Unified timeline: merges progressCheckins + progressEntries into a single
+ * sorted array for the progress graph.
+ */
+export async function getProgressTimeline(userId: number, limit = 200) {
+  const db = await getDb();
+  if (!db) return [];
+
+  const [checkins, entries] = await Promise.all([
+    db
+      .select({
+        date: progressCheckins.createdAt,
+        weightKg: progressCheckins.weightKg,
+        bodyFatPercent: progressCheckins.bodyFatEstimate,
+      })
+      .from(progressCheckins)
+      .where(eq(progressCheckins.userId, userId))
+      .orderBy(desc(progressCheckins.createdAt))
+      .limit(limit),
+    db
+      .select({
+        date: progressEntries.recordedAt,
+        weightKg: progressEntries.weightKg,
+        bodyFatPercent: progressEntries.bodyFatPercent,
+      })
+      .from(progressEntries)
+      .where(eq(progressEntries.userId, userId))
+      .orderBy(desc(progressEntries.recordedAt))
+      .limit(limit),
+  ]);
+
+  const merged = [
+    ...checkins.map((c) => ({ ...c, source: "checkin" })),
+    ...entries.map((e) => ({ ...e, source: "entry" })),
+  ].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+  return merged;
 }
