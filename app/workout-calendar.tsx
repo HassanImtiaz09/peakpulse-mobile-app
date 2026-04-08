@@ -15,6 +15,7 @@ import * as FileSystem from "expo-file-system/legacy";
 
 import { GOLDEN_WORKOUT, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgrounds";
 import { UI as SF } from "@/constants/ui-colors";
+import { getStreakFreezeStatus, getFrozenDates, calculateStreakWithFreezes, applyStreakFreeze, StreakFreezeStatus } from "@/lib/streak-freeze-service";
 import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
 // Solar Forge colour tokens
 const DAYS_OF_WEEK = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
@@ -48,6 +49,8 @@ export default function WorkoutCalendarScreen() {
   const [localSessions, setLocalSessions] = useState<WorkoutSession[]>([]);
   const [selectedDay, setSelectedDay] = useState<string | null>(null);
   const [detailModalVisible, setDetailModalVisible] = useState(false);
+  const [frozenDates, setFrozenDates] = useState<Set<string>>(new Set());
+  const [freezeStatus, setFreezeStatus] = useState<StreakFreezeStatus | null>(null);
 
   // Fetch from server for authenticated users
   const sessionsQuery = trpc.workoutPlan.getAllSessions.useQuery(undefined, {
@@ -141,11 +144,11 @@ export default function WorkoutCalendarScreen() {
     let startDow = firstDay.getDay() - 1;
     if (startDow < 0) startDow = 6;
 
-    const cells: Array<{ day: number | null; key: string; isToday: boolean; hasWorkout: boolean; workoutCount: number }> = [];
+    const cells: Array<{ day: number | null; key: string; isToday: boolean; hasWorkout: boolean; workoutCount: number; isFrozen: boolean }> = [];
 
     // Empty cells before first day
     for (let i = 0; i < startDow; i++) {
-      cells.push({ day: null, key: `empty-${i}`, isToday: false, hasWorkout: false, workoutCount: 0 });
+      cells.push({ day: null, key: `empty-${i}`, isToday: false, hasWorkout: false, workoutCount: 0, isFrozen: false });
     }
 
     const today = new Date();
@@ -153,11 +156,12 @@ export default function WorkoutCalendarScreen() {
       const dk = `${year}-${String(month + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
       const isToday = today.getFullYear() === year && today.getMonth() === month && today.getDate() === d;
       const sessions = sessionsByDate[dk] ?? [];
-      cells.push({ day: d, key: dk, isToday, hasWorkout: sessions.length > 0, workoutCount: sessions.length });
+      const isFrozen = frozenDates.has(dk);
+      cells.push({ day: d, key: dk, isToday, hasWorkout: sessions.length > 0, workoutCount: sessions.length, isFrozen });
     }
 
     return cells;
-  }, [currentMonth, sessionsByDate]);
+  }, [currentMonth, sessionsByDate, frozenDates]);
 
   function navigateMonth(delta: number) {
     setCurrentMonth(prev => {
@@ -253,7 +257,25 @@ export default function WorkoutCalendarScreen() {
           <StatCard icon="📅" label="This Month" value={String(thisMonthCount)} />
         </View>
 
-        {/* Social Share Button */}
+        {/* Streak Freeze Status */}
+      {freezeStatus && (
+        <View style={{ marginHorizontal: 20, marginBottom: 12, backgroundColor: "rgba(59,130,246,0.08)", borderRadius: 14, padding: 14, borderWidth: 1, borderColor: "rgba(59,130,246,0.2)" }}>
+          <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+            <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+              <Text style={{ fontSize: 18 }}>🧊</Text>
+              <View>
+                <Text style={{ color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 13 }}>Streak Freeze</Text>
+                <Text style={{ color: SF.muted, fontSize: 11 }}>{freezeStatus.freezesUsedThisWeek}/{freezeStatus.weeklyLimit === 999 ? "∞" : freezeStatus.weeklyLimit} used this week</Text>
+              </View>
+            </View>
+            <View style={{ backgroundColor: "rgba(59,130,246,0.15)", borderRadius: 8, paddingHorizontal: 10, paddingVertical: 4 }}>
+              <Text style={{ color: "#60A5FA", fontFamily: "DMSans_700Bold", fontSize: 12 }}>{freezeStatus.freezesRemaining === 999 ? "∞" : freezeStatus.freezesRemaining} left</Text>
+            </View>
+          </View>
+        </View>
+      )}
+
+      {/* Social Share Button */}
         <TouchableOpacity
           style={{ marginHorizontal: 20, marginBottom: 16, backgroundColor: "rgba(245,158,11,0.08)", borderRadius: 14, padding: 14, flexDirection: "row", alignItems: "center", gap: 12, borderWidth: 1, borderColor: SF.border2 }}
           onPress={() => router.push("/share-workout" as any)}
@@ -310,7 +332,7 @@ export default function WorkoutCalendarScreen() {
                   borderRadius: 19,
                   alignItems: "center",
                   justifyContent: "center",
-                  backgroundColor: cell.hasWorkout ? SF.gold : "transparent",
+                  backgroundColor: cell.hasWorkout ? SF.gold : cell.isFrozen ? "rgba(59,130,246,0.25)" : "transparent",
                   borderWidth: cell.isToday && !cell.hasWorkout ? 1.5 : 0,
                   borderColor: cell.isToday ? SF.gold : "transparent",
                 }}>
