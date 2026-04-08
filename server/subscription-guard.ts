@@ -3,24 +3,25 @@
  *
  * Validates that the user's subscription tier allows access to the
  * requested feature, preventing client-side bypass of paywalls.
+ *
+ * Updated to use centralized pricing constants and the new 4-tier
+ * system: Free / Starter / Pro / Elite
  */
 
 import { TRPCError } from "@trpc/server";
+import {
+  type SubscriptionTier,
+  TIER_RANK,
+  normalizeLegacyTier,
+} from "@/constants/pricing";
 
-// ── Tier definitions ──
-
-export type SubscriptionTier = "free" | "basic" | "pro" | "elite";
-
-const TIER_RANK: Record<SubscriptionTier, number> = {
-  free: 0,
-  basic: 1,
-  pro: 2,
-  elite: 3,
-};
+// Re-export for server-side consumers
+export type { SubscriptionTier };
 
 /**
- * Feature-to-minimum-tier mapping.
- * Update this when adding new premium features.
+ * Server-side feature-to-minimum-tier mapping.
+ * This may differ slightly from the client FEATURE_TIERS
+ * because the server enforces stricter access for sensitive operations.
  */
 export const FEATURE_REQUIREMENTS: Record<string, SubscriptionTier> = {
   // Free features
@@ -28,11 +29,14 @@ export const FEATURE_REQUIREMENTS: Record<string, SubscriptionTier> = {
   workout_log: "free",
   meal_log: "free",
 
-  // Basic tier
-  ai_coach_basic: "basic",
-  wearable_sync: "basic",
-  social_feed: "basic",
-  custom_meals: "basic",
+  // Starter tier (formerly "basic")
+  ai_coach_basic: "starter",
+  wearable_sync: "starter",
+  social_feed: "starter",
+  custom_meals: "starter",
+  streak_freeze: "starter",
+  achievements: "starter",
+  weekly_challenges: "starter",
 
   // Pro tier
   ai_plan_generation: "pro",
@@ -40,12 +44,15 @@ export const FEATURE_REQUIREMENTS: Record<string, SubscriptionTier> = {
   advanced_analytics: "pro",
   nutrition_insights: "pro",
   workout_ai_suggestions: "pro",
+  form_checker: "pro",
+  ai_coaching: "pro",
 
   // Elite tier
   unlimited_ai: "elite",
   personal_coaching: "elite",
   priority_support: "elite",
   body_scan_unlimited: "elite",
+  custom_programs: "elite",
 };
 
 /**
@@ -71,10 +78,12 @@ export function tierHasAccess(
  *   assertSubscription(ctx.userTier, 'ai_plan_generation');
  */
 export function assertSubscription(
-  userTier: SubscriptionTier | undefined,
+  userTier: SubscriptionTier | string | undefined,
   feature: string,
 ): void {
-  const tier = userTier ?? "free";
+  // Normalize legacy "basic" tier to "starter"
+  const tier = normalizeLegacyTier(userTier ?? "free");
+
   if (!tierHasAccess(tier, feature)) {
     const required = FEATURE_REQUIREMENTS[feature] ?? "pro";
     throw new TRPCError({
@@ -93,20 +102,24 @@ export function assertSubscription(
  *
  * @param userId - The user ID to verify
  * @param dbTier - The tier stored in the database
- * @returns The verified tier (currently trusts DB, logs warning)
+ * @returns The verified and normalized tier
  */
 export async function verifySubscriptionReceipt(
   userId: string,
-  dbTier: SubscriptionTier,
+  dbTier: string,
 ): Promise<SubscriptionTier> {
+  // Normalize legacy tier names (basic → starter)
+  const normalizedTier = normalizeLegacyTier(dbTier);
+
   // TODO: Implement real receipt validation with Apple/Google APIs
   // For now, trust the database but log for audit trail
-  if (dbTier !== "free") {
+  if (normalizedTier !== "free") {
     console.info(
-      `[SubscriptionGuard] User ${userId} has ${dbTier} tier — receipt validation pending store integration`,
+      `[SubscriptionGuard] User ${userId} has ${normalizedTier} tier — receipt validation pending store integration`,
     );
   }
-  return dbTier;
+
+  return normalizedTier;
 }
 
 /**
@@ -114,7 +127,9 @@ export async function verifySubscriptionReceipt(
  */
 export function requireSubscription(feature: string) {
   return (req: any, res: any, next: any) => {
-    const userTier: SubscriptionTier = req.userTier ?? "free";
+    // Normalize legacy tier names
+    const userTier = normalizeLegacyTier(req.userTier ?? "free");
+
     if (!tierHasAccess(userTier, feature)) {
       const required = FEATURE_REQUIREMENTS[feature] ?? "pro";
       return res.status(403).json({
@@ -126,3 +141,4 @@ export function requireSubscription(feature: string) {
     next();
   };
 }
+
