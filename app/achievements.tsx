@@ -18,6 +18,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { GOLDEN_SOCIAL, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgrounds";
 import { C } from "@/constants/ui-colors";
 import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
+import { getAllAchievementProgress, getAndClearNewlyUnlocked, checkAndUnlockAchievements } from "@/lib/achievement-service";
 
 // ── Types ────────────────────────────────────────────────────────────
 type BadgeCategory = "all" | "fitness" | "nutrition" | "social" | "challenges";
@@ -190,6 +191,50 @@ export default function AchievementsScreen() {
       </TouchableOpacity>
     );
   };
+
+  // ── Real Achievement Service Integration ──
+  const [realAchievements, setRealAchievements] = useState<any[]>([]);
+  const [newlyUnlocked, setNewlyUnlocked] = useState<string[]>([]);
+
+  useEffect(() => {
+    async function loadRealAchievements() {
+      try {
+        // Check for any new unlocks based on current user stats
+        await checkAndUnlockAchievements({
+          totalWorkouts: 0, // Will be populated from actual data
+          totalMinutes: 0,
+          currentStreak: 0,
+          longestStreak: 0,
+          totalMealsLogged: 0,
+          totalBodyScans: 0,
+          totalSharePosts: 0,
+          challengesCompleted: 0,
+          challengesWon: 0,
+          friendsReferred: 0,
+          workoutTypesUsed: 0,
+          perfectWeeks: 0,
+          daysActive: 0,
+          totalCaloriesBurned: 0,
+          earlyMorningWorkouts: 0,
+          weekendWorkouts: 0,
+        });
+
+        // Load all achievement progress
+        const progress = await getAllAchievementProgress();
+        setRealAchievements(progress);
+
+        // Check for newly unlocked badges to show toast
+        const newUnlocks = await getAndClearNewlyUnlocked();
+        if (newUnlocks.length > 0) {
+          setNewlyUnlocked(newUnlocks.map(u => u.id));
+        }
+      } catch (err) {
+        console.error("[Achievements] Error loading real achievements:", err);
+      }
+    }
+    loadRealAchievements();
+  }, []);
+
 
   return (
     <ImageBackground source={{ uri: GOLDEN_SOCIAL }} style={{ flex: 1 }} resizeMode="cover">
