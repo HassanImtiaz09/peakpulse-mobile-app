@@ -36,6 +36,9 @@ import { scheduleAllAINotifications } from "@/lib/ai-notification-scheduler";
 import { evaluateAndScheduleSmartReminders } from "@/lib/smart-reminders";
 import { defineBackgroundHealthSyncTask, registerBackgroundHealthSync } from "@/lib/background-health-sync";
 import { initWeeklyDigest } from "@/lib/weekly-health-digest";
+import { checkComebackOnAppOpen } from "@/lib/comeback-notifications";
+import { autoFreezeIfNeeded } from "@/lib/streak-freeze-service";
+import { getWeeklyChallenges } from "@/lib/weekly-challenge-service";
 
 import { FavoritesProvider } from "@/lib/favorites-context";
 import { UserProfileProvider } from "@/lib/user-profile-context";
@@ -269,6 +272,41 @@ export default function RootLayout() {
     return () => clearTimeout(timer);
   }, [fontsLoaded]);
 
+  // ── Retention System: comeback notifications + auto-freeze + weekly challenges ──
+  useEffect(() => {
+    if (!fontsLoaded || Platform.OS === "web") return;
+    const timer = setTimeout(async () => {
+      try {
+        // Auto-freeze yesterday if user missed a workout (protects streaks >= 3)
+        await autoFreezeIfNeeded();
+
+        // Check comeback status and schedule escalating notifications
+        const userName = "there"; // Will be replaced with actual user name from profile
+        const sessions = await AsyncStorage.getItem("@workout_sessions_local");
+        const parsed = sessions ? JSON.parse(sessions) : [];
+        const lastWorkout = parsed.length > 0
+          ? new Date(parsed[parsed.length - 1].completedAt).toISOString().split("T")[0]
+          : null;
+
+        const comebackResult = await checkComebackOnAppOpen(userName, 0, lastWorkout);
+        if (comebackResult.shouldShowModal) {
+          // Store comeback modal data for home screen to display
+          await AsyncStorage.setItem("@peakpulse_comeback_modal", JSON.stringify({
+            show: true,
+            daysInactive: comebackResult.daysInactive,
+            message: comebackResult.message,
+          }));
+        }
+
+        // Pre-generate weekly challenges so they're ready when user opens challenges tab
+        await getWeeklyChallenges();
+      } catch (err) {
+        console.error("[Retention] Init error:", err);
+      }
+    }, 7000);
+    return () => clearTimeout(timer);
+  }, [fontsLoaded]);
+
 
 
   if (!fontsLoaded) return null;
@@ -344,3 +382,4 @@ export default function RootLayout() {
     </ThemeProvider>
   );
 }
+
