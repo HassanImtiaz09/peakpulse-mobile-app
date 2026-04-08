@@ -48,6 +48,7 @@ import { getTotalUnreadCount } from "@/lib/chat-service";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
 import { ScreenErrorBoundary } from "@/components/error-boundary";
+import { getWeeklyChallenges, getChallengeStats, WeeklyChallenge } from "@/lib/weekly-challenge-service";
 
 const HERO_BG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/golden-challenge-bg-2DXBpSZwN3LCroCHSRyD4K.webp";
 
@@ -245,6 +246,25 @@ export default function ChallengeScreen() {
   };
 
   // ── Main Render ───────────────────────────────────────────────
+
+  // ── Weekly Auto-Challenges Integration ──
+  const [weeklyChallenges, setWeeklyChallenges] = useState<WeeklyChallenge[]>([]);
+  const [challengeStats, setChallengeStats] = useState<{ totalCompleted: number; totalXp: number; currentWeekProgress: number } | null>(null);
+
+  useEffect(() => {
+    async function loadWeeklyChallenges() {
+      try {
+        const challenges = await getWeeklyChallenges();
+        setWeeklyChallenges(challenges);
+        const stats = await getChallengeStats();
+        setChallengeStats(stats);
+      } catch (err) {
+        console.error("[Challenge] Error loading weekly challenges:", err);
+      }
+    }
+    loadWeeklyChallenges();
+  }, []);
+
 
   return (
     <View style={{ flex: 1, backgroundColor: "#0A0E14" }}>
