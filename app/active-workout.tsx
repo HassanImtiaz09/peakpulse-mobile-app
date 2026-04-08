@@ -69,6 +69,7 @@ import { useAiLimit } from "@/components/ai-limit-modal";
 import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
 import { getExerciseDbGifUrl } from "@/lib/exercisedb-api";
 import { ScreenErrorBoundary } from "@/components/error-boundary";
+import { FocusMode } from "@/components/focus-mode";
 
 const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get("window");
 
@@ -553,6 +554,15 @@ export default function ActiveWorkoutScreen() {
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const restRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const [restSettings, setRestSettings] = useState<RestTimerSettings>(DEFAULT_REST_TIMERS);
+  const [focusModeVisible, setFocusModeVisible] = useState(false);
+  const [focusModePreference, setFocusModePreference] = useState(false);
+
+  // Load focus mode preference
+  useEffect(() => {
+    AsyncStorage.getItem("@peakpulse_focus_mode").then((val) => {
+      if (val === "true") setFocusModePreference(true);
+    }).catch(() => {});
+  }, []);
 
   const logSession = trpc.workoutPlan.logSession.useMutation({
     onSuccess: () => {
@@ -983,6 +993,30 @@ export default function ActiveWorkoutScreen() {
             {exercises.length} exercises
           </Text>
         </View>
+        {/* Focus Mode toggle */}
+        <TouchableOpacity
+          onPress={() => {
+            setFocusModeVisible(true);
+            if (Platform.OS !== "web")
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+          }}
+          style={{
+            width: 36,
+            height: 36,
+            borderRadius: 12,
+            backgroundColor: focusModePreference ? "rgba(245,158,11,0.15)" : SF.surface,
+            alignItems: "center",
+            justifyContent: "center",
+            borderWidth: 1,
+            borderColor: focusModePreference ? SF.gold : SF.border,
+          }}
+        >
+          <MaterialIcons
+            name="center-focus-strong"
+            size={18}
+            color={focusModePreference ? SF.gold : SF.muted}
+          />
+        </TouchableOpacity>
         <View
           style={{
             backgroundColor: "rgba(245,158,11,0.10)",
@@ -1783,6 +1817,27 @@ export default function ActiveWorkoutScreen() {
           completedSets={completedSets}
         />
       )}
+
+      {/* Focus Mode */}
+      <FocusMode
+        visible={focusModeVisible}
+        exercises={exercises}
+        currentExercise={currentExercise}
+        setLogs={setLogs}
+        elapsedSeconds={elapsedSeconds}
+        onClose={() => {
+          setFocusModeVisible(false);
+          // Save preference
+          AsyncStorage.setItem("@peakpulse_focus_mode", "true").catch(() => {});
+          setFocusModePreference(true);
+        }}
+        onSetCurrentExercise={setCurrentExercise}
+        onCompleteSet={completeSet}
+        onUpdateSetLog={updateSetLog}
+        onFinishWorkout={finishWorkout}
+        getSetLogs={getSetLogs}
+        formatTime={formatTime}
+      />
 
       {/* Voice Coach Timer Modal */}
       {exercise && (

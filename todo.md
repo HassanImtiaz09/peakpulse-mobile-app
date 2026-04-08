@@ -3226,3 +3226,17 @@
 - [x] Write 26 unit tests for energy check-in logic (all passing)
 - [x] Verify TypeScript compiles (0 errors) and full test suite passes (81 files, 2237 tests, 0 failures)
 - [x] Save checkpoint
+
+## Round 97 Step 2: Focus Mode for Active Workouts
+- [x] Add focus mode toggle button (center-focus-strong icon) to active-workout.tsx header
+- [x] Create FocusMode component as full-screen modal (components/focus-mode.tsx)
+- [x] Show exercise name (32pt Bebas Neue), sets/reps, notes, and set tracker with weight/reps/done
+- [x] Add Previous/Next navigation buttons with progress dots (tappable)
+- [x] Add swipe left/right gesture for exercise navigation
+- [x] Auto-advance to next exercise when all sets completed (1.5s delay with haptic)
+- [x] Persist focus mode preference in AsyncStorage (@peakpulse_focus_mode)
+- [x] Show "Finish Workout" button on last exercise, motivational messages throughout
+- [x] Extract pure logic to lib/focus-mode-logic.ts for testability
+- [x] Write 23 unit tests for focus mode logic (all passing)
+- [x] Verify TypeScript compiles (0 errors) and full test suite passes (82 files, 2260 tests, 0 failures)
+- [x] Save checkpoint
