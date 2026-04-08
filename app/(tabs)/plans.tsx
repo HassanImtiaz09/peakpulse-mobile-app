@@ -178,6 +178,23 @@ function PlansScreenContent() {
 
 
   const [completedDays, setCompletedDays] = useState<Record<string, boolean>>({});
+  const [showFullWeek, setShowFullWeek] = useState(false);
+
+  // Load progressive disclosure preference
+  React.useEffect(() => {
+    AsyncStorage.getItem("@peakpulse_show_full_week").then(raw => {
+      if (raw === "true") setShowFullWeek(true);
+    });
+  }, []);
+
+  const toggleFullWeek = React.useCallback(() => {
+    setShowFullWeek(prev => {
+      const next = !prev;
+      AsyncStorage.setItem("@peakpulse_show_full_week", String(next));
+      if (Platform.OS !== "web") Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      return next;
+    });
+  }, []);
 
   React.useEffect(() => {
     AsyncStorage.getItem("@workout_completed_days").then(raw => {
@@ -611,25 +628,98 @@ function PlansScreenContent() {
                   </>
                 )}
 
-                {/* ── REST OF THE WEEK ── */}
+                {/* ── REST OF THE WEEK (Progressive Disclosure) ── */}
                 {otherWorkoutDays.length > 0 && (
                   <>
-                    <View style={{ flexDirection: "row", alignItems: "center", gap: 8, marginTop: 8, marginBottom: 10 }}>
-                      <MaterialIcons name="date-range" size={16} color={MUTED} />
-                      <Text style={{ color: MUTED, fontFamily: "DMSans_700Bold", fontSize: 13 }}>Rest of the Week</Text>
-                    </View>
-                    {otherWorkoutDays.map((day: any, i: number) => (
-                      <WorkoutDayCard
-                        key={i}
-                        day={day}
-                        isCompleted={!!completedDays[day.day]}
-                        onToggleComplete={() => toggleDayComplete(day.day)}
-                        onPress={() => {
-                          if (!day.isRest) router.push({ pathname: "/energy-checkin", params: { dayData: JSON.stringify(day) } } as any);
-                        }}
-                        onExerciseSwap={handleExerciseSwap}
-                      />
-                    ))}
+                    <TouchableOpacity
+                      style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginTop: 8, marginBottom: 10, paddingVertical: 6 }}
+                      onPress={toggleFullWeek}
+                    >
+                      <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+                        <MaterialIcons name="date-range" size={16} color={MUTED} />
+                        <Text style={{ color: MUTED, fontFamily: "DMSans_700Bold", fontSize: 13 }}>Rest of the Week</Text>
+                        <View style={{ backgroundColor: GOLD_DIM, borderRadius: 8, paddingHorizontal: 6, paddingVertical: 2 }}>
+                          <Text style={{ color: GOLD, fontSize: 10, fontFamily: "SpaceMono_700Bold" }}>{otherWorkoutDays.length}</Text>
+                        </View>
+                      </View>
+                      <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
+                        <Text style={{ color: MUTED, fontSize: 11 }}>{showFullWeek ? "Collapse" : "Show all"}</Text>
+                        <MaterialIcons name={showFullWeek ? "expand-less" : "expand-more"} size={18} color={MUTED} />
+                      </View>
+                    </TouchableOpacity>
+
+                    {showFullWeek ? (
+                      /* Full expanded view — all WorkoutDayCards */
+                      otherWorkoutDays.map((day: any, i: number) => (
+                        <WorkoutDayCard
+                          key={i}
+                          day={day}
+                          isCompleted={!!completedDays[day.day]}
+                          onToggleComplete={() => toggleDayComplete(day.day)}
+                          onPress={() => {
+                            if (!day.isRest) router.push({ pathname: "/energy-checkin", params: { dayData: JSON.stringify(day) } } as any);
+                          }}
+                          onExerciseSwap={handleExerciseSwap}
+                        />
+                      ))
+                    ) : (
+                      /* Compact summary rows — minimal cognitive load */
+                      <View style={{ backgroundColor: SURFACE, borderRadius: 14, borderWidth: 1, borderColor: "rgba(30,41,59,0.6)", overflow: "hidden" }}>
+                        {otherWorkoutDays.map((day: any, i: number) => {
+                          const isDayCompleted = !!completedDays[day.day];
+                          return (
+                            <TouchableOpacity
+                              key={i}
+                              style={{
+                                flexDirection: "row", alignItems: "center", justifyContent: "space-between",
+                                paddingHorizontal: 14, paddingVertical: 12,
+                                borderBottomWidth: i < otherWorkoutDays.length - 1 ? 1 : 0,
+                                borderBottomColor: "rgba(30,41,59,0.4)",
+                                backgroundColor: isDayCompleted ? "rgba(34,197,94,0.06)" : "transparent",
+                              }}
+                              onPress={() => {
+                                if (day.isRest) return;
+                                router.push({ pathname: "/energy-checkin", params: { dayData: JSON.stringify(day) } } as any);
+                              }}
+                            >
+                              <View style={{ flexDirection: "row", alignItems: "center", gap: 10, flex: 1 }}>
+                                <View style={{
+                                  width: 28, height: 28, borderRadius: 8,
+                                  backgroundColor: isDayCompleted ? "#22C55E" : day.isRest ? "rgba(253,230,138,0.1)" : GOLD_DIM,
+                                  alignItems: "center", justifyContent: "center",
+                                }}>
+                                  <MaterialIcons
+                                    name={isDayCompleted ? "check" : day.isRest ? "bedtime" : "fitness-center"}
+                                    size={13}
+                                    color={isDayCompleted ? "#fff" : day.isRest ? CREAM : GOLD}
+                                  />
+                                </View>
+                                <View style={{ flex: 1 }}>
+                                  <Text style={{
+                                    color: isDayCompleted ? "#22C55E" : FG,
+                                    fontFamily: "DMSans_600SemiBold", fontSize: 13,
+                                    textDecorationLine: isDayCompleted ? "line-through" : "none",
+                                  }}>
+                                    {day.day}
+                                  </Text>
+                                  <Text style={{ color: isDayCompleted ? "#4ADE80" : MUTED, fontSize: 11 }}>
+                                    {isDayCompleted ? "Completed" : day.focus ?? (day.isRest ? "Rest" : "Workout")}
+                                  </Text>
+                                </View>
+                              </View>
+                              <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+                                {!day.isRest && (
+                                  <Text style={{ color: MUTED, fontSize: 11 }}>{day.exercises?.length ?? 0} ex</Text>
+                                )}
+                                {!day.isRest && (
+                                  <MaterialIcons name="chevron-right" size={16} color={MUTED} />
+                                )}
+                              </View>
+                            </TouchableOpacity>
+                          );
+                        })}
+                      </View>
+                    )}
                   </>
                 )}
 

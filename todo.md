@@ -3240,3 +3240,16 @@
 - [x] Write 23 unit tests for focus mode logic (all passing)
 - [x] Verify TypeScript compiles (0 errors) and full test suite passes (82 files, 2260 tests, 0 failures)
 - [x] Save checkpoint
+
+## Round 97 Step 3: Progressive Disclosure in Plans Tab
+- [x] Identify today's workout day from the 7-day plan (already existed)
+- [x] Show today's workout card expanded and prominent at the top (already existed)
+- [x] Collapse remaining days behind a "Show all / Collapse" toggle with day count badge
+- [x] Compact summary rows when collapsed: day name, focus, exercise count, completion status, icons
+- [x] Full WorkoutDayCards when expanded (existing behavior preserved)
+- [x] Compact rows tappable to start workout via energy check-in
+- [x] Persist "show full week" preference in AsyncStorage (@peakpulse_show_full_week)
+- [x] Haptic feedback on toggle (Light impact)
+- [x] Write 17 unit tests for progressive disclosure logic (all passing)
+- [x] Verify TypeScript compiles (0 errors) and full test suite passes (83 files, 2277 tests, 0 failures)
+- [x] Save checkpoint
