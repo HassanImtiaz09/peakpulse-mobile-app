@@ -139,7 +139,7 @@ export default function ProgressGraph({ targetBodyFat }: Props) {
   if (isLoading) {
     return (
       <View style={styles.card}>
-        <ActivityIndicator color={UI.lime400} />
+        <ActivityIndicator color={UI.success} />
       </View>
     );
   }

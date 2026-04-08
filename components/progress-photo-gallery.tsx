@@ -25,7 +25,7 @@ import {
   Modal,
   Alert,
 } from "react-native";
-import * as FileSystem from "expo-file-system";
+import * as FileSystem from "expo-file-system/legacy";
 import * as ImagePicker from "expo-image-picker";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { UI, SF } from "@/constants/ui-colors";
@@ -212,15 +212,18 @@ export default function ProgressPhotoGallery({
       // 2. Upload to server in background
       if (isAuthenticated) {
         try {
+          const base64 = await FileSystem.readAsStringAsync(asset.uri, {
+            encoding: FileSystem.EncodingType.Base64,
+          });
           const uploadResult = await uploadMutation.mutateAsync({
-            photoUri: asset.uri,
+            photoBase64: base64,
           });
 
           // 3. Request AI analysis
           if (uploadResult && startBodyFat && targetBodyFat) {
             const analysis = await analyzeMutation.mutateAsync({
-              photoUrl: uploadResult.url,
-              startBodyFat,
+              currentPhotoUrl: uploadResult.photoUrl,
+              baselineBodyFat: startBodyFat,
               targetBodyFat,
             });
 
@@ -228,7 +231,7 @@ export default function ProgressPhotoGallery({
             const updated = await readManifest();
             const idx = updated.findIndex((p) => p.id === localPhoto.id);
             if (idx >= 0 && analysis) {
-              updated[idx].remoteUrl = uploadResult.url;
+              updated[idx].remoteUrl = uploadResult.photoUrl;
               updated[idx].bodyFatPercent = analysis.estimatedBodyFat;
               updated[idx].progressPercent = analysis.progressPercent;
               await writeManifest(updated);
@@ -313,7 +316,7 @@ export default function ProgressPhotoGallery({
   if (loading) {
     return (
       <View style={styles.emptyContainer}>
-        <ActivityIndicator color={UI.lime400} />
+        <ActivityIndicator color={UI.success} />
       </View>
     );
   }
@@ -355,7 +358,7 @@ export default function ProgressPhotoGallery({
               <RefreshControl
                 refreshing={refreshing}
                 onRefresh={handleRefresh}
-                tintColor={UI.lime400}
+                tintColor={UI.success}
               />
             }
           />
@@ -367,10 +370,10 @@ export default function ProgressPhotoGallery({
             disabled={uploading}
           >
             {uploading ? (
-              <ActivityIndicator color={SF.darkBg} size="small" />
+              <ActivityIndicator color={SF.bg} size="small" />
             ) : (
               <>
-                <MaterialIcons name="add-a-photo" size={18} color={SF.darkBg} />
+                <MaterialIcons name="add-a-photo" size={18} color={SF.bg} />
                 <Text style={styles.addBtnText}>Add Progress Photo</Text>
               </>
             )}
@@ -471,7 +474,7 @@ const styles = StyleSheet.create({
   overallBadgeText: {
     fontFamily: "DMSans_600SemiBold",
     fontSize: 12,
-    color: UI.lime400,
+    color: UI.success,
   },
   row: { gap: GAP, marginBottom: GAP },
   thumbWrap: { width: THUMB_SIZE, position: "relative" },
@@ -485,7 +488,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 6,
     right: 6,
-    backgroundColor: UI.lime400,
+    backgroundColor: UI.success,
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 8,
@@ -493,7 +496,7 @@ const styles = StyleSheet.create({
   progressBadgeText: {
     fontFamily: "DMSans_700Bold",
     fontSize: 10,
-    color: SF.darkBg,
+    color: SF.bg,
   },
   dateLabel: {
     fontFamily: "DMSans_400Regular",
@@ -521,7 +524,7 @@ const styles = StyleSheet.create({
     maxWidth: 240,
   },
   emptyBtn: {
-    backgroundColor: UI.lime400,
+    backgroundColor: UI.success,
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderRadius: 12,
@@ -530,14 +533,14 @@ const styles = StyleSheet.create({
   emptyBtnText: {
     fontFamily: "DMSans_700Bold",
     fontSize: 14,
-    color: SF.darkBg,
+    color: SF.bg,
   },
   addBtn: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
     gap: 8,
-    backgroundColor: UI.lime400,
+    backgroundColor: UI.success,
     paddingVertical: 12,
     borderRadius: 14,
     marginTop: 12,
@@ -545,7 +548,7 @@ const styles = StyleSheet.create({
   addBtnText: {
     fontFamily: "DMSans_700Bold",
     fontSize: 14,
-    color: SF.darkBg,
+    color: SF.bg,
   },
   // Modal
   modalBg: {
@@ -589,12 +592,12 @@ const styles = StyleSheet.create({
   modalProgressFill: {
     height: 5,
     borderRadius: 3,
-    backgroundColor: UI.lime400,
+    backgroundColor: UI.success,
   },
   modalProgressText: {
     fontFamily: "DMSans_600SemiBold",
     fontSize: 12,
-    color: UI.lime400,
+    color: UI.success,
   },
   modalNote: {
     fontFamily: "DMSans_400Regular",

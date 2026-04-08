@@ -196,7 +196,7 @@ const styles = StyleSheet.create({
     height: 140,
     borderRadius: 70,
     borderWidth: 3,
-    borderColor: UI.lime400,
+    borderColor: UI.success,
     borderTopColor: "transparent",
   },
   iconCircle: {
@@ -237,7 +237,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   dotActive: {
-    backgroundColor: UI.lime400,
+    backgroundColor: UI.success,
   },
   dotInactive: {
     backgroundColor: "rgba(255,255,255,0.15)",
@@ -253,7 +253,7 @@ const styles = StyleSheet.create({
   progressFill: {
     height: 4,
     borderRadius: 2,
-    backgroundColor: UI.lime400,
+    backgroundColor: UI.success,
   },
   percentText: {
     fontFamily: "DMSans_600SemiBold",

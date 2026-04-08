@@ -116,7 +116,7 @@ export default function TransformationCard({ hidden }: Props) {
           accessibilityRole="button"
           accessibilityLabel="Upload progress photo"
         >
-          <MaterialIcons name="add-a-photo" size={18} color={SF.darkBg} />
+          <MaterialIcons name="add-a-photo" size={18} color={SF.bg} />
           <Text style={styles.ctaPrimaryText}>Upload Progress Photo</Text>
         </TouchableOpacity>
 
@@ -126,7 +126,7 @@ export default function TransformationCard({ hidden }: Props) {
           accessibilityRole="button"
           accessibilityLabel="View progress gallery"
         >
-          <MaterialIcons name="photo-library" size={18} color={UI.lime400} />
+          <MaterialIcons name="photo-library" size={18} color={UI.success} />
         </TouchableOpacity>
       </View>
     </View>
@@ -154,7 +154,7 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
   },
   badge: {
-    backgroundColor: UI.lime400,
+    backgroundColor: UI.success,
     paddingHorizontal: 10,
     paddingVertical: 3,
     borderRadius: 12,
@@ -162,7 +162,7 @@ const styles = StyleSheet.create({
   badgeText: {
     fontFamily: "DMSans_700Bold",
     fontSize: 13,
-    color: SF.darkBg,
+    color: SF.bg,
   },
   image: {
     width: CARD_W - 32,
@@ -222,7 +222,7 @@ const styles = StyleSheet.create({
   progressFill: {
     height: 6,
     borderRadius: 3,
-    backgroundColor: UI.lime400,
+    backgroundColor: UI.success,
   },
   ctaRow: {
     flexDirection: "row",
@@ -234,14 +234,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     gap: 8,
-    backgroundColor: UI.lime400,
+    backgroundColor: UI.success,
     paddingVertical: 12,
     borderRadius: 14,
   },
   ctaPrimaryText: {
     fontFamily: "DMSans_700Bold",
     fontSize: 14,
-    color: SF.darkBg,
+    color: SF.bg,
   },
   ctaSecondary: {
     width: 48,

@@ -18,6 +18,7 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 import Svg, { Path, Circle, Line, Rect, G } from "react-native-svg";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { UI as SF } from "@/constants/ui-colors";
@@ -179,6 +180,12 @@ export default function ProgressDashboard() {
   const { data: serverGoal } = trpc.goals.active.useQuery(undefined, { enabled: isAuthenticated });
 
   // Load local history as fallback
+  const [localHistory, setLocalHistory] = React.useState<any[]>([]);
+  React.useEffect(() => {
+    AsyncStorage.getItem("@progress_checkins").then(raw => {
+      if (raw) setLocalHistory(JSON.parse(raw));
+    });
+  }, []);
   
 
   // Merge data â prefer server, fall back to local

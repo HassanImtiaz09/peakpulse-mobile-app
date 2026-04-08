@@ -3173,3 +3173,12 @@
 - [x] Add haptic feedback to Quick Insights carousel (Light impact on page change, Light on card/CTA tap)
 - [x] Verify TypeScript compiles (0 errors)
 - [x] Save checkpoint
+
+## Round 94: Fix post-merge TypeScript errors
+- [x] Fixed progress-photo-gallery.tsx FileSystem import (expo-file-system → expo-file-system/legacy)
+- [x] Fixed progress-photo-gallery.tsx upload mutation: photoUri → photoBase64 (with base64 file read)
+- [x] Fixed progress-photo-gallery.tsx analyze mutation: photoUrl → currentPhotoUrl, startBodyFat → baselineBodyFat
+- [x] Fixed progress-photo-gallery.tsx upload result: .url → .photoUrl (matching server return type)
+- [x] Verified TypeScript compiles (0 errors via tsc --noEmit)
+- [x] Verified 2311 unit tests passing (36 pre-existing failures from outdated test files, unchanged)
+- [x] Save checkpoint

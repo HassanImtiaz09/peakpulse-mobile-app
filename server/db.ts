@@ -3,7 +3,7 @@ import { drizzle } from "drizzle-orm/mysql2";
 import {
   InsertUser, users, userProfiles, InsertUserProfile,
   bodyScans, fitnessPlans, progressPhotos, mealLogs, workoutSessions, aiUsage,
-  userGoals, progressCheckins,, progressEntries, progressCheckins} from "../drizzle/schema";
+  userGoals, progressCheckins, progressEntries} from "../drizzle/schema";
 import { ENV } from "./_core/env";
 
 let _db: ReturnType<typeof drizzle> | null = null;

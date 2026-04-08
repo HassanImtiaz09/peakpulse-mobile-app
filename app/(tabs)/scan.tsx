@@ -639,6 +639,7 @@ function ScanScreenContent() {
 
         {/* ââ STEP: Analyzing ââ */}
         {step === "analyzing" && (
+          <>
           <ScanLoadingOverlay phase="analyzing" />
           <View style={{ paddingHorizontal: 20, alignItems: "center", paddingTop: 60 }}>
             <View style={{ width: 100, height: 100, borderRadius: 50, backgroundColor: ICE_DIM, alignItems: "center", justifyContent: "center", marginBottom: 24 }}>
@@ -661,9 +662,10 @@ function ScanScreenContent() {
               ))}
             </View>
           </View>
+          </>
         )}
 
-        {/* ââ STEP: Results ââ */}
+        {/* —— STEP: Results —— */}
         {step === "results" && scan && (
           <View style={{ paddingHorizontal: 20 }}>
             {/* Body Fat Result */}
@@ -1091,6 +1093,7 @@ function ScanScreenContent() {
 
         {/* ââ STEP: Generating ââ */}
         {step === "generating" && (
+          <>
           <ScanLoadingOverlay phase="generating" />
           <View style={{ paddingHorizontal: 20, alignItems: "center", paddingTop: 60 }}>
             <View style={{ width: 100, height: 100, borderRadius: 50, backgroundColor: ICE_DIM, alignItems: "center", justifyContent: "center", marginBottom: 24 }}>
@@ -1113,6 +1116,7 @@ function ScanScreenContent() {
               ))}
             </View>
           </View>
+          </>
         )}
       </ReAnimated.ScrollView>
 
