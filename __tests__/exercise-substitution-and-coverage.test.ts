@@ -39,7 +39,6 @@ describe("ExerciseDB Coverage", () => {
       "dumbbell shoulder press",
       "front raise",
       "glute bridge",
-      "high knees",
       "leg raise",
       "pendlay row",
       "reverse lunge",

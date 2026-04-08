@@ -3,7 +3,7 @@ import * as fs from "fs";
 
 describe("Round 50 — Meal Photo Recognition (AI Auto-Log)", () => {
   it("server/routers.ts has enhanced mealLog.analyzePhoto endpoint with health score and suggestion", () => {
-    const content = fs.readFileSync("/home/ubuntu/peakpulse-mobile/server/routers.ts", "utf-8");
+    const content = fs.readFileSync("/home/ubuntu/peakpulse-mobile/server/nutrition.router.ts", "utf-8");
     // Enhanced prompt with health score and suggestion
     expect(content).toContain("healthScore");
     expect(content).toContain("suggestion");
@@ -34,7 +34,7 @@ describe("Round 50 — Meal Photo Recognition (AI Auto-Log)", () => {
   });
 
   it("server endpoint has macro recalculation validation", () => {
-    const content = fs.readFileSync("/home/ubuntu/peakpulse-mobile/server/routers.ts", "utf-8");
+    const content = fs.readFileSync("/home/ubuntu/peakpulse-mobile/server/nutrition.router.ts", "utf-8");
     // Server-side macro recalculation
     expect(content).toContain("macro recalculation");
     expect(content).toContain("p * 4 + c * 4 + f * 9");

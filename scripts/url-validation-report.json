@@ -1,0 +1,1004 @@
+{
+  "timestamp": "2026-04-08T10:50:12.417Z",
+  "totalUrls": 166,
+  "passed": 0,
+  "failed": 166,
+  "failures": [
+    {
+      "exerciseName": "Bench Press",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-barbell-bench-press-front.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Bench Press",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-barbell-bench-press-side_KciuhbB.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Push Up",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Bodyweight-push-up-front.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Push Up",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Bodyweight-push-up-side.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Dumbbell Fly",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-dumbbell-chest-fly-front.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Dumbbell Fly",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-dumbbell-chest-fly-side.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Incline Bench Press",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Barbell-barbell-incline-bench-press-front.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Incline Bench Press",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Barbell-barbell-incline-bench-press-side.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Incline Dumbbell Press",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-dumbbell-incline-bench-press-front_q2q0T12.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Incline Dumbbell Press",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-dumbbell-incline-bench-press-side_2HBfFN3.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Decline Bench Press",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-dumbbell-decline-bench-press-front.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Decline Bench Press",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-dumbbell-decline-bench-press-side.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Cable Fly",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-cable-pec-fly-front.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Cable Fly",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-cable-pec-fly-side.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Cable Crossover",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-cable-chestpress-front.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Cable Crossover",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-cable-chestpress-side.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Dip",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Dumbbells-dumbbell-weighted-dip-front.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Dip",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Dumbbells-dumbbell-weighted-dip-side.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Pull Up",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-bodyweight-pullup-front.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Pull Up",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-bodyweight-pullup-side.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Chin Up",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-bodyweight-chinup-front.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Chin Up",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-bodyweight-chinup-side.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Lat Pulldown",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-machine-pulldown-front.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Lat Pulldown",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-machine-pulldown-side.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Bent Over Row",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-barbell-bent-over-row-front.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Bent Over Row",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-barbell-bent-over-row-side.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Dumbbell Row",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Dumbbells-dumbbell-row-bilateral-front.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Dumbbell Row",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Dumbbells-dumbbell-row-bilateral-side.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Seated Cable Row",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-machine-seated-cable-row-front.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Seated Cable Row",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-machine-seated-cable-row-side.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Deadlift",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Barbell-barbell-deadlift-front.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Deadlift",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Barbell-barbell-deadlift-side.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "T-Bar Row",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Barbell-landmine-t-bar-rows-front.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "T-Bar Row",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Barbell-landmine-t-bar-rows-side.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Pendlay Row",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-dumbbell-pendlay-row-front.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Pendlay Row",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-dumbbell-pendlay-row-side.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Overhead Press",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Barbell-barbell-overhead-press-front.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Overhead Press",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Barbell-barbell-overhead-press-side.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Dumbbell Shoulder Press",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Dumbbells-dumbbell-overhead-press-front.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Dumbbell Shoulder Press",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Dumbbells-dumbbell-overhead-press-side.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Lateral Raise",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Dumbbells-dumbbell-lateral-raise-front.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Lateral Raise",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Dumbbells-dumbbell-lateral-raise-side.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Front Raise",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Dumbbells-dumbbell-front-raise-front.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Front Raise",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Dumbbells-dumbbell-front-raise-side.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Face Pull",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Machine-machine-face-pulls-front.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Face Pull",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Machine-machine-face-pulls-side.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Rear Delt Fly",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Dumbbells-dumbbell-rear-delt-fly-front.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Rear Delt Fly",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Dumbbells-dumbbell-rear-delt-fly-side.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Arnold Press",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Dumbbells-dumbbell-arnold-press-front.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Arnold Press",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Dumbbells-dumbbell-arnold-press-side.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Upright Row",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Kettlebells-kettlebell-upright-row-front.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Upright Row",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Kettlebells-kettlebell-upright-row-side.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Shrug",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Dumbbells-dumbbell-shrug-front.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Shrug",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Dumbbells-dumbbell-shrug-side.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Bicep Curl",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Dumbbells-dumbbell-curl-front.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Bicep Curl",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Dumbbells-dumbbell-curl-side.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Barbell Curl",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Barbell-barbell-curl-front.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Barbell Curl",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Barbell-barbell-curl-side.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Hammer Curl",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Dumbbells-dumbbell-hammer-curl-front.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Hammer Curl",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Dumbbells-dumbbell-hammer-curl-side.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Preacher Curl",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Dumbbells-dumbbell-preacher-curl-front.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Preacher Curl",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Dumbbells-dumbbell-preacher-curl-side.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Concentration Curl",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-dumbbell-concentration-curl-front.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Concentration Curl",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-dumbbell-concentration-curl-side.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Tricep Pushdown",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Cables-cable-push-down-front.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Tricep Pushdown",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Cables-cable-push-down-side.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Tricep Extension",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Bodyweight-bodyweight-tricep-extension-front.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Tricep Extension",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Bodyweight-bodyweight-tricep-extension-side.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Overhead Tricep Extension",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Band-band-overhead-tricep-extension-front.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Overhead Tricep Extension",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Band-band-overhead-tricep-extension-side.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Skull Crusher",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Kettlebells-kettlebell-skull-crusher-front.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Skull Crusher",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Kettlebells-kettlebell-skull-crusher-side.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Close Grip Bench Press",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Barbell-barbell-close-grip-bench-press-front.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Close Grip Bench Press",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Barbell-barbell-close-grip-bench-press-side.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Squat",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Barbell-barbell-squat-front.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Squat",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Barbell-barbell-squat-side.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Front Squat",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Barbell-barbell-front-squat-olympic-front.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Front Squat",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Barbell-barbell-front-squat-olympic-side.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Goblet Squat",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-dumbbell-goblet-squat-front.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Goblet Squat",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-dumbbell-goblet-squat-side.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Bulgarian Split Squat",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Bodyweight-bulgarian-split-squat-front.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Bulgarian Split Squat",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Bodyweight-bulgarian-split-squat-side.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Lunge",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-bodyweight-forward-lunge-front_zb4K50d.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Lunge",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-bodyweight-forward-lunge-side_4k0dfH0.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Leg Press",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Machine-machine-leg-press-front.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Leg Press",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Machine-machine-leg-press-side.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Leg Curl",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-dumbbell-leg-curl-front.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Leg Curl",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-dumbbell-leg-curl-side.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Leg Extension",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-machine-leg-extension-front.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Leg Extension",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-machine-leg-extension-side.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Romanian Deadlift",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Barbell-barbell-romanian-deadlift-front.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Romanian Deadlift",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Barbell-barbell-romanian-deadlift-side_dnNh5UH.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Hip Thrust",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Barbell-barbell-hip-thrust-front.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Hip Thrust",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Barbell-barbell-hip-thrust-side.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Glute Bridge",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Bodyweight-glute-bridge-front.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Glute Bridge",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Bodyweight-glute-bridge-side.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Calf Raise",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-machine-standing-calf-raises-front.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Calf Raise",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-machine-standing-calf-raises-side.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Seated Calf Raise",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-machine-seated-calf-raise-front.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Seated Calf Raise",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-machine-seated-calf-raise-side.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Hack Squat",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Machine-machine-hack-squat-front.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Hack Squat",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Machine-machine-hack-squat-side.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Step Up",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Kettlebells-kettlebell-step-up-front.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Step Up",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Kettlebells-kettlebell-step-up-side.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Reverse Lunge",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-barbell-reverse-lunge-front.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Reverse Lunge",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-barbell-reverse-lunge-side.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Sumo Deadlift",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Barbell-barbell-sumo-deadlift-front_hI2eO77.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Sumo Deadlift",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Barbell-barbell-sumo-deadlift-side_5lcmI1F.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Stiff Leg Deadlift",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-barbell-stiff-leg-deadlift-front.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Stiff Leg Deadlift",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-barbell-stiff-leg-deadlift-side.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Plank",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Medicine-Ball-plank-front.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Plank",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Medicine-Ball-plank-side.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Side Plank",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-bodyweight-elbow-side-plank-front.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Side Plank",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-bodyweight-elbow-side-plank-side.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Crunch",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-bodyweight-crunch-front.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Crunch",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-bodyweight-crunch-side.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Sit Up",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Bodyweight-situp-front.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Sit Up",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Bodyweight-situp-side.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Russian Twist",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Kettlebells-kettlebell-russian-twist-front.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Russian Twist",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Kettlebells-kettlebell-russian-twist-side.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Mountain Climber",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-bodyweight-mountain-climber-front.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Mountain Climber",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-bodyweight-mountain-climber-side.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Leg Raise",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Bodyweight-laying-leg-raises-front.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Leg Raise",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Bodyweight-laying-leg-raises-side.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Hanging Leg Raise",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-bodyweight-hanging-knee-raises-front.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Hanging Leg Raise",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-bodyweight-hanging-knee-raises-side.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Ab Wheel Rollout",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-trx-ab-rollout-front.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Ab Wheel Rollout",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-trx-ab-rollout-side.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Bicycle Crunch",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Bodyweight-bicycle-crunch-front.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Bicycle Crunch",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Bodyweight-bicycle-crunch-side.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Dead Bug",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Bodyweight-dead-bug-front.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Dead Bug",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Bodyweight-dead-bug-side.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Cable Woodchop",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-cable-woodchopper-front.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Cable Woodchop",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-cable-woodchopper-side.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Burpee",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-bodyweight-burpee-front.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Burpee",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-bodyweight-burpee-side.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Jumping Jack",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Cardio-cardio-jumping-jacks-front.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Jumping Jack",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Cardio-cardio-jumping-jacks-side.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Box Jump",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Bodyweight-box-jump-front.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Box Jump",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Bodyweight-box-jump-side.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Kettlebell Swing",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Kettlebells-kettlebell-swing-front.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Kettlebell Swing",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Kettlebells-kettlebell-swing-side.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Jump Rope",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Cardio-jump-rope-front.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Jump Rope",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Cardio-jump-rope-side.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Sprint",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Cardio-treadmill-sprint-front.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "Sprint",
+      "source": "exercise-data.ts (angleViews)",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Cardio-treadmill-sprint-side.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "male-bodyweight-bench-dips-front",
+      "source": "exercise-gif-registry.ts",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Bodyweight-bench-dips-front.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "male-bodyweight-bench-dips-side",
+      "source": "exercise-gif-registry.ts",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Bodyweight-bench-dips-side.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "male-barbell-stiff-leg-deadlift-front",
+      "source": "exercise-gif-registry.ts",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Barbell-barbell-stiff-leg-deadlift-front.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "male-barbell-stiff-leg-deadlift-side",
+      "source": "exercise-gif-registry.ts",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Barbell-barbell-stiff-leg-deadlift-side.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "male-machine-pulldown-front",
+      "source": "exercise-gif-registry.ts",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Cable-cable-lat-pulldown-front.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "male-machine-pulldown-side",
+      "source": "exercise-gif-registry.ts",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Cable-cable-lat-pulldown-side.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "male-machine-seated-cable-row-front",
+      "source": "exercise-gif-registry.ts",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Cable-cable-seated-row-front.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "male-machine-seated-cable-row-side",
+      "source": "exercise-gif-registry.ts",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Cable-cable-seated-row-side.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "male-Cable-cable-rope-face-pulls-front",
+      "source": "exercise-gif-registry.ts",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Cable-cable-rope-face-pulls-front.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "male-Cable-cable-rope-face-pulls-side",
+      "source": "exercise-gif-registry.ts",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Cable-cable-rope-face-pulls-side.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "male-Bodyweight-walking-lunge-front",
+      "source": "exercise-gif-registry.ts",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Bodyweight-walking-lunge-front.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "male-Bodyweight-walking-lunge-side",
+      "source": "exercise-gif-registry.ts",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Bodyweight-walking-lunge-side.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "male-machine-leg-extension-front",
+      "source": "exercise-gif-registry.ts",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Machine-machine-leg-extension-front.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "male-machine-leg-extension-side",
+      "source": "exercise-gif-registry.ts",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Machine-machine-leg-extension-side.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "male-machine-standing-calf-raises-front",
+      "source": "exercise-gif-registry.ts",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Machine-machine-standing-calf-raises-front.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "male-machine-standing-calf-raises-side",
+      "source": "exercise-gif-registry.ts",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Machine-machine-standing-calf-raises-side.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "male-Bodyweight-floor-incline-leg-raise-front",
+      "source": "exercise-gif-registry.ts",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Bodyweight-floor-incline-leg-raise-front.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "male-Bodyweight-floor-incline-leg-raise-side",
+      "source": "exercise-gif-registry.ts",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Bodyweight-floor-incline-leg-raise-side.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "male-cable-woodchopper-front",
+      "source": "exercise-gif-registry.ts",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Cable-cable-woodchopper-front.mp4",
+      "status": 403
+    },
+    {
+      "exerciseName": "male-cable-woodchopper-side",
+      "source": "exercise-gif-registry.ts",
+      "url": "https://media.musclewiki.com/media/uploads/videos/branded/male-Cable-cable-woodchopper-side.mp4",
+      "status": 403
+    }
+  ]
+}

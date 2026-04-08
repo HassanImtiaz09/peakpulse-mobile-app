@@ -235,7 +235,7 @@ describe("Subscription Tiers (Free/Basic/Pro)", () => {
 
     // Pro tier features
     expect(FEATURE_TIERS.form_checker).toBe("pro");
-    expect(FEATURE_TIERS.social_feed).toBe("pro");
+    expect(FEATURE_TIERS.social_feed).toBe("basic");  // moved from Pro (read-only)
     expect(FEATURE_TIERS.challenges).toBe("pro");
   });
 

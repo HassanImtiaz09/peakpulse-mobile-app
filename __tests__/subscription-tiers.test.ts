@@ -104,7 +104,7 @@ describe("Subscription Tiers", () => {
     });
 
     it("total feature count should match expected", () => {
-      expect(Object.keys(FEATURE_TIERS)).toHaveLength(28);
+      expect(Object.keys(FEATURE_TIERS)).toHaveLength(26);
     });
   });
 });

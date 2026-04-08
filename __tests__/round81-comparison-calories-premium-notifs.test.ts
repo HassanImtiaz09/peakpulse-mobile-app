@@ -68,13 +68,13 @@ describe("Calorie-Aware Meal Swaps with Images", () => {
   });
 
   it("server mealSwapWithPantry endpoint includes imageUrl in response", () => {
-    const src = readFile("server/routers.ts");
+    const src = readFile("server/nutrition.router.ts");
     expect(src).toContain("imageUrl");
     expect(src).toContain("mealSwapWithPantry");
   });
 
   it("server mealSwapWithPantry accepts dailyCalorieTarget", () => {
-    const src = readFile("server/routers.ts");
+    const src = readFile("server/nutrition.router.ts");
     expect(src).toContain("dailyCalorieTarget");
   });
 });

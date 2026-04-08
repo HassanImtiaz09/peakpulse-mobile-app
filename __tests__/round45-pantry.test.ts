@@ -106,7 +106,7 @@ describe("Round 45 — Pantry Inventory Feature", () => {
 
   // ── Server Endpoints ──
   describe("Server Pantry Router (server/routers.ts)", () => {
-    const src = readFile("server/routers.ts");
+    const src = readFile("server/nutrition.router.ts");
 
     it("has pantry.suggestMeals endpoint", () => {
       expect(src).toContain("suggestMeals: guestOrUserProcedure");
