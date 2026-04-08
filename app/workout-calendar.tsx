@@ -18,6 +18,7 @@ import * as Haptics from "expo-haptics";
 import { GOLDEN_WORKOUT } from "@/constants/golden-backgrounds";
 import { UI as SF } from "@/constants/ui-colors";
 import { a11yButton, a11yHeader } from "@/lib/accessibility";
+import { WeeklyGoalRings } from "@/components/weekly-goal-rings";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const DAYS_OF_WEEK = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
@@ -128,6 +129,11 @@ export default function WorkoutCalendarScreen() {
   const [selectedDay, setSelectedDay] = useState<string | null>(null);
   const [detailModalVisible, setDetailModalVisible] = useState(false);
   const [activeTab, setActiveTab] = useState<"calendar" | "heatmap">("calendar");
+
+  // ── Comparison Mode ──────────────────────────────────────────
+  const [compareMode, setCompareMode] = useState(false);
+  const [compareDays, setCompareDays] = useState<[string | null, string | null]>([null, null]);
+  const [compareModalVisible, setCompareModalVisible] = useState(false);
 
   // Fetch from server for authenticated users
   const sessionsQuery = trpc.workoutPlan.getAllSessions.useQuery(undefined, {
@@ -278,6 +284,24 @@ export default function WorkoutCalendarScreen() {
   }
 
   function handleDayPress(dk: string) {
+    if (compareMode) {
+      // In compare mode, select days for comparison
+      if (Platform.OS !== "web") Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+      if (!sessionsByDate[dk] || sessionsByDate[dk].length === 0) return;
+
+      if (compareDays[0] === null) {
+        setCompareDays([dk, null]);
+      } else if (compareDays[1] === null) {
+        if (dk === compareDays[0]) return; // same day
+        setCompareDays([compareDays[0], dk]);
+        setCompareModalVisible(true);
+      } else {
+        // Reset and start new selection
+        setCompareDays([dk, null]);
+      }
+      return;
+    }
+
     if (sessionsByDate[dk] && sessionsByDate[dk].length > 0) {
       setSelectedDay(dk);
       setDetailModalVisible(true);
@@ -285,6 +309,75 @@ export default function WorkoutCalendarScreen() {
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
       }
     }
+  }
+
+  function toggleCompareMode() {
+    const newMode = !compareMode;
+    setCompareMode(newMode);
+    if (!newMode) {
+      setCompareDays([null, null]);
+      setCompareModalVisible(false);
+    }
+    if (Platform.OS !== "web") Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+  }
+
+  // ── Comparison Stats Calculator ──────────────────────────────
+  function getDayStats(dk: string) {
+    const sessions = sessionsByDate[dk] ?? [];
+    let totalDuration = 0;
+    let totalCalories = 0;
+    let totalVolume = 0;
+    let totalExercises = 0;
+    const exerciseNames: string[] = [];
+
+    for (const s of sessions) {
+      totalDuration += s.durationMinutes ?? 0;
+      // Parse exercises for volume
+      try {
+        const exList = JSON.parse(s.completedExercisesJson ?? "[]");
+        if (Array.isArray(exList)) {
+          for (const ex of exList) {
+            if (typeof ex === "string") {
+              exerciseNames.push(ex);
+              totalExercises++;
+            } else if (ex && typeof ex === "object") {
+              exerciseNames.push(ex.name || "Unknown");
+              totalExercises++;
+              // Calculate volume from logs
+              if (Array.isArray(ex.logs)) {
+                for (const log of ex.logs) {
+                  if (log.completed) {
+                    const w = parseFloat(log.weight) || 0;
+                    const r = parseInt(log.reps) || 0;
+                    totalVolume += w * r;
+                  }
+                }
+              }
+            }
+          }
+        }
+      } catch { /* ignore parse errors */ }
+    }
+
+    // Check log entries too
+    for (const entry of logEntries) {
+      const entryDate = entry.loggedAt ? entry.loggedAt.substring(0, 10) : dateKey(new Date(entry.workout.startDate));
+      if (entryDate === dk) {
+        totalCalories += entry.workout.caloriesBurned ?? 0;
+      }
+    }
+
+    return {
+      date: dk,
+      displayDate: formatDisplayDate(dk),
+      sessionCount: sessions.length,
+      totalDuration,
+      totalCalories,
+      totalVolume: Math.round(totalVolume),
+      totalExercises,
+      exerciseNames,
+      dayName: sessions[0]?.dayName ?? sessions[0]?.focus ?? "Workout",
+    };
   }
 
   const selectedSessions = selectedDay ? (sessionsByDate[selectedDay] ?? []) : [];
@@ -358,6 +451,11 @@ export default function WorkoutCalendarScreen() {
           </View>
         </Animated.View>
 
+        {/* ── Weekly Goal Rings ── */}
+        <Animated.View entering={FadeInDown.delay(80).duration(300)} style={{ paddingHorizontal: 20, marginBottom: 4 }}>
+          <WeeklyGoalRings onPress={() => router.push("/weekly-goals" as any)} />
+        </Animated.View>
+
         {/* ── Streak Stats Row ── */}
         <Animated.View entering={FadeInDown.delay(100).duration(300)} style={{ flexDirection: "row", paddingHorizontal: 20, gap: 8, marginBottom: 8, marginTop: 8 }}>
           <StatCard icon="local-fire-department" iconColor="#EF4444" label="Current" value={`${currentStreak}d`} highlight={currentStreak > 0} />
@@ -394,6 +492,28 @@ export default function WorkoutCalendarScreen() {
 
         {activeTab === "calendar" ? (
           <>
+            {/* ── Compare Mode Banner ── */}
+            {compareMode && (
+              <View style={{
+                flexDirection: "row", alignItems: "center", gap: 8,
+                marginHorizontal: 20, marginBottom: 8, padding: 10,
+                backgroundColor: "rgba(59,130,246,0.08)", borderRadius: 10,
+                borderWidth: 1, borderColor: "rgba(59,130,246,0.2)",
+              }}>
+                <MaterialIcons name="compare-arrows" size={18} color="#3B82F6" />
+                <Text style={{ flex: 1, color: "#93C5FD", fontSize: 12, fontFamily: "DMSans_500Medium" }}>
+                  {compareDays[0] === null
+                    ? "Tap a workout day to start comparing"
+                    : compareDays[1] === null
+                    ? "Now tap a second day to compare"
+                    : "Comparison ready — tap new days to reset"}
+                </Text>
+                <TouchableOpacity onPress={toggleCompareMode} style={{ padding: 4 }}>
+                  <MaterialIcons name="close" size={18} color="#93C5FD" />
+                </TouchableOpacity>
+              </View>
+            )}
+
             {/* ── Month Navigation ── */}
             <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingHorizontal: 20, marginBottom: 12 }}>
               <TouchableOpacity onPress={() => navigateMonth(-1)} style={{ padding: 8 }}>
@@ -402,9 +522,21 @@ export default function WorkoutCalendarScreen() {
               <Text style={{ color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 18 }}>
                 {MONTHS[currentMonth.month]} {currentMonth.year}
               </Text>
-              <TouchableOpacity onPress={() => navigateMonth(1)} style={{ padding: 8 }}>
-                <MaterialIcons name="chevron-right" size={28} color={SF.gold} />
-              </TouchableOpacity>
+              <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
+                <TouchableOpacity
+                  onPress={toggleCompareMode}
+                  style={{
+                    padding: 6, borderRadius: 8,
+                    backgroundColor: compareMode ? "rgba(59,130,246,0.15)" : "transparent",
+                    borderWidth: 1, borderColor: compareMode ? "rgba(59,130,246,0.3)" : "transparent",
+                  }}
+                >
+                  <MaterialIcons name="compare-arrows" size={20} color={compareMode ? "#3B82F6" : SF.muted} />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => navigateMonth(1)} style={{ padding: 8 }}>
+                  <MaterialIcons name="chevron-right" size={28} color={SF.gold} />
+                </TouchableOpacity>
+              </View>
             </View>
 
             {/* ── Day of Week Headers ── */}
@@ -418,42 +550,53 @@ export default function WorkoutCalendarScreen() {
 
             {/* ── Calendar Grid ── */}
             <View style={{ flexDirection: "row", flexWrap: "wrap", paddingHorizontal: 16 }}>
-              {calendarDays.map(cell => (
-                <TouchableOpacity
-                  key={cell.key}
-                  style={{ width: `${100 / 7}%`, aspectRatio: 1, alignItems: "center", justifyContent: "center", padding: 2 }}
-                  disabled={!cell.hasWorkout}
-                  onPress={() => cell.day ? handleDayPress(cell.key) : undefined}
-                >
-                  {cell.day !== null && (
-                    <View style={{
-                      width: 38, height: 38, borderRadius: 19,
-                      alignItems: "center", justifyContent: "center",
-                      backgroundColor: cell.hasWorkout
-                        ? (cell.workoutCount >= 2 ? SF.gold : "rgba(245,158,11,0.65)")
-                        : "transparent",
-                      borderWidth: cell.isToday && !cell.hasWorkout ? 1.5 : 0,
-                      borderColor: cell.isToday ? SF.gold : "transparent",
-                      opacity: cell.isFuture ? 0.3 : 1,
-                    }}>
-                      <Text style={{
-                        color: cell.hasWorkout ? "#0A0E14" : cell.isToday ? SF.gold : SF.fg,
-                        fontFamily: cell.hasWorkout || cell.isToday ? "DMSans_700Bold" : "DMSans_400Regular",
-                        fontSize: 14,
+              {calendarDays.map(cell => {
+                const isCompareSelected = compareMode && (cell.key === compareDays[0] || cell.key === compareDays[1]);
+                const compareIndex = cell.key === compareDays[0] ? 1 : cell.key === compareDays[1] ? 2 : 0;
+                return (
+                  <TouchableOpacity
+                    key={cell.key}
+                    style={{ width: `${100 / 7}%`, aspectRatio: 1, alignItems: "center", justifyContent: "center", padding: 2 }}
+                    disabled={!compareMode && !cell.hasWorkout}
+                    onPress={() => cell.day ? handleDayPress(cell.key) : undefined}
+                  >
+                    {cell.day !== null && (
+                      <View style={{
+                        width: 38, height: 38, borderRadius: 19,
+                        alignItems: "center", justifyContent: "center",
+                        backgroundColor: isCompareSelected
+                          ? "rgba(59,130,246,0.7)"
+                          : cell.hasWorkout
+                            ? (cell.workoutCount >= 2 ? SF.gold : "rgba(245,158,11,0.65)")
+                            : "transparent",
+                        borderWidth: isCompareSelected ? 2.5 : cell.isToday && !cell.hasWorkout ? 1.5 : 0,
+                        borderColor: isCompareSelected ? "#3B82F6" : cell.isToday ? SF.gold : "transparent",
+                        opacity: cell.isFuture ? 0.3 : 1,
                       }}>
-                        {cell.day}
-                      </Text>
-                      {cell.workoutCount > 1 && (
-                        <View style={{ position: "absolute", bottom: 2, flexDirection: "row", gap: 2 }}>
-                          {Array.from({ length: Math.min(cell.workoutCount, 3) }).map((_, i) => (
-                            <View key={i} style={{ width: 3, height: 3, borderRadius: 1.5, backgroundColor: "#0A0E14" }} />
-                          ))}
-                        </View>
-                      )}
-                    </View>
-                  )}
-                </TouchableOpacity>
-              ))}
+                        <Text style={{
+                          color: isCompareSelected ? "#fff" : cell.hasWorkout ? "#0A0E14" : cell.isToday ? SF.gold : SF.fg,
+                          fontFamily: cell.hasWorkout || cell.isToday || isCompareSelected ? "DMSans_700Bold" : "DMSans_400Regular",
+                          fontSize: 14,
+                        }}>
+                          {cell.day}
+                        </Text>
+                        {isCompareSelected && (
+                          <View style={{ position: "absolute", top: -4, right: -4, width: 16, height: 16, borderRadius: 8, backgroundColor: "#3B82F6", alignItems: "center", justifyContent: "center" }}>
+                            <Text style={{ color: "#fff", fontSize: 9, fontWeight: "700" }}>{compareIndex}</Text>
+                          </View>
+                        )}
+                        {!isCompareSelected && cell.workoutCount > 1 && (
+                          <View style={{ position: "absolute", bottom: 2, flexDirection: "row", gap: 2 }}>
+                            {Array.from({ length: Math.min(cell.workoutCount, 3) }).map((_, i) => (
+                              <View key={i} style={{ width: 3, height: 3, borderRadius: 1.5, backgroundColor: "#0A0E14" }} />
+                            ))}
+                          </View>
+                        )}
+                      </View>
+                    )}
+                  </TouchableOpacity>
+                );
+              })}
             </View>
 
             {/* ── Legend ── */}
@@ -685,6 +828,191 @@ export default function WorkoutCalendarScreen() {
           </View>
         )}
       </ScrollView>
+
+      {/* ── Comparison Modal ── */}
+      <Modal visible={compareModalVisible} animationType="slide" transparent>
+        <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.85)", justifyContent: "flex-end" }}>
+          <View style={{
+            backgroundColor: SF.surface, borderTopLeftRadius: 24, borderTopRightRadius: 24,
+            maxHeight: "85%", paddingBottom: Platform.OS === "ios" ? 34 : 20,
+          }}>
+            {/* Header */}
+            <View style={{
+              flexDirection: "row", justifyContent: "space-between", alignItems: "center",
+              padding: 20, borderBottomWidth: 1, borderBottomColor: SF.border,
+            }}>
+              <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+                <MaterialIcons name="compare-arrows" size={22} color="#3B82F6" />
+                <Text style={{ color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 18 }}>Compare Days</Text>
+              </View>
+              <TouchableOpacity onPress={() => { setCompareModalVisible(false); setCompareDays([null, null]); }} style={{ padding: 4 }}>
+                <MaterialIcons name="close" size={24} color={SF.muted} />
+              </TouchableOpacity>
+            </View>
+
+            <ScrollView contentContainerStyle={{ padding: 20 }}>
+              {compareDays[0] && compareDays[1] && (() => {
+                const day1 = getDayStats(compareDays[0]);
+                const day2 = getDayStats(compareDays[1]);
+
+                const metrics: { label: string; key: string; v1: number; v2: number; unit: string; icon: string; iconColor: string }[] = [
+                  { label: "Duration", key: "dur", v1: day1.totalDuration, v2: day2.totalDuration, unit: "min", icon: "timer", iconColor: "#3B82F6" },
+                  { label: "Exercises", key: "ex", v1: day1.totalExercises, v2: day2.totalExercises, unit: "", icon: "fitness-center", iconColor: SF.gold },
+                  { label: "Volume", key: "vol", v1: day1.totalVolume, v2: day2.totalVolume, unit: "kg", icon: "monitor-weight", iconColor: "#22C55E" },
+                  { label: "Calories", key: "cal", v1: day1.totalCalories, v2: day2.totalCalories, unit: "kcal", icon: "local-fire-department", iconColor: "#EF4444" },
+                  { label: "Sessions", key: "sess", v1: day1.sessionCount, v2: day2.sessionCount, unit: "", icon: "repeat", iconColor: "#8B5CF6" },
+                ];
+
+                return (
+                  <View style={{ gap: 16 }}>
+                    {/* Day Labels */}
+                    <View style={{ flexDirection: "row", gap: 8 }}>
+                      <View style={{ flex: 1, backgroundColor: "rgba(59,130,246,0.08)", borderRadius: 12, padding: 12, borderWidth: 1, borderColor: "rgba(59,130,246,0.2)" }}>
+                        <View style={{ flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 4 }}>
+                          <View style={{ width: 20, height: 20, borderRadius: 10, backgroundColor: "#3B82F6", alignItems: "center", justifyContent: "center" }}>
+                            <Text style={{ color: "#fff", fontSize: 10, fontWeight: "700" }}>1</Text>
+                          </View>
+                          <Text style={{ color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 13 }}>{day1.dayName}</Text>
+                        </View>
+                        <Text style={{ color: SF.muted, fontSize: 11 }}>{day1.displayDate}</Text>
+                      </View>
+                      <View style={{ flex: 1, backgroundColor: "rgba(139,92,246,0.08)", borderRadius: 12, padding: 12, borderWidth: 1, borderColor: "rgba(139,92,246,0.2)" }}>
+                        <View style={{ flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 4 }}>
+                          <View style={{ width: 20, height: 20, borderRadius: 10, backgroundColor: "#8B5CF6", alignItems: "center", justifyContent: "center" }}>
+                            <Text style={{ color: "#fff", fontSize: 10, fontWeight: "700" }}>2</Text>
+                          </View>
+                          <Text style={{ color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 13 }}>{day2.dayName}</Text>
+                        </View>
+                        <Text style={{ color: SF.muted, fontSize: 11 }}>{day2.displayDate}</Text>
+                      </View>
+                    </View>
+
+                    {/* Metrics Comparison */}
+                    {metrics.map(m => {
+                      const diff = m.v1 === 0 && m.v2 === 0 ? 0 : m.v2 === 0 ? 100 : Math.round(((m.v1 - m.v2) / m.v2) * 100);
+                      const maxVal = Math.max(m.v1, m.v2, 1);
+                      return (
+                        <View key={m.key} style={{
+                          backgroundColor: SF.surface, borderRadius: 14, padding: 14,
+                          borderWidth: 1, borderColor: SF.border,
+                        }}>
+                          <View style={{ flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 10 }}>
+                            <MaterialIcons name={m.icon as any} size={16} color={m.iconColor} />
+                            <Text style={{ color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 14, flex: 1 }}>{m.label}</Text>
+                            {diff !== 0 && (m.v1 > 0 || m.v2 > 0) && (
+                              <View style={{
+                                flexDirection: "row", alignItems: "center", gap: 2,
+                                backgroundColor: diff > 0 ? "rgba(34,197,94,0.1)" : "rgba(239,68,68,0.1)",
+                                borderRadius: 6, paddingHorizontal: 6, paddingVertical: 2,
+                              }}>
+                                <MaterialIcons name={diff > 0 ? "trending-up" : "trending-down"} size={12} color={diff > 0 ? "#22C55E" : "#EF4444"} />
+                                <Text style={{ color: diff > 0 ? "#22C55E" : "#EF4444", fontSize: 11, fontWeight: "600" }}>
+                                  {Math.abs(diff)}%
+                                </Text>
+                              </View>
+                            )}
+                          </View>
+                          {/* Bar comparison */}
+                          <View style={{ gap: 6 }}>
+                            <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+                              <View style={{ width: 20, height: 14, borderRadius: 4, backgroundColor: "#3B82F6", alignItems: "center", justifyContent: "center" }}>
+                                <Text style={{ color: "#fff", fontSize: 8, fontWeight: "700" }}>1</Text>
+                              </View>
+                              <View style={{ flex: 1, height: 8, borderRadius: 4, backgroundColor: "rgba(59,130,246,0.1)" }}>
+                                <View style={{ height: 8, borderRadius: 4, backgroundColor: "#3B82F6", width: `${Math.max((m.v1 / maxVal) * 100, 2)}%` }} />
+                              </View>
+                              <Text style={{ color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 13, minWidth: 50, textAlign: "right" }}>
+                                {m.v1}{m.unit ? ` ${m.unit}` : ""}
+                              </Text>
+                            </View>
+                            <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+                              <View style={{ width: 20, height: 14, borderRadius: 4, backgroundColor: "#8B5CF6", alignItems: "center", justifyContent: "center" }}>
+                                <Text style={{ color: "#fff", fontSize: 8, fontWeight: "700" }}>2</Text>
+                              </View>
+                              <View style={{ flex: 1, height: 8, borderRadius: 4, backgroundColor: "rgba(139,92,246,0.1)" }}>
+                                <View style={{ height: 8, borderRadius: 4, backgroundColor: "#8B5CF6", width: `${Math.max((m.v2 / maxVal) * 100, 2)}%` }} />
+                              </View>
+                              <Text style={{ color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 13, minWidth: 50, textAlign: "right" }}>
+                                {m.v2}{m.unit ? ` ${m.unit}` : ""}
+                              </Text>
+                            </View>
+                          </View>
+                        </View>
+                      );
+                    })}
+
+                    {/* Exercise Overlap */}
+                    {(() => {
+                      const set1 = new Set(day1.exerciseNames);
+                      const set2 = new Set(day2.exerciseNames);
+                      const shared = [...set1].filter(e => set2.has(e));
+                      const only1 = [...set1].filter(e => !set2.has(e));
+                      const only2 = [...set2].filter(e => !set1.has(e));
+                      if (set1.size === 0 && set2.size === 0) return null;
+                      return (
+                        <View style={{
+                          backgroundColor: SF.surface, borderRadius: 14, padding: 14,
+                          borderWidth: 1, borderColor: SF.border,
+                        }}>
+                          <View style={{ flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 10 }}>
+                            <MaterialIcons name="join-inner" size={16} color={SF.gold} />
+                            <Text style={{ color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 14 }}>Exercise Overlap</Text>
+                          </View>
+                          {shared.length > 0 && (
+                            <View style={{ marginBottom: 8 }}>
+                              <Text style={{ color: SF.muted, fontSize: 10, fontFamily: "DMSans_700Bold", letterSpacing: 1, marginBottom: 4 }}>SHARED ({shared.length})</Text>
+                              {shared.map((ex, i) => (
+                                <View key={`s-${i}`} style={{ flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 3 }}>
+                                  <View style={{ width: 5, height: 5, borderRadius: 2.5, backgroundColor: "#22C55E" }} />
+                                  <Text style={{ color: SF.fg, fontSize: 12 }}>{ex}</Text>
+                                </View>
+                              ))}
+                            </View>
+                          )}
+                          {only1.length > 0 && (
+                            <View style={{ marginBottom: 8 }}>
+                              <Text style={{ color: SF.muted, fontSize: 10, fontFamily: "DMSans_700Bold", letterSpacing: 1, marginBottom: 4 }}>DAY 1 ONLY ({only1.length})</Text>
+                              {only1.map((ex, i) => (
+                                <View key={`o1-${i}`} style={{ flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 3 }}>
+                                  <View style={{ width: 5, height: 5, borderRadius: 2.5, backgroundColor: "#3B82F6" }} />
+                                  <Text style={{ color: SF.fg, fontSize: 12 }}>{ex}</Text>
+                                </View>
+                              ))}
+                            </View>
+                          )}
+                          {only2.length > 0 && (
+                            <View>
+                              <Text style={{ color: SF.muted, fontSize: 10, fontFamily: "DMSans_700Bold", letterSpacing: 1, marginBottom: 4 }}>DAY 2 ONLY ({only2.length})</Text>
+                              {only2.map((ex, i) => (
+                                <View key={`o2-${i}`} style={{ flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 3 }}>
+                                  <View style={{ width: 5, height: 5, borderRadius: 2.5, backgroundColor: "#8B5CF6" }} />
+                                  <Text style={{ color: SF.fg, fontSize: 12 }}>{ex}</Text>
+                                </View>
+                              ))}
+                            </View>
+                          )}
+                        </View>
+                      );
+                    })()}
+
+                    {/* Compare Again Button */}
+                    <TouchableOpacity
+                      onPress={() => { setCompareModalVisible(false); setCompareDays([null, null]); }}
+                      style={{
+                        backgroundColor: "rgba(59,130,246,0.12)", borderRadius: 12,
+                        paddingVertical: 14, alignItems: "center",
+                        borderWidth: 1, borderColor: "rgba(59,130,246,0.2)",
+                      }}
+                    >
+                      <Text style={{ color: "#93C5FD", fontFamily: "DMSans_700Bold", fontSize: 14 }}>Compare Different Days</Text>
+                    </TouchableOpacity>
+                  </View>
+                );
+              })()}
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
 
       {/* ── Day Detail Modal ── */}
       <Modal visible={detailModalVisible} animationType="slide" transparent>

@@ -3197,3 +3197,20 @@
 - [x] Verify TypeScript compiles (0 errors via tsc --noEmit)
 - [x] Full test suite: 79 files passed, 2175 tests passed, 0 failures
 - [x] Save checkpoint
+
+## Round 96: Weekly goal rings, exercise illustration fallback, workout comparison
+- [x] Add WeeklyGoalRings component with SVG circular progress indicators (workouts, calories, active minutes)
+- [x] Integrate goal rings into workout-calendar.tsx header below the back button
+- [x] Wire goal rings to existing goal-tracking.ts calculateWeeklyProgress data
+- [x] Add auto-fallback in ExerciseDemoPlayer: when MuscleWiki video fails, auto-switch to ExerciseDB GIF
+- [x] Show fallback info banner ("MuscleWiki video unavailable") and Retry Video button
+- [x] Reset auto-fallback state when user manually toggles source or retries
+- [x] Add compare mode toggle button (compare-arrows icon) in month navigation
+- [x] Implement two-day selection with numbered blue badges (1, 2) on calendar cells
+- [x] Build comparison modal with side-by-side metrics: duration, exercises, volume, calories, sessions
+- [x] Show percentage difference with trending-up/trending-down indicators and bar charts
+- [x] Add exercise overlap analysis (shared, day-1-only, day-2-only)
+- [x] Write 36 unit tests for all three features (all passing)
+- [x] Verify TypeScript compiles (0 errors)
+- [x] Full test suite: 80 files passed, 2211 tests passed, 0 failures
+- [x] Save checkpoint

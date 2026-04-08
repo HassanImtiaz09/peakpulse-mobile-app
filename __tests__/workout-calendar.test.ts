@@ -92,7 +92,7 @@ describe("Monthly Calendar View", () => {
   it("highlights today with a border ring", () => {
     const src = readFile("app/workout-calendar.tsx");
     expect(src).toContain("cell.isToday");
-    expect(src).toContain("borderWidth: cell.isToday && !cell.hasWorkout ? 1.5 : 0");
+    expect(src).toMatch(/borderWidth:.*cell\.isToday && !cell\.hasWorkout \? 1\.5 : 0/);
   });
 
   it("highlights workout days with gold fill", () => {

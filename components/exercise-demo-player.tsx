@@ -128,6 +128,7 @@ export function ExerciseDemoPlayer({
     [exerciseName]
   );
   const [useExerciseDb, setUseExerciseDb] = useState(false);
+  const [videoFailedAutoFallback, setVideoFailedAutoFallback] = useState(false);
 
   // Muscle info for mini diagram
   const exerciseInfo = useMemo(
@@ -194,8 +195,18 @@ export function ExerciseDemoPlayer({
     }
   }, [videoIsLoading]);
 
+  // Auto-fallback: when MuscleWiki video fails, switch to ExerciseDB GIF
+  useEffect(() => {
+    if (videoHasError && !useExerciseDb && exerciseDbGifUrl && !videoFailedAutoFallback) {
+      setVideoFailedAutoFallback(true);
+      setUseExerciseDb(true);
+    }
+  }, [videoHasError, useExerciseDb, exerciseDbGifUrl, videoFailedAutoFallback]);
+
   // Retry handler for video errors
   const handleVideoRetry = useCallback(() => {
+    setVideoFailedAutoFallback(false);
+    setUseExerciseDb(false);
     setVideoRetryKey((k) => k + 1);
     if (Platform.OS !== "web") {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
@@ -380,13 +391,13 @@ export function ExerciseDemoPlayer({
                 </View>
               </View>
             )}
-            {/* Error Fallback Overlay */}
-            {videoHasError && (
+            {/* Error Fallback Overlay — only show if no auto-fallback GIF available */}
+            {videoHasError && !videoFailedAutoFallback && (
               <View style={styles.errorOverlay}>
                 <MaterialIcons name="error-outline" size={40} color="#EF4444" />
-                <Text style={styles.errorTitle}>Video failed to load</Text>
+                <Text style={styles.errorTitle}>Video unavailable</Text>
                 <Text style={styles.errorSubtitle}>
-                  {videoError?.message || "The MuscleWiki video could not be loaded. Check your connection and try again."}
+                  No illustration available for this exercise. Tap retry to try the video again.
                 </Text>
                 <Pressable
                   onPress={handleVideoRetry}
@@ -421,7 +432,7 @@ export function ExerciseDemoPlayer({
           {/* Badge */}
           <View style={styles.gifBadge}>
             <MaterialIcons name={useExerciseDb ? "gif" : "image"} size={16} color="#fff" />
-            <Text style={styles.gifBadgeText}>{useExerciseDb ? "Animated GIF" : "MuscleWiki Video"}</Text>
+            <Text style={styles.gifBadgeText}>{useExerciseDb ? (videoFailedAutoFallback ? "Illustration (fallback)" : "Animated GIF") : "MuscleWiki Video"}</Text>
           </View>
           {/* Muscle mini diagram overlay (bottom-left) */}
           {exerciseInfo && (
@@ -515,10 +526,27 @@ export function ExerciseDemoPlayer({
       ) : null}
 
       {/* GIF Source Toggle: ExerciseDB animated vs static images */}
+      {/* Fallback info banner */}
+      {videoFailedAutoFallback && useExerciseDb && (
+        <View style={{ flexDirection: "row", alignItems: "center", backgroundColor: "rgba(245,158,11,0.1)", borderRadius: 8, padding: 10, marginHorizontal: 4, marginBottom: 6, gap: 8 }}>
+          <MaterialIcons name="info-outline" size={16} color="#F59E0B" />
+          <Text style={{ flex: 1, color: "#B45309", fontSize: 11, lineHeight: 15 }}>
+            MuscleWiki video unavailable — showing animated illustration instead.
+          </Text>
+          <Pressable
+            onPress={handleVideoRetry}
+            style={({ pressed }) => [{ flexDirection: "row", alignItems: "center", backgroundColor: "rgba(245,158,11,0.15)", borderRadius: 6, paddingHorizontal: 8, paddingVertical: 4, gap: 4 }, pressed && { opacity: 0.7 }]}
+          >
+            <MaterialIcons name="refresh" size={12} color="#B45309" />
+            <Text style={{ color: "#B45309", fontSize: 10, fontWeight: "600" }}>Retry Video</Text>
+          </Pressable>
+        </View>
+      )}
+
       {exerciseDbGifUrl && (
         <View style={styles.sourceToggleRow}>
           <Pressable
-            onPress={() => { setUseExerciseDb(true); if (Platform.OS !== "web") Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {}); }}
+            onPress={() => { setVideoFailedAutoFallback(false); setUseExerciseDb(true); if (Platform.OS !== "web") Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {}); }}
             style={({ pressed }) => [
               styles.sourceToggleBtn,
               useExerciseDb && styles.sourceToggleBtnActive,
@@ -529,7 +557,7 @@ export function ExerciseDemoPlayer({
             <Text style={[styles.sourceToggleTxt, useExerciseDb && styles.sourceToggleTxtActive]}>ExerciseDB GIF</Text>
           </Pressable>
           <Pressable
-            onPress={() => { setUseExerciseDb(false); if (Platform.OS !== "web") Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {}); }}
+            onPress={() => { setVideoFailedAutoFallback(false); setUseExerciseDb(false); if (Platform.OS !== "web") Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {}); }}
             style={({ pressed }) => [
               styles.sourceToggleBtn,
               !useExerciseDb && styles.sourceToggleBtnActive,
@@ -783,13 +811,13 @@ export function ExerciseDemoPlayer({
                 </View>
               </View>
             )}
-            {/* Fullscreen Error Fallback */}
-            {videoHasError && (
+            {/* Fullscreen Error Fallback — only show if no auto-fallback GIF */}
+            {videoHasError && !videoFailedAutoFallback && (
               <View style={[styles.errorOverlay, { width: SCREEN_W, height: SCREEN_W }]}>
                 <MaterialIcons name="error-outline" size={48} color="#EF4444" />
-                <Text style={styles.errorTitle}>Video failed to load</Text>
+                <Text style={styles.errorTitle}>Video unavailable</Text>
                 <Text style={styles.errorSubtitle}>
-                  {videoError?.message || "The MuscleWiki video could not be loaded."}
+                  No illustration available. Tap retry to try the video again.
                 </Text>
                 <Pressable
                   onPress={handleVideoRetry}
