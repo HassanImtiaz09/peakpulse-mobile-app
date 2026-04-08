@@ -3253,3 +3253,17 @@
 - [x] Write 17 unit tests for progressive disclosure logic (all passing)
 - [x] Verify TypeScript compiles (0 errors) and full test suite passes (83 files, 2277 tests, 0 failures)
 - [x] Save checkpoint
+
+## Round 97 Step 4: Missed Workout Detection & Rescheduling
+- [x] Create lib/missed-workout-detection.ts with pure logic (detectMissedDays, getRemainingDays, generateReschedulePreview, applyReschedule, hasMuscleConflict)
+- [x] Detect missed workout days using completedDays + day-of-week comparison, excluding rest days
+- [x] Build rescheduling engine: redistribute missed exercises across remaining days with round-robin distribution
+- [x] Smart redistribution: respect muscle group balance (max 2 per group), cap 8 exercises per day, fallback for overflow
+- [x] Create MissedWorkoutBanner component with amber warning styling, shown on Plans tab and Home tab
+- [x] Banner shows missed day count, focus areas, and "Redistribute" / "Dismiss" buttons
+- [x] Rescheduling preview modal shows per-day breakdown with added exercises highlighted in blue
+- [x] Apply rescheduling: updates local workout plan in AsyncStorage with notes on redistributed exercises
+- [x] Track dismissed alerts per-week in AsyncStorage (@peakpulse_dismissed_missed_days)
+- [x] Write 39 unit tests for detection and rescheduling logic (all passing)
+- [x] Verify TypeScript compiles (0 errors) and full test suite passes (84 files, 2316 tests, 0 failures)
+- [x] Save checkpoint

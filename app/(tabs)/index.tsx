@@ -39,7 +39,8 @@ import { analyzeMuscleBalance, generateSuggestions, generatePlanChanges, type Mu
 import { BodyDiagramInteractive, type MuscleGroup } from "@/components/body-diagram";
 import { TrendChart, type TrendDataPoint } from "@/components/trend-chart";
 import { WearableMetricsPanel } from "@/components/wearable-metrics-panel";
-import { PremiumFeatureBanner, PremiumFeatureTeaser } from "@/components/premium-feature-banner";
+import { PremiumFeatureTeaser } from "@/components/premium-feature-banner";
+import { MissedWorkoutBanner } from "@/components/missed-workout-banner";
 import { usePantry } from "@/lib/pantry-context";
 import { getActiveChallenges, type Challenge } from "@/lib/challenge-service";
 import { loadOrCreateSocialCircle, getActiveFriendsCount, type SocialCircleData } from "@/lib/social-circle";
@@ -159,6 +160,7 @@ function HomeScreenContent() {
   const [showMore, setShowMore] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [recentSessions, setRecentSessions] = useState<WorkoutLogEntry[]>([]);
+  const [completedDays, setCompletedDays] = useState<Record<string, boolean>>({});
   const [showStreakCelebration, setShowStreakCelebration] = useState(false);
   const [targetTransform, setTargetTransform] = useState<{target_bf: number; imageUrl: string; description?: string} | null>(null);
   const [originalScanPhoto, setOriginalScanPhoto] = useState<string | null>(null);
@@ -180,7 +182,14 @@ function HomeScreenContent() {
 
   const { totalCalories: todayCalories, calorieGoal, meals: todayMeals, setCalorieGoal, macroTargets } = useCalories();
 
-  // ââ Smart day matching: find today's workout from the schedule ââ
+  // ── Load completed days for missed workout detection ──
+  useEffect(() => {
+    AsyncStorage.getItem("@workout_completed_days").then(raw => {
+      if (raw) try { setCompletedDays(JSON.parse(raw)); } catch {}
+    });
+  }, []);
+
+  // ── Smart day matching: find today's workout from the schedule ──e ââ
   const todayWorkout = useMemo(() => {
     const plan = workoutPlan ?? localWorkoutPlan;
     if (!plan?.schedule?.length) return null;
@@ -685,6 +694,20 @@ function HomeScreenContent() {
               </TouchableOpacity>
             </View>
           </View>
+
+              {/* ── MISSED WORKOUT BANNER ── */}
+              {(workoutPlan ?? localWorkoutPlan)?.schedule && (
+                <MissedWorkoutBanner
+                  schedule={(workoutPlan ?? localWorkoutPlan).schedule}
+                  completedDays={completedDays}
+                  onReschedule={(updatedSchedule) => {
+                    const plan = workoutPlan ?? localWorkoutPlan;
+                    const updatedPlan = { ...plan, schedule: updatedSchedule };
+                    setLocalWorkoutPlan(updatedPlan);
+                    AsyncStorage.setItem("@guest_workout_plan", JSON.stringify(updatedPlan));
+                  }}
+                />
+              )}
 
               {/* SECTION 2: Today's Workout Card with CTA (or Rest Day Recovery Card)
               âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */}

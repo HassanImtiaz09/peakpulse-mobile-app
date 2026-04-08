@@ -28,6 +28,7 @@ import { getTodayTargetMuscles } from "@/lib/muscle-balance";
 import { usePantry } from "@/lib/pantry-context";
 import { useCalories } from "@/lib/calorie-context";
 import { PremiumFeatureTeaser } from "@/components/premium-feature-banner";
+import { MissedWorkoutBanner } from "@/components/missed-workout-banner";
 import { useExerciseCompletion } from "@/lib/exercise-completion-context";
 import { EmptyState, EMPTY_STATES } from "@/components/empty-state";
 import { useAiLimit } from "@/components/ai-limit-modal";
@@ -592,6 +593,19 @@ function PlansScreenContent() {
                   <MaterialIcons name="chevron-right" size={20} color="#06B6D4" />
                 </TouchableOpacity>
                 </View>
+
+                {/* ── MISSED WORKOUT BANNER ── */}
+                {workoutPlan?.schedule && (
+                  <MissedWorkoutBanner
+                    schedule={workoutPlan.schedule}
+                    completedDays={completedDays}
+                    onReschedule={(updatedSchedule) => {
+                      const updatedPlan = { ...workoutPlan, schedule: updatedSchedule };
+                      setLocalWorkoutPlan(updatedPlan);
+                      AsyncStorage.setItem("@guest_workout_plan", JSON.stringify(updatedPlan));
+                    }}
+                  />
+                )}
 
                 {/* ── TODAY'S WORKOUT (highlighted) ── */}
                 {todayWorkout && (
