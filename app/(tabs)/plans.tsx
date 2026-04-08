@@ -603,7 +603,7 @@ function PlansScreenContent() {
                       isCompleted={!!completedDays[todayWorkout.day]}
                       onToggleComplete={() => toggleDayComplete(todayWorkout.day)}
                       onPress={() => {
-                        if (!todayWorkout.isRest) router.push({ pathname: "/active-workout", params: { dayData: JSON.stringify(todayWorkout) } } as any);
+                        if (!todayWorkout.isRest) router.push({ pathname: "/energy-checkin", params: { dayData: JSON.stringify(todayWorkout) } } as any);
                       }}
                       isToday
                       onExerciseSwap={handleExerciseSwap}
@@ -625,7 +625,7 @@ function PlansScreenContent() {
                         isCompleted={!!completedDays[day.day]}
                         onToggleComplete={() => toggleDayComplete(day.day)}
                         onPress={() => {
-                          if (!day.isRest) router.push({ pathname: "/active-workout", params: { dayData: JSON.stringify(day) } } as any);
+                          if (!day.isRest) router.push({ pathname: "/energy-checkin", params: { dayData: JSON.stringify(day) } } as any);
                         }}
                         onExerciseSwap={handleExerciseSwap}
                       />

@@ -3214,3 +3214,15 @@
 - [x] Verify TypeScript compiles (0 errors)
 - [x] Full test suite: 80 files passed, 2211 tests passed, 0 failures
 - [x] Save checkpoint
+
+## Round 97 Step 1: Pre-Workout Energy Check-In
+- [x] Create energy-checkin.tsx screen with 3 energy levels (Low / Normal / Fired Up)
+- [x] Design visual cards for each energy level with icons, descriptions, and workout adjustments
+- [x] Implement workout adjustment logic: Low = fewer exercises + lighter, Normal = standard, Fired Up = extra sets/supersets
+- [x] Integrate check-in into the workout start flow (Plans tab, Home tab, notification deep-link all route through check-in)
+- [x] Pass energy level to active-workout.tsx to modify the displayed workout
+- [x] Store energy check-in history in AsyncStorage for future pattern learning (90-day retention)
+- [x] Extract pure logic into lib/energy-checkin.ts for testability
+- [x] Write 26 unit tests for energy check-in logic (all passing)
+- [x] Verify TypeScript compiles (0 errors) and full test suite passes (81 files, 2237 tests, 0 failures)
+- [x] Save checkpoint

@@ -642,8 +642,10 @@ function HomeScreenContent() {
                     : 999;
                   if (daysSinceProgress >= 7) {
                     router.push("/progress-checkin" as any);
+                  } else if (workoutPlan && todayWorkout) {
+                    router.push({ pathname: "/energy-checkin", params: { dayData: JSON.stringify(todayWorkout) } } as any);
                   } else if (workoutPlan) {
-                    router.push("/active-workout" as any);
+                    router.push("/(tabs)/plans" as any);
                   } else {
                     router.push("/(tabs)/scan" as any);
                   }
@@ -734,7 +736,7 @@ function HomeScreenContent() {
                 <SectionTitle title="Today's Target Muscles" />
                 <TouchableOpacity
                   onPress={() => {
-                    router.push({ pathname: "/active-workout", params: { dayData: JSON.stringify(todayWorkout) } } as any);
+                    router.push({ pathname: "/energy-checkin", params: { dayData: JSON.stringify(todayWorkout) } } as any);
                   }}
                   activeOpacity={0.85}
                   style={styles.workoutCard}

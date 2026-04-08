@@ -112,7 +112,7 @@ function useNotificationDeepLink(ready: boolean) {
       const todayData = await loadTodayWorkoutData();
       const nav = () => {
         if (todayData) {
-          router.push({ pathname: "/active-workout", params: { dayData: JSON.stringify(todayData) } } as any);
+          router.push({ pathname: "/energy-checkin", params: { dayData: JSON.stringify(todayData) } } as any);
         } else {
           // No plan found — go to plans tab
           router.push("/(tabs)/plans" as any);
