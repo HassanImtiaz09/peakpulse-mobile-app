@@ -1,6 +1,7 @@
 import * as Notifications from "expo-notifications";
 import { Platform } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { initWeeklyNutritionNotification } from "@/lib/weekly-nutrition-notification";
 
 // Configure how notifications appear when app is in foreground
 Notifications.setNotificationHandler({
@@ -141,6 +142,8 @@ export async function scheduleAllDefaultReminders(): Promise<void> {
   await scheduleWaterReminder(2);
   await scheduleWeeklyRecapNotification(19, 0);
   await scheduleMealPlanRenewalReminder(18, 0);
+  // Weekly nutrition summary (Sunday 7:30 PM)
+  await initWeeklyNutritionNotification();
 }
 
 export async function sendImmediateNotification(title: string, body: string): Promise<void> {

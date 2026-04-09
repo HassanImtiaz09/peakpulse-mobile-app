@@ -18,6 +18,7 @@ import * as FileSystem from "expo-file-system/legacy";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { trpc } from "@/lib/trpc";
 import { useGuestAuth } from "@/lib/guest-auth";
+import { awardXP } from "@/lib/xp-engine";
 import { useAiLimit } from "@/components/ai-limit-modal";
 import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
 import { ScreenErrorBoundary } from "@/components/error-boundary";
@@ -213,6 +214,8 @@ export default function DailyCheckInScreen() {
       // Check streak
       const newStreak = streak + (todayCheckIn ? 0 : 1);
       setStreak(newStreak);
+      // Award XP for daily check-in
+      awardXP("daily_checkin").catch(() => {});
 
       const reward = STREAK_REWARDS.find((r) => r.days === newStreak);
       if (reward) {

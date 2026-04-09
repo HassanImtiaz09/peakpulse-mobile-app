@@ -62,6 +62,7 @@ import { autoCacheCurrentWorkout } from "@/lib/offline-workout-cache";
 import { prefetchExerciseVideos } from "@/lib/gif-cache";
 import { prefetchWorkoutGifs } from "@/lib/exercise-gif-cache";
 import { recordWorkoutCompleted, recordTimerUsed } from "@/lib/feature-discovery";
+import { awardXP } from "@/lib/xp-engine";
 import { evaluateAndScheduleSmartReminders } from "@/lib/smart-reminders";
 import { GOLDEN_WORKOUT, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgrounds";
 import { UI as SF } from "@/constants/ui-colors";
@@ -805,6 +806,7 @@ export default function ActiveWorkoutScreen() {
 
             // Fire-and-forget analytics — OK to swallow
             recordWorkoutCompleted().catch(() => {});
+            awardXP("workout_completed").catch(() => {});
             evaluateAndScheduleSmartReminders().catch(() => {});
 
             try {

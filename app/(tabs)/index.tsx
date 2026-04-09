@@ -52,6 +52,10 @@ import { ErrorBoundary } from "@/components/error-boundary";
 import { a11yButton, a11yHeader, a11yImage, a11yProgress, A11Y_LABELS } from "@/lib/accessibility";
 import TransformationCard from "@/components/transformation-card";
 import ProgressPhotoGallery from "@/components/progress-photo-gallery";
+import { XPProgressBar } from "@/components/xp-progress-bar";
+import { ConfettiCelebration } from "@/components/confetti-celebration";
+import { XPToast } from "@/components/xp-toast";
+import { useXP } from "@/lib/xp-context";
 
 const AT_DASHBOARD_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/PZcnawJwIZkQHTEM.jpg";
 
@@ -879,6 +883,11 @@ function HomeScreenContent() {
             </StaggeredCard>
           )}
 
+          {/* ── XP Progress Bar ── */}
+          <StaggeredCard index={2}>
+            <XPProgressBar />
+          </StaggeredCard>
+
           {/* âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
               SECTION 3: Daily Progress (Calories + Macros in one compact row)
               âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */}
@@ -1642,6 +1651,25 @@ export default function HomeScreen() {
   return (
     <ErrorBoundary fallbackScreen="Dashboard">
       <HomeScreenContent />
+      <XPOverlay />
     </ErrorBoundary>
+  );
+}
+
+/** XP toast + confetti overlay — rendered above all Home content */
+function XPOverlay() {
+  const { toast, dismissToast, showConfetti, dismissConfetti } = useXP();
+  return (
+    <>
+      <XPToast
+        visible={toast.visible}
+        xp={toast.xp}
+        label={toast.label}
+        levelUp={toast.levelUp}
+        newLevel={toast.newLevel}
+        onDismiss={dismissToast}
+      />
+      <ConfettiCelebration visible={showConfetti} onComplete={dismissConfetti} />
+    </>
   );
 }

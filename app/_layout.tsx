@@ -11,6 +11,7 @@ import "@/lib/_core/nativewind-pressable";
 import { ThemeProvider } from "@/lib/theme-provider";
 import { GuestAuthProvider } from "@/lib/guest-auth";
 import { CalorieProvider } from "@/lib/calorie-context";
+import { XPProvider } from "@/lib/xp-context";
 import { PantryProvider } from "@/lib/pantry-context";
 import { WearableProvider } from "@/lib/wearable-context";
 import {
@@ -293,6 +294,7 @@ export default function RootLayout() {
       <UserProfileProvider>
       <FavoritesProvider>
       <CalorieProvider>
+      <XPProvider>
       <PantryProvider>
       <ExerciseCompletionProvider>
       <WearableProvider>
@@ -314,6 +316,7 @@ export default function RootLayout() {
       </WearableProvider>
       </ExerciseCompletionProvider>
       </PantryProvider>
+      </XPProvider>
       </CalorieProvider>
       </FavoritesProvider>
       </UserProfileProvider>

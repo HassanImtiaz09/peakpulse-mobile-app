@@ -30,6 +30,10 @@ import {
   cancelProgressPhotoReminder,
   getProgressPhotoReminderSettings,
 } from "@/lib/notifications";
+import {
+  getWeeklyNutritionEnabled,
+  setWeeklyNutritionEnabled,
+} from "@/lib/weekly-nutrition-notification";
 import { GOLDEN_PRIMARY, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgrounds";
 import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
 
@@ -60,6 +64,7 @@ interface NotifPrefs {
   weeklyRecapEnabled: boolean;
   weeklyRecapHour: number;
   weeklyRecapMinute: number;
+  weeklyNutritionEnabled: boolean;
   progressPhotoFrequency: "daily" | "weekly" | "off";
   progressPhotoHour: number;
   progressPhotoMinute: number;
@@ -91,6 +96,7 @@ const DEFAULT_PREFS: NotifPrefs = {
   weeklyRecapEnabled: true,
   weeklyRecapHour: 19,
   weeklyRecapMinute: 0,
+  weeklyNutritionEnabled: true,
   progressPhotoFrequency: "off" as const,
   progressPhotoHour: 9,
   progressPhotoMinute: 0,
@@ -610,6 +616,27 @@ export default function NotificationPreferencesScreen() {
           )}
         </View>
 
+        {/* ── Weekly Nutrition Summary ── */}
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionIcon}>{"\ud83e\udd57"}</Text>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.sectionTitle}>Weekly Nutrition Summary</Text>
+              <Text style={styles.sectionSub}>Sunday evening — calorie & protein averages</Text>
+            </View>
+            <Switch
+              value={prefs.weeklyNutritionEnabled}
+              onValueChange={async () => {
+                const updated = { ...prefs, weeklyNutritionEnabled: !prefs.weeklyNutritionEnabled };
+                setPrefs(updated);
+                await AsyncStorage.setItem(PREF_KEY, JSON.stringify(updated));
+                await setWeeklyNutritionEnabled(updated.weeklyNutritionEnabled);
+              }}
+              trackColor={{ false: "#333", true: "#F59E0B" }}
+              thumbColor={prefs.weeklyNutritionEnabled ? "#fff" : "#888"}
+            />
+          </View>
+        </View>
         {/* ── Progress Photo Reminders ── */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>

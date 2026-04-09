@@ -2237,6 +2237,19 @@ function MealsScreenContent() {
           calorieGoal={calorieGoal}
           proteinTarget={macroTargets?.protein || 0}
           dietaryPref={userDietaryPref}
+          isRegenerating={regenerating}
+          onRegeneratePlan={(adjustedCalories) => {
+            setRegenerating(true);
+            const params = getMealPlanMutateParams("generic");
+            regenerateMealPlan.mutate({
+              ...params,
+              dailyCalories: adjustedCalories,
+              varietyHint: (params.varietyHint || "") +
+                " This plan is being adjusted because the user has been consistently " +
+                (adjustedCalories < calorieGoal ? "under-eating" : "over-eating") +
+                ". Target ~" + adjustedCalories + " kcal/day to be more realistic and sustainable.",
+            });
+          }}
         />
         {/* ── Today's Log ── */}
         <Text style={{ color: MFG, fontFamily: "DMSans_700Bold", fontSize: 15, marginBottom: 10 }}>

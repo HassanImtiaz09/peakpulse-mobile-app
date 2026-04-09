@@ -68,6 +68,10 @@ interface AdaptiveMealBannerProps {
   calorieGoal: number;
   proteinTarget: number;
   dietaryPref?: string;
+  /** Callback to regenerate the meal plan with adjusted calorie targets */
+  onRegeneratePlan?: (adjustedCalories: number) => void;
+  /** Whether a regeneration is currently in progress */
+  isRegenerating?: boolean;
 }
 
 // ── Component ────────────────────────────────────────────────────────────
@@ -76,6 +80,8 @@ export function AdaptiveMealBanner({
   calorieGoal,
   proteinTarget,
   dietaryPref,
+  onRegeneratePlan,
+  isRegenerating,
 }: AdaptiveMealBannerProps) {
   const [analysis, setAnalysis] = useState<AdaptiveAnalysis | null>(null);
   const [visibleInsights, setVisibleInsights] = useState<MealInsight[]>([]);
@@ -187,6 +193,37 @@ export function AdaptiveMealBanner({
             </Text>
           )}
         </View>
+
+        {/* Adjust My Plan button — shown for under/over eating */}
+        {onRegeneratePlan && analysis && (
+          topInsight.type === "under_eating" || topInsight.type === "over_eating"
+        ) && (
+          <TouchableOpacity
+            onPress={() => {
+              if (Platform.OS !== "web")
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+              // Suggest adjusted calories based on actual average
+              const adjusted = Math.round(
+                (analysis.averageDailyCalories + calorieGoal) / 2
+              );
+              onRegeneratePlan(adjusted);
+            }}
+            style={[
+              styles.regenerateButton,
+              isRegenerating && { opacity: 0.5 },
+            ]}
+            disabled={isRegenerating}
+          >
+            <MaterialIcons
+              name={isRegenerating ? "hourglass-top" : "auto-fix-high"}
+              size={16}
+              color="#000"
+            />
+            <Text style={styles.regenerateText}>
+              {isRegenerating ? "Adjusting Plan..." : "Adjust My Plan"}
+            </Text>
+          </TouchableOpacity>
+        )}
       </View>
 
       {/* Detail Modal */}
@@ -515,5 +552,22 @@ const styles = StyleSheet.create({
   statLabel: {
     color: MMUTED,
     fontSize: 10,
+  },
+  // Regenerate button
+  regenerateButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+    backgroundColor: AMBER,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 12,
+    marginTop: 2,
+  },
+  regenerateText: {
+    color: "#000",
+    fontFamily: "DMSans_700Bold",
+    fontSize: 13,
   },
 });

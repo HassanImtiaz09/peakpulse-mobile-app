@@ -3289,3 +3289,29 @@
 - [x] Integrate AdaptiveMealBanner into Meals tab Tracker section (above Today's Log)
 - [x] Write 32 unit tests for adaptive meal plan logic (all passing)
 - [x] Verify TypeScript compiles (0 errors) and full test suite passes (86 files, 2370 tests, 0 failures)
+
+## Round 97 Step 7: Micro-Reward System
+- [x] Create lib/xp-engine.ts with XP calculation, level progression, and streak tracking
+- [x] Define XP actions: meal logged, workout completed, streak day, progress photo, body scan
+- [x] Streak badges: 3-day, 7-day, 14-day, 30-day, 60-day, 100-day milestones
+- [x] Level system: XP thresholds for levels 1-50 with titles
+- [x] Create components/confetti-celebration.tsx with animated confetti burst
+- [x] Create components/xp-toast.tsx for "+XP" floating toast notifications
+- [x] Integrate XP awards into meal logging, workout completion, and progress photo flows
+- [x] Display XP bar and level on Home tab dashboard
+- [x] Display streak badge collection on Profile tab
+- [x] Write unit tests for XP engine logic (50 tests passing)
+
+## Round 97 Step 8: Weekly Nutrition Summary Notification
+- [x] Create lib/weekly-nutrition-notification.ts with digest computation
+- [x] Schedule Sunday evening push notification with week's calorie/protein averages
+- [x] Include insights from adaptive meal plan analysis in notification body
+- [x] Add toggle in Notification Preferences screen
+- [x] Write unit tests for weekly summary logic
+
+## Round 97 Step 9: Adaptive Meal Plan Regeneration
+- [x] Add "Adjust My Plan" one-tap button to AdaptiveMealBanner when under/over-eating detected
+- [x] Calculate adjusted calorie target based on actual intake patterns
+- [x] Trigger meal plan regeneration with adjusted targets via existing tRPC endpoint
+- [x] Show confirmation dialog before regenerating
+- [x] Write unit tests for adjusted target calculation
