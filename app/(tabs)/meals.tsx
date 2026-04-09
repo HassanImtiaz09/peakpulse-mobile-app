@@ -2470,7 +2470,7 @@ function MealsScreenContent() {
                       <MaterialIcons name="star" size={16} color="#F59E0B" />
                       <View style={{ flex: 1 }}>
                         <Text style={{ color: MFG, fontFamily: "DMSans_700Bold", fontSize: 13 }}>{fav.name}</Text>
-                        <Text style={{ color: MMUTED, fontSize: 10 }}>{fav.calories} kcal \u2022 P:{fav.protein}g C:{fav.carbs}g F:{fav.fat}g</Text>
+                        <Text style={{ color: MMUTED, fontSize: 10 }}>{fav.calories} kcal {"\u2022"} P:{fav.protein}g C:{fav.carbs}g F:{fav.fat}g</Text>
                       </View>
                     </TouchableOpacity>
                   ))}
@@ -2805,7 +2805,7 @@ function MealsScreenContent() {
                   )}
                   <View style={{ padding: 10 }}>
                     <Text style={{ color: MFG, fontFamily: "DMSans_700Bold", fontSize: 12 }} numberOfLines={1}>{recipe.title}</Text>
-                    <Text style={{ color: MMUTED, fontSize: 10, marginTop: 2 }}>{cals} kcal \u2022 {prot}g protein</Text>
+                    <Text style={{ color: MMUTED, fontSize: 10, marginTop: 2 }}>{cals} kcal {"\u2022"} {prot}g protein</Text>
                     <View style={{ flexDirection: "row", gap: 4, marginTop: 8 }}>
                       <TouchableOpacity
                         style={{ flex: 1, backgroundColor: "#F59E0B", borderRadius: 8, paddingVertical: 6, alignItems: "center" }}
@@ -3184,7 +3184,7 @@ function MealsScreenContent() {
               <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", backgroundColor: MSURFACE, borderRadius: 14, padding: 12, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}>
                 <View style={{ flexDirection: "row", alignItems: "center", gap: 8, flex: 1 }}>
                   <MaterialIcons name="restaurant-menu" size={16} color="#F59E0B" />
-                  <Text style={{ color: MFG, fontFamily: "DMSans_600SemiBold", fontSize: 13 }} numberOfLines={1}>{mealGoalLabel} \u00b7 {dietLabel}{selectedCuisines.length > 0 ? ` \u00b7 ${selectedCuisines.length} cuisine${selectedCuisines.length > 1 ? "s" : ""}` : ""}{ramadanMode ? " \u00b7 Ramadan" : ""}</Text>
+                  <Text style={{ color: MFG, fontFamily: "DMSans_600SemiBold", fontSize: 13 }} numberOfLines={1}>{mealGoalLabel} {"\u00b7"} {dietLabel}{selectedCuisines.length > 0 ? ` \u00b7 ${selectedCuisines.length} cuisine${selectedCuisines.length > 1 ? "s" : ""}` : ""}{ramadanMode ? " \u00b7 Ramadan" : ""}</Text>
                 </View>
                 <TouchableOpacity onPress={() => setShowMealCustomize(!showMealCustomize)}>
                   <MaterialIcons name="tune" size={18} color="#F59E0B" />
@@ -4224,7 +4224,7 @@ function MealsScreenContent() {
               <View style={{ flex: 1 }}>
                 <Text style={{ color: "#F59E0B", fontSize: 11, fontFamily: "DMSans_700Bold", letterSpacing: 1.5 }}>SMART SWAP</Text>
                 <Text style={{ color: MFG, fontSize: 20, fontFamily: "BebasNeue_400Regular", marginTop: 2 }}>Choose a Replacement</Text>
-                <Text style={{ color: MMUTED, fontSize: 11, marginTop: 2 }}>Replacing: {swapMealPlanModal.meal.name} \u00b7 {swapMealPlanModal.meal.calories} kcal</Text>
+                <Text style={{ color: MMUTED, fontSize: 11, marginTop: 2 }}>Replacing: {swapMealPlanModal.meal.name} {"\u00b7"} {swapMealPlanModal.meal.calories} kcal</Text>
               </View>
               <TouchableOpacity
                 style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: "rgba(245,158,11,0.10)", alignItems: "center", justifyContent: "center" }}
@@ -4394,7 +4394,7 @@ function MealSwapModal({ mealType, mealData, dietaryPreference, fitnessGoal, gen
               Swap {mealType.charAt(0).toUpperCase() + mealType.slice(1)}
             </Text>
             {mealData && (
-              <Text style={{ color: MMUTED, fontSize: 11, marginTop: 2 }}>Replacing: {mealData.name} \u00b7 {mealData.calories} kcal</Text>
+              <Text style={{ color: MMUTED, fontSize: 11, marginTop: 2 }}>Replacing: {mealData.name} {"\u00b7"} {mealData.calories} kcal</Text>
             )}
           </View>
           <TouchableOpacity
@@ -4446,7 +4446,7 @@ function MealSwapModal({ mealType, mealData, dietaryPreference, fitnessGoal, gen
             <Text style={{ color: "#F59E0B", fontFamily: "DMSans_700Bold", fontSize: 13, marginBottom: 8, letterSpacing: 0.5 }}>INGREDIENTS</Text>
             {(selectedItem.ingredients ?? []).map((ing: string, i: number) => (
               <View key={i} style={{ flexDirection: "row", gap: 8, marginBottom: 6 }}>
-                <Text style={{ color: "#F59E0B", fontSize: 12 }}>\u2022</Text>
+                <Text style={{ color: "#F59E0B", fontSize: 12 }}>{"\u2022"}</Text>
                 <Text style={{ color: MFG, fontSize: 13, flex: 1, lineHeight: 20 }}>{ing}</Text>
               </View>
             ))}

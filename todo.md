@@ -3415,3 +3415,11 @@
 - [x] Reduce Metro memory footprint (maxWorkers=2, heap 1536 MB Metro / 512 MB server)
 - [x] Pre-cache Android bundle via warmup script so Expo Go connects instantly
 - [x] Verify both manifest and bundle endpoints respond via proxy (HTTP 200, 0.2-0.6s)
+
+## Round 101: Typography & Overlap Fixes
+- [x] Fix Unicode escape sequences (\u00a3) showing as raw text in subscription pricing instead of £ symbol
+- [x] Fix annual pricing showing raw \u00a3 and \u00b7 escape sequences
+- [x] Fix raw \u2022 bullet and \u00b7 middle dot in meals.tsx
+- [x] Fix Start Workout FAB overlapping "Using as Guest" section at bottom of Home screen (paddingBottom 140→200)
+- [x] Check other screens for similar FAB/bottom content overlap issues (all clean — other tabs have 120px padding with no FAB)
+- [x] Check other areas for similar Unicode/typography rendering issues (all clean)

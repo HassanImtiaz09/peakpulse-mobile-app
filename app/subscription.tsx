@@ -172,13 +172,13 @@ export default function SubscriptionScreen() {
             >
               <Text style={styles.planName}>Basic</Text>
               <View style={styles.priceRow}>
-                <Text style={styles.currency}>\u00a3</Text>
+                <Text style={styles.currency}>{"\u00a3"}</Text>
                 <Text style={styles.price}>{prices.basic.toFixed(2)}</Text>
               </View>
               <Text style={styles.perMonth}>/ month</Text>
               {billingCycle === "annual" && (
                 <>
-                  <Text style={styles.annualNote}>\u00a3{annualTotals.basic.toFixed(2)}/yr \u00b7 save \u00a3{annualSavings.basic.toFixed(2)}/yr</Text>
+                  <Text style={styles.annualNote}>{"\u00a3"}{annualTotals.basic.toFixed(2)}/yr {"\u00b7"} save {"\u00a3"}{annualSavings.basic.toFixed(2)}/yr</Text>
                   <View style={styles.savingsChip}><Text style={styles.savingsChipText}>30% OFF</Text></View>
                 </>
               )}
@@ -197,13 +197,13 @@ export default function SubscriptionScreen() {
               </View>
               <Text style={[styles.planName, styles.planNamePro]}>Pro</Text>
               <View style={styles.priceRow}>
-                <Text style={[styles.currency, styles.currencyPro]}>\u00a3</Text>
+                <Text style={[styles.currency, styles.currencyPro]}>{"\u00a3"}</Text>
                 <Text style={[styles.price, styles.pricePro]}>{prices.pro.toFixed(2)}</Text>
               </View>
               <Text style={[styles.perMonth, styles.perMonthPro]}>/ month</Text>
               {billingCycle === "annual" && (
                 <>
-                  <Text style={[styles.annualNote, { color: "#F59E0B" }]}>\u00a3{annualTotals.pro.toFixed(2)}/yr \u00b7 save \u00a3{annualSavings.pro.toFixed(2)}/yr</Text>
+                  <Text style={[styles.annualNote, { color: "#F59E0B" }]}>{"\u00a3"}{annualTotals.pro.toFixed(2)}/yr {"\u00b7"} save {"\u00a3"}{annualSavings.pro.toFixed(2)}/yr</Text>
                   <View style={[styles.savingsChip, { backgroundColor: "#EA580C20", borderColor: "#EA580C40" }]}><Text style={[styles.savingsChipText, { color: "#EA580C" }]}>30% OFF</Text></View>
                 </>
               )}
@@ -278,7 +278,7 @@ export default function SubscriptionScreen() {
               ) : (
                 <>
                   <Text style={styles.trialBtnText}>Start 7-Day Free Trial</Text>
-                  <Text style={styles.trialBtnSub}>No credit card required \u00b7 Full Pro access</Text>
+                  <Text style={styles.trialBtnSub}>{"No credit card required \u00b7 Full Pro access"}</Text>
                 </>
               )}
             </TouchableOpacity>
@@ -295,9 +295,9 @@ export default function SubscriptionScreen() {
             ) : (
               <>
                 <Text style={styles.ctaBtnText}>
-                  Start {selectedPlan === "basic" ? "Basic" : "Pro"} \u2014 \u00a3{prices[selectedPlan].toFixed(2)}/mo
+                  Start {selectedPlan === "basic" ? "Basic" : "Pro"} {"\u2014"} {"\u00a3"}{prices[selectedPlan].toFixed(2)}/mo
                 </Text>
-                <Text style={styles.ctaSubText}>Cancel anytime \u00b7 Secure payment via Stripe</Text>
+                <Text style={styles.ctaSubText}>{"Cancel anytime \u00b7 Secure payment via Stripe"}</Text>
               </>
             )}
           </TouchableOpacity>

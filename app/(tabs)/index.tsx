@@ -557,7 +557,7 @@ function HomeScreenContent() {
       <View style={{ flex: 1, backgroundColor: SF.bg }}>
         <Animated.ScrollView
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: 140 }}
+          contentContainerStyle={{ paddingBottom: 200 }}
           style={{ flex: 1 }}
           scrollEventThrottle={16}
           refreshControl={
