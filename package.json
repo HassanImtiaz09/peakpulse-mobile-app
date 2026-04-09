@@ -5,8 +5,8 @@
   "main": "expo-router/entry",
   "scripts": {
     "dev": "concurrently -k \"pnpm dev:server\" \"pnpm dev:metro\"",
-    "dev:server": "cross-env NODE_ENV=development NODE_OPTIONS=--max-old-space-size=2048 tsx watch server/_core/index.ts",
-    "dev:metro": "cross-env EXPO_USE_METRO_WORKSPACE_ROOT=1 NODE_OPTIONS=--max-old-space-size=2048 npx expo start --web --port ${EXPO_PORT:-8081}",
+    "dev:server": "cross-env NODE_ENV=development NODE_OPTIONS=--max-old-space-size=512 tsx watch server/_core/index.ts",
+    "dev:metro": "cross-env EXPO_USE_METRO_WORKSPACE_ROOT=1 NODE_OPTIONS=--max-old-space-size=1536 npx expo start --web --port ${EXPO_PORT:-8081}",
     "build": "esbuild server/_core/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist",
     "start": "NODE_ENV=production node dist/index.js",
     "check": "tsc --noEmit",

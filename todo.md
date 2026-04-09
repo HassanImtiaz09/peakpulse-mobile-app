@@ -3409,3 +3409,9 @@
 ## Round 99: Bug Fixes — Preview Error & Expo Go
 - [x] Fix uncaught error on web preview screen (Platform.OS web guards for FileSystem in progress-photo-gallery.tsx and gif-cache.ts)
 - [x] Diagnose Expo Go connectivity issue (sandbox network isolation — users should use the exps:// QR code from the Preview panel)
+
+## Round 100: Fix Expo Go 504 Gateway Time-out
+- [x] Diagnose 504 timeout when Expo Go connects (Metro unresponsive / OOM during initial native bundle)
+- [x] Reduce Metro memory footprint (maxWorkers=2, heap 1536 MB Metro / 512 MB server)
+- [x] Pre-cache Android bundle via warmup script so Expo Go connects instantly
+- [x] Verify both manifest and bundle endpoints respond via proxy (HTTP 200, 0.2-0.6s)
