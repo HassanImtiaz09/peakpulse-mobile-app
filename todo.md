@@ -3315,3 +3315,27 @@
 - [x] Trigger meal plan regeneration with adjusted targets via existing tRPC endpoint
 - [x] Show confirmation dialog before regenerating
 - [x] Write unit tests for adjusted target calculation
+
+## Round 97 Step 10: XP Rewards Screen
+- [x] Create app/xp-rewards.tsx dedicated screen
+- [x] Show current level, XP bar, and level title prominently at top
+- [x] Display full XP history log with timestamps and action labels
+- [x] Show badge collection grid with earned/locked states
+- [x] Show level milestones roadmap with progress indicators
+- [x] Make XP bar on Home tab tappable to navigate to this screen
+- [x] Write unit tests for XP rewards screen logic (31 tests passing)
+
+## Round 97 Step 11: Social Sharing for Milestones
+- [x] Create lib/milestone-share.ts with share card generation logic
+- [x] Generate styled share card view for level-ups and streak badges (SVG + text)
+- [x] Use expo-sharing to share to Instagram Stories, iMessage, etc.
+- [x] Add share button to badge cards in XP Rewards screen
+- [x] Add "Share Level" button to hero card in XP Rewards screen
+- [x] Write unit tests for share card content generation
+
+## Round 97 Step 12: Smart Meal Suggestions
+- [x] Create lib/smart-meal-suggestions.ts with gap-closing meal logic
+- [x] When under-eating detected, find meals from current plan that fit remaining calorie gap
+- [x] Display suggested meals in AdaptiveMealBanner detail modal
+- [x] Include meal name, calories, and one-tap "Add to Today" action
+- [x] Write unit tests for smart meal suggestion algorithm

@@ -3,7 +3,8 @@
  * Shows current level, XP progress within level, and streak badges.
  */
 import React, { useEffect } from "react";
-import { View, Text, StyleSheet, Platform } from "react-native";
+import { View, Text, StyleSheet, Platform, Pressable } from "react-native";
+import { useRouter } from "expo-router";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -22,6 +23,7 @@ const BORDER = "rgba(30,41,59,0.6)";
 
 export function XPProgressBar() {
   const { state } = useXP();
+  const router = useRouter();
   const progressWidth = useSharedValue(0);
 
   useEffect(() => {
@@ -43,7 +45,13 @@ export function XPProgressBar() {
   const earnedBadges = badges.filter((b) => data.earnedBadges.includes(b.days));
 
   return (
-    <View style={styles.container}>
+    <Pressable
+      onPress={() => router.push("/xp-rewards" as any)}
+      style={({ pressed }) => [
+        styles.container,
+        pressed && { opacity: 0.85, transform: [{ scale: 0.98 }] },
+      ]}
+    >
       {/* Level + XP row */}
       <View style={styles.headerRow}>
         <View style={styles.levelBadge}>
@@ -83,7 +91,7 @@ export function XPProgressBar() {
           ))}
         </View>
       )}
-    </View>
+    </Pressable>
   );
 }
 

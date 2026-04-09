@@ -28,6 +28,10 @@ import {
   type SimpleMealSuggestion,
 } from "@/lib/adaptive-meal-plan";
 import { getHistoricalMeals, type MealEntry } from "@/lib/calorie-context";
+import {
+  getSmartMealSuggestions,
+  type SmartSuggestion,
+} from "@/lib/smart-meal-suggestions";
 
 // ── Design Tokens (Meals tab palette) ────────────────────────────────────
 
@@ -72,6 +76,12 @@ interface AdaptiveMealBannerProps {
   onRegeneratePlan?: (adjustedCalories: number) => void;
   /** Whether a regeneration is currently in progress */
   isRegenerating?: boolean;
+  /** The user's current weekly meal plan for smart suggestions */
+  mealPlanDays?: Array<{ day: string; meals: any[] }>;
+  /** Names of meals already logged today */
+  todayLoggedMealNames?: string[];
+  /** Callback when user taps "Add to Today" on a smart suggestion */
+  onAddMealToday?: (meal: { name: string; calories: number; protein: number; carbs: number; fat: number; type: string }) => void;
 }
 
 // ── Component ────────────────────────────────────────────────────────────
@@ -82,12 +92,16 @@ export function AdaptiveMealBanner({
   dietaryPref,
   onRegeneratePlan,
   isRegenerating,
+  mealPlanDays,
+  todayLoggedMealNames,
+  onAddMealToday,
 }: AdaptiveMealBannerProps) {
   const [analysis, setAnalysis] = useState<AdaptiveAnalysis | null>(null);
   const [visibleInsights, setVisibleInsights] = useState<MealInsight[]>([]);
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [selectedInsight, setSelectedInsight] = useState<MealInsight | null>(null);
   const [suggestions, setSuggestions] = useState<SimpleMealSuggestion[]>([]);
+  const [smartSuggestions, setSmartSuggestions] = useState<SmartSuggestion[]>([]);
 
   // Run analysis on mount and when goals change
   useEffect(() => {
@@ -115,6 +129,19 @@ export function AdaptiveMealBanner({
       if (result.insights.some((i) => i.type === "under_eating")) {
         const gap = calorieGoal - result.averageDailyCalories;
         setSuggestions(getSimpleMealSuggestions(gap, dietaryPref));
+
+        // Smart suggestions from the user's actual meal plan
+        if (mealPlanDays && mealPlanDays.length > 0) {
+          const smart = getSmartMealSuggestions(
+            mealPlanDays as any,
+            gap,
+            todayLoggedMealNames || [],
+            4,
+          );
+          setSmartSuggestions(smart);
+        }
+      } else {
+        setSmartSuggestions([]);
       }
     } catch {}
   }, [calorieGoal, proteinTarget, dietaryPref]);
@@ -302,6 +329,49 @@ export function AdaptiveMealBanner({
                           {s.calories} kcal · {s.protein}g protein · {s.prepTime}
                         </Text>
                       </View>
+                    </View>
+                  ))}
+                </View>
+              )}
+
+              {/* Smart Meal Suggestions from User's Plan */}
+              {smartSuggestions.length > 0 && (
+                <View style={styles.suggestionsSection}>
+                  <Text style={styles.sectionTitle}>From Your Meal Plan</Text>
+                  <Text style={styles.sectionSubtitle}>
+                    These meals from your plan would close today's calorie gap
+                  </Text>
+                  {smartSuggestions.map((s, i) => (
+                    <View key={`smart-${i}`} style={styles.smartSuggestionCard}>
+                      <View style={{ flex: 1 }}>
+                        <Text style={styles.suggestionName}>{s.name}</Text>
+                        <Text style={styles.suggestionMeta}>
+                          {s.calories} kcal · {s.protein}g protein · {s.type}
+                        </Text>
+                        <Text style={[styles.suggestionMeta, { color: MINT, marginTop: 2 }]}>
+                          From {s.fromDay}'s plan
+                        </Text>
+                      </View>
+                      {onAddMealToday && (
+                        <TouchableOpacity
+                          onPress={() => {
+                            if (Platform.OS !== "web")
+                              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                            onAddMealToday({
+                              name: s.name,
+                              calories: s.calories,
+                              protein: s.protein,
+                              carbs: s.carbs,
+                              fat: s.fat,
+                              type: s.type,
+                            });
+                          }}
+                          style={styles.addTodayButton}
+                        >
+                          <MaterialIcons name="add-circle-outline" size={16} color={MINT} />
+                          <Text style={styles.addTodayText}>Add</Text>
+                        </TouchableOpacity>
+                      )}
                     </View>
                   ))}
                 </View>
@@ -569,5 +639,30 @@ const styles = StyleSheet.create({
     color: "#000",
     fontFamily: "DMSans_700Bold",
     fontSize: 13,
+  },
+  smartSuggestionCard: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    backgroundColor: "rgba(20,184,166,0.06)",
+    borderRadius: 12,
+    padding: 12,
+    marginBottom: 8,
+    borderWidth: 1,
+    borderColor: "rgba(20,184,166,0.15)",
+  },
+  addTodayButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 8,
+    backgroundColor: "rgba(20,184,166,0.12)",
+  },
+  addTodayText: {
+    color: "#14B8A6",
+    fontFamily: "DMSans_600SemiBold",
+    fontSize: 12,
   },
 });
