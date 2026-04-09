@@ -3267,3 +3267,25 @@
 - [x] Write 39 unit tests for detection and rescheduling logic (all passing)
 - [x] Verify TypeScript compiles (0 errors) and full test suite passes (84 files, 2316 tests, 0 failures)
 - [x] Save checkpoint
+
+## Round 97 Step 5: "Just One Exercise" Quick Start
+- [x] Create lib/quick-pick-exercise.ts with smart exercise selection (muscle recovery scoring, motivational messages)
+- [x] Create app/quick-exercise.tsx screen with energy level selection, exercise card, shuffle, and start workout flow
+- [x] Wire "Just One Exercise" button into Home tab dashboard
+- [x] Write 22 unit tests for quick-pick logic (all passing)
+- [x] Verify TypeScript compiles (0 errors) and full test suite passes (85 files, 2338 tests, 0 failures)
+- [x] Save checkpoint
+
+## Round 97 Step 6: Adaptive Meal Plan Adjustment
+- [x] Create lib/adaptive-meal-plan.ts with pattern analysis (under-eating, over-eating, missed meals, low protein, on-track/great streak)
+- [x] buildDaySummaries: aggregate historical meal data into per-day calorie/macro summaries
+- [x] analyseMealPatterns: detect 5 insight types with configurable thresholds (80% under, 120% over, 70% protein, 3-day minimum)
+- [x] getSimpleMealSuggestions: calorie-dense low-effort meal ideas for under-eaters (vegan/omnivore variants)
+- [x] calculateRemainingDayTargets: redistribute weekly calorie/protein budget across remaining days
+- [x] Dismiss persistence: per-week dismissal tracking in AsyncStorage
+- [x] Create AdaptiveMealBanner component with severity-colored banners (warning/info/success)
+- [x] Banner shows top insight with "View Suggestion" action and detail modal
+- [x] Detail modal shows all insights, quick meal ideas, and weekly summary stats
+- [x] Integrate AdaptiveMealBanner into Meals tab Tracker section (above Today's Log)
+- [x] Write 32 unit tests for adaptive meal plan logic (all passing)
+- [x] Verify TypeScript compiles (0 errors) and full test suite passes (86 files, 2370 tests, 0 failures)

@@ -840,6 +840,45 @@ function HomeScreenContent() {
             </StaggeredCard>
           )}
 
+
+          {/* --- SECTION 2b: Just One Exercise Quick Start --- */}
+          {workoutPlan && (
+            <StaggeredCard index={2}>
+              <TouchableOpacity
+                onPress={() => {
+                  if (Platform.OS !== "web") Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                  router.push("/quick-exercise" as any);
+                }}
+                activeOpacity={0.85}
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  backgroundColor: "rgba(245,158,11,0.08)",
+                  borderRadius: 16,
+                  padding: 16,
+                  marginHorizontal: 20,
+                  marginBottom: 8,
+                  borderWidth: 1,
+                  borderColor: "rgba(245,158,11,0.15)",
+                  gap: 14,
+                }}
+              >
+                <View style={{
+                  width: 44, height: 44, borderRadius: 22,
+                  backgroundColor: "rgba(245,158,11,0.15)",
+                  alignItems: "center", justifyContent: "center",
+                }}>
+                  <MaterialIcons name="flash-on" size={22} color="#F59E0B" />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={{ color: "#F9FAFB", fontFamily: "DMSans_600SemiBold", fontSize: 14 }}>Just One Exercise</Text>
+                  <Text style={{ color: "#9CA3AF", fontFamily: "DMSans_400Regular", fontSize: 12, marginTop: 2 }}>Low on time or energy? We'll pick the perfect one.</Text>
+                </View>
+                <MaterialIcons name="chevron-right" size={20} color="#9CA3AF" />
+              </TouchableOpacity>
+            </StaggeredCard>
+          )}
+
           {/* âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
               SECTION 3: Daily Progress (Calories + Macros in one compact row)
               âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */}

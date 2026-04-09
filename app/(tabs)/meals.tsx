@@ -30,7 +30,7 @@ import * as Sharing from "expo-sharing";
 import { extractGroceryList, copyGroceryList, shareGroceryList, exportGroceryPdf, type GroceryCategory } from "@/lib/grocery-list";
 import { loadMealPreferences, toggleFavourite, rateMeal, isFavourite, getMealRating, buildPreferenceSummary, type MealPreferences } from "@/lib/meal-preferences";
 import { saveMealPlanToHistory, getPastMealNames, updatePhotoCacheFromPlan, applyCachedPhotos, isWeeklyRefreshNeeded, markWeeklyRefreshDone, loadPinnedMeals, togglePinnedMeal, applyPinnedMeals, cleanupPinnedMeals } from "@/lib/meal-history";
-
+import { AdaptiveMealBanner } from "@/components/adaptive-meal-banner";
 
 // NanoBanana design tokens — Meals uses mint/teal accent
 const MBG = "#0A0E14";
@@ -2232,6 +2232,12 @@ function MealsScreenContent() {
           />
         }
       >
+        {/* ── Adaptive Meal Insight Banner ── */}
+        <AdaptiveMealBanner
+          calorieGoal={calorieGoal}
+          proteinTarget={macroTargets?.protein || 0}
+          dietaryPref={userDietaryPref}
+        />
         {/* ── Today's Log ── */}
         <Text style={{ color: MFG, fontFamily: "DMSans_700Bold", fontSize: 15, marginBottom: 10 }}>
           Today's Log {meals.length > 0 ? `(${meals.length})` : ""}
