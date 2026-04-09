@@ -4,6 +4,7 @@ import { colorScheme as nativewindColorScheme, vars } from "nativewind";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { SchemeColors, type ColorScheme } from "@/constants/theme";
+import { setUIColorScheme } from "@/constants/ui-colors";
 
 export type ThemePreference = "light" | "dark" | "system";
 
@@ -56,7 +57,11 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   // Apply whenever resolved scheme changes
   useEffect(() => {
-    if (loaded) applyScheme(resolvedScheme);
+    if (loaded) {
+      applyScheme(resolvedScheme);
+      // Sync the reactive UI/SF/C color proxy with the current scheme
+      setUIColorScheme(resolvedScheme);
+    }
   }, [applyScheme, resolvedScheme, loaded]);
 
   const setThemePreference = useCallback((pref: ThemePreference) => {

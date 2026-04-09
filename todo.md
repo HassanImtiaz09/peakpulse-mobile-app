@@ -3423,3 +3423,15 @@
 - [x] Fix Start Workout FAB overlapping "Using as Guest" section at bottom of Home screen (paddingBottom 140→200)
 - [x] Check other screens for similar FAB/bottom content overlap issues (all clean — other tabs have 120px padding with no FAB)
 - [x] Check other areas for similar Unicode/typography rendering issues (all clean)
+
+## Round 102: Rest Timer & Theme Toggle
+- [x] Enhanced rest timer with large countdown display, progress bar, and +/-15s quick adjust buttons
+- [x] Added haptic buzz on rest timer completion (success notification) and warning haptic at 3 seconds
+- [x] Rest timer auto-starts between sets with configurable per-exercise-type durations
+- [x] Rest timer preference persisted in AsyncStorage via rest-timer-settings
+- [x] Added dark/light theme toggle button (sun/moon icon) in top-right corner of the app
+- [x] Theme preference persisted in AsyncStorage via ThemeProvider
+- [x] Made all 64 screens theme-aware via reactive Proxy-based UI/SF/C color constants
+- [x] Updated theme.config.js with proper light mode color palette
+- [x] Tab bar, blur background, and FAB buttons all respond to theme toggle
+- [x] Wrote 13 tests for reactive UI colors and rest timer settings

@@ -5,7 +5,7 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
-import { SF } from "@/constants/ui-colors";
+import { UI as SF } from "@/constants/ui-colors";
 import * as Haptics from "expo-haptics";
 
 const { height: SCREEN_H } = Dimensions.get("window");

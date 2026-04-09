@@ -8,7 +8,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ScreenErrorBoundary } from "@/components/error-boundary";
-import { SF, UI } from "@/constants/ui-colors";
+import { UI, SF } from "@/constants/ui-colors";
 
 const { width: SCREEN_W } = Dimensions.get("window");
 const CARD_GAP = 12;

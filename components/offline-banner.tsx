@@ -12,7 +12,7 @@ import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet, Animated } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useOfflineQueue } from "@/lib/offline-queue";
-import { SF } from "@/constants/ui-colors";
+import { UI as SF } from "@/constants/ui-colors";
 
 export function OfflineBanner() {
   const { isOnline, stats, retryAll } = useOfflineQueue();

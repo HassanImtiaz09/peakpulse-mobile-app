@@ -1,17 +1,16 @@
 /**
- * Centralized UI color constants for all screens.
+ * Theme-aware UI color hook.
  *
- * Uses a Proxy so that `UI.bg`, `SF.surface`, `C.fg` etc. resolve to the
- * current theme's palette at read-time. This allows StyleSheet.create() to
- * reference these values at module level while still getting theme-aware colors
- * on each render cycle.
+ * Returns the same shape as the old static `SF`/`UI`/`C` constants
+ * from `@/constants/ui-colors`, but resolves colors based on the
+ * current light/dark theme.
  *
- * The active palette is updated by ThemeProvider via `setUIColorScheme()`.
- *
- * Usage (unchanged from before):
- *   import { UI } from "@/constants/ui-colors";
- *   // UI.bg, UI.fg, etc. resolve to the active theme's colors
+ * Usage (drop-in replacement):
+ *   // Before: import { UI as SF } from "@/constants/ui-colors";
+ *   // After:  const SF = useUI();
  */
+import { useMemo } from "react";
+import { useThemeContext } from "@/lib/theme-provider";
 
 // ── Dark palette (original) ────────────────────────────────────
 const DARK = {
@@ -145,58 +144,12 @@ const LIGHT = {
   text:           "#1E293B",
 } as const;
 
-// ── Reactive color store ───────────────────────────────────────
-type UIColorKey = keyof typeof DARK;
-type UIColorMap = Record<UIColorKey, string>;
-
-let _activeScheme: "light" | "dark" = "dark";
+export type UIColors = { [K in keyof typeof DARK]: string };
 
 /**
- * Called by ThemeProvider whenever the resolved color scheme changes.
- * This updates which palette the Proxy-based UI/SF/C objects read from.
+ * Returns theme-aware UI colors. Drop-in replacement for the static SF/UI/C imports.
  */
-export function setUIColorScheme(scheme: "light" | "dark") {
-  _activeScheme = scheme;
+export function useUI(): UIColors {
+  const { colorScheme } = useThemeContext();
+  return useMemo(() => (colorScheme === "light" ? LIGHT : DARK) as UIColors, [colorScheme]);
 }
-
-/** Get the current active scheme (for tests or debugging). */
-export function getUIColorScheme(): "light" | "dark" {
-  return _activeScheme;
-}
-
-function createReactiveProxy(): UIColorMap {
-  return new Proxy({} as UIColorMap, {
-    get(_target, prop: string) {
-      const palette = _activeScheme === "light" ? LIGHT : DARK;
-      return (palette as any)[prop];
-    },
-    ownKeys() {
-      return Object.keys(DARK);
-    },
-    getOwnPropertyDescriptor(_target, prop: string) {
-      const palette = _activeScheme === "light" ? LIGHT : DARK;
-      if (prop in palette) {
-        return { configurable: true, enumerable: true, value: (palette as any)[prop] };
-      }
-      return undefined;
-    },
-  });
-}
-
-/**
- * Primary reactive color object. All property reads resolve to the
- * current theme's palette at access time.
- */
-export const UI = createReactiveProxy();
-
-/**
- * Legacy aliases for backward compatibility.
- */
-export const SF = UI;
-
-/**
- * Shorter alias used by some screens (workout-analytics, workout-timer-coach).
- */
-export const C = UI;
-
-export type { UIColorKey };

@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
-import { SF } from "@/constants/ui-colors";
+import { UI as SF } from "@/constants/ui-colors";
 
 const { width: SCREEN_W } = Dimensions.get("window");
 

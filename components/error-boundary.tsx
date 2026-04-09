@@ -1,7 +1,7 @@
 import React, { Component, type ErrorInfo, type ReactNode } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from "react-native";
 import { captureError } from "@/lib/sentry";
-import { UI, SF } from "@/constants/ui-colors";
+// Error boundary is a class component - no UI color imports needed
 
 interface Props {
   children: ReactNode;

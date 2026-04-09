@@ -702,12 +702,30 @@ export default function ActiveWorkoutScreen() {
       setRestTimer((prev) => {
         if (prev === null || prev <= 1) {
           if (restRef.current) clearInterval(restRef.current);
+          // Haptic buzz when rest timer completes
+          if (Platform.OS !== "web") {
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+            // Double buzz after a short delay for emphasis
+            setTimeout(() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy).catch(() => {});
+            }, 300);
+            setTimeout(() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy).catch(() => {});
+            }, 600);
+          }
           return null;
+        }
+        // Warning haptic at 3 seconds remaining
+        if (prev === 4 && Platform.OS !== "web") {
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
         }
         return prev - 1;
       });
     }, 1000);
   }
+
+  const [showRestConfig, setShowRestConfig] = useState(false);
+  const REST_PRESETS = [30, 45, 60, 90, 120, 180];
 
   function formatTime(seconds: number): string {
     const m = Math.floor(seconds / 60).toString().padStart(2, "0");
@@ -1081,36 +1099,63 @@ export default function ActiveWorkoutScreen() {
             marginBottom: 12,
             backgroundColor: "#F9731620",
             borderRadius: 16,
-            padding: 12,
+            padding: 14,
             borderWidth: 1,
-            borderColor: "#F9731640",
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "space-between",
+            borderColor: restTimer <= 5 ? "#EF444480" : "#F9731640",
           }}
         >
-          <Text
-            style={{ color: "#FED7AA", fontFamily: "DMSans_700Bold", fontSize: 14 }}
-          >
-            🔥🔄 Rest Timer
-          </Text>
-          <Text
-            style={{
-              color: SF.gold2,
-              fontFamily: "BebasNeue_400Regular",
-              fontSize: 24,
-            }}
-          >
-            {formatTime(restTimer)}
-          </Text>
-          <TouchableOpacity
-            onPress={() => {
-              setRestTimer(null);
-              if (restRef.current) clearInterval(restRef.current);
-            }}
-          >
-            <Text style={{ color: SF.muted, fontSize: 12 }}>Skip</Text>
-          </TouchableOpacity>
+          <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
+            <Text
+              style={{ color: "#FED7AA", fontFamily: "DMSans_700Bold", fontSize: 14 }}
+            >
+              Rest Timer
+            </Text>
+            <TouchableOpacity
+              onPress={() => {
+                setRestTimer(null);
+                if (restRef.current) clearInterval(restRef.current);
+                if (Platform.OS !== "web") Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+              }}
+              style={{ backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 8, paddingHorizontal: 12, paddingVertical: 4 }}
+            >
+              <Text style={{ color: SF.gold, fontFamily: "DMSans_700Bold", fontSize: 12 }}>Skip</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={{ alignItems: "center", marginBottom: 8 }}>
+            <Text
+              style={{
+                color: restTimer <= 5 ? "#F87171" : SF.gold2,
+                fontFamily: "BebasNeue_400Regular",
+                fontSize: 48,
+              }}
+            >
+              {formatTime(restTimer)}
+            </Text>
+            {/* Progress bar */}
+            <View style={{ width: "100%", height: 4, backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 2, marginTop: 4 }}>
+              <View style={{ height: 4, backgroundColor: restTimer <= 5 ? "#EF4444" : SF.gold, borderRadius: 2, width: `${Math.max(0, (restTimer / (getRestTimeForExercise(exercise?.name ?? "", restSettings) || 60)) * 100)}%` }} />
+            </View>
+          </View>
+          <View style={{ flexDirection: "row", justifyContent: "center", gap: 12 }}>
+            <TouchableOpacity
+              onPress={() => {
+                setRestTimer((prev) => Math.max(1, (prev ?? 0) - 15));
+                if (Platform.OS !== "web") Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+              }}
+              style={{ backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 10, paddingHorizontal: 14, paddingVertical: 6 }}
+            >
+              <Text style={{ color: SF.gold, fontFamily: "DMSans_700Bold", fontSize: 13 }}>-15s</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                setRestTimer((prev) => (prev ?? 0) + 15);
+                if (Platform.OS !== "web") Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+              }}
+              style={{ backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 10, paddingHorizontal: 14, paddingVertical: 6 }}
+            >
+              <Text style={{ color: SF.gold, fontFamily: "DMSans_700Bold", fontSize: 13 }}>+15s</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       )}
 
