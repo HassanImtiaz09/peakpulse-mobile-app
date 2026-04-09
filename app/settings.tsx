@@ -228,6 +228,50 @@ export default function SettingsScreen() {
           })}
         </View>
 
+        {/* ── Theme Preview ── */}
+        <View style={styles.previewStrip}>
+          {(["light", "dark"] as const).map((mode) => {
+            const isLight = mode === "light";
+            const bg = isLight ? "#FFFFFF" : "#0A0E14";
+            const fg = isLight ? "#11181C" : "#F1F5F9";
+            const muted = isLight ? "#687076" : "#94A3B8";
+            const surface = isLight ? "#F5F5F5" : "#141A22";
+            const accent = isLight ? "#F59E0B" : "#F59E0B";
+            const border = isLight ? "#E5E7EB" : "rgba(30,41,59,0.6)";
+            const isActive = themePreference === mode || (themePreference === "system" && mode === "dark");
+            return (
+              <TouchableOpacity
+                key={mode}
+                style={[
+                  styles.previewCard,
+                  { backgroundColor: bg, borderColor: isActive ? accent : border },
+                  isActive && { borderWidth: 2 },
+                ]}
+                onPress={() => {
+                  setThemePreference(mode);
+                  if (Platform.OS !== "web") Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                }}
+                activeOpacity={0.8}
+              >
+                <View style={{ flexDirection: "row", alignItems: "center", gap: 4, marginBottom: 6 }}>
+                  <MaterialIcons name={isLight ? "light-mode" : "dark-mode"} size={12} color={accent} />
+                  <Text style={{ color: fg, fontSize: 10, fontWeight: "700" }}>{isLight ? "Light" : "Dark"}</Text>
+                </View>
+                {/* Mini mockup */}
+                <View style={{ backgroundColor: surface, borderRadius: 4, padding: 4, marginBottom: 4 }}>
+                  <View style={{ width: "60%", height: 3, backgroundColor: fg, borderRadius: 1, marginBottom: 3 }} />
+                  <View style={{ width: "80%", height: 2, backgroundColor: muted, borderRadius: 1, marginBottom: 2 }} />
+                  <View style={{ width: "40%", height: 2, backgroundColor: muted, borderRadius: 1 }} />
+                </View>
+                <View style={{ flexDirection: "row", gap: 3 }}>
+                  <View style={{ flex: 1, height: 6, backgroundColor: accent, borderRadius: 3 }} />
+                  <View style={{ flex: 1, height: 6, backgroundColor: surface, borderRadius: 3, borderWidth: 0.5, borderColor: border }} />
+                </View>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+
         {/* ── Font Size ── */}
         <Text style={styles.sectionLabel}>FONT SIZE</Text>
         <View style={styles.card}>
@@ -634,5 +678,17 @@ const styles = StyleSheet.create({
   },
   aboutValue: {
     color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 14,
+  },
+  previewStrip: {
+    flexDirection: "row" as const,
+    gap: 12,
+    marginTop: 12,
+    marginBottom: 8,
+  },
+  previewCard: {
+    flex: 1,
+    borderRadius: 14,
+    padding: 12,
+    borderWidth: 1,
   },
 });

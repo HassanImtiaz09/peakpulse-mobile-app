@@ -3363,3 +3363,28 @@
 - [x] Add "Quick Swap" button to MealPlanMealCard alongside existing AI Swap
 - [x] Create SwapMealSheet component showing ranked candidates with match scores and macro comparison
 - [x] Write unit tests for meal swap algorithm
+
+## Round 97 Step 16: Workout Plan Progression
+- [x] Create lib/workout-progression.ts with auto-increase logic
+- [x] Track completed sets per exercise with weight/reps history
+- [x] Detect when user consistently completes all sets at current level (3 consecutive sessions)
+- [x] Calculate progression increments (weight +2.5kg/5lb for compounds, +1.25kg/2.5lb for isolation; reps +1-2)
+- [x] Create components/level-up-prompt.tsx modal with suggested new weight/reps
+- [x] Integrate progression check into active-workout.tsx finishWorkout flow
+- [x] Write unit tests for progression logic (44 tests passing)
+
+## Round 97 Step 17: Meal Photo Logging
+- [x] Already exists: AI Food Scanner in Meals tab with full photo analysis
+- [x] Already uses server mealLog.analyzePhoto endpoint with multimodal LLM
+- [x] Already supports camera and gallery via expo-image-picker
+- [x] Already sends to AI with server-side macro validation (p*4+c*4+f*9)
+- [x] Already displays food breakdown, portion multiplier, health score, and AI suggestion
+- [x] Already has "AI Scan" option in Log Meal dropdown
+- [x] Write unit tests for photo analysis parsing and macro validation logic
+
+## Round 97 Step 18: Dark/Light Theme Toggle
+- [x] Already exists: System/Light/Dark toggle in Settings with icons and descriptions
+- [x] Already persisted to AsyncStorage via ThemeProvider
+- [x] Already wired: ThemeProvider respects manual override
+- [x] Enhanced: Added visual theme preview strip with mini mockups of light/dark modes
+- [x] Write unit tests for theme resolution logic

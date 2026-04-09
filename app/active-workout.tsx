@@ -72,6 +72,8 @@ import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABEL
 import { getExerciseDbGifUrl } from "@/lib/exercisedb-api";
 import { ScreenErrorBoundary } from "@/components/error-boundary";
 import { FocusMode } from "@/components/focus-mode";
+import { checkProgressionForExercises, type ProgressionSuggestion } from "@/lib/workout-progression";
+import { LevelUpPrompt } from "@/components/level-up-prompt";
 
 const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get("window");
 
@@ -558,6 +560,8 @@ export default function ActiveWorkoutScreen() {
   const [restSettings, setRestSettings] = useState<RestTimerSettings>(DEFAULT_REST_TIMERS);
   const [focusModeVisible, setFocusModeVisible] = useState(false);
   const [focusModePreference, setFocusModePreference] = useState(false);
+  const [progressionSuggestions, setProgressionSuggestions] = useState<ProgressionSuggestion[]>([]);
+  const [showLevelUp, setShowLevelUp] = useState(false);
 
   // Load focus mode preference
   useEffect(() => {
@@ -810,6 +814,17 @@ export default function ActiveWorkoutScreen() {
             awardXP("workout_completed").catch(() => {});
             incrementCounter("workouts_completed").catch(() => {});
             evaluateAndScheduleSmartReminders().catch(() => {});
+
+            // Check workout progression for level-up suggestions
+            checkProgressionForExercises(completedExercises)
+              .then((suggestions) => {
+                if (suggestions.length > 0) {
+                  setProgressionSuggestions(suggestions);
+                  // Show level-up prompt after a short delay to let the completion alert show first
+                  setTimeout(() => setShowLevelUp(true), 2000);
+                }
+              })
+              .catch(() => {});
 
             try {
               const prResults = await logWorkoutPRs(completedExercises);
@@ -1880,6 +1895,22 @@ export default function ActiveWorkoutScreen() {
           restTimerValue={restTimer}
         />
       )}
+      {/* Workout Progression Level Up Prompt */}
+      <LevelUpPrompt
+        visible={showLevelUp}
+        suggestions={progressionSuggestions}
+        onAccept={(suggestion) => {
+          // User accepted the progression - log it
+          setShowLevelUp(false);
+          Alert.alert(
+            "Challenge Accepted! 💪",
+            suggestion.exerciseType === "bodyweight" || suggestion.currentWeight === 0
+              ? `Next time you do ${suggestion.exerciseName}, aim for ${suggestion.suggestedReps} reps!`
+              : `Next time you do ${suggestion.exerciseName}, load up ${suggestion.suggestedWeight}kg!`,
+          );
+        }}
+        onDismiss={() => setShowLevelUp(false)}
+      />
     </ScreenContainer>
   );
 }
