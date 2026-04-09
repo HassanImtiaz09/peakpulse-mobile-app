@@ -137,7 +137,15 @@ export default function XPRewardsScreen() {
             <MaterialIcons name="arrow-back" size={24} color={FG} />
           </Pressable>
           <Text style={styles.headerTitle}>XP Rewards</Text>
-          <View style={{ width: 40 }} />
+          <Pressable
+            onPress={() => router.push("/xp-leaderboard" as any)}
+            style={({ pressed }) => [
+              styles.backButton,
+              pressed && { opacity: 0.6 },
+            ]}
+          >
+            <MaterialIcons name="leaderboard" size={22} color={"#F59E0B"} />
+          </Pressable>
         </View>
 
         {/* ── Level Hero Card ── */}

@@ -3339,3 +3339,27 @@
 - [x] Display suggested meals in AdaptiveMealBanner detail modal
 - [x] Include meal name, calories, and one-tap "Add to Today" action
 - [x] Write unit tests for smart meal suggestion algorithm
+
+## Round 97 Step 13: Achievement System Expansion
+- [x] Create lib/achievements.ts with non-streak achievement definitions and tracking
+- [x] Define achievements: First Workout, 10 Workouts, 50 Workouts, First Meal Logged, 100 Meals Logged, Protein Target 7 Days, First Progress Photo, Body Scan Complete, etc.
+- [x] Track achievement progress via AsyncStorage counters
+- [x] Create components/achievement-unlock.tsx with dedicated unlock animation
+- [x] Integrate achievement checks into workout completion, meal logging, check-in, progress photo, body scan, and share flows
+- [x] Rewrite app/achievements.tsx to use real tracked data with progress bars and share buttons
+- [x] Write unit tests for achievement logic (38 tests passing)
+
+## Round 97 Step 14: XP Leaderboard
+- [x] Create lib/xp-leaderboard.ts with simulated community averages
+- [x] Generate anonymized community data based on seeded random distributions
+- [x] Create app/xp-leaderboard.tsx screen with weekly/monthly/all-time tabs
+- [x] Show user's rank, XP bar, percentile, and comparison to community average with insights
+- [x] Add leaderboard button in XP Rewards screen header
+- [x] Write unit tests for leaderboard logic
+
+## Round 97 Step 15: Smart Meal Swap
+- [x] Create lib/smart-meal-swap.ts with macro-matching swap algorithm
+- [x] Find alternative meals from other plan days with similar calorie/macro profile
+- [x] Add "Quick Swap" button to MealPlanMealCard alongside existing AI Swap
+- [x] Create SwapMealSheet component showing ranked candidates with match scores and macro comparison
+- [x] Write unit tests for meal swap algorithm

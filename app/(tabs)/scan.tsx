@@ -22,6 +22,7 @@ import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { FeatureGate } from "@/components/feature-gate";
 import { useSubscription } from "@/hooks/use-subscription";
+import { incrementCounter } from "@/lib/achievements";
 import { PremiumFeatureBanner, PremiumFeatureTeaser } from "@/components/premium-feature-banner";
 import { recordProgressPhotoTaken } from "@/lib/feature-discovery";
 import { useAiLimit } from "@/components/ai-limit-modal";
@@ -247,6 +248,7 @@ function ScanScreenContent() {
         const existing = existingRaw ? JSON.parse(existingRaw) : [];
         existing.push(scanEntry);
         await AsyncStorage.setItem("@body_scan_history", JSON.stringify(existing));
+        incrementCounter("body_scans").catch(() => {});
       }
       if (!isAuthenticated) {
         // Store result locally for guest users (include the uploaded photo URL)

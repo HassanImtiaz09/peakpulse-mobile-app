@@ -6,6 +6,7 @@ import React, { createContext, useContext, useEffect, useState, useCallback } fr
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { recordMealLogged } from "@/lib/feature-discovery";
 import { awardXP } from "@/lib/xp-engine";
+import { incrementCounter } from "@/lib/achievements";
 
 export interface MealEntry {
   id: string;
@@ -164,6 +165,8 @@ export function CalorieProvider({ children }: { children: React.ReactNode }) {
     recordMealLogged().catch(() => {});
     // Award XP for meal logging
     awardXP("meal_logged").catch(() => {});
+    // Track achievement progress
+    incrementCounter("meals_logged").catch(() => {});
   }
 
   async function removeMeal(id: string) {

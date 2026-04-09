@@ -19,6 +19,7 @@ import { GOLDEN_SCAN, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-background
 import { EmptyState, EMPTY_STATES } from "@/components/empty-state";
 import { useAiLimit } from "@/components/ai-limit-modal";
 import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
+import { incrementCounter } from "@/lib/achievements";
 const { width: SCREEN_W } = Dimensions.get("window");
 const CARD_PADDING = 40;
 const CARD_W = SCREEN_W - CARD_PADDING;
@@ -556,6 +557,7 @@ export default function ProgressPhotosScreen() {
       const weightKg = weightInput ? parseFloat(weightInput) : undefined;
       const bodyFatPercent = bfInput ? parseFloat(bfInput) : undefined;
       await (uploadPhoto.mutateAsync as any)({ photoBase64: base64, note, isBaseline, weightKg: isNaN(weightKg as number) ? undefined : weightKg, bodyFatPercent: isNaN(bodyFatPercent as number) ? undefined : bodyFatPercent });
+      incrementCounter("progress_photos").catch(() => {});
     } catch (e: any) { Alert.alert("Error", e.message); }
   }
 

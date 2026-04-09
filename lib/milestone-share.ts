@@ -11,6 +11,7 @@
 import * as Sharing from "expo-sharing";
 import * as FileSystem from "expo-file-system/legacy";
 import { Platform } from "react-native";
+import { incrementCounter } from "@/lib/achievements";
 
 // ── Types ────────────────────────────────────────────────────────────────
 
@@ -177,6 +178,8 @@ export async function shareMilestone(data: MilestoneShareData): Promise<boolean>
       dialogTitle: "Share your milestone!",
     });
 
+    // Track achievement progress for sharing
+    incrementCounter("milestones_shared").catch(() => {});
     return true;
   } catch {
     // Sharing cancelled or failed

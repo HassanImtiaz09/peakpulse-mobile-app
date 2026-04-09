@@ -31,6 +31,8 @@ import { extractGroceryList, copyGroceryList, shareGroceryList, exportGroceryPdf
 import { loadMealPreferences, toggleFavourite, rateMeal, isFavourite, getMealRating, buildPreferenceSummary, type MealPreferences } from "@/lib/meal-preferences";
 import { saveMealPlanToHistory, getPastMealNames, updatePhotoCacheFromPlan, applyCachedPhotos, isWeeklyRefreshNeeded, markWeeklyRefreshDone, loadPinnedMeals, togglePinnedMeal, applyPinnedMeals, cleanupPinnedMeals } from "@/lib/meal-history";
 import { AdaptiveMealBanner } from "@/components/adaptive-meal-banner";
+import { extractMealsFromPlan, type MealForSwap, type SwapCandidate } from "@/lib/smart-meal-swap";
+import { SwapMealSheet } from "@/components/swap-meal-sheet";
 
 // NanoBanana design tokens — Meals uses mint/teal accent
 const MBG = "#0A0E14";
@@ -943,6 +945,11 @@ function MealsScreenContent() {
   const [swapMealPlanModal, setSwapMealPlanModal] = useState<{ meal: any; dayIndex: number; mealIndex: number } | null>(null);
   const [swapMealPlanAlts, setSwapMealPlanAlts] = useState<any[]>([]);
   const [swapMealPlanLoading, setSwapMealPlanLoading] = useState(false);
+  // Smart Swap (local macro-matching)
+  const [smartSwapVisible, setSmartSwapVisible] = useState(false);
+  const [smartSwapSource, setSmartSwapSource] = useState<MealForSwap | null>(null);
+  const [smartSwapSourceDayIdx, setSmartSwapSourceDayIdx] = useState(0);
+  const [smartSwapSourceMealIdx, setSmartSwapSourceMealIdx] = useState(0);
   // Per-day customization state
   const [dayCustomizeModal, setDayCustomizeModal] = useState(false);
   const [dayCustomizeTheme, setDayCustomizeTheme] = useState("");
@@ -1892,6 +1899,63 @@ function MealsScreenContent() {
     }
     doSwap();
   }, [swapMealPlanModal, aiMealPlan, dailyCalorieTarget]);
+
+  // ── Smart Swap (local macro-matching) ──
+  const allPlanMeals = useMemo(() => {
+    if (!aiMealPlan?.days) return [] as MealForSwap[];
+    return extractMealsFromPlan(aiMealPlan.days);
+  }, [aiMealPlan]);
+
+  const handleSmartSwap = useCallback((meal: any, dayIdx: number, mealIdx: number) => {
+    const mealType = (meal.type ?? "meal").toLowerCase();
+    const source: MealForSwap = {
+      id: `day${dayIdx}-${mealType}-${mealIdx}`,
+      name: meal.name,
+      calories: meal.calories ?? 0,
+      protein: meal.protein ?? 0,
+      carbs: meal.carbs ?? 0,
+      fat: meal.fat ?? 0,
+      mealType,
+      dayIndex: dayIdx,
+      imageUrl: meal.imageUrl,
+    };
+    setSmartSwapSource(source);
+    setSmartSwapSourceDayIdx(dayIdx);
+    setSmartSwapSourceMealIdx(mealIdx);
+    setSmartSwapVisible(true);
+    if (Platform.OS !== "web") { try { const H = require("expo-haptics"); H.impactAsync(H.ImpactFeedbackStyle.Light); } catch {} }
+  }, []);
+
+  const handleSmartSwapAccept = useCallback((candidate: SwapCandidate) => {
+    if (!aiMealPlan?.days) return;
+    // Find the actual meal data from the plan
+    const srcDay = aiMealPlan.days[candidate.meal.dayIndex];
+    if (!srcDay?.meals) return;
+    // Find the matching meal in that day
+    const matchedMeal = srcDay.meals.find((m: any) =>
+      m.name === candidate.meal.name &&
+      (m.calories ?? 0) === candidate.meal.calories
+    );
+    if (!matchedMeal) return;
+    // Apply the swap
+    const updatedDays = aiMealPlan.days.map((day: any, di: number) => {
+      if (di !== smartSwapSourceDayIdx) return day;
+      return {
+        ...day,
+        meals: day.meals?.map((m: any, mi: number) =>
+          mi === smartSwapSourceMealIdx
+            ? { ...matchedMeal, type: smartSwapSource?.mealType ?? m.type }
+            : m
+        ),
+      };
+    });
+    const updatedPlan = { ...aiMealPlan, days: updatedDays };
+    setAiMealPlan(updatedPlan);
+    AsyncStorage.setItem("@guest_meal_plan", JSON.stringify(updatedPlan));
+    setSmartSwapVisible(false);
+    if (Platform.OS !== "web") { try { const H = require("expo-haptics"); H.notificationAsync(H.NotificationFeedbackType.Success); } catch {} }
+    Alert.alert("Meal Swapped", `Replaced with ${candidate.meal.name} from ${candidate.dayLabel}`);
+  }, [aiMealPlan, smartSwapSourceDayIdx, smartSwapSourceMealIdx, smartSwapSource]);
 
   const caloriePercent = Math.min(100, (totalCalories / calorieGoal) * 100);
   const calorieColor = caloriePercent > 90 ? MMUTED : caloriePercent > 70 ? "#FBBF24" : "#FDE68A";
@@ -3425,6 +3489,7 @@ function MealsScreenContent() {
                         key={i}
                         meal={meal}
                         onSwap={() => handleMealPlanSwap(meal, dayIdx, i)}
+                        onSmartSwap={() => handleSmartSwap(meal, dayIdx, i)}
                         isFav={isFavourite(mealPrefs, meal.name)}
                         rating={getMealRating(mealPrefs, meal.name)}
                         isPinned={!!pinnedMeals[pinKey]}
@@ -4268,11 +4333,18 @@ function MealsScreenContent() {
             Alert.alert("\u2705 Meal Swapped!", `${item.name} is now your ${swapMealType}.`);
           }}
         />
-      )}
+       )}
+      {/* Smart Swap Sheet */}
+      <SwapMealSheet
+        visible={smartSwapVisible}
+        sourceMeal={smartSwapSource}
+        allMeals={allPlanMeals}
+        onClose={() => setSmartSwapVisible(false)}
+        onSwap={handleSmartSwapAccept}
+      />
     </View>
   );
 }
-
 function MacroStat({ label, value, unit, color, goal }: { label: string; value: number; unit: string; color: string; goal?: number }) {
   return (
     <View style={{ alignItems: "center" }}>
@@ -4463,7 +4535,7 @@ function MealPlanDayCard({ day, dayIndex, onMealSwap }: { day: any; dayIndex: nu
   );
 }
 
-function MealPlanMealCard({ meal, onSwap, isFav, rating, onToggleFav, onRate, onDislike, isPinned, onTogglePin }: { meal: any; onSwap?: () => void; isFav?: boolean; rating?: number; onToggleFav?: () => void; onRate?: (stars: number) => void; onDislike?: () => void; isPinned?: boolean; onTogglePin?: () => void }) {
+function MealPlanMealCard({ meal, onSwap, onSmartSwap, isFav, rating, onToggleFav, onRate, onDislike, isPinned, onTogglePin }: { meal: any; onSwap?: () => void; onSmartSwap?: () => void; isFav?: boolean; rating?: number; onToggleFav?: () => void; onRate?: (stars: number) => void; onDislike?: () => void; isPinned?: boolean; onTogglePin?: () => void }) {
   const [showPrep, setShowPrep] = React.useState(false);
   const [showRating, setShowRating] = React.useState(false);
   const photoUrl = getMealPlanPhotoUrl(meal);
@@ -4508,7 +4580,16 @@ function MealPlanMealCard({ meal, onSwap, isFav, rating, onToggleFav, onRate, on
             onPress={onSwap}
           >
             <MaterialIcons name="swap-horiz" size={12} color="#0A0E14" />
-            <Text style={{ color: "#0A0E14", fontSize: 10, fontFamily: "DMSans_700Bold" }}>Swap</Text>
+            <Text style={{ color: "#0A0E14", fontSize: 10, fontFamily: "DMSans_700Bold" }}>AI Swap</Text>
+          </TouchableOpacity>
+        )}
+        {onSmartSwap && (
+          <TouchableOpacity
+            style={{ backgroundColor: "rgba(245,158,11,0.90)", borderRadius: 8, paddingHorizontal: 10, paddingVertical: 4, flexDirection: "row", alignItems: "center", gap: 3 }}
+            onPress={onSmartSwap}
+          >
+            <MaterialIcons name="find-replace" size={12} color="#0A0E14" />
+            <Text style={{ color: "#0A0E14", fontSize: 10, fontFamily: "DMSans_700Bold" }}>Quick Swap</Text>
           </TouchableOpacity>
         )}
         <View style={{ backgroundColor: "rgba(0,0,0,0.7)", borderRadius: 8, paddingHorizontal: 10, paddingVertical: 4 }}>
