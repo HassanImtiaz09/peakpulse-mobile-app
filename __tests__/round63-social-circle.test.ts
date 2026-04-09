@@ -348,7 +348,7 @@ describe("Social Circle Screen (app/social-circle.tsx)", () => {
   // ── Styling ────────────────────────────────────────────────────
 
   it("should use Aurora Titan dark theme colors", () => {
-    expect(src).toMatch(/#0A0E14|#141A22|#FDE68A|#F59E0B|#B45309/);
+    expect(src).toMatch(/UI\.bg|UI\.surface|UI\.gold3|UI\.gold|UI\.secondaryLight|#0A0E14|#141A22|#FDE68A|#F59E0B|#B45309/);
   });
 
   it("should use hero background image", () => {

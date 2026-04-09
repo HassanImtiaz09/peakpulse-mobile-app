@@ -12,6 +12,7 @@
  *   - Persistence via AsyncStorage
  */
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { UI } from "@/constants/ui-colors";
 
 // ── Storage Keys ─────────────────────────────────────────────────────────
 
@@ -145,11 +146,11 @@ export function getLevelInfo(totalXP: number): LevelInfo {
 export const STREAK_MILESTONES = [3, 7, 14, 30, 60, 100];
 
 export const STREAK_BADGE_DEFS: Array<{ days: number; name: string; icon: string; color: string }> = [
-  { days: 3,   name: "Spark",       icon: "local-fire-department", color: "#F59E0B" },
-  { days: 7,   name: "Flame",       icon: "whatshot",              color: "#EF4444" },
+  { days: 3,   name: "Spark",       icon: "local-fire-department", color: UI.gold },
+  { days: 7,   name: "Flame",       icon: "whatshot",              color: UI.red },
   { days: 14,  name: "Blaze",       icon: "bolt",                 color: "#8B5CF6" },
   { days: 30,  name: "Inferno",     icon: "military-tech",        color: "#3B82F6" },
-  { days: 60,  name: "Titan",       icon: "shield",               color: "#10B981" },
+  { days: 60,  name: "Titan",       icon: "shield",               color: UI.emerald },
   { days: 100, name: "Immortal",    icon: "diamond",              color: "#EC4899" },
 ];
 

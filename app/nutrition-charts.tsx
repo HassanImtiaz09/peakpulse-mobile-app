@@ -20,6 +20,7 @@ import { useCalories } from "@/lib/calorie-context";
 
 import { GOLDEN_PANTRY, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgrounds";
 import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
+import { UI } from "@/constants/ui-colors";
 type ViewMode = "daily" | "weekly";
 
 interface DaySummary {
@@ -135,7 +136,7 @@ export default function NutritionChartsScreen() {
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
-          <MaterialIcons name="arrow-back" size={24} color="#F1F5F9" />
+          <MaterialIcons name="arrow-back" size={24} color={UI.fg} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Nutrition Insights</Text>
         <View style={{ width: 40 }} />
@@ -158,7 +159,7 @@ export default function NutritionChartsScreen() {
         </View>
 
         {loading ? (
-          <ActivityIndicator color="#F59E0B" size="large" style={{ marginTop: 60 }} />
+          <ActivityIndicator color={UI.gold} size="large" style={{ marginTop: 60 }} />
         ) : (
           <>
             {/* Calorie Bar Chart */}
@@ -177,7 +178,7 @@ export default function NutritionChartsScreen() {
                     y1={180 - (calorieGoal / maxCal) * 160}
                     x2={data.length * 52 + 20}
                     y2={180 - (calorieGoal / maxCal) * 160}
-                    stroke="#F59E0B"
+                    stroke={UI.gold}
                     strokeWidth={1}
                     strokeDasharray="4,4"
                     opacity={0.5}
@@ -195,7 +196,7 @@ export default function NutritionChartsScreen() {
                           width={32}
                           height={barH}
                           rx={6}
-                          fill={overGoal ? "#EF4444" : "#F59E0B"}
+                          fill={overGoal ? UI.red : UI.gold}
                           opacity={0.85}
                         />
                         {/* Calorie value */}
@@ -203,7 +204,7 @@ export default function NutritionChartsScreen() {
                           x={x + 16}
                           y={180 - barH - 6}
                           textAnchor="middle"
-                          fill="#F1F5F9"
+                          fill={UI.fg}
                           fontSize={9}
                           fontWeight="bold"
                         >
@@ -214,7 +215,7 @@ export default function NutritionChartsScreen() {
                           x={x + 16}
                           y={196}
                           textAnchor="middle"
-                          fill="#B45309"
+                          fill={UI.secondaryLight}
                           fontSize={9}
                           fontWeight="600"
                         >
@@ -238,11 +239,11 @@ export default function NutritionChartsScreen() {
                   <Text style={styles.legendText}>Protein</Text>
                 </View>
                 <View style={styles.legendItem}>
-                  <View style={[styles.legendDot, { backgroundColor: "#FDE68A" }]} />
+                  <View style={[styles.legendDot, { backgroundColor: UI.gold3 }]} />
                   <Text style={styles.legendText}>Carbs</Text>
                 </View>
                 <View style={styles.legendItem}>
-                  <View style={[styles.legendDot, { backgroundColor: "#FBBF24" }]} />
+                  <View style={[styles.legendDot, { backgroundColor: UI.gold2 }]} />
                   <Text style={styles.legendText}>Fat</Text>
                 </View>
               </View>
@@ -256,19 +257,19 @@ export default function NutritionChartsScreen() {
                   const fatPct = totalG > 0 ? (d.fat / totalG) * 100 : 34;
                   return (
                     <View key={d.date} style={{ flexDirection: "row", alignItems: "center", marginBottom: 8 }}>
-                      <Text style={{ color: "#B45309", fontSize: 10, fontFamily: "DMSans_700Bold", width: 32 }}>
+                      <Text style={{ color: UI.secondaryLight, fontSize: 10, fontFamily: "DMSans_700Bold", width: 32 }}>
                         {d.shortLabel}
                       </Text>
-                      <View style={{ flex: 1, flexDirection: "row", height: 16, borderRadius: 8, overflow: "hidden", backgroundColor: "rgba(245,158,11,0.06)" }}>
+                      <View style={{ flex: 1, flexDirection: "row", height: 16, borderRadius: 8, overflow: "hidden", backgroundColor: UI.goldAlpha6 }}>
                         {totalG > 0 && (
                           <>
                             <View style={{ width: `${protPct * barW / 100}%`, backgroundColor: "#3B82F6", borderTopLeftRadius: 8, borderBottomLeftRadius: 8 }} />
-                            <View style={{ width: `${carbPct * barW / 100}%`, backgroundColor: "#FDE68A" }} />
-                            <View style={{ width: `${fatPct * barW / 100}%`, backgroundColor: "#FBBF24", borderTopRightRadius: 8, borderBottomRightRadius: 8 }} />
+                            <View style={{ width: `${carbPct * barW / 100}%`, backgroundColor: UI.gold3 }} />
+                            <View style={{ width: `${fatPct * barW / 100}%`, backgroundColor: UI.gold2, borderTopRightRadius: 8, borderBottomRightRadius: 8 }} />
                           </>
                         )}
                       </View>
-                      <Text style={{ color: "#B45309", fontSize: 9, fontFamily: "DMSans_700Bold", width: 36, textAlign: "right" }}>
+                      <Text style={{ color: UI.secondaryLight, fontSize: 9, fontFamily: "DMSans_700Bold", width: 36, textAlign: "right" }}>
                         {totalG > 0 ? `${totalG}g` : "—"}
                       </Text>
                     </View>
@@ -304,8 +305,8 @@ export default function NutritionChartsScreen() {
                         let start = 0;
                         const slices = [
                           { angle: protAngle, color: "#3B82F6" },
-                          { angle: carbAngle, color: "#FDE68A" },
-                          { angle: fatAngle, color: "#FBBF24" },
+                          { angle: carbAngle, color: UI.gold3 },
+                          { angle: fatAngle, color: UI.gold2 },
                         ];
 
                         return (
@@ -319,11 +320,11 @@ export default function NutritionChartsScreen() {
                               return <Path key={idx} d={path} fill={s.color} opacity={0.9} />;
                             })}
                             {/* Center hole for donut effect */}
-                            <Circle cx={cx} cy={cy} r={42} fill="#141A22" />
-                            <SvgText x={cx} y={cy - 4} textAnchor="middle" fill="#F1F5F9" fontSize={18} fontWeight="bold">
+                            <Circle cx={cx} cy={cy} r={42} fill={UI.surface} />
+                            <SvgText x={cx} y={cy - 4} textAnchor="middle" fill={UI.fg} fontSize={18} fontWeight="bold">
                               {todayData.calories}
                             </SvgText>
-                            <SvgText x={cx} y={cy + 14} textAnchor="middle" fill="#B45309" fontSize={10}>
+                            <SvgText x={cx} y={cy + 14} textAnchor="middle" fill={UI.secondaryLight} fontSize={10}>
                               kcal
                             </SvgText>
                           </>
@@ -332,9 +333,9 @@ export default function NutritionChartsScreen() {
                       })()
                     ) : (
                       <>
-                        <Circle cx={90} cy={90} r={70} fill="rgba(245,158,11,0.06)" />
-                        <Circle cx={90} cy={90} r={42} fill="#141A22" />
-                        <SvgText x={90} y={90} textAnchor="middle" fill="#B45309" fontSize={12}>
+                        <Circle cx={90} cy={90} r={70} fill={UI.goldAlpha6} />
+                        <Circle cx={90} cy={90} r={42} fill={UI.surface} />
+                        <SvgText x={90} y={90} textAnchor="middle" fill={UI.secondaryLight} fontSize={12}>
                           No data
                         </SvgText>
                       </>
@@ -345,15 +346,15 @@ export default function NutritionChartsScreen() {
                 <View style={{ flexDirection: "row", justifyContent: "space-around", marginTop: 12 }}>
                   {[
                     { label: "Protein", value: todayData.protein, color: "#3B82F6", pct: totalMacroG > 0 ? Math.round((todayData.protein / totalMacroG) * 100) : 0 },
-                    { label: "Carbs", value: todayData.carbs, color: "#FDE68A", pct: totalMacroG > 0 ? Math.round((todayData.carbs / totalMacroG) * 100) : 0 },
-                    { label: "Fat", value: todayData.fat, color: "#FBBF24", pct: totalMacroG > 0 ? Math.round((todayData.fat / totalMacroG) * 100) : 0 },
+                    { label: "Carbs", value: todayData.carbs, color: UI.gold3, pct: totalMacroG > 0 ? Math.round((todayData.carbs / totalMacroG) * 100) : 0 },
+                    { label: "Fat", value: todayData.fat, color: UI.gold2, pct: totalMacroG > 0 ? Math.round((todayData.fat / totalMacroG) * 100) : 0 },
                   ].map(m => (
                     <View key={m.label} style={{ alignItems: "center" }}>
                       <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
                         <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: m.color }} />
-                        <Text style={{ color: "#F1F5F9", fontSize: 12, fontFamily: "DMSans_700Bold" }}>{m.value}g</Text>
+                        <Text style={{ color: UI.fg, fontSize: 12, fontFamily: "DMSans_700Bold" }}>{m.value}g</Text>
                       </View>
-                      <Text style={{ color: "#B45309", fontSize: 10, marginTop: 2 }}>{m.label} ({m.pct}%)</Text>
+                      <Text style={{ color: UI.secondaryLight, fontSize: 10, marginTop: 2 }}>{m.label} ({m.pct}%)</Text>
                     </View>
                   ))}
                 </View>
@@ -372,10 +373,10 @@ export default function NutritionChartsScreen() {
                   { label: "Total Meals", value: `${data.reduce((s, d) => s + d.mealCount, 0)}`, icon: "restaurant" },
                   { label: "Days Tracked", value: `${data.filter(d => d.mealCount > 0).length}/${data.length}`, icon: "calendar-today" },
                 ].map(stat => (
-                  <View key={stat.label} style={{ flex: 1, minWidth: "45%", backgroundColor: "rgba(245,158,11,0.06)", borderRadius: 12, padding: 12, borderWidth: 1, borderColor: "rgba(245,158,11,0.08)" }}>
-                    <MaterialIcons name={stat.icon as any} size={18} color="#F59E0B" />
-                    <Text style={{ color: "#F1F5F9", fontSize: 16, fontFamily: "DMSans_700Bold", marginTop: 4 }}>{stat.value}</Text>
-                    <Text style={{ color: "#B45309", fontSize: 10, fontFamily: "DMSans_700Bold" }}>{stat.label}</Text>
+                  <View key={stat.label} style={{ flex: 1, minWidth: "45%", backgroundColor: UI.goldAlpha6, borderRadius: 12, padding: 12, borderWidth: 1, borderColor: UI.dim }}>
+                    <MaterialIcons name={stat.icon as any} size={18} color={UI.gold} />
+                    <Text style={{ color: UI.fg, fontSize: 16, fontFamily: "DMSans_700Bold", marginTop: 4 }}>{stat.value}</Text>
+                    <Text style={{ color: UI.secondaryLight, fontSize: 10, fontFamily: "DMSans_700Bold" }}>{stat.label}</Text>
                   </View>
                 ))}
               </View>
@@ -388,20 +389,20 @@ export default function NutritionChartsScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#0A0E14" },
+  container: { flex: 1, backgroundColor: UI.bg },
   header: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingHorizontal: 16, paddingVertical: 12 },
-  backBtn: { width: 40, height: 40, borderRadius: 20, backgroundColor: "rgba(245,158,11,0.10)", alignItems: "center", justifyContent: "center" },
-  headerTitle: { color: "#F1F5F9", fontSize: 18, fontFamily: "BebasNeue_400Regular" },
+  backBtn: { width: 40, height: 40, borderRadius: 20, backgroundColor: UI.goldAlpha10, alignItems: "center", justifyContent: "center" },
+  headerTitle: { color: UI.fg, fontSize: 18, fontFamily: "BebasNeue_400Regular" },
   toggleRow: { flexDirection: "row", gap: 8, marginBottom: 16, marginTop: 8 },
-  toggleBtn: { flex: 1, paddingVertical: 10, borderRadius: 12, alignItems: "center", backgroundColor: "rgba(245,158,11,0.06)", borderWidth: 1, borderColor: "rgba(245,158,11,0.08)" },
-  toggleBtnActive: { backgroundColor: "#F59E0B", borderColor: "#F59E0B" },
-  toggleText: { color: "#B45309", fontSize: 13, fontFamily: "DMSans_700Bold" },
-  toggleTextActive: { color: "#F1F5F9" },
-  chartCard: { backgroundColor: "#141A22", borderRadius: 16, padding: 16, marginBottom: 16, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" },
-  chartTitle: { color: "#F1F5F9", fontSize: 15, fontFamily: "DMSans_700Bold" },
-  chartSubtitle: { color: "#B45309", fontSize: 11, fontFamily: "DMSans_700Bold", marginTop: 2 },
+  toggleBtn: { flex: 1, paddingVertical: 10, borderRadius: 12, alignItems: "center", backgroundColor: UI.goldAlpha6, borderWidth: 1, borderColor: UI.dim },
+  toggleBtnActive: { backgroundColor: UI.gold, borderColor: UI.gold },
+  toggleText: { color: UI.secondaryLight, fontSize: 13, fontFamily: "DMSans_700Bold" },
+  toggleTextActive: { color: UI.fg },
+  chartCard: { backgroundColor: UI.surface, borderRadius: 16, padding: 16, marginBottom: 16, borderWidth: 1, borderColor: UI.goldAlpha10 },
+  chartTitle: { color: UI.fg, fontSize: 15, fontFamily: "DMSans_700Bold" },
+  chartSubtitle: { color: UI.secondaryLight, fontSize: 11, fontFamily: "DMSans_700Bold", marginTop: 2 },
   macroLegend: { flexDirection: "row", gap: 12, marginTop: 8 },
   legendItem: { flexDirection: "row", alignItems: "center", gap: 4 },
   legendDot: { width: 8, height: 8, borderRadius: 4 },
-  legendText: { color: "#B45309", fontSize: 10, fontFamily: "DMSans_700Bold" },
+  legendText: { color: UI.secondaryLight, fontSize: 10, fontFamily: "DMSans_700Bold" },
 });

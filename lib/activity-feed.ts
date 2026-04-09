@@ -7,6 +7,7 @@
  */
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import type { FriendProfile } from "@/lib/social-circle";
+import { UI } from "@/constants/ui-colors";
 
 // ── Types ────────────────────────────────────────────────────────────
 
@@ -101,10 +102,10 @@ export function getFeedItemMessage(item: ActivityFeedItem): string {
 export function getFeedItemColor(type: FeedEventType): string {
   switch (type) {
     case "workout_completed": return "#3B82F6"; // Blue
-    case "milestone_unlocked": return "#F59E0B"; // Gold
+    case "milestone_unlocked": return UI.gold; // Gold
     case "challenge_won": return "#8B5CF6"; // Purple
-    case "streak_achieved": return "#EF4444"; // Red
-    case "goal_hit": return "#10B981"; // Green
+    case "streak_achieved": return UI.red; // Red
+    case "goal_hit": return UI.emerald; // Green
     case "joined_circle": return "#06B6D4"; // Cyan
   }
 }

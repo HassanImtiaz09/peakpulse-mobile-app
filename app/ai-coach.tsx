@@ -16,7 +16,7 @@ import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/hooks/use-auth";
 import { useGuestAuth } from "@/lib/guest-auth";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { UI as SF } from "@/constants/ui-colors";
+import { UI, SF } from "@/constants/ui-colors";
 import { useAiLimit } from "@/components/ai-limit-modal";
 import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
 
@@ -37,7 +37,7 @@ function ScoreRing({ score }: { score: number }) {
   const label = score >= 80 ? "Elite" : score >= 60 ? "Strong" : score >= 40 ? "Building" : "Starting";
   return (
     <View style={{ alignItems: "center" }}>
-      <View style={{ width: 100, height: 100, borderRadius: 50, borderWidth: 4, borderColor: color, backgroundColor: "rgba(245,158,11,0.08)", alignItems: "center", justifyContent: "center" }}>
+      <View style={{ width: 100, height: 100, borderRadius: 50, borderWidth: 4, borderColor: color, backgroundColor: UI.dim, alignItems: "center", justifyContent: "center" }}>
         <Text style={{ color, fontFamily: "BebasNeue_400Regular", fontSize: 30 }}>{score}</Text>
         <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 10 }}>/ 100</Text>
       </View>
@@ -268,7 +268,7 @@ export default function AICoachScreen() {
                   {insights.headline ?? "Keep pushing — you're making progress"}
                 </Text>
                 <TouchableOpacity
-                  style={{ marginTop: 16, backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 12, paddingVertical: 10, paddingHorizontal: 20, borderWidth: 1, borderColor: SF.border2 }}
+                  style={{ marginTop: 16, backgroundColor: UI.goldAlpha10, borderRadius: 12, paddingVertical: 10, paddingHorizontal: 20, borderWidth: 1, borderColor: SF.border2 }}
                   onPress={generateInsights}
                   disabled={loadingInsights}
                 >
@@ -300,17 +300,17 @@ export default function AICoachScreen() {
                   )}
                   {insights.formAnalysis.topIssues?.length > 0 && (
                     <View style={{ marginBottom: 12 }}>
-                      <Text style={{ color: "#EF4444", fontFamily: "DMSans_700Bold", fontSize: 12, marginBottom: 8 }}>⚠️ Priority Fixes</Text>
+                      <Text style={{ color: UI.red, fontFamily: "DMSans_700Bold", fontSize: 12, marginBottom: 8 }}>⚠️ Priority Fixes</Text>
                       {insights.formAnalysis.topIssues.map((issue: string, i: number) => (
                         <View key={i} style={{ flexDirection: "row", gap: 8, marginBottom: 4 }}>
-                          <Text style={{ color: "#EF4444", fontSize: 13 }}>•</Text>
+                          <Text style={{ color: UI.red, fontSize: 13 }}>•</Text>
                           <Text style={{ color: SF.fg, fontFamily: "DMSans_400Regular", fontSize: 13, flex: 1, lineHeight: 18 }}>{issue}</Text>
                         </View>
                       ))}
                     </View>
                   )}
                   {insights.formAnalysis.priorityExercise && (
-                    <View style={{ backgroundColor: "rgba(245,158,11,0.08)", borderRadius: 12, padding: 12, borderWidth: 1, borderColor: SF.border2 }}>
+                    <View style={{ backgroundColor: UI.dim, borderRadius: 12, padding: 12, borderWidth: 1, borderColor: SF.border2 }}>
                       <Text style={{ color: SF.gold2, fontFamily: "DMSans_700Bold", fontSize: 13 }}>
                         🏋️ Focus Exercise: {insights.formAnalysis.priorityExercise}
                       </Text>
@@ -357,7 +357,7 @@ export default function AICoachScreen() {
                   <Text style={{ color: SF.gold, fontFamily: "DMSans_700Bold", fontSize: 11, letterSpacing: 1.5, marginBottom: 12 }}>💡 PERSONALISED TIPS</Text>
                   {insights.personalizedTips.map((tip: any, i: number) => (
                     <View key={i} style={{ flexDirection: "row", gap: 12, marginBottom: 14, alignItems: "flex-start" }}>
-                      <View style={{ width: 40, height: 40, borderRadius: 10, backgroundColor: "rgba(245,158,11,0.10)", alignItems: "center", justifyContent: "center" }}>
+                      <View style={{ width: 40, height: 40, borderRadius: 10, backgroundColor: UI.goldAlpha10, alignItems: "center", justifyContent: "center" }}>
                         <Text style={{ fontSize: 20 }}>{tip.icon ?? "💡"}</Text>
                       </View>
                       <View style={{ flex: 1 }}>
@@ -375,7 +375,7 @@ export default function AICoachScreen() {
                   <Text style={{ color: SF.gold, fontFamily: "DMSans_700Bold", fontSize: 11, letterSpacing: 1.5, marginBottom: 12 }}>📅 THIS WEEK'S FOCUS</Text>
                   {insights.weeklyPlan.map((day: any, i: number) => (
                     <View key={i} style={{ flexDirection: "row", gap: 12, marginBottom: 12, alignItems: "flex-start" }}>
-                      <View style={{ width: 56, height: 56, borderRadius: 12, backgroundColor: "rgba(245,158,11,0.10)", alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: SF.border2 }}>
+                      <View style={{ width: 56, height: 56, borderRadius: 12, backgroundColor: UI.goldAlpha10, alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: SF.border2 }}>
                         <Text style={{ color: SF.gold, fontFamily: "DMSans_700Bold", fontSize: 10, textAlign: "center" }}>{day.day?.slice(0, 3)?.toUpperCase()}</Text>
                       </View>
                       <View style={{ flex: 1 }}>
@@ -389,7 +389,7 @@ export default function AICoachScreen() {
 
               {/* Next Milestone */}
               {insights.nextMilestone && (
-                <View style={{ backgroundColor: "rgba(245,158,11,0.08)", borderRadius: 20, padding: 18, borderWidth: 1, borderColor: SF.border2 }}>
+                <View style={{ backgroundColor: UI.dim, borderRadius: 20, padding: 18, borderWidth: 1, borderColor: SF.border2 }}>
                   <Text style={{ color: SF.gold, fontFamily: "DMSans_700Bold", fontSize: 11, letterSpacing: 1.5, marginBottom: 12 }}>🏆 NEXT MILESTONE</Text>
                   <Text style={{ color: SF.fg, fontFamily: "BebasNeue_400Regular", fontSize: 18, marginBottom: 6 }}>{insights.nextMilestone.title}</Text>
                   <Text style={{ color: SF.gold3, fontFamily: "DMSans_400Regular", fontSize: 13, lineHeight: 19, marginBottom: 10 }}>{insights.nextMilestone.description}</Text>

@@ -9,7 +9,7 @@ import { useRouter } from "expo-router";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import * as Haptics from "expo-haptics";
 import { useSubscription } from "@/hooks/use-subscription";
-import { UI as SF } from "@/constants/ui-colors";
+import { UI, SF } from "@/constants/ui-colors";
 
 interface GridTile {
   icon: string;
@@ -35,7 +35,7 @@ const CATEGORIES: TileCategory[] = [
     tiles: [
       { icon: "watch", label: "Wearables", route: "/wearable-sync", color: "#06B6D4", bgColor: "rgba(6,182,212,0.12)", feature: "wearable_sync", tier: "basic" },
       { icon: "show-chart", label: "Health Trends", route: "/health-trends", color: "#3B82F6", bgColor: "rgba(59,130,246,0.12)", feature: "health_trends", tier: "basic" },
-      { icon: "notifications-active", label: "AI Reminders", route: "/notification-settings", color: "#F59E0B", bgColor: "rgba(245,158,11,0.12)", feature: "ai_reminders", tier: "basic" },
+      { icon: "notifications-active", label: "AI Reminders", route: "/notification-settings", color: UI.gold, bgColor: UI.goldAlpha12, feature: "ai_reminders", tier: "basic" },
     ],
   },
   {
@@ -53,20 +53,20 @@ const CATEGORIES: TileCategory[] = [
     icon: "fitness-center",
     tiles: [
       { icon: "bar-chart", label: "Analytics", route: "/workout/analytics", color: "#3B82F6", bgColor: "rgba(59,130,246,0.12)" },
-      { icon: "emoji-events", label: "Records", route: "/personal-records", color: "#22C55E", bgColor: "rgba(34,197,94,0.12)" },
-      { icon: "calendar-today", label: "Calendar", route: "/workout/calendar", color: "#F59E0B", bgColor: "rgba(245,158,11,0.12)" },
+      { icon: "emoji-events", label: "Records", route: "/personal-records", color: UI.green, bgColor: "rgba(34,197,94,0.12)" },
+      { icon: "calendar-today", label: "Calendar", route: "/workout/calendar", color: UI.gold, bgColor: UI.goldAlpha12 },
       { icon: "view-list", label: "Templates", route: "/workout/templates", color: "#8B5CF6", bgColor: "rgba(139,92,246,0.12)" },
-      { icon: "check-circle", label: "Check-In", route: "/daily-checkin", color: "#14B8A6", bgColor: "rgba(20,184,166,0.12)" },
-      { icon: "accessibility-new", label: "By Muscle", route: "/browse-by-muscle", color: "#F59E0B", bgColor: "rgba(245,158,11,0.12)" },
+      { icon: "check-circle", label: "Check-In", route: "/daily-checkin", color: UI.teal, bgColor: "rgba(20,184,166,0.12)" },
+      { icon: "accessibility-new", label: "By Muscle", route: "/browse-by-muscle", color: UI.gold, bgColor: UI.goldAlpha12 },
     ],
   },
   {
     title: "Progress",
     icon: "trending-up",
     tiles: [
-      { icon: "trending-up", label: "Progress Photos", route: "/progress-photos", color: "#10B981", bgColor: "rgba(16,185,129,0.12)", feature: "progress_photos", tier: "basic" },
+      { icon: "trending-up", label: "Progress Photos", route: "/progress-photos", color: UI.emerald, bgColor: "rgba(16,185,129,0.12)", feature: "progress_photos", tier: "basic" },
       { icon: "bar-chart", label: "Weekly Summary", route: "/weekly-summary", color: "#6366F1", bgColor: "rgba(99,102,241,0.12)" },
-      { icon: "star", label: "Achievements", route: "/achievements", color: "#FBBF24", bgColor: "rgba(251,191,36,0.12)" },
+      { icon: "star", label: "Achievements", route: "/achievements", color: UI.gold2, bgColor: "rgba(251,191,36,0.12)" },
     ],
   },
   {
@@ -75,9 +75,9 @@ const CATEGORIES: TileCategory[] = [
     tiles: [
       { icon: "people", label: "Social Circle", route: "/social-circle", color: "#3B82F6", bgColor: "rgba(59,130,246,0.12)" },
       { icon: "group", label: "Community", route: "/social-feed", color: "#8B5CF6", bgColor: "rgba(139,92,246,0.12)", feature: "social_feed", tier: "basic" },
-      { icon: "bolt", label: "7-Day Challenge", route: "/challenge-onboarding", color: "#F59E0B", bgColor: "rgba(245,158,11,0.12)", feature: "challenges", tier: "basic" },
-      { icon: "sports-martial-arts", label: "Challenges", route: "/challenge", color: "#EF4444", bgColor: "rgba(239,68,68,0.12)" },
-      { icon: "groups", label: "Group Goals", route: "/group-goals", color: "#14B8A6", bgColor: "rgba(20,184,166,0.12)" },
+      { icon: "bolt", label: "7-Day Challenge", route: "/challenge-onboarding", color: UI.gold, bgColor: UI.goldAlpha12, feature: "challenges", tier: "basic" },
+      { icon: "sports-martial-arts", label: "Challenges", route: "/challenge", color: UI.red, bgColor: "rgba(239,68,68,0.12)" },
+      { icon: "groups", label: "Group Goals", route: "/group-goals", color: UI.teal, bgColor: "rgba(20,184,166,0.12)" },
       { icon: "card-giftcard", label: "Refer a Friend", route: "/referral", color: "#EC4899", bgColor: "rgba(236,72,153,0.12)" },
     ],
   },
@@ -85,8 +85,8 @@ const CATEGORIES: TileCategory[] = [
     title: "More",
     icon: "explore",
     tiles: [
-      { icon: "location-on", label: "Find Gym", route: "/gym-finder", color: "#EF4444", bgColor: "rgba(239,68,68,0.12)" },
-      { icon: "workspace-premium", label: "Upgrade Plan", route: "/paywall", color: "#F59E0B", bgColor: "rgba(245,158,11,0.12)" },
+      { icon: "location-on", label: "Find Gym", route: "/gym-finder", color: UI.red, bgColor: "rgba(239,68,68,0.12)" },
+      { icon: "workspace-premium", label: "Upgrade Plan", route: "/paywall", color: UI.gold, bgColor: UI.goldAlpha12 },
     ],
   },
 ];
@@ -135,7 +135,7 @@ export function ExploreGrid({ onPaywall }: ExploreGridProps) {
                     <Text style={[styles.categoryTitle, isExpanded && { color: SF.gold }]}>{cat.title}</Text>
                     {premiumCount > 0 && (
                       <View style={styles.premiumBadge}>
-                        <MaterialIcons name="workspace-premium" size={9} color="#F59E0B" />
+                        <MaterialIcons name="workspace-premium" size={9} color={UI.gold} />
                         <Text style={styles.premiumBadgeText}>{premiumCount} Premium</Text>
                       </View>
                     )}
@@ -163,7 +163,7 @@ export function ExploreGrid({ onPaywall }: ExploreGridProps) {
                       ]}>
                         <Text style={[
                           styles.tileBadgeText,
-                          tile.badge === "PRO" ? { color: "#7C3AED" } : { color: "#F59E0B" },
+                          tile.badge === "PRO" ? { color: "#7C3AED" } : { color: UI.gold },
                         ]}>{tile.badge}</Text>
                       </View>
                     )}
@@ -214,11 +214,11 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 10,
-    backgroundColor: "rgba(245,158,11,0.10)",
+    backgroundColor: UI.goldAlpha10,
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 1,
-    borderColor: "rgba(245,158,11,0.20)",
+    borderColor: UI.goldAlpha20,
   },
   categoryIconBoxActive: {
     backgroundColor: SF.gold,
@@ -239,15 +239,15 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 3,
-    backgroundColor: "rgba(245,158,11,0.12)",
+    backgroundColor: UI.goldAlpha12,
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 6,
     borderWidth: 1,
-    borderColor: "rgba(245,158,11,0.25)",
+    borderColor: UI.borderGold2,
   },
   premiumBadgeText: {
-    color: "#F59E0B",
+    color: UI.gold,
     fontFamily: "DMSans_600SemiBold",
     fontSize: 8,
     letterSpacing: 0.5,
@@ -283,9 +283,9 @@ const styles = StyleSheet.create({
     borderColor: "rgba(124,58,237,0.4)",
   },
   tileBadgeBasic: {
-    backgroundColor: "rgba(245,158,11,0.12)",
+    backgroundColor: UI.goldAlpha12,
     borderWidth: 1,
-    borderColor: "rgba(245,158,11,0.25)",
+    borderColor: UI.borderGold2,
   },
   tileBadgeText: {
     fontFamily: "DMSans_700Bold",

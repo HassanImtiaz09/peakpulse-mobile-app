@@ -36,6 +36,7 @@ import {
 } from "@/lib/weekly-nutrition-notification";
 import { GOLDEN_PRIMARY, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgrounds";
 import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
+import { UI } from "@/constants/ui-colors";
 
 const PREF_KEY = "@notif_preferences";
 
@@ -390,7 +391,7 @@ export default function NotificationPreferencesScreen() {
             <Switch
               value={prefs.workoutEnabled}
               onValueChange={() => toggleNotif("workout")}
-              trackColor={{ false: "#333", true: "#F59E0B" }}
+              trackColor={{ false: "#333", true: UI.gold }}
               thumbColor={prefs.workoutEnabled ? "#fff" : "#888"}
             />
           </View>
@@ -421,7 +422,7 @@ export default function NotificationPreferencesScreen() {
             <Switch
               value={prefs.mealEnabled}
               onValueChange={() => toggleNotif("meal")}
-              trackColor={{ false: "#333", true: "#F59E0B" }}
+              trackColor={{ false: "#333", true: UI.gold }}
               thumbColor={prefs.mealEnabled ? "#fff" : "#888"}
             />
           </View>
@@ -452,7 +453,7 @@ export default function NotificationPreferencesScreen() {
             <Switch
               value={prefs.checkinEnabled}
               onValueChange={() => toggleNotif("checkin")}
-              trackColor={{ false: "#333", true: "#F59E0B" }}
+              trackColor={{ false: "#333", true: UI.gold }}
               thumbColor={prefs.checkinEnabled ? "#fff" : "#888"}
             />
           </View>
@@ -483,7 +484,7 @@ export default function NotificationPreferencesScreen() {
             <Switch
               value={prefs.mealTimesEnabled}
               onValueChange={() => toggleNotif("mealTimes")}
-              trackColor={{ false: "#333", true: "#F59E0B" }}
+              trackColor={{ false: "#333", true: UI.gold }}
               thumbColor={prefs.mealTimesEnabled ? "#fff" : "#888"}
             />
           </View>
@@ -525,7 +526,7 @@ export default function NotificationPreferencesScreen() {
             <Switch
               value={prefs.waterEnabled}
               onValueChange={() => toggleNotif("water")}
-              trackColor={{ false: "#333", true: "#F59E0B" }}
+              trackColor={{ false: "#333", true: UI.gold }}
               thumbColor={prefs.waterEnabled ? "#fff" : "#888"}
             />
           </View>
@@ -537,7 +538,7 @@ export default function NotificationPreferencesScreen() {
                   <TouchableOpacity
                     key={h}
                     style={[{
-                      backgroundColor: prefs.waterIntervalHours === h ? "#F59E0B" : "#1e1e3a",
+                      backgroundColor: prefs.waterIntervalHours === h ? UI.gold : "#1e1e3a",
                       borderRadius: 8, paddingHorizontal: 12, paddingVertical: 8,
                     }]}
                     onPress={async () => {
@@ -565,7 +566,7 @@ export default function NotificationPreferencesScreen() {
             <Switch
               value={prefs.aiCoachEnabled}
               onValueChange={() => toggleNotif("aiCoach")}
-              trackColor={{ false: "#333", true: "#F59E0B" }}
+              trackColor={{ false: "#333", true: UI.gold }}
               thumbColor={prefs.aiCoachEnabled ? "#fff" : "#888"}
             />
           </View>
@@ -596,7 +597,7 @@ export default function NotificationPreferencesScreen() {
             <Switch
               value={prefs.weeklyRecapEnabled}
               onValueChange={() => toggleNotif("weeklyRecap")}
-              trackColor={{ false: "#333", true: "#F59E0B" }}
+              trackColor={{ false: "#333", true: UI.gold }}
               thumbColor={prefs.weeklyRecapEnabled ? "#fff" : "#888"}
             />
           </View>
@@ -632,7 +633,7 @@ export default function NotificationPreferencesScreen() {
                 await AsyncStorage.setItem(PREF_KEY, JSON.stringify(updated));
                 await setWeeklyNutritionEnabled(updated.weeklyNutritionEnabled);
               }}
-              trackColor={{ false: "#333", true: "#F59E0B" }}
+              trackColor={{ false: "#333", true: UI.gold }}
               thumbColor={prefs.weeklyNutritionEnabled ? "#fff" : "#888"}
             />
           </View>
@@ -655,10 +656,10 @@ export default function NotificationPreferencesScreen() {
                   flex: 1,
                   paddingVertical: 10,
                   borderRadius: 10,
-                  backgroundColor: prefs.progressPhotoFrequency === freq ? "#F59E0B" : "#1E293B",
+                  backgroundColor: prefs.progressPhotoFrequency === freq ? UI.gold : UI.inactive,
                   alignItems: "center",
                   borderWidth: 1,
-                  borderColor: prefs.progressPhotoFrequency === freq ? "#F59E0B" : "rgba(30,41,59,0.6)",
+                  borderColor: prefs.progressPhotoFrequency === freq ? UI.gold : UI.border,
                 }}
                 onPress={async () => {
                   const updated = { ...prefs, progressPhotoFrequency: freq };
@@ -667,7 +668,7 @@ export default function NotificationPreferencesScreen() {
                 }}
               >
                 <Text style={{
-                  color: prefs.progressPhotoFrequency === freq ? "#0A0E14" : "#94A3B8",
+                  color: prefs.progressPhotoFrequency === freq ? UI.bg : UI.muted,
                   fontFamily: "DMSans_700Bold",
                   fontSize: 12,
                   textTransform: "capitalize",
@@ -691,7 +692,7 @@ export default function NotificationPreferencesScreen() {
               </TouchableOpacity>
               {prefs.progressPhotoFrequency === "weekly" && (
                 <View style={{ marginTop: 8 }}>
-                  <Text style={{ color: "#94A3B8", fontSize: 12, marginBottom: 6, fontFamily: "DMSans_600SemiBold" }}>Day of Week</Text>
+                  <Text style={{ color: UI.muted, fontSize: 12, marginBottom: 6, fontFamily: "DMSans_600SemiBold" }}>Day of Week</Text>
                   <View style={{ flexDirection: "row", gap: 4 }}>
                     {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day, i) => (
                       <TouchableOpacity
@@ -700,10 +701,10 @@ export default function NotificationPreferencesScreen() {
                           flex: 1,
                           paddingVertical: 8,
                           borderRadius: 8,
-                          backgroundColor: prefs.progressPhotoWeekday === (i + 1) ? "#F59E0B" : "#1E293B",
+                          backgroundColor: prefs.progressPhotoWeekday === (i + 1) ? UI.gold : UI.inactive,
                           alignItems: "center",
                           borderWidth: 1,
-                          borderColor: prefs.progressPhotoWeekday === (i + 1) ? "#F59E0B" : "rgba(30,41,59,0.6)",
+                          borderColor: prefs.progressPhotoWeekday === (i + 1) ? UI.gold : UI.border,
                         }}
                         onPress={async () => {
                           const updated = { ...prefs, progressPhotoWeekday: i + 1 };
@@ -712,7 +713,7 @@ export default function NotificationPreferencesScreen() {
                         }}
                       >
                         <Text style={{
-                          color: prefs.progressPhotoWeekday === (i + 1) ? "#0A0E14" : "#94A3B8",
+                          color: prefs.progressPhotoWeekday === (i + 1) ? UI.bg : UI.muted,
                           fontFamily: "DMSans_700Bold",
                           fontSize: 10,
                         }}>{day}</Text>
@@ -846,7 +847,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   backText: {
-    color: "#F59E0B",
+    color: UI.gold,
     fontSize: 16,
     fontFamily: "DMSans_600SemiBold",
   },
@@ -868,7 +869,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 16,
     borderWidth: 1,
-    borderColor: "#F59E0B",
+    borderColor: UI.gold,
     gap: 12,
   },
   permBannerIcon: {
@@ -885,7 +886,7 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   permBannerArrow: {
-    color: "#F59E0B",
+    color: UI.gold,
     fontSize: 18,
     fontFamily: "DMSans_700Bold",
   },
@@ -937,7 +938,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   timeValueText: {
-    color: "#F59E0B",
+    color: UI.gold,
     fontSize: 16,
     fontFamily: "DMSans_700Bold",
   },
@@ -972,7 +973,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 14,
     borderLeftWidth: 3,
-    borderLeftColor: "#F59E0B",
+    borderLeftColor: UI.gold,
   },
   tipText: {
     color: "#aaa",
@@ -1036,7 +1037,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
   },
   pickerItemTextActive: {
-    color: "#F59E0B",
+    color: UI.gold,
     fontFamily: "DMSans_700Bold",
   },
   previewTime: {
@@ -1064,7 +1065,7 @@ const styles = StyleSheet.create({
   },
   confirmBtn: {
     flex: 1,
-    backgroundColor: "#F59E0B",
+    backgroundColor: UI.gold,
     borderRadius: 12,
     paddingVertical: 14,
     alignItems: "center",

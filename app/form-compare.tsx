@@ -31,6 +31,7 @@ import { getFormAnnotations, hasFormAnnotations } from "@/lib/form-annotations";
 import { FormAnnotationOverlay, AnnotationLegend } from "@/components/form-annotation-overlay";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
+import { UI } from "@/constants/ui-colors";
 
 const { width: SCREEN_W } = Dimensions.get("window");
 const COMPARE_W = (SCREEN_W - 48) / 2;
@@ -176,7 +177,7 @@ export default function FormCompareScreen() {
                 pressed && { opacity: 0.7 },
               ]}
             >
-              <MaterialIcons name="arrow-back" size={24} color="#FDE68A" />
+              <MaterialIcons name="arrow-back" size={24} color={UI.gold3} />
             </Pressable>
             <View style={{ flex: 1 }}>
               <Text style={styles.headerTitle}>Form Compare</Text>
@@ -194,7 +195,7 @@ export default function FormCompareScreen() {
                 <MaterialIcons
                   name="architecture"
                   size={20}
-                  color={showAnnotations ? "#0A0E14" : "#D4AF37"}
+                  color={showAnnotations ? UI.bg : "#D4AF37"}
                 />
               </Pressable>
             )}
@@ -216,7 +217,7 @@ export default function FormCompareScreen() {
                 <MaterialIcons
                   name="view-column"
                   size={16}
-                  color={viewMode === "side" ? "#0A0E14" : "#D4AF37"}
+                  color={viewMode === "side" ? UI.bg : "#D4AF37"}
                 />
                 <Text
                   style={[
@@ -237,7 +238,7 @@ export default function FormCompareScreen() {
                 <MaterialIcons
                   name="layers"
                   size={16}
-                  color={viewMode === "overlay" ? "#0A0E14" : "#D4AF37"}
+                  color={viewMode === "overlay" ? UI.bg : "#D4AF37"}
                 />
                 <Text
                   style={[
@@ -389,7 +390,7 @@ export default function FormCompareScreen() {
                   pressed && { opacity: 0.8, transform: [{ scale: 0.97 }] },
                 ]}
               >
-                <MaterialIcons name="camera-alt" size={20} color="#0A0E14" />
+                <MaterialIcons name="camera-alt" size={20} color={UI.bg} />
                 <Text style={styles.actionButtonText}>Take Photo</Text>
               </Pressable>
               <Pressable
@@ -412,7 +413,7 @@ export default function FormCompareScreen() {
                   pressed && { opacity: 0.8, transform: [{ scale: 0.97 }] },
                 ]}
               >
-                <MaterialIcons name="save" size={18} color="#22C55E" />
+                <MaterialIcons name="save" size={18} color={UI.green} />
                 <Text style={styles.saveButtonText}>
                   Save Photo for Progress Tracking
                 </Text>
@@ -510,7 +511,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   headerTitle: {
-    color: "#FDE68A",
+    color: UI.gold3,
     fontSize: 20,
     fontWeight: "800",
   },
@@ -532,7 +533,7 @@ const styles = StyleSheet.create({
   },
   annotationToggleActive: {
     backgroundColor: "#D4AF37",
-    borderColor: "#FDE68A",
+    borderColor: UI.gold3,
   },
   scrollContent: {
     paddingHorizontal: 16,
@@ -557,7 +558,7 @@ const styles = StyleSheet.create({
   },
   viewModeBtnActive: {
     backgroundColor: "#D4AF37",
-    borderColor: "#FDE68A",
+    borderColor: UI.gold3,
   },
   viewModeText: {
     color: "#D4AF37",
@@ -565,7 +566,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   viewModeTextActive: {
-    color: "#0A0E14",
+    color: UI.bg,
   },
   sideBySide: {
     flexDirection: "row",
@@ -576,7 +577,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   compareLabel: {
-    color: "#FDE68A",
+    color: UI.gold3,
     fontSize: 12,
     fontWeight: "700",
     textAlign: "center",
@@ -653,7 +654,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#D4AF37",
   },
   actionButtonText: {
-    color: "#0A0E14",
+    color: UI.bg,
     fontSize: 15,
     fontWeight: "700",
   },
@@ -687,7 +688,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   saveButtonText: {
-    color: "#22C55E",
+    color: UI.green,
     fontSize: 14,
     fontWeight: "600",
   },
@@ -701,7 +702,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   tipsTitle: {
-    color: "#FDE68A",
+    color: UI.gold3,
     fontSize: 15,
     fontWeight: "700",
     marginBottom: 2,
@@ -721,7 +722,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   historyTitle: {
-    color: "#FDE68A",
+    color: UI.gold3,
     fontSize: 15,
     fontWeight: "700",
     marginBottom: 10,

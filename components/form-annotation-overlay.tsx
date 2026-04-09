@@ -27,6 +27,7 @@ import type {
   AlignmentLine,
   FormCheckpoint,
 } from "@/lib/form-annotations";
+import { UI } from "@/constants/ui-colors";
 
 const { width: SCREEN_W } = Dimensions.get("window");
 
@@ -87,7 +88,7 @@ export function FormAnnotationOverlay({
                 y1={pct(line.y1, height)}
                 x2={pct(line.x2, width)}
                 y2={pct(line.y2, height)}
-                stroke={line.type === "correct" ? "#22C55E" : "#F59E0B"}
+                stroke={line.type === "correct" ? UI.green : UI.gold}
                 strokeWidth={2}
                 strokeDasharray={line.type === "correct" ? "6,3" : "4,4"}
                 opacity={0.8}
@@ -95,7 +96,7 @@ export function FormAnnotationOverlay({
               <SvgText
                 x={pct((line.x1 + line.x2) / 2, width)}
                 y={pct((line.y1 + line.y2) / 2, height) - 6}
-                fill={line.type === "correct" ? "#22C55E" : "#F59E0B"}
+                fill={line.type === "correct" ? UI.green : UI.gold}
                 fontSize={9}
                 fontWeight="600"
                 textAnchor="middle"
@@ -124,7 +125,7 @@ export function FormAnnotationOverlay({
                 <SvgText
                   x={cx + arcRadius + 4}
                   y={cy - 4}
-                  fill="#FDE68A"
+                  fill={UI.gold3}
                   fontSize={10}
                   fontWeight="700"
                 >
@@ -194,11 +195,11 @@ export function AnnotationLegend() {
   return (
     <View style={styles.legend}>
       <View style={styles.legendItem}>
-        <View style={[styles.legendDot, { backgroundColor: "#22C55E" }]} />
+        <View style={[styles.legendDot, { backgroundColor: UI.green }]} />
         <Text style={styles.legendText}>Correct Form</Text>
       </View>
       <View style={styles.legendItem}>
-        <View style={[styles.legendDot, { backgroundColor: "#F59E0B" }]} />
+        <View style={[styles.legendDot, { backgroundColor: UI.gold }]} />
         <Text style={styles.legendText}>Watch Out</Text>
       </View>
       <View style={styles.legendItem}>
@@ -224,11 +225,11 @@ const styles = StyleSheet.create({
   },
   checkpointCorrect: {
     backgroundColor: "rgba(34,197,94,0.85)",
-    borderColor: "#22C55E",
+    borderColor: UI.green,
   },
   checkpointWarning: {
-    backgroundColor: "rgba(245,158,11,0.85)",
-    borderColor: "#F59E0B",
+    backgroundColor: UI.goldAlpha85,
+    borderColor: UI.gold,
   },
   checkpointSelected: {
     transform: [{ scale: 1.15 }],
@@ -252,7 +253,7 @@ const styles = StyleSheet.create({
     zIndex: 20,
   },
   tooltipTitle: {
-    color: "#FDE68A",
+    color: UI.gold3,
     fontSize: 12,
     fontWeight: "700",
     marginBottom: 3,

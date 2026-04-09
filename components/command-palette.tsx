@@ -5,7 +5,7 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
-import { UI as SF } from "@/constants/ui-colors";
+import { UI, SF } from "@/constants/ui-colors";
 import * as Haptics from "expo-haptics";
 
 const { height: SCREEN_H } = Dimensions.get("window");
@@ -93,8 +93,8 @@ function fuzzyMatch(query: string, item: CommandItem): number {
 
 const CATEGORY_META: Record<string, { label: string; color: string }> = {
   navigate: { label: "Screen", color: "#6366F1" },
-  action: { label: "Action", color: "#14B8A6" },
-  tool: { label: "Tool", color: "#F59E0B" },
+  action: { label: "Action", color: UI.teal },
+  tool: { label: "Tool", color: UI.gold },
 };
 
 // ── Component ──────────────────────────────────────────────────────────

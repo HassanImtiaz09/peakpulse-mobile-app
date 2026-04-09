@@ -9,14 +9,15 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import * as Haptics from "expo-haptics";
 import { useSubscription } from "@/hooks/use-subscription";
 import { PaywallModal } from "@/components/paywall-modal";
+import { UI } from "@/constants/ui-colors";
 
-const BG = "#0A0E14";
-const SURFACE = "#141A22";
-const FG = "#F1F5F9";
+const BG = UI.bg;
+const SURFACE = UI.surface;
+const FG = UI.fg;
 const MUTED = "#64748B";
-const GOLD = "#F59E0B";
-const GOLD_DIM = "rgba(245,158,11,0.12)";
-const GOLD_BORDER = "rgba(245,158,11,0.20)";
+const GOLD = UI.gold;
+const GOLD_DIM = UI.goldAlpha12;
+const GOLD_BORDER = UI.goldAlpha20;
 
 interface PremiumFeatureBannerProps {
   /** Feature key from FEATURE_TIERS */

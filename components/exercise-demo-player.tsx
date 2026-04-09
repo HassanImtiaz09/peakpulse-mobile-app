@@ -40,6 +40,7 @@ import { hasFormTips } from "@/lib/form-cue-tips";
 import { VideoView, useVideoPlayer } from "expo-video";
 import { useEvent } from "expo";
 import type { VideoSource } from "expo-video";
+import { UI } from "@/constants/ui-colors";
 
 /** Check if a URL points to an MP4 video file */
 function isVideoUrl(url: string | number | undefined): url is string {
@@ -384,7 +385,7 @@ export function ExerciseDemoPlayer({
                   ]}
                 />
                 <View style={styles.skeletonContent}>
-                  <ActivityIndicator size="large" color="#F59E0B" />
+                  <ActivityIndicator size="large" color={UI.gold} />
                   <Text style={styles.skeletonText}>Loading video...</Text>
                   <View style={styles.skeletonBar} />
                   <View style={[styles.skeletonBar, { width: "50%" }]} />
@@ -394,7 +395,7 @@ export function ExerciseDemoPlayer({
             {/* Error Fallback Overlay — only show if no auto-fallback GIF available */}
             {videoHasError && !videoFailedAutoFallback && (
               <View style={styles.errorOverlay}>
-                <MaterialIcons name="error-outline" size={40} color="#EF4444" />
+                <MaterialIcons name="error-outline" size={40} color={UI.red} />
                 <Text style={styles.errorTitle}>Video unavailable</Text>
                 <Text style={styles.errorSubtitle}>
                   No illustration available for this exercise. Tap retry to try the video again.
@@ -406,7 +407,7 @@ export function ExerciseDemoPlayer({
                     pressed && { opacity: 0.8, transform: [{ scale: 0.97 }] },
                   ]}
                 >
-                  <MaterialIcons name="refresh" size={18} color="#0A0E14" />
+                  <MaterialIcons name="refresh" size={18} color={UI.bg} />
                   <Text style={styles.retryButtonText}>Retry</Text>
                 </Pressable>
               </View>
@@ -491,7 +492,7 @@ export function ExerciseDemoPlayer({
                   view.label.includes("Side") ? "switch-video" : "videocam"
                 }
                 size={14}
-                color={activeAngle === i ? "#0A0E14" : "#F59E0B"}
+                color={activeAngle === i ? UI.bg : UI.gold}
               />
               <Text
                 style={[
@@ -515,7 +516,7 @@ export function ExerciseDemoPlayer({
             <MaterialIcons
               name={angleViews[activeAngle].label.includes("Side") ? "switch-video" : "videocam"}
               size={12}
-              color="#F59E0B"
+              color={UI.gold}
             />
             <Text style={styles.sectionLabelText}>
               {angleViews[activeAngle].label.toUpperCase()} - WHAT TO CHECK
@@ -528,17 +529,17 @@ export function ExerciseDemoPlayer({
       {/* GIF Source Toggle: ExerciseDB animated vs static images */}
       {/* Fallback info banner */}
       {videoFailedAutoFallback && useExerciseDb && (
-        <View style={{ flexDirection: "row", alignItems: "center", backgroundColor: "rgba(245,158,11,0.1)", borderRadius: 8, padding: 10, marginHorizontal: 4, marginBottom: 6, gap: 8 }}>
-          <MaterialIcons name="info-outline" size={16} color="#F59E0B" />
-          <Text style={{ flex: 1, color: "#B45309", fontSize: 11, lineHeight: 15 }}>
+        <View style={{ flexDirection: "row", alignItems: "center", backgroundColor: UI.goldAlpha10, borderRadius: 8, padding: 10, marginHorizontal: 4, marginBottom: 6, gap: 8 }}>
+          <MaterialIcons name="info-outline" size={16} color={UI.gold} />
+          <Text style={{ flex: 1, color: UI.secondaryLight, fontSize: 11, lineHeight: 15 }}>
             MuscleWiki video unavailable — showing animated illustration instead.
           </Text>
           <Pressable
             onPress={handleVideoRetry}
-            style={({ pressed }) => [{ flexDirection: "row", alignItems: "center", backgroundColor: "rgba(245,158,11,0.15)", borderRadius: 6, paddingHorizontal: 8, paddingVertical: 4, gap: 4 }, pressed && { opacity: 0.7 }]}
+            style={({ pressed }) => [{ flexDirection: "row", alignItems: "center", backgroundColor: UI.borderGold, borderRadius: 6, paddingHorizontal: 8, paddingVertical: 4, gap: 4 }, pressed && { opacity: 0.7 }]}
           >
-            <MaterialIcons name="refresh" size={12} color="#B45309" />
-            <Text style={{ color: "#B45309", fontSize: 10, fontWeight: "600" }}>Retry Video</Text>
+            <MaterialIcons name="refresh" size={12} color={UI.secondaryLight} />
+            <Text style={{ color: UI.secondaryLight, fontSize: 10, fontWeight: "600" }}>Retry Video</Text>
           </Pressable>
         </View>
       )}
@@ -553,7 +554,7 @@ export function ExerciseDemoPlayer({
               pressed && { opacity: 0.7 },
             ]}
           >
-            <MaterialIcons name="gif" size={14} color={useExerciseDb ? "#0A0E14" : "#B45309"} />
+            <MaterialIcons name="gif" size={14} color={useExerciseDb ? UI.bg : UI.secondaryLight} />
             <Text style={[styles.sourceToggleTxt, useExerciseDb && styles.sourceToggleTxtActive]}>ExerciseDB GIF</Text>
           </Pressable>
           <Pressable
@@ -564,7 +565,7 @@ export function ExerciseDemoPlayer({
               pressed && { opacity: 0.7 },
             ]}
           >
-            <MaterialIcons name="image" size={14} color={!useExerciseDb ? "#0A0E14" : "#B45309"} />
+            <MaterialIcons name="image" size={14} color={!useExerciseDb ? UI.bg : UI.secondaryLight} />
             <Text style={[styles.sourceToggleTxt, !useExerciseDb && styles.sourceToggleTxtActive]}>MuscleWiki Video</Text>
           </Pressable>
         </View>
@@ -591,7 +592,7 @@ export function ExerciseDemoPlayer({
             <MaterialIcons
               name="architecture"
               size={16}
-              color={showAnnotations ? "#0A0E14" : "#D4AF37"}
+              color={showAnnotations ? UI.bg : "#D4AF37"}
             />
             <Text
               style={[
@@ -615,7 +616,7 @@ export function ExerciseDemoPlayer({
             <MaterialIcons
               name={isPlaying ? "stop" : "volume-up"}
               size={16}
-              color={isPlaying ? "#0A0E14" : "#D4AF37"}
+              color={isPlaying ? UI.bg : "#D4AF37"}
             />
             <Text
               style={[
@@ -692,7 +693,7 @@ export function ExerciseDemoPlayer({
           {/* Section label */}
           <View style={styles.sectionLabelRow}>
             <View style={styles.sectionAccentBar} />
-            <MaterialIcons name="chat-bubble-outline" size={12} color="#F59E0B" />
+            <MaterialIcons name="chat-bubble-outline" size={12} color={UI.gold} />
             <Text style={styles.sectionLabelText}>COACHING CUE</Text>
           </View>
           {/* Quote card */}
@@ -736,7 +737,7 @@ export function ExerciseDemoPlayer({
                   <MaterialIcons
                     name="architecture"
                     size={22}
-                    color={showAnnotations ? "#FDE68A" : "#fff"}
+                    color={showAnnotations ? UI.gold3 : "#fff"}
                   />
                 </Pressable>
               )}
@@ -751,7 +752,7 @@ export function ExerciseDemoPlayer({
                   <MaterialIcons
                     name={favorited ? "favorite" : "favorite-border"}
                     size={22}
-                    color={favorited ? "#EF4444" : "#fff"}
+                    color={favorited ? UI.red : "#fff"}
                   />
                 </Pressable>
               ) : null}
@@ -806,7 +807,7 @@ export function ExerciseDemoPlayer({
                   ]}
                 />
                 <View style={styles.skeletonContent}>
-                  <ActivityIndicator size="large" color="#F59E0B" />
+                  <ActivityIndicator size="large" color={UI.gold} />
                   <Text style={styles.skeletonText}>Loading video...</Text>
                 </View>
               </View>
@@ -814,7 +815,7 @@ export function ExerciseDemoPlayer({
             {/* Fullscreen Error Fallback — only show if no auto-fallback GIF */}
             {videoHasError && !videoFailedAutoFallback && (
               <View style={[styles.errorOverlay, { width: SCREEN_W, height: SCREEN_W }]}>
-                <MaterialIcons name="error-outline" size={48} color="#EF4444" />
+                <MaterialIcons name="error-outline" size={48} color={UI.red} />
                 <Text style={styles.errorTitle}>Video unavailable</Text>
                 <Text style={styles.errorSubtitle}>
                   No illustration available. Tap retry to try the video again.
@@ -826,7 +827,7 @@ export function ExerciseDemoPlayer({
                     pressed && { opacity: 0.8, transform: [{ scale: 0.97 }] },
                   ]}
                 >
-                  <MaterialIcons name="refresh" size={18} color="#0A0E14" />
+                  <MaterialIcons name="refresh" size={18} color={UI.bg} />
                   <Text style={styles.retryButtonText}>Retry</Text>
                 </Pressable>
               </View>
@@ -864,7 +865,7 @@ export function ExerciseDemoPlayer({
                   <Text
                     style={[
                       styles.fullscreenAngleTxt,
-                      activeAngle === i && { color: "#0A0E14" },
+                      activeAngle === i && { color: UI.bg },
                     ]}
                   >
                     {getAngleShortLabel(view.label)}
@@ -1012,10 +1013,10 @@ const styles = StyleSheet.create({
     width: 3,
     height: 14,
     borderRadius: 2,
-    backgroundColor: "#F59E0B",
+    backgroundColor: UI.gold,
   },
   sectionLabelText: {
-    color: "#F59E0B",
+    color: UI.gold,
     fontSize: 10,
     fontWeight: "700",
     letterSpacing: 1.2,
@@ -1025,7 +1026,7 @@ const styles = StyleSheet.create({
   // ── Angle focus card ───────────────────────────────────────────────────────
   angleFocusCard: {
     marginTop: 10,
-    backgroundColor: "#141A22",
+    backgroundColor: UI.surface,
     borderRadius: 12,
     padding: 12,
     borderWidth: 1,
@@ -1047,7 +1048,7 @@ const styles = StyleSheet.create({
     top: -2,
     left: 6,
     fontSize: 44,
-    color: "#F59E0B",
+    color: UI.gold,
     opacity: 0.10,
     lineHeight: 44,
     fontWeight: "900",
@@ -1101,16 +1102,16 @@ const styles = StyleSheet.create({
     borderColor: "rgba(180,83,9,0.25)",
   },
   sourceToggleBtnActive: {
-    backgroundColor: "#F59E0B",
-    borderColor: "#F59E0B",
+    backgroundColor: UI.gold,
+    borderColor: UI.gold,
   },
   sourceToggleTxt: {
-    color: "#B45309",
+    color: UI.secondaryLight,
     fontSize: 11,
     fontWeight: "700" as const,
   },
   sourceToggleTxtActive: {
-    color: "#0A0E14",
+    color: UI.bg,
   },
   angleLabelOverlay: {
     position: "absolute",
@@ -1122,7 +1123,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   angleLabelText: {
-    color: "#FDE68A",
+    color: UI.gold3,
     fontSize: 10,
     fontWeight: "600",
     letterSpacing: 0.3,
@@ -1148,22 +1149,22 @@ const styles = StyleSheet.create({
     gap: 6,
     paddingVertical: 10,
     borderRadius: 11,
-    backgroundColor: "rgba(245,158,11,0.08)",
+    backgroundColor: UI.dim,
     borderWidth: 1.5,
-    borderColor: "rgba(245,158,11,0.18)",
+    borderColor: UI.borderGold3,
   },
   angleToggleBtnActive: {
-    backgroundColor: "#F59E0B",
-    borderColor: "#F59E0B",
+    backgroundColor: UI.gold,
+    borderColor: UI.gold,
   },
   angleToggleText: {
-    color: "#F59E0B",
+    color: UI.gold,
     fontSize: 13,
     fontWeight: "700",
     fontFamily: "DMSans_700Bold",
   },
   angleToggleTextActive: {
-    color: "#0A0E14",
+    color: UI.bg,
   },
   // Action bar
   actionBar: {
@@ -1179,23 +1180,23 @@ const styles = StyleSheet.create({
     paddingHorizontal: 13,
     paddingVertical: 8,
     borderRadius: 10,
-    backgroundColor: "rgba(245,158,11,0.06)",
+    backgroundColor: UI.goldAlpha6,
     borderWidth: 1.5,
-    borderColor: "rgba(245,158,11,0.18)",
+    borderColor: UI.borderGold3,
   },
   actionBtnActive: {
-    backgroundColor: "#F59E0B",
-    borderColor: "#F59E0B",
+    backgroundColor: UI.gold,
+    borderColor: UI.gold,
   },
   actionBtnText: {
-    color: "#F59E0B",
+    color: UI.gold,
     fontSize: 12,
     fontWeight: "700",
     fontFamily: "DMSans_700Bold",
     letterSpacing: 0.2,
   },
   actionBtnTextActive: {
-    color: "#0A0E14",
+    color: UI.bg,
   },
   // Audio cue card
   audioCueCard: {
@@ -1230,7 +1231,7 @@ const styles = StyleSheet.create({
     marginLeft: "auto",
   },
   audioCueLabel: {
-    color: "#FDE68A",
+    color: UI.gold3,
     fontSize: 14,
     fontWeight: "700",
     marginBottom: 3,
@@ -1317,16 +1318,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 10,
-    backgroundColor: "rgba(245,158,11,0.1)",
+    backgroundColor: UI.goldAlpha10,
     borderWidth: 1,
-    borderColor: "rgba(245,158,11,0.25)",
+    borderColor: UI.borderGold2,
   },
   fullscreenAngleBtnActive: {
-    backgroundColor: "#F59E0B",
-    borderColor: "#FBBF24",
+    backgroundColor: UI.gold,
+    borderColor: UI.gold2,
   },
   fullscreenAngleTxt: {
-    color: "#F59E0B",
+    color: UI.gold,
     fontWeight: "600",
     fontSize: 13,
   },
@@ -1339,7 +1340,7 @@ const styles = StyleSheet.create({
     maxWidth: SCREEN_W - 48,
   },
   fullscreenAudioCueText: {
-    color: "#FDE68A",
+    color: UI.gold3,
     fontSize: 14,
     lineHeight: 20,
     flex: 1,
@@ -1392,7 +1393,7 @@ const styles = StyleSheet.create({
   // — Loading skeleton overlay —
   skeletonOverlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "#0A0E14",
+    backgroundColor: UI.bg,
     justifyContent: "center",
     alignItems: "center",
     zIndex: 5,
@@ -1449,10 +1450,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderRadius: 10,
-    backgroundColor: "#F59E0B",
+    backgroundColor: UI.gold,
   },
   retryButtonText: {
-    color: "#0A0E14",
+    color: UI.bg,
     fontSize: 14,
     fontWeight: "700",
   },
@@ -1466,10 +1467,10 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     borderRadius: 6,
     borderWidth: 1,
-    borderColor: "rgba(245,158,11,0.4)",
+    borderColor: UI.goldAlpha40,
   },
   speedButtonText: {
-    color: "#F59E0B",
+    color: UI.gold,
     fontSize: 11,
     fontWeight: "700",
     fontFamily: "DMSans_700Bold",
@@ -1490,8 +1491,8 @@ const styles = StyleSheet.create({
     borderColor: "rgba(255,255,255,0.15)",
   },
   fullscreenSpeedBtnActive: {
-    backgroundColor: "#F59E0B",
-    borderColor: "#F59E0B",
+    backgroundColor: UI.gold,
+    borderColor: UI.gold,
   },
   fullscreenSpeedTxt: {
     color: "#9BA1A6",
@@ -1500,6 +1501,6 @@ const styles = StyleSheet.create({
     fontFamily: "DMSans_700Bold",
   },
   fullscreenSpeedTxtActive: {
-    color: "#0A0E14",
+    color: UI.bg,
   },
 });

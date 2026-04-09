@@ -15,6 +15,7 @@ import { View, Text, StyleSheet } from "react-native";
 import Svg, { Path, G, Defs, LinearGradient, Stop } from "react-native-svg";
 import type { MuscleGroup } from "@/components/body-diagram";
 import type { MuscleStatus, MuscleBalanceEntry } from "@/lib/muscle-balance";
+import { UI } from "@/constants/ui-colors";
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -48,24 +49,24 @@ const COLORS = {
   // Base body — MUCH lighter for visibility on dark backgrounds
   bodyMale: "#3D2E1A",            // Warm dark brown (visible against dark BG)
   bodyFemale: "#3A2428",          // Warm dark rose-brown
-  bodyStroke: "rgba(245,178,50,0.45)", // Gold stroke at 45% opacity — clearly visible
+  bodyStroke: UI.bodyStroke, // Gold stroke at 45% opacity — clearly visible
   bodyOutline: "rgba(255,255,255,0.08)", // Subtle white outline for body edge
   // Target mode
-  targetPrimary: "#F59E0B",
-  targetSecondary: "rgba(245,158,11,0.50)",  // Bumped from 0.35 to 0.50
+  targetPrimary: UI.gold,
+  targetSecondary: UI.goldAlpha50,  // Bumped from 0.35 to 0.50
   // Balance mode heatmap — boosted saturation and brightness
   over: "#FF5252",                // Brighter red
   overGlow: "rgba(255,82,82,0.4)", // Stronger glow
   optimal: "#4ADE80",             // Brighter green
   optimalGlow: "rgba(74,222,128,0.4)",
-  under: "#60A5FA",               // Brighter blue
+  under: UI.blue,               // Brighter blue
   underGlow: "rgba(96,165,250,0.4)",
   none: "#4A3520",                // Warm brown — visible but muted
   noneStroke: "rgba(245,178,50,0.20)", // Light gold outline for untracked muscles
   // Labels
-  labelFg: "#FDE68A",
+  labelFg: UI.gold3,
   labelBg: "rgba(0,0,0,0.6)",     // Label background for readability
-  labelMuted: "#B45309",
+  labelMuted: UI.secondaryLight,
 };
 
 // ── Male Body Paths (Front) — broader shoulders, narrower hips ──────────────
@@ -225,7 +226,7 @@ function getPathColor(
       return { fill: COLORS.targetPrimary, stroke: COLORS.targetPrimary, strokeWidth: 1.5, opacity: 1 };
     }
     if (targetSecondaryPaths.has(pathKey)) {
-      return { fill: COLORS.targetSecondary, stroke: "rgba(245,158,11,0.2)", strokeWidth: 1, opacity: 0.8 };
+      return { fill: COLORS.targetSecondary, stroke: UI.goldAlpha20, strokeWidth: 1, opacity: 0.8 };
     }
     return { fill: baseColor, stroke: COLORS.bodyStroke, strokeWidth: 0.8, opacity: 0.6 };
   }
@@ -458,7 +459,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   viewLabel: {
-    color: "#B45309",
+    color: UI.secondaryLight,
     fontFamily: "DMSans_400Regular",
     fontSize: 9,
     marginTop: 2,
@@ -483,7 +484,7 @@ const styles = StyleSheet.create({
     borderRadius: 3,
   },
   labelText: {
-    color: "#FDE68A",
+    color: UI.gold3,
     fontFamily: "DMSans_500Medium",
     fontSize: 9,
     letterSpacing: 0.3,
@@ -505,7 +506,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   legendText: {
-    color: "#B45309",
+    color: UI.secondaryLight,
     fontFamily: "DMSans_500Medium",
     fontSize: 9,
     letterSpacing: 0.3,

@@ -10,6 +10,7 @@
 
 import * as Speech from "expo-speech";
 import { Platform } from "react-native";
+import { UI } from "@/constants/ui-colors";
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -257,11 +258,11 @@ export function getAudioCueCount(): number {
  */
 export function getPhaseColor(phase: FormCue["phase"]): string {
   switch (phase) {
-    case "setup": return "#60A5FA";
+    case "setup": return UI.blue;
     case "execution": return "#D4AF37";
-    case "peak": return "#22C55E";
-    case "return": return "#A78BFA";
-    case "breathing": return "#F59E0B";
+    case "peak": return UI.green;
+    case "return": return UI.purple;
+    case "breathing": return UI.gold;
     default: return "#9BA1A6";
   }
 }

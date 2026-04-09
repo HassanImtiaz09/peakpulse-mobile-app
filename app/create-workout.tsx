@@ -20,7 +20,7 @@ import {
   type BalanceAnalysis, type CalorieEstimate, type BodyCompositionEstimate, type WorkoutCoachInsight,
 } from "@/lib/workout-insights";
 import { GOLDEN_WORKOUT, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgrounds";
-import { UI as SF } from "@/constants/ui-colors";
+import { UI, SF } from "@/constants/ui-colors";
 import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
 import { useExerciseSearch } from "@/lib/exercisedb-hooks";
 import { hasExerciseDBKey, type ExerciseDBExercise } from "@/lib/exercisedb";
@@ -226,7 +226,7 @@ export default function CreateWorkoutScreen() {
       <TouchableOpacity
         onPress={() => toggleExercise(item)}
         style={{
-          backgroundColor: selected ? "rgba(245,158,11,0.12)" : SF.surface,
+          backgroundColor: selected ? UI.goldAlpha12 : SF.surface,
           borderRadius: 14, padding: 12, marginBottom: 8,
           borderWidth: 1.5,
           borderColor: selected ? SF.gold2 : SF.border,
@@ -237,7 +237,7 @@ export default function CreateWorkoutScreen() {
         {item.angleViews[0]?.gifUrl ? (
           <Image
             source={{ uri: item.angleViews[0].gifUrl }}
-            style={{ width: 48, height: 48, borderRadius: 10, backgroundColor: "rgba(245,158,11,0.06)" }}
+            style={{ width: 48, height: 48, borderRadius: 10, backgroundColor: UI.goldAlpha6 }}
             cachePolicy="disk"
           />
         ) : (
@@ -264,7 +264,7 @@ export default function CreateWorkoutScreen() {
           borderWidth: selected ? 0 : 1.5, borderColor: SF.borderBright,
           alignItems: "center", justifyContent: "center",
         }}>
-          {selected && <MaterialIcons name="check" size={16} color="#0A0E14" />}
+          {selected && <MaterialIcons name="check" size={16} color={UI.bg} />}
         </View>
       </TouchableOpacity>
       </ScreenErrorBoundary>
@@ -305,7 +305,7 @@ export default function CreateWorkoutScreen() {
                 onPress={() => setStep("configure")}
                 style={{ backgroundColor: SF.gold2, borderRadius: 10, paddingHorizontal: 14, paddingVertical: 8 }}
               >
-                <Text style={{ color: "#0A0E14", fontFamily: "DMSans_700Bold", fontSize: 12 }}>Next</Text>
+                <Text style={{ color: UI.bg, fontFamily: "DMSans_700Bold", fontSize: 12 }}>Next</Text>
               </TouchableOpacity>
             )}
           </View>
@@ -320,7 +320,7 @@ export default function CreateWorkoutScreen() {
                   style={{
                     flexDirection: "row", alignItems: "center", gap: 4,
                     paddingHorizontal: 10, paddingVertical: 5, borderRadius: 8,
-                    backgroundColor: goal === g.key ? "rgba(245,158,11,0.2)" : SF.surface,
+                    backgroundColor: goal === g.key ? UI.goldAlpha20 : SF.surface,
                     borderWidth: 1, borderColor: goal === g.key ? SF.gold2 : SF.border,
                   }}
                 >
@@ -363,7 +363,7 @@ export default function CreateWorkoutScreen() {
                   onPress={() => setActiveCategory(cat.key)}
                   style={{
                     paddingHorizontal: 10, paddingVertical: 5, borderRadius: 8,
-                    backgroundColor: activeCategory === cat.key ? "rgba(245,158,11,0.15)" : SF.surface,
+                    backgroundColor: activeCategory === cat.key ? UI.borderGold : SF.surface,
                     borderWidth: 1, borderColor: activeCategory === cat.key ? SF.gold3 : SF.border,
                   }}
                 >
@@ -416,7 +416,7 @@ export default function CreateWorkoutScreen() {
                           });
                         }}
                         style={{
-                          backgroundColor: apiSelected ? "rgba(245,158,11,0.12)" : SF.surface,
+                          backgroundColor: apiSelected ? UI.goldAlpha12 : SF.surface,
                           borderRadius: 14, padding: 12, marginBottom: 8,
                           borderWidth: 1.5,
                           borderColor: apiSelected ? SF.gold2 : SF.border,
@@ -426,7 +426,7 @@ export default function CreateWorkoutScreen() {
                         {getExerciseDbGifUrl(apiEx.name) ? (
                           <Image
                             source={{ uri: getExerciseDbGifUrl(apiEx.name)! }}
-                            style={{ width: 48, height: 48, borderRadius: 10, backgroundColor: "rgba(245,158,11,0.06)" }}
+                            style={{ width: 48, height: 48, borderRadius: 10, backgroundColor: UI.goldAlpha6 }}
                             cachePolicy="disk"
                           />
                         ) : (
@@ -442,7 +442,7 @@ export default function CreateWorkoutScreen() {
                             {apiEx.target} \u00b7 {apiEx.equipment}
                           </Text>
                           <View style={{ flexDirection: "row", alignItems: "center", gap: 4, marginTop: 2 }}>
-                            <View style={{ paddingHorizontal: 4, paddingVertical: 1, borderRadius: 3, backgroundColor: "rgba(245,158,11,0.1)" }}>
+                            <View style={{ paddingHorizontal: 4, paddingVertical: 1, borderRadius: 3, backgroundColor: UI.goldAlpha10 }}>
                               <Text style={{ color: SF.gold3, fontFamily: "DMSans_500Medium", fontSize: 8 }}>API</Text>
                             </View>
                             <Text style={{ color: SF.gold3, fontFamily: "DMSans_400Regular", fontSize: 9 }}>{apiEx.bodyPart}</Text>
@@ -455,7 +455,7 @@ export default function CreateWorkoutScreen() {
                           borderColor: SF.border,
                           alignItems: "center", justifyContent: "center",
                         }}>
-                          {apiSelected && <MaterialIcons name="check" size={16} color="#0A0E14" />}
+                          {apiSelected && <MaterialIcons name="check" size={16} color={UI.bg} />}
                         </View>
                       </TouchableOpacity>
                     );
@@ -496,7 +496,7 @@ export default function CreateWorkoutScreen() {
                 onPress={() => setStep("configure")}
                 style={{ backgroundColor: SF.gold2, borderRadius: 12, paddingHorizontal: 20, paddingVertical: 10 }}
               >
-                <Text style={{ color: "#0A0E14", fontFamily: "DMSans_700Bold", fontSize: 13 }}>Configure</Text>
+                <Text style={{ color: UI.bg, fontFamily: "DMSans_700Bold", fontSize: 13 }}>Configure</Text>
               </TouchableOpacity>
             </View>
           )}
@@ -525,7 +525,7 @@ export default function CreateWorkoutScreen() {
               onPress={() => setStep("insights")}
               style={{ backgroundColor: SF.gold2, borderRadius: 10, paddingHorizontal: 14, paddingVertical: 8 }}
             >
-              <Text style={{ color: "#0A0E14", fontFamily: "DMSans_700Bold", fontSize: 12 }}>Review</Text>
+              <Text style={{ color: UI.bg, fontFamily: "DMSans_700Bold", fontSize: 12 }}>Review</Text>
             </TouchableOpacity>
           </View>
 
@@ -551,7 +551,7 @@ export default function CreateWorkoutScreen() {
               <TouchableOpacity
                 onPress={() => setShowInsightsModal(true)}
                 style={{
-                  backgroundColor: "rgba(245,158,11,0.08)", borderRadius: 14, padding: 12, marginBottom: 12,
+                  backgroundColor: UI.dim, borderRadius: 14, padding: 12, marginBottom: 12,
                   borderWidth: 1, borderColor: SF.borderBright, flexDirection: "row", alignItems: "center", gap: 10,
                 }}
               >
@@ -575,7 +575,7 @@ export default function CreateWorkoutScreen() {
                 <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
                   <Text style={{ color: SF.cream, fontFamily: "DMSans_700Bold", fontSize: 13 }}>Muscle Balance</Text>
                   <View style={{
-                    backgroundColor: balance.rating === "excellent" ? "rgba(34,197,94,0.15)" : balance.rating === "good" ? "rgba(245,158,11,0.15)" : "rgba(239,68,68,0.15)",
+                    backgroundColor: balance.rating === "excellent" ? "rgba(34,197,94,0.15)" : balance.rating === "good" ? UI.borderGold : "rgba(239,68,68,0.15)",
                     paddingHorizontal: 8, paddingVertical: 2, borderRadius: 6,
                   }}>
                     <Text style={{
@@ -638,7 +638,7 @@ export default function CreateWorkoutScreen() {
 
                   {/* AI Suggestion */}
                   <View style={{
-                    backgroundColor: "rgba(245,158,11,0.06)", borderRadius: 8, padding: 8, marginBottom: 10,
+                    backgroundColor: UI.goldAlpha6, borderRadius: 8, padding: 8, marginBottom: 10,
                     flexDirection: "row", gap: 6, alignItems: "flex-start",
                   }}>
                     <MaterialIcons name="auto-awesome" size={11} color={SF.gold3} style={{ marginTop: 1 }} />
@@ -739,8 +739,8 @@ export default function CreateWorkoutScreen() {
               style={{ backgroundColor: SF.gold2, borderRadius: 12, paddingVertical: 12, alignItems: "center" }}
             >
               <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
-                <MaterialIcons name="auto-awesome" size={16} color="#0A0E14" />
-                <Text style={{ color: "#0A0E14", fontFamily: "DMSans_700Bold", fontSize: 14 }}>Review AI Insights</Text>
+                <MaterialIcons name="auto-awesome" size={16} color={UI.bg} />
+                <Text style={{ color: UI.bg, fontFamily: "DMSans_700Bold", fontSize: 14 }}>Review AI Insights</Text>
               </View>
             </TouchableOpacity>
           </View>
@@ -830,7 +830,7 @@ export default function CreateWorkoutScreen() {
                   <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 10 }}>minutes</Text>
                 </View>
                 <View style={{ alignItems: "center" }}>
-                  <Text style={{ color: "#F97316", fontFamily: "DMSans_700Bold", fontSize: 24 }}>+{calorieEst.afterburnCalories}</Text>
+                  <Text style={{ color: UI.orange2, fontFamily: "DMSans_700Bold", fontSize: 24 }}>+{calorieEst.afterburnCalories}</Text>
                   <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 10 }}>afterburn</Text>
                 </View>
               </View>
@@ -855,7 +855,7 @@ export default function CreateWorkoutScreen() {
                 <MaterialIcons name="trending-up" size={16} color={SF.green} />
                 <Text style={{ color: SF.cream, fontFamily: "DMSans_700Bold", fontSize: 14 }}>Projected Results</Text>
                 <View style={{
-                  backgroundColor: bodyCompEst.confidence === "high" ? "rgba(34,197,94,0.15)" : "rgba(245,158,11,0.15)",
+                  backgroundColor: bodyCompEst.confidence === "high" ? "rgba(34,197,94,0.15)" : UI.borderGold,
                   paddingHorizontal: 6, paddingVertical: 1, borderRadius: 4, marginLeft: "auto",
                 }}>
                   <Text style={{
@@ -892,7 +892,7 @@ export default function CreateWorkoutScreen() {
 
               {/* Timeline */}
               <View style={{
-                backgroundColor: "rgba(245,158,11,0.06)", borderRadius: 10, padding: 10, marginBottom: 8,
+                backgroundColor: UI.goldAlpha6, borderRadius: 10, padding: 10, marginBottom: 8,
               }}>
                 <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
                   <MaterialIcons name="calendar-today" size={12} color={SF.gold3} />
@@ -974,13 +974,13 @@ export default function CreateWorkoutScreen() {
           >
             {saving ? (
               <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-                <ActivityIndicator size="small" color="#0A0E14" />
-                <Text style={{ color: "#0A0E14", fontFamily: "DMSans_700Bold", fontSize: 14 }}>Saving...</Text>
+                <ActivityIndicator size="small" color={UI.bg} />
+                <Text style={{ color: UI.bg, fontFamily: "DMSans_700Bold", fontSize: 14 }}>Saving...</Text>
               </View>
             ) : (
               <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
-                <MaterialIcons name="save" size={18} color="#0A0E14" />
-                <Text style={{ color: "#0A0E14", fontFamily: "DMSans_700Bold", fontSize: 14 }}>Save to My Plan</Text>
+                <MaterialIcons name="save" size={18} color={UI.bg} />
+                <Text style={{ color: UI.bg, fontFamily: "DMSans_700Bold", fontSize: 14 }}>Save to My Plan</Text>
               </View>
             )}
           </TouchableOpacity>

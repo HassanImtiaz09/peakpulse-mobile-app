@@ -36,7 +36,7 @@ import {
   GOLDEN_WORKOUT,
   GOLDEN_OVERLAY_STYLE,
 } from "@/constants/golden-backgrounds";
-import { C } from "@/constants/ui-colors";
+import { UI, C } from "@/constants/ui-colors";
 import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
 import { searchExercisesByName, type ExerciseDBExercise } from "@/lib/exercisedb";
 import { ActivityIndicator } from "react-native";
@@ -109,7 +109,7 @@ export default function ExerciseDetailScreen() {
           <Text style={styles.headerTitle} numberOfLines={1}>
             {apiExercise.name.replace(/\b\w/g, c => c.toUpperCase())}
           </Text>
-          <View style={{ paddingHorizontal: 6, paddingVertical: 2, borderRadius: 4, backgroundColor: "rgba(245,158,11,0.15)" }}>
+          <View style={{ paddingHorizontal: 6, paddingVertical: 2, borderRadius: 4, backgroundColor: UI.borderGold }}>
             <Text style={{ color: C.gold, fontFamily: "DMSans_600SemiBold", fontSize: 9 }}>API</Text>
           </View>
         </View>
@@ -226,7 +226,7 @@ export default function ExerciseDetailScreen() {
           <MaterialIcons
             name={favorited ? "favorite" : "favorite-border"}
             size={22}
-            color={favorited ? "#EF4444" : C.gold}
+            color={favorited ? UI.red : C.gold}
           />
         </Pressable>
       </View>
@@ -574,7 +574,7 @@ const styles = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: "rgba(245,158,11,0.15)",
+    backgroundColor: UI.borderGold,
     borderWidth: 1,
     borderColor: C.border,
   },
@@ -588,16 +588,16 @@ const styles = StyleSheet.create({
   },
   muscleChips: { flexDirection: "row", flexWrap: "wrap", gap: 4 },
   muscleChip: {
-    backgroundColor: "rgba(245,158,11,0.12)",
+    backgroundColor: UI.goldAlpha12,
     borderRadius: 6,
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderWidth: 1,
-    borderColor: "rgba(245,158,11,0.25)",
+    borderColor: UI.borderGold2,
   },
   muscleChipSecondary: {
-    backgroundColor: "rgba(245,158,11,0.06)",
-    borderColor: "rgba(245,158,11,0.12)",
+    backgroundColor: UI.goldAlpha6,
+    borderColor: UI.goldAlpha12,
   },
   muscleChipText: { color: C.gold, fontFamily: "DMSans_500Medium", fontSize: 9 },
   muscleChipTextSecondary: { color: C.muted },
@@ -711,7 +711,7 @@ const styles = StyleSheet.create({
     height: 56,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "rgba(30,41,59,0.5)",
+    backgroundColor: UI.slateAlpha50,
   },
   altInfo: { flex: 1, gap: 2 },
   altName: { color: C.fg, fontFamily: "DMSans_600SemiBold", fontSize: 13 },
@@ -723,12 +723,12 @@ const styles = StyleSheet.create({
   },
   altMeta: { flexDirection: "row", gap: 4, marginTop: 3 },
   altChip: {
-    backgroundColor: "rgba(245,158,11,0.1)",
+    backgroundColor: UI.goldAlpha10,
     borderRadius: 5,
     paddingHorizontal: 6,
     paddingVertical: 1,
   },
-  altChipDifficulty: { backgroundColor: "rgba(245,158,11,0.06)" },
+  altChipDifficulty: { backgroundColor: UI.goldAlpha6 },
   altChipText: {
     color: C.gold,
     fontFamily: "DMSans_500Medium",
@@ -755,7 +755,7 @@ const styles = StyleSheet.create({
     width: 22,
     height: 22,
     borderRadius: 11,
-    backgroundColor: "rgba(245,158,11,0.15)",
+    backgroundColor: UI.borderGold,
     alignItems: "center" as const,
     justifyContent: "center" as const,
     marginTop: 1,

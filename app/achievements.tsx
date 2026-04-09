@@ -15,7 +15,7 @@ import { ScreenContainer } from "@/components/screen-container";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import * as Haptics from "expo-haptics";
 import { GOLDEN_SOCIAL, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgrounds";
-import { C } from "@/constants/ui-colors";
+import { UI, C } from "@/constants/ui-colors";
 import {
   getAllAchievements,
   getAchievementStats,
@@ -252,7 +252,7 @@ export default function AchievementsScreen() {
 
                     {/* XP Reward */}
                     <View style={styles.xpRow}>
-                      <MaterialIcons name="bolt" size={16} color="#FBBF24" />
+                      <MaterialIcons name="bolt" size={16} color={UI.gold2} />
                       <Text style={styles.xpText}>+{selectedAchievement.xpReward} XP</Text>
                     </View>
 
@@ -312,13 +312,13 @@ const styles = StyleSheet.create({
   },
   backBtn: {
     width: 36, height: 36, borderRadius: 18,
-    backgroundColor: "rgba(245,158,11,0.10)", alignItems: "center", justifyContent: "center",
+    backgroundColor: UI.goldAlpha10, alignItems: "center", justifyContent: "center",
   },
   headerTitle: { color: C.fg, fontSize: 20, fontWeight: "800" },
   headerSub: { color: C.muted, fontSize: 11, marginTop: 1 },
   shareBtn: {
     width: 36, height: 36, borderRadius: 18,
-    backgroundColor: "rgba(245,158,11,0.10)", alignItems: "center", justifyContent: "center",
+    backgroundColor: UI.goldAlpha10, alignItems: "center", justifyContent: "center",
   },
   // Progress Card
   progressCard: {
@@ -333,7 +333,7 @@ const styles = StyleSheet.create({
   progressTitle: { color: C.fg, fontSize: 15, fontWeight: "700" },
   progressSub: { color: C.muted, fontSize: 12, marginTop: 2 },
   overallBarBg: {
-    height: 6, backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 3, marginTop: 8,
+    height: 6, backgroundColor: UI.goldAlpha10, borderRadius: 3, marginTop: 8,
   },
   overallBarFill: { height: 6, backgroundColor: C.gold, borderRadius: 3 },
   tierRow: {
@@ -347,10 +347,10 @@ const styles = StyleSheet.create({
   // Next Achievement
   nextCard: {
     marginHorizontal: 16, backgroundColor: C.surface, borderRadius: 16,
-    padding: 16, borderWidth: 1, borderColor: "rgba(245,158,11,0.20)", marginBottom: 12,
+    padding: 16, borderWidth: 1, borderColor: UI.goldAlpha20, marginBottom: 12,
   },
   nextBarBg: {
-    height: 6, backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 3,
+    height: 6, backgroundColor: UI.goldAlpha10, borderRadius: 3,
   },
   nextBarFill: { height: 6, borderRadius: 3 },
   // Category Tabs
@@ -360,7 +360,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8, borderRadius: 20, backgroundColor: C.surface,
     borderWidth: 1, borderColor: C.border,
   },
-  catTabActive: { backgroundColor: "rgba(245,158,11,0.15)", borderColor: C.gold },
+  catTabActive: { backgroundColor: UI.borderGold, borderColor: C.gold },
   catTabText: { color: C.muted, fontSize: 12, fontWeight: "600" },
   catTabTextActive: { color: C.gold },
   // Badge Grid
@@ -375,7 +375,7 @@ const styles = StyleSheet.create({
   badgeCardLocked: { opacity: 0.7 },
   badgeEmojiBox: {
     width: 48, height: 48, borderRadius: 24, borderWidth: 2,
-    alignItems: "center", justifyContent: "center", backgroundColor: "rgba(245,158,11,0.05)",
+    alignItems: "center", justifyContent: "center", backgroundColor: UI.goldAlpha5,
   },
   badgeEmoji: { fontSize: 22 },
   lockOverlay: {
@@ -386,7 +386,7 @@ const styles = StyleSheet.create({
   badgeName: { color: C.fg, fontSize: 11, fontWeight: "700", textAlign: "center" },
   tierDot: { width: 6, height: 6, borderRadius: 3 },
   progressBarBg: {
-    width: "100%", height: 3, backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 2,
+    width: "100%", height: 3, backgroundColor: UI.goldAlpha10, borderRadius: 2,
   },
   progressBarFill: { height: 3, borderRadius: 2 },
   progressLabel: { color: C.muted, fontSize: 9, fontWeight: "600" },
@@ -396,12 +396,12 @@ const styles = StyleSheet.create({
     alignItems: "center", padding: 30,
   },
   modalContent: {
-    width: "100%", backgroundColor: "#141A22", borderRadius: 20, padding: 24,
+    width: "100%", backgroundColor: UI.surface, borderRadius: 20, padding: 24,
     alignItems: "center", borderWidth: 1, borderColor: C.border,
   },
   modalEmojiBox: {
     width: 80, height: 80, borderRadius: 40, borderWidth: 3,
-    alignItems: "center", justifyContent: "center", backgroundColor: "rgba(245,158,11,0.05)",
+    alignItems: "center", justifyContent: "center", backgroundColor: UI.goldAlpha5,
     marginBottom: 16,
   },
   modalName: { color: C.fg, fontSize: 20, fontWeight: "800", marginBottom: 8 },
@@ -409,17 +409,17 @@ const styles = StyleSheet.create({
   modalTierText: { fontSize: 12, fontWeight: "700" },
   modalDesc: { color: C.fg, fontSize: 14, textAlign: "center", lineHeight: 20, marginBottom: 8 },
   xpRow: { flexDirection: "row", alignItems: "center", gap: 4 },
-  xpText: { color: "#FBBF24", fontSize: 14, fontWeight: "700" },
+  xpText: { color: UI.gold2, fontSize: 14, fontWeight: "700" },
   modalUnlockedBadge: {
     flexDirection: "row", alignItems: "center", gap: 6,
     backgroundColor: "rgba(34,197,94,0.10)", borderRadius: 10, paddingHorizontal: 14, paddingVertical: 8,
   },
   modalProgressBg: {
-    height: 8, backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 4,
+    height: 8, backgroundColor: UI.goldAlpha10, borderRadius: 4,
   },
   modalProgressFill: { height: 8, borderRadius: 4 },
   modalCloseBtn: {
-    marginTop: 20, backgroundColor: "rgba(245,158,11,0.12)", borderRadius: 12,
+    marginTop: 20, backgroundColor: UI.goldAlpha12, borderRadius: 12,
     paddingHorizontal: 30, paddingVertical: 12,
   },
   modalCloseBtnText: { color: C.gold, fontSize: 14, fontWeight: "700" },

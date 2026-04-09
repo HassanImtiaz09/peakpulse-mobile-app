@@ -11,7 +11,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 import { GOLDEN_WORKOUT, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgrounds";
-import { UI as SF } from "@/constants/ui-colors";
+import { UI, SF } from "@/constants/ui-colors";
 import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
 const { width: SCREEN_W } = Dimensions.get("window");
 const CARD_W = SCREEN_W - 40;
@@ -50,7 +50,7 @@ function getMilestoneText(total: number): string | null {
 const StreakCard = React.forwardRef<View, { data: ShareData }>(({ data }, ref) => (
   <View ref={ref as any} collapsable={false}
     style={{
-      width: CARD_W, height: CARD_H, backgroundColor: "#0A0E14",
+      width: CARD_W, height: CARD_H, backgroundColor: UI.bg,
       borderRadius: 28, overflow: "hidden", padding: 0,
     }}
   >
@@ -69,19 +69,19 @@ const StreakCard = React.forwardRef<View, { data: ShareData }>(({ data }, ref) =
 
       {/* Stats grid */}
       <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 12 }}>
-        <View style={{ width: "46%", backgroundColor: "rgba(245,158,11,0.08)", borderRadius: 16, padding: 16, borderWidth: 1, borderColor: "rgba(245,158,11,0.15)" }}>
+        <View style={{ width: "46%", backgroundColor: UI.dim, borderRadius: 16, padding: 16, borderWidth: 1, borderColor: UI.borderGold }}>
           <Text style={{ color: SF.gold, fontWeight: "900", fontSize: 28 }}>{data.totalWorkouts}</Text>
           <Text style={{ color: SF.muted, fontSize: 11, marginTop: 2 }}>Total Workouts</Text>
         </View>
-        <View style={{ width: "46%", backgroundColor: "rgba(245,158,11,0.08)", borderRadius: 16, padding: 16, borderWidth: 1, borderColor: "rgba(245,158,11,0.15)" }}>
+        <View style={{ width: "46%", backgroundColor: UI.dim, borderRadius: 16, padding: 16, borderWidth: 1, borderColor: UI.borderGold }}>
           <Text style={{ color: SF.gold, fontWeight: "900", fontSize: 28 }}>{data.longestStreak}</Text>
           <Text style={{ color: SF.muted, fontSize: 11, marginTop: 2 }}>Longest Streak</Text>
         </View>
-        <View style={{ width: "46%", backgroundColor: "rgba(245,158,11,0.08)", borderRadius: 16, padding: 16, borderWidth: 1, borderColor: "rgba(245,158,11,0.15)" }}>
+        <View style={{ width: "46%", backgroundColor: UI.dim, borderRadius: 16, padding: 16, borderWidth: 1, borderColor: UI.borderGold }}>
           <Text style={{ color: SF.gold, fontWeight: "900", fontSize: 28 }}>{formatDuration(data.totalMinutes)}</Text>
           <Text style={{ color: SF.muted, fontSize: 11, marginTop: 2 }}>Total Time</Text>
         </View>
-        <View style={{ width: "46%", backgroundColor: "rgba(245,158,11,0.08)", borderRadius: 16, padding: 16, borderWidth: 1, borderColor: "rgba(245,158,11,0.15)" }}>
+        <View style={{ width: "46%", backgroundColor: UI.dim, borderRadius: 16, padding: 16, borderWidth: 1, borderColor: UI.borderGold }}>
           <Text style={{ color: SF.gold, fontWeight: "900", fontSize: 28 }}>{data.caloriesBurned > 0 ? `${Math.round(data.caloriesBurned / 1000)}k` : "—"}</Text>
           <Text style={{ color: SF.muted, fontSize: 11, marginTop: 2 }}>Calories Burned</Text>
         </View>
@@ -100,7 +100,7 @@ StreakCard.displayName = "StreakCard";
 const SessionCard = React.forwardRef<View, { data: ShareData }>(({ data }, ref) => (
   <View ref={ref as any} collapsable={false}
     style={{
-      width: CARD_W, height: CARD_H, backgroundColor: "#0A0E14",
+      width: CARD_W, height: CARD_H, backgroundColor: UI.bg,
       borderRadius: 28, overflow: "hidden",
     }}
   >
@@ -134,7 +134,7 @@ const SessionCard = React.forwardRef<View, { data: ShareData }>(({ data }, ref) 
         </View>
 
         {/* Streak badge */}
-        <View style={{ backgroundColor: "rgba(245,158,11,0.08)", borderRadius: 16, padding: 16, borderWidth: 1, borderColor: "rgba(245,158,11,0.15)", flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+        <View style={{ backgroundColor: UI.dim, borderRadius: 16, padding: 16, borderWidth: 1, borderColor: UI.borderGold, flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
           <View>
             <Text style={{ color: SF.gold, fontWeight: "900", fontSize: 24 }}>🔥 {data.currentStreak} Day Streak</Text>
             <Text style={{ color: SF.muted, fontSize: 11, marginTop: 2 }}>{data.totalWorkouts} total workouts</Text>
@@ -154,7 +154,7 @@ SessionCard.displayName = "SessionCard";
 const MilestoneCard = React.forwardRef<View, { data: ShareData; milestone: string }>(({ data, milestone }, ref) => (
   <View ref={ref as any} collapsable={false}
     style={{
-      width: CARD_W, height: CARD_H, backgroundColor: "#0A0E14",
+      width: CARD_W, height: CARD_H, backgroundColor: UI.bg,
       borderRadius: 28, overflow: "hidden",
     }}
   >
@@ -175,12 +175,12 @@ const MilestoneCard = React.forwardRef<View, { data: ShareData; milestone: strin
           <Text style={{ color: SF.gold, fontWeight: "900", fontSize: 22 }}>{data.currentStreak}🔥</Text>
           <Text style={{ color: SF.muted, fontSize: 10, marginTop: 2 }}>Current Streak</Text>
         </View>
-        <View style={{ width: 1, height: 30, backgroundColor: "rgba(245,158,11,0.2)" }} />
+        <View style={{ width: 1, height: 30, backgroundColor: UI.goldAlpha20 }} />
         <View style={{ alignItems: "center" }}>
           <Text style={{ color: SF.gold, fontWeight: "900", fontSize: 22 }}>{formatDuration(data.totalMinutes)}</Text>
           <Text style={{ color: SF.muted, fontSize: 10, marginTop: 2 }}>Total Time</Text>
         </View>
-        <View style={{ width: 1, height: 30, backgroundColor: "rgba(245,158,11,0.2)" }} />
+        <View style={{ width: 1, height: 30, backgroundColor: UI.goldAlpha20 }} />
         <View style={{ alignItems: "center" }}>
           <Text style={{ color: SF.gold, fontWeight: "900", fontSize: 22 }}>{data.caloriesBurned > 0 ? `${Math.round(data.caloriesBurned / 1000)}k` : "—"}</Text>
           <Text style={{ color: SF.muted, fontSize: 10, marginTop: 2 }}>Calories</Text>
@@ -361,7 +361,7 @@ export default function ShareWorkoutScreen() {
             <TouchableOpacity
               key={t.key}
               style={{
-                flex: 1, backgroundColor: selectedTemplate === t.key ? "rgba(245,158,11,0.12)" : SF.surface,
+                flex: 1, backgroundColor: selectedTemplate === t.key ? UI.goldAlpha12 : SF.surface,
                 borderRadius: 12, padding: 12, alignItems: "center",
                 borderWidth: 1, borderColor: selectedTemplate === t.key ? SF.border2 : SF.border,
               }}
@@ -389,7 +389,7 @@ export default function ShareWorkoutScreen() {
             style={{
               backgroundColor: SF.gold, borderRadius: 16, paddingVertical: 16, alignItems: "center",
               flexDirection: "row", justifyContent: "center", gap: 8,
-              shadowColor: "#F59E0B", shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.4, shadowRadius: 12,
+              shadowColor: UI.gold, shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.4, shadowRadius: 12,
               opacity: sharing ? 0.7 : 1,
             }}
             onPress={handleShare}
@@ -437,7 +437,7 @@ export default function ShareWorkoutScreen() {
         {/* Tip */}
         <View style={{
           marginHorizontal: 20,
-          backgroundColor: "rgba(245,158,11,0.06)", borderRadius: 16,
+          backgroundColor: UI.goldAlpha6, borderRadius: 16,
           padding: 14, borderWidth: 1, borderColor: SF.border,
         }}>
           <Text style={{ color: SF.gold3, fontSize: 12, lineHeight: 18 }}>

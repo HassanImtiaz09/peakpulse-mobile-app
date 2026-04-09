@@ -13,13 +13,14 @@ import Animated, {
 } from "react-native-reanimated";
 import { useXP } from "@/lib/xp-context";
 import { STREAK_BADGE_DEFS } from "@/lib/xp-engine";
+import { UI } from "@/constants/ui-colors";
 
-const GOLD = "#F59E0B";
-const GOLD_DIM = "rgba(245,158,11,0.12)";
-const FG = "#F1F5F9";
+const GOLD = UI.gold;
+const GOLD_DIM = UI.goldAlpha12;
+const FG = UI.fg;
 const MUTED = "#64748B";
 const SURFACE = "#111827";
-const BORDER = "rgba(30,41,59,0.6)";
+const BORDER = UI.border;
 
 export function XPProgressBar() {
   const { state } = useXP();
@@ -116,7 +117,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 1,
-    borderColor: "rgba(245,158,11,0.25)",
+    borderColor: UI.borderGold2,
   },
   levelText: {
     color: GOLD,
@@ -142,7 +143,7 @@ const styles = StyleSheet.create({
   progressTrack: {
     height: 6,
     borderRadius: 3,
-    backgroundColor: "rgba(245,158,11,0.10)",
+    backgroundColor: UI.goldAlpha10,
     overflow: "hidden",
   },
   progressFill: {
@@ -174,7 +175,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
   streakText: {
-    color: "#EF4444",
+    color: UI.red,
     fontFamily: "DMSans_600SemiBold",
     fontSize: 11,
   },

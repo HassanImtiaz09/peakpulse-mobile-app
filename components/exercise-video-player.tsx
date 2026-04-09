@@ -29,6 +29,7 @@ import {
   ViewStyle,
 } from "react-native";
 import { Image } from "expo-image";
+import { UI } from "@/constants/ui-colors";
 
 interface ExerciseVideoPlayerProps {
   /** Animated GIF URL from ExerciseDB CDN (or any public GIF/image URL) */
@@ -61,7 +62,7 @@ export function ExerciseVideoPlayer({
     <View style={[styles.container, { height }, style]}>
       {loading && !hasError && (
         <View style={[StyleSheet.absoluteFill, styles.loadingOverlay]}>
-          <ActivityIndicator color="#F59E0B" size="small" />
+          <ActivityIndicator color={UI.gold} size="small" />
         </View>
       )}
       {hasError ? (

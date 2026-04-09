@@ -23,6 +23,7 @@ import { incrementCounter } from "@/lib/achievements";
 import { useAiLimit } from "@/components/ai-limit-modal";
 import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
 import { ScreenErrorBoundary } from "@/components/error-boundary";
+import { UI } from "@/constants/ui-colors";
 
 const HERO_BG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/golden-challenge-bg-2DXBpSZwN3LCroCHSRyD4K.webp";
 
@@ -500,7 +501,7 @@ const styles = StyleSheet.create({
   streakBadge: { backgroundColor: "#92400e", borderRadius: 8, paddingHorizontal: 10, paddingVertical: 4 },
   streakBadgeText: { color: "#fbbf24", fontSize: 12, fontFamily: "DMSans_700Bold" },
   milestonesScroll: { marginBottom: 20 },
-  milestoneChip: { backgroundColor: "#1f2937", borderRadius: 10, padding: 10, marginRight: 8, alignItems: "center", minWidth: 56, borderWidth: 1, borderColor: "rgba(245,158,11,0.15)" },
+  milestoneChip: { backgroundColor: "#1f2937", borderRadius: 10, padding: 10, marginRight: 8, alignItems: "center", minWidth: 56, borderWidth: 1, borderColor: UI.borderGold },
   milestoneChipAchieved: { backgroundColor: "#1a0a00", borderColor: "#92400e" },
   milestoneEmoji: { fontSize: 20, marginBottom: 4 },
   milestoneDays: { color: "#9ca3af", fontSize: 11, fontFamily: "DMSans_600SemiBold" },
@@ -525,12 +526,12 @@ const styles = StyleSheet.create({
   photoPreview: { width: "100%", height: 220, borderRadius: 12 },
   photoOverlay: { position: "absolute", top: 0, left: 0, right: 0, bottom: 0, backgroundColor: "rgba(0,0,0,0.6)", borderRadius: 12, alignItems: "center", justifyContent: "center" },
   photoOverlayText: { color: "#fff", fontSize: 14, marginTop: 8 },
-  photoPlaceholder: { backgroundColor: "#1f2937", borderRadius: 12, height: 160, alignItems: "center", justifyContent: "center", marginBottom: 10, borderWidth: 1, borderColor: "rgba(245,158,11,0.15)", borderStyle: "dashed" },
+  photoPlaceholder: { backgroundColor: "#1f2937", borderRadius: 12, height: 160, alignItems: "center", justifyContent: "center", marginBottom: 10, borderWidth: 1, borderColor: UI.borderGold, borderStyle: "dashed" },
   photoPlaceholderEmoji: { fontSize: 36, marginBottom: 8 },
   photoPlaceholderText: { color: "#9ca3af", fontSize: 15, fontFamily: "DMSans_600SemiBold", marginBottom: 4 },
   photoPlaceholderSub: { color: "#6b7280", fontSize: 12, textAlign: "center", paddingHorizontal: 20 },
   photoButtons: { flexDirection: "row", gap: 10 },
-  photoBtn: { flex: 1, backgroundColor: "#1f2937", borderRadius: 10, paddingVertical: 12, alignItems: "center", borderWidth: 1, borderColor: "rgba(245,158,11,0.15)" },
+  photoBtn: { flex: 1, backgroundColor: "#1f2937", borderRadius: 10, paddingVertical: 12, alignItems: "center", borderWidth: 1, borderColor: UI.borderGold },
   photoBtnText: { color: "#e5e7eb", fontSize: 14, fontFamily: "DMSans_600SemiBold" },
   analysisCard: { backgroundColor: "#0f172a", borderRadius: 12, padding: 14, marginBottom: 16, borderWidth: 1, borderColor: "#1e3a5f" },
   analysisTitle: { color: "#60a5fa", fontSize: 15, fontFamily: "DMSans_700Bold", marginBottom: 12 },
@@ -546,7 +547,7 @@ const styles = StyleSheet.create({
   bodyCompLabel: { color: "#9ca3af", fontSize: 12, fontFamily: "DMSans_600SemiBold" },
   bodyCompValue: { color: "#e5e7eb", fontSize: 12, flex: 1 },
   inputLabel: { color: "#9ca3af", fontSize: 13, fontFamily: "DMSans_600SemiBold", marginBottom: 8, marginTop: 12 },
-  input: { backgroundColor: "#1f2937", borderRadius: 10, padding: 12, color: "#fff", fontSize: 14, borderWidth: 1, borderColor: "rgba(245,158,11,0.15)" },
+  input: { backgroundColor: "#1f2937", borderRadius: 10, padding: 12, color: "#fff", fontSize: 14, borderWidth: 1, borderColor: UI.borderGold },
   notesInput: { minHeight: 80, textAlignVertical: "top" },
   saveBtn: { backgroundColor: "#7c3aed", borderRadius: 14, paddingVertical: 16, alignItems: "center", marginTop: 20 },
   saveBtnText: { color: "#fff", fontSize: 16, fontFamily: "BebasNeue_400Regular" },

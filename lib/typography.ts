@@ -1,3 +1,4 @@
+import { UI } from "@/constants/ui-colors";
 /**
  * Typography system — Bebas Neue + DM Sans + Space Mono
  *
@@ -25,13 +26,13 @@ export const FontFamily = {
 
 /** Per-screen accent color mapping for visual wayfinding */
 export const ScreenAccent = {
-  dashboard: "#F59E0B",   // Gold — energy, workouts
-  bodyScan: "#22D3EE",    // Ice blue — health data
-  workout: "#F59E0B",     // Gold — exercise, energy
-  meals: "#10B981",       // Mint/teal — nutrition
-  coach: "#10B981",       // Mint/teal — AI coaching
-  profile: "#F59E0B",     // Gold — personal
-  rose: "#F472B6",        // Rose — protein targets
+  dashboard: UI.gold,   // Gold — energy, workouts
+  bodyScan: UI.ice,    // Ice blue — health data
+  workout: UI.gold,     // Gold — exercise, energy
+  meals: UI.emerald,       // Mint/teal — nutrition
+  coach: UI.emerald,       // Mint/teal — AI coaching
+  profile: UI.gold,     // Gold — personal
+  rose: UI.rose,        // Rose — protein targets
 } as const;
 
 /** Reusable text style presets */

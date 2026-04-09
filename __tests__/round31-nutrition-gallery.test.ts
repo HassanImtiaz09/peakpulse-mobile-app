@@ -56,7 +56,7 @@ describe("Nutrition Charts Screen", () => {
 
   it("highlights bars over calorie goal in red", () => {
     expect(nutritionCharts).toContain("overGoal");
-    expect(nutritionCharts).toContain("#EF4444");
+    expect(nutritionCharts).toMatch(/UI\.red|#EF4444/);
   });
 
   it("renders macro stacked bar chart", () => {

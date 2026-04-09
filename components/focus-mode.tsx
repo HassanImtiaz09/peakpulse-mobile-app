@@ -36,7 +36,7 @@ import Animated, {
 } from "react-native-reanimated";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import * as Haptics from "expo-haptics";
-import { UI as SF } from "@/constants/ui-colors";
+import { UI, SF } from "@/constants/ui-colors";
 
 const { width: SCREEN_W } = Dimensions.get("window");
 
@@ -204,7 +204,7 @@ export function FocusMode({
       <View
         style={{
           flex: 1,
-          backgroundColor: "#0A0E14",
+          backgroundColor: UI.bg,
           paddingTop: Platform.OS === "ios" ? 60 : 40,
         }}
       >
@@ -350,7 +350,7 @@ export function FocusMode({
               {exercise.notes && (
                 <View
                   style={{
-                    backgroundColor: "rgba(245,158,11,0.06)",
+                    backgroundColor: UI.goldAlpha6,
                     borderRadius: 12,
                     padding: 12,
                     marginBottom: 16,
@@ -441,7 +441,7 @@ export function FocusMode({
                         height: 36,
                         borderRadius: 10,
                         backgroundColor: log.completed
-                          ? "rgba(245,158,11,0.15)"
+                          ? UI.borderGold
                           : "rgba(255,255,255,0.04)",
                         alignItems: "center",
                         justifyContent: "center",
@@ -510,7 +510,7 @@ export function FocusMode({
                         height: 36,
                         borderRadius: 10,
                         backgroundColor: log.completed
-                          ? "rgba(245,158,11,0.20)"
+                          ? UI.goldAlpha20
                           : SF.gold,
                         alignItems: "center",
                         justifyContent: "center",
@@ -523,7 +523,7 @@ export function FocusMode({
                     >
                       <Text
                         style={{
-                          color: log.completed ? SF.gold : "#0A0E14",
+                          color: log.completed ? SF.gold : UI.bg,
                           fontFamily: "DMSans_700Bold",
                           fontSize: 13,
                         }}
@@ -583,7 +583,7 @@ export function FocusMode({
                       i === currentExercise
                         ? SF.gold
                         : iDone
-                          ? "rgba(245,158,11,0.40)"
+                          ? UI.goldAlpha40
                           : "rgba(255,255,255,0.10)",
                   }}
                 />
@@ -634,10 +634,10 @@ export function FocusMode({
                   gap: 6,
                 }}
               >
-                <MaterialIcons name="flag" size={18} color="#0A0E14" />
+                <MaterialIcons name="flag" size={18} color={UI.bg} />
                 <Text
                   style={{
-                    color: "#0A0E14",
+                    color: UI.bg,
                     fontFamily: "DMSans_700Bold",
                     fontSize: 15,
                   }}
@@ -661,7 +661,7 @@ export function FocusMode({
               >
                 <Text
                   style={{
-                    color: "#0A0E14",
+                    color: UI.bg,
                     fontFamily: "DMSans_700Bold",
                     fontSize: 15,
                   }}
@@ -671,7 +671,7 @@ export function FocusMode({
                 <MaterialIcons
                   name="chevron-right"
                   size={20}
-                  color="#0A0E14"
+                  color={UI.bg}
                 />
               </TouchableOpacity>
             )}

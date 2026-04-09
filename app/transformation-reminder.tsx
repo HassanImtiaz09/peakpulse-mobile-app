@@ -8,7 +8,7 @@ import { ScreenContainer } from "@/components/screen-container";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 import { GOLDEN_SCAN, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgrounds";
-import { UI as SF } from "@/constants/ui-colors";
+import { UI, SF } from "@/constants/ui-colors";
 const { width: SCREEN_W } = Dimensions.get("window");
 
 export default function TransformationReminderScreen() {
@@ -51,7 +51,7 @@ export default function TransformationReminderScreen() {
       <ScrollView contentContainerStyle={{ padding: 24, paddingBottom: 48 }} showsVerticalScrollIndicator={false}>
         {/* Header */}
         <View style={{ alignItems: "center", marginBottom: 28 }}>
-          <View style={{ backgroundColor: "rgba(245,158,11,0.12)", borderRadius: 20, paddingHorizontal: 14, paddingVertical: 6, marginBottom: 14, borderWidth: 1, borderColor: SF.border2 }}>
+          <View style={{ backgroundColor: UI.goldAlpha12, borderRadius: 20, paddingHorizontal: 14, paddingVertical: 6, marginBottom: 14, borderWidth: 1, borderColor: SF.border2 }}>
             <Text style={{ color: SF.gold, fontFamily: "DMSans_700Bold", fontSize: 11, letterSpacing: 2 }}>🔥 YOUR TRANSFORMATION</Text>
           </View>
           <Text style={{ color: SF.fg, fontFamily: "BebasNeue_400Regular", fontSize: 30, textAlign: "center", lineHeight: 36, marginBottom: 10 }}>
@@ -70,7 +70,7 @@ export default function TransformationReminderScreen() {
               {initialPhoto ? (
                 <Image source={{ uri: initialPhoto }} style={{ width: "100%", height: imgH }} resizeMode="cover" />
               ) : (
-                <View style={{ width: "100%", height: imgH, alignItems: "center", justifyContent: "center", backgroundColor: "rgba(245,158,11,0.05)" }}>
+                <View style={{ width: "100%", height: imgH, alignItems: "center", justifyContent: "center", backgroundColor: UI.goldAlpha5 }}>
                   <Text style={{ fontSize: 36 }}>📸</Text>
                   <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 12, marginTop: 8, textAlign: "center", paddingHorizontal: 8 }}>No photo taken</Text>
                 </View>
@@ -95,14 +95,14 @@ export default function TransformationReminderScreen() {
               {targetTransformation?.imageUrl ? (
                 <Image source={{ uri: targetTransformation.imageUrl }} style={{ width: "100%", height: imgH }} resizeMode="cover" />
               ) : (
-                <View style={{ width: "100%", height: imgH, alignItems: "center", justifyContent: "center", backgroundColor: "rgba(245,158,11,0.08)" }}>
+                <View style={{ width: "100%", height: imgH, alignItems: "center", justifyContent: "center", backgroundColor: UI.dim }}>
                   <Text style={{ fontSize: 36 }}>🏆</Text>
                   <Text style={{ color: SF.gold3, fontFamily: "DMSans_400Regular", fontSize: 12, marginTop: 8, textAlign: "center", paddingHorizontal: 8 }}>
                     {targetTransformation ? `${targetTransformation.target_bf}% BF target` : "Set your target"}
                   </Text>
                 </View>
               )}
-              <View style={{ padding: 12, backgroundColor: "rgba(245,158,11,0.08)" }}>
+              <View style={{ padding: 12, backgroundColor: UI.dim }}>
                 <Text style={{ color: SF.gold, fontFamily: "DMSans_700Bold", fontSize: 13 }}>
                   {targetTransformation ? `${targetTransformation.target_bf}% BF` : "Your Goal"}
                 </Text>
@@ -132,7 +132,7 @@ export default function TransformationReminderScreen() {
         )}
 
         {/* Motivational message */}
-        <View style={{ backgroundColor: "rgba(245,158,11,0.08)", borderRadius: 16, padding: 18, marginBottom: 28, borderWidth: 1, borderColor: SF.border2 }}>
+        <View style={{ backgroundColor: UI.dim, borderRadius: 16, padding: 18, marginBottom: 28, borderWidth: 1, borderColor: SF.border2 }}>
           <Text style={{ color: SF.gold, fontFamily: "DMSans_700Bold", fontSize: 13, marginBottom: 8 }}>💬 Remember This</Text>
           <Text style={{ color: SF.gold3, fontFamily: "DMSans_400Regular", fontSize: 14, lineHeight: 22 }}>
             Every great physique was built one session at a time. Your AI-generated target body is not a fantasy — it's a scientific projection of what your body can achieve. Trust the process, follow your plan, and check back here whenever you need motivation.

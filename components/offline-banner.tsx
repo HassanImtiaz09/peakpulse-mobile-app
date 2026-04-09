@@ -12,7 +12,7 @@ import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet, Animated } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useOfflineQueue } from "@/lib/offline-queue";
-import { UI as SF } from "@/constants/ui-colors";
+import { UI, SF } from "@/constants/ui-colors";
 
 export function OfflineBanner() {
   const { isOnline, stats, retryAll } = useOfflineQueue();
@@ -32,22 +32,22 @@ export function OfflineBanner() {
     <Animated.View style={[styles.banner, { opacity: fadeAnim }]}>
       {!isOnline ? (
         <View style={styles.row}>
-          <Ionicons name="cloud-offline" size={16} color="#F59E0B" />
+          <Ionicons name="cloud-offline" size={16} color={UI.gold} />
           <Text style={styles.text}>
             You're offline{stats.pending > 0 ? ` — ${stats.pending} action${stats.pending > 1 ? "s" : ""} queued` : ""}
           </Text>
         </View>
       ) : stats.pending > 0 ? (
         <TouchableOpacity style={styles.row} onPress={() => retryAll()}>
-          <Ionicons name="cloud-upload" size={16} color="#14B8A6" />
-          <Text style={[styles.text, { color: "#14B8A6" }]}>
+          <Ionicons name="cloud-upload" size={16} color={UI.teal} />
+          <Text style={[styles.text, { color: UI.teal }]}>
             Syncing {stats.pending} action{stats.pending > 1 ? "s" : ""}...
           </Text>
         </TouchableOpacity>
       ) : stats.failed > 0 ? (
         <TouchableOpacity style={styles.row} onPress={() => retryAll()}>
-          <Ionicons name="alert-circle" size={16} color="#EF4444" />
-          <Text style={[styles.text, { color: "#EF4444" }]}>
+          <Ionicons name="alert-circle" size={16} color={UI.red} />
+          <Text style={[styles.text, { color: UI.red }]}>
             {stats.failed} action{stats.failed > 1 ? "s" : ""} failed to sync — tap to retry
           </Text>
         </TouchableOpacity>
@@ -73,6 +73,6 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 13,
     fontFamily: "DMSans_600SemiBold",
-    color: "#F59E0B",
+    color: UI.gold,
   },
 });

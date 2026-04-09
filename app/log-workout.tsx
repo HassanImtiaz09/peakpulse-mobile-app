@@ -12,6 +12,7 @@ import type { WorkoutType, WorkoutData } from "@/lib/health-service";
 import { saveTemplate, type CreateTemplateInput } from "@/lib/workout-templates";
 import { shareWorkoutCard, type WorkoutCardData } from "@/lib/social-card-generator";
 import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
+import { UI } from "@/constants/ui-colors";
 
 const DASHBOARD_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/PZcnawJwIZkQHTEM.jpg";
 
@@ -26,18 +27,18 @@ interface WorkoutTypeConfig {
 }
 
 const WORKOUT_TYPES: WorkoutTypeConfig[] = [
-  { type: "running", label: "Running", icon: "directions-run", color: "#22C55E", caloriesPerMin: 11, hasDistance: true },
+  { type: "running", label: "Running", icon: "directions-run", color: UI.green, caloriesPerMin: 11, hasDistance: true },
   { type: "walking", label: "Walking", icon: "directions-walk", color: "#3B82F6", caloriesPerMin: 5, hasDistance: true },
-  { type: "cycling", label: "Cycling", icon: "pedal-bike", color: "#F59E0B", caloriesPerMin: 9, hasDistance: true },
+  { type: "cycling", label: "Cycling", icon: "pedal-bike", color: UI.gold, caloriesPerMin: 9, hasDistance: true },
   { type: "swimming", label: "Swimming", icon: "pool", color: "#06B6D4", caloriesPerMin: 10, hasDistance: true },
-  { type: "strength_training", label: "Strength", icon: "fitness-center", color: "#EF4444", caloriesPerMin: 7, hasDistance: false },
-  { type: "hiit", label: "HIIT", icon: "bolt", color: "#F97316", caloriesPerMin: 13, hasDistance: false },
+  { type: "strength_training", label: "Strength", icon: "fitness-center", color: UI.red, caloriesPerMin: 7, hasDistance: false },
+  { type: "hiit", label: "HIIT", icon: "bolt", color: UI.orange2, caloriesPerMin: 13, hasDistance: false },
   { type: "yoga", label: "Yoga", icon: "self-improvement", color: "#8B5CF6", caloriesPerMin: 4, hasDistance: false },
   { type: "pilates", label: "Pilates", icon: "accessibility", color: "#EC4899", caloriesPerMin: 5, hasDistance: false },
-  { type: "dance", label: "Dance", icon: "music-note", color: "#A78BFA", caloriesPerMin: 8, hasDistance: false },
-  { type: "elliptical", label: "Elliptical", icon: "directions-run", color: "#14B8A6", caloriesPerMin: 9, hasDistance: true },
+  { type: "dance", label: "Dance", icon: "music-note", color: UI.purple, caloriesPerMin: 8, hasDistance: false },
+  { type: "elliptical", label: "Elliptical", icon: "directions-run", color: UI.teal, caloriesPerMin: 9, hasDistance: true },
   { type: "rowing", label: "Rowing", icon: "rowing", color: "#0EA5E9", caloriesPerMin: 10, hasDistance: true },
-  { type: "stair_climbing", label: "Stairs", icon: "stairs", color: "#FBBF24", caloriesPerMin: 11, hasDistance: false },
+  { type: "stair_climbing", label: "Stairs", icon: "stairs", color: UI.gold2, caloriesPerMin: 11, hasDistance: false },
   { type: "other", label: "Other", icon: "sports", color: "#9CA3AF", caloriesPerMin: 6, hasDistance: false },
 ];
 
@@ -262,7 +263,7 @@ export default function LogWorkoutScreen() {
   }, [canSave, selectedType, dateStr, timeStr, totalDurationMin, effectiveCalories, distance, heartRate, title, syncToHealth, isHealthPlatformAvailable, permissionStatus, logWorkoutToHealthPlatform, healthSourceName, selectedConfig, router]);
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#0A0E14" }}>
+    <View style={{ flex: 1, backgroundColor: UI.bg }}>
       {/* Hero Header */}
       <ImageBackground source={{ uri: DASHBOARD_BG }} style={{ height: 140 }} resizeMode="cover">
         <View style={{ flex: 1, backgroundColor: "rgba(8,8,16,0.72)", justifyContent: "flex-end", padding: 20, paddingTop: 52 }}>
@@ -272,35 +273,35 @@ export default function LogWorkoutScreen() {
               backgroundColor: "rgba(255,255,255,0.1)", alignItems: "center", justifyContent: "center",
             }}
             onPress={() => router.back()} {...a11yButton(A11Y_LABELS.backButton)}>
-            <Text style={{ color: "#F1F5F9", fontSize: 18 }}>←</Text>
+            <Text style={{ color: UI.fg, fontSize: 18 }}>←</Text>
           </TouchableOpacity>
-          <Text style={{ color: "#FBBF24", fontFamily: "DMSans_700Bold", fontSize: 12, letterSpacing: 1 }}>MANUAL ENTRY</Text>
-          <Text style={{ color: "#F1F5F9", fontFamily: "BebasNeue_400Regular", fontSize: 26, letterSpacing: -0.5 }}>Log Workout</Text>
+          <Text style={{ color: UI.gold2, fontFamily: "DMSans_700Bold", fontSize: 12, letterSpacing: 1 }}>MANUAL ENTRY</Text>
+          <Text style={{ color: UI.fg, fontFamily: "BebasNeue_400Regular", fontSize: 26, letterSpacing: -0.5 }}>Log Workout</Text>
         </View>
       </ImageBackground>
 
       {/* Quick Links */}
-      <View style={{ flexDirection: "row", borderBottomWidth: 1, borderBottomColor: "rgba(245,158,11,0.08)" }}>
+      <View style={{ flexDirection: "row", borderBottomWidth: 1, borderBottomColor: UI.dim }}>
         <TouchableOpacity
           onPress={() => router.push("/workout-history" as any)}
           style={{
             flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 4,
-            paddingVertical: 10, backgroundColor: "rgba(245,158,11,0.06)",
+            paddingVertical: 10, backgroundColor: UI.goldAlpha6,
           }}
         >
-          <MaterialIcons name="history" size={14} color="#F59E0B" />
-          <Text style={{ color: "#F59E0B", fontFamily: "DMSans_600SemiBold", fontSize: 11 }}>View Workout History</Text>
+          <MaterialIcons name="history" size={14} color={UI.gold} />
+          <Text style={{ color: UI.gold, fontFamily: "DMSans_600SemiBold", fontSize: 11 }}>View Workout History</Text>
         </TouchableOpacity>
-        <View style={{ width: 1, backgroundColor: "rgba(245,158,11,0.08)" }} />
+        <View style={{ width: 1, backgroundColor: UI.dim }} />
         <TouchableOpacity
           onPress={() => router.push("/workout-templates" as any)}
           style={{
             flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 4,
-            paddingVertical: 10, backgroundColor: "rgba(245,158,11,0.06)",
+            paddingVertical: 10, backgroundColor: UI.goldAlpha6,
           }}
         >
-          <MaterialIcons name="bookmark" size={14} color="#F59E0B" />
-          <Text style={{ color: "#F59E0B", fontFamily: "DMSans_600SemiBold", fontSize: 11 }}>Templates</Text>
+          <MaterialIcons name="bookmark" size={14} color={UI.gold} />
+          <Text style={{ color: UI.gold, fontFamily: "DMSans_600SemiBold", fontSize: 11 }}>Templates</Text>
         </TouchableOpacity>
       </View>
 
@@ -310,10 +311,10 @@ export default function LogWorkoutScreen() {
           {/* ═══ STEP 1: Workout Type ═══ */}
           <View style={{ marginBottom: 20 }}>
             <View style={{ flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 12 }}>
-              <View style={{ width: 24, height: 24, borderRadius: 12, backgroundColor: "#F59E0B", alignItems: "center", justifyContent: "center" }}>
-                <Text style={{ color: "#0A0E14", fontFamily: "DMSans_700Bold", fontSize: 12 }}>1</Text>
+              <View style={{ width: 24, height: 24, borderRadius: 12, backgroundColor: UI.gold, alignItems: "center", justifyContent: "center" }}>
+                <Text style={{ color: UI.bg, fontFamily: "DMSans_700Bold", fontSize: 12 }}>1</Text>
               </View>
-              <Text style={{ color: "#F1F5F9", fontFamily: "DMSans_700Bold", fontSize: 16 }}>Workout Type</Text>
+              <Text style={{ color: UI.fg, fontFamily: "DMSans_700Bold", fontSize: 16 }}>Workout Type</Text>
             </View>
             <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
               {WORKOUT_TYPES.map((wt) => {
@@ -323,22 +324,22 @@ export default function LogWorkoutScreen() {
                     key={wt.type}
                     style={{
                       width: "31%",
-                      backgroundColor: isSelected ? wt.color + "20" : "#141A22",
+                      backgroundColor: isSelected ? wt.color + "20" : UI.surface,
                       borderRadius: 14,
                       padding: 12,
                       alignItems: "center",
                       gap: 4,
                       borderWidth: 1.5,
-                      borderColor: isSelected ? wt.color + "60" : "rgba(245,158,11,0.10)",
+                      borderColor: isSelected ? wt.color + "60" : UI.goldAlpha10,
                     }}
                     onPress={() => {
                       setSelectedType(wt.type);
                       if (Platform.OS !== "web") Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                     }}
                   >
-                    <MaterialIcons name={wt.icon as any} size={24} color={isSelected ? wt.color : "#B45309"} />
+                    <MaterialIcons name={wt.icon as any} size={24} color={isSelected ? wt.color : UI.secondaryLight} />
                     <Text style={{
-                      color: isSelected ? wt.color : "#B45309",
+                      color: isSelected ? wt.color : UI.secondaryLight,
                       fontFamily: isSelected ? "DMSans_700Bold" : "DMSans_500Medium",
                       fontSize: 11,
                     }}>
@@ -353,53 +354,53 @@ export default function LogWorkoutScreen() {
           {/* ═══ STEP 2: Duration ═══ */}
           <View style={{ marginBottom: 20 }}>
             <View style={{ flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 12 }}>
-              <View style={{ width: 24, height: 24, borderRadius: 12, backgroundColor: "#F59E0B", alignItems: "center", justifyContent: "center" }}>
-                <Text style={{ color: "#0A0E14", fontFamily: "DMSans_700Bold", fontSize: 12 }}>2</Text>
+              <View style={{ width: 24, height: 24, borderRadius: 12, backgroundColor: UI.gold, alignItems: "center", justifyContent: "center" }}>
+                <Text style={{ color: UI.bg, fontFamily: "DMSans_700Bold", fontSize: 12 }}>2</Text>
               </View>
-              <Text style={{ color: "#F1F5F9", fontFamily: "DMSans_700Bold", fontSize: 16 }}>Duration</Text>
+              <Text style={{ color: UI.fg, fontFamily: "DMSans_700Bold", fontSize: 16 }}>Duration</Text>
             </View>
             <View style={{
-              flexDirection: "row", gap: 12, backgroundColor: "#141A22", borderRadius: 16,
-              padding: 16, borderWidth: 1, borderColor: "rgba(245,158,11,0.15)",
+              flexDirection: "row", gap: 12, backgroundColor: UI.surface, borderRadius: 16,
+              padding: 16, borderWidth: 1, borderColor: UI.borderGold,
             }}>
               <View style={{ flex: 1 }}>
-                <Text style={{ color: "#B45309", fontFamily: "DMSans_500Medium", fontSize: 11, marginBottom: 6 }}>Hours</Text>
+                <Text style={{ color: UI.secondaryLight, fontFamily: "DMSans_500Medium", fontSize: 11, marginBottom: 6 }}>Hours</Text>
                 <TextInput
                   style={{
-                    backgroundColor: "#0A0E14", borderRadius: 12, padding: 12,
-                    color: "#F1F5F9", fontFamily: "DMSans_700Bold", fontSize: 20, textAlign: "center",
-                    borderWidth: 1, borderColor: "rgba(245,158,11,0.15)",
+                    backgroundColor: UI.bg, borderRadius: 12, padding: 12,
+                    color: UI.fg, fontFamily: "DMSans_700Bold", fontSize: 20, textAlign: "center",
+                    borderWidth: 1, borderColor: UI.borderGold,
                   }}
                   value={hours}
                   onChangeText={setHours}
                   keyboardType="number-pad"
                   placeholder="0"
-                  placeholderTextColor="#B45309"
+                  placeholderTextColor={UI.secondaryLight}
                   maxLength={2}
                 />
               </View>
               <View style={{ justifyContent: "flex-end", paddingBottom: 14 }}>
-                <Text style={{ color: "#B45309", fontFamily: "DMSans_700Bold", fontSize: 20 }}>:</Text>
+                <Text style={{ color: UI.secondaryLight, fontFamily: "DMSans_700Bold", fontSize: 20 }}>:</Text>
               </View>
               <View style={{ flex: 1 }}>
-                <Text style={{ color: "#B45309", fontFamily: "DMSans_500Medium", fontSize: 11, marginBottom: 6 }}>Minutes</Text>
+                <Text style={{ color: UI.secondaryLight, fontFamily: "DMSans_500Medium", fontSize: 11, marginBottom: 6 }}>Minutes</Text>
                 <TextInput
                   style={{
-                    backgroundColor: "#0A0E14", borderRadius: 12, padding: 12,
-                    color: "#F1F5F9", fontFamily: "DMSans_700Bold", fontSize: 20, textAlign: "center",
-                    borderWidth: 1, borderColor: "rgba(245,158,11,0.15)",
+                    backgroundColor: UI.bg, borderRadius: 12, padding: 12,
+                    color: UI.fg, fontFamily: "DMSans_700Bold", fontSize: 20, textAlign: "center",
+                    borderWidth: 1, borderColor: UI.borderGold,
                   }}
                   value={minutes}
                   onChangeText={setMinutes}
                   keyboardType="number-pad"
                   placeholder="30"
-                  placeholderTextColor="#B45309"
+                  placeholderTextColor={UI.secondaryLight}
                   maxLength={2}
                 />
               </View>
               {totalDurationMin > 0 && (
                 <View style={{ justifyContent: "flex-end", paddingBottom: 10 }}>
-                  <Text style={{ color: "#F59E0B", fontFamily: "DMSans_600SemiBold", fontSize: 12 }}>
+                  <Text style={{ color: UI.gold, fontFamily: "DMSans_600SemiBold", fontSize: 12 }}>
                     {totalDurationMin} min
                   </Text>
                 </View>
@@ -410,38 +411,38 @@ export default function LogWorkoutScreen() {
           {/* ═══ STEP 3: Calories ═══ */}
           <View style={{ marginBottom: 20 }}>
             <View style={{ flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 12 }}>
-              <View style={{ width: 24, height: 24, borderRadius: 12, backgroundColor: "#F59E0B", alignItems: "center", justifyContent: "center" }}>
-                <Text style={{ color: "#0A0E14", fontFamily: "DMSans_700Bold", fontSize: 12 }}>3</Text>
+              <View style={{ width: 24, height: 24, borderRadius: 12, backgroundColor: UI.gold, alignItems: "center", justifyContent: "center" }}>
+                <Text style={{ color: UI.bg, fontFamily: "DMSans_700Bold", fontSize: 12 }}>3</Text>
               </View>
-              <Text style={{ color: "#F1F5F9", fontFamily: "DMSans_700Bold", fontSize: 16 }}>Calories Burned</Text>
+              <Text style={{ color: UI.fg, fontFamily: "DMSans_700Bold", fontSize: 16 }}>Calories Burned</Text>
             </View>
             <View style={{
-              backgroundColor: "#141A22", borderRadius: 16, padding: 16,
-              borderWidth: 1, borderColor: "rgba(245,158,11,0.15)",
+              backgroundColor: UI.surface, borderRadius: 16, padding: 16,
+              borderWidth: 1, borderColor: UI.borderGold,
             }}>
               {/* Auto/Manual Toggle */}
               <View style={{ flexDirection: "row", gap: 8, marginBottom: 12 }}>
                 <TouchableOpacity
                   style={{
                     flex: 1, paddingVertical: 8, borderRadius: 10, alignItems: "center",
-                    backgroundColor: autoCalories ? "#F59E0B" : "transparent",
-                    borderWidth: 1, borderColor: autoCalories ? "#F59E0B" : "rgba(245,158,11,0.20)",
+                    backgroundColor: autoCalories ? UI.gold : "transparent",
+                    borderWidth: 1, borderColor: autoCalories ? UI.gold : UI.goldAlpha20,
                   }}
                   onPress={() => setAutoCalories(true)}
                 >
-                  <Text style={{ color: autoCalories ? "#0A0E14" : "#B45309", fontFamily: "DMSans_700Bold", fontSize: 12 }}>
+                  <Text style={{ color: autoCalories ? UI.bg : UI.secondaryLight, fontFamily: "DMSans_700Bold", fontSize: 12 }}>
                     Auto-Estimate
                   </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={{
                     flex: 1, paddingVertical: 8, borderRadius: 10, alignItems: "center",
-                    backgroundColor: !autoCalories ? "#F59E0B" : "transparent",
-                    borderWidth: 1, borderColor: !autoCalories ? "#F59E0B" : "rgba(245,158,11,0.20)",
+                    backgroundColor: !autoCalories ? UI.gold : "transparent",
+                    borderWidth: 1, borderColor: !autoCalories ? UI.gold : UI.goldAlpha20,
                   }}
                   onPress={() => setAutoCalories(false)}
                 >
-                  <Text style={{ color: !autoCalories ? "#0A0E14" : "#B45309", fontFamily: "DMSans_700Bold", fontSize: 12 }}>
+                  <Text style={{ color: !autoCalories ? UI.bg : UI.secondaryLight, fontFamily: "DMSans_700Bold", fontSize: 12 }}>
                     Manual Entry
                   </Text>
                 </TouchableOpacity>
@@ -449,14 +450,14 @@ export default function LogWorkoutScreen() {
 
               {autoCalories ? (
                 <View style={{ alignItems: "center", paddingVertical: 8 }}>
-                  <Text style={{ color: "#F59E0B", fontFamily: "DMSans_700Bold", fontSize: 36 }}>
+                  <Text style={{ color: UI.gold, fontFamily: "DMSans_700Bold", fontSize: 36 }}>
                     {estimatedCalories}
                   </Text>
-                  <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 12 }}>
+                  <Text style={{ color: UI.secondaryLight, fontFamily: "DMSans_400Regular", fontSize: 12 }}>
                     estimated kcal
                   </Text>
                   {selectedConfig && (
-                    <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 10, marginTop: 4 }}>
+                    <Text style={{ color: UI.secondaryLight, fontFamily: "DMSans_400Regular", fontSize: 10, marginTop: 4 }}>
                       Based on ~{selectedConfig.caloriesPerMin} kcal/min for {selectedConfig.label.toLowerCase()}
                     </Text>
                   )}
@@ -464,15 +465,15 @@ export default function LogWorkoutScreen() {
               ) : (
                 <TextInput
                   style={{
-                    backgroundColor: "#0A0E14", borderRadius: 12, padding: 12,
-                    color: "#F1F5F9", fontFamily: "DMSans_700Bold", fontSize: 20, textAlign: "center",
-                    borderWidth: 1, borderColor: "rgba(245,158,11,0.15)",
+                    backgroundColor: UI.bg, borderRadius: 12, padding: 12,
+                    color: UI.fg, fontFamily: "DMSans_700Bold", fontSize: 20, textAlign: "center",
+                    borderWidth: 1, borderColor: UI.borderGold,
                   }}
                   value={calories}
                   onChangeText={setCalories}
                   keyboardType="number-pad"
                   placeholder="Enter calories"
-                  placeholderTextColor="#B45309"
+                  placeholderTextColor={UI.secondaryLight}
                 />
               )}
             </View>
@@ -481,71 +482,71 @@ export default function LogWorkoutScreen() {
           {/* ═══ STEP 4: Optional Fields ═══ */}
           <View style={{ marginBottom: 20 }}>
             <View style={{ flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 12 }}>
-              <View style={{ width: 24, height: 24, borderRadius: 12, backgroundColor: "rgba(245,158,11,0.20)", alignItems: "center", justifyContent: "center" }}>
-                <Text style={{ color: "#F59E0B", fontFamily: "DMSans_700Bold", fontSize: 12 }}>4</Text>
+              <View style={{ width: 24, height: 24, borderRadius: 12, backgroundColor: UI.goldAlpha20, alignItems: "center", justifyContent: "center" }}>
+                <Text style={{ color: UI.gold, fontFamily: "DMSans_700Bold", fontSize: 12 }}>4</Text>
               </View>
-              <Text style={{ color: "#F1F5F9", fontFamily: "DMSans_700Bold", fontSize: 16 }}>Details</Text>
-              <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 11 }}>(optional)</Text>
+              <Text style={{ color: UI.fg, fontFamily: "DMSans_700Bold", fontSize: 16 }}>Details</Text>
+              <Text style={{ color: UI.secondaryLight, fontFamily: "DMSans_400Regular", fontSize: 11 }}>(optional)</Text>
             </View>
             <View style={{
-              backgroundColor: "#141A22", borderRadius: 16, padding: 16, gap: 12,
-              borderWidth: 1, borderColor: "rgba(245,158,11,0.15)",
+              backgroundColor: UI.surface, borderRadius: 16, padding: 16, gap: 12,
+              borderWidth: 1, borderColor: UI.borderGold,
             }}>
               {/* Distance (only for applicable types) */}
               {selectedConfig?.hasDistance && (
                 <View>
-                  <Text style={{ color: "#B45309", fontFamily: "DMSans_500Medium", fontSize: 11, marginBottom: 6 }}>
+                  <Text style={{ color: UI.secondaryLight, fontFamily: "DMSans_500Medium", fontSize: 11, marginBottom: 6 }}>
                     Distance (km)
                   </Text>
                   <TextInput
                     style={{
-                      backgroundColor: "#0A0E14", borderRadius: 12, padding: 12,
-                      color: "#F1F5F9", fontFamily: "DMSans_700Bold", fontSize: 16,
-                      borderWidth: 1, borderColor: "rgba(245,158,11,0.15)",
+                      backgroundColor: UI.bg, borderRadius: 12, padding: 12,
+                      color: UI.fg, fontFamily: "DMSans_700Bold", fontSize: 16,
+                      borderWidth: 1, borderColor: UI.borderGold,
                     }}
                     value={distance}
                     onChangeText={setDistance}
                     keyboardType="decimal-pad"
                     placeholder="e.g. 5.2"
-                    placeholderTextColor="#B45309"
+                    placeholderTextColor={UI.secondaryLight}
                   />
                 </View>
               )}
 
               {/* Heart Rate */}
               <View>
-                <Text style={{ color: "#B45309", fontFamily: "DMSans_500Medium", fontSize: 11, marginBottom: 6 }}>
+                <Text style={{ color: UI.secondaryLight, fontFamily: "DMSans_500Medium", fontSize: 11, marginBottom: 6 }}>
                   Avg Heart Rate (bpm)
                 </Text>
                 <TextInput
                   style={{
-                    backgroundColor: "#0A0E14", borderRadius: 12, padding: 12,
-                    color: "#F1F5F9", fontFamily: "DMSans_700Bold", fontSize: 16,
-                    borderWidth: 1, borderColor: "rgba(245,158,11,0.15)",
+                    backgroundColor: UI.bg, borderRadius: 12, padding: 12,
+                    color: UI.fg, fontFamily: "DMSans_700Bold", fontSize: 16,
+                    borderWidth: 1, borderColor: UI.borderGold,
                   }}
                   value={heartRate}
                   onChangeText={setHeartRate}
                   keyboardType="number-pad"
                   placeholder="e.g. 145"
-                  placeholderTextColor="#B45309"
+                  placeholderTextColor={UI.secondaryLight}
                 />
               </View>
 
               {/* Title / Notes */}
               <View>
-                <Text style={{ color: "#B45309", fontFamily: "DMSans_500Medium", fontSize: 11, marginBottom: 6 }}>
+                <Text style={{ color: UI.secondaryLight, fontFamily: "DMSans_500Medium", fontSize: 11, marginBottom: 6 }}>
                   Workout Title
                 </Text>
                 <TextInput
                   style={{
-                    backgroundColor: "#0A0E14", borderRadius: 12, padding: 12,
-                    color: "#F1F5F9", fontFamily: "DMSans_500Medium", fontSize: 14,
-                    borderWidth: 1, borderColor: "rgba(245,158,11,0.15)",
+                    backgroundColor: UI.bg, borderRadius: 12, padding: 12,
+                    color: UI.fg, fontFamily: "DMSans_500Medium", fontSize: 14,
+                    borderWidth: 1, borderColor: UI.borderGold,
                   }}
                   value={title}
                   onChangeText={setTitle}
                   placeholder={`${selectedConfig?.label ?? "Workout"} Session`}
-                  placeholderTextColor="#B45309"
+                  placeholderTextColor={UI.secondaryLight}
                   returnKeyType="done"
                 />
               </View>
@@ -553,35 +554,35 @@ export default function LogWorkoutScreen() {
               {/* Date & Time */}
               <View style={{ flexDirection: "row", gap: 12 }}>
                 <View style={{ flex: 1 }}>
-                  <Text style={{ color: "#B45309", fontFamily: "DMSans_500Medium", fontSize: 11, marginBottom: 6 }}>
+                  <Text style={{ color: UI.secondaryLight, fontFamily: "DMSans_500Medium", fontSize: 11, marginBottom: 6 }}>
                     Date
                   </Text>
                   <TextInput
                     style={{
-                      backgroundColor: "#0A0E14", borderRadius: 12, padding: 12,
-                      color: "#F1F5F9", fontFamily: "DMSans_500Medium", fontSize: 14,
-                      borderWidth: 1, borderColor: "rgba(245,158,11,0.15)",
+                      backgroundColor: UI.bg, borderRadius: 12, padding: 12,
+                      color: UI.fg, fontFamily: "DMSans_500Medium", fontSize: 14,
+                      borderWidth: 1, borderColor: UI.borderGold,
                     }}
                     value={dateStr}
                     onChangeText={setDateStr}
                     placeholder="YYYY-MM-DD"
-                    placeholderTextColor="#B45309"
+                    placeholderTextColor={UI.secondaryLight}
                   />
                 </View>
                 <View style={{ flex: 1 }}>
-                  <Text style={{ color: "#B45309", fontFamily: "DMSans_500Medium", fontSize: 11, marginBottom: 6 }}>
+                  <Text style={{ color: UI.secondaryLight, fontFamily: "DMSans_500Medium", fontSize: 11, marginBottom: 6 }}>
                     Time
                   </Text>
                   <TextInput
                     style={{
-                      backgroundColor: "#0A0E14", borderRadius: 12, padding: 12,
-                      color: "#F1F5F9", fontFamily: "DMSans_500Medium", fontSize: 14,
-                      borderWidth: 1, borderColor: "rgba(245,158,11,0.15)",
+                      backgroundColor: UI.bg, borderRadius: 12, padding: 12,
+                      color: UI.fg, fontFamily: "DMSans_500Medium", fontSize: 14,
+                      borderWidth: 1, borderColor: UI.borderGold,
                     }}
                     value={timeStr}
                     onChangeText={setTimeStr}
                     placeholder="HH:MM"
-                    placeholderTextColor="#B45309"
+                    placeholderTextColor={UI.secondaryLight}
                   />
                 </View>
               </View>
@@ -593,28 +594,28 @@ export default function LogWorkoutScreen() {
             <TouchableOpacity
               style={{
                 flexDirection: "row", alignItems: "center", gap: 12,
-                backgroundColor: "#141A22", borderRadius: 16, padding: 16, marginBottom: 20,
-                borderWidth: 1, borderColor: syncToHealth ? "rgba(34,197,94,0.25)" : "rgba(245,158,11,0.15)",
+                backgroundColor: UI.surface, borderRadius: 16, padding: 16, marginBottom: 20,
+                borderWidth: 1, borderColor: syncToHealth ? "rgba(34,197,94,0.25)" : UI.borderGold,
               }}
               onPress={() => setSyncToHealth(!syncToHealth)}
             >
               <View style={{
                 width: 44, height: 44, borderRadius: 14,
-                backgroundColor: syncToHealth ? "rgba(34,197,94,0.12)" : "rgba(245,158,11,0.08)",
+                backgroundColor: syncToHealth ? "rgba(34,197,94,0.12)" : UI.dim,
                 alignItems: "center", justifyContent: "center",
-                borderWidth: 1, borderColor: syncToHealth ? "rgba(34,197,94,0.25)" : "rgba(245,158,11,0.15)",
+                borderWidth: 1, borderColor: syncToHealth ? "rgba(34,197,94,0.25)" : UI.borderGold,
               }}>
                 <MaterialIcons
                   name={Platform.OS === "ios" ? "favorite" : "health-and-safety"}
                   size={22}
-                  color={syncToHealth ? "#22C55E" : "#B45309"}
+                  color={syncToHealth ? UI.green : UI.secondaryLight}
                 />
               </View>
               <View style={{ flex: 1 }}>
-                <Text style={{ color: "#F1F5F9", fontFamily: "DMSans_700Bold", fontSize: 14 }}>
+                <Text style={{ color: UI.fg, fontFamily: "DMSans_700Bold", fontSize: 14 }}>
                   Save to {healthSourceName}
                 </Text>
-                <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 11 }}>
+                <Text style={{ color: UI.secondaryLight, fontFamily: "DMSans_400Regular", fontSize: 11 }}>
                   {permissionStatus === "granted"
                     ? "Workout will appear in your health app"
                     : "Grant permission in Wearable Sync first"}
@@ -622,13 +623,13 @@ export default function LogWorkoutScreen() {
               </View>
               <View style={{
                 width: 48, height: 28, borderRadius: 14,
-                backgroundColor: syncToHealth ? "#22C55E" : "rgba(245,158,11,0.15)",
+                backgroundColor: syncToHealth ? UI.green : UI.borderGold,
                 justifyContent: "center",
                 paddingHorizontal: 3,
               }}>
                 <View style={{
                   width: 22, height: 22, borderRadius: 11,
-                  backgroundColor: "#F1F5F9",
+                  backgroundColor: UI.fg,
                   alignSelf: syncToHealth ? "flex-end" : "flex-start",
                 }} />
               </View>
@@ -638,41 +639,41 @@ export default function LogWorkoutScreen() {
           {/* ═══ Summary & Save Button ═══ */}
           {canSave && (
             <View style={{
-              backgroundColor: "#141A22", borderRadius: 16, padding: 16, marginBottom: 16,
-              borderWidth: 1, borderColor: "rgba(245,158,11,0.20)",
+              backgroundColor: UI.surface, borderRadius: 16, padding: 16, marginBottom: 16,
+              borderWidth: 1, borderColor: UI.goldAlpha20,
             }}>
-              <Text style={{ color: "#FDE68A", fontFamily: "DMSans_700Bold", fontSize: 13, marginBottom: 10 }}>
+              <Text style={{ color: UI.gold3, fontFamily: "DMSans_700Bold", fontSize: 13, marginBottom: 10 }}>
                 WORKOUT SUMMARY
               </Text>
               <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 12 }}>
                 <View style={{ alignItems: "center", flex: 1 }}>
-                  <MaterialIcons name={selectedConfig?.icon as any ?? "fitness-center"} size={20} color={selectedConfig?.color ?? "#F59E0B"} />
-                  <Text style={{ color: "#F1F5F9", fontFamily: "DMSans_700Bold", fontSize: 14, marginTop: 2 }}>
+                  <MaterialIcons name={selectedConfig?.icon as any ?? "fitness-center"} size={20} color={selectedConfig?.color ?? UI.gold} />
+                  <Text style={{ color: UI.fg, fontFamily: "DMSans_700Bold", fontSize: 14, marginTop: 2 }}>
                     {selectedConfig?.label}
                   </Text>
-                  <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 9 }}>Type</Text>
+                  <Text style={{ color: UI.secondaryLight, fontFamily: "DMSans_400Regular", fontSize: 9 }}>Type</Text>
                 </View>
                 <View style={{ alignItems: "center", flex: 1 }}>
                   <MaterialIcons name="timer" size={20} color="#3B82F6" />
-                  <Text style={{ color: "#F1F5F9", fontFamily: "DMSans_700Bold", fontSize: 14, marginTop: 2 }}>
+                  <Text style={{ color: UI.fg, fontFamily: "DMSans_700Bold", fontSize: 14, marginTop: 2 }}>
                     {totalDurationMin} min
                   </Text>
-                  <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 9 }}>Duration</Text>
+                  <Text style={{ color: UI.secondaryLight, fontFamily: "DMSans_400Regular", fontSize: 9 }}>Duration</Text>
                 </View>
                 <View style={{ alignItems: "center", flex: 1 }}>
-                  <MaterialIcons name="local-fire-department" size={20} color="#F59E0B" />
-                  <Text style={{ color: "#F1F5F9", fontFamily: "DMSans_700Bold", fontSize: 14, marginTop: 2 }}>
+                  <MaterialIcons name="local-fire-department" size={20} color={UI.gold} />
+                  <Text style={{ color: UI.fg, fontFamily: "DMSans_700Bold", fontSize: 14, marginTop: 2 }}>
                     {effectiveCalories}
                   </Text>
-                  <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 9 }}>kcal</Text>
+                  <Text style={{ color: UI.secondaryLight, fontFamily: "DMSans_400Regular", fontSize: 9 }}>kcal</Text>
                 </View>
                 {distance ? (
                   <View style={{ alignItems: "center", flex: 1 }}>
-                    <MaterialIcons name="straighten" size={20} color="#22C55E" />
-                    <Text style={{ color: "#F1F5F9", fontFamily: "DMSans_700Bold", fontSize: 14, marginTop: 2 }}>
+                    <MaterialIcons name="straighten" size={20} color={UI.green} />
+                    <Text style={{ color: UI.fg, fontFamily: "DMSans_700Bold", fontSize: 14, marginTop: 2 }}>
                       {distance} km
                     </Text>
-                    <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 9 }}>Distance</Text>
+                    <Text style={{ color: UI.secondaryLight, fontFamily: "DMSans_400Regular", fontSize: 9 }}>Distance</Text>
                   </View>
                 ) : null}
               </View>
@@ -681,23 +682,23 @@ export default function LogWorkoutScreen() {
 
           <TouchableOpacity
             style={{
-              backgroundColor: canSave ? "#F59E0B" : "rgba(245,158,11,0.20)",
+              backgroundColor: canSave ? UI.gold : UI.goldAlpha20,
               borderRadius: 16, paddingVertical: 16, alignItems: "center",
               flexDirection: "row", justifyContent: "center", gap: 8,
               opacity: saving ? 0.7 : 1,
-              shadowColor: canSave ? "#F59E0B" : "transparent",
+              shadowColor: canSave ? UI.gold : "transparent",
               shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 8,
             }}
             onPress={handleSave}
             disabled={!canSave || saving}
           >
             {saving ? (
-              <ActivityIndicator color="#0A0E14" size="small" />
+              <ActivityIndicator color={UI.bg} size="small" />
             ) : (
-              <MaterialIcons name="check-circle" size={20} color={canSave ? "#0A0E14" : "#B45309"} />
+              <MaterialIcons name="check-circle" size={20} color={canSave ? UI.bg : UI.secondaryLight} />
             )}
             <Text style={{
-              color: canSave ? "#0A0E14" : "#B45309",
+              color: canSave ? UI.bg : UI.secondaryLight,
               fontFamily: "DMSans_700Bold", fontSize: 16,
             }}>
               {saving ? "Saving..." : "Log Workout"}

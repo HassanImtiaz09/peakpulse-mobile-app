@@ -16,7 +16,7 @@ import * as Sharing from "expo-sharing";
 import * as Haptics from "expo-haptics";
 
 import { GOLDEN_WORKOUT } from "@/constants/golden-backgrounds";
-import { UI as SF } from "@/constants/ui-colors";
+import { UI, SF } from "@/constants/ui-colors";
 import { a11yButton, a11yHeader } from "@/lib/accessibility";
 import { WeeklyGoalRings } from "@/components/weekly-goal-rings";
 
@@ -108,10 +108,10 @@ function buildHeatmapData(sessionsByDate: Record<string, any[]>): { days: Heatma
 }
 
 function heatmapColor(count: number): string {
-  if (count === 0) return "rgba(245,158,11,0.06)";
-  if (count === 1) return "rgba(245,158,11,0.3)";
+  if (count === 0) return UI.goldAlpha6;
+  if (count === 1) return UI.goldAlpha30;
   if (count === 2) return "rgba(245,158,11,0.55)";
-  return "#F59E0B"; // 3+
+  return UI.gold; // 3+
 }
 
 // ══════════════════════════════════════════════════════════════════
@@ -433,7 +433,7 @@ export default function WorkoutCalendarScreen() {
               disabled={isSharing}
               style={{
                 flexDirection: "row", alignItems: "center", gap: 4,
-                backgroundColor: "rgba(245,158,11,0.12)", borderRadius: 10,
+                backgroundColor: UI.goldAlpha12, borderRadius: 10,
                 paddingHorizontal: 12, paddingVertical: 7,
                 borderWidth: 1, borderColor: SF.borderGold,
                 opacity: isSharing ? 0.6 : 1,
@@ -458,10 +458,10 @@ export default function WorkoutCalendarScreen() {
 
         {/* ── Streak Stats Row ── */}
         <Animated.View entering={FadeInDown.delay(100).duration(300)} style={{ flexDirection: "row", paddingHorizontal: 20, gap: 8, marginBottom: 8, marginTop: 8 }}>
-          <StatCard icon="local-fire-department" iconColor="#EF4444" label="Current" value={`${currentStreak}d`} highlight={currentStreak > 0} />
-          <StatCard icon="emoji-events" iconColor="#F59E0B" label="Best" value={`${longestStreak}d`} />
+          <StatCard icon="local-fire-department" iconColor={UI.red} label="Current" value={`${currentStreak}d`} highlight={currentStreak > 0} />
+          <StatCard icon="emoji-events" iconColor={UI.gold} label="Best" value={`${longestStreak}d`} />
           <StatCard icon="fitness-center" iconColor="#3B82F6" label="Total" value={String(totalWorkouts)} />
-          <StatCard icon="calendar-today" iconColor="#22C55E" label="This Mo." value={String(thisMonthCount)} />
+          <StatCard icon="calendar-today" iconColor={UI.green} label="This Mo." value={String(thisMonthCount)} />
         </Animated.View>
 
         {/* ── Tab Switcher ── */}
@@ -470,7 +470,7 @@ export default function WorkoutCalendarScreen() {
             onPress={() => setActiveTab("calendar")}
             style={{
               flex: 1, paddingVertical: 8, borderRadius: 10, alignItems: "center",
-              backgroundColor: activeTab === "calendar" ? "rgba(245,158,11,0.15)" : "transparent",
+              backgroundColor: activeTab === "calendar" ? UI.borderGold : "transparent",
             }}
           >
             <Text style={{ color: activeTab === "calendar" ? SF.gold : SF.muted, fontFamily: "DMSans_600SemiBold", fontSize: 13 }}>
@@ -481,7 +481,7 @@ export default function WorkoutCalendarScreen() {
             onPress={() => setActiveTab("heatmap")}
             style={{
               flex: 1, paddingVertical: 8, borderRadius: 10, alignItems: "center",
-              backgroundColor: activeTab === "heatmap" ? "rgba(245,158,11,0.15)" : "transparent",
+              backgroundColor: activeTab === "heatmap" ? UI.borderGold : "transparent",
             }}
           >
             <Text style={{ color: activeTab === "heatmap" ? SF.gold : SF.muted, fontFamily: "DMSans_600SemiBold", fontSize: 13 }}>
@@ -574,7 +574,7 @@ export default function WorkoutCalendarScreen() {
                         opacity: cell.isFuture ? 0.3 : 1,
                       }}>
                         <Text style={{
-                          color: isCompareSelected ? "#fff" : cell.hasWorkout ? "#0A0E14" : cell.isToday ? SF.gold : SF.fg,
+                          color: isCompareSelected ? "#fff" : cell.hasWorkout ? UI.bg : cell.isToday ? SF.gold : SF.fg,
                           fontFamily: cell.hasWorkout || cell.isToday || isCompareSelected ? "DMSans_700Bold" : "DMSans_400Regular",
                           fontSize: 14,
                         }}>
@@ -588,7 +588,7 @@ export default function WorkoutCalendarScreen() {
                         {!isCompareSelected && cell.workoutCount > 1 && (
                           <View style={{ position: "absolute", bottom: 2, flexDirection: "row", gap: 2 }}>
                             {Array.from({ length: Math.min(cell.workoutCount, 3) }).map((_, i) => (
-                              <View key={i} style={{ width: 3, height: 3, borderRadius: 1.5, backgroundColor: "#0A0E14" }} />
+                              <View key={i} style={{ width: 3, height: 3, borderRadius: 1.5, backgroundColor: UI.bg }} />
                             ))}
                           </View>
                         )}
@@ -709,7 +709,7 @@ export default function WorkoutCalendarScreen() {
         {/* ── Social Share Link ── */}
         <TouchableOpacity
           style={{
-            marginHorizontal: 20, marginTop: 20, backgroundColor: "rgba(245,158,11,0.08)",
+            marginHorizontal: 20, marginTop: 20, backgroundColor: UI.dim,
             borderRadius: 14, padding: 14, flexDirection: "row", alignItems: "center", gap: 12,
             borderWidth: 1, borderColor: SF.borderGold,
           }}
@@ -777,7 +777,7 @@ export default function WorkoutCalendarScreen() {
                         backgroundColor: cell.hasWorkout ? SF.gold : "transparent",
                       }}>
                         <Text style={{
-                          color: cell.hasWorkout ? "#0A0E14" : SF.muted,
+                          color: cell.hasWorkout ? UI.bg : SF.muted,
                           fontSize: 10,
                           fontFamily: cell.hasWorkout ? "DMSans_700Bold" : "DMSans_400Regular",
                         }}>{cell.day}</Text>
@@ -808,7 +808,7 @@ export default function WorkoutCalendarScreen() {
               <TouchableOpacity
                 onPress={() => router.push("/log-workout" as any)}
                 style={{
-                  marginTop: 12, backgroundColor: "rgba(245,158,11,0.15)", borderRadius: 10,
+                  marginTop: 12, backgroundColor: UI.borderGold, borderRadius: 10,
                   paddingHorizontal: 16, paddingVertical: 8,
                 }}
               >
@@ -858,8 +858,8 @@ export default function WorkoutCalendarScreen() {
                 const metrics: { label: string; key: string; v1: number; v2: number; unit: string; icon: string; iconColor: string }[] = [
                   { label: "Duration", key: "dur", v1: day1.totalDuration, v2: day2.totalDuration, unit: "min", icon: "timer", iconColor: "#3B82F6" },
                   { label: "Exercises", key: "ex", v1: day1.totalExercises, v2: day2.totalExercises, unit: "", icon: "fitness-center", iconColor: SF.gold },
-                  { label: "Volume", key: "vol", v1: day1.totalVolume, v2: day2.totalVolume, unit: "kg", icon: "monitor-weight", iconColor: "#22C55E" },
-                  { label: "Calories", key: "cal", v1: day1.totalCalories, v2: day2.totalCalories, unit: "kcal", icon: "local-fire-department", iconColor: "#EF4444" },
+                  { label: "Volume", key: "vol", v1: day1.totalVolume, v2: day2.totalVolume, unit: "kg", icon: "monitor-weight", iconColor: UI.green },
+                  { label: "Calories", key: "cal", v1: day1.totalCalories, v2: day2.totalCalories, unit: "kcal", icon: "local-fire-department", iconColor: UI.red },
                   { label: "Sessions", key: "sess", v1: day1.sessionCount, v2: day2.sessionCount, unit: "", icon: "repeat", iconColor: "#8B5CF6" },
                 ];
 
@@ -905,8 +905,8 @@ export default function WorkoutCalendarScreen() {
                                 backgroundColor: diff > 0 ? "rgba(34,197,94,0.1)" : "rgba(239,68,68,0.1)",
                                 borderRadius: 6, paddingHorizontal: 6, paddingVertical: 2,
                               }}>
-                                <MaterialIcons name={diff > 0 ? "trending-up" : "trending-down"} size={12} color={diff > 0 ? "#22C55E" : "#EF4444"} />
-                                <Text style={{ color: diff > 0 ? "#22C55E" : "#EF4444", fontSize: 11, fontWeight: "600" }}>
+                                <MaterialIcons name={diff > 0 ? "trending-up" : "trending-down"} size={12} color={diff > 0 ? UI.green : UI.red} />
+                                <Text style={{ color: diff > 0 ? UI.green : UI.red, fontSize: 11, fontWeight: "600" }}>
                                   {Math.abs(diff)}%
                                 </Text>
                               </View>
@@ -963,7 +963,7 @@ export default function WorkoutCalendarScreen() {
                               <Text style={{ color: SF.muted, fontSize: 10, fontFamily: "DMSans_700Bold", letterSpacing: 1, marginBottom: 4 }}>SHARED ({shared.length})</Text>
                               {shared.map((ex, i) => (
                                 <View key={`s-${i}`} style={{ flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 3 }}>
-                                  <View style={{ width: 5, height: 5, borderRadius: 2.5, backgroundColor: "#22C55E" }} />
+                                  <View style={{ width: 5, height: 5, borderRadius: 2.5, backgroundColor: UI.green }} />
                                   <Text style={{ color: SF.fg, fontSize: 12 }}>{ex}</Text>
                                 </View>
                               ))}
@@ -1060,7 +1060,7 @@ function StatCard({ icon, iconColor, label, value, highlight = false }: {
 }) {
   return (
     <View style={{
-      flex: 1, backgroundColor: highlight ? "rgba(245,158,11,0.10)" : SF.surface,
+      flex: 1, backgroundColor: highlight ? UI.goldAlpha10 : SF.surface,
       borderRadius: 12, padding: 10, alignItems: "center",
       borderWidth: 1, borderColor: highlight ? SF.borderGold : SF.border,
     }}>
@@ -1080,7 +1080,7 @@ function SessionCard({ session, expanded = false }: { session: WorkoutSession; e
 
   return (
     <View style={{
-      backgroundColor: expanded ? "rgba(245,158,11,0.06)" : SF.surface,
+      backgroundColor: expanded ? UI.goldAlpha6 : SF.surface,
       borderRadius: 14, padding: 14, borderWidth: 1, borderColor: SF.border,
       marginBottom: expanded ? 0 : 8,
     }}>

@@ -26,14 +26,15 @@ import {
   type QuickPickExercise,
 } from "@/lib/quick-pick-exercise";
 import { getAllExercises } from "@/lib/exercise-data";
+import { UI } from "@/constants/ui-colors";
 
 const STORAGE_KEY_LOGS = "@workout_logs";
 
 type EnergyLevel = "low" | "normal" | "high";
 
 const ENERGY_OPTIONS: { level: EnergyLevel; icon: string; label: string; color: string }[] = [
-  { level: "low", icon: "battery-2-bar", label: "Low Energy", color: "#F59E0B" },
-  { level: "normal", icon: "battery-4-bar", label: "Normal", color: "#22C55E" },
+  { level: "low", icon: "battery-2-bar", label: "Low Energy", color: UI.gold },
+  { level: "normal", icon: "battery-4-bar", label: "Normal", color: UI.green },
   { level: "high", icon: "battery-full", label: "Fired Up", color: "#3B82F6" },
 ];
 
@@ -170,12 +171,12 @@ export default function QuickExerciseScreen() {
         {/* Exercise Result */}
         {energyLevel && !loading && exercise && (
           <View style={styles.resultSection}>
-            <Text style={[styles.motivationText, { color: "#F59E0B" }]}>{motivation}</Text>
+            <Text style={[styles.motivationText, { color: UI.gold }]}>{motivation}</Text>
 
             <View style={[styles.exerciseCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
               <View style={styles.exerciseHeader}>
-                <View style={[styles.exerciseBadge, { backgroundColor: "rgba(245,158,11,0.15)" }]}>
-                  <MaterialIcons name="flash-on" size={24} color="#F59E0B" />
+                <View style={[styles.exerciseBadge, { backgroundColor: UI.borderGold }]}>
+                  <MaterialIcons name="flash-on" size={24} color={UI.gold} />
                 </View>
                 <View style={{ flex: 1 }}>
                   <Text style={[styles.exerciseName, { color: colors.foreground }]}>{exercise.name}</Text>
@@ -189,8 +190,8 @@ export default function QuickExerciseScreen() {
                 <Text style={[styles.muscleLabel, { color: colors.muted }]}>Primary:</Text>
                 <View style={styles.muscleChips}>
                   {exercise.primaryMuscles.map((m) => (
-                    <View key={m} style={[styles.chip, { backgroundColor: "rgba(245,158,11,0.12)" }]}>
-                      <Text style={[styles.chipText, { color: "#F59E0B" }]}>{m.replace(/_/g, " ")}</Text>
+                    <View key={m} style={[styles.chip, { backgroundColor: UI.goldAlpha12 }]}>
+                      <Text style={[styles.chipText, { color: UI.gold }]}>{m.replace(/_/g, " ")}</Text>
                     </View>
                   ))}
                 </View>
@@ -221,12 +222,12 @@ export default function QuickExerciseScreen() {
               </View>
 
               <View style={[styles.reasonBox, { backgroundColor: colors.background }]}>
-                <MaterialIcons name="lightbulb-outline" size={16} color="#F59E0B" />
+                <MaterialIcons name="lightbulb-outline" size={16} color={UI.gold} />
                 <Text style={[styles.reasonText, { color: colors.muted }]}>{exercise.reason}</Text>
               </View>
 
               {exercise.cue ? (
-                <View style={[styles.cueBox, { borderLeftColor: "#F59E0B" }]}>
+                <View style={[styles.cueBox, { borderLeftColor: UI.gold }]}>
                   <Text style={[styles.cueText, { color: colors.foreground }]}>{exercise.cue}</Text>
                 </View>
               ) : null}
@@ -316,7 +317,7 @@ const styles = StyleSheet.create({
   actionRow: { flexDirection: "row", gap: 12 },
   shuffleButton: { flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8, paddingVertical: 14, borderRadius: 14, borderWidth: 1 },
   shuffleText: { fontSize: 15, fontWeight: "600" },
-  startButton: { flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8, paddingVertical: 16, borderRadius: 14, backgroundColor: "#F59E0B" },
+  startButton: { flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8, paddingVertical: 16, borderRadius: 14, backgroundColor: UI.gold },
   startText: { fontSize: 16, fontWeight: "700", color: "#000" },
   changeEnergy: { alignItems: "center", paddingVertical: 8 },
   changeEnergyText: { fontSize: 14, textDecorationLine: "underline" },

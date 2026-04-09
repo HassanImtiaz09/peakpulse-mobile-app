@@ -21,7 +21,7 @@ import Svg, { Path, Circle, Line, Rect, G } from "react-native-svg";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { UI as SF } from "@/constants/ui-colors";
+import { UI, SF } from "@/constants/ui-colors";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/hooks/use-auth";
 import { ScreenErrorBoundary } from "@/components/error-boundary";
@@ -99,7 +99,7 @@ function TrendLine({
         <Text style={styles.chartLabel}>{label}</Text>
         <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
           <Text style={[styles.chartValue, { color }]}>{latest.toFixed(1)}{unit}</Text>
-          <Text style={[styles.chartChange, { color: change <= 0 ? "#10B981" : "#F59E0B" }]}>
+          <Text style={[styles.chartChange, { color: change <= 0 ? UI.emerald : UI.gold }]}>
             {changeStr}
           </Text>
         </View>
@@ -245,7 +245,7 @@ export default function ProgressDashboard() {
               <Text style={styles.summaryLabel}>Weight</Text>
             </View>
             <View style={styles.summaryCard}>
-              <MaterialIcons name="speed" size={20} color="#F59E0B" />
+              <MaterialIcons name="speed" size={20} color={UI.gold} />
               <Text style={styles.summaryValue}>{latestBf ? latestBf.toFixed(1) + "%" : "--"}</Text>
               <Text style={styles.summaryLabel}>Body Fat</Text>
             </View>
@@ -255,7 +255,7 @@ export default function ProgressDashboard() {
               <Text style={styles.summaryLabel}>Target BF</Text>
             </View>
             <View style={styles.summaryCard}>
-              <MaterialIcons name="camera-alt" size={20} color="#10B981" />
+              <MaterialIcons name="camera-alt" size={20} color={UI.emerald} />
               <Text style={styles.summaryValue}>{checkins.length}</Text>
               <Text style={styles.summaryLabel}>Check-ins</Text>
             </View>
@@ -279,7 +279,7 @@ export default function ProgressDashboard() {
               data={bfData}
               label="Body Fat %"
               unit="%"
-              color="#F59E0B"
+              color={UI.gold}
               targetValue={targetBf ?? undefined}
             />
           </View>
@@ -321,12 +321,12 @@ export default function ProgressDashboard() {
                     <View style={[styles.ratingBadge, {
                       backgroundColor: c.progressRating === "excellent" ? "rgba(16,185,129,0.15)"
                         : c.progressRating === "good" ? "rgba(59,130,246,0.15)"
-                        : "rgba(245,158,11,0.15)",
+                        : UI.borderGold,
                     }]}>
                       <Text style={[styles.ratingText, {
-                        color: c.progressRating === "excellent" ? "#10B981"
+                        color: c.progressRating === "excellent" ? UI.emerald
                           : c.progressRating === "good" ? "#3B82F6"
-                          : "#F59E0B",
+                          : UI.gold,
                       }]}>
                         {c.progressRating}
                       </Text>
@@ -351,7 +351,7 @@ const styles = StyleSheet.create({
   },
   backBtn: { width: 40, height: 40, borderRadius: 12, backgroundColor: SF.surface, alignItems: "center", justifyContent: "center" },
   headerTitle: { color: SF.fg, fontSize: 18, fontWeight: "700", fontFamily: "DMSans_700Bold" },
-  addBtn: { width: 40, height: 40, borderRadius: 12, backgroundColor: "rgba(245,158,11,0.1)", alignItems: "center", justifyContent: "center" },
+  addBtn: { width: 40, height: 40, borderRadius: 12, backgroundColor: UI.goldAlpha10, alignItems: "center", justifyContent: "center" },
 
   summaryRow: { flexDirection: "row", gap: 8, paddingHorizontal: 20, marginBottom: 8 },
   summaryCard: {

@@ -2,6 +2,7 @@ import * as Print from "expo-print";
 import { shareAsync } from "expo-sharing";
 import { Platform, Alert } from "react-native";
 import { classifyExercise } from "./rest-timer-settings";
+import { UI } from "@/constants/ui-colors";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -29,7 +30,7 @@ interface WorkoutPlan {
 // ─── Exercise type badge colors ─────────────────────────────────────────────
 
 const TYPE_COLORS: Record<string, { bg: string; text: string; label: string }> = {
-  compound:   { bg: "#FEF3C7", text: "#92400E", label: "Compound" },
+  compound:   { bg: "#FEF3C7", text: UI.secondaryDim, label: "Compound" },
   isolation:  { bg: "#DBEAFE", text: "#1E40AF", label: "Isolation" },
   cardio:     { bg: "#D1FAE5", text: "#065F46", label: "Cardio" },
   stretching: { bg: "#EDE9FE", text: "#5B21B6", label: "Stretching" },

@@ -10,19 +10,20 @@ import { useExerciseCompletion } from "@/lib/exercise-completion-context";
 import { useCalories } from "@/lib/calorie-context";
 import * as Haptics from "expo-haptics";
 import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
+import { UI } from "@/constants/ui-colors";
 
-const BG = "#0A0E14";
-const SURFACE = "#141A22";
-const FG = "#F1F5F9";
+const BG = UI.bg;
+const SURFACE = UI.surface;
+const FG = UI.fg;
 const MUTED = "#64748B";
-const GOLD = "#F59E0B";
-const GOLD2 = "#FBBF24";
-const GOLD3 = "#FDE68A";
-const GOLD_DIM = "rgba(245,158,11,0.08)";
-const GOLD_BORDER = "rgba(245,158,11,0.25)";
-const MINT = "#10B981";
-const ICE = "#22D3EE";
-const ROSE = "#F472B6";
+const GOLD = UI.gold;
+const GOLD2 = UI.gold2;
+const GOLD3 = UI.gold3;
+const GOLD_DIM = UI.dim;
+const GOLD_BORDER = UI.borderGold2;
+const MINT = UI.emerald;
+const ICE = UI.ice;
+const ROSE = UI.rose;
 
 function getWeekDates(): string[] {
   const now = new Date();
@@ -351,20 +352,20 @@ export default function WeeklySummaryScreen() {
 
 const s = StyleSheet.create({
   header: { flexDirection: "row", alignItems: "center", paddingHorizontal: 16, paddingVertical: 12, gap: 12 },
-  backBtn: { width: 40, height: 40, borderRadius: 12, backgroundColor: SURFACE, alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: "rgba(30,41,59,0.6)" },
+  backBtn: { width: 40, height: 40, borderRadius: 12, backgroundColor: SURFACE, alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: UI.border },
   headerTitle: { color: FG, fontFamily: "BebasNeue_400Regular", fontSize: 22, letterSpacing: 2 },
   headerSub: { color: MUTED, fontFamily: "DMSans_400Regular", fontSize: 12, marginTop: 2 },
   shareBtn: { flexDirection: "row", alignItems: "center", gap: 6, backgroundColor: GOLD_DIM, borderRadius: 12, paddingHorizontal: 14, paddingVertical: 8, borderWidth: 1, borderColor: GOLD_BORDER },
   shareBtnText: { color: GOLD, fontFamily: "DMSans_700Bold", fontSize: 13 },
   ringsCard: { marginHorizontal: 16, marginTop: 12, backgroundColor: "rgba(20,26,34,0.82)", borderRadius: 20, padding: 20, borderWidth: 1, borderColor: GOLD_BORDER },
   sectionLabel: { color: MUTED, fontFamily: "DMSans_600SemiBold", fontSize: 10, letterSpacing: 1.5 },
-  card: { marginHorizontal: 16, marginTop: 12, backgroundColor: "rgba(20,26,34,0.82)", borderRadius: 18, padding: 18, borderWidth: 1, borderColor: "rgba(245,158,11,0.15)" },
+  card: { marginHorizontal: 16, marginTop: 12, backgroundColor: "rgba(20,26,34,0.82)", borderRadius: 18, padding: 18, borderWidth: 1, borderColor: UI.borderGold },
   iconBox: { width: 36, height: 36, borderRadius: 10, backgroundColor: GOLD_DIM, alignItems: "center", justifyContent: "center" },
   cardTitle: { color: FG, fontFamily: "DMSans_700Bold", fontSize: 16 },
   statLabel: { color: MUTED, fontFamily: "DMSans_400Regular", fontSize: 13 },
   statValue: { color: FG, fontFamily: "DMSans_700Bold", fontSize: 13 },
   progressTrack: { height: 8, backgroundColor: "rgba(255,255,255,0.06)", borderRadius: 4, overflow: "hidden" },
   progressFill: { height: 8, borderRadius: 4 },
-  miniCard: { backgroundColor: "rgba(20,26,34,0.82)", borderRadius: 18, padding: 18, alignItems: "center", borderWidth: 1, borderColor: "rgba(245,158,11,0.15)" },
+  miniCard: { backgroundColor: "rgba(20,26,34,0.82)", borderRadius: 18, padding: 18, alignItems: "center", borderWidth: 1, borderColor: UI.borderGold },
   shareCard: { flexDirection: "row", alignItems: "center", gap: 14, backgroundColor: GOLD, borderRadius: 18, padding: 18 },
 });

@@ -39,7 +39,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { FlatList } from "react-native";
 import { usePantry, type PantryCategory } from "@/lib/pantry-context";
-import { UI as SF } from "@/constants/ui-colors";
+import { UI, SF } from "@/constants/ui-colors";
 import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
 
 function mapCategoryToPantry(name: string, brand: string): PantryCategory {
@@ -367,7 +367,7 @@ const manualStyles = StyleSheet.create({
     fontFamily: "DMSans_500Medium",
     fontSize: 14,
     borderWidth: 1,
-    borderColor: "rgba(245,158,11,0.15)",
+    borderColor: UI.borderGold,
   },
   submitBtn: {
     flexDirection: "row",
@@ -711,12 +711,12 @@ export default function BarcodeScannerScreen() {
                         P: {item.protein}g
                       </Text>
                       <Text
-                        style={[styles.historyMacroText, { color: "#FDE68A" }]}
+                        style={[styles.historyMacroText, { color: UI.gold3 }]}
                       >
                         C: {item.carbs}g
                       </Text>
                       <Text
-                        style={[styles.historyMacroText, { color: "#FBBF24" }]}
+                        style={[styles.historyMacroText, { color: UI.gold2 }]}
                       >
                         F: {item.fat}g
                       </Text>
@@ -775,7 +775,7 @@ export default function BarcodeScannerScreen() {
               <MaterialIcons
                 name={result.found ? "check-circle" : "error-outline"}
                 size={28}
-                color={result.found ? "#22C55E" : "#EF4444"}
+                color={result.found ? UI.green : UI.red}
               />
               <View style={{ flex: 1 }}>
                 <Text style={styles.resultName} numberOfLines={2}>
@@ -815,7 +815,7 @@ export default function BarcodeScannerScreen() {
                       styles.nutritionItem,
                       {
                         borderLeftWidth: 1,
-                        borderLeftColor: "rgba(245,158,11,0.15)",
+                        borderLeftColor: UI.borderGold,
                       },
                     ]}
                   >
@@ -834,14 +834,14 @@ export default function BarcodeScannerScreen() {
                       styles.nutritionItem,
                       {
                         borderLeftWidth: 1,
-                        borderLeftColor: "rgba(245,158,11,0.15)",
+                        borderLeftColor: UI.borderGold,
                       },
                     ]}
                   >
                     <Text
                       style={[
                         styles.nutritionValue,
-                        { color: "#FDE68A" },
+                        { color: UI.gold3 },
                       ]}
                     >
                       {result.carbs}g
@@ -853,14 +853,14 @@ export default function BarcodeScannerScreen() {
                       styles.nutritionItem,
                       {
                         borderLeftWidth: 1,
-                        borderLeftColor: "rgba(245,158,11,0.15)",
+                        borderLeftColor: UI.borderGold,
                       },
                     ]}
                   >
                     <Text
                       style={[
                         styles.nutritionValue,
-                        { color: "#FBBF24" },
+                        { color: UI.gold2 },
                       ]}
                     >
                       {result.fat}g
@@ -985,7 +985,7 @@ export default function BarcodeScannerScreen() {
                   style={[
                     styles.addBtn,
                     {
-                      backgroundColor: "rgba(245,158,11,0.15)",
+                      backgroundColor: UI.borderGold,
                       marginTop: -8,
                       shadowOpacity: 0,
                     },
@@ -1213,7 +1213,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     padding: 16,
     borderWidth: 1,
-    borderColor: "rgba(245,158,11,0.15)",
+    borderColor: UI.borderGold,
   },
   instructionTitle: {
     color: SF.fg,
@@ -1236,7 +1236,7 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     padding: 24,
     borderWidth: 1,
-    borderColor: "rgba(245,158,11,0.15)",
+    borderColor: UI.borderGold,
   },
   resultHeader: {
     flexDirection: "row",
@@ -1263,7 +1263,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     paddingBottom: 16,
     borderBottomWidth: 1,
-    borderBottomColor: "rgba(245,158,11,0.10)",
+    borderBottomColor: UI.goldAlpha10,
   },
   barcodeText: {
     color: SF.muted,
@@ -1275,7 +1275,7 @@ const styles = StyleSheet.create({
     color: SF.gold3,
     fontSize: 12,
     fontFamily: "DMSans_600SemiBold",
-    backgroundColor: "rgba(245,158,11,0.10)",
+    backgroundColor: UI.goldAlpha10,
     paddingHorizontal: 8,
     paddingVertical: 3,
     borderRadius: 6,
@@ -1335,7 +1335,7 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     paddingVertical: 14,
     borderWidth: 1,
-    borderColor: "rgba(245,158,11,0.15)",
+    borderColor: UI.borderGold,
   },
   scanAgainText: {
     color: SF.gold,
@@ -1350,7 +1350,7 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     paddingVertical: 14,
     borderWidth: 1,
-    borderColor: "rgba(245,158,11,0.10)",
+    borderColor: UI.goldAlpha10,
   },
   goBackText: {
     color: SF.muted,
@@ -1364,7 +1364,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     padding: 14,
     borderWidth: 1,
-    borderColor: "rgba(245,158,11,0.10)",
+    borderColor: UI.goldAlpha10,
     gap: 12,
   },
   historyName: {

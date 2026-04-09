@@ -17,7 +17,7 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useRouter } from "expo-router";
 import { useWearable, type WearableStats, type DailyWearableEntry } from "@/lib/wearable-context";
 import * as Haptics from "expo-haptics";
-import { C } from "@/constants/ui-colors";
+import { UI, C } from "@/constants/ui-colors";
 
 // ── Colour Tokens ────────────────────────────────────────────────
 type MetricTab = "overview" | "heart" | "activity" | "sleep";
@@ -232,7 +232,7 @@ export function WearableMetricsPanel() {
               style={s.connectBtn}
               onPress={() => router.push("/wearable-sync" as any)}
             >
-              <MaterialIcons name="speed" size={18} color="#F59E0B" />
+              <MaterialIcons name="speed" size={18} color={UI.gold} />
               <View style={{ flex: 1 }}>
                 <Text style={s.connectBtnText}>WHOOP</Text>
                 <Text style={{ color: C.muted, fontSize: 10, marginTop: 1 }}>WHOOP 4.0, recovery & strain</Text>

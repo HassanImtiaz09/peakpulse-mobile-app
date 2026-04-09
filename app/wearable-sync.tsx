@@ -48,6 +48,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useWearable } from "@/lib/wearable-context";
 import { FeatureGate } from "@/components/feature-gate";
 import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
+import { UI } from "@/constants/ui-colors";
 
 const DASHBOARD_BG =
   "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/PZcnawJwIZkQHTEM.jpg";
@@ -69,7 +70,7 @@ const THIRD_PARTY_WEARABLES = [
     id: "garmin",
     name: "Garmin Connect",
     icon: "explore" as const,
-    color: "#FDE68A",
+    color: UI.gold3,
     platform: "both",
     description: "Syncs via Apple Health (iOS) or Health Connect (Android).",
     deepLink: "garmin-connect://",
@@ -80,7 +81,7 @@ const THIRD_PARTY_WEARABLES = [
     id: "whoop",
     name: "WHOOP",
     icon: "fitness-center" as const,
-    color: "#F59E0B",
+    color: UI.gold,
     platform: "both",
     description: "Syncs recovery, strain, and HRV via Apple Health or Health Connect.",
     deepLink: "whoop://",
@@ -91,7 +92,7 @@ const THIRD_PARTY_WEARABLES = [
     id: "samsung_health",
     name: "Samsung Health",
     icon: "phone-android" as const,
-    color: "#FBBF24",
+    color: UI.gold2,
     platform: "android",
     description: "Syncs via Health Connect on Android.",
     deepLink: "shealth://",
@@ -102,7 +103,7 @@ const THIRD_PARTY_WEARABLES = [
     id: "oura",
     name: "Oura Ring",
     icon: "radio-button-checked" as const,
-    color: "#A78BFA",
+    color: UI.purple,
     platform: "both",
     description: "Syncs sleep, readiness, and activity via Apple Health or Health Connect.",
     deepLink: "oura://",
@@ -279,7 +280,7 @@ export default function WearableSyncScreen() {
       feature="wearable_sync"
       message="Sync your fitness wearable (Apple Watch, Fitbit, Garmin) with PeakPulse. Available on Basic plan and above."
     >
-      <View style={{ flex: 1, backgroundColor: "#0A0E14" }}>
+      <View style={{ flex: 1, backgroundColor: UI.bg }}>
         {/* Hero */}
         <ImageBackground
           source={{ uri: DASHBOARD_BG }}
@@ -308,11 +309,11 @@ export default function WearableSyncScreen() {
                 justifyContent: "center",
               }}
               onPress={() => router.back()} {...a11yButton(A11Y_LABELS.backButton)}>
-              <Text style={{ color: "#F1F5F9", fontSize: 18 }}>←</Text>
+              <Text style={{ color: UI.fg, fontSize: 18 }}>←</Text>
             </TouchableOpacity>
             <Text
               style={{
-                color: "#FBBF24",
+                color: UI.gold2,
                 fontFamily: "DMSans_700Bold",
                 fontSize: 12,
                 letterSpacing: 1,
@@ -322,7 +323,7 @@ export default function WearableSyncScreen() {
             </Text>
             <Text
               style={{
-                color: "#F1F5F9",
+                color: UI.fg,
                 fontFamily: "BebasNeue_400Regular",
                 fontSize: 26,
                 letterSpacing: -0.5,
@@ -345,7 +346,7 @@ export default function WearableSyncScreen() {
           {isSimulated && (
             <View
               style={{
-                backgroundColor: "rgba(245,158,11,0.12)",
+                backgroundColor: UI.goldAlpha12,
                 borderRadius: 12,
                 padding: 14,
                 marginBottom: 16,
@@ -356,11 +357,11 @@ export default function WearableSyncScreen() {
                 alignItems: "flex-start",
               }}
             >
-              <MaterialIcons name="warning" size={20} color="#F59E0B" />
+              <MaterialIcons name="warning" size={20} color={UI.gold} />
               <View style={{ flex: 1 }}>
                 <Text
                   style={{
-                    color: "#FDE68A",
+                    color: UI.gold3,
                     fontFamily: "DMSans_700Bold",
                     fontSize: 13,
                     marginBottom: 3,
@@ -370,7 +371,7 @@ export default function WearableSyncScreen() {
                 </Text>
                 <Text
                   style={{
-                    color: "#B45309",
+                    color: UI.secondaryLight,
                     fontFamily: "DMSans_400Regular",
                     fontSize: 12,
                     lineHeight: 17,
@@ -389,14 +390,14 @@ export default function WearableSyncScreen() {
           ═══════════════════════════════════════════════════════════════ */}
           <View
             style={{
-              backgroundColor: "#141A22",
+              backgroundColor: UI.surface,
               borderRadius: 20,
               padding: 20,
               marginBottom: 16,
               borderWidth: 1.5,
               borderColor: isHealthConnected
                 ? "rgba(34,197,94,0.30)"
-                : "rgba(245,158,11,0.20)",
+                : UI.goldAlpha20,
             }}
           >
             {/* Header */}
@@ -415,19 +416,19 @@ export default function WearableSyncScreen() {
                   borderRadius: 16,
                   backgroundColor: isHealthConnected
                     ? "rgba(34,197,94,0.15)"
-                    : "rgba(245,158,11,0.15)",
+                    : UI.borderGold,
                   alignItems: "center",
                   justifyContent: "center",
                   borderWidth: 1,
                   borderColor: isHealthConnected
                     ? "rgba(34,197,94,0.30)"
-                    : "rgba(245,158,11,0.30)",
+                    : UI.goldAlpha30,
                 }}
               >
                 <MaterialIcons
                   name={Platform.OS === "ios" ? "favorite" : "health-and-safety"}
                   size={28}
-                  color={isHealthConnected ? "#22C55E" : "#F59E0B"}
+                  color={isHealthConnected ? UI.green : UI.gold}
                 />
               </View>
               <View style={{ flex: 1 }}>
@@ -441,7 +442,7 @@ export default function WearableSyncScreen() {
                 >
                   <Text
                     style={{
-                      color: "#F1F5F9",
+                      color: UI.fg,
                       fontFamily: "DMSans_700Bold",
                       fontSize: 17,
                     }}
@@ -463,7 +464,7 @@ export default function WearableSyncScreen() {
                     >
                       <Text
                         style={{
-                          color: "#22C55E",
+                          color: UI.green,
                           fontSize: 10,
                           fontFamily: "DMSans_700Bold",
                         }}
@@ -473,7 +474,7 @@ export default function WearableSyncScreen() {
                     </View>
                   )}
                 </View>
-                <Text style={{ color: "#B45309", fontSize: 12, lineHeight: 16 }}>
+                <Text style={{ color: UI.secondaryLight, fontSize: 12, lineHeight: 16 }}>
                   {nativeAvailable
                     ? `Reads steps, heart rate, calories, sleep, HRV, SpO2, and distance from ${healthSourceName}.`
                     : "Native health platform not available on web. Connect a native device to sync real data."}
@@ -492,19 +493,19 @@ export default function WearableSyncScreen() {
                     style={{
                       backgroundColor: isHealthConnected
                         ? "rgba(34,197,94,0.08)"
-                        : "rgba(245,158,11,0.08)",
+                        : UI.dim,
                       borderRadius: 8,
                       paddingHorizontal: 10,
                       paddingVertical: 4,
                       borderWidth: 1,
                       borderColor: isHealthConnected
                         ? "rgba(34,197,94,0.20)"
-                        : "rgba(245,158,11,0.15)",
+                        : UI.borderGold,
                     }}
                   >
                     <Text
                       style={{
-                        color: isHealthConnected ? "#22C55E" : "#B45309",
+                        color: isHealthConnected ? UI.green : UI.secondaryLight,
                         fontSize: 11,
                         fontFamily: "DMSans_600SemiBold",
                       }}
@@ -520,7 +521,7 @@ export default function WearableSyncScreen() {
             {!isHealthConnected && nativeAvailable && (
               <View
                 style={{
-                  backgroundColor: "#0A0E14",
+                  backgroundColor: UI.bg,
                   borderRadius: 12,
                   padding: 12,
                   marginBottom: 14,
@@ -528,7 +529,7 @@ export default function WearableSyncScreen() {
               >
                 <Text
                   style={{
-                    color: "#B45309",
+                    color: UI.secondaryLight,
                     fontSize: 11,
                     fontFamily: "DMSans_700Bold",
                     letterSpacing: 1,
@@ -552,7 +553,7 @@ export default function WearableSyncScreen() {
                   <TouchableOpacity
                     style={{
                       flex: 2,
-                      backgroundColor: "#22C55E",
+                      backgroundColor: UI.green,
                       borderRadius: 14,
                       paddingVertical: 14,
                       alignItems: "center",
@@ -565,13 +566,13 @@ export default function WearableSyncScreen() {
                     disabled={syncing}
                   >
                     {syncing ? (
-                      <ActivityIndicator color="#F1F5F9" size="small" />
+                      <ActivityIndicator color={UI.fg} size="small" />
                     ) : (
-                      <MaterialIcons name="sync" size={18} color="#F1F5F9" />
+                      <MaterialIcons name="sync" size={18} color={UI.fg} />
                     )}
                     <Text
                       style={{
-                        color: "#F1F5F9",
+                        color: UI.fg,
                         fontFamily: "DMSans_700Bold",
                         fontSize: 14,
                       }}
@@ -582,12 +583,12 @@ export default function WearableSyncScreen() {
                   <TouchableOpacity
                     style={{
                       flex: 1,
-                      backgroundColor: "rgba(245,158,11,0.10)",
+                      backgroundColor: UI.goldAlpha10,
                       borderRadius: 14,
                       paddingVertical: 14,
                       alignItems: "center",
                       borderWidth: 1,
-                      borderColor: "rgba(245,158,11,0.20)",
+                      borderColor: UI.goldAlpha20,
                     }}
                     onPress={() => {
                       if (Platform.OS === "ios") {
@@ -601,7 +602,7 @@ export default function WearableSyncScreen() {
                   >
                     <Text
                       style={{
-                        color: "#F59E0B",
+                        color: UI.gold,
                         fontFamily: "DMSans_700Bold",
                         fontSize: 13,
                       }}
@@ -613,7 +614,7 @@ export default function WearableSyncScreen() {
               ) : (
                 <TouchableOpacity
                   style={{
-                    backgroundColor: "#F59E0B",
+                    backgroundColor: UI.gold,
                     borderRadius: 14,
                     paddingVertical: 16,
                     alignItems: "center",
@@ -621,7 +622,7 @@ export default function WearableSyncScreen() {
                     justifyContent: "center",
                     gap: 8,
                     opacity: requestingPermission ? 0.7 : 1,
-                    shadowColor: "#F59E0B",
+                    shadowColor: UI.gold,
                     shadowOffset: { width: 0, height: 4 },
                     shadowOpacity: 0.4,
                     shadowRadius: 8,
@@ -630,13 +631,13 @@ export default function WearableSyncScreen() {
                   disabled={requestingPermission}
                 >
                   {requestingPermission ? (
-                    <ActivityIndicator color="#F1F5F9" size="small" />
+                    <ActivityIndicator color={UI.fg} size="small" />
                   ) : (
-                    <MaterialIcons name="link" size={20} color="#F1F5F9" />
+                    <MaterialIcons name="link" size={20} color={UI.fg} />
                   )}
                   <Text
                     style={{
-                      color: "#F1F5F9",
+                      color: UI.fg,
                       fontFamily: "DMSans_700Bold",
                       fontSize: 15,
                     }}
@@ -650,13 +651,13 @@ export default function WearableSyncScreen() {
             ) : (
               <View
                 style={{
-                  backgroundColor: "rgba(245,158,11,0.08)",
+                  backgroundColor: UI.dim,
                   borderRadius: 12,
                   padding: 12,
                 }}
               >
                 <Text
-                  style={{ color: "#B45309", fontSize: 12, textAlign: "center" }}
+                  style={{ color: UI.secondaryLight, fontSize: 12, textAlign: "center" }}
                 >
                   Health platform integration requires a native device (iPhone or
                   Android). On web, data is simulated for preview purposes.
@@ -671,14 +672,14 @@ export default function WearableSyncScreen() {
           {hasWearableData && (
             <View
               style={{
-                backgroundColor: "#141A22",
+                backgroundColor: UI.surface,
                 borderRadius: 20,
                 padding: 18,
                 marginBottom: 16,
                 borderWidth: 1.5,
                 borderColor: isSimulated
-                  ? "rgba(245,158,11,0.35)"
-                  : "rgba(245,158,11,0.20)",
+                  ? UI.borderGold4
+                  : UI.goldAlpha20,
               }}
             >
               <View
@@ -689,10 +690,10 @@ export default function WearableSyncScreen() {
                   marginBottom: 4,
                 }}
               >
-                <MaterialIcons name="watch" size={18} color="#F59E0B" />
+                <MaterialIcons name="watch" size={18} color={UI.gold} />
                 <Text
                   style={{
-                    color: "#FDE68A",
+                    color: UI.gold3,
                     fontFamily: "DMSans_700Bold",
                     fontSize: 14,
                   }}
@@ -704,20 +705,20 @@ export default function WearableSyncScreen() {
                 <View
                   style={{
                     backgroundColor: isSimulated
-                      ? "rgba(245,158,11,0.20)"
+                      ? UI.goldAlpha20
                       : "rgba(34,197,94,0.10)",
                     borderRadius: 6,
                     paddingHorizontal: 8,
                     paddingVertical: 2,
                     borderWidth: isSimulated ? 1 : 0,
                     borderColor: isSimulated
-                      ? "rgba(245,158,11,0.50)"
+                      ? UI.goldAlpha50
                       : "transparent",
                   }}
                 >
                   <Text
                     style={{
-                      color: isSimulated ? "#F59E0B" : "#22C55E",
+                      color: isSimulated ? UI.gold : UI.green,
                       fontSize: 9,
                       fontFamily: "DMSans_700Bold",
                     }}
@@ -729,7 +730,7 @@ export default function WearableSyncScreen() {
               {stats.lastSyncedAt && (
                 <Text
                   style={{
-                    color: "#B45309",
+                    color: UI.secondaryLight,
                     fontFamily: "DMSans_400Regular",
                     fontSize: 10,
                     marginBottom: 12,
@@ -740,17 +741,17 @@ export default function WearableSyncScreen() {
               )}
               <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
                 {[
-                  { label: "Steps", value: stats.steps.toLocaleString(), icon: "directions-walk" as const, color: "#22C55E" },
-                  { label: "Heart Rate", value: `${stats.heartRate} bpm`, icon: "favorite" as const, color: "#EF4444" },
-                  { label: "Calories Burnt", value: `${stats.totalCaloriesBurnt}`, icon: "local-fire-department" as const, color: "#F59E0B" },
-                  { label: "Active Cal", value: `${stats.activeCalories}`, icon: "flash-on" as const, color: "#FB923C" },
+                  { label: "Steps", value: stats.steps.toLocaleString(), icon: "directions-walk" as const, color: UI.green },
+                  { label: "Heart Rate", value: `${stats.heartRate} bpm`, icon: "favorite" as const, color: UI.red },
+                  { label: "Calories Burnt", value: `${stats.totalCaloriesBurnt}`, icon: "local-fire-department" as const, color: UI.gold },
+                  { label: "Active Cal", value: `${stats.activeCalories}`, icon: "flash-on" as const, color: UI.macroFat },
                   { label: "Sleep", value: `${stats.sleepHours}h`, icon: "bedtime" as const, color: "#8B5CF6" },
-                  { label: "Sleep Quality", value: stats.sleepQuality, icon: "star" as const, color: "#A78BFA" },
+                  { label: "Sleep Quality", value: stats.sleepQuality, icon: "star" as const, color: UI.purple },
                   { label: "Distance", value: `${stats.distance} km`, icon: "straighten" as const, color: "#3B82F6" },
-                  { label: "Active Min", value: `${stats.activeMinutes}`, icon: "timer" as const, color: "#14B8A6" },
-                  ...(stats.standHours > 0 ? [{ label: "Stand Hours", value: `${stats.standHours}/12`, icon: "accessibility" as const, color: "#FBBF24" }] : []),
-                  ...(stats.vo2Max ? [{ label: "VO2 Max", value: `${stats.vo2Max} ml/kg/min`, icon: "air" as const, color: "#60A5FA" }] : []),
-                  ...(stats.hrv ? [{ label: "HRV", value: `${stats.hrv} ms`, icon: "monitor-heart" as const, color: "#F472B6" }] : []),
+                  { label: "Active Min", value: `${stats.activeMinutes}`, icon: "timer" as const, color: UI.teal },
+                  ...(stats.standHours > 0 ? [{ label: "Stand Hours", value: `${stats.standHours}/12`, icon: "accessibility" as const, color: UI.gold2 }] : []),
+                  ...(stats.vo2Max ? [{ label: "VO2 Max", value: `${stats.vo2Max} ml/kg/min`, icon: "air" as const, color: UI.blue }] : []),
+                  ...(stats.hrv ? [{ label: "HRV", value: `${stats.hrv} ms`, icon: "monitor-heart" as const, color: UI.rose }] : []),
                   ...(stats.bloodOxygen ? [{ label: "SpO2", value: `${stats.bloodOxygen}%`, icon: "water-drop" as const, color: "#06B6D4" }] : []),
                   ...(stats.restingHeartRate ? [{ label: "Resting HR", value: `${stats.restingHeartRate} bpm`, icon: "favorite-border" as const, color: "#FB7185" }] : []),
                 ].map((item) => (
@@ -780,7 +781,7 @@ export default function WearableSyncScreen() {
                     </Text>
                     <Text
                       style={{
-                        color: "#B45309",
+                        color: UI.secondaryLight,
                         fontFamily: "DMSans_400Regular",
                         fontSize: 9,
                         textAlign: "center",
@@ -829,7 +830,7 @@ export default function WearableSyncScreen() {
                 <View style={{ alignItems: "center" }}>
                   <Text
                     style={{
-                      color: "#22C55E",
+                      color: UI.green,
                       fontFamily: "DMSans_700Bold",
                       fontSize: 18,
                     }}
@@ -838,7 +839,7 @@ export default function WearableSyncScreen() {
                   </Text>
                   <Text
                     style={{
-                      color: "#B45309",
+                      color: UI.secondaryLight,
                       fontFamily: "DMSans_400Regular",
                       fontSize: 10,
                     }}
@@ -849,7 +850,7 @@ export default function WearableSyncScreen() {
                 <View style={{ alignItems: "center" }}>
                   <Text
                     style={{
-                      color: "#F59E0B",
+                      color: UI.gold,
                       fontFamily: "DMSans_700Bold",
                       fontSize: 18,
                     }}
@@ -858,7 +859,7 @@ export default function WearableSyncScreen() {
                   </Text>
                   <Text
                     style={{
-                      color: "#B45309",
+                      color: UI.secondaryLight,
                       fontFamily: "DMSans_400Regular",
                       fontSize: 10,
                     }}
@@ -878,7 +879,7 @@ export default function WearableSyncScreen() {
                   </Text>
                   <Text
                     style={{
-                      color: "#B45309",
+                      color: UI.secondaryLight,
                       fontFamily: "DMSans_400Regular",
                       fontSize: 10,
                     }}
@@ -889,7 +890,7 @@ export default function WearableSyncScreen() {
                 <View style={{ alignItems: "center" }}>
                   <Text
                     style={{
-                      color: "#EF4444",
+                      color: UI.red,
                       fontFamily: "DMSans_700Bold",
                       fontSize: 18,
                     }}
@@ -898,7 +899,7 @@ export default function WearableSyncScreen() {
                   </Text>
                   <Text
                     style={{
-                      color: "#B45309",
+                      color: UI.secondaryLight,
                       fontFamily: "DMSans_400Regular",
                       fontSize: 10,
                     }}
@@ -914,7 +915,7 @@ export default function WearableSyncScreen() {
           <TouchableOpacity
             onPress={() => router.push("/health-trends" as any)}
             style={{
-              backgroundColor: "#141A22",
+              backgroundColor: UI.surface,
               borderRadius: 16,
               padding: 16,
               marginBottom: 16,
@@ -942,7 +943,7 @@ export default function WearableSyncScreen() {
             <View style={{ flex: 1 }}>
               <Text
                 style={{
-                  color: "#F1F5F9",
+                  color: UI.fg,
                   fontFamily: "DMSans_700Bold",
                   fontSize: 15,
                 }}
@@ -951,7 +952,7 @@ export default function WearableSyncScreen() {
               </Text>
               <Text
                 style={{
-                  color: "#B45309",
+                  color: UI.secondaryLight,
                   fontFamily: "DMSans_400Regular",
                   fontSize: 11,
                 }}
@@ -978,13 +979,13 @@ export default function WearableSyncScreen() {
                 style={{
                   width: 3,
                   height: 16,
-                  backgroundColor: "#F59E0B",
+                  backgroundColor: UI.gold,
                   borderRadius: 2,
                 }}
               />
               <Text
                 style={{
-                  color: "#F1F5F9",
+                  color: UI.fg,
                   fontFamily: "DMSans_700Bold",
                   fontSize: 15,
                 }}
@@ -994,7 +995,7 @@ export default function WearableSyncScreen() {
             </View>
             <Text
               style={{
-                color: "#B45309",
+                color: UI.secondaryLight,
                 fontSize: 12,
                 lineHeight: 18,
                 marginBottom: 12,
@@ -1015,7 +1016,7 @@ export default function WearableSyncScreen() {
               <View
                 key={wearable.id}
                 style={{
-                  backgroundColor: "#141A22",
+                  backgroundColor: UI.surface,
                   borderRadius: 20,
                   marginBottom: 12,
                   borderWidth: 1,
@@ -1023,7 +1024,7 @@ export default function WearableSyncScreen() {
                     ? wearable.color + "50"
                     : isExpanded
                     ? wearable.color + "30"
-                    : "rgba(245,158,11,0.10)",
+                    : UI.goldAlpha10,
                   overflow: "hidden",
                 }}
               >
@@ -1066,7 +1067,7 @@ export default function WearableSyncScreen() {
                     >
                       <Text
                         style={{
-                          color: "#F1F5F9",
+                          color: UI.fg,
                           fontFamily: "DMSans_700Bold",
                           fontSize: 14,
                         }}
@@ -1076,7 +1077,7 @@ export default function WearableSyncScreen() {
                       {isLinked && (
                         <View
                           style={{
-                            backgroundColor: "rgba(245,158,11,0.10)",
+                            backgroundColor: UI.goldAlpha10,
                             borderRadius: 6,
                             paddingHorizontal: 6,
                             paddingVertical: 2,
@@ -1084,7 +1085,7 @@ export default function WearableSyncScreen() {
                         >
                           <Text
                             style={{
-                              color: "#FDE68A",
+                              color: UI.gold3,
                               fontSize: 10,
                               fontFamily: "DMSans_700Bold",
                             }}
@@ -1095,7 +1096,7 @@ export default function WearableSyncScreen() {
                       )}
                     </View>
                     <Text
-                      style={{ color: "#B45309", fontSize: 11, lineHeight: 15 }}
+                      style={{ color: UI.secondaryLight, fontSize: 11, lineHeight: 15 }}
                     >
                       {wearable.description}
                     </Text>
@@ -1103,7 +1104,7 @@ export default function WearableSyncScreen() {
                   <MaterialIcons
                     name={isExpanded ? "expand-less" : "expand-more"}
                     size={20}
-                    color="#B45309"
+                    color={UI.secondaryLight}
                   />
                 </TouchableOpacity>
 
@@ -1156,17 +1157,17 @@ export default function WearableSyncScreen() {
                           disabled={isOpening}
                         >
                           {isOpening ? (
-                            <ActivityIndicator color="#F1F5F9" size="small" />
+                            <ActivityIndicator color={UI.fg} size="small" />
                           ) : (
                             <MaterialIcons
                               name="open-in-new"
                               size={16}
-                              color="#F1F5F9"
+                              color={UI.fg}
                             />
                           )}
                           <Text
                             style={{
-                              color: "#F1F5F9",
+                              color: UI.fg,
                               fontFamily: "DMSans_700Bold",
                               fontSize: 13,
                             }}
@@ -1188,7 +1189,7 @@ export default function WearableSyncScreen() {
                         >
                           <Text
                             style={{
-                              color: "#B45309",
+                              color: UI.secondaryLight,
                               fontFamily: "DMSans_700Bold",
                               fontSize: 12,
                             }}
@@ -1213,17 +1214,17 @@ export default function WearableSyncScreen() {
                         disabled={isOpening}
                       >
                         {isOpening ? (
-                          <ActivityIndicator color="#F1F5F9" size="small" />
+                          <ActivityIndicator color={UI.fg} size="small" />
                         ) : (
                           <MaterialIcons
                             name="open-in-new"
                             size={16}
-                            color="#F1F5F9"
+                            color={UI.fg}
                           />
                         )}
                         <Text
                           style={{
-                            color: "#F1F5F9",
+                            color: UI.fg,
                             fontFamily: "DMSans_700Bold",
                             fontSize: 13,
                           }}
@@ -1241,12 +1242,12 @@ export default function WearableSyncScreen() {
           {/* Manual Entry Note */}
           <View
             style={{
-              backgroundColor: "#141A22",
+              backgroundColor: UI.surface,
               borderRadius: 16,
               padding: 16,
               marginTop: 8,
               borderWidth: 1,
-              borderColor: "rgba(245,158,11,0.10)",
+              borderColor: UI.goldAlpha10,
             }}
           >
             <View
@@ -1257,10 +1258,10 @@ export default function WearableSyncScreen() {
                 marginBottom: 8,
               }}
             >
-              <MaterialIcons name="edit" size={18} color="#F59E0B" />
+              <MaterialIcons name="edit" size={18} color={UI.gold} />
               <Text
                 style={{
-                  color: "#F1F5F9",
+                  color: UI.fg,
                   fontFamily: "DMSans_700Bold",
                   fontSize: 14,
                 }}
@@ -1270,7 +1271,7 @@ export default function WearableSyncScreen() {
             </View>
             <Text
               style={{
-                color: "#B45309",
+                color: UI.secondaryLight,
                 fontSize: 13,
                 lineHeight: 20,
                 marginBottom: 12,
@@ -1281,7 +1282,7 @@ export default function WearableSyncScreen() {
             </Text>
             <TouchableOpacity
               style={{
-                backgroundColor: "rgba(245,158,11,0.10)",
+                backgroundColor: UI.goldAlpha10,
                 borderRadius: 12,
                 paddingVertical: 12,
                 alignItems: "center",
@@ -1289,7 +1290,7 @@ export default function WearableSyncScreen() {
               onPress={() => router.back()} {...a11yButton(A11Y_LABELS.backButton)}>
               <Text
                 style={{
-                  color: "#F59E0B",
+                  color: UI.gold,
                   fontFamily: "DMSans_600SemiBold",
                   fontSize: 14,
                 }}

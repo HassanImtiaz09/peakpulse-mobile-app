@@ -8,6 +8,7 @@
 import * as Notifications from "expo-notifications";
 import { Platform } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { UI } from "@/constants/ui-colors";
 
 const PUSH_TOKEN_KEY = "@peakpulse_push_token";
 const PUSH_ENABLED_KEY = "@peakpulse_push_notifications";
@@ -37,7 +38,7 @@ export async function requestNotificationPermissions(): Promise<boolean> {
       name: "PeakPulse Reminders",
       importance: Notifications.AndroidImportance.HIGH,
       vibrationPattern: [0, 250, 250, 250],
-      lightColor: "#F59E0B",
+      lightColor: UI.gold,
       sound: "default",
     });
 

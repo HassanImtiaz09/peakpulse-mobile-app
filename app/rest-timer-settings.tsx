@@ -13,7 +13,7 @@ import {
   saveRestTimerSettings,
 } from "@/lib/rest-timer-settings";
 import { GOLDEN_WORKOUT, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgrounds";
-import { UI as SF } from "@/constants/ui-colors";
+import { UI, SF } from "@/constants/ui-colors";
 import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
 
 interface TimerConfig {
@@ -140,7 +140,7 @@ export default function RestTimerSettingsScreen() {
         {/* Info card */}
         <View style={{
           marginHorizontal: 20, marginBottom: 16,
-          backgroundColor: "rgba(245,158,11,0.06)", borderRadius: 16,
+          backgroundColor: UI.goldAlpha6, borderRadius: 16,
           padding: 14, borderWidth: 1, borderColor: SF.border,
         }}>
           <Text style={{ color: SF.gold3, fontSize: 12, lineHeight: 18 }}>
@@ -227,7 +227,7 @@ export default function RestTimerSettingsScreen() {
         {/* Tip */}
         <View style={{
           marginHorizontal: 20, marginTop: 8,
-          backgroundColor: "rgba(245,158,11,0.06)", borderRadius: 16,
+          backgroundColor: UI.goldAlpha6, borderRadius: 16,
           padding: 14, borderWidth: 1, borderColor: SF.border,
         }}>
           <Text style={{ color: SF.gold3, fontSize: 12, lineHeight: 18 }}>

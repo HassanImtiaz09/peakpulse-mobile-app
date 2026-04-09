@@ -16,7 +16,7 @@ import {
 import { requestNotificationPermissions } from "@/lib/notifications";
 
 import { GOLDEN_PRIMARY, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgrounds";
-import { UI as SF } from "@/constants/ui-colors";
+import { UI, SF } from "@/constants/ui-colors";
 import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
 // ── Time Picker Modal ──
 
@@ -101,21 +101,21 @@ function TimePickerModal({ visible, title, hour, minute, onConfirm, onCancel }: 
 
 const tpStyles = StyleSheet.create({
   overlay: { flex: 1, backgroundColor: "rgba(0,0,0,0.7)", justifyContent: "center", padding: 24 },
-  card: { backgroundColor: "#1A0F00", borderRadius: 20, padding: 24, borderWidth: 1, borderColor: "rgba(245,158,11,0.20)" },
-  title: { color: "#F1F5F9", fontFamily: "DMSans_700Bold", fontSize: 18, textAlign: "center" },
-  preview: { color: "#F59E0B", fontFamily: "BebasNeue_400Regular", fontSize: 32, textAlign: "center", marginTop: 8, marginBottom: 16 },
-  label: { color: "#FBBF24", fontFamily: "DMSans_600SemiBold", fontSize: 12, textTransform: "uppercase", letterSpacing: 1, marginBottom: 8, marginTop: 4 },
+  card: { backgroundColor: "#1A0F00", borderRadius: 20, padding: 24, borderWidth: 1, borderColor: UI.goldAlpha20 },
+  title: { color: UI.fg, fontFamily: "DMSans_700Bold", fontSize: 18, textAlign: "center" },
+  preview: { color: UI.gold, fontFamily: "BebasNeue_400Regular", fontSize: 32, textAlign: "center", marginTop: 8, marginBottom: 16 },
+  label: { color: UI.gold2, fontFamily: "DMSans_600SemiBold", fontSize: 12, textTransform: "uppercase", letterSpacing: 1, marginBottom: 8, marginTop: 4 },
   scroll: { maxHeight: 44, marginBottom: 12 },
   scrollContent: { gap: 6, paddingRight: 8 },
-  chip: { height: 36, minWidth: 44, borderRadius: 18, backgroundColor: "rgba(245,158,11,0.08)", alignItems: "center", justifyContent: "center", paddingHorizontal: 12, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" },
-  chipActive: { backgroundColor: "#F59E0B", borderColor: "#F59E0B" },
-  chipText: { color: "#B45309", fontFamily: "DMSans_600SemiBold", fontSize: 14 },
-  chipTextActive: { color: "#0A0E14" },
+  chip: { height: 36, minWidth: 44, borderRadius: 18, backgroundColor: UI.dim, alignItems: "center", justifyContent: "center", paddingHorizontal: 12, borderWidth: 1, borderColor: UI.goldAlpha10 },
+  chipActive: { backgroundColor: UI.gold, borderColor: UI.gold },
+  chipText: { color: UI.secondaryLight, fontFamily: "DMSans_600SemiBold", fontSize: 14 },
+  chipTextActive: { color: UI.bg },
   actions: { flexDirection: "row", gap: 12, marginTop: 8 },
-  cancelBtn: { flex: 1, alignItems: "center", paddingVertical: 14, borderRadius: 14, backgroundColor: "rgba(245,158,11,0.06)", borderWidth: 1, borderColor: "rgba(245,158,11,0.12)" },
-  cancelText: { color: "#B45309", fontFamily: "DMSans_600SemiBold", fontSize: 15 },
-  confirmBtn: { flex: 1, alignItems: "center", paddingVertical: 14, borderRadius: 14, backgroundColor: "#F59E0B" },
-  confirmText: { color: "#0A0E14", fontFamily: "DMSans_700Bold", fontSize: 15 },
+  cancelBtn: { flex: 1, alignItems: "center", paddingVertical: 14, borderRadius: 14, backgroundColor: UI.goldAlpha6, borderWidth: 1, borderColor: UI.goldAlpha12 },
+  cancelText: { color: UI.secondaryLight, fontFamily: "DMSans_600SemiBold", fontSize: 15 },
+  confirmBtn: { flex: 1, alignItems: "center", paddingVertical: 14, borderRadius: 14, backgroundColor: UI.gold },
+  confirmText: { color: UI.bg, fontFamily: "DMSans_700Bold", fontSize: 15 },
 });
 
 // ── Toggle Row with optional time picker ──
@@ -155,9 +155,9 @@ function ToggleRow({ icon, iconColor, label, desc, value, onToggle, timeLabel, o
       <Switch
         value={value}
         onValueChange={onToggle}
-        trackColor={{ false: "rgba(245,158,11,0.10)", true: SF.gold + "60" }}
+        trackColor={{ false: UI.goldAlpha10, true: SF.gold + "60" }}
         thumbColor={value ? SF.gold : "#555"}
-        ios_backgroundColor="rgba(245,158,11,0.10)"
+        ios_backgroundColor={UI.goldAlpha10}
       />
     </View>
   );
@@ -314,7 +314,7 @@ export default function NotificationSettingsScreen() {
           <View style={styles.divider} />
           <ToggleRow
             icon="lunch-dining"
-            iconColor="#F97316"
+            iconColor={UI.orange2}
             label="Lunch"
             desc="Midday meal reminder"
             value={prefs.mealReminders}
@@ -325,7 +325,7 @@ export default function NotificationSettingsScreen() {
           <View style={styles.divider} />
           <ToggleRow
             icon="dinner-dining"
-            iconColor="#EF4444"
+            iconColor={UI.red}
             label="Dinner"
             desc="Evening meal reminder"
             value={prefs.mealReminders}
@@ -336,7 +336,7 @@ export default function NotificationSettingsScreen() {
           <View style={styles.divider} />
           <ToggleRow
             icon="apple"
-            iconColor="#22C55E"
+            iconColor={UI.green}
             label="Snack"
             desc="Afternoon snack nudge"
             value={prefs.snackReminder}
@@ -350,7 +350,7 @@ export default function NotificationSettingsScreen() {
         <View style={styles.section}>
           <ToggleRow
             icon="fitness-center"
-            iconColor="#EF4444"
+            iconColor={UI.red}
             label="Workout Nudge"
             desc="Daily training reminder"
             value={prefs.workoutNudges}
@@ -365,7 +365,7 @@ export default function NotificationSettingsScreen() {
         <View style={styles.section}>
           <ToggleRow
             icon="wb-sunny"
-            iconColor="#FBBF24"
+            iconColor={UI.gold2}
             label="Morning Boost"
             desc="Start your day motivated"
             value={prefs.morningMotivation}
@@ -401,7 +401,7 @@ export default function NotificationSettingsScreen() {
           <View style={styles.divider} />
           <ToggleRow
             icon="bar-chart"
-            iconColor="#10B981"
+            iconColor={UI.emerald}
             label="Weekly Summary"
             desc="Sunday calorie & macro recap"
             value={(prefs as any).weeklySummary ?? true}
@@ -415,7 +415,7 @@ export default function NotificationSettingsScreen() {
         <View style={styles.section}>
           <ToggleRow
             icon="person-add"
-            iconColor="#22C55E"
+            iconColor={UI.green}
             label="Friend Joined"
             desc="When someone joins your circle"
             value={(prefs as any).socialFriendJoined ?? true}
@@ -424,7 +424,7 @@ export default function NotificationSettingsScreen() {
           <View style={styles.divider} />
           <ToggleRow
             icon="emoji-events"
-            iconColor="#F59E0B"
+            iconColor={UI.gold}
             label="Challenge Completed"
             desc="When a challenge finishes"
             value={(prefs as any).socialChallengeCompleted ?? true}
@@ -433,7 +433,7 @@ export default function NotificationSettingsScreen() {
           <View style={styles.divider} />
           <ToggleRow
             icon="sports-mma"
-            iconColor="#EF4444"
+            iconColor={UI.red}
             label="Challenge Invitation"
             desc="When a friend challenges you"
             value={(prefs as any).socialChallengeInvitation ?? true}
@@ -520,7 +520,7 @@ const styles = StyleSheet.create({
   },
   backBtn: {
     width: 40, height: 40, borderRadius: 20,
-    backgroundColor: "rgba(245,158,11,0.10)", alignItems: "center", justifyContent: "center",
+    backgroundColor: UI.goldAlpha10, alignItems: "center", justifyContent: "center",
   },
   headerTitle: { color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 20 },
   statusCard: {
@@ -543,9 +543,9 @@ const styles = StyleSheet.create({
   rowDesc: { color: SF.mutedBright, fontFamily: "DMSans_400Regular", fontSize: 12, marginTop: 1 },
   timePill: {
     flexDirection: "row", alignItems: "center", gap: 5, marginTop: 5,
-    backgroundColor: "rgba(245,158,11,0.08)", borderRadius: 10,
+    backgroundColor: UI.dim, borderRadius: 10,
     paddingHorizontal: 8, paddingVertical: 3, alignSelf: "flex-start",
-    borderWidth: 1, borderColor: "rgba(245,158,11,0.12)",
+    borderWidth: 1, borderColor: UI.goldAlpha12,
   },
   timeLabel: { color: SF.gold2, fontFamily: "DMSans_600SemiBold", fontSize: 12 },
   divider: { height: 1, backgroundColor: SF.border, marginHorizontal: 14 },
@@ -561,7 +561,7 @@ const styles = StyleSheet.create({
   },
   disableBtnText: { color: SF.red, fontFamily: "DMSans_600SemiBold", fontSize: 14 },
   infoCard: {
-    flexDirection: "row", gap: 8, backgroundColor: "rgba(245,158,11,0.04)",
+    flexDirection: "row", gap: 8, backgroundColor: UI.goldAlpha4,
     borderRadius: 12, padding: 12, marginTop: 16, borderWidth: 1, borderColor: SF.border,
   },
   infoText: { color: SF.mutedBright, fontFamily: "DMSans_400Regular", fontSize: 12, lineHeight: 18, flex: 1 },

@@ -25,6 +25,7 @@ import {
   shareMilestoneCard, type MilestoneCardData,
 } from "@/lib/social-card-generator";
 import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
+import { UI } from "@/constants/ui-colors";
 
 const DASHBOARD_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/PZcnawJwIZkQHTEM.jpg";
 const WORKOUT_HISTORY_KEY = "@workout_log_history";
@@ -83,8 +84,8 @@ function getHeatmapData(workoutHistory: any[]): { days: HeatmapDay[]; months: { 
 
 function getHeatmapColor(count: number): string {
   if (count === 0) return "rgba(255,255,255,0.04)";
-  if (count === 1) return "rgba(245,158,11,0.25)";
-  if (count === 2) return "rgba(245,158,11,0.50)";
+  if (count === 1) return UI.borderGold2;
+  if (count === 2) return UI.goldAlpha50;
   return "rgba(245,158,11,0.80)";
 }
 
@@ -116,7 +117,7 @@ function MilestoneCard({ tier, unlocked, unlockedAt, streakAtUnlock, streakData,
         <View style={{ flex: 1 }}>
           <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
             <Text style={{
-              color: unlocked ? tier.color : "#B45309",
+              color: unlocked ? tier.color : UI.secondaryLight,
               fontFamily: "DMSans_700Bold", fontSize: 16,
             }}>
               {tier.name}
@@ -126,7 +127,7 @@ function MilestoneCard({ tier, unlocked, unlockedAt, streakAtUnlock, streakData,
               paddingHorizontal: 6, paddingVertical: 2, borderRadius: 6,
             }}>
               <Text style={{
-                color: unlocked ? tier.color : "#B45309",
+                color: unlocked ? tier.color : UI.secondaryLight,
                 fontFamily: "DMSans_700Bold", fontSize: 10,
               }}>
                 {tier.badge}
@@ -137,7 +138,7 @@ function MilestoneCard({ tier, unlocked, unlockedAt, streakAtUnlock, streakData,
             )}
           </View>
           <Text style={{
-            color: unlocked ? "#F1F5F9" : "#B45309",
+            color: unlocked ? UI.fg : UI.secondaryLight,
             fontFamily: "DMSans_400Regular", fontSize: 12, marginTop: 2, lineHeight: 16,
             opacity: unlocked ? 0.8 : 0.5,
           }}>
@@ -145,7 +146,7 @@ function MilestoneCard({ tier, unlocked, unlockedAt, streakAtUnlock, streakData,
           </Text>
           {unlocked && unlockedAt && (
             <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginTop: 4 }}>
-              <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 10 }}>
+              <Text style={{ color: UI.secondaryLight, fontFamily: "DMSans_400Regular", fontSize: 10 }}>
                 Unlocked {new Date(unlockedAt).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
                 {streakAtUnlock ? ` at ${streakAtUnlock}-week streak` : ""}
               </Text>
@@ -162,7 +163,7 @@ function MilestoneCard({ tier, unlocked, unlockedAt, streakAtUnlock, streakData,
             </View>
           )}
           {!unlocked && (
-            <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 10, marginTop: 4, opacity: 0.5 }}>
+            <Text style={{ color: UI.secondaryLight, fontFamily: "DMSans_400Regular", fontSize: 10, marginTop: 4, opacity: 0.5 }}>
               Requires {tier.weeksRequired} consecutive week{tier.weeksRequired !== 1 ? "s" : ""}
             </Text>
           )}
@@ -182,11 +183,11 @@ function WeekHistoryRow({ week }: { week: WeekResult }) {
   return (
     <View style={{
       flexDirection: "row", alignItems: "center", paddingVertical: 10,
-      borderBottomWidth: 1, borderBottomColor: "rgba(245,158,11,0.06)",
+      borderBottomWidth: 1, borderBottomColor: UI.goldAlpha6,
     }}>
       <View style={{ flex: 1 }}>
         <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
-          <Text style={{ color: "#F1F5F9", fontFamily: "DMSans_600SemiBold", fontSize: 12 }}>
+          <Text style={{ color: UI.fg, fontFamily: "DMSans_600SemiBold", fontSize: 12 }}>
             {weekDate.toLocaleDateString("en-GB", { day: "numeric", month: "short" })} – {weekEnd.toLocaleDateString("en-GB", { day: "numeric", month: "short" })}
           </Text>
           {week.frozen && (
@@ -201,25 +202,25 @@ function WeekHistoryRow({ week }: { week: WeekResult }) {
           <MaterialIcons
             name={week.stepsHit ? "check-circle" : "cancel"}
             size={16}
-            color={week.stepsHit ? "#22C55E" : "#EF4444"}
+            color={week.stepsHit ? UI.green : UI.red}
           />
-          <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 8, marginTop: 1 }}>Steps</Text>
+          <Text style={{ color: UI.secondaryLight, fontFamily: "DMSans_400Regular", fontSize: 8, marginTop: 1 }}>Steps</Text>
         </View>
         <View style={{ alignItems: "center", width: 32 }}>
           <MaterialIcons
             name={week.caloriesHit ? "check-circle" : "cancel"}
             size={16}
-            color={week.caloriesHit ? "#22C55E" : "#EF4444"}
+            color={week.caloriesHit ? UI.green : UI.red}
           />
-          <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 8, marginTop: 1 }}>Cals</Text>
+          <Text style={{ color: UI.secondaryLight, fontFamily: "DMSans_400Regular", fontSize: 8, marginTop: 1 }}>Cals</Text>
         </View>
         <View style={{ alignItems: "center", width: 32 }}>
           <MaterialIcons
             name={week.workoutsHit ? "check-circle" : "cancel"}
             size={16}
-            color={week.workoutsHit ? "#22C55E" : "#EF4444"}
+            color={week.workoutsHit ? UI.green : UI.red}
           />
-          <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 8, marginTop: 1 }}>Gym</Text>
+          <Text style={{ color: UI.secondaryLight, fontFamily: "DMSans_400Regular", fontSize: 8, marginTop: 1 }}>Gym</Text>
         </View>
         <View style={{
           width: 28, height: 28, borderRadius: 14, alignItems: "center", justifyContent: "center",
@@ -254,12 +255,12 @@ function WorkoutHeatmap({ workoutHistory }: { workoutHistory: any[] }) {
     <View>
       <View style={{ flexDirection: "row", justifyContent: "space-between", marginBottom: 12 }}>
         <View>
-          <Text style={{ color: "#F1F5F9", fontFamily: "DMSans_700Bold", fontSize: 16 }}>Workout Heatmap</Text>
-          <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 11, marginTop: 2 }}>Past 3 months</Text>
+          <Text style={{ color: UI.fg, fontFamily: "DMSans_700Bold", fontSize: 16 }}>Workout Heatmap</Text>
+          <Text style={{ color: UI.secondaryLight, fontFamily: "DMSans_400Regular", fontSize: 11, marginTop: 2 }}>Past 3 months</Text>
         </View>
         <View style={{ alignItems: "flex-end" }}>
-          <Text style={{ color: "#F59E0B", fontFamily: "BebasNeue_400Regular", fontSize: 20 }}>{totalWorkouts}</Text>
-          <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 10 }}>workouts in {activeDays} days</Text>
+          <Text style={{ color: UI.gold, fontFamily: "BebasNeue_400Regular", fontSize: 20 }}>{totalWorkouts}</Text>
+          <Text style={{ color: UI.secondaryLight, fontFamily: "DMSans_400Regular", fontSize: 10 }}>workouts in {activeDays} days</Text>
         </View>
       </View>
 
@@ -271,7 +272,7 @@ function WorkoutHeatmap({ workoutHistory }: { workoutHistory: any[] }) {
               key={`month-${i}`}
               x={labelWidth + m.colStart * (cellSize + cellGap)}
               y={12}
-              fill="#B45309"
+              fill={UI.secondaryLight}
               fontSize={9}
               fontWeight="600"
             >
@@ -286,7 +287,7 @@ function WorkoutHeatmap({ workoutHistory }: { workoutHistory: any[] }) {
                 key={`day-${i}`}
                 x={0}
                 y={24 + i * (cellSize + cellGap) + cellSize - 2}
-                fill="#B45309"
+                fill={UI.secondaryLight}
                 fontSize={8}
                 fontWeight="500"
               >
@@ -318,7 +319,7 @@ function WorkoutHeatmap({ workoutHistory }: { workoutHistory: any[] }) {
 
       {/* Legend */}
       <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "flex-end", gap: 6, marginTop: 8 }}>
-        <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 9 }}>Less</Text>
+        <Text style={{ color: UI.secondaryLight, fontFamily: "DMSans_400Regular", fontSize: 9 }}>Less</Text>
         {[0, 1, 2, 3].map((level) => (
           <View
             key={level}
@@ -328,7 +329,7 @@ function WorkoutHeatmap({ workoutHistory }: { workoutHistory: any[] }) {
             }}
           />
         ))}
-        <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 9 }}>More</Text>
+        <Text style={{ color: UI.secondaryLight, fontFamily: "DMSans_400Regular", fontSize: 9 }}>More</Text>
       </View>
     </View>
   );
@@ -418,8 +419,8 @@ export default function StreakDetailsScreen() {
 
   if (!streakData) {
     return (
-      <View style={{ flex: 1, backgroundColor: "#0A0E14", alignItems: "center", justifyContent: "center" }}>
-        <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 14 }}>Loading...</Text>
+      <View style={{ flex: 1, backgroundColor: UI.bg, alignItems: "center", justifyContent: "center" }}>
+        <Text style={{ color: UI.secondaryLight, fontFamily: "DMSans_400Regular", fontSize: 14 }}>Loading...</Text>
       </View>
     );
   }
@@ -434,7 +435,7 @@ export default function StreakDetailsScreen() {
   const weekFrozen = isCurrentWeekFrozen(streakData.freezeData);
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#0A0E14" }}>
+    <View style={{ flex: 1, backgroundColor: UI.bg }}>
       {/* Hero Header */}
       <ImageBackground source={{ uri: DASHBOARD_BG }} style={{ height: 200 }} resizeMode="cover">
         <View style={{ flex: 1, backgroundColor: "rgba(8,8,16,0.75)", justifyContent: "flex-end", padding: 20, paddingTop: 52 }}>
@@ -444,10 +445,10 @@ export default function StreakDetailsScreen() {
               backgroundColor: "rgba(255,255,255,0.1)", alignItems: "center", justifyContent: "center",
             }}
             onPress={() => router.back()} {...a11yButton(A11Y_LABELS.backButton)}>
-            <Text style={{ color: "#F1F5F9", fontSize: 18 }}>←</Text>
+            <Text style={{ color: UI.fg, fontSize: 18 }}>←</Text>
           </TouchableOpacity>
-          <Text style={{ color: "#FBBF24", fontFamily: "DMSans_700Bold", fontSize: 12, letterSpacing: 1 }}>CONSISTENCY TRACKER</Text>
-          <Text style={{ color: "#F1F5F9", fontFamily: "BebasNeue_400Regular", fontSize: 28, letterSpacing: -0.5 }}>Goal Streaks</Text>
+          <Text style={{ color: UI.gold2, fontFamily: "DMSans_700Bold", fontSize: 12, letterSpacing: 1 }}>CONSISTENCY TRACKER</Text>
+          <Text style={{ color: UI.fg, fontFamily: "BebasNeue_400Regular", fontSize: 28, letterSpacing: -0.5 }}>Goal Streaks</Text>
         </View>
       </ImageBackground>
 
@@ -455,19 +456,19 @@ export default function StreakDetailsScreen() {
 
         {/* ── Current Streak Hero ── */}
         <View style={{
-          backgroundColor: streakData.currentStreak > 0 ? "rgba(245,158,11,0.06)" : "rgba(255,255,255,0.02)",
+          backgroundColor: streakData.currentStreak > 0 ? UI.goldAlpha6 : "rgba(255,255,255,0.02)",
           borderRadius: 24, padding: 24, alignItems: "center",
-          borderWidth: 1.5, borderColor: streakData.currentStreak > 0 ? "rgba(245,158,11,0.15)" : "rgba(255,255,255,0.05)",
+          borderWidth: 1.5, borderColor: streakData.currentStreak > 0 ? UI.borderGold : "rgba(255,255,255,0.05)",
         }}>
           <Text style={{ fontSize: 52 }}>{getStreakEmoji(streakData.currentStreak)}</Text>
           <Text style={{
-            color: streakData.currentStreak > 0 ? "#F59E0B" : "#B45309",
+            color: streakData.currentStreak > 0 ? UI.gold : UI.secondaryLight,
             fontFamily: "BebasNeue_400Regular", fontSize: 36, marginTop: 8,
           }}>
             {streakData.currentStreak}
           </Text>
           <Text style={{
-            color: streakData.currentStreak > 0 ? "#F1F5F9" : "#B45309",
+            color: streakData.currentStreak > 0 ? UI.fg : UI.secondaryLight,
             fontFamily: "DMSans_700Bold", fontSize: 16,
           }}>
             {getStreakLabel(streakData.currentStreak)}
@@ -483,7 +484,7 @@ export default function StreakDetailsScreen() {
             </View>
           )}
           <Text style={{
-            color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 12,
+            color: UI.secondaryLight, fontFamily: "DMSans_400Regular", fontSize: 12,
             textAlign: "center", marginTop: 10, lineHeight: 18,
           }}>
             {getStreakMotivation(streakData.currentStreak, false)}
@@ -493,14 +494,14 @@ export default function StreakDetailsScreen() {
           {nextMilestone && (
             <View style={{ width: "100%", marginTop: 16 }}>
               <View style={{ flexDirection: "row", justifyContent: "space-between", marginBottom: 6 }}>
-                <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 10 }}>
+                <Text style={{ color: UI.secondaryLight, fontFamily: "DMSans_400Regular", fontSize: 10 }}>
                   Next: {nextMilestone.emoji} {nextMilestone.name}
                 </Text>
-                <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 10 }}>
+                <Text style={{ color: UI.secondaryLight, fontFamily: "DMSans_400Regular", fontSize: 10 }}>
                   {weeksToNext} week{weeksToNext !== 1 ? "s" : ""} away
                 </Text>
               </View>
-              <View style={{ height: 6, backgroundColor: "rgba(245,158,11,0.1)", borderRadius: 3 }}>
+              <View style={{ height: 6, backgroundColor: UI.goldAlpha10, borderRadius: 3 }}>
                 <View style={{
                   height: 6, borderRadius: 3, backgroundColor: nextMilestone.color,
                   width: `${milestoneProgress}%`,
@@ -526,22 +527,22 @@ export default function StreakDetailsScreen() {
         {/* ── Stats Row ── */}
         <View style={{ flexDirection: "row", gap: 10, marginTop: 16 }}>
           <View style={{
-            flex: 1, backgroundColor: "rgba(245,158,11,0.06)", borderRadius: 16, padding: 14,
-            borderWidth: 1, borderColor: "rgba(245,158,11,0.1)", alignItems: "center",
+            flex: 1, backgroundColor: UI.goldAlpha6, borderRadius: 16, padding: 14,
+            borderWidth: 1, borderColor: UI.goldAlpha10, alignItems: "center",
           }}>
-            <Text style={{ color: "#F59E0B", fontFamily: "BebasNeue_400Regular", fontSize: 22 }}>
+            <Text style={{ color: UI.gold, fontFamily: "BebasNeue_400Regular", fontSize: 22 }}>
               {streakData.longestStreak}
             </Text>
-            <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 10, marginTop: 2 }}>Best Streak</Text>
+            <Text style={{ color: UI.secondaryLight, fontFamily: "DMSans_400Regular", fontSize: 10, marginTop: 2 }}>Best Streak</Text>
           </View>
           <View style={{
             flex: 1, backgroundColor: "rgba(34,197,94,0.06)", borderRadius: 16, padding: 14,
             borderWidth: 1, borderColor: "rgba(34,197,94,0.1)", alignItems: "center",
           }}>
-            <Text style={{ color: "#22C55E", fontFamily: "BebasNeue_400Regular", fontSize: 22 }}>
+            <Text style={{ color: UI.green, fontFamily: "BebasNeue_400Regular", fontSize: 22 }}>
               {streakData.totalWeeksCompleted}
             </Text>
-            <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 10, marginTop: 2 }}>Weeks Completed</Text>
+            <Text style={{ color: UI.secondaryLight, fontFamily: "DMSans_400Regular", fontSize: 10, marginTop: 2 }}>Weeks Completed</Text>
           </View>
           <View style={{
             flex: 1, backgroundColor: "rgba(139,92,246,0.06)", borderRadius: 16, padding: 14,
@@ -550,7 +551,7 @@ export default function StreakDetailsScreen() {
             <Text style={{ color: "#8B5CF6", fontFamily: "BebasNeue_400Regular", fontSize: 22 }}>
               {streakData.milestones.length}
             </Text>
-            <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 10, marginTop: 2 }}>Milestones</Text>
+            <Text style={{ color: UI.secondaryLight, fontFamily: "DMSans_400Regular", fontSize: 10, marginTop: 2 }}>Milestones</Text>
           </View>
         </View>
 
@@ -567,8 +568,8 @@ export default function StreakDetailsScreen() {
               <Text style={{ fontSize: 18 }}>❄️</Text>
             </View>
             <View style={{ flex: 1 }}>
-              <Text style={{ color: "#F1F5F9", fontFamily: "DMSans_700Bold", fontSize: 15 }}>Streak Freeze</Text>
-              <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 11 }}>
+              <Text style={{ color: UI.fg, fontFamily: "DMSans_700Bold", fontSize: 15 }}>Streak Freeze</Text>
+              <Text style={{ color: UI.secondaryLight, fontFamily: "DMSans_400Regular", fontSize: 11 }}>
                 {freezesRemaining > 0 ? "1 freeze available this month" : "Freeze used this month — resets on the 1st"}
               </Text>
             </View>
@@ -577,7 +578,7 @@ export default function StreakDetailsScreen() {
               paddingHorizontal: 8, paddingVertical: 3, borderRadius: 8,
             }}>
               <Text style={{
-                color: freezeAvailable && !weekFrozen ? "#3B82F6" : "#B45309",
+                color: freezeAvailable && !weekFrozen ? "#3B82F6" : UI.secondaryLight,
                 fontFamily: "DMSans_700Bold", fontSize: 11,
               }}>
                 {freezesRemaining}/1
@@ -591,11 +592,11 @@ export default function StreakDetailsScreen() {
                 value={freezeReason}
                 onChangeText={setFreezeReason}
                 placeholder="Reason (optional): illness, travel, injury..."
-                placeholderTextColor="#B45309"
+                placeholderTextColor={UI.secondaryLight}
                 returnKeyType="done"
                 style={{
                   backgroundColor: "rgba(255,255,255,0.04)", borderRadius: 12, padding: 12,
-                  color: "#F1F5F9", fontFamily: "DMSans_400Regular", fontSize: 13,
+                  color: UI.fg, fontFamily: "DMSans_400Regular", fontSize: 13,
                   borderWidth: 1, borderColor: "rgba(59,130,246,0.1)", marginBottom: 10,
                 }}
               />
@@ -634,7 +635,7 @@ export default function StreakDetailsScreen() {
           )}
 
           {streakData.currentStreak === 0 && (
-            <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 11, textAlign: "center", marginTop: 4, opacity: 0.6 }}>
+            <Text style={{ color: UI.secondaryLight, fontFamily: "DMSans_400Regular", fontSize: 11, textAlign: "center", marginTop: 4, opacity: 0.6 }}>
               Build a streak first to use the freeze feature.
             </Text>
           )}
@@ -642,11 +643,11 @@ export default function StreakDetailsScreen() {
           {/* Freeze History */}
           {streakData.freezeData.freezeHistory.length > 0 && (
             <View style={{ marginTop: 12, paddingTop: 12, borderTopWidth: 1, borderTopColor: "rgba(59,130,246,0.08)" }}>
-              <Text style={{ color: "#B45309", fontFamily: "DMSans_700Bold", fontSize: 11, marginBottom: 6 }}>FREEZE HISTORY</Text>
+              <Text style={{ color: UI.secondaryLight, fontFamily: "DMSans_700Bold", fontSize: 11, marginBottom: 6 }}>FREEZE HISTORY</Text>
               {streakData.freezeData.freezeHistory.slice(0, 5).map((freeze, i) => (
                 <View key={i} style={{ flexDirection: "row", alignItems: "center", gap: 6, paddingVertical: 4 }}>
                   <Text style={{ fontSize: 12 }}>❄️</Text>
-                  <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 11, flex: 1 }}>
+                  <Text style={{ color: UI.secondaryLight, fontFamily: "DMSans_400Regular", fontSize: 11, flex: 1 }}>
                     Week of {new Date(freeze.weekStart + "T00:00:00").toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
                     {freeze.reason ? ` — ${freeze.reason}` : ""}
                   </Text>
@@ -670,11 +671,11 @@ export default function StreakDetailsScreen() {
               }}
               style={{
                 flex: 1, paddingVertical: 10, borderRadius: 10, alignItems: "center",
-                backgroundColor: activeTab === tab ? "rgba(245,158,11,0.12)" : "transparent",
+                backgroundColor: activeTab === tab ? UI.goldAlpha12 : "transparent",
               }}
             >
               <Text style={{
-                color: activeTab === tab ? "#F59E0B" : "#B45309",
+                color: activeTab === tab ? UI.gold : UI.secondaryLight,
                 fontFamily: activeTab === tab ? "DMSans_700Bold" : "DMSans_400Regular", fontSize: 12,
               }}>
                 {tab === "milestones" ? "Milestones" : tab === "history" ? "History" : "Heatmap"}
@@ -686,7 +687,7 @@ export default function StreakDetailsScreen() {
         {/* ── Milestones Gallery ── */}
         {activeTab === "milestones" && (
           <View style={{ marginTop: 16 }}>
-            <Text style={{ color: "#F1F5F9", fontFamily: "DMSans_700Bold", fontSize: 16, marginBottom: 12 }}>
+            <Text style={{ color: UI.fg, fontFamily: "DMSans_700Bold", fontSize: 16, marginBottom: 12 }}>
               Milestone Gallery
             </Text>
             {MILESTONE_TIERS.map((tier) => {
@@ -709,7 +710,7 @@ export default function StreakDetailsScreen() {
         {/* ── Week History ── */}
         {activeTab === "history" && (
           <View style={{ marginTop: 16 }}>
-            <Text style={{ color: "#F1F5F9", fontFamily: "DMSans_700Bold", fontSize: 16, marginBottom: 12 }}>
+            <Text style={{ color: UI.fg, fontFamily: "DMSans_700Bold", fontSize: 16, marginBottom: 12 }}>
               Weekly Goal History
             </Text>
             {streakData.weekHistory.length === 0 ? (
@@ -718,10 +719,10 @@ export default function StreakDetailsScreen() {
                 borderWidth: 1, borderColor: "rgba(255,255,255,0.05)",
               }}>
                 <Text style={{ fontSize: 32, marginBottom: 8 }}>📊</Text>
-                <Text style={{ color: "#B45309", fontFamily: "DMSans_600SemiBold", fontSize: 14, textAlign: "center" }}>
+                <Text style={{ color: UI.secondaryLight, fontFamily: "DMSans_600SemiBold", fontSize: 14, textAlign: "center" }}>
                   No History Yet
                 </Text>
-                <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 12, textAlign: "center", marginTop: 4, opacity: 0.6 }}>
+                <Text style={{ color: UI.secondaryLight, fontFamily: "DMSans_400Regular", fontSize: 12, textAlign: "center", marginTop: 4, opacity: 0.6 }}>
                   Complete your first week with goals enabled to start tracking.
                 </Text>
               </View>
@@ -731,13 +732,13 @@ export default function StreakDetailsScreen() {
                 borderWidth: 1, borderColor: "rgba(255,255,255,0.05)",
               }}>
                 {/* Header */}
-                <View style={{ flexDirection: "row", paddingBottom: 8, borderBottomWidth: 1, borderBottomColor: "rgba(245,158,11,0.1)" }}>
-                  <Text style={{ flex: 1, color: "#B45309", fontFamily: "DMSans_700Bold", fontSize: 10 }}>WEEK</Text>
+                <View style={{ flexDirection: "row", paddingBottom: 8, borderBottomWidth: 1, borderBottomColor: UI.goldAlpha10 }}>
+                  <Text style={{ flex: 1, color: UI.secondaryLight, fontFamily: "DMSans_700Bold", fontSize: 10 }}>WEEK</Text>
                   <View style={{ flexDirection: "row", gap: 8 }}>
-                    <Text style={{ width: 32, color: "#B45309", fontFamily: "DMSans_700Bold", fontSize: 10, textAlign: "center" }}>Steps</Text>
-                    <Text style={{ width: 32, color: "#B45309", fontFamily: "DMSans_700Bold", fontSize: 10, textAlign: "center" }}>Cals</Text>
-                    <Text style={{ width: 32, color: "#B45309", fontFamily: "DMSans_700Bold", fontSize: 10, textAlign: "center" }}>Gym</Text>
-                    <Text style={{ width: 28, color: "#B45309", fontFamily: "DMSans_700Bold", fontSize: 10, textAlign: "center" }}>All</Text>
+                    <Text style={{ width: 32, color: UI.secondaryLight, fontFamily: "DMSans_700Bold", fontSize: 10, textAlign: "center" }}>Steps</Text>
+                    <Text style={{ width: 32, color: UI.secondaryLight, fontFamily: "DMSans_700Bold", fontSize: 10, textAlign: "center" }}>Cals</Text>
+                    <Text style={{ width: 32, color: UI.secondaryLight, fontFamily: "DMSans_700Bold", fontSize: 10, textAlign: "center" }}>Gym</Text>
+                    <Text style={{ width: 28, color: UI.secondaryLight, fontFamily: "DMSans_700Bold", fontSize: 10, textAlign: "center" }}>All</Text>
                   </View>
                 </View>
                 {streakData.weekHistory.map((week) => (
@@ -757,20 +758,20 @@ export default function StreakDetailsScreen() {
             {workoutHistory.length === 0 ? (
               <View style={{ alignItems: "center", padding: 24 }}>
                 <Text style={{ fontSize: 32, marginBottom: 8 }}>📅</Text>
-                <Text style={{ color: "#B45309", fontFamily: "DMSans_600SemiBold", fontSize: 14, textAlign: "center" }}>
+                <Text style={{ color: UI.secondaryLight, fontFamily: "DMSans_600SemiBold", fontSize: 14, textAlign: "center" }}>
                   No Workouts Logged
                 </Text>
-                <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 12, textAlign: "center", marginTop: 4, opacity: 0.6 }}>
+                <Text style={{ color: UI.secondaryLight, fontFamily: "DMSans_400Regular", fontSize: 12, textAlign: "center", marginTop: 4, opacity: 0.6 }}>
                   Start logging workouts to see your activity heatmap.
                 </Text>
                 <TouchableOpacity
                   onPress={() => router.push("/log-workout" as any)}
                   style={{
-                    marginTop: 16, backgroundColor: "rgba(245,158,11,0.12)", paddingHorizontal: 20, paddingVertical: 10,
-                    borderRadius: 12, borderWidth: 1, borderColor: "rgba(245,158,11,0.2)",
+                    marginTop: 16, backgroundColor: UI.goldAlpha12, paddingHorizontal: 20, paddingVertical: 10,
+                    borderRadius: 12, borderWidth: 1, borderColor: UI.goldAlpha20,
                   }}
                 >
-                  <Text style={{ color: "#F59E0B", fontFamily: "DMSans_600SemiBold", fontSize: 13 }}>Log a Workout</Text>
+                  <Text style={{ color: UI.gold, fontFamily: "DMSans_600SemiBold", fontSize: 13 }}>Log a Workout</Text>
                 </TouchableOpacity>
               </View>
             ) : (
@@ -784,13 +785,13 @@ export default function StreakDetailsScreen() {
           onPress={() => router.push("/weekly-goals" as any)}
           style={{
             marginTop: 20, flexDirection: "row", alignItems: "center", justifyContent: "center",
-            gap: 6, paddingVertical: 14, backgroundColor: "rgba(245,158,11,0.06)",
-            borderRadius: 14, borderWidth: 1, borderColor: "rgba(245,158,11,0.1)",
+            gap: 6, paddingVertical: 14, backgroundColor: UI.goldAlpha6,
+            borderRadius: 14, borderWidth: 1, borderColor: UI.goldAlpha10,
           }}
         >
-          <MaterialIcons name="flag" size={16} color="#F59E0B" />
-          <Text style={{ color: "#F59E0B", fontFamily: "DMSans_600SemiBold", fontSize: 13 }}>Edit Weekly Goals</Text>
-          <MaterialIcons name="chevron-right" size={16} color="#F59E0B" />
+          <MaterialIcons name="flag" size={16} color={UI.gold} />
+          <Text style={{ color: UI.gold, fontFamily: "DMSans_600SemiBold", fontSize: 13 }}>Edit Weekly Goals</Text>
+          <MaterialIcons name="chevron-right" size={16} color={UI.gold} />
         </TouchableOpacity>
 
       </ScrollView>

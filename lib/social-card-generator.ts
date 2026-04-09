@@ -8,6 +8,7 @@
 
 import { Platform } from "react-native";
 import type { WorkoutType } from "@/lib/health-service";
+import { UI } from "@/constants/ui-colors";
 
 // ── Types ──────────────────────────────────────────────────────────
 
@@ -56,18 +57,18 @@ const WORKOUT_ICONS: Record<string, string> = {
 };
 
 const WORKOUT_COLORS: Record<string, string> = {
-  running: "#22C55E",
+  running: UI.green,
   walking: "#3B82F6",
-  cycling: "#F59E0B",
+  cycling: UI.gold,
   swimming: "#06B6D4",
-  strength_training: "#EF4444",
-  hiit: "#F97316",
+  strength_training: UI.red,
+  hiit: UI.orange2,
   yoga: "#8B5CF6",
   pilates: "#EC4899",
-  dance: "#A78BFA",
-  elliptical: "#14B8A6",
+  dance: UI.purple,
+  elliptical: UI.teal,
   rowing: "#0EA5E9",
-  stair_climbing: "#FBBF24",
+  stair_climbing: UI.gold2,
   other: "#9CA3AF",
 };
 
@@ -75,7 +76,7 @@ const WORKOUT_COLORS: Record<string, string> = {
 
 export function generateWorkoutCardHTML(data: WorkoutCardData): string {
   const icon = WORKOUT_ICONS[data.type] || "🏅";
-  const color = WORKOUT_COLORS[data.type] || "#F59E0B";
+  const color = WORKOUT_COLORS[data.type] || UI.gold;
   const hours = Math.floor(data.durationMinutes / 60);
   const mins = data.durationMinutes % 60;
   const durationStr = hours > 0 ? `${hours}h ${mins}m` : `${mins} min`;
@@ -199,7 +200,7 @@ export function generateWorkoutCardHTML(data: WorkoutCardData): string {
 export function generateWeeklySummaryCardHTML(data: WeeklySummaryCardData): string {
   const goalBadge = (pct: number | undefined) => {
     if (pct === undefined) return "";
-    const color = pct >= 100 ? "#22C55E" : pct >= 75 ? "#F59E0B" : "#EF4444";
+    const color = pct >= 100 ? UI.green : pct >= 75 ? UI.gold : UI.red;
     const label = pct >= 100 ? "GOAL MET" : `${pct}%`;
     return `<span style="display:inline-block;background:${color}20;color:${color};font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;margin-left:6px;">${label}</span>`;
   };
@@ -353,7 +354,7 @@ export interface MilestoneCardData {
 }
 
 export function generateMilestoneCardHTML(data: MilestoneCardData): string {
-  const c = data.milestoneColor || "#F59E0B";
+  const c = data.milestoneColor || UI.gold;
   return `<!DOCTYPE html>
 <html>
 <head>

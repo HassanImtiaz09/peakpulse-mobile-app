@@ -12,7 +12,7 @@ import { ScreenContainer } from "@/components/screen-container";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import * as Haptics from "expo-haptics";
 import { GOLDEN_SOCIAL, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgrounds";
-import { C } from "@/constants/ui-colors";
+import { UI, C } from "@/constants/ui-colors";
 import { useXP } from "@/lib/xp-context";
 import {
   getLeaderboard,
@@ -218,7 +218,7 @@ const styles = StyleSheet.create({
   },
   backBtn: {
     width: 36, height: 36, borderRadius: 18,
-    backgroundColor: "rgba(245,158,11,0.10)", alignItems: "center", justifyContent: "center",
+    backgroundColor: UI.goldAlpha10, alignItems: "center", justifyContent: "center",
   },
   headerTitle: { color: C.fg, fontSize: 20, fontWeight: "800" },
   headerSub: { color: C.muted, fontSize: 11, marginTop: 1 },
@@ -232,7 +232,7 @@ const styles = StyleSheet.create({
     flex: 1, paddingVertical: 10, alignItems: "center", borderRadius: 10,
   },
   periodTabActive: {
-    backgroundColor: "rgba(245,158,11,0.15)",
+    backgroundColor: UI.borderGold,
   },
   periodText: { color: C.muted, fontSize: 13, fontWeight: "600" },
   periodTextActive: { color: C.gold, fontWeight: "700" },
@@ -279,10 +279,10 @@ const styles = StyleSheet.create({
     marginBottom: 6, borderWidth: 1, borderColor: C.border,
   },
   entryRowUser: {
-    backgroundColor: "rgba(245,158,11,0.08)", borderColor: "rgba(245,158,11,0.30)",
+    backgroundColor: UI.dim, borderColor: UI.goldAlpha30,
   },
   entryRowTop3: {
-    borderColor: "rgba(245,158,11,0.20)",
+    borderColor: UI.goldAlpha20,
   },
   rankCol: { width: 36, alignItems: "center" },
   rankText: { color: C.muted, fontSize: 14, fontWeight: "700" },

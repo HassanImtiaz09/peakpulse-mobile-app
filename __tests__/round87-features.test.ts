@@ -186,7 +186,7 @@ describe("Social Circle — Unread Chat Badge", () => {
 
   it("renders red badge on Chat tab when unreadCount > 0", () => {
     expect(src).toMatch(/chatUnreadCount\s*>\s*0/);
-    expect(src).toMatch(/backgroundColor:\s*["']#EF4444["']/);
+    expect(src).toMatch(/backgroundColor:\s*["']?(?:#EF4444|UI\.red)["']?/);
   });
 
   it("shows count text capped at 99+", () => {
@@ -222,7 +222,7 @@ describe("Challenge — Unread Chat Badge", () => {
 
   it("renders red badge on Active tab when unreadCount > 0", () => {
     expect(src).toMatch(/tab\s*===\s*["']active["']\s*&&\s*chatUnreadCount\s*>\s*0/);
-    expect(src).toMatch(/backgroundColor:\s*["']#EF4444["']/);
+    expect(src).toMatch(/backgroundColor:\s*["']?(?:#EF4444|UI\.red)["']?/);
   });
 
   it("shows count text capped at 99+", () => {

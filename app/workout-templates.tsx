@@ -11,7 +11,7 @@ import {
   getTemplates, deleteTemplate, saveTemplate, recordTemplateUsage,
   BUILT_IN_TEMPLATES, type WorkoutTemplate,
 } from "@/lib/workout-templates";
-import { UI as SF } from "@/constants/ui-colors";
+import { UI, SF } from "@/constants/ui-colors";
 import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
 
 const DASHBOARD_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/PZcnawJwIZkQHTEM.jpg";
@@ -86,7 +86,7 @@ export default function WorkoutTemplatesScreen() {
             {item.distanceKm ? ` · ${item.distanceKm} km` : ""}
           </Text>
           {item.usageCount > 0 && (
-            <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 9, marginTop: 2 }}>
+            <Text style={{ color: UI.secondaryLight, fontFamily: "DMSans_400Regular", fontSize: 9, marginTop: 2 }}>
               Used {item.usageCount} time{item.usageCount !== 1 ? "s" : ""}
               {item.lastUsedAt ? ` · Last: ${new Date(item.lastUsedAt).toLocaleDateString()}` : ""}
             </Text>
@@ -111,7 +111,7 @@ export default function WorkoutTemplatesScreen() {
             backgroundColor: "rgba(239,68,68,0.10)", borderWidth: 1, borderColor: "rgba(239,68,68,0.20)",
           }}
         >
-          <MaterialIcons name="delete-outline" size={18} color="#EF4444" />
+          <MaterialIcons name="delete-outline" size={18} color={UI.red} />
         </TouchableOpacity>
       </View>
     </View>
@@ -131,7 +131,7 @@ export default function WorkoutTemplatesScreen() {
             paddingTop: 8, paddingBottom: 12, gap: 12,
           }}>
             <TouchableOpacity onPress={() => router.back()} style={{
-              width: 40, height: 40, borderRadius: 20, backgroundColor: "rgba(245,158,11,0.10)",
+              width: 40, height: 40, borderRadius: 20, backgroundColor: UI.goldAlpha10,
               alignItems: "center", justifyContent: "center",
             }}>
               <MaterialIcons name="arrow-back" size={22} color={SF.gold3} />
@@ -146,7 +146,7 @@ export default function WorkoutTemplatesScreen() {
               onPress={() => router.push("/log-workout" as any)}
               style={{
                 flexDirection: "row", alignItems: "center", gap: 4,
-                backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 10,
+                backgroundColor: UI.goldAlpha10, borderRadius: 10,
                 paddingHorizontal: 10, paddingVertical: 6, borderWidth: 1, borderColor: SF.border2,
               }}
             >
@@ -203,7 +203,7 @@ export default function WorkoutTemplatesScreen() {
               ListEmptyComponent={
                 suggestedTemplates.length === 0 ? (
                   <View style={{ alignItems: "center", paddingVertical: 40 }}>
-                    <MaterialIcons name="bookmark-border" size={48} color="#B45309" />
+                    <MaterialIcons name="bookmark-border" size={48} color={UI.secondaryLight} />
                     <Text style={{ color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 16, marginTop: 12 }}>No Templates Yet</Text>
                     <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 13, textAlign: "center", marginTop: 4 }}>
                       Log a workout and save it as a template for quick access

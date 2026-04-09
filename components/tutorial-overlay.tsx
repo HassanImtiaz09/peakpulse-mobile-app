@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { UI as SF } from "@/constants/ui-colors";
+import { UI, SF } from "@/constants/ui-colors";
 
 const { width: W, height: H } = Dimensions.get("window");
 
@@ -252,8 +252,8 @@ const styles = StyleSheet.create({
   dotActive: { width: 24, backgroundColor: SF.gold },
   content: { paddingHorizontal: 24, paddingBottom: 8 },
   iconRow: { flexDirection: "row", alignItems: "center", gap: 12, marginBottom: 12 },
-  iconCircle: { width: 48, height: 48, borderRadius: 14, backgroundColor: "rgba(245,158,11,0.12)", alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: SF.border },
-  tabBadge: { backgroundColor: "rgba(245,158,11,0.15)", borderRadius: 8, paddingHorizontal: 10, paddingVertical: 4, borderWidth: 1, borderColor: SF.border },
+  iconCircle: { width: 48, height: 48, borderRadius: 14, backgroundColor: UI.goldAlpha12, alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: SF.border },
+  tabBadge: { backgroundColor: UI.borderGold, borderRadius: 8, paddingHorizontal: 10, paddingVertical: 4, borderWidth: 1, borderColor: SF.border },
   tabBadgeText: { color: SF.gold, fontFamily: "DMSans_700Bold", fontSize: 11, letterSpacing: 1.5 },
   slideTitle: { color: SF.fg, fontFamily: "BebasNeue_400Regular", fontSize: 24, lineHeight: 30, marginBottom: 10 },
   slideBody: { color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 14, lineHeight: 22, marginBottom: 16 },
@@ -262,7 +262,7 @@ const styles = StyleSheet.create({
   featureLabel: { color: SF.fg, fontFamily: "DMSans_400Regular", fontSize: 13, flex: 1 },
   tierBadge: { borderRadius: 6, paddingHorizontal: 6, paddingVertical: 2, borderWidth: 1 },
   tierBadgeText: { fontFamily: "DMSans_700Bold", fontSize: 9, letterSpacing: 0.8 },
-  tipBox: { flexDirection: "row", backgroundColor: "rgba(245,158,11,0.08)", borderRadius: 12, padding: 12, gap: 8, borderWidth: 1, borderColor: "rgba(245,158,11,0.2)" },
+  tipBox: { flexDirection: "row", backgroundColor: UI.dim, borderRadius: 12, padding: 12, gap: 8, borderWidth: 1, borderColor: UI.goldAlpha20 },
   tipText: { color: SF.gold3, fontFamily: "DMSans_400Regular", fontSize: 13, lineHeight: 19, flex: 1 },
   navRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingHorizontal: 24, marginTop: 16 },
   navBtn: { paddingVertical: 10, paddingHorizontal: 16, borderRadius: 12, borderWidth: 1, borderColor: SF.border },

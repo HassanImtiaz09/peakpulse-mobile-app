@@ -9,7 +9,7 @@ import { Text, View, TouchableOpacity, ScrollView } from "react-native";
 import Svg, { Path, Circle, Line, Rect, G } from "react-native-svg";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import type { MuscleGroup } from "@/components/body-diagram";
-import { UI as SF } from "@/constants/ui-colors";
+import { UI, SF } from "@/constants/ui-colors";
 
 // ── Theme ────────────────────────────────────────────────────────────────────
 // ── Types ────────────────────────────────────────────────────────────────────
@@ -257,7 +257,7 @@ export function TrendChart({ data, title = "Muscle Balance Trend", height = 200,
               onPress={() => setSelectedMuscle(null)}
               style={{
                 paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6,
-                backgroundColor: !selectedMuscle ? "rgba(245,158,11,0.15)" : SF.surface,
+                backgroundColor: !selectedMuscle ? UI.borderGold : SF.surface,
                 borderWidth: 1, borderColor: !selectedMuscle ? SF.gold3 : SF.border,
               }}
             >

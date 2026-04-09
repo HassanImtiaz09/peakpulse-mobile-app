@@ -5,6 +5,7 @@
  * shopping suggestions from the Pantry feature.
  */
 import { Platform, Share, Alert } from "react-native";
+import { UI } from "@/constants/ui-colors";
 
 export interface ShoppingExportItem {
   name: string;
@@ -192,7 +193,7 @@ function generateShoppingListHTML(
       </div>
 
       <!-- Sections -->
-      ${renderSection("Essential — Must Buy", "⭐", "#D97706", essential)}
+      ${renderSection("Essential — Must Buy", "⭐", UI.secondary, essential)}
       ${renderSection("Recommended", "✅", "#16A34A", recommended)}
       ${renderSection("Nice to Have", "💡", "#2563EB", niceToHave)}
 

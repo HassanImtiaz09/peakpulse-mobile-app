@@ -37,6 +37,7 @@ import {
   hasExerciseDBKey,
 } from "@/lib/exercisedb";
 import { resolveGifUri } from "@/lib/exercise-gif-cache";
+import { UI } from "@/constants/ui-colors";
 
 interface EnhancedGifPlayerProps {
   /**
@@ -262,8 +263,8 @@ export default function EnhancedGifPlayer({
   );
 }
 
-const AMBER = "#F59E0B";
-const SURFACE = "#141A22";
+const AMBER = UI.gold;
+const SURFACE = UI.surface;
 
 const styles = StyleSheet.create({
   wrapper: {

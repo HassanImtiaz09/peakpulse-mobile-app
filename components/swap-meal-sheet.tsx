@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import * as Haptics from "expo-haptics";
-import { C } from "@/constants/ui-colors";
+import { UI, C } from "@/constants/ui-colors";
 import {
   findSwapCandidates,
   getMatchLabel,
@@ -72,11 +72,11 @@ export function SwapMealSheet({
                 <Text style={styles.macroLabel}>protein</Text>
               </View>
               <View style={styles.macroItem}>
-                <Text style={[styles.macroValue, { color: "#F59E0B" }]}>{sourceMeal.carbs}g</Text>
+                <Text style={[styles.macroValue, { color: UI.gold }]}>{sourceMeal.carbs}g</Text>
                 <Text style={styles.macroLabel}>carbs</Text>
               </View>
               <View style={styles.macroItem}>
-                <Text style={[styles.macroValue, { color: "#EF4444" }]}>{sourceMeal.fat}g</Text>
+                <Text style={[styles.macroValue, { color: UI.red }]}>{sourceMeal.fat}g</Text>
                 <Text style={styles.macroLabel}>fat</Text>
               </View>
             </View>
@@ -137,7 +137,7 @@ export function SwapMealSheet({
                           <Text style={styles.compLabel}>cal</Text>
                           <Text style={[
                             styles.compDiff,
-                            { color: candidate.calorieDiff <= 50 ? "#22C55E" : candidate.calorieDiff <= 100 ? "#FBBF24" : "#F87171" },
+                            { color: candidate.calorieDiff <= 50 ? UI.green : candidate.calorieDiff <= 100 ? UI.gold2 : "#F87171" },
                           ]}>
                             {candidate.calorieDiff === 0 ? "=" : `±${candidate.calorieDiff}`}
                           </Text>
@@ -147,24 +147,24 @@ export function SwapMealSheet({
                           <Text style={styles.compLabel}>protein</Text>
                           <Text style={[
                             styles.compDiff,
-                            { color: candidate.proteinDiff <= 5 ? "#22C55E" : candidate.proteinDiff <= 10 ? "#FBBF24" : "#F87171" },
+                            { color: candidate.proteinDiff <= 5 ? UI.green : candidate.proteinDiff <= 10 ? UI.gold2 : "#F87171" },
                           ]}>
                             {candidate.proteinDiff === 0 ? "=" : `±${candidate.proteinDiff}g`}
                           </Text>
                         </View>
                         <View style={styles.compItem}>
-                          <Text style={[styles.compValue, { color: "#F59E0B" }]}>{candidate.meal.carbs}g</Text>
+                          <Text style={[styles.compValue, { color: UI.gold }]}>{candidate.meal.carbs}g</Text>
                           <Text style={styles.compLabel}>carbs</Text>
                         </View>
                         <View style={styles.compItem}>
-                          <Text style={[styles.compValue, { color: "#EF4444" }]}>{candidate.meal.fat}g</Text>
+                          <Text style={[styles.compValue, { color: UI.red }]}>{candidate.meal.fat}g</Text>
                           <Text style={styles.compLabel}>fat</Text>
                         </View>
                       </View>
 
                       {/* Swap Button */}
                       <View style={styles.swapBtnRow}>
-                        <MaterialIcons name="swap-horiz" size={18} color="#F59E0B" />
+                        <MaterialIcons name="swap-horiz" size={18} color={UI.gold} />
                         <Text style={styles.swapBtnText}>Swap to this meal</Text>
                       </View>
                     </TouchableOpacity>
@@ -184,7 +184,7 @@ const styles = StyleSheet.create({
     flex: 1, backgroundColor: "rgba(0,0,0,0.6)", justifyContent: "flex-end",
   },
   sheet: {
-    backgroundColor: "#141A22", borderTopLeftRadius: 24, borderTopRightRadius: 24,
+    backgroundColor: UI.surface, borderTopLeftRadius: 24, borderTopRightRadius: 24,
     maxHeight: "85%", paddingBottom: 30,
   },
   handle: {
@@ -249,7 +249,7 @@ const styles = StyleSheet.create({
     flexDirection: "row", alignItems: "center", justifyContent: "center",
     gap: 6, marginTop: 10, paddingTop: 10, borderTopWidth: 1, borderTopColor: C.border,
   },
-  swapBtnText: { color: "#F59E0B", fontSize: 13, fontWeight: "700" },
+  swapBtnText: { color: UI.gold, fontSize: 13, fontWeight: "700" },
   // Empty State
   emptyState: { alignItems: "center", paddingVertical: 40, paddingHorizontal: 30 },
   emptyTitle: { color: C.fg, fontSize: 16, fontWeight: "700", marginTop: 12 },

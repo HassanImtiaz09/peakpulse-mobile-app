@@ -22,6 +22,7 @@ import {
   DEFAULT_SETTINGS,
 } from "@/lib/smart-reminders";
 import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
+import { UI } from "@/constants/ui-colors";
 
 const DAY_LABELS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
@@ -213,7 +214,7 @@ export default function SmartRemindersScreen() {
               <View style={styles.toggleRow}>
                 <View style={{ flex: 1 }}>
                   <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
-                    <MaterialIcons name="local-fire-department" size={18} color="#EF4444" />
+                    <MaterialIcons name="local-fire-department" size={18} color={UI.red} />
                     <Text style={[styles.toggleLabel, { color: colors.foreground }]}>Streak Protection</Text>
                   </View>
                   <Text style={[styles.toggleDesc, { color: colors.muted }]}>
@@ -253,7 +254,7 @@ export default function SmartRemindersScreen() {
               <View style={styles.toggleRow}>
                 <View style={{ flex: 1 }}>
                   <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
-                    <MaterialIcons name="emoji-events" size={18} color="#F59E0B" />
+                    <MaterialIcons name="emoji-events" size={18} color={UI.gold} />
                     <Text style={[styles.toggleLabel, { color: colors.foreground }]}>Milestone Celebrations</Text>
                   </View>
                   <Text style={[styles.toggleDesc, { color: colors.muted }]}>
@@ -273,7 +274,7 @@ export default function SmartRemindersScreen() {
               <View style={styles.toggleRow}>
                 <View style={{ flex: 1 }}>
                   <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
-                    <MaterialIcons name="self-improvement" size={18} color="#10B981" />
+                    <MaterialIcons name="self-improvement" size={18} color={UI.emerald} />
                     <Text style={[styles.toggleLabel, { color: colors.foreground }]}>Rest Day Reminders</Text>
                   </View>
                   <Text style={[styles.toggleDesc, { color: colors.muted }]}>
@@ -293,7 +294,7 @@ export default function SmartRemindersScreen() {
               <View style={styles.toggleRow}>
                 <View style={{ flex: 1 }}>
                   <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
-                    <MaterialIcons name="wb-sunny" size={18} color="#FBBF24" />
+                    <MaterialIcons name="wb-sunny" size={18} color={UI.gold2} />
                     <Text style={[styles.toggleLabel, { color: colors.foreground }]}>Morning Boost</Text>
                   </View>
                   <Text style={[styles.toggleDesc, { color: colors.muted }]}>

@@ -11,7 +11,7 @@ import React, { useMemo, useState } from "react";
 import { View, Text, StyleSheet, Pressable, Platform } from "react-native";
 import Body, { type Slug, type ExtendedBodyPart } from "react-native-body-highlighter";
 import * as Haptics from "expo-haptics";
-import { C } from "@/constants/ui-colors";
+import { UI, C } from "@/constants/ui-colors";
 
 export type MuscleGroup =
   | "chest"
@@ -343,12 +343,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 4,
-    backgroundColor: "rgba(245,158,11,0.06)",
+    backgroundColor: UI.goldAlpha6,
     paddingHorizontal: 8,
     paddingVertical: 3,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: "rgba(245,158,11,0.12)",
+    borderColor: UI.goldAlpha12,
   },
   labelDot: {
     width: 6,
@@ -374,13 +374,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 6,
     borderRadius: 8,
-    backgroundColor: "rgba(245,158,11,0.08)",
+    backgroundColor: UI.dim,
     borderWidth: 1,
     borderColor: "transparent",
   },
   toggleBtnActive: {
-    backgroundColor: "rgba(245,158,11,0.15)",
-    borderColor: "rgba(245,158,11,0.3)",
+    backgroundColor: UI.borderGold,
+    borderColor: UI.goldAlpha30,
   },
   toggleTxt: {
     color: C.muted,

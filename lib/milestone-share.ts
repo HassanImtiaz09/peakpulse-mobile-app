@@ -12,6 +12,7 @@ import * as Sharing from "expo-sharing";
 import * as FileSystem from "expo-file-system/legacy";
 import { Platform } from "react-native";
 import { incrementCounter } from "@/lib/achievements";
+import { UI } from "@/constants/ui-colors";
 
 // ── Types ────────────────────────────────────────────────────────────────
 
@@ -97,7 +98,7 @@ export function generateShareCardText(data: MilestoneShareData): string {
  */
 export function generateShareCardSVG(data: MilestoneShareData): string {
   const bgColor = data.type === "level_up" ? "#0A0A0F" : "#0A0A0F";
-  const accentColor = data.badgeColor || "#F59E0B";
+  const accentColor = data.badgeColor || UI.gold;
   const iconEmoji =
     data.type === "level_up"
       ? "🏆"
@@ -124,11 +125,11 @@ export function generateShareCardSVG(data: MilestoneShareData): string {
   <rect width="400" height="500" rx="24" fill="url(#bg)" />
   <rect x="0" y="0" width="400" height="4" fill="url(#accent)" />
   <text x="200" y="120" text-anchor="middle" font-size="64">${iconEmoji}</text>
-  <text x="200" y="190" text-anchor="middle" font-family="system-ui, sans-serif" font-weight="800" font-size="28" fill="#F1F5F9">${escapeXml(title)}</text>
+  <text x="200" y="190" text-anchor="middle" font-family="system-ui, sans-serif" font-weight="800" font-size="28" fill={UI.fg}>${escapeXml(title)}</text>
   <text x="200" y="230" text-anchor="middle" font-family="system-ui, sans-serif" font-weight="600" font-size="20" fill="${accentColor}">${escapeXml(data.subtitle)}</text>
   <line x1="100" y1="260" x2="300" y2="260" stroke="${accentColor}" stroke-opacity="0.3" stroke-width="1" />
   <text x="200" y="300" text-anchor="middle" font-family="system-ui, sans-serif" font-size="16" fill="#9BA1A6">${data.totalXP.toLocaleString()} XP earned</text>
-  ${data.streakDays > 0 ? `<text x="200" y="330" text-anchor="middle" font-family="system-ui, sans-serif" font-size="16" fill="#EF4444">🔥 ${data.streakDays}-day streak</text>` : ""}
+  ${data.streakDays > 0 ? `<text x="200" y="330" text-anchor="middle" font-family="system-ui, sans-serif" font-size="16" fill={UI.red}>🔥 ${data.streakDays}-day streak</text>` : ""}
   <text x="200" y="440" text-anchor="middle" font-family="system-ui, sans-serif" font-weight="700" font-size="18" fill="${accentColor}">PeakPulse AI</text>
   <text x="200" y="465" text-anchor="middle" font-family="system-ui, sans-serif" font-size="12" fill="#64748B">Your AI Fitness Companion</text>
 </svg>`;

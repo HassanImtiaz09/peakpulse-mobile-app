@@ -20,6 +20,7 @@ import { Modal } from "react-native";
 import { PremiumFeatureBanner, PremiumFeatureTeaser } from "@/components/premium-feature-banner";
 import { ErrorBoundary } from "@/components/error-boundary";
 import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
+import { UI } from "@/constants/ui-colors";
 
 // Enable LayoutAnimation on Android
 if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental) {
@@ -27,16 +28,16 @@ if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental
 }
 
 // NanoBanana design tokens
-const BG = "#0A0E14";
+const BG = UI.bg;
 const SURFACE = "#111827";
-const SURFACE2 = "#1E293B";
-const FG = "#F1F5F9";
+const SURFACE2 = UI.inactive;
+const FG = UI.fg;
 const MUTED = "#64748B";
-const GOLD = "#F59E0B";
-const GOLD_DIM = "rgba(245,158,11,0.10)";
-const GOLD_BORDER = "rgba(245,158,11,0.25)";
+const GOLD = UI.gold;
+const GOLD_DIM = UI.goldAlpha10;
+const GOLD_BORDER = UI.borderGold2;
 const ICE = "#06B6D4";
-const CREAM = "#FDE68A";
+const CREAM = UI.gold3;
 
 const HERO_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/hXdqoCBElSGntMHm.jpg";
 const APP_LOGO = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/hXdqoCBElSGntMHm.jpg";
@@ -292,7 +293,7 @@ function ProfileScreenContent() {
               </View>
               {isAuthenticated && (
                 <TouchableOpacity
-                  style={{ backgroundColor: editing ? GOLD : SURFACE2, borderRadius: 12, paddingHorizontal: 16, paddingVertical: 8, borderWidth: 1, borderColor: editing ? GOLD : "rgba(30,41,59,0.6)" }}
+                  style={{ backgroundColor: editing ? GOLD : SURFACE2, borderRadius: 12, paddingHorizontal: 16, paddingVertical: 8, borderWidth: 1, borderColor: editing ? GOLD : UI.border }}
                   onPress={editing ? saveProfile : () => setEditing(true)}
                 >
                   {upsertProfile.isPending ? (
@@ -344,7 +345,7 @@ function ProfileScreenContent() {
             title="Personalised AI Coach"
             description="Your AI fitness coach provides real-time guidance, exercise form tips, and workout adjustments tailored to your goals."
             icon="smart-toy"
-            accentColor="#F59E0B"
+            accentColor={UI.gold}
             requiredTier="pro"
             compact
           />
@@ -384,7 +385,7 @@ function ProfileScreenContent() {
                 placeholderTextColor={MUTED}
                 keyboardType="numeric"
                 editable={editing}
-                style={{ backgroundColor: SURFACE, borderRadius: 10, paddingHorizontal: 12, paddingVertical: 10, color: editing ? FG : MUTED, fontSize: 14, borderWidth: 1, borderColor: "rgba(30,41,59,0.6)" }}
+                style={{ backgroundColor: SURFACE, borderRadius: 10, paddingHorizontal: 12, paddingVertical: 10, color: editing ? FG : MUTED, fontSize: 14, borderWidth: 1, borderColor: UI.border }}
                 returnKeyType="done"
               />
             </View>
@@ -397,7 +398,7 @@ function ProfileScreenContent() {
                 placeholderTextColor={MUTED}
                 keyboardType="numeric"
                 editable={editing}
-                style={{ backgroundColor: SURFACE, borderRadius: 10, paddingHorizontal: 12, paddingVertical: 10, color: editing ? FG : MUTED, fontSize: 14, borderWidth: 1, borderColor: "rgba(30,41,59,0.6)" }}
+                style={{ backgroundColor: SURFACE, borderRadius: 10, paddingHorizontal: 12, paddingVertical: 10, color: editing ? FG : MUTED, fontSize: 14, borderWidth: 1, borderColor: UI.border }}
                 returnKeyType="done"
               />
             </View>
@@ -410,7 +411,7 @@ function ProfileScreenContent() {
                 placeholderTextColor={MUTED}
                 keyboardType="numeric"
                 editable={editing}
-                style={{ backgroundColor: SURFACE, borderRadius: 10, paddingHorizontal: 12, paddingVertical: 10, color: editing ? FG : MUTED, fontSize: 14, borderWidth: 1, borderColor: "rgba(30,41,59,0.6)" }}
+                style={{ backgroundColor: SURFACE, borderRadius: 10, paddingHorizontal: 12, paddingVertical: 10, color: editing ? FG : MUTED, fontSize: 14, borderWidth: 1, borderColor: UI.border }}
                 returnKeyType="done"
               />
             </View>
@@ -422,7 +423,7 @@ function ProfileScreenContent() {
             {GENDERS.map(g => (
               <TouchableOpacity
                 key={g.key}
-                style={{ flex: 1, paddingVertical: 8, borderRadius: 10, alignItems: "center", backgroundColor: gender === g.key ? GOLD : SURFACE, borderWidth: 1, borderColor: gender === g.key ? GOLD : "rgba(30,41,59,0.6)", opacity: editing ? 1 : 0.7 }}
+                style={{ flex: 1, paddingVertical: 8, borderRadius: 10, alignItems: "center", backgroundColor: gender === g.key ? GOLD : SURFACE, borderWidth: 1, borderColor: gender === g.key ? GOLD : UI.border, opacity: editing ? 1 : 0.7 }}
                 onPress={() => editing && setGender(g.key)}
               >
                 <Text style={{ color: gender === g.key ? FG : MUTED, fontFamily: "DMSans_600SemiBold", fontSize: 12 }}>{g.label}</Text>
@@ -436,7 +437,7 @@ function ProfileScreenContent() {
             {GOALS.map(g => (
               <TouchableOpacity
                 key={g.key}
-                style={{ flexDirection: "row", alignItems: "center", gap: 6, paddingHorizontal: 14, paddingVertical: 8, borderRadius: 12, backgroundColor: goal === g.key ? GOLD : SURFACE, borderWidth: 1, borderColor: goal === g.key ? GOLD : "rgba(30,41,59,0.6)", opacity: editing ? 1 : 0.7 }}
+                style={{ flexDirection: "row", alignItems: "center", gap: 6, paddingHorizontal: 14, paddingVertical: 8, borderRadius: 12, backgroundColor: goal === g.key ? GOLD : SURFACE, borderWidth: 1, borderColor: goal === g.key ? GOLD : UI.border, opacity: editing ? 1 : 0.7 }}
                 onPress={() => editing && setGoal(g.key)}
               >
                 <MaterialIcons name={g.iconName as any} size={14} color={goal === g.key ? FG : GOLD} />
@@ -451,7 +452,7 @@ function ProfileScreenContent() {
             {WORKOUT_STYLES.map(w => (
               <TouchableOpacity
                 key={w.key}
-                style={{ flexDirection: "row", alignItems: "center", gap: 6, paddingHorizontal: 14, paddingVertical: 8, borderRadius: 12, backgroundColor: workoutStyle === w.key ? GOLD : SURFACE, borderWidth: 1, borderColor: workoutStyle === w.key ? GOLD : "rgba(30,41,59,0.6)", opacity: editing ? 1 : 0.7 }}
+                style={{ flexDirection: "row", alignItems: "center", gap: 6, paddingHorizontal: 14, paddingVertical: 8, borderRadius: 12, backgroundColor: workoutStyle === w.key ? GOLD : SURFACE, borderWidth: 1, borderColor: workoutStyle === w.key ? GOLD : UI.border, opacity: editing ? 1 : 0.7 }}
                 onPress={() => editing && setWorkoutStyle(w.key)}
               >
                 <MaterialIcons name={w.iconName as any} size={14} color={workoutStyle === w.key ? FG : GOLD} />
@@ -466,7 +467,7 @@ function ProfileScreenContent() {
             {DIETARY_PREFS.map(d => (
               <TouchableOpacity
                 key={d.key}
-                style={{ flexDirection: "row", alignItems: "center", gap: 6, paddingHorizontal: 14, paddingVertical: 8, borderRadius: 12, backgroundColor: dietaryPref === d.key ? GOLD : SURFACE, borderWidth: 1, borderColor: dietaryPref === d.key ? GOLD : "rgba(30,41,59,0.6)", opacity: editing ? 1 : 0.7 }}
+                style={{ flexDirection: "row", alignItems: "center", gap: 6, paddingHorizontal: 14, paddingVertical: 8, borderRadius: 12, backgroundColor: dietaryPref === d.key ? GOLD : SURFACE, borderWidth: 1, borderColor: dietaryPref === d.key ? GOLD : UI.border, opacity: editing ? 1 : 0.7 }}
                 onPress={() => editing && setDietaryPref(d.key)}
               >
                 <MaterialIcons name={d.iconName as any} size={14} color={dietaryPref === d.key ? FG : GOLD} />
@@ -481,7 +482,7 @@ function ProfileScreenContent() {
             {[3, 4, 5, 6].map(d => (
               <TouchableOpacity
                 key={d}
-                style={{ flex: 1, paddingVertical: 10, borderRadius: 12, alignItems: "center", backgroundColor: daysPerWeek === d.toString() ? GOLD : SURFACE, borderWidth: 1, borderColor: daysPerWeek === d.toString() ? GOLD : "rgba(30,41,59,0.6)", opacity: editing ? 1 : 0.7 }}
+                style={{ flex: 1, paddingVertical: 10, borderRadius: 12, alignItems: "center", backgroundColor: daysPerWeek === d.toString() ? GOLD : SURFACE, borderWidth: 1, borderColor: daysPerWeek === d.toString() ? GOLD : UI.border, opacity: editing ? 1 : 0.7 }}
                 onPress={() => editing && setDaysPerWeek(d.toString())}
               >
                 <Text style={{ color: daysPerWeek === d.toString() ? FG : MUTED, fontFamily: "DMSans_700Bold" }}>{d}x</Text>
@@ -579,7 +580,7 @@ function ProfileScreenContent() {
                 );
               }}
             >
-              <Text style={{ color: "#EF4444", fontFamily: "DMSans_700Bold", fontSize: 14 }}>Delete Account</Text>
+              <Text style={{ color: UI.red, fontFamily: "DMSans_700Bold", fontSize: 14 }}>Delete Account</Text>
             </TouchableOpacity>
           )}
 
@@ -640,7 +641,7 @@ function SectionHeader({ children }: { children: React.ReactNode }) {
 
 function StatBox({ label, value }: { label: string; value: string }) {
   return (
-    <View style={{ flex: 1, backgroundColor: SURFACE, borderRadius: 12, padding: 10, alignItems: "center", borderWidth: 1, borderColor: "rgba(30,41,59,0.6)" }}>
+    <View style={{ flex: 1, backgroundColor: SURFACE, borderRadius: 12, padding: 10, alignItems: "center", borderWidth: 1, borderColor: UI.border }}>
       <Text style={{ color: FG, fontFamily: "DMSans_700Bold", fontSize: 14 }}>{value}</Text>
       <Text style={{ color: MUTED, fontSize: 10, marginTop: 2 }}>{label}</Text>
     </View>
@@ -650,10 +651,10 @@ function StatBox({ label, value }: { label: string; value: string }) {
 function FeatureLink({ icon, label, onPress }: { icon: string; label: string; onPress: () => void }) {
   return (
     <TouchableOpacity
-      style={{ flexDirection: "row", alignItems: "center", gap: 12, backgroundColor: SURFACE2, borderRadius: 14, padding: 14, borderWidth: 1, borderColor: "rgba(30,41,59,0.6)" }}
+      style={{ flexDirection: "row", alignItems: "center", gap: 12, backgroundColor: SURFACE2, borderRadius: 14, padding: 14, borderWidth: 1, borderColor: UI.border }}
       onPress={onPress}
     >
-      <View style={{ width: 36, height: 36, borderRadius: 10, backgroundColor: GOLD_DIM, alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: "rgba(30,41,59,0.6)" }}>
+      <View style={{ width: 36, height: 36, borderRadius: 10, backgroundColor: GOLD_DIM, alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: UI.border }}>
         <MaterialIcons name={icon as any} size={20} color={GOLD} />
       </View>
       <Text style={{ color: GOLD, fontFamily: "DMSans_600SemiBold", fontSize: 14, flex: 1 }}>{label}</Text>
@@ -717,7 +718,7 @@ function SubscriptionStatusCard({
   const expiryDate = expiresAt ? new Date(expiresAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : null;
 
   return (
-    <View style={{ backgroundColor: SURFACE, borderRadius: 16, padding: 16, borderWidth: 1, borderColor: tier === "free" ? "rgba(30,41,59,0.6)" : `${tierColor}33` }}>
+    <View style={{ backgroundColor: SURFACE, borderRadius: 16, padding: 16, borderWidth: 1, borderColor: tier === "free" ? UI.border : `${tierColor}33` }}>
       {/* Tier Badge Row */}
       <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
         <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
@@ -820,13 +821,13 @@ function PersonalInfoCard({
   if (targetBF) rows.push({ icon: "track-changes", label: "Target BF", value: `${targetBF}%` });
 
   return (
-    <View style={{ backgroundColor: SURFACE, borderRadius: 16, overflow: "hidden", borderWidth: 1, borderColor: "rgba(30,41,59,0.6)" }}>
-      <View style={{ flexDirection: "row", alignItems: "center", gap: 8, padding: 14, borderBottomWidth: 1, borderBottomColor: "rgba(30,41,59,0.4)" }}>
+    <View style={{ backgroundColor: SURFACE, borderRadius: 16, overflow: "hidden", borderWidth: 1, borderColor: UI.border }}>
+      <View style={{ flexDirection: "row", alignItems: "center", gap: 8, padding: 14, borderBottomWidth: 1, borderBottomColor: UI.slateAlpha40 }}>
         <MaterialIcons name="badge" size={18} color={GOLD} />
         <Text style={{ color: FG, fontFamily: "DMSans_700Bold", fontSize: 14 }}>Personal Information</Text>
       </View>
       {rows.map((row, i) => (
-        <View key={i} style={{ flexDirection: "row", alignItems: "center", paddingHorizontal: 14, paddingVertical: 10, borderBottomWidth: i < rows.length - 1 ? 1 : 0, borderBottomColor: "rgba(30,41,59,0.25)" }}>
+        <View key={i} style={{ flexDirection: "row", alignItems: "center", paddingHorizontal: 14, paddingVertical: 10, borderBottomWidth: i < rows.length - 1 ? 1 : 0, borderBottomColor: UI.slateAlpha25 }}>
           <View style={{ width: 28, alignItems: "center" }}>
             <MaterialIcons name={row.icon as any} size={16} color={MUTED} />
           </View>
@@ -863,7 +864,7 @@ function PhotoOptionsModal({
           <View style={{ width: 40, height: 4, borderRadius: 2, backgroundColor: MUTED, alignSelf: "center", marginBottom: 20, opacity: 0.5 }} />
           <Text style={{ color: FG, fontFamily: "BebasNeue_400Regular", fontSize: 20, textAlign: "center", marginBottom: 20 }}>Profile Photo</Text>
           <TouchableOpacity
-            style={{ flexDirection: "row", alignItems: "center", gap: 14, backgroundColor: SURFACE2, borderRadius: 14, padding: 16, marginBottom: 10, borderWidth: 1, borderColor: "rgba(30,41,59,0.6)" }}
+            style={{ flexDirection: "row", alignItems: "center", gap: 14, backgroundColor: SURFACE2, borderRadius: 14, padding: 16, marginBottom: 10, borderWidth: 1, borderColor: UI.border }}
             onPress={onPickLibrary}
           >
             <View style={{ width: 40, height: 40, borderRadius: 12, backgroundColor: GOLD_DIM, alignItems: "center", justifyContent: "center" }}>
@@ -876,7 +877,7 @@ function PhotoOptionsModal({
             <MaterialIcons name="chevron-right" size={20} color={MUTED} />
           </TouchableOpacity>
           <TouchableOpacity
-            style={{ flexDirection: "row", alignItems: "center", gap: 14, backgroundColor: SURFACE2, borderRadius: 14, padding: 16, marginBottom: 10, borderWidth: 1, borderColor: "rgba(30,41,59,0.6)" }}
+            style={{ flexDirection: "row", alignItems: "center", gap: 14, backgroundColor: SURFACE2, borderRadius: 14, padding: 16, marginBottom: 10, borderWidth: 1, borderColor: UI.border }}
             onPress={onTakePhoto}
           >
             <View style={{ width: 40, height: 40, borderRadius: 12, backgroundColor: GOLD_DIM, alignItems: "center", justifyContent: "center" }}>
@@ -894,16 +895,16 @@ function PhotoOptionsModal({
               onPress={onRemove}
             >
               <View style={{ width: 40, height: 40, borderRadius: 12, backgroundColor: "#EF444420", alignItems: "center", justifyContent: "center" }}>
-                <MaterialIcons name="delete" size={22} color="#EF4444" />
+                <MaterialIcons name="delete" size={22} color={UI.red} />
               </View>
               <View style={{ flex: 1 }}>
-                <Text style={{ color: "#EF4444", fontFamily: "DMSans_600SemiBold", fontSize: 15 }}>Remove Photo</Text>
+                <Text style={{ color: UI.red, fontFamily: "DMSans_600SemiBold", fontSize: 15 }}>Remove Photo</Text>
                 <Text style={{ color: MUTED, fontSize: 12, marginTop: 2 }}>Reset to default avatar</Text>
               </View>
             </TouchableOpacity>
           )}
           <TouchableOpacity
-            style={{ marginTop: 8, paddingVertical: 14, alignItems: "center", backgroundColor: SURFACE2, borderRadius: 14, borderWidth: 1, borderColor: "rgba(30,41,59,0.6)" }}
+            style={{ marginTop: 8, paddingVertical: 14, alignItems: "center", backgroundColor: SURFACE2, borderRadius: 14, borderWidth: 1, borderColor: UI.border }}
             onPress={onClose}
           >
             <Text style={{ color: MUTED, fontFamily: "DMSans_600SemiBold", fontSize: 15 }}>Cancel</Text>
@@ -929,7 +930,7 @@ function ThemeToggle() {
               backgroundColor: active ? GOLD_DIM : SURFACE,
               borderRadius: 14, padding: 14,
               borderWidth: 1,
-              borderColor: active ? GOLD_BORDER : "rgba(30,41,59,0.6)",
+              borderColor: active ? GOLD_BORDER : UI.border,
             }}
             onPress={() => {
               setThemePreference(opt.key);

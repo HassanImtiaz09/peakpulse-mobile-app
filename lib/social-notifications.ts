@@ -14,6 +14,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Platform } from "react-native";
 import * as Notifications from "expo-notifications";
+import { UI } from "@/constants/ui-colors";
 
 // ── Storage Keys ─────────────────────────────────────────────────
 
@@ -72,7 +73,7 @@ export async function setupSocialNotificationChannel(): Promise<void> {
       description: "Friend joins, challenge completions, and circle updates",
       importance: Notifications.AndroidImportance.HIGH,
       vibrationPattern: [0, 200, 100, 200],
-      lightColor: "#F59E0B",
+      lightColor: UI.gold,
       sound: "default",
     });
   }
@@ -358,11 +359,11 @@ export function getNotificationIcon(type: SocialNotificationType): string {
 
 export function getNotificationColor(type: SocialNotificationType): string {
   switch (type) {
-    case "friend_joined": return "#22C55E";
-    case "challenge_completed": return "#F59E0B";
-    case "challenge_invitation": return "#EF4444";
+    case "friend_joined": return UI.green;
+    case "challenge_completed": return UI.gold;
+    case "challenge_invitation": return UI.red;
     case "circle_milestone": return "#8B5CF6";
-    case "friend_streak": return "#F97316";
+    case "friend_streak": return UI.orange2;
     case "leaderboard_change": return "#3B82F6";
     default: return "#64748B";
   }

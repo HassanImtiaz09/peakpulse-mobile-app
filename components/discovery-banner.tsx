@@ -8,6 +8,7 @@ import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import type { DiscoveryPrompt } from "@/lib/feature-discovery";
+import { UI } from "@/constants/ui-colors";
 
 interface DiscoveryBannerProps {
   prompt: DiscoveryPrompt;
@@ -86,13 +87,13 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   title: {
-    color: "#F1F5F9",
+    color: UI.fg,
     fontFamily: "DMSans_700Bold",
     fontSize: 14,
     marginBottom: 3,
   },
   message: {
-    color: "#94A3B8",
+    color: UI.muted,
     fontFamily: "DMSans_400Regular",
     fontSize: 12,
     lineHeight: 18,

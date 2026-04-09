@@ -18,7 +18,7 @@ import {
   SOUND_OPTIONS, DEFAULT_SOUND_SETTINGS,
   type RestTimerSoundSettings, type SoundType,
 } from "@/lib/rest-timer-sounds";
-import { C } from "@/constants/ui-colors";
+import { UI, C } from "@/constants/ui-colors";
 import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
 
 export default function RestTimerSoundsScreen() {
@@ -136,7 +136,7 @@ export default function RestTimerSoundsScreen() {
             <Switch
               value={settings.hapticFeedback}
               onValueChange={(v) => updateSetting("hapticFeedback", v)}
-              trackColor={{ false: C.surface, true: "rgba(245,158,11,0.3)" }}
+              trackColor={{ false: C.surface, true: UI.goldAlpha30 }}
               thumbColor={settings.hapticFeedback ? C.gold : C.muted}
             />
           </View>
@@ -152,7 +152,7 @@ export default function RestTimerSoundsScreen() {
             <Switch
               value={settings.halfwayWarning}
               onValueChange={(v) => updateSetting("halfwayWarning", v)}
-              trackColor={{ false: C.surface, true: "rgba(245,158,11,0.3)" }}
+              trackColor={{ false: C.surface, true: UI.goldAlpha30 }}
               thumbColor={settings.halfwayWarning ? C.gold : C.muted}
             />
           </View>
@@ -236,7 +236,7 @@ const s = StyleSheet.create({
   },
   optionCardActive: {
     borderColor: C.gold,
-    backgroundColor: "rgba(245,158,11,0.06)",
+    backgroundColor: UI.goldAlpha6,
   },
   optionRow: {
     flexDirection: "row",
@@ -265,7 +265,7 @@ const s = StyleSheet.create({
     gap: 4,
     marginTop: 8,
     alignSelf: "flex-start",
-    backgroundColor: "rgba(245,158,11,0.10)",
+    backgroundColor: UI.goldAlpha10,
     borderRadius: 8,
     paddingHorizontal: 12,
     paddingVertical: 6,

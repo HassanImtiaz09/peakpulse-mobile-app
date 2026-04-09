@@ -1,3 +1,4 @@
+import { UI } from "@/constants/ui-colors";
 /**
  * Golden-themed HD background URLs for all screens.
  * These are the AI-generated golden coach backgrounds used throughout PeakPulse.
@@ -52,7 +53,7 @@ export const GOLDEN_HERO_OVERLAY = {
  */
 export const GOLDEN_CARD_STYLE = {
   backgroundColor: "rgba(20,26,34,0.80)",
-  borderColor: "rgba(245,158,11,0.12)",
+  borderColor: UI.goldAlpha12,
   borderWidth: 1,
   borderRadius: 20,
 } as const;

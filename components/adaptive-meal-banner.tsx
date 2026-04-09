@@ -32,23 +32,24 @@ import {
   getSmartMealSuggestions,
   type SmartSuggestion,
 } from "@/lib/smart-meal-suggestions";
+import { UI } from "@/constants/ui-colors";
 
 // ── Design Tokens (Meals tab palette) ────────────────────────────────────
 
-const MBG = "#0A0E14";
+const MBG = UI.bg;
 const MSURFACE = "#111827";
-const MSURFACE2 = "#1E293B";
-const MFG = "#F1F5F9";
+const MSURFACE2 = UI.inactive;
+const MFG = UI.fg;
 const MMUTED = "#64748B";
-const MINT = "#14B8A6";
-const AMBER = "#F59E0B";
-const RED = "#EF4444";
-const GREEN = "#22C55E";
+const MINT = UI.teal;
+const AMBER = UI.gold;
+const RED = UI.red;
+const GREEN = UI.green;
 
 const SEVERITY_COLORS: Record<string, { bg: string; border: string; icon: string; iconColor: string }> = {
   warning: {
-    bg: "rgba(245,158,11,0.08)",
-    border: "rgba(245,158,11,0.20)",
+    bg: UI.dim,
+    border: UI.goldAlpha20,
     icon: "warning-amber",
     iconColor: AMBER,
   },
@@ -574,13 +575,13 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     padding: 14,
     borderWidth: 1,
-    borderColor: "rgba(245,158,11,0.10)",
+    borderColor: UI.goldAlpha10,
   },
   suggestionIcon: {
     width: 40,
     height: 40,
     borderRadius: 12,
-    backgroundColor: "rgba(245,158,11,0.12)",
+    backgroundColor: UI.goldAlpha12,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -612,7 +613,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 4,
     borderWidth: 1,
-    borderColor: "rgba(245,158,11,0.10)",
+    borderColor: UI.goldAlpha10,
   },
   statValue: {
     color: MFG,
@@ -661,7 +662,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(20,184,166,0.12)",
   },
   addTodayText: {
-    color: "#14B8A6",
+    color: UI.teal,
     fontFamily: "DMSans_600SemiBold",
     fontSize: 12,
   },

@@ -32,6 +32,7 @@ import {
 import { WebView } from "react-native-webview";
 import { Image } from "expo-image";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { UI } from "@/constants/ui-colors";
 
 interface GifWebViewPlayerProps {
   /** Base64-encoded GIF data (without data: prefix) or a URL */
@@ -782,7 +783,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 8,
     right: 8,
-    backgroundColor: "rgba(245,158,11,0.85)",
+    backgroundColor: UI.goldAlpha85,
     paddingHorizontal: 8,
     paddingVertical: 3,
     borderRadius: 10,

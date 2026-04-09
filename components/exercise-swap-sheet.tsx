@@ -26,7 +26,7 @@ import {
   type SubstitutionResult,
 } from "@/lib/exercise-substitution";
 import { getExerciseInfo, type ExerciseInfo } from "@/lib/exercise-data";
-import { C } from "@/constants/ui-colors";
+import { UI, C } from "@/constants/ui-colors";
 
 // ── Theme ────────────────────────────────────────────────────────────────────
 interface ExerciseSwapSheetProps {
@@ -355,12 +355,12 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   muscleChip: {
-    backgroundColor: "rgba(245,158,11,0.12)",
+    backgroundColor: UI.goldAlpha12,
     paddingHorizontal: 8,
     paddingVertical: 3,
     borderRadius: 6,
     borderWidth: 1,
-    borderColor: "rgba(245,158,11,0.2)",
+    borderColor: UI.goldAlpha20,
   },
   muscleChipText: {
     color: C.primary,
@@ -378,13 +378,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 8,
-    backgroundColor: "rgba(30,41,59,0.6)",
+    backgroundColor: UI.border,
     borderWidth: 1,
     borderColor: "transparent",
   },
   filterChipActive: {
-    backgroundColor: "rgba(245,158,11,0.15)",
-    borderColor: "rgba(245,158,11,0.3)",
+    backgroundColor: UI.borderGold,
+    borderColor: UI.goldAlpha30,
   },
   filterChipText: {
     color: C.muted,
@@ -432,7 +432,7 @@ const styles = StyleSheet.create({
     height: 56,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "rgba(30,41,59,0.5)",
+    backgroundColor: UI.slateAlpha50,
   },
   gifBadge: {
     position: "absolute",
@@ -497,7 +497,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 8,
-    backgroundColor: "rgba(245,158,11,0.12)",
+    backgroundColor: UI.goldAlpha12,
   },
   emptyBtnText: {
     color: C.primary,

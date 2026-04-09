@@ -449,7 +449,7 @@ export default function ProgressPhotoGallery({
                 style={styles.modalDeleteBtn}
                 onPress={() => handleDelete(fullScreenPhoto)}
               >
-                <MaterialIcons name="delete-outline" size={20} color="#EF4444" />
+                <MaterialIcons name="delete-outline" size={20} color={UI.red} />
                 <Text style={styles.modalDeleteText}>Delete</Text>
               </TouchableOpacity>
             </View>
@@ -626,6 +626,6 @@ const styles = StyleSheet.create({
   modalDeleteText: {
     fontFamily: "DMSans_400Regular",
     fontSize: 14,
-    color: "#EF4444",
+    color: UI.red,
   },
 });

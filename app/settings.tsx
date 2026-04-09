@@ -37,7 +37,7 @@ function formatBytes(bytes: number): string {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 import { GOLDEN_PRIMARY, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgrounds";
-import { UI as SF } from "@/constants/ui-colors";
+import { UI, SF } from "@/constants/ui-colors";
 import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
 
 const FONT_SIZE_KEY = "@peakpulse_font_size";
@@ -232,12 +232,12 @@ export default function SettingsScreen() {
         <View style={styles.previewStrip}>
           {(["light", "dark"] as const).map((mode) => {
             const isLight = mode === "light";
-            const bg = isLight ? "#FFFFFF" : "#0A0E14";
-            const fg = isLight ? "#11181C" : "#F1F5F9";
-            const muted = isLight ? "#687076" : "#94A3B8";
-            const surface = isLight ? "#F5F5F5" : "#141A22";
-            const accent = isLight ? "#F59E0B" : "#F59E0B";
-            const border = isLight ? "#E5E7EB" : "rgba(30,41,59,0.6)";
+            const bg = isLight ? "#FFFFFF" : UI.bg;
+            const fg = isLight ? "#11181C" : UI.fg;
+            const muted = isLight ? "#687076" : UI.muted;
+            const surface = isLight ? "#F5F5F5" : UI.surface;
+            const accent = isLight ? UI.gold : UI.gold;
+            const border = isLight ? "#E5E7EB" : UI.border;
             const isActive = themePreference === mode || (themePreference === "system" && mode === "dark");
             return (
               <TouchableOpacity
@@ -318,7 +318,7 @@ export default function SettingsScreen() {
               <Switch
                 value={pushEnabled}
                 onValueChange={togglePush}
-                trackColor={{ false: "#334155", true: "rgba(245,158,11,0.4)" }}
+                trackColor={{ false: "#334155", true: UI.goldAlpha40 }}
                 thumbColor={pushEnabled ? SF.gold : "#687076"}
               />
             )}
@@ -326,7 +326,7 @@ export default function SettingsScreen() {
 
           {pushEnabled && scheduledCount > 0 && (
             <View style={styles.notifInfo}>
-              <MaterialIcons name="check-circle" size={14} color="#22C55E" />
+              <MaterialIcons name="check-circle" size={14} color={UI.green} />
               <Text style={styles.notifInfoText}>
                 {scheduledCount} daily reminder{scheduledCount !== 1 ? "s" : ""} scheduled
               </Text>
@@ -354,7 +354,7 @@ export default function SettingsScreen() {
         {pushEnabled && (
           <TouchableOpacity
             onPress={() => router.push("/notification-settings" as any)}
-            style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", backgroundColor: "rgba(245,158,11,0.06)", borderRadius: 14, padding: 14, marginTop: 8, borderWidth: 1, borderColor: "rgba(245,158,11,0.12)" }}
+            style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", backgroundColor: UI.goldAlpha6, borderRadius: 14, padding: 14, marginTop: 8, borderWidth: 1, borderColor: UI.goldAlpha12 }}
           >
             <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
               <MaterialIcons name="smart-toy" size={20} color={SF.gold} />
@@ -393,7 +393,7 @@ export default function SettingsScreen() {
             </View>
 
             {/* Cache stats */}
-            <View style={{ backgroundColor: "rgba(245,158,11,0.06)", borderRadius: 10, padding: 12, gap: 6 }}>
+            <View style={{ backgroundColor: UI.goldAlpha6, borderRadius: 10, padding: 12, gap: 6 }}>
               <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
                 <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 12 }}>Cache Size</Text>
                 <Text style={{ color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 12 }}>{videoCacheSize}</Text>
@@ -418,11 +418,11 @@ export default function SettingsScreen() {
               disabled={clearingCache}
             >
               {clearingCache ? (
-                <ActivityIndicator color="#EF4444" size="small" />
+                <ActivityIndicator color={UI.red} size="small" />
               ) : (
-                <MaterialIcons name="delete-outline" size={18} color="#EF4444" />
+                <MaterialIcons name="delete-outline" size={18} color={UI.red} />
               )}
-              <Text style={{ color: "#EF4444", fontFamily: "DMSans_700Bold", fontSize: 13 }}>Clear Cache</Text>
+              <Text style={{ color: UI.red, fontFamily: "DMSans_700Bold", fontSize: 13 }}>Clear Cache</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -443,7 +443,7 @@ export default function SettingsScreen() {
 
             {/* Current target display */}
             {tdeeBreakdown && (
-              <View style={{ backgroundColor: "rgba(245,158,11,0.06)", borderRadius: 10, padding: 12, marginBottom: 14, borderWidth: 1, borderColor: SF.border }}>
+              <View style={{ backgroundColor: UI.goldAlpha6, borderRadius: 10, padding: 12, marginBottom: 14, borderWidth: 1, borderColor: SF.border }}>
                 <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
                   <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 11 }}>Current Target</Text>
                   <Text style={{ color: SF.gold, fontFamily: "DMSans_700Bold", fontSize: 16 }}>{tdeeBreakdown.adjustedTdee} kcal</Text>
@@ -527,7 +527,7 @@ export default function SettingsScreen() {
             <TouchableOpacity
               onPress={handleRecalculate}
               disabled={recalculating}
-              style={{ marginTop: 14, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8, backgroundColor: "rgba(245,158,11,0.12)", borderRadius: 12, paddingVertical: 12, borderWidth: 1, borderColor: "rgba(245,158,11,0.30)" }}
+              style={{ marginTop: 14, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8, backgroundColor: UI.goldAlpha12, borderRadius: 12, paddingVertical: 12, borderWidth: 1, borderColor: UI.goldAlpha30 }}
             >
               {recalculating ? (
                 <ActivityIndicator color={SF.gold} size="small" />
@@ -560,15 +560,15 @@ export default function SettingsScreen() {
 // TDEE recalculate form inline styles
 const tdeeInputLabel = { color: SF.muted, fontFamily: "DMSans_600SemiBold" as const, fontSize: 11, marginBottom: 4 };
 const tdeeInputStyle = {
-  backgroundColor: "rgba(245,158,11,0.06)", borderRadius: 10, borderWidth: 1, borderColor: SF.border,
+  backgroundColor: UI.goldAlpha6, borderRadius: 10, borderWidth: 1, borderColor: SF.border,
   paddingHorizontal: 12, paddingVertical: 10, color: SF.fg, fontFamily: "DMSans_600SemiBold" as const, fontSize: 14,
 };
 const tdeeChipStyle = {
   flex: 1 as const, alignItems: "center" as const, paddingVertical: 8, borderRadius: 10,
-  backgroundColor: "rgba(245,158,11,0.04)", borderWidth: 1, borderColor: SF.border,
+  backgroundColor: UI.goldAlpha4, borderWidth: 1, borderColor: SF.border,
 };
 const tdeeChipActiveStyle = {
-  backgroundColor: "rgba(245,158,11,0.12)", borderColor: "rgba(245,158,11,0.30)",
+  backgroundColor: UI.goldAlpha12, borderColor: UI.goldAlpha30,
 };
 const tdeeChipText = { color: SF.fg, fontFamily: "DMSans_600SemiBold" as const, fontSize: 12 };
 
@@ -578,7 +578,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20, paddingVertical: 14,
   },
   backBtn: {
-    width: 36, height: 36, borderRadius: 10, backgroundColor: "rgba(245,158,11,0.08)",
+    width: 36, height: 36, borderRadius: 10, backgroundColor: UI.dim,
     alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: SF.border,
   },
   headerTitle: {
@@ -596,14 +596,14 @@ const styles = StyleSheet.create({
     flexDirection: "row", alignItems: "center", gap: 12, padding: 14, borderRadius: 12,
   },
   optionRowActive: {
-    backgroundColor: "rgba(245,158,11,0.08)",
+    backgroundColor: UI.dim,
   },
   optionIcon: {
-    width: 36, height: 36, borderRadius: 10, backgroundColor: "rgba(245,158,11,0.06)",
+    width: 36, height: 36, borderRadius: 10, backgroundColor: UI.goldAlpha6,
     alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: SF.border,
   },
   optionIconActive: {
-    backgroundColor: "rgba(245,158,11,0.12)", borderColor: "rgba(245,158,11,0.25)",
+    backgroundColor: UI.goldAlpha12, borderColor: UI.borderGold2,
   },
   optionLabel: {
     color: SF.fg, fontFamily: "DMSans_600SemiBold", fontSize: 14,
@@ -620,10 +620,10 @@ const styles = StyleSheet.create({
   },
   fontSizeBtn: {
     flex: 1, alignItems: "center", paddingVertical: 12, borderRadius: 12,
-    backgroundColor: "rgba(245,158,11,0.04)", borderWidth: 1, borderColor: SF.border,
+    backgroundColor: UI.goldAlpha4, borderWidth: 1, borderColor: SF.border,
   },
   fontSizeBtnActive: {
-    backgroundColor: "rgba(245,158,11,0.12)", borderColor: "rgba(245,158,11,0.30)",
+    backgroundColor: UI.goldAlpha12, borderColor: UI.goldAlpha30,
   },
   fontSizePreview: {
     color: SF.fg, fontFamily: "DMSans_700Bold", marginBottom: 4,
@@ -632,7 +632,7 @@ const styles = StyleSheet.create({
     color: SF.muted, fontSize: 10, fontFamily: "DMSans_600SemiBold",
   },
   previewBox: {
-    margin: 10, marginTop: 0, padding: 14, backgroundColor: "rgba(245,158,11,0.04)",
+    margin: 10, marginTop: 0, padding: 14, backgroundColor: UI.goldAlpha4,
     borderRadius: 10, borderWidth: 1, borderColor: SF.border,
   },
   previewText: {
@@ -646,11 +646,11 @@ const styles = StyleSheet.create({
     paddingBottom: 8,
   },
   notifInfoText: {
-    color: "#22C55E", fontSize: 11, fontFamily: "DMSans_600SemiBold",
+    color: UI.green, fontSize: 11, fontFamily: "DMSans_600SemiBold",
   },
   reminderList: {
     marginHorizontal: 10, marginBottom: 10, padding: 10, borderRadius: 10,
-    backgroundColor: "rgba(245,158,11,0.04)", borderWidth: 1, borderColor: SF.border,
+    backgroundColor: UI.goldAlpha4, borderWidth: 1, borderColor: SF.border,
     gap: 8,
   },
   reminderRow: {
@@ -664,7 +664,7 @@ const styles = StyleSheet.create({
   },
   webNote: {
     flexDirection: "row", alignItems: "center", gap: 8, marginTop: 12,
-    padding: 12, backgroundColor: "rgba(245,158,11,0.04)", borderRadius: 10,
+    padding: 12, backgroundColor: UI.goldAlpha4, borderRadius: 10,
     borderWidth: 1, borderColor: SF.border,
   },
   webNoteText: {

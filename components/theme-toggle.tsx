@@ -3,6 +3,7 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import * as Haptics from "expo-haptics";
 import { useThemeContext } from "@/lib/theme-provider";
 import { useColors } from "@/hooks/use-colors";
+import { UI } from "@/constants/ui-colors";
 
 /**
  * A compact theme toggle button that cycles: dark → light → system → dark.
@@ -41,11 +42,11 @@ export function ThemeToggle() {
         {
           backgroundColor:
             colorScheme === "dark"
-              ? "rgba(245,158,11,0.12)"
+              ? UI.goldAlpha12
               : "rgba(217,119,6,0.12)",
           borderColor:
             colorScheme === "dark"
-              ? "rgba(245,158,11,0.25)"
+              ? UI.borderGold2
               : "rgba(217,119,6,0.25)",
         },
       ]}
@@ -54,7 +55,7 @@ export function ThemeToggle() {
       <MaterialIcons
         name={iconName}
         size={18}
-        color={colorScheme === "dark" ? "#F59E0B" : "#D97706"}
+        color={colorScheme === "dark" ? UI.gold : UI.secondary}
       />
     </TouchableOpacity>
   );

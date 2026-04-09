@@ -11,6 +11,7 @@ import {
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import * as Haptics from "expo-haptics";
 import { TIER_COLORS, TIER_LABELS, type AchievementDef, type AchievementTier } from "@/lib/achievements";
+import { UI } from "@/constants/ui-colors";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -147,7 +148,7 @@ export function AchievementUnlock({ achievement, visible, onDismiss }: Achieveme
 
           {/* XP Reward */}
           <View style={styles.xpRow}>
-            <MaterialIcons name="bolt" size={18} color="#FBBF24" />
+            <MaterialIcons name="bolt" size={18} color={UI.gold2} />
             <Text style={styles.xpText}>+{achievement.xpReward} XP</Text>
           </View>
 
@@ -250,7 +251,7 @@ const styles = StyleSheet.create({
   xpText: {
     fontSize: 18,
     fontFamily: "SpaceMono_700Bold",
-    color: "#FBBF24",
+    color: UI.gold2,
   },
   dismissButton: {
     marginTop: 8,
@@ -259,7 +260,7 @@ const styles = StyleSheet.create({
     borderRadius: 14,
   },
   dismissButtonText: {
-    color: "#0A0E14",
+    color: UI.bg,
     fontSize: 15,
     fontFamily: "DMSans_700Bold",
   },

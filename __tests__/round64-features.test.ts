@@ -145,9 +145,9 @@ describe("Challenge Screen (app/challenge.tsx)", () => {
   });
 
   it("uses Aurora Titan dark theme colors", () => {
-    expect(src).toContain("#0A0E14");
-    expect(src).toContain("#FDE68A");
-    expect(src).toContain("#F59E0B");
+    expect(src).toMatch(/UI\.bg|#0A0E14/);
+    expect(src).toMatch(/UI\.gold3|#FDE68A/);
+    expect(src).toMatch(/UI\.gold|#F59E0B/);
   });
 
   it("has navigation back button", () => {
@@ -388,9 +388,9 @@ describe("Group Goals Screen (app/group-goals.tsx)", () => {
   });
 
   it("uses Aurora Titan dark theme colors", () => {
-    expect(src).toContain("#0A0E14");
-    expect(src).toContain("#FDE68A");
-    expect(src).toContain("#F59E0B");
+    expect(src).toMatch(/UI\.bg|#0A0E14/);
+    expect(src).toMatch(/UI\.gold3|#FDE68A/);
+    expect(src).toMatch(/UI\.gold|#F59E0B/);
   });
 
   it("has navigation back button", () => {

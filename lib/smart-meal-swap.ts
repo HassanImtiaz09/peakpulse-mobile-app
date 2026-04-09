@@ -1,3 +1,4 @@
+import { UI } from "@/constants/ui-colors";
 /**
  * Smart Meal Swap — Find macro-matched alternative meals from the user's
  * existing weekly meal plan. No AI call needed — purely local matching.
@@ -142,10 +143,10 @@ export function findSwapCandidates(
  * Get a human-readable match quality label.
  */
 export function getMatchLabel(score: number): { label: string; color: string } {
-  if (score >= 0.85) return { label: "Excellent Match", color: "#22C55E" };
+  if (score >= 0.85) return { label: "Excellent Match", color: UI.green };
   if (score >= 0.70) return { label: "Great Match", color: "#4ADE80" };
-  if (score >= 0.50) return { label: "Good Match", color: "#FBBF24" };
-  if (score >= 0.35) return { label: "Fair Match", color: "#F59E0B" };
+  if (score >= 0.50) return { label: "Good Match", color: UI.gold2 };
+  if (score >= 0.35) return { label: "Fair Match", color: UI.gold };
   return { label: "Loose Match", color: "#F87171" };
 }
 

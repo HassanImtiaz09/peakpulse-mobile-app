@@ -24,7 +24,7 @@ import {
   QUICK_REACTIONS, type ChatMessage, type ChatRoom, type ReadReceipt,
 } from "@/lib/chat-service";
 import { GOLDEN_SOCIAL, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgrounds";
-import { UI as SF } from "@/constants/ui-colors";
+import { UI, SF } from "@/constants/ui-colors";
 import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
@@ -309,7 +309,7 @@ export default function ChatScreen() {
       <View style={[
         styles.msgRow,
         isMe && styles.msgRowMe,
-        isSearchMatch && searchQuery.trim() ? { backgroundColor: "rgba(245,158,11,0.05)", borderRadius: 12, marginHorizontal: -4, paddingHorizontal: 4 } : undefined,
+        isSearchMatch && searchQuery.trim() ? { backgroundColor: UI.goldAlpha5, borderRadius: 12, marginHorizontal: -4, paddingHorizontal: 4 } : undefined,
       ]}>
         {!isMe && (
           <View style={styles.avatarCircle}>
@@ -427,7 +427,7 @@ export default function ChatScreen() {
             ))}
             {isMe && (
               <TouchableOpacity style={styles.actionBtn} onPress={() => handleDelete(item.id)}>
-                <MaterialIcons name="delete" size={18} color="#EF4444" />
+                <MaterialIcons name="delete" size={18} color={UI.red} />
               </TouchableOpacity>
             )}
           </View>
@@ -610,13 +610,13 @@ const styles = StyleSheet.create({
   },
   backBtn: {
     width: 36, height: 36, borderRadius: 18,
-    backgroundColor: "rgba(245,158,11,0.10)", alignItems: "center", justifyContent: "center",
+    backgroundColor: UI.goldAlpha10, alignItems: "center", justifyContent: "center",
   },
   headerTitle: { color: SF.fg, fontSize: 17, fontWeight: "700" },
   headerSub: { color: SF.muted, fontSize: 11, marginTop: 1 },
   headerAction: {
     width: 36, height: 36, borderRadius: 18,
-    backgroundColor: "rgba(245,158,11,0.10)", alignItems: "center", justifyContent: "center",
+    backgroundColor: UI.goldAlpha10, alignItems: "center", justifyContent: "center",
   },
   // Search header
   searchHeader: {
@@ -625,7 +625,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1, borderBottomColor: SF.border,
   },
   searchInput: {
-    flex: 1, backgroundColor: "rgba(245,158,11,0.08)", borderRadius: 16,
+    flex: 1, backgroundColor: UI.dim, borderRadius: 16,
     paddingHorizontal: 14, paddingVertical: 8, color: SF.fg, fontSize: 14,
     borderWidth: 1, borderColor: SF.border,
   },
@@ -651,7 +651,7 @@ const styles = StyleSheet.create({
   msgRowMe: { flexDirection: "row-reverse" },
   avatarCircle: {
     width: 30, height: 30, borderRadius: 15,
-    backgroundColor: "rgba(245,158,11,0.15)", alignItems: "center", justifyContent: "center",
+    backgroundColor: UI.borderGold, alignItems: "center", justifyContent: "center",
   },
   avatarText: { fontSize: 14 },
   bubble: {
@@ -659,7 +659,7 @@ const styles = StyleSheet.create({
   },
   bubbleMe: {
     backgroundColor: SF.myBubble, borderBottomRightRadius: 4,
-    borderWidth: 1, borderColor: "rgba(245,158,11,0.20)",
+    borderWidth: 1, borderColor: UI.goldAlpha20,
   },
   bubbleOther: {
     backgroundColor: SF.otherBubble, borderBottomLeftRadius: 4,
@@ -684,15 +684,15 @@ const styles = StyleSheet.create({
   // Reactions
   reactionsRow: { flexDirection: "row", flexWrap: "wrap", gap: 4, marginTop: 6 },
   reactionBadge: {
-    flexDirection: "row", alignItems: "center", backgroundColor: "rgba(245,158,11,0.08)",
+    flexDirection: "row", alignItems: "center", backgroundColor: UI.dim,
     borderRadius: 10, paddingHorizontal: 6, paddingVertical: 2,
-    borderWidth: 1, borderColor: "rgba(245,158,11,0.10)",
+    borderWidth: 1, borderColor: UI.goldAlpha10,
   },
-  reactionBadgeMine: { borderColor: SF.gold, backgroundColor: "rgba(245,158,11,0.15)" },
+  reactionBadgeMine: { borderColor: SF.gold, backgroundColor: UI.borderGold },
   reactionEmoji: { fontSize: 12, color: SF.fg },
   // Reply
   replyPreview: {
-    backgroundColor: "rgba(245,158,11,0.08)", borderRadius: 8,
+    backgroundColor: UI.dim, borderRadius: 8,
     paddingHorizontal: 10, paddingVertical: 6, marginBottom: 6,
     borderLeftWidth: 3, borderLeftColor: SF.gold,
   },
@@ -724,11 +724,11 @@ const styles = StyleSheet.create({
   },
   attachBtn: {
     width: 40, height: 40, borderRadius: 20,
-    backgroundColor: "rgba(245,158,11,0.10)", alignItems: "center", justifyContent: "center",
+    backgroundColor: UI.goldAlpha10, alignItems: "center", justifyContent: "center",
     marginBottom: 2,
   },
   textInput: {
-    flex: 1, backgroundColor: "rgba(245,158,11,0.06)", borderRadius: 20,
+    flex: 1, backgroundColor: UI.goldAlpha6, borderRadius: 20,
     paddingHorizontal: 16, paddingVertical: 10, color: SF.fg, fontSize: 14,
     maxHeight: 100, borderWidth: 1, borderColor: SF.border,
   },

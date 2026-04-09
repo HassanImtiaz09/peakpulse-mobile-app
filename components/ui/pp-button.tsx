@@ -46,7 +46,7 @@ const VARIANT_STYLES: Record<Variant, { bg: string; text: string; border?: strin
   secondary: { bg: UI.surface, text: UI.fg, border: UI.border },
   outline:   { bg: "transparent", text: UI.fg, border: "rgba(255,255,255,0.15)" },
   ghost:     { bg: "transparent", text: UI.muted },
-  danger:    { bg: "#EF4444", text: "#fff" },
+  danger:    { bg: UI.red, text: "#fff" },
 };
 
 const SIZE_STYLES: Record<Size, { h: number; px: number; fontSize: number; iconSize: number; radius: number }> = {

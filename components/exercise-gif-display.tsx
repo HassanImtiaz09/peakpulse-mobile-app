@@ -26,6 +26,7 @@ import {
 import { Image } from "expo-image";
 import { getExerciseGifUrl, hasExerciseDBKey } from "@/lib/exercisedb";
 import { getExerciseDbGifUrl } from "@/lib/exercisedb-api";
+import { UI } from "@/constants/ui-colors";
 
 interface ExerciseGifDisplayProps {
   /** Exercise name used for lookup (e.g. "barbell squat", "Bench Press") */
@@ -103,7 +104,7 @@ export function ExerciseGifDisplay({
     <View style={[styles.container, { height }, style]}>
       {loading && (
         <View style={[StyleSheet.absoluteFill, styles.loadingLayer]}>
-          <ActivityIndicator color="#F59E0B" size="small" />
+          <ActivityIndicator color={UI.gold} size="small" />
         </View>
       )}
       {gifUrl ? (

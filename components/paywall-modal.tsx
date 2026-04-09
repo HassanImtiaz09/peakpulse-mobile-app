@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, Modal, ActivityIndicator, Alert, Linking 
 import { useRouter } from "expo-router";
 import { useSubscription } from "@/hooks/use-subscription";
 import { useGuestAuth } from "@/lib/guest-auth";
+import { UI } from "@/constants/ui-colors";
 
 interface PaywallModalProps {
   visible: boolean;
@@ -18,7 +19,7 @@ const TIER_PRICES = {
   pro: { monthly: "£11.99", annual: "£8.49" },
 };
 const TIER_LABELS = { basic: "Basic", pro: "Pro" };
-const TIER_COLORS = { basic: "#F59E0B", pro: "#EA580C" };
+const TIER_COLORS = { basic: UI.gold, pro: UI.orange };
 
 export function PaywallModal({
   visible,
@@ -66,7 +67,7 @@ export function PaywallModal({
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
       <View style={{ flex: 1, backgroundColor: "rgba(10,5,0,0.88)", justifyContent: "center", alignItems: "center", paddingHorizontal: 24 }}>
-        <View style={{ backgroundColor: "#0A0E14", borderRadius: 28, padding: 28, width: "100%", maxWidth: 380, borderWidth: 1, borderColor: "rgba(245,158,11,0.25)" }}>
+        <View style={{ backgroundColor: UI.bg, borderRadius: 28, padding: 28, width: "100%", maxWidth: 380, borderWidth: 1, borderColor: UI.borderGold2 }}>
 
           {/* Icon + tier badge */}
           <View style={{ alignItems: "center", marginBottom: 16 }}>
@@ -81,12 +82,12 @@ export function PaywallModal({
           </View>
 
           {/* Title */}
-          <Text style={{ color: "#F1F5F9", fontFamily: "BebasNeue_400Regular", fontSize: 22, textAlign: "center", marginBottom: 8 }}>
+          <Text style={{ color: UI.fg, fontFamily: "BebasNeue_400Regular", fontSize: 22, textAlign: "center", marginBottom: 8 }}>
             Unlock {featureName}
           </Text>
 
           {/* Description */}
-          <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 14, textAlign: "center", lineHeight: 22, marginBottom: 20 }}>
+          <Text style={{ color: UI.secondaryLight, fontFamily: "DMSans_400Regular", fontSize: 14, textAlign: "center", lineHeight: 22, marginBottom: 20 }}>
             {description ?? `${featureName} is available on the ${label} plan and above. Upgrade to access this and many more premium features.`}
           </Text>
 
@@ -94,30 +95,30 @@ export function PaywallModal({
           {showTrialCTA ? (
             <View style={{ backgroundColor: "#1c1000", borderRadius: 16, padding: 16, marginBottom: 16, borderWidth: 1, borderColor: "#F59E0B40", alignItems: "center" }}>
               <Text style={{ fontSize: 28, marginBottom: 6 }}>🎁</Text>
-              <Text style={{ color: "#F59E0B", fontFamily: "BebasNeue_400Regular", fontSize: 16, marginBottom: 4 }}>
+              <Text style={{ color: UI.gold, fontFamily: "BebasNeue_400Regular", fontSize: 16, marginBottom: 4 }}>
                 7-Day Free Trial
               </Text>
-              <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 12, textAlign: "center", lineHeight: 18 }}>
+              <Text style={{ color: UI.secondaryLight, fontFamily: "DMSans_400Regular", fontSize: 12, textAlign: "center", lineHeight: 18 }}>
                 Try all Pro features free for 7 days.{"\n"}No credit card required.
               </Text>
             </View>
           ) : (
             /* Price callout — shown when no trial available */
-            <View style={{ backgroundColor: "#141A22", borderRadius: 16, padding: 16, marginBottom: 20, borderWidth: 1, borderColor: "rgba(245,158,11,0.12)" }}>
+            <View style={{ backgroundColor: UI.surface, borderRadius: 16, padding: 16, marginBottom: 20, borderWidth: 1, borderColor: UI.goldAlpha12 }}>
               <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
                 <View>
-                  <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 12, marginBottom: 2 }}>Starting from</Text>
-                  <Text style={{ color: "#F1F5F9", fontFamily: "BebasNeue_400Regular", fontSize: 26 }}>
+                  <Text style={{ color: UI.secondaryLight, fontFamily: "DMSans_400Regular", fontSize: 12, marginBottom: 2 }}>Starting from</Text>
+                  <Text style={{ color: UI.fg, fontFamily: "BebasNeue_400Regular", fontSize: 26 }}>
                     {price.annual}
-                    <Text style={{ fontSize: 14, color: "#B45309", fontFamily: "DMSans_400Regular" }}>/mo</Text>
+                    <Text style={{ fontSize: 14, color: UI.secondaryLight, fontFamily: "DMSans_400Regular" }}>/mo</Text>
                   </Text>
-                  <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 11, marginTop: 2 }}>
+                  <Text style={{ color: UI.secondaryLight, fontFamily: "DMSans_400Regular", fontSize: 11, marginTop: 2 }}>
                     billed annually · or {price.monthly}/mo
                   </Text>
                 </View>
                 <View style={{ backgroundColor: "#22C55E20", borderRadius: 10, paddingHorizontal: 10, paddingVertical: 6, borderWidth: 1, borderColor: "#22C55E40" }}>
-                  <Text style={{ color: "#22C55E", fontFamily: "DMSans_700Bold", fontSize: 12 }}>SAVE 30%</Text>
-                  <Text style={{ color: "#22C55E", fontFamily: "DMSans_400Regular", fontSize: 10, textAlign: "center" }}>annual</Text>
+                  <Text style={{ color: UI.green, fontFamily: "DMSans_700Bold", fontSize: 12 }}>SAVE 30%</Text>
+                  <Text style={{ color: UI.green, fontFamily: "DMSans_400Regular", fontSize: 10, textAlign: "center" }}>annual</Text>
                 </View>
               </View>
             </View>
@@ -125,20 +126,20 @@ export function PaywallModal({
 
           {/* Billing cycle toggle */}
           {!showTrialCTA && (
-            <View style={{ flexDirection: "row", backgroundColor: "#141A22", borderRadius: 10, padding: 3, marginBottom: 14 }}>
+            <View style={{ flexDirection: "row", backgroundColor: UI.surface, borderRadius: 10, padding: 3, marginBottom: 14 }}>
               <TouchableOpacity
                 style={{ flex: 1, paddingVertical: 8, alignItems: "center", borderRadius: 8, backgroundColor: billingCycle === "monthly" ? color : "transparent" }}
                 onPress={() => setBillingCycle("monthly")}
               >
-                <Text style={{ color: billingCycle === "monthly" ? "#F1F5F9" : "#B45309", fontFamily: "DMSans_600SemiBold", fontSize: 12 }}>Monthly</Text>
+                <Text style={{ color: billingCycle === "monthly" ? UI.fg : UI.secondaryLight, fontFamily: "DMSans_600SemiBold", fontSize: 12 }}>Monthly</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={{ flex: 1, paddingVertical: 8, alignItems: "center", borderRadius: 8, backgroundColor: billingCycle === "annual" ? color : "transparent", flexDirection: "row", justifyContent: "center", gap: 4 }}
                 onPress={() => setBillingCycle("annual")}
               >
-                <Text style={{ color: billingCycle === "annual" ? "#F1F5F9" : "#B45309", fontFamily: "DMSans_600SemiBold", fontSize: 12 }}>Annual</Text>
+                <Text style={{ color: billingCycle === "annual" ? UI.fg : UI.secondaryLight, fontFamily: "DMSans_600SemiBold", fontSize: 12 }}>Annual</Text>
                 <View style={{ backgroundColor: "#22C55E30", borderRadius: 4, paddingHorizontal: 4, paddingVertical: 1 }}>
-                  <Text style={{ color: "#22C55E", fontFamily: "DMSans_700Bold", fontSize: 8 }}>-30%</Text>
+                  <Text style={{ color: UI.green, fontFamily: "DMSans_700Bold", fontSize: 8 }}>-30%</Text>
                 </View>
               </TouchableOpacity>
             </View>
@@ -147,14 +148,14 @@ export function PaywallModal({
           {/* Primary CTA */}
           {showTrialCTA ? (
             <TouchableOpacity
-              style={{ backgroundColor: "#F59E0B", borderRadius: 16, paddingVertical: 16, alignItems: "center", marginBottom: 10, opacity: trialLoading ? 0.7 : 1 }}
+              style={{ backgroundColor: UI.gold, borderRadius: 16, paddingVertical: 16, alignItems: "center", marginBottom: 10, opacity: trialLoading ? 0.7 : 1 }}
               onPress={handleStartTrial}
               disabled={trialLoading}
             >
               {trialLoading ? (
-                <ActivityIndicator color="#0A0E14" />
+                <ActivityIndicator color={UI.bg} />
               ) : (
-                <Text style={{ color: "#0A0E14", fontFamily: "BebasNeue_400Regular", fontSize: 16 }}>
+                <Text style={{ color: UI.bg, fontFamily: "BebasNeue_400Regular", fontSize: 16 }}>
                   Start Free Trial 🎉
                 </Text>
               )}
@@ -191,10 +192,10 @@ export function PaywallModal({
               disabled={purchaseLoading}
             >
               {purchaseLoading ? (
-                <ActivityIndicator color="#F1F5F9" />
+                <ActivityIndicator color={UI.fg} />
               ) : (
                 <>
-                  <Text style={{ color: "#F1F5F9", fontFamily: "BebasNeue_400Regular", fontSize: 16 }}>
+                  <Text style={{ color: UI.fg, fontFamily: "BebasNeue_400Regular", fontSize: 16 }}>
                     Subscribe to {label} — {billingCycle === "annual" ? price.annual : price.monthly}/mo ⚡
                   </Text>
                   <Text style={{ color: "rgba(255,255,255,0.6)", fontSize: 10, marginTop: 2 }}>Secure payment via Stripe · Cancel anytime</Text>
@@ -208,13 +209,13 @@ export function PaywallModal({
             style={{ alignItems: "center", paddingVertical: 8, marginBottom: 4 }}
             onPress={() => { onClose(); router.push("/subscription" as any); }}
           >
-            <Text style={{ color: "#EA580C", fontFamily: "DMSans_600SemiBold", fontSize: 13 }}>
+            <Text style={{ color: UI.orange, fontFamily: "DMSans_600SemiBold", fontSize: 13 }}>
               {showTrialCTA ? "View all plans instead →" : "Compare all plans →"}
             </Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={{ alignItems: "center", paddingVertical: 10 }} onPress={onClose}>
-            <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 14 }}>Maybe later</Text>
+            <Text style={{ color: UI.secondaryLight, fontFamily: "DMSans_400Regular", fontSize: 14 }}>Maybe later</Text>
           </TouchableOpacity>
         </View>
       </View>

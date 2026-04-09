@@ -11,6 +11,7 @@ import {
   shareMilestoneAsText,
   type MilestoneShareData,
 } from "@/lib/milestone-share";
+import { UI } from "@/constants/ui-colors";
 
 interface ShareMilestoneButtonProps {
   data: MilestoneShareData;
@@ -26,7 +27,7 @@ export function ShareMilestoneButton({
   data,
   compact = false,
   label = "Share",
-  color = "#F59E0B",
+  color = UI.gold,
 }: ShareMilestoneButtonProps) {
   const [sharing, setSharing] = useState(false);
 

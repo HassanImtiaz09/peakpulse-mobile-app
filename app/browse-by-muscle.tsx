@@ -36,7 +36,7 @@ import { getExercisesByMuscle, type ExerciseInfo } from "@/lib/exercise-data";
 import { getExerciseDbGifUrl, hasExerciseDbGif } from "@/lib/exercisedb-api";
 import { muscleGroupToBodyPart, hasExerciseDBKey, type ExerciseDBExercise } from "@/lib/exercisedb";
 import { useExercisesByBodyPart } from "@/lib/exercisedb-hooks";
-import { C } from "@/constants/ui-colors";
+import { UI, C } from "@/constants/ui-colors";
 import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
 
 // ── Theme ──────────────────────────────────────────────────────────────────────
@@ -510,7 +510,7 @@ export default function BrowseByMuscleScreen() {
                               {apiEx.equipment} · {apiEx.target}
                             </Text>
                           </View>
-                          <View style={{ paddingHorizontal: 5, paddingVertical: 2, borderRadius: 4, backgroundColor: "rgba(245,158,11,0.1)" }}>
+                          <View style={{ paddingHorizontal: 5, paddingVertical: 2, borderRadius: 4, backgroundColor: UI.goldAlpha10 }}>
                             <Text style={{ color: C.primary, fontFamily: "DMSans_500Medium", fontSize: 8 }}>API</Text>
                           </View>
                         </Pressable>
@@ -579,13 +579,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 8,
     borderRadius: 10,
-    backgroundColor: "rgba(245,158,11,0.06)",
+    backgroundColor: UI.goldAlpha6,
     borderWidth: 1,
     borderColor: "transparent",
   },
   toggleBtnActive: {
-    backgroundColor: "rgba(245,158,11,0.15)",
-    borderColor: "rgba(245,158,11,0.3)",
+    backgroundColor: UI.borderGold,
+    borderColor: UI.goldAlpha30,
   },
   toggleTxt: { color: C.muted, fontSize: 11, fontWeight: "700", letterSpacing: 1.2 },
   toggleTxtActive: { color: C.primary },
@@ -598,12 +598,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 8,
-    backgroundColor: "rgba(30,41,59,0.8)",
+    backgroundColor: UI.border2,
     borderWidth: 1,
-    borderColor: "rgba(245,158,11,0.1)",
+    borderColor: UI.goldAlpha10,
   },
   regionLabelActive: {
-    backgroundColor: "rgba(245,158,11,0.15)",
+    backgroundColor: UI.borderGold,
     borderColor: C.primary,
   },
   regionLabelText: { color: C.muted, fontSize: 10, fontWeight: "600" },
@@ -612,7 +612,7 @@ const styles = StyleSheet.create({
     color: C.secondaryDim,
     fontSize: 9,
     fontWeight: "700",
-    backgroundColor: "rgba(245,158,11,0.08)",
+    backgroundColor: UI.dim,
     paddingHorizontal: 4,
     paddingVertical: 1,
     borderRadius: 4,
@@ -695,7 +695,7 @@ const styles = StyleSheet.create({
     height: 60,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "rgba(30,41,59,0.5)",
+    backgroundColor: UI.slateAlpha50,
   },
   // FIX: play button overlay shown when GIF is paused
   playOverlay: {
@@ -727,7 +727,7 @@ const styles = StyleSheet.create({
   exerciseMeta: { fontSize: 11, color: C.muted },
   muscleChips: { flexDirection: "row", gap: 4, marginTop: 2 },
   muscleChip: {
-    backgroundColor: "rgba(245,158,11,0.08)",
+    backgroundColor: UI.dim,
     paddingHorizontal: 6,
     paddingVertical: 1,
     borderRadius: 4,

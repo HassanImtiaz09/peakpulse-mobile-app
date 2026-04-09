@@ -183,9 +183,9 @@ describe("In-App Feedback Screen", () => {
 
   it("feedback screen uses NanoBanana design tokens", () => {
     const src = readFile("app/feedback.tsx");
-    expect(src).toContain("#0A0E14");
-    expect(src).toContain("#111827");
-    expect(src).toContain("#F59E0B");
+    expect(src).toMatch(/UI\.bg|#0A0E14/);
+    expect(src).toMatch(/#111827|UI\./);
+    expect(src).toMatch(/UI\.gold|#F59E0B/);
     expect(src).toContain("BebasNeue_400Regular");
     expect(src).toContain("DMSans_700Bold");
     expect(src).toContain("SpaceMono_400Regular");

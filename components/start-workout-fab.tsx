@@ -24,10 +24,11 @@ import { router } from "expo-router";
 import * as Haptics from "expo-haptics";
 import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { UI } from "@/constants/ui-colors";
 
 /* ── Design tokens ───────────────────────────────────────────────── */
-const GOLD       = "#F59E0B";
-const GOLD_PRESS = "#D97706";
+const GOLD       = UI.gold;
+const GOLD_PRESS = UI.secondary;
 const LABEL      = "#0D1117";   // near-black label on gold bg
 const SHADOW     = "#000";
 

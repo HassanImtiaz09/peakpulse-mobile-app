@@ -1,3 +1,4 @@
+import { UI } from "@/constants/ui-colors";
 /**
  * Exercise Form Cue Tips
  *
@@ -990,10 +991,10 @@ export function getTipCategoryIcon(category: FormTip["category"]): string {
  */
 export function getTipCategoryColor(category: FormTip["category"]): string {
   switch (category) {
-    case "form": return "#22C55E";     // green
-    case "mistake": return "#F59E0B";  // amber
+    case "form": return UI.green;     // green
+    case "mistake": return UI.gold;  // amber
     case "breathing": return "#3B82F6"; // blue
-    case "safety": return "#EF4444";   // red
+    case "safety": return UI.red;   // red
     default: return "#9BA1A6";
   }
 }

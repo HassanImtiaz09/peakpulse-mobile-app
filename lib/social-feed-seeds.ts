@@ -1,3 +1,4 @@
+import { UI } from "@/constants/ui-colors";
 /**
  * Social Feed Seed Data
  *
@@ -216,7 +217,7 @@ export const WEEKLY_CHALLENGE_TEMPLATES: WeeklyChallengeTemplate[] = [
     dailyGoal: "10,000 steps",
     difficulty: "beginner",
     participantCount: 2847,
-    color: "#22C55E",
+    color: UI.green,
     tips: [
       "Take a 15-minute walk after each meal",
       "Use stairs instead of elevators",
@@ -252,7 +253,7 @@ export const WEEKLY_CHALLENGE_TEMPLATES: WeeklyChallengeTemplate[] = [
     dailyGoal: "20-minute HIIT session",
     difficulty: "intermediate",
     participantCount: 982,
-    color: "#F97316",
+    color: UI.orange2,
     tips: [
       "Alternate between 30s work / 15s rest",
       "Include burpees, mountain climbers, and jump squats",
@@ -270,7 +271,7 @@ export const WEEKLY_CHALLENGE_TEMPLATES: WeeklyChallengeTemplate[] = [
     dailyGoal: "1.6g protein per kg bodyweight",
     difficulty: "intermediate",
     participantCount: 1245,
-    color: "#EF4444",
+    color: UI.red,
     tips: [
       "Prep protein-rich snacks in advance",
       "Greek yogurt, eggs, and chicken are your friends",
@@ -306,7 +307,7 @@ export const WEEKLY_CHALLENGE_TEMPLATES: WeeklyChallengeTemplate[] = [
     dailyGoal: "Zero added sugar intake",
     difficulty: "advanced",
     participantCount: 743,
-    color: "#DC2626",
+    color: UI.red2,
     tips: [
       "Check labels for hidden sugars (dextrose, fructose, sucrose)",
       "Replace sweet snacks with fruit",

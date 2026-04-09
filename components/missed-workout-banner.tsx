@@ -20,18 +20,19 @@ import {
   type MissedDay,
   type ReschedulePreview,
 } from "@/lib/missed-workout-detection";
+import { UI } from "@/constants/ui-colors";
 
 // Design tokens (matching Plans tab)
-const GOLD = "#F59E0B";
-const GOLD_DIM = "rgba(245,158,11,0.12)";
-const GOLD_BORDER = "rgba(245,158,11,0.20)";
-const BG = "#0A0E14";
-const SURFACE = "#141A22";
-const FG = "#F1F5F9";
+const GOLD = UI.gold;
+const GOLD_DIM = UI.goldAlpha12;
+const GOLD_BORDER = UI.goldAlpha20;
+const BG = UI.bg;
+const SURFACE = UI.surface;
+const FG = UI.fg;
 const MUTED = "#64748B";
-const CREAM = "#FDE68A";
-const AMBER = "#F59E0B";
-const AMBER_DIM = "rgba(245,158,11,0.15)";
+const CREAM = UI.gold3;
+const AMBER = UI.gold;
+const AMBER_DIM = UI.borderGold;
 
 interface MissedWorkoutBannerProps {
   schedule: WorkoutDay[];
@@ -162,7 +163,7 @@ export function MissedWorkoutBanner({
             style={{
               paddingHorizontal: 16, paddingVertical: 10,
               borderRadius: 10, backgroundColor: SURFACE,
-              borderWidth: 1, borderColor: "rgba(30,41,59,0.6)",
+              borderWidth: 1, borderColor: UI.border,
               alignItems: "center", justifyContent: "center",
             }}
             onPress={handleDismiss}
@@ -183,7 +184,7 @@ export function MissedWorkoutBanner({
             {/* Header */}
             <View style={{
               flexDirection: "row", justifyContent: "space-between", alignItems: "center",
-              padding: 20, borderBottomWidth: 1, borderBottomColor: "rgba(30,41,59,0.6)",
+              padding: 20, borderBottomWidth: 1, borderBottomColor: UI.border,
             }}>
               <View style={{ flex: 1 }}>
                 <Text style={{ color: AMBER, fontFamily: "DMSans_700Bold", fontSize: 12, letterSpacing: 1 }}>
@@ -215,7 +216,7 @@ export function MissedWorkoutBanner({
                   borderWidth: 1, borderColor: "rgba(239,68,68,0.2)",
                 }}>
                   <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-                    <MaterialIcons name="event-busy" size={14} color="#EF4444" />
+                    <MaterialIcons name="event-busy" size={14} color={UI.red} />
                     <Text style={{ color: "#F87171", fontFamily: "DMSans_700Bold", fontSize: 13 }}>{day.day}</Text>
                     <Text style={{ color: MUTED, fontSize: 11 }}>— {day.focus}</Text>
                   </View>
@@ -258,7 +259,7 @@ export function MissedWorkoutBanner({
                             flexDirection: "row", alignItems: "center", gap: 6,
                             paddingVertical: 4,
                           }}>
-                            <MaterialIcons name="add-circle" size={12} color="#22C55E" />
+                            <MaterialIcons name="add-circle" size={12} color={UI.green} />
                             <Text style={{ color: "#4ADE80", fontSize: 12 }}>{ex.name}</Text>
                             <Text style={{ color: MUTED, fontSize: 10 }}>
                               {ex.sets} × {ex.reps}
@@ -287,7 +288,7 @@ export function MissedWorkoutBanner({
                 style={{
                   flex: 1, backgroundColor: SURFACE, borderRadius: 12,
                   paddingVertical: 12, alignItems: "center",
-                  borderWidth: 1, borderColor: "rgba(30,41,59,0.6)",
+                  borderWidth: 1, borderColor: UI.border,
                 }}
                 onPress={() => setShowModal(false)}
               >

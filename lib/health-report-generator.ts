@@ -16,6 +16,7 @@ import { shareAsync } from "expo-sharing";
 import { Platform } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { fetchHealthHistory, type DailyHealthSummary } from "./health-service";
+import { UI } from "@/constants/ui-colors";
 
 // ── Types ──
 
@@ -137,8 +138,8 @@ function trendArrow(dir: "up" | "down" | "flat"): string {
 
 function trendColor(dir: "up" | "down" | "flat", higherIsBetter: boolean): string {
   if (dir === "flat") return "#6B7280";
-  if ((dir === "up" && higherIsBetter) || (dir === "down" && !higherIsBetter)) return "#22C55E";
-  return "#EF4444";
+  if ((dir === "up" && higherIsBetter) || (dir === "down" && !higherIsBetter)) return UI.green;
+  return UI.red;
 }
 
 function formatDate(dateStr: string): string {

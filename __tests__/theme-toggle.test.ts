@@ -22,11 +22,11 @@ describe("Reactive UI Colors", () => {
 
   it("should return light colors when scheme is light", () => {
     setUIColorScheme("light");
-    expect(UI.bg).toBe("#F8FAFC");
-    expect(UI.fg).toBe("#0F172A");
-    expect(UI.surface).toBe("#FFFFFF");
-    expect(UI.gold).toBe("#D97706");
-    expect(UI.muted).toBe("#64748B");
+    expect(UI.bg).toBe("#FFF8F0");
+    expect(UI.fg).toBe("#1C1917");
+    expect(UI.surface).toBe("#FFF1E0");
+    expect(UI.gold).toBe("#B45309");
+    expect(UI.muted).toBe("#78716C");
   });
 
   it("should switch colors dynamically", () => {
@@ -34,7 +34,7 @@ describe("Reactive UI Colors", () => {
     expect(UI.bg).toBe("#0A0E14");
 
     setUIColorScheme("light");
-    expect(UI.bg).toBe("#F8FAFC");
+    expect(UI.bg).toBe("#FFF8F0");
 
     setUIColorScheme("dark");
     expect(UI.bg).toBe("#0A0E14");
@@ -93,10 +93,10 @@ describe("Reactive UI Colors", () => {
 
   it("light mode colors should have proper contrast (bg is light, fg is dark)", () => {
     setUIColorScheme("light");
-    // Light bg should start with #F or be a light color
-    expect(UI.bg).toMatch(/^#[A-Fa-f8-9]/);
-    // Dark fg should start with #0 or #1
-    expect(UI.fg).toMatch(/^#[0-2]/);
+    // Light bg should be warm cream (#FFF8F0)
+    expect(UI.bg).toBe("#FFF8F0");
+    // Dark fg should be warm black
+    expect(UI.fg).toMatch(/^#[0-3]/);
   });
 
   it("dark mode colors should have proper contrast (bg is dark, fg is light)", () => {
@@ -116,7 +116,7 @@ describe("Reactive UI Colors", () => {
     setUIColorScheme("light");
     expect(UI.red).toBe("#DC2626");
     expect(UI.green).toBe("#16A34A");
-    expect(UI.blue).toBe("#3B82F6");
+    expect(UI.blue).toBe("#2563EB");
   });
 
   it("should return correct chart colors in both modes", () => {
@@ -124,7 +124,7 @@ describe("Reactive UI Colors", () => {
     expect(UI.chartLine).toBe("#F59E0B");
 
     setUIColorScheme("light");
-    expect(UI.chartLine).toBe("#D97706");
+    expect(UI.chartLine).toBe("#B45309");
   });
 });
 
@@ -133,6 +133,6 @@ describe("Rest Timer Haptic Enhancement", () => {
     const { loadRestTimerSettings, DEFAULT_REST_TIMERS } = await import("../lib/rest-timer-settings");
     const settings = await loadRestTimerSettings();
     expect(settings).toBeDefined();
-    expect(settings.defaultDuration).toBe(DEFAULT_REST_TIMERS.defaultDuration);
+    expect(settings.compound).toBe(DEFAULT_REST_TIMERS.compound);
   });
 });

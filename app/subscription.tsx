@@ -9,6 +9,7 @@ import { useGuestAuth } from "@/lib/guest-auth";
 import { useSubscription } from "@/hooks/use-subscription";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
+import { UI } from "@/constants/ui-colors";
 
 const HERO_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/PZcnawJwIZkQHTEM.jpg";
 
@@ -112,7 +113,7 @@ export default function SubscriptionScreen() {
         <ImageBackground source={{ uri: HERO_BG }} style={styles.hero}>
           <View style={styles.heroOverlay}>
             <TouchableOpacity style={styles.backBtn} onPress={() => router.back()} {...a11yButton(A11Y_LABELS.backButton)}>
-              <MaterialIcons name="arrow-back" size={20} color="#F1F5F9" />
+              <MaterialIcons name="arrow-back" size={20} color={UI.fg} />
               <Text style={styles.backText}>Back</Text>
             </TouchableOpacity>
             <View style={styles.heroContent}>
@@ -127,7 +128,7 @@ export default function SubscriptionScreen() {
           {/* Trial Status Banner */}
           {subscription.isTrialActive && (
             <View style={styles.trialBanner}>
-              <MaterialIcons name="hourglass-top" size={22} color="#F59E0B" />
+              <MaterialIcons name="hourglass-top" size={22} color={UI.gold} />
               <View style={{ flex: 1 }}>
                 <Text style={styles.trialBannerTitle}>Pro Trial Active</Text>
                 <Text style={styles.trialBannerSub}>
@@ -203,8 +204,8 @@ export default function SubscriptionScreen() {
               <Text style={[styles.perMonth, styles.perMonthPro]}>/ month</Text>
               {billingCycle === "annual" && (
                 <>
-                  <Text style={[styles.annualNote, { color: "#F59E0B" }]}>{"\u00a3"}{annualTotals.pro.toFixed(2)}/yr {"\u00b7"} save {"\u00a3"}{annualSavings.pro.toFixed(2)}/yr</Text>
-                  <View style={[styles.savingsChip, { backgroundColor: "#EA580C20", borderColor: "#EA580C40" }]}><Text style={[styles.savingsChipText, { color: "#EA580C" }]}>30% OFF</Text></View>
+                  <Text style={[styles.annualNote, { color: UI.gold }]}>{"\u00a3"}{annualTotals.pro.toFixed(2)}/yr {"\u00b7"} save {"\u00a3"}{annualSavings.pro.toFixed(2)}/yr</Text>
+                  <View style={[styles.savingsChip, { backgroundColor: "#EA580C20", borderColor: "#EA580C40" }]}><Text style={[styles.savingsChipText, { color: UI.orange }]}>30% OFF</Text></View>
                 </>
               )}
               <View style={[styles.selectIndicator, styles.selectIndicatorPro, selectedPlan === "pro" && styles.selectIndicatorActive]}>
@@ -215,7 +216,7 @@ export default function SubscriptionScreen() {
 
           {/* Free Tier Callout */}
           <View style={styles.freeCallout}>
-            <MaterialIcons name="check-circle" size={18} color="#22C55E" />
+            <MaterialIcons name="check-circle" size={18} color={UI.green} />
             <Text style={styles.freeCalloutText}>Free tier includes manual logging, exercise library, basic calorie tracker, timer, and 1 free AI plan</Text>
           </View>
 
@@ -229,9 +230,9 @@ export default function SubscriptionScreen() {
                 <MaterialIcons
                   name={f.included ? "check-circle" : "cancel"}
                   size={18}
-                  color={f.included ? "#F59E0B" : "#ef4444"}
+                  color={f.included ? UI.gold : "#ef4444"}
                 />
-                <Text style={[styles.featureLabel, !f.included && styles.featureLabelExcluded, (f as any).highlight && { color: "#FBBF24", fontFamily: "DMSans_700Bold" }]}>
+                <Text style={[styles.featureLabel, !f.included && styles.featureLabelExcluded, (f as any).highlight && { color: UI.gold2, fontFamily: "DMSans_700Bold" }]}>
                   {f.label}
                 </Text>
               </View>
@@ -274,7 +275,7 @@ export default function SubscriptionScreen() {
               disabled={trialLoading}
             >
               {trialLoading ? (
-                <ActivityIndicator color="#0A0E14" />
+                <ActivityIndicator color={UI.bg} />
               ) : (
                 <>
                   <Text style={styles.trialBtnText}>Start 7-Day Free Trial</Text>
@@ -291,7 +292,7 @@ export default function SubscriptionScreen() {
             disabled={loading}
           >
             {loading ? (
-              <ActivityIndicator color="#F1F5F9" />
+              <ActivityIndicator color={UI.fg} />
             ) : (
               <>
                 <Text style={styles.ctaBtnText}>
@@ -328,68 +329,68 @@ const styles = StyleSheet.create({
   hero: { height: 280 },
   heroOverlay: { flex: 1, backgroundColor: "rgba(10,5,0,0.65)", padding: 20, justifyContent: "space-between" },
   backBtn: { alignSelf: "flex-start", paddingVertical: 8, paddingHorizontal: 4, flexDirection: "row", alignItems: "center", gap: 6 },
-  backText: { color: "#F1F5F9", fontSize: 16, fontFamily: "DMSans_500Medium" },
+  backText: { color: UI.fg, fontSize: 16, fontFamily: "DMSans_500Medium" },
   heroContent: { paddingBottom: 20 },
-  heroLabel: { color: "#F59E0B", fontSize: 12, fontFamily: "DMSans_700Bold", letterSpacing: 2, marginBottom: 8 },
-  heroTitle: { color: "#F1F5F9", fontSize: 32, fontFamily: "BebasNeue_400Regular", lineHeight: 40, marginBottom: 8 },
+  heroLabel: { color: UI.gold, fontSize: 12, fontFamily: "DMSans_700Bold", letterSpacing: 2, marginBottom: 8 },
+  heroTitle: { color: UI.fg, fontSize: 32, fontFamily: "BebasNeue_400Regular", lineHeight: 40, marginBottom: 8 },
   heroSub: { color: "rgba(255,255,255,0.8)", fontSize: 15, lineHeight: 22 },
-  body: { backgroundColor: "#0A0E14", padding: 20, paddingBottom: 60 },
-  toggleRow: { flexDirection: "row", backgroundColor: "#141A22", borderRadius: 12, padding: 4, marginBottom: 24 },
+  body: { backgroundColor: UI.bg, padding: 20, paddingBottom: 60 },
+  toggleRow: { flexDirection: "row", backgroundColor: UI.surface, borderRadius: 12, padding: 4, marginBottom: 24 },
   toggleBtn: { flex: 1, paddingVertical: 10, alignItems: "center", borderRadius: 10, flexDirection: "row", justifyContent: "center", gap: 6 },
-  toggleActive: { backgroundColor: "#EA580C" },
-  toggleText: { color: "#B45309", fontSize: 14, fontFamily: "DMSans_600SemiBold" },
-  toggleTextActive: { color: "#F1F5F9" },
-  saveBadge: { backgroundColor: "#F59E0B", borderRadius: 6, paddingHorizontal: 6, paddingVertical: 2 },
-  saveBadgeText: { color: "#F1F5F9", fontSize: 10, fontFamily: "DMSans_700Bold" },
+  toggleActive: { backgroundColor: UI.orange },
+  toggleText: { color: UI.secondaryLight, fontSize: 14, fontFamily: "DMSans_600SemiBold" },
+  toggleTextActive: { color: UI.fg },
+  saveBadge: { backgroundColor: UI.gold, borderRadius: 6, paddingHorizontal: 6, paddingVertical: 2 },
+  saveBadgeText: { color: UI.fg, fontSize: 10, fontFamily: "DMSans_700Bold" },
   plansRow: { flexDirection: "row", gap: 12, marginBottom: 16 },
-  planCard: { flex: 1, backgroundColor: "#141A22", borderRadius: 16, padding: 16, borderWidth: 2, borderColor: "#2A1200", alignItems: "center" },
+  planCard: { flex: 1, backgroundColor: UI.surface, borderRadius: 16, padding: 16, borderWidth: 2, borderColor: "#2A1200", alignItems: "center" },
   planCardPro: { backgroundColor: "#1F0D00" },
-  planCardSelected: { borderColor: "#EA580C" },
-  popularBadge: { backgroundColor: "#EA580C", borderRadius: 8, paddingHorizontal: 8, paddingVertical: 3, marginBottom: 8 },
-  popularText: { color: "#F1F5F9", fontSize: 9, fontFamily: "BebasNeue_400Regular", letterSpacing: 1 },
-  planName: { color: "#B45309", fontSize: 14, fontFamily: "DMSans_700Bold", marginBottom: 8 },
-  planNamePro: { color: "#FBBF24" },
+  planCardSelected: { borderColor: UI.orange },
+  popularBadge: { backgroundColor: UI.orange, borderRadius: 8, paddingHorizontal: 8, paddingVertical: 3, marginBottom: 8 },
+  popularText: { color: UI.fg, fontSize: 9, fontFamily: "BebasNeue_400Regular", letterSpacing: 1 },
+  planName: { color: UI.secondaryLight, fontSize: 14, fontFamily: "DMSans_700Bold", marginBottom: 8 },
+  planNamePro: { color: UI.gold2 },
   priceRow: { flexDirection: "row", alignItems: "flex-start" },
-  currency: { color: "#F1F5F9", fontSize: 18, fontFamily: "DMSans_700Bold", marginTop: 6 },
-  currencyPro: { color: "#F59E0B" },
-  price: { color: "#F1F5F9", fontSize: 36, fontFamily: "BebasNeue_400Regular", lineHeight: 44 },
-  pricePro: { color: "#F59E0B" },
-  perMonth: { color: "#B45309", fontSize: 12, marginBottom: 4 },
-  perMonthPro: { color: "#EA580C" },
-  annualNote: { color: "#B45309", fontSize: 10, marginBottom: 4 },
+  currency: { color: UI.fg, fontSize: 18, fontFamily: "DMSans_700Bold", marginTop: 6 },
+  currencyPro: { color: UI.gold },
+  price: { color: UI.fg, fontSize: 36, fontFamily: "BebasNeue_400Regular", lineHeight: 44 },
+  pricePro: { color: UI.gold },
+  perMonth: { color: UI.secondaryLight, fontSize: 12, marginBottom: 4 },
+  perMonthPro: { color: UI.orange },
+  annualNote: { color: UI.secondaryLight, fontSize: 10, marginBottom: 4 },
   savingsChip: { backgroundColor: "#22C55E20", borderRadius: 6, paddingHorizontal: 8, paddingVertical: 3, borderWidth: 1, borderColor: "#22C55E40", marginBottom: 8 },
-  savingsChipText: { color: "#22C55E", fontFamily: "DMSans_700Bold", fontSize: 9, letterSpacing: 0.5 },
+  savingsChipText: { color: UI.green, fontFamily: "DMSans_700Bold", fontSize: 9, letterSpacing: 0.5 },
   selectIndicator: { marginTop: 8, backgroundColor: "#2A1200", borderRadius: 8, paddingVertical: 6, paddingHorizontal: 12 },
   selectIndicatorPro: { backgroundColor: "#3D1A00" },
-  selectIndicatorActive: { backgroundColor: "#EA580C" },
-  selectIndicatorText: { color: "#F1F5F9", fontSize: 12, fontFamily: "DMSans_600SemiBold" },
+  selectIndicatorActive: { backgroundColor: UI.orange },
+  selectIndicatorText: { color: UI.fg, fontSize: 12, fontFamily: "DMSans_600SemiBold" },
   freeCallout: { flexDirection: "row", alignItems: "center", gap: 10, backgroundColor: "#0f1f0f", borderRadius: 12, padding: 14, marginBottom: 24, borderWidth: 1, borderColor: "#22C55E30" },
   freeCalloutText: { color: "#86efac", fontFamily: "DMSans_400Regular", fontSize: 12, flex: 1, lineHeight: 18 },
   section: { marginBottom: 28 },
-  sectionTitle: { color: "#F1F5F9", fontSize: 18, fontFamily: "DMSans_700Bold", marginBottom: 14 },
-  featureRow: { flexDirection: "row", alignItems: "center", gap: 10, paddingVertical: 8, borderBottomWidth: 1, borderBottomColor: "#141A22" },
+  sectionTitle: { color: UI.fg, fontSize: 18, fontFamily: "DMSans_700Bold", marginBottom: 14 },
+  featureRow: { flexDirection: "row", alignItems: "center", gap: 10, paddingVertical: 8, borderBottomWidth: 1, borderBottomColor: UI.surface },
   featureLabel: { color: "#e5e7eb", fontSize: 14, flex: 1 },
-  featureLabelExcluded: { color: "#B45309" },
+  featureLabelExcluded: { color: UI.secondaryLight },
   compareTable: { borderRadius: 12, overflow: "hidden", borderWidth: 1, borderColor: "#2A1200" },
-  compareHeader: { flexDirection: "row", backgroundColor: "#141A22", paddingVertical: 10, paddingHorizontal: 12 },
-  compareHeaderText: { color: "#B45309", fontSize: 12, fontFamily: "DMSans_700Bold" },
-  compareRow: { flexDirection: "row", paddingVertical: 10, paddingHorizontal: 12, borderTopWidth: 1, borderTopColor: "#141A22" },
+  compareHeader: { flexDirection: "row", backgroundColor: UI.surface, paddingVertical: 10, paddingHorizontal: 12 },
+  compareHeaderText: { color: UI.secondaryLight, fontSize: 12, fontFamily: "DMSans_700Bold" },
+  compareRow: { flexDirection: "row", paddingVertical: 10, paddingHorizontal: 12, borderTopWidth: 1, borderTopColor: UI.surface },
   compareRowHighlight: { backgroundColor: "#1F0D00" },
   compareCell: { flex: 1, color: "#e5e7eb", fontSize: 13, textAlign: "center" },
-  compareHighlightText: { color: "#F59E0B", fontFamily: "DMSans_700Bold" },
-  compareNote: { color: "#B45309", fontSize: 12, marginTop: 10, textAlign: "center", lineHeight: 18 },
-  ctaBtn: { backgroundColor: "#EA580C", borderRadius: 16, paddingVertical: 18, alignItems: "center", marginBottom: 20 },
-  ctaBtnText: { color: "#F1F5F9", fontSize: 17, fontFamily: "BebasNeue_400Regular" },
+  compareHighlightText: { color: UI.gold, fontFamily: "DMSans_700Bold" },
+  compareNote: { color: UI.secondaryLight, fontSize: 12, marginTop: 10, textAlign: "center", lineHeight: 18 },
+  ctaBtn: { backgroundColor: UI.orange, borderRadius: 16, paddingVertical: 18, alignItems: "center", marginBottom: 20 },
+  ctaBtnText: { color: UI.fg, fontSize: 17, fontFamily: "BebasNeue_400Regular" },
   ctaSubText: { color: "rgba(255,255,255,0.7)", fontSize: 12, marginTop: 4 },
   stripeNote: { backgroundColor: "#0f172a", borderRadius: 12, padding: 16, marginBottom: 20, borderWidth: 1, borderColor: "#1e3a5f" },
   stripeNoteTitle: { color: "#60a5fa", fontSize: 14, fontFamily: "DMSans_700Bold", marginBottom: 8 },
-  stripeNoteText: { color: "#B45309", fontSize: 12, lineHeight: 20 },
+  stripeNoteText: { color: UI.secondaryLight, fontSize: 12, lineHeight: 20 },
   legalText: { color: "#4b5563", fontSize: 11, textAlign: "center", lineHeight: 18 },
   trialBanner: { flexDirection: "row", alignItems: "center", gap: 12, backgroundColor: "#1c1000", borderRadius: 14, padding: 14, marginBottom: 16, borderWidth: 1, borderColor: "#F59E0B40" },
   trialBannerExpired: { backgroundColor: "#1a0000", borderColor: "#ef444440" },
-  trialBannerTitle: { color: "#F59E0B", fontFamily: "DMSans_700Bold", fontSize: 14, marginBottom: 2 },
-  trialBannerSub: { color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 12, lineHeight: 17 },
-  trialBtn: { backgroundColor: "#F59E0B", borderRadius: 16, paddingVertical: 18, alignItems: "center", marginBottom: 12 },
-  trialBtnText: { color: "#0A0E14", fontSize: 17, fontFamily: "BebasNeue_400Regular" },
+  trialBannerTitle: { color: UI.gold, fontFamily: "DMSans_700Bold", fontSize: 14, marginBottom: 2 },
+  trialBannerSub: { color: UI.secondaryLight, fontFamily: "DMSans_400Regular", fontSize: 12, lineHeight: 17 },
+  trialBtn: { backgroundColor: UI.gold, borderRadius: 16, paddingVertical: 18, alignItems: "center", marginBottom: 12 },
+  trialBtnText: { color: UI.bg, fontSize: 17, fontFamily: "BebasNeue_400Regular" },
   trialBtnSub: { color: "rgba(10,5,0,0.65)", fontSize: 12, marginTop: 3 },
 });

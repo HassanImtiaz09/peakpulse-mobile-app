@@ -20,7 +20,7 @@ import {
   type TimePeriod, type VolumeDataPoint, type FrequencyDataPoint,
   type StrengthDataPoint, type MuscleDistribution, type AnalyticsSummary,
 } from "@/lib/workout-analytics";
-import { C } from "@/constants/ui-colors";
+import { UI, C } from "@/constants/ui-colors";
 import { EmptyState, EMPTY_STATES } from "@/components/empty-state";
 import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
 import { ScreenErrorBoundary } from "@/components/error-boundary";
@@ -482,7 +482,7 @@ const s = StyleSheet.create({
     borderRadius: 10,
   },
   tabItemActive: {
-    backgroundColor: "rgba(245,158,11,0.15)",
+    backgroundColor: UI.borderGold,
   },
   tabLabel: {
     color: C.muted,
@@ -505,12 +505,12 @@ const s = StyleSheet.create({
     alignItems: "center",
     paddingVertical: 8,
     borderRadius: 10,
-    backgroundColor: "rgba(245,158,11,0.06)",
+    backgroundColor: UI.goldAlpha6,
     borderWidth: 1,
     borderColor: "transparent",
   },
   periodChipActive: {
-    backgroundColor: "rgba(245,158,11,0.15)",
+    backgroundColor: UI.borderGold,
     borderColor: C.gold,
   },
   periodText: {
@@ -657,7 +657,7 @@ const s = StyleSheet.create({
     justifyContent: "space-around",
     paddingTop: 12,
     borderTopWidth: 1,
-    borderTopColor: "rgba(245,158,11,0.08)",
+    borderTopColor: UI.dim,
   },
   statItem: {
     alignItems: "center",
@@ -682,12 +682,12 @@ const s = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 8,
-    backgroundColor: "rgba(245,158,11,0.06)",
+    backgroundColor: UI.goldAlpha6,
     borderWidth: 1,
     borderColor: "transparent",
   },
   exercisePickerChipActive: {
-    backgroundColor: "rgba(245,158,11,0.15)",
+    backgroundColor: UI.borderGold,
     borderColor: C.gold,
   },
   exercisePickerText: {
@@ -718,7 +718,7 @@ const s = StyleSheet.create({
   muscleBarBg: {
     flex: 1,
     height: 8,
-    backgroundColor: "rgba(245,158,11,0.08)",
+    backgroundColor: UI.dim,
     borderRadius: 4,
     overflow: "hidden",
   },

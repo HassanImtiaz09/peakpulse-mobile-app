@@ -71,7 +71,7 @@ export default function TabLayout() {
   useAuthGuard();
   const [cmdOpen, setCmdOpen] = useState(false);
 
-  const borderTopColor = colorScheme === "dark" ? "rgba(30,41,59,0.6)" : "rgba(226,232,240,0.8)";
+  const borderTopColor = colorScheme === "dark" ? UI.border : "rgba(226,232,240,0.8)";
 
   return (
     <>

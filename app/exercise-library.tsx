@@ -34,7 +34,7 @@ import {
 import type { MuscleGroup } from "@/components/body-diagram";
 
 import { GOLDEN_WORKOUT, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgrounds";
-import { C } from "@/constants/ui-colors";
+import { UI, C } from "@/constants/ui-colors";
 import { useRecentlyViewed } from "@/hooks/use-recently-viewed";
 import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
 type FilterMode = "all" | "favorites" | ExerciseInfo["category"];
@@ -238,7 +238,7 @@ export default function ExerciseLibraryScreen() {
               );
             }
             return (
-              <View style={[styles.gifPreview, { justifyContent: "center", alignItems: "center", backgroundColor: "rgba(245,158,11,0.06)" }]}>
+              <View style={[styles.gifPreview, { justifyContent: "center", alignItems: "center", backgroundColor: UI.goldAlpha6 }]}>
                 <MaterialIcons name="play-circle-outline" size={24} color={C.gold} />
               </View>
             );
@@ -438,7 +438,7 @@ export default function ExerciseLibraryScreen() {
                         transition={200}
                       />
                     ) : (
-                      <View style={[styles.recentCardImg, { justifyContent: "center", alignItems: "center", backgroundColor: "rgba(245,158,11,0.06)" }]}>
+                      <View style={[styles.recentCardImg, { justifyContent: "center", alignItems: "center", backgroundColor: UI.goldAlpha6 }]}>
                         <MaterialIcons name="play-circle-outline" size={20} color={C.gold} />
                       </View>
                     )}
@@ -529,7 +529,7 @@ const styles = StyleSheet.create({
     marginLeft: 12,
   },
   countBadge: {
-    backgroundColor: "rgba(245,158,11,0.15)",
+    backgroundColor: UI.borderGold,
     borderRadius: 10,
     paddingHorizontal: 10,
     paddingVertical: 4,
@@ -635,7 +635,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   categoryBadge: {
-    backgroundColor: "rgba(245,158,11,0.1)",
+    backgroundColor: UI.goldAlpha10,
     borderRadius: 4,
     paddingHorizontal: 5,
     paddingVertical: 1,
@@ -655,7 +655,7 @@ const styles = StyleSheet.create({
     width: 5,
     height: 5,
     borderRadius: 2.5,
-    backgroundColor: "rgba(245,158,11,0.15)",
+    backgroundColor: UI.borderGold,
   },
   diffDotActive: {
     backgroundColor: C.gold,
@@ -672,7 +672,7 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   muscleTag: {
-    backgroundColor: "rgba(245,158,11,0.08)",
+    backgroundColor: UI.dim,
     borderRadius: 4,
     paddingHorizontal: 5,
     paddingVertical: 1,
@@ -686,7 +686,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 2,
-    backgroundColor: "rgba(245,158,11,0.08)",
+    backgroundColor: UI.dim,
     borderRadius: 4,
     paddingHorizontal: 5,
     paddingVertical: 1,

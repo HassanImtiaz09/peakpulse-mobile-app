@@ -48,6 +48,7 @@ import { getTotalUnreadCount } from "@/lib/chat-service";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
 import { ScreenErrorBoundary } from "@/components/error-boundary";
+import { UI } from "@/constants/ui-colors";
 
 const HERO_BG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/golden-challenge-bg-2DXBpSZwN3LCroCHSRyD4K.webp";
 
@@ -203,10 +204,10 @@ export default function ChallengeScreen() {
         {/* Progress Bars */}
         <View style={styles.progressSection}>
           <View style={styles.progressBarContainer}>
-            <View style={[styles.progressBar, { width: `${userPct}%`, backgroundColor: "#F59E0B" }]} />
+            <View style={[styles.progressBar, { width: `${userPct}%`, backgroundColor: UI.gold }]} />
           </View>
           <View style={styles.progressBarContainer}>
-            <View style={[styles.progressBar, { width: `${oppPct}%`, backgroundColor: "#EF4444" }]} />
+            <View style={[styles.progressBar, { width: `${oppPct}%`, backgroundColor: UI.red }]} />
           </View>
         </View>
 
@@ -219,7 +220,7 @@ export default function ChallengeScreen() {
             return (
               <View key={i} style={[styles.dayCell, isToday && styles.dayCellToday]}>
                 <Text style={styles.dayLabel}>D{i + 1}</Text>
-                <Text style={[styles.dayValue, userWon && { color: "#F59E0B" }]}>
+                <Text style={[styles.dayValue, userWon && { color: UI.gold }]}>
                   {val > 0 ? (challenge.type === "steps" ? `${(val / 1000).toFixed(0)}K` : val.toString()) : "-"}
                 </Text>
               </View>
@@ -230,14 +231,14 @@ export default function ChallengeScreen() {
         {/* Chat Button */}
         {!isCompleted && (
           <TouchableOpacity
-            style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6, backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 10, paddingVertical: 10, marginTop: 10, borderWidth: 1, borderColor: "rgba(245,158,11,0.15)" }}
+            style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6, backgroundColor: UI.goldAlpha10, borderRadius: 10, paddingVertical: 10, marginTop: 10, borderWidth: 1, borderColor: UI.borderGold }}
             onPress={() => {
               if (Platform.OS !== "web") Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
               router.push({ pathname: "/chat" as any, params: { roomId: `challenge_${challenge.id}`, roomName: `${getChallengeTypeLabel(challenge.type)} vs ${challenge.opponent.name}`, roomType: "challenge" } });
             }}
           >
-            <MaterialIcons name="chat" size={16} color="#FBBF24" />
-            <Text style={{ color: "#FBBF24", fontSize: 13, fontWeight: "600" }}>Challenge Chat</Text>
+            <MaterialIcons name="chat" size={16} color={UI.gold2} />
+            <Text style={{ color: UI.gold2, fontSize: 13, fontWeight: "600" }}>Challenge Chat</Text>
           </TouchableOpacity>
         )}
       </View>
@@ -247,12 +248,12 @@ export default function ChallengeScreen() {
   // ── Main Render ───────────────────────────────────────────────
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#0A0E14" }}>
+    <View style={{ flex: 1, backgroundColor: UI.bg }}>
       {/* Hero */}
       <ImageBackground source={{ uri: HERO_BG }} style={{ height: 170 }} resizeMode="cover">
         <View style={styles.heroOverlay}>
           <TouchableOpacity style={styles.backBtn} onPress={() => router.back()} {...a11yButton(A11Y_LABELS.backButton)}>
-            <Text style={{ color: "#F1F5F9", fontSize: 18 }}>←</Text>
+            <Text style={{ color: UI.fg, fontSize: 18 }}>←</Text>
           </TouchableOpacity>
           <Text style={styles.heroLabel}>CHALLENGES</Text>
           <Text style={styles.heroTitle}>Friend Duels</Text>
@@ -283,7 +284,7 @@ export default function ChallengeScreen() {
               </Text>
               {tab === "active" && chatUnreadCount > 0 && (
                 <View style={{
-                  backgroundColor: "#EF4444", borderRadius: 9, minWidth: 18, height: 18,
+                  backgroundColor: UI.red, borderRadius: 9, minWidth: 18, height: 18,
                   alignItems: "center", justifyContent: "center", paddingHorizontal: 4,
                 }}>
                   <Text style={{ color: "#fff", fontSize: 10, fontWeight: "800" }}>
@@ -298,7 +299,7 @@ export default function ChallengeScreen() {
 
       {loading ? (
         <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-          <ActivityIndicator size="large" color="#F59E0B" />
+          <ActivityIndicator size="large" color={UI.gold} />
         </View>
       ) : (
         <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 40 }} showsVerticalScrollIndicator={false}>
@@ -405,36 +406,36 @@ export default function ChallengeScreen() {
                               {getTemplateDifficultyLabel(template.difficulty)}
                             </Text>
                           </View>
-                          <Text style={{ color: "#B45309", fontSize: 11 }}>{template.durationDays} days</Text>
+                          <Text style={{ color: UI.secondaryLight, fontSize: 11 }}>{template.durationDays} days</Text>
                         </View>
                       </View>
                     </View>
                     {template.isPopular && (
-                      <View style={{ backgroundColor: "rgba(245,158,11,0.15)", borderRadius: 8, paddingHorizontal: 8, paddingVertical: 3 }}>
-                        <Text style={{ color: "#FDE68A", fontSize: 10, fontWeight: "700" }}>POPULAR</Text>
+                      <View style={{ backgroundColor: UI.borderGold, borderRadius: 8, paddingHorizontal: 8, paddingVertical: 3 }}>
+                        <Text style={{ color: UI.gold3, fontSize: 10, fontWeight: "700" }}>POPULAR</Text>
                       </View>
                     )}
                   </View>
-                  <Text style={{ color: "#94A3B8", fontSize: 12, lineHeight: 17, marginBottom: 10 }}>{template.description}</Text>
+                  <Text style={{ color: UI.muted, fontSize: 12, lineHeight: 17, marginBottom: 10 }}>{template.description}</Text>
                   <View style={{ flexDirection: "row", gap: 12 }}>
                     <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
-                      <Text style={{ color: "#F59E0B", fontSize: 11 }}>🎯</Text>
-                      <Text style={{ color: "#B45309", fontSize: 11 }}>{template.dailyTarget} {template.unit}/day</Text>
+                      <Text style={{ color: UI.gold, fontSize: 11 }}>🎯</Text>
+                      <Text style={{ color: UI.secondaryLight, fontSize: 11 }}>{template.dailyTarget} {template.unit}/day</Text>
                     </View>
                     <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
-                      <Text style={{ color: "#F59E0B", fontSize: 11 }}>{template.rewardEmoji}</Text>
-                      <Text style={{ color: "#B45309", fontSize: 11 }}>{template.reward}</Text>
+                      <Text style={{ color: UI.gold, fontSize: 11 }}>{template.rewardEmoji}</Text>
+                      <Text style={{ color: UI.secondaryLight, fontSize: 11 }}>{template.reward}</Text>
                     </View>
                   </View>
 
                   {/* Expanded details when selected */}
                   {selectedTemplate?.id === template.id && (
-                    <View style={{ marginTop: 14, paddingTop: 14, borderTopWidth: 1, borderTopColor: "rgba(245,158,11,0.10)" }}>
-                      <Text style={{ color: "#FDE68A", fontSize: 12, fontWeight: "700", marginBottom: 8 }}>Tips</Text>
+                    <View style={{ marginTop: 14, paddingTop: 14, borderTopWidth: 1, borderTopColor: UI.goldAlpha10 }}>
+                      <Text style={{ color: UI.gold3, fontSize: 12, fontWeight: "700", marginBottom: 8 }}>Tips</Text>
                       {template.tips.map((tip, i) => (
                         <View key={i} style={{ flexDirection: "row", gap: 6, marginBottom: 4 }}>
-                          <Text style={{ color: "#F59E0B", fontSize: 11 }}>•</Text>
-                          <Text style={{ color: "#94A3B8", fontSize: 12, flex: 1 }}>{tip}</Text>
+                          <Text style={{ color: UI.gold, fontSize: 11 }}>•</Text>
+                          <Text style={{ color: UI.muted, fontSize: 12, flex: 1 }}>{tip}</Text>
                         </View>
                       ))}
                       <TouchableOpacity
@@ -500,7 +501,7 @@ export default function ChallengeScreen() {
                 ) : (
                   <Text style={styles.friendSelectorPlaceholder}>Tap to select a friend</Text>
                 )}
-                <Text style={{ color: "#B45309", fontSize: 18 }}>›</Text>
+                <Text style={{ color: UI.secondaryLight, fontSize: 18 }}>›</Text>
               </TouchableOpacity>
 
               {/* Create Button */}
@@ -525,7 +526,7 @@ export default function ChallengeScreen() {
                   "Win streaks are tracked across challenges",
                 ].map((rule, i) => (
                   <View key={i} style={{ flexDirection: "row", gap: 8, marginBottom: 6 }}>
-                    <Text style={{ color: "#F59E0B", fontSize: 12 }}>•</Text>
+                    <Text style={{ color: UI.gold, fontSize: 12 }}>•</Text>
                     <Text style={styles.ruleText}>{rule}</Text>
                   </View>
                 ))}
@@ -540,7 +541,7 @@ export default function ChallengeScreen() {
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>Invite Friends</Text>
-            <Text style={{ color: "#B45309", fontSize: 12, marginBottom: 14 }}>
+            <Text style={{ color: UI.secondaryLight, fontSize: 12, marginBottom: 14 }}>
               Select friends to join "{selectedTemplate?.name}". Tap to toggle.
             </Text>
             {friends.length > 0 ? (
@@ -567,7 +568,7 @@ export default function ChallengeScreen() {
                           {item.streakCount}w streak • {(item.weeklySteps / 1000).toFixed(0)}K steps
                         </Text>
                       </View>
-                      {isSelected && <Text style={{ color: "#F59E0B", fontSize: 16 }}>✓</Text>}
+                      {isSelected && <Text style={{ color: UI.gold, fontSize: 16 }}>✓</Text>}
                     </TouchableOpacity>
                   );
                 }}
@@ -581,10 +582,10 @@ export default function ChallengeScreen() {
             )}
             <View style={{ flexDirection: "row", gap: 10, marginTop: 16 }}>
               <TouchableOpacity
-                style={[styles.primaryBtn, { flex: 1, backgroundColor: "#1A2030" }]}
+                style={[styles.primaryBtn, { flex: 1, backgroundColor: UI.surface2 }]}
                 onPress={() => setShowTemplateFriendPicker(false)}
               >
-                <Text style={[styles.primaryBtnText, { color: "#F1F5F9" }]}>Cancel</Text>
+                <Text style={[styles.primaryBtnText, { color: UI.fg }]}>Cancel</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.primaryBtn, { flex: 2 }, (selectedTemplateFriends.length === 0 || launchingTemplate) && { opacity: 0.5 }]}
@@ -647,7 +648,7 @@ export default function ChallengeScreen() {
                         🔥 {item.streakCount}w • 👟 {(item.weeklySteps / 1000).toFixed(0)}K steps
                       </Text>
                     </View>
-                    {selectedFriend?.id === item.id && <Text style={{ color: "#F59E0B" }}>✓</Text>}
+                    {selectedFriend?.id === item.id && <Text style={{ color: UI.gold }}>✓</Text>}
                   </TouchableOpacity>
                 )}
                 ItemSeparatorComponent={() => <View style={{ height: 4 }} />}
@@ -659,10 +660,10 @@ export default function ChallengeScreen() {
               </View>
             )}
             <TouchableOpacity
-              style={[styles.primaryBtn, { marginTop: 16, backgroundColor: "#1A2030" }]}
+              style={[styles.primaryBtn, { marginTop: 16, backgroundColor: UI.surface2 }]}
               onPress={() => setShowFriendPicker(false)}
             >
-              <Text style={[styles.primaryBtnText, { color: "#F1F5F9" }]}>Cancel</Text>
+              <Text style={[styles.primaryBtnText, { color: UI.fg }]}>Cancel</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -682,122 +683,122 @@ const styles = StyleSheet.create({
     position: "absolute", top: 52, left: 20, backgroundColor: "#FFFFFF20",
     borderRadius: 20, width: 36, height: 36, alignItems: "center", justifyContent: "center",
   },
-  heroLabel: { color: "#FDE68A", fontSize: 11, fontWeight: "800", letterSpacing: 1.5 },
-  heroTitle: { color: "#F1F5F9", fontSize: 24, fontWeight: "800" },
-  heroStat: { color: "#FDE68A", fontSize: 12 },
+  heroLabel: { color: UI.gold3, fontSize: 11, fontWeight: "800", letterSpacing: 1.5 },
+  heroTitle: { color: UI.fg, fontSize: 24, fontWeight: "800" },
+  heroStat: { color: UI.gold3, fontSize: 12 },
 
   tabBar: {
-    flexDirection: "row", backgroundColor: "#141A22", borderBottomWidth: 1,
-    borderBottomColor: "rgba(245,158,11,0.10)",
+    flexDirection: "row", backgroundColor: UI.surface, borderBottomWidth: 1,
+    borderBottomColor: UI.goldAlpha10,
   },
   tab: { flex: 1, paddingVertical: 12, alignItems: "center" },
-  tabActive: { borderBottomWidth: 2, borderBottomColor: "#F59E0B" },
-  tabText: { color: "#B45309", fontSize: 12, fontWeight: "700" },
-  tabTextActive: { color: "#FDE68A" },
+  tabActive: { borderBottomWidth: 2, borderBottomColor: UI.gold },
+  tabText: { color: UI.secondaryLight, fontSize: 12, fontWeight: "700" },
+  tabTextActive: { color: UI.gold3 },
 
-  sectionTitle: { color: "#F1F5F9", fontSize: 18, fontWeight: "800", marginBottom: 6 },
-  sectionSubtitle: { color: "#B45309", fontSize: 13, marginBottom: 16, lineHeight: 18 },
-  fieldLabel: { color: "#FDE68A", fontSize: 13, fontWeight: "700", marginBottom: 8, letterSpacing: 0.5 },
+  sectionTitle: { color: UI.fg, fontSize: 18, fontWeight: "800", marginBottom: 6 },
+  sectionSubtitle: { color: UI.secondaryLight, fontSize: 13, marginBottom: 16, lineHeight: 18 },
+  fieldLabel: { color: UI.gold3, fontSize: 13, fontWeight: "700", marginBottom: 8, letterSpacing: 0.5 },
 
   challengeCard: {
-    backgroundColor: "#141A22", borderRadius: 20, padding: 16, marginBottom: 12,
-    borderWidth: 1, borderColor: "rgba(245,158,11,0.10)",
+    backgroundColor: UI.surface, borderRadius: 20, padding: 16, marginBottom: 12,
+    borderWidth: 1, borderColor: UI.goldAlpha10,
   },
   challengeCardWon: { borderColor: "rgba(16,185,129,0.25)", backgroundColor: "#0A1A0F" },
   challengeHeader: {
     flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 14,
   },
-  challengeType: { color: "#F1F5F9", fontSize: 15, fontWeight: "700" },
-  challengeDays: { color: "#B45309", fontSize: 12, marginTop: 2 },
+  challengeType: { color: UI.fg, fontSize: 15, fontWeight: "700" },
+  challengeDays: { color: UI.secondaryLight, fontSize: 12, marginTop: 2 },
   dayBadge: {
-    backgroundColor: "rgba(245,158,11,0.15)", borderRadius: 10, paddingHorizontal: 10, paddingVertical: 4,
+    backgroundColor: UI.borderGold, borderRadius: 10, paddingHorizontal: 10, paddingVertical: 4,
   },
-  dayBadgeText: { color: "#FDE68A", fontSize: 11, fontWeight: "700" },
+  dayBadgeText: { color: UI.gold3, fontSize: 11, fontWeight: "700" },
 
   vsSection: {
     flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 14,
   },
   participant: { alignItems: "center", width: "35%" },
-  participantName: { color: "#F1F5F9", fontSize: 13, fontWeight: "700", marginTop: 4 },
-  participantScore: { color: "#FDE68A", fontSize: 18, fontWeight: "800", marginTop: 2 },
+  participantName: { color: UI.fg, fontSize: 13, fontWeight: "700", marginTop: 4 },
+  participantScore: { color: UI.gold3, fontSize: 18, fontWeight: "800", marginTop: 2 },
   vsCircle: {
-    width: 40, height: 40, borderRadius: 20, backgroundColor: "rgba(245,158,11,0.15)",
+    width: 40, height: 40, borderRadius: 20, backgroundColor: UI.borderGold,
     alignItems: "center", justifyContent: "center",
   },
-  vsText: { color: "#F59E0B", fontSize: 14, fontWeight: "800" },
+  vsText: { color: UI.gold, fontSize: 14, fontWeight: "800" },
 
   progressSection: { gap: 6, marginBottom: 12 },
   progressBarContainer: {
-    height: 8, backgroundColor: "rgba(245,158,11,0.08)", borderRadius: 4, overflow: "hidden",
+    height: 8, backgroundColor: UI.dim, borderRadius: 4, overflow: "hidden",
   },
   progressBar: { height: "100%", borderRadius: 4 },
 
   dailyRow: { flexDirection: "row", gap: 4 },
   dayCell: {
-    flex: 1, alignItems: "center", backgroundColor: "rgba(245,158,11,0.04)",
+    flex: 1, alignItems: "center", backgroundColor: UI.goldAlpha4,
     borderRadius: 8, paddingVertical: 6,
   },
-  dayCellToday: { backgroundColor: "rgba(245,158,11,0.12)", borderWidth: 1, borderColor: "rgba(245,158,11,0.25)" },
-  dayLabel: { color: "#B45309", fontSize: 9, fontWeight: "700" },
-  dayValue: { color: "#F1F5F9", fontSize: 10, fontWeight: "700", marginTop: 2 },
+  dayCellToday: { backgroundColor: UI.goldAlpha12, borderWidth: 1, borderColor: UI.borderGold2 },
+  dayLabel: { color: UI.secondaryLight, fontSize: 9, fontWeight: "700" },
+  dayValue: { color: UI.fg, fontSize: 10, fontWeight: "700", marginTop: 2 },
 
   statsRow: { flexDirection: "row", gap: 8, marginBottom: 16 },
   statCard: {
-    flex: 1, backgroundColor: "#141A22", borderRadius: 14, padding: 12,
-    borderWidth: 1, borderColor: "rgba(245,158,11,0.10)", alignItems: "center",
+    flex: 1, backgroundColor: UI.surface, borderRadius: 14, padding: 12,
+    borderWidth: 1, borderColor: UI.goldAlpha10, alignItems: "center",
   },
-  statValue: { color: "#FDE68A", fontSize: 18, fontWeight: "800" },
-  statLabel: { color: "#B45309", fontSize: 10, marginTop: 2 },
+  statValue: { color: UI.gold3, fontSize: 18, fontWeight: "800" },
+  statLabel: { color: UI.secondaryLight, fontSize: 10, marginTop: 2 },
 
   emptyState: {
-    alignItems: "center", padding: 32, backgroundColor: "#141A22",
-    borderRadius: 20, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)",
+    alignItems: "center", padding: 32, backgroundColor: UI.surface,
+    borderRadius: 20, borderWidth: 1, borderColor: UI.goldAlpha10,
   },
-  emptyTitle: { color: "#F1F5F9", fontSize: 18, fontWeight: "800", marginBottom: 6 },
-  emptySubtitle: { color: "#B45309", fontSize: 13, textAlign: "center", lineHeight: 18, marginBottom: 16 },
+  emptyTitle: { color: UI.fg, fontSize: 18, fontWeight: "800", marginBottom: 6 },
+  emptySubtitle: { color: UI.secondaryLight, fontSize: 13, textAlign: "center", lineHeight: 18, marginBottom: 16 },
 
   primaryBtn: {
-    backgroundColor: "#F59E0B", borderRadius: 14, paddingVertical: 14, alignItems: "center",
+    backgroundColor: UI.gold, borderRadius: 14, paddingVertical: 14, alignItems: "center",
   },
-  primaryBtnText: { color: "#F1F5F9", fontSize: 15, fontWeight: "700" },
+  primaryBtnText: { color: UI.fg, fontSize: 15, fontWeight: "700" },
 
   typeCard: {
-    flex: 1, backgroundColor: "#141A22", borderRadius: 16, padding: 16,
-    alignItems: "center", borderWidth: 1, borderColor: "rgba(245,158,11,0.10)",
+    flex: 1, backgroundColor: UI.surface, borderRadius: 16, padding: 16,
+    alignItems: "center", borderWidth: 1, borderColor: UI.goldAlpha10,
   },
-  typeCardActive: { borderColor: "#F59E0B", backgroundColor: "rgba(245,158,11,0.08)" },
-  typeLabel: { color: "#F1F5F9", fontSize: 14, fontWeight: "700", marginTop: 8 },
-  typeLabelActive: { color: "#FDE68A" },
-  typeUnit: { color: "#B45309", fontSize: 11, marginTop: 4 },
+  typeCardActive: { borderColor: UI.gold, backgroundColor: UI.dim },
+  typeLabel: { color: UI.fg, fontSize: 14, fontWeight: "700", marginTop: 8 },
+  typeLabelActive: { color: UI.gold3 },
+  typeUnit: { color: UI.secondaryLight, fontSize: 11, marginTop: 4 },
 
   friendSelector: {
-    backgroundColor: "#141A22", borderRadius: 16, padding: 16,
+    backgroundColor: UI.surface, borderRadius: 16, padding: 16,
     flexDirection: "row", alignItems: "center", justifyContent: "space-between",
-    borderWidth: 1, borderColor: "rgba(245,158,11,0.15)",
+    borderWidth: 1, borderColor: UI.borderGold,
   },
-  friendSelectorName: { color: "#F1F5F9", fontSize: 15, fontWeight: "700" },
-  friendSelectorStat: { color: "#B45309", fontSize: 12, marginTop: 2 },
-  friendSelectorPlaceholder: { color: "#B45309", fontSize: 14 },
+  friendSelectorName: { color: UI.fg, fontSize: 15, fontWeight: "700" },
+  friendSelectorStat: { color: UI.secondaryLight, fontSize: 12, marginTop: 2 },
+  friendSelectorPlaceholder: { color: UI.secondaryLight, fontSize: 14 },
 
   rulesCard: {
-    marginTop: 20, backgroundColor: "#141A22", borderRadius: 16, padding: 16,
-    borderWidth: 1, borderColor: "rgba(245,158,11,0.08)",
+    marginTop: 20, backgroundColor: UI.surface, borderRadius: 16, padding: 16,
+    borderWidth: 1, borderColor: UI.dim,
   },
-  rulesTitle: { color: "#FDE68A", fontSize: 14, fontWeight: "700", marginBottom: 10 },
+  rulesTitle: { color: UI.gold3, fontSize: 14, fontWeight: "700", marginBottom: 10 },
   ruleText: { color: "#D1D5DB", fontSize: 12, lineHeight: 16, flex: 1 },
 
   // Modal
   modalOverlay: { flex: 1, backgroundColor: "rgba(0,0,0,0.85)", justifyContent: "flex-end" },
   modalContent: {
-    backgroundColor: "#141A22", borderTopLeftRadius: 28, borderTopRightRadius: 28,
+    backgroundColor: UI.surface, borderTopLeftRadius: 28, borderTopRightRadius: 28,
     padding: 24, paddingBottom: 40, maxHeight: "70%",
   },
-  modalTitle: { color: "#F1F5F9", fontSize: 20, fontWeight: "800", marginBottom: 16 },
+  modalTitle: { color: UI.fg, fontSize: 20, fontWeight: "800", marginBottom: 16 },
   friendPickerRow: {
     flexDirection: "row", alignItems: "center", gap: 12, padding: 12,
-    backgroundColor: "rgba(245,158,11,0.04)", borderRadius: 14,
+    backgroundColor: UI.goldAlpha4, borderRadius: 14,
   },
-  friendPickerRowActive: { backgroundColor: "rgba(245,158,11,0.12)", borderWidth: 1, borderColor: "#F59E0B" },
-  friendPickerName: { color: "#F1F5F9", fontSize: 14, fontWeight: "700" },
-  friendPickerStat: { color: "#B45309", fontSize: 12, marginTop: 2 },
+  friendPickerRowActive: { backgroundColor: UI.goldAlpha12, borderWidth: 1, borderColor: UI.gold },
+  friendPickerName: { color: UI.fg, fontSize: 14, fontWeight: "700" },
+  friendPickerStat: { color: UI.secondaryLight, fontSize: 12, marginTop: 2 },
 });

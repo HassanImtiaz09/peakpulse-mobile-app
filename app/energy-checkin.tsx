@@ -59,8 +59,8 @@ const ENERGY_OPTIONS: EnergyOption[] = [
     description:
       "Follow your plan as designed. All exercises, standard sets and reps.",
     color: UI.gold,
-    bgColor: "rgba(245,158,11,0.10)",
-    borderColor: "rgba(245,158,11,0.25)",
+    bgColor: UI.goldAlpha10,
+    borderColor: UI.borderGold2,
     adjustment: "Full plan · standard sets · regular intensity",
   },
   {

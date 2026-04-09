@@ -5,7 +5,7 @@ import {
 import { useRouter } from "expo-router";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { ScreenContainer } from "@/components/screen-container";
-import { UI as SF } from "@/constants/ui-colors";
+import { UI, SF } from "@/constants/ui-colors";
 import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
 
 const HERO_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/PZcnawJwIZkQHTEM.jpg";
@@ -110,7 +110,7 @@ export default function UserGuideScreen() {
       <ImageBackground source={{ uri: HERO_BG }} style={{ height: 180 }} resizeMode="cover">
         <View style={{ flex: 1, backgroundColor: "rgba(10,5,0,0.78)", justifyContent: "flex-end", padding: 20, paddingTop: 52 }}>
           <TouchableOpacity
-            style={{ position: "absolute", top: 52, left: 20, width: 38, height: 38, borderRadius: 19, backgroundColor: "rgba(245,158,11,0.15)", alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: SF.border2 }}
+            style={{ position: "absolute", top: 52, left: 20, width: 38, height: 38, borderRadius: 19, backgroundColor: UI.borderGold, alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: SF.border2 }}
             onPress={() => router.back()} {...a11yButton(A11Y_LABELS.backButton)}>
             <MaterialIcons name="arrow-back" size={20} color={SF.gold} />
           </TouchableOpacity>
@@ -124,7 +124,7 @@ export default function UserGuideScreen() {
 
       <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 60 }}>
         {/* Quick start banner */}
-        <View style={{ backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 16, padding: 16, marginBottom: 20, borderWidth: 1, borderColor: SF.border2, flexDirection: "row", gap: 12, alignItems: "flex-start" }}>
+        <View style={{ backgroundColor: UI.goldAlpha10, borderRadius: 16, padding: 16, marginBottom: 20, borderWidth: 1, borderColor: SF.border2, flexDirection: "row", gap: 12, alignItems: "flex-start" }}>
           <Text style={{ fontSize: 28 }}>⚡</Text>
           <View style={{ flex: 1 }}>
             <Text style={{ color: SF.gold, fontFamily: "DMSans_700Bold", fontSize: 14, marginBottom: 4 }}>Quick Start</Text>
@@ -144,7 +144,7 @@ export default function UserGuideScreen() {
                   flexDirection: "row",
                   alignItems: "center",
                   gap: 12,
-                  backgroundColor: isOpen ? "rgba(245,158,11,0.12)" : SF.surface,
+                  backgroundColor: isOpen ? UI.goldAlpha12 : SF.surface,
                   borderRadius: isOpen ? 0 : 16,
                   borderTopLeftRadius: 16,
                   borderTopRightRadius: 16,
@@ -157,7 +157,7 @@ export default function UserGuideScreen() {
                 }}
                 onPress={() => setExpandedSection(isOpen ? null : idx)}
               >
-                <View style={{ width: 44, height: 44, borderRadius: 12, backgroundColor: "rgba(245,158,11,0.10)", alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: SF.border }}>
+                <View style={{ width: 44, height: 44, borderRadius: 12, backgroundColor: UI.goldAlpha10, alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: SF.border }}>
                   <Text style={{ fontSize: 22 }}>{section.icon}</Text>
                 </View>
                 <Text style={{ color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 16, flex: 1 }}>{section.title}</Text>
@@ -165,7 +165,7 @@ export default function UserGuideScreen() {
               </TouchableOpacity>
 
               {isOpen && (
-                <View style={{ backgroundColor: "rgba(245,158,11,0.06)", borderBottomLeftRadius: 16, borderBottomRightRadius: 16, padding: 16, borderWidth: 1, borderTopWidth: 0, borderColor: SF.border2, gap: 12 }}>
+                <View style={{ backgroundColor: UI.goldAlpha6, borderBottomLeftRadius: 16, borderBottomRightRadius: 16, padding: 16, borderWidth: 1, borderTopWidth: 0, borderColor: SF.border2, gap: 12 }}>
                   {section.steps.map((step, si) => (
                     <View key={si} style={{ flexDirection: "row", gap: 12, alignItems: "flex-start" }}>
                       <View style={{ width: 24, height: 24, borderRadius: 12, backgroundColor: SF.gold, alignItems: "center", justifyContent: "center", flexShrink: 0, marginTop: 1 }}>

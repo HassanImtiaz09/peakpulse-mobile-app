@@ -3435,3 +3435,17 @@
 - [x] Updated theme.config.js with proper light mode color palette
 - [x] Tab bar, blur background, and FAB buttons all respond to theme toggle
 - [x] Wrote 13 tests for reactive UI colors and rest timer settings
+
+## Light Mode Polish (Warm Cream/Amber)
+
+- [x] Updated LIGHT palette in constants/ui-colors.ts to warm cream/amber (#FFF8F0 bg, #FFF0DC surface, #FDEFD4 card, #1A0F00 fg, #92400E muted, #D97706 gold accent)
+- [x] Updated theme.config.js with warm cream/amber CSS variables for NativeWind light mode
+- [x] Batch replaced 3,060 hardcoded hex/rgba colors with reactive UI.* references across 136 files
+- [x] Fixed 319 JSX syntax issues (color=UI.x → color={UI.x})
+- [x] Added/fixed 128 missing UI/SF/C imports from @/constants/ui-colors
+- [x] Fixed 34 files with duplicate SF import (UI as SF alias collision)
+- [x] Added missing UI import to hooks/use-ui.ts
+- [x] Updated 8 snapshot-style tests to accept UI.* references instead of hardcoded hex colors
+- [x] Updated theme-toggle test assertions to match new warm cream/amber palette values
+- [x] TypeScript: 0 errors
+- [x] Tests: 2,592 passing, 0 failures

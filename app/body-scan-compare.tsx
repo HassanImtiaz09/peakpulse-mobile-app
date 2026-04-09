@@ -10,7 +10,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 import { GOLDEN_SCAN, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgrounds";
-import { UI as SF } from "@/constants/ui-colors";
+import { UI, SF } from "@/constants/ui-colors";
 import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
 const { width: SCREEN_W } = Dimensions.get("window");
 const PHOTO_W = SCREEN_W - 40;
@@ -339,7 +339,7 @@ export default function BodyScanCompareScreen() {
                 key={scan.date}
                 style={{
                   flexDirection: "row", alignItems: "center", gap: 12,
-                  backgroundColor: isLeft || isRight ? "rgba(245,158,11,0.08)" : SF.surface,
+                  backgroundColor: isLeft || isRight ? UI.dim : SF.surface,
                   borderRadius: 12, padding: 12, marginBottom: 6,
                   borderWidth: 1,
                   borderColor: isLeft ? SF.border2 : isRight ? "rgba(16,185,129,0.25)" : SF.border,
@@ -382,7 +382,7 @@ export default function BodyScanCompareScreen() {
         {/* Tip */}
         <View style={{
           marginHorizontal: 20, marginTop: 4,
-          backgroundColor: "rgba(245,158,11,0.06)", borderRadius: 16,
+          backgroundColor: UI.goldAlpha6, borderRadius: 16,
           padding: 14, borderWidth: 1, borderColor: SF.border,
         }}>
           <Text style={{ color: SF.gold3, fontSize: 12, lineHeight: 18 }}>
@@ -422,7 +422,7 @@ export default function BodyScanCompareScreen() {
                   <TouchableOpacity
                     style={{
                       flexDirection: "row", alignItems: "center", gap: 12,
-                      backgroundColor: isSelected ? "rgba(245,158,11,0.12)" : SF.surface2,
+                      backgroundColor: isSelected ? UI.goldAlpha12 : SF.surface2,
                       borderRadius: 12, padding: 14,
                       borderWidth: 1,
                       borderColor: isSelected ? SF.gold : SF.border,

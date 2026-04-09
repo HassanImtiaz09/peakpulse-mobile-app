@@ -475,10 +475,10 @@ describe("Integration and Navigation", () => {
   });
 
   it("streak-details uses Aurora Titan dark theme", () => {
-    expect(streakDetails).toContain("#0A0E14");
-    expect(streakDetails).toContain("#F59E0B");
-    expect(streakDetails).toContain("#F1F5F9");
-    expect(streakDetails).toContain("#B45309");
-    expect(streakDetails).toContain("#FBBF24");
+    expect(streakDetails).toMatch(/UI\.bg|#0A0E14/);
+    expect(streakDetails).toMatch(/UI\.gold|#F59E0B/);
+    expect(streakDetails).toMatch(/UI\.fg|#F1F5F9/);
+    expect(streakDetails).toMatch(/UI\.secondaryLight|#B45309/);
+    expect(streakDetails).toMatch(/UI\.gold2|#FBBF24/);
   });
 });

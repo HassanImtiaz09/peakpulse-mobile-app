@@ -8,7 +8,7 @@ import { ScreenContainer } from "@/components/screen-container";
 import { getHistoricalMeals, type MealEntry } from "@/lib/calorie-context";
 
 import { GOLDEN_MEALS, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgrounds";
-import { UI as SF } from "@/constants/ui-colors";
+import { UI, SF } from "@/constants/ui-colors";
 import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
 const MEAL_TYPE_ICONS: Record<string, keyof typeof MaterialIcons.glyphMap> = {
   breakfast: "free-breakfast", lunch: "restaurant", dinner: "dinner-dining", snack: "cookie",
@@ -359,7 +359,7 @@ const styles = StyleSheet.create({
   emptyTitle: { color: SF.text, fontFamily: "DMSans_700Bold", fontSize: 18 },
   emptyDesc: { color: SF.muted, fontSize: 13, textAlign: "center", paddingHorizontal: 40 },
   logBtn: { backgroundColor: SF.orange, borderRadius: 12, paddingHorizontal: 20, paddingVertical: 10, marginTop: 8 },
-  logBtnText: { color: "#0A0E14", fontFamily: "DMSans_700Bold", fontSize: 14 },
+  logBtnText: { color: UI.bg, fontFamily: "DMSans_700Bold", fontSize: 14 },
 
   // Chart
   chartContainer: { backgroundColor: SF.card, borderRadius: 14, padding: 12, marginTop: 12, marginBottom: 8, borderWidth: 1, borderColor: SF.border },
@@ -378,16 +378,16 @@ const styles = StyleSheet.create({
   dateHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 8, marginTop: 8 },
   dateTitle: { color: SF.text, fontFamily: "DMSans_700Bold", fontSize: 16 },
   dateSub: { color: SF.muted, fontSize: 11, marginTop: 2 },
-  daySummaryPill: { backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 8, paddingHorizontal: 10, paddingVertical: 4 },
+  daySummaryPill: { backgroundColor: UI.goldAlpha10, borderRadius: 8, paddingHorizontal: 10, paddingVertical: 4 },
   daySummaryCal: { color: SF.cream, fontSize: 12, fontFamily: "DMSans_700Bold" },
   photoStrip: { flexDirection: "row", gap: 8, marginBottom: 10, flexWrap: "wrap" },
   stripThumb: { width: 56, height: 56, borderRadius: 10, borderWidth: 1, borderColor: SF.border },
   mealCard: { backgroundColor: SF.card, borderRadius: 12, padding: 12, marginBottom: 6, borderWidth: 1, borderColor: SF.border },
   mealRow: { flexDirection: "row", alignItems: "center" },
   thumbnail: { width: 44, height: 44, borderRadius: 10 },
-  placeholderThumb: { backgroundColor: "rgba(245,158,11,0.06)", alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: SF.border },
+  placeholderThumb: { backgroundColor: UI.goldAlpha6, alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: SF.border },
   mealName: { color: SF.text, fontFamily: "DMSans_700Bold", fontSize: 14, flex: 1 },
-  typePill: { backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 6, paddingHorizontal: 6, paddingVertical: 2 },
+  typePill: { backgroundColor: UI.goldAlpha10, borderRadius: 6, paddingHorizontal: 6, paddingVertical: 2 },
   typeText: { color: SF.cream, fontSize: 9, fontFamily: "DMSans_700Bold", textTransform: "capitalize" },
   calText: { color: SF.gold, fontSize: 12, fontFamily: "DMSans_600SemiBold" },
   timeText: { color: SF.muted, fontSize: 11 },

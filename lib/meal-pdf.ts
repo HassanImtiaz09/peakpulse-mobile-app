@@ -5,6 +5,7 @@
 import * as Print from "expo-print";
 import { shareAsync } from "expo-sharing";
 import { Platform, Alert } from "react-native";
+import { UI } from "@/constants/ui-colors";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -40,7 +41,7 @@ interface MealLogExportData {
 // ─── Meal type badge colors ─────────────────────────────────────────────────
 
 const MEAL_COLORS: Record<string, { bg: string; text: string; label: string }> = {
-  breakfast: { bg: "#FEF3C7", text: "#92400E", label: "Breakfast" },
+  breakfast: { bg: "#FEF3C7", text: UI.secondaryDim, label: "Breakfast" },
   lunch:     { bg: "#DBEAFE", text: "#1E40AF", label: "Lunch" },
   dinner:    { bg: "#FCE7F3", text: "#9D174D", label: "Dinner" },
   snack:     { bg: "#D1FAE5", text: "#065F46", label: "Snack" },

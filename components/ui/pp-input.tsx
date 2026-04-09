@@ -52,7 +52,7 @@ export function PPInput({
           styles.inputContainer,
           {
             backgroundColor: VARIANT_BG[variant],
-            borderColor: error ? "#EF4444" : isOutlined ? "rgba(255,255,255,0.15)" : UI.border,
+            borderColor: error ? UI.red : isOutlined ? "rgba(255,255,255,0.15)" : UI.border,
           },
         ]}
       >
@@ -99,7 +99,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
   },
   error: {
-    color: "#EF4444",
+    color: UI.red,
     fontSize: 12,
     marginTop: 4,
   },

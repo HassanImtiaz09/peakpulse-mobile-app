@@ -9,6 +9,7 @@
  */
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { UI } from "@/constants/ui-colors";
 
 // ── Types ────────────────────────────────────────────────────────
 
@@ -93,7 +94,7 @@ export const CHALLENGE_TEMPLATES: ChallengeTemplate[] = [
     totalTarget: 70000,
     reward: "Step Master Badge",
     rewardEmoji: "🏅",
-    color: "#22C55E",
+    color: UI.green,
     tips: [
       "Take a 15-minute walk after each meal",
       "Use stairs instead of elevators",
@@ -140,7 +141,7 @@ export const CHALLENGE_TEMPLATES: ChallengeTemplate[] = [
     totalTarget: 3500,
     reward: "Calorie Crusher Badge",
     rewardEmoji: "💪",
-    color: "#F97316",
+    color: UI.orange2,
     tips: [
       "Combine cardio and strength training",
       "HIIT sessions burn more in less time",
@@ -163,7 +164,7 @@ export const CHALLENGE_TEMPLATES: ChallengeTemplate[] = [
     totalTarget: 1050,
     reward: "Protein Pro Badge",
     rewardEmoji: "🏋️",
-    color: "#EF4444",
+    color: UI.red,
     tips: [
       "Prep protein-rich snacks in advance",
       "Add protein to every meal",
@@ -210,7 +211,7 @@ export const CHALLENGE_TEMPLATES: ChallengeTemplate[] = [
     totalTarget: 22,
     reward: "Transformation Badge",
     rewardEmoji: "🏆",
-    color: "#F59E0B",
+    color: UI.gold,
     tips: [
       "Plan your weekly schedule in advance",
       "Include rest days for recovery",
@@ -234,7 +235,7 @@ export const CHALLENGE_TEMPLATES: ChallengeTemplate[] = [
     totalTarget: 21,
     reward: "Habit Master Badge",
     rewardEmoji: "🧠",
-    color: "#10B981",
+    color: UI.emerald,
     tips: [
       "Set a daily alarm as a reminder",
       "Stack the habit with something you already do",
@@ -281,7 +282,7 @@ export const CHALLENGE_TEMPLATES: ChallengeTemplate[] = [
     totalTarget: 100,
     reward: "Century Badge",
     rewardEmoji: "💯",
-    color: "#14B8A6",
+    color: UI.teal,
     tips: [
       "Just 3.3km per day — a 30-minute walk",
       "Track cumulative distance for motivation",
@@ -318,9 +319,9 @@ export function getTemplateDifficultyLabel(d: TemplateDifficulty): string {
 
 export function getTemplateDifficultyColor(d: TemplateDifficulty): string {
   switch (d) {
-    case "beginner": return "#22C55E";
-    case "intermediate": return "#F59E0B";
-    case "advanced": return "#EF4444";
+    case "beginner": return UI.green;
+    case "intermediate": return UI.gold;
+    case "advanced": return UI.red;
     case "elite": return "#8B5CF6";
   }
 }

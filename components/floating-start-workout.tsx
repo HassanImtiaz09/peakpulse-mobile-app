@@ -10,10 +10,11 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import * as Haptics from "expo-haptics";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { UI } from "@/constants/ui-colors";
 
-const GOLD = "#F59E0B";
-const GOLD_DARK = "#B45309";
-const BG_DARK = "#0A0E14";
+const GOLD = UI.gold;
+const GOLD_DARK = UI.secondaryLight;
+const BG_DARK = UI.bg;
 
 interface FloatingStartWorkoutProps {
   /** Override the label text */

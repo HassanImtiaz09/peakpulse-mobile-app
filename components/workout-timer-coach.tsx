@@ -24,7 +24,7 @@ import {
   loadSoundSettings, playCompletionSound, playCountdownSound, playHalfwaySound,
   type RestTimerSoundSettings,
 } from "@/lib/rest-timer-sounds";
-import { C } from "@/constants/ui-colors";
+import { UI, C } from "@/constants/ui-colors";
 
 const { width: SCREEN_W } = Dimensions.get("window");
 
@@ -755,7 +755,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     gap: 6,
     paddingVertical: 6,
-    backgroundColor: "rgba(245,158,11,0.06)",
+    backgroundColor: UI.goldAlpha6,
     borderBottomWidth: 1,
     borderBottomColor: C.border,
   },
@@ -803,7 +803,7 @@ const styles = StyleSheet.create({
     borderWidth: 4,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "rgba(245,158,11,0.04)",
+    backgroundColor: UI.goldAlpha4,
   },
   timerBig: {
     color: C.gold,
@@ -814,7 +814,7 @@ const styles = StyleSheet.create({
   progressBarBg: {
     width: SCREEN_W - 80,
     height: 4,
-    backgroundColor: "rgba(245,158,11,0.10)",
+    backgroundColor: UI.goldAlpha10,
     borderRadius: 2,
     marginTop: 16,
     overflow: "hidden",
@@ -886,7 +886,7 @@ const styles = StyleSheet.create({
   setDotCurrent: {
     borderColor: C.gold2,
     borderWidth: 2,
-    backgroundColor: "rgba(245,158,11,0.15)",
+    backgroundColor: UI.borderGold,
   },
   setDotText: {
     color: C.muted,
@@ -977,12 +977,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 8,
-    backgroundColor: "rgba(245,158,11,0.08)",
+    backgroundColor: UI.dim,
     borderWidth: 1,
     borderColor: C.border,
   },
   autoToggleOn: {
-    backgroundColor: "rgba(245,158,11,0.20)",
+    backgroundColor: UI.goldAlpha20,
     borderColor: C.gold,
   },
   autoToggleText: {
@@ -1003,10 +1003,10 @@ const styles = StyleSheet.create({
     gap: 10,
     paddingVertical: 10,
     borderTopWidth: 1,
-    borderTopColor: "rgba(245,158,11,0.06)",
+    borderTopColor: UI.goldAlpha6,
   },
   cueItemActive: {
-    backgroundColor: "rgba(245,158,11,0.08)",
+    backgroundColor: UI.dim,
     marginHorizontal: -14,
     paddingHorizontal: 14,
     borderRadius: 8,
@@ -1062,7 +1062,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 4,
-    backgroundColor: "rgba(245,158,11,0.10)",
+    backgroundColor: UI.goldAlpha10,
     borderRadius: 10,
     paddingHorizontal: 16,
     paddingVertical: 8,
@@ -1134,8 +1134,8 @@ const styles = StyleSheet.create({
     color: C.bg,
   },
   exerciseChipNext: {
-    borderColor: "rgba(245,158,11,0.35)",
-    backgroundColor: "rgba(245,158,11,0.06)",
+    borderColor: UI.borderGold4,
+    backgroundColor: UI.goldAlpha6,
   },
   exerciseChipDone: {
     borderColor: "rgba(34,197,94,0.25)",
@@ -1172,10 +1172,10 @@ const styles = StyleSheet.create({
   },
   exerciseIndicatorCurrent: {
     borderColor: C.gold,
-    backgroundColor: "rgba(245,158,11,0.06)",
+    backgroundColor: UI.goldAlpha6,
   },
   exerciseIndicatorNext: {
-    borderColor: "rgba(245,158,11,0.10)",
+    borderColor: UI.goldAlpha10,
     opacity: 0.7,
   },
   exerciseIndicatorDone: {
@@ -1183,13 +1183,13 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(34,197,94,0.06)",
   },
   exerciseIndicatorBadge: {
-    backgroundColor: "rgba(245,158,11,0.20)",
+    backgroundColor: UI.goldAlpha20,
     borderRadius: 6,
     paddingHorizontal: 8,
     paddingVertical: 2,
   },
   exerciseIndicatorBadgeNext: {
-    backgroundColor: "rgba(245,158,11,0.08)",
+    backgroundColor: UI.dim,
   },
   exerciseIndicatorBadgeText: {
     color: C.gold,
@@ -1209,7 +1209,7 @@ const styles = StyleSheet.create({
     fontSize: 10,
   },
   exerciseIndicatorProgress: {
-    backgroundColor: "rgba(245,158,11,0.15)",
+    backgroundColor: UI.borderGold,
     borderRadius: 6,
     paddingHorizontal: 8,
     paddingVertical: 3,

@@ -7,6 +7,7 @@
  */
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { UI } from "@/constants/ui-colors";
 
 // ── Types ──────────────────────────────────────────────────────────
 
@@ -68,7 +69,7 @@ export const MILESTONE_TIERS: MilestoneTier[] = [
     name: "Ignition",
     weeksRequired: 1,
     emoji: "🔥",
-    color: "#F59E0B",
+    color: UI.gold,
     description: "First week of hitting all your goals. The spark is lit.",
     badge: "1W",
   },
@@ -95,7 +96,7 @@ export const MILESTONE_TIERS: MilestoneTier[] = [
     name: "Unstoppable",
     weeksRequired: 8,
     emoji: "🚀",
-    color: "#EF4444",
+    color: UI.red,
     description: "Eight weeks without breaking. You are unstoppable.",
     badge: "8W",
   },
@@ -104,7 +105,7 @@ export const MILESTONE_TIERS: MilestoneTier[] = [
     name: "Legendary",
     weeksRequired: 12,
     emoji: "👑",
-    color: "#F59E0B",
+    color: UI.gold,
     description: "Three months of perfection. You've entered legendary status.",
     badge: "12W",
   },
@@ -113,7 +114,7 @@ export const MILESTONE_TIERS: MilestoneTier[] = [
     name: "Titan",
     weeksRequired: 26,
     emoji: "⚔️",
-    color: "#10B981",
+    color: UI.emerald,
     description: "Half a year of relentless consistency. You are a Titan.",
     badge: "26W",
   },

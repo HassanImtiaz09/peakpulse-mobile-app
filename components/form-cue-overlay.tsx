@@ -30,6 +30,7 @@ import {
   type FormTip,
   type ExerciseFormTips,
 } from "@/lib/form-cue-tips";
+import { UI } from "@/constants/ui-colors";
 
 interface FormCueOverlayProps {
   /** Exercise name for tip lookup */
@@ -113,7 +114,7 @@ export function FormCueOverlay({
         <View style={[styles.card, { padding }]}>
           {/* Header */}
           <View style={styles.header}>
-            <MaterialIcons name="fitness-center" size={iconSize} color="#F59E0B" />
+            <MaterialIcons name="fitness-center" size={iconSize} color={UI.gold} />
             <Text style={[styles.headerText, { fontSize: fontSize + 1 }]} numberOfLines={1}>
               Form Tips
             </Text>
@@ -208,7 +209,7 @@ export function FormCueBadge({
       <MaterialIcons
         name="lightbulb"
         size={14}
-        color={active ? "#0A0E14" : "#F59E0B"}
+        color={active ? UI.bg : UI.gold}
       />
       <Text style={[styles.badgeText, active && styles.badgeTextActive]}>
         {tips.tips.length} Tips
@@ -237,7 +238,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   headerText: {
-    color: "#F59E0B",
+    color: UI.gold,
     fontWeight: "700",
     flex: 1,
     letterSpacing: 0.3,
@@ -280,20 +281,20 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 5,
     borderRadius: 8,
-    backgroundColor: "rgba(245,158,11,0.08)",
+    backgroundColor: UI.dim,
     borderWidth: 1,
-    borderColor: "rgba(245,158,11,0.2)",
+    borderColor: UI.goldAlpha20,
   },
   badgeActive: {
-    backgroundColor: "#F59E0B",
-    borderColor: "#FBBF24",
+    backgroundColor: UI.gold,
+    borderColor: UI.gold2,
   },
   badgeText: {
-    color: "#F59E0B",
+    color: UI.gold,
     fontSize: 11,
     fontWeight: "700",
   },
   badgeTextActive: {
-    color: "#0A0E14",
+    color: UI.bg,
   },
 });

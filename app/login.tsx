@@ -7,7 +7,7 @@ import { useRouter } from "expo-router";
 import { startOAuthLogin } from "@/constants/oauth";
 import { useGuestAuth } from "@/lib/guest-auth";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { C } from "@/constants/ui-colors";
+import { UI, C } from "@/constants/ui-colors";
 import { ScreenErrorBoundary } from "@/components/error-boundary";
 
 type AuthMode = "choose" | "email";
@@ -64,7 +64,7 @@ export default function LoginScreen() {
             {/* Ambient glow behind logo */}
             <View style={{
               position: "absolute", top: 60, width: 300, height: 300,
-              borderRadius: 150, backgroundColor: "rgba(245,158,11,0.08)",
+              borderRadius: 150, backgroundColor: UI.dim,
               shadowColor: C.gold, shadowOffset: { width: 0, height: 0 },
               shadowOpacity: 0.3, shadowRadius: 80,
             }} />
@@ -72,9 +72,9 @@ export default function LoginScreen() {
             {/* Logo */}
             <View style={{
               width: 100, height: 100, borderRadius: 28,
-              backgroundColor: "rgba(245,158,11,0.12)",
+              backgroundColor: UI.goldAlpha12,
               alignItems: "center", justifyContent: "center",
-              marginBottom: 20, borderWidth: 1.5, borderColor: "rgba(245,158,11,0.25)",
+              marginBottom: 20, borderWidth: 1.5, borderColor: UI.borderGold2,
             }}>
               <MaterialIcons name="local-fire-department" size={52} color={C.gold} />
             </View>

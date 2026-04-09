@@ -7,6 +7,7 @@
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import type { WorkoutType } from "@/lib/health-service";
+import { UI } from "@/constants/ui-colors";
 
 // ── Types ──────────────────────────────────────────────────────────
 
@@ -99,7 +100,7 @@ export const BUILT_IN_TEMPLATES: CreateTemplateInput[] = [
     durationMinutes: 30,
     estimatedCalories: 330,
     distanceKm: 5,
-    color: "#22C55E",
+    color: UI.green,
     icon: "directions-run",
   },
   {
@@ -116,7 +117,7 @@ export const BUILT_IN_TEMPLATES: CreateTemplateInput[] = [
     type: "strength_training",
     durationMinutes: 60,
     estimatedCalories: 420,
-    color: "#EF4444",
+    color: UI.red,
     icon: "fitness-center",
   },
   {
@@ -124,7 +125,7 @@ export const BUILT_IN_TEMPLATES: CreateTemplateInput[] = [
     type: "hiit",
     durationMinutes: 25,
     estimatedCalories: 325,
-    color: "#F97316",
+    color: UI.orange2,
     icon: "bolt",
   },
   {
@@ -141,7 +142,7 @@ export const BUILT_IN_TEMPLATES: CreateTemplateInput[] = [
     durationMinutes: 40,
     estimatedCalories: 360,
     distanceKm: 12,
-    color: "#F59E0B",
+    color: UI.gold,
     icon: "pedal-bike",
   },
 ];

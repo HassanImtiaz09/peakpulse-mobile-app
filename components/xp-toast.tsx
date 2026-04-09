@@ -16,9 +16,10 @@ import Animated, {
 } from "react-native-reanimated";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import * as Haptics from "expo-haptics";
+import { UI } from "@/constants/ui-colors";
 
-const AMBER = "#F59E0B";
-const GREEN = "#22C55E";
+const AMBER = UI.gold;
+const GREEN = UI.green;
 const PURPLE = "#8B5CF6";
 
 interface XPToastProps {
@@ -140,7 +141,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   label: {
-    color: "#94A3B8",
+    color: UI.muted,
     fontSize: 12,
     fontFamily: "DMSans_500Medium",
   },

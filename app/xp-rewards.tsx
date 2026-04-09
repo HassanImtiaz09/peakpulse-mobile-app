@@ -44,17 +44,18 @@ import {
   type XPHistoryEntry,
   type StreakBadge,
 } from "@/lib/xp-engine";
+import { UI } from "@/constants/ui-colors";
 
 // ── Colors ──────────────────────────────────────────────────────────────
 const BG = "#0A0A0F";
 const SURFACE = "#111827";
 const SURFACE2 = "#1A1F2E";
-const GOLD = "#F59E0B";
-const GOLD_DIM = "rgba(245,158,11,0.12)";
-const GOLD_BORDER = "rgba(245,158,11,0.25)";
-const FG = "#F1F5F9";
+const GOLD = UI.gold;
+const GOLD_DIM = UI.goldAlpha12;
+const GOLD_BORDER = UI.borderGold2;
+const FG = UI.fg;
 const MUTED = "#64748B";
-const BORDER = "rgba(30,41,59,0.6)";
+const BORDER = UI.border;
 const LOCKED = "#374151";
 const LOCKED_TEXT = "#4B5563";
 
@@ -144,7 +145,7 @@ export default function XPRewardsScreen() {
               pressed && { opacity: 0.6 },
             ]}
           >
-            <MaterialIcons name="leaderboard" size={22} color={"#F59E0B"} />
+            <MaterialIcons name="leaderboard" size={22} color={UI.gold} />
           </Pressable>
         </View>
 
@@ -458,7 +459,7 @@ const styles = StyleSheet.create({
   heroProgressTrack: {
     height: 8,
     borderRadius: 4,
-    backgroundColor: "rgba(245,158,11,0.10)",
+    backgroundColor: UI.goldAlpha10,
     overflow: "hidden",
     marginTop: 8,
   },

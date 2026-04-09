@@ -24,7 +24,7 @@ import { useAuth } from "@/hooks/use-auth";
 
 // ── Colours ──────────────────────────────────────────────────────────────────
 const WEIGHT_COLOR = "#3B82F6"; // blue-500
-const BF_COLOR = "#F59E0B"; // amber-500
+const BF_COLOR = UI.gold; // amber-500
 const GRID_COLOR = "rgba(255,255,255,0.08)";
 const LABEL_COLOR = "rgba(255,255,255,0.50)";
 

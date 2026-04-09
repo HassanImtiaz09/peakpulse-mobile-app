@@ -23,6 +23,7 @@ import { getSeedPosts, getCurrentWeeklyChallenge, WEEKLY_CHALLENGE_TEMPLATES, ty
 import { EmptyState, EMPTY_STATES } from "@/components/empty-state";
 import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
 import { ScreenErrorBoundary } from "@/components/error-boundary";
+import { UI } from "@/constants/ui-colors";
 
 const HERO_BG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/golden-social-bg-6XESYMXaHwooBovbKXUgYi.webp";
 
@@ -542,16 +543,16 @@ const styles = StyleSheet.create({
   modalBody: { flex: 1, padding: 16 },
   modalLabel: { color: "#9ca3af", fontSize: 13, fontFamily: "DMSans_600SemiBold", marginBottom: 8, marginTop: 16 },
   postTypeRow: { flexDirection: "row", gap: 8 },
-  postTypeBtn: { flex: 1, backgroundColor: "#1f2937", borderRadius: 10, paddingVertical: 10, alignItems: "center", borderWidth: 1, borderColor: "rgba(245,158,11,0.15)" },
+  postTypeBtn: { flex: 1, backgroundColor: "#1f2937", borderRadius: 10, paddingVertical: 10, alignItems: "center", borderWidth: 1, borderColor: UI.borderGold },
   postTypeBtnActive: { backgroundColor: "#2d1b69", borderColor: "#7c3aed" },
   postTypeBtnText: { color: "#9ca3af", fontSize: 12, fontFamily: "DMSans_600SemiBold" },
   postTypeBtnTextActive: { color: "#c4b5fd" },
-  captionInput: { backgroundColor: "#1f2937", borderRadius: 12, padding: 14, color: "#fff", fontSize: 14, lineHeight: 22, minHeight: 100, textAlignVertical: "top", borderWidth: 1, borderColor: "rgba(245,158,11,0.15)" },
+  captionInput: { backgroundColor: "#1f2937", borderRadius: 12, padding: 14, color: "#fff", fontSize: 14, lineHeight: 22, minHeight: 100, textAlignVertical: "top", borderWidth: 1, borderColor: UI.borderGold },
   statsInputRow: { flexDirection: "row", gap: 12 },
   statsInputGroup: { flex: 1 },
   statsInputLabel: { color: "#6b7280", fontSize: 12, marginBottom: 6 },
-  statsInput: { backgroundColor: "#1f2937", borderRadius: 10, padding: 12, color: "#fff", fontSize: 14, borderWidth: 1, borderColor: "rgba(245,158,11,0.15)" },
-  photoPickerBtn: { backgroundColor: "#1f2937", borderRadius: 12, height: 120, alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: "rgba(245,158,11,0.15)", borderStyle: "dashed", overflow: "hidden" },
+  statsInput: { backgroundColor: "#1f2937", borderRadius: 10, padding: 12, color: "#fff", fontSize: 14, borderWidth: 1, borderColor: UI.borderGold },
+  photoPickerBtn: { backgroundColor: "#1f2937", borderRadius: 12, height: 120, alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: UI.borderGold, borderStyle: "dashed", overflow: "hidden" },
   photoPickerText: { color: "#6b7280", fontSize: 16 },
   selectedPhoto: { width: "100%", height: "100%" },
   signInNote: { backgroundColor: "#1c0a00", borderRadius: 10, padding: 12, marginTop: 16, borderWidth: 1, borderColor: "#92400e" },
@@ -563,7 +564,7 @@ const styles = StyleSheet.create({
   seedBannerText: { color: "#9ca3af", fontSize: 12, lineHeight: 17 },
   // Featured weekly challenge
   featuredChallengeCard: { backgroundColor: "#111", borderRadius: 16, padding: 20, marginBottom: 20, borderWidth: 2, alignItems: "center" },
-  featuredBadge: { backgroundColor: "rgba(245,158,11,0.15)", paddingHorizontal: 12, paddingVertical: 4, borderRadius: 20, marginBottom: 12 },
+  featuredBadge: { backgroundColor: UI.borderGold, paddingHorizontal: 12, paddingVertical: 4, borderRadius: 20, marginBottom: 12 },
   featuredBadgeText: { color: "#fbbf24", fontSize: 10, fontWeight: "800", letterSpacing: 2 },
   featuredEmoji: { fontSize: 48, marginBottom: 8 },
   featuredTitle: { color: "#fff", fontSize: 22, fontWeight: "800", textAlign: "center", marginBottom: 6 },

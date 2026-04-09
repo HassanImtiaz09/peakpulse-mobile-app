@@ -24,7 +24,7 @@ import { trpc } from "@/lib/trpc";
 import { useSubscription } from "@/hooks/use-subscription";
 import { getGreeting, type GreetingData } from "@/lib/assistant-greetings";
 import { classifyIntent, type NavigationIntent } from "@/lib/assistant-navigation";
-import { UI as SF } from "@/constants/ui-colors";
+import { UI, SF } from "@/constants/ui-colors";
 
 const { width: W, height: H } = Dimensions.get("window");
 
@@ -614,7 +614,7 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: "rgba(245,158,11,0.85)",
+    backgroundColor: UI.goldAlpha85,
     alignItems: "center",
     justifyContent: "center",
     shadowColor: SF.gold,
@@ -623,7 +623,7 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 6,
     borderWidth: 1,
-    borderColor: "rgba(245,158,11,0.40)",
+    borderColor: UI.goldAlpha40,
   },
   fabIcon: {
     fontSize: 22,
@@ -632,7 +632,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: -4,
     right: -4,
-    backgroundColor: "#10B981",
+    backgroundColor: UI.emerald,
     borderRadius: 8,
     paddingHorizontal: 5,
     paddingVertical: 1,

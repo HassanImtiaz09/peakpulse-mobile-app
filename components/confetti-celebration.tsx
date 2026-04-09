@@ -14,12 +14,13 @@ import Animated, {
   Easing,
   runOnJS,
 } from "react-native-reanimated";
+import { UI } from "@/constants/ui-colors";
 
 const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get("window");
 
 const CONFETTI_COLORS = [
-  "#F59E0B", "#EF4444", "#3B82F6", "#10B981", "#8B5CF6",
-  "#EC4899", "#14B8A6", "#FDE68A", "#F87171", "#60A5FA",
+  UI.gold, UI.red, "#3B82F6", UI.emerald, "#8B5CF6",
+  "#EC4899", UI.teal, UI.gold3, "#F87171", UI.blue,
 ];
 
 const PARTICLE_COUNT = 40;

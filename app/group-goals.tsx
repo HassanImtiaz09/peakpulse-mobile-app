@@ -28,6 +28,7 @@ import {
 } from "@/lib/group-goals";
 import { loadOrCreateSocialCircle, type FriendProfile } from "@/lib/social-circle";
 import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
+import { UI } from "@/constants/ui-colors";
 
 const HERO_BG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/golden-social-bg-6XESYMXaHwooBovbKXUgYi.webp";
 
@@ -140,7 +141,7 @@ export default function GroupGoalsScreen() {
           </View>
           {!isCompleted && (
             <TouchableOpacity onPress={() => handleDelete(goal)}>
-              <Text style={{ color: "#B45309", fontSize: 14 }}>✕</Text>
+              <Text style={{ color: UI.secondaryLight, fontSize: 14 }}>✕</Text>
             </TouchableOpacity>
           )}
         </View>
@@ -151,13 +152,13 @@ export default function GroupGoalsScreen() {
             <Text style={styles.progressLabel}>
               {formatMetricValue(goal.metric, goal.currentTotal)} / {formatMetricValue(goal.metric, goal.target)} {getMetricUnit(goal.metric)}
             </Text>
-            <Text style={[styles.progressPct, isAchieved && { color: "#10B981" }]}>{pct}%</Text>
+            <Text style={[styles.progressPct, isAchieved && { color: UI.emerald }]}>{pct}%</Text>
           </View>
           <View style={styles.progressBarBg}>
             <View style={[
               styles.progressBarFill,
               { width: `${pct}%` },
-              isAchieved && { backgroundColor: "#10B981" },
+              isAchieved && { backgroundColor: UI.emerald },
             ]} />
           </View>
         </View>
@@ -167,7 +168,7 @@ export default function GroupGoalsScreen() {
           <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
             <Text style={styles.contribTitle}>Contributors ({goal.contributions.length})</Text>
             <TouchableOpacity onPress={() => setShowContribModal(goal)}>
-              <Text style={{ color: "#F59E0B", fontSize: 12, fontWeight: "700" }}>View All</Text>
+              <Text style={{ color: UI.gold, fontSize: 12, fontWeight: "700" }}>View All</Text>
             </TouchableOpacity>
           </View>
           {goal.contributions
@@ -176,7 +177,7 @@ export default function GroupGoalsScreen() {
             .map((contrib, i) => (
               <View key={contrib.userId} style={styles.contribRow}>
                 <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-                  <Text style={{ fontSize: 10, color: "#FDE68A", fontWeight: "800", width: 16 }}>
+                  <Text style={{ fontSize: 10, color: UI.gold3, fontWeight: "800", width: 16 }}>
                     {i === 0 ? "🥇" : i === 1 ? "🥈" : "🥉"}
                   </Text>
                   <Text style={{ fontSize: 16 }}>{contrib.avatarEmoji}</Text>
@@ -198,12 +199,12 @@ export default function GroupGoalsScreen() {
   // ── Main Render ───────────────────────────────────────────────
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#0A0E14" }}>
+    <View style={{ flex: 1, backgroundColor: UI.bg }}>
       {/* Hero */}
       <ImageBackground source={{ uri: HERO_BG }} style={{ height: 170 }} resizeMode="cover">
         <View style={styles.heroOverlay}>
           <TouchableOpacity style={styles.backBtn} onPress={() => router.back()} {...a11yButton(A11Y_LABELS.backButton)}>
-            <Text style={{ color: "#F1F5F9", fontSize: 18 }}>←</Text>
+            <Text style={{ color: UI.fg, fontSize: 18 }}>←</Text>
           </TouchableOpacity>
           <Text style={styles.heroLabel}>CIRCLE</Text>
           <Text style={styles.heroTitle}>Group Goals</Text>
@@ -234,7 +235,7 @@ export default function GroupGoalsScreen() {
 
       {loading ? (
         <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-          <ActivityIndicator size="large" color="#F59E0B" />
+          <ActivityIndicator size="large" color={UI.gold} />
         </View>
       ) : (
         <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 40 }} showsVerticalScrollIndicator={false}>
@@ -323,7 +324,7 @@ export default function GroupGoalsScreen() {
               <TextInput
                 style={styles.targetInput}
                 placeholder="Or enter custom target..."
-                placeholderTextColor="#B45309"
+                placeholderTextColor={UI.secondaryLight}
                 keyboardType="numeric"
                 value={customTarget}
                 onChangeText={setCustomTarget}
@@ -384,7 +385,7 @@ export default function GroupGoalsScreen() {
               .map((contrib, i) => (
                 <View key={contrib.userId} style={styles.modalContribRow}>
                   <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
-                    <Text style={{ fontSize: 14, color: "#FDE68A", fontWeight: "800", width: 20 }}>
+                    <Text style={{ fontSize: 14, color: UI.gold3, fontWeight: "800", width: 20 }}>
                       #{i + 1}
                     </Text>
                     <Text style={{ fontSize: 20 }}>{contrib.avatarEmoji}</Text>
@@ -400,10 +401,10 @@ export default function GroupGoalsScreen() {
                 </View>
               ))}
             <TouchableOpacity
-              style={[styles.primaryBtn, { marginTop: 16, backgroundColor: "#1A2030" }]}
+              style={[styles.primaryBtn, { marginTop: 16, backgroundColor: UI.surface2 }]}
               onPress={() => setShowContribModal(null)}
             >
-              <Text style={[styles.primaryBtnText, { color: "#F1F5F9" }]}>Close</Text>
+              <Text style={[styles.primaryBtnText, { color: UI.fg }]}>Close</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -423,111 +424,111 @@ const styles = StyleSheet.create({
     position: "absolute", top: 52, left: 20, backgroundColor: "#FFFFFF20",
     borderRadius: 20, width: 36, height: 36, alignItems: "center", justifyContent: "center",
   },
-  heroLabel: { color: "#FDE68A", fontSize: 11, fontWeight: "800", letterSpacing: 1.5 },
-  heroTitle: { color: "#F1F5F9", fontSize: 24, fontWeight: "800" },
-  heroStat: { color: "#FDE68A", fontSize: 12 },
+  heroLabel: { color: UI.gold3, fontSize: 11, fontWeight: "800", letterSpacing: 1.5 },
+  heroTitle: { color: UI.fg, fontSize: 24, fontWeight: "800" },
+  heroStat: { color: UI.gold3, fontSize: 12 },
 
   tabBar: {
-    flexDirection: "row", backgroundColor: "#141A22", borderBottomWidth: 1,
-    borderBottomColor: "rgba(245,158,11,0.10)",
+    flexDirection: "row", backgroundColor: UI.surface, borderBottomWidth: 1,
+    borderBottomColor: UI.goldAlpha10,
   },
   tab: { flex: 1, paddingVertical: 12, alignItems: "center" },
-  tabActive: { borderBottomWidth: 2, borderBottomColor: "#F59E0B" },
-  tabText: { color: "#B45309", fontSize: 12, fontWeight: "700" },
-  tabTextActive: { color: "#FDE68A" },
+  tabActive: { borderBottomWidth: 2, borderBottomColor: UI.gold },
+  tabText: { color: UI.secondaryLight, fontSize: 12, fontWeight: "700" },
+  tabTextActive: { color: UI.gold3 },
 
-  sectionTitle: { color: "#F1F5F9", fontSize: 18, fontWeight: "800", marginBottom: 6 },
-  sectionSubtitle: { color: "#B45309", fontSize: 13, marginBottom: 16, lineHeight: 18 },
-  fieldLabel: { color: "#FDE68A", fontSize: 13, fontWeight: "700", marginBottom: 8, letterSpacing: 0.5 },
+  sectionTitle: { color: UI.fg, fontSize: 18, fontWeight: "800", marginBottom: 6 },
+  sectionSubtitle: { color: UI.secondaryLight, fontSize: 13, marginBottom: 16, lineHeight: 18 },
+  fieldLabel: { color: UI.gold3, fontSize: 13, fontWeight: "700", marginBottom: 8, letterSpacing: 0.5 },
 
   goalCard: {
-    backgroundColor: "#141A22", borderRadius: 20, padding: 16, marginBottom: 12,
-    borderWidth: 1, borderColor: "rgba(245,158,11,0.10)",
+    backgroundColor: UI.surface, borderRadius: 20, padding: 16, marginBottom: 12,
+    borderWidth: 1, borderColor: UI.goldAlpha10,
   },
   goalCardAchieved: { borderColor: "rgba(16,185,129,0.25)", backgroundColor: "#0A1A0F" },
   goalHeader: {
     flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 14,
   },
-  goalTitle: { color: "#F1F5F9", fontSize: 15, fontWeight: "700" },
-  goalSubtitle: { color: "#B45309", fontSize: 12, marginTop: 2 },
+  goalTitle: { color: UI.fg, fontSize: 15, fontWeight: "700" },
+  goalSubtitle: { color: UI.secondaryLight, fontSize: 12, marginTop: 2 },
 
   progressSection: { marginTop: 4 },
-  progressLabel: { color: "#F1F5F9", fontSize: 13, fontWeight: "600" },
-  progressPct: { color: "#FDE68A", fontSize: 14, fontWeight: "800" },
+  progressLabel: { color: UI.fg, fontSize: 13, fontWeight: "600" },
+  progressPct: { color: UI.gold3, fontSize: 14, fontWeight: "800" },
   progressBarBg: {
-    height: 10, backgroundColor: "rgba(245,158,11,0.08)", borderRadius: 5, overflow: "hidden",
+    height: 10, backgroundColor: UI.dim, borderRadius: 5, overflow: "hidden",
   },
-  progressBarFill: { height: "100%", borderRadius: 5, backgroundColor: "#F59E0B" },
+  progressBarFill: { height: "100%", borderRadius: 5, backgroundColor: UI.gold },
 
-  contribTitle: { color: "#FDE68A", fontSize: 12, fontWeight: "700" },
+  contribTitle: { color: UI.gold3, fontSize: 12, fontWeight: "700" },
   contribRow: {
     flexDirection: "row", justifyContent: "space-between", alignItems: "center",
-    paddingVertical: 8, borderBottomWidth: 1, borderBottomColor: "rgba(245,158,11,0.06)",
+    paddingVertical: 8, borderBottomWidth: 1, borderBottomColor: UI.goldAlpha6,
   },
-  contribName: { color: "#F1F5F9", fontSize: 13, fontWeight: "600", maxWidth: 120 },
-  contribValue: { color: "#FDE68A", fontSize: 13, fontWeight: "700" },
-  contribPct: { color: "#B45309", fontSize: 10, marginTop: 2 },
+  contribName: { color: UI.fg, fontSize: 13, fontWeight: "600", maxWidth: 120 },
+  contribValue: { color: UI.gold3, fontSize: 13, fontWeight: "700" },
+  contribPct: { color: UI.secondaryLight, fontSize: 10, marginTop: 2 },
 
   emptyState: {
-    alignItems: "center", padding: 32, backgroundColor: "#141A22",
-    borderRadius: 20, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)",
+    alignItems: "center", padding: 32, backgroundColor: UI.surface,
+    borderRadius: 20, borderWidth: 1, borderColor: UI.goldAlpha10,
   },
-  emptyTitle: { color: "#F1F5F9", fontSize: 18, fontWeight: "800", marginBottom: 6 },
-  emptySubtitle: { color: "#B45309", fontSize: 13, textAlign: "center", lineHeight: 18, marginBottom: 16 },
+  emptyTitle: { color: UI.fg, fontSize: 18, fontWeight: "800", marginBottom: 6 },
+  emptySubtitle: { color: UI.secondaryLight, fontSize: 13, textAlign: "center", lineHeight: 18, marginBottom: 16 },
 
   primaryBtn: {
-    backgroundColor: "#F59E0B", borderRadius: 14, paddingVertical: 14, alignItems: "center",
+    backgroundColor: UI.gold, borderRadius: 14, paddingVertical: 14, alignItems: "center",
   },
-  primaryBtnText: { color: "#F1F5F9", fontSize: 15, fontWeight: "700" },
+  primaryBtnText: { color: UI.fg, fontSize: 15, fontWeight: "700" },
 
   metricPill: {
     flexDirection: "row", alignItems: "center", gap: 6, paddingHorizontal: 14, paddingVertical: 10,
-    backgroundColor: "#141A22", borderRadius: 12, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)",
+    backgroundColor: UI.surface, borderRadius: 12, borderWidth: 1, borderColor: UI.goldAlpha10,
   },
-  metricPillActive: { borderColor: "#F59E0B", backgroundColor: "rgba(245,158,11,0.08)" },
-  metricPillText: { color: "#B45309", fontSize: 13, fontWeight: "700" },
-  metricPillTextActive: { color: "#FDE68A" },
+  metricPillActive: { borderColor: UI.gold, backgroundColor: UI.dim },
+  metricPillText: { color: UI.secondaryLight, fontSize: 13, fontWeight: "700" },
+  metricPillTextActive: { color: UI.gold3 },
 
   durationPill: {
-    flex: 1, alignItems: "center", paddingVertical: 10, backgroundColor: "#141A22",
-    borderRadius: 12, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)",
+    flex: 1, alignItems: "center", paddingVertical: 10, backgroundColor: UI.surface,
+    borderRadius: 12, borderWidth: 1, borderColor: UI.goldAlpha10,
   },
-  durationPillActive: { borderColor: "#F59E0B", backgroundColor: "rgba(245,158,11,0.08)" },
-  durationText: { color: "#B45309", fontSize: 13, fontWeight: "700" },
-  durationTextActive: { color: "#FDE68A" },
+  durationPillActive: { borderColor: UI.gold, backgroundColor: UI.dim },
+  durationText: { color: UI.secondaryLight, fontSize: 13, fontWeight: "700" },
+  durationTextActive: { color: UI.gold3 },
 
   targetPill: {
-    paddingHorizontal: 16, paddingVertical: 8, backgroundColor: "#141A22",
-    borderRadius: 10, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)",
+    paddingHorizontal: 16, paddingVertical: 8, backgroundColor: UI.surface,
+    borderRadius: 10, borderWidth: 1, borderColor: UI.goldAlpha10,
   },
-  targetPillActive: { borderColor: "#F59E0B", backgroundColor: "rgba(245,158,11,0.08)" },
-  targetPillText: { color: "#B45309", fontSize: 13, fontWeight: "700" },
-  targetPillTextActive: { color: "#FDE68A" },
+  targetPillActive: { borderColor: UI.gold, backgroundColor: UI.dim },
+  targetPillText: { color: UI.secondaryLight, fontSize: 13, fontWeight: "700" },
+  targetPillTextActive: { color: UI.gold3 },
 
   targetInput: {
-    backgroundColor: "#141A22", borderRadius: 12, padding: 14, color: "#F1F5F9",
-    fontSize: 14, borderWidth: 1, borderColor: "rgba(245,158,11,0.15)", marginTop: 8,
+    backgroundColor: UI.surface, borderRadius: 12, padding: 14, color: UI.fg,
+    fontSize: 14, borderWidth: 1, borderColor: UI.borderGold, marginTop: 8,
   },
 
   summaryCard: {
-    marginTop: 16, backgroundColor: "rgba(245,158,11,0.06)", borderRadius: 14, padding: 14,
-    borderWidth: 1, borderColor: "rgba(245,158,11,0.12)",
+    marginTop: 16, backgroundColor: UI.goldAlpha6, borderRadius: 14, padding: 14,
+    borderWidth: 1, borderColor: UI.goldAlpha12,
   },
-  summaryTitle: { color: "#FDE68A", fontSize: 13, fontWeight: "700", marginBottom: 6 },
-  summaryText: { color: "#F1F5F9", fontSize: 13, lineHeight: 20 },
+  summaryTitle: { color: UI.gold3, fontSize: 13, fontWeight: "700", marginBottom: 6 },
+  summaryText: { color: UI.fg, fontSize: 13, lineHeight: 20 },
 
   // Modal
   modalOverlay: { flex: 1, backgroundColor: "rgba(0,0,0,0.85)", justifyContent: "flex-end" },
   modalContent: {
-    backgroundColor: "#141A22", borderTopLeftRadius: 28, borderTopRightRadius: 28,
+    backgroundColor: UI.surface, borderTopLeftRadius: 28, borderTopRightRadius: 28,
     padding: 24, paddingBottom: 40, maxHeight: "70%",
   },
-  modalTitle: { color: "#F1F5F9", fontSize: 20, fontWeight: "800", marginBottom: 16 },
+  modalTitle: { color: UI.fg, fontSize: 20, fontWeight: "800", marginBottom: 16 },
   modalContribRow: {
     flexDirection: "row", justifyContent: "space-between", alignItems: "center",
-    paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: "rgba(245,158,11,0.06)",
+    paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: UI.goldAlpha6,
   },
-  modalContribName: { color: "#F1F5F9", fontSize: 14, fontWeight: "700" },
-  modalContribPct: { color: "#B45309", fontSize: 11, marginTop: 2 },
-  modalContribValue: { color: "#FDE68A", fontSize: 14, fontWeight: "700" },
+  modalContribName: { color: UI.fg, fontSize: 14, fontWeight: "700" },
+  modalContribPct: { color: UI.secondaryLight, fontSize: 11, marginTop: 2 },
+  modalContribValue: { color: UI.gold3, fontSize: 14, fontWeight: "700" },
 });

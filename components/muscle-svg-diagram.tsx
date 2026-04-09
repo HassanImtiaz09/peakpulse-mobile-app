@@ -13,7 +13,7 @@ import { View, Text, StyleSheet, Pressable, Platform } from "react-native";
 import Svg, { Path, G, Rect, Ellipse, Circle } from "react-native-svg";
 import * as Haptics from "expo-haptics";
 import type { MuscleGroup } from "@/components/body-diagram";
-import { C } from "@/constants/ui-colors";
+import { UI, C } from "@/constants/ui-colors";
 
 // Theme colors matching the app's gold/dark aesthetic
 // ── SVG Path Data ────────────────────────────────────────────────────────────
@@ -382,13 +382,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 5,
     borderRadius: 8,
-    backgroundColor: "rgba(245,158,11,0.08)",
+    backgroundColor: UI.dim,
     borderWidth: 1,
     borderColor: "transparent",
   },
   toggleBtnActive: {
-    backgroundColor: "rgba(245,158,11,0.15)",
-    borderColor: "rgba(245,158,11,0.3)",
+    backgroundColor: UI.borderGold,
+    borderColor: UI.goldAlpha30,
   },
   toggleTxt: {
     color: C.muted,
@@ -409,12 +409,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 3,
-    backgroundColor: "rgba(245,158,11,0.06)",
+    backgroundColor: UI.goldAlpha6,
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 6,
     borderWidth: 1,
-    borderColor: "rgba(245,158,11,0.12)",
+    borderColor: UI.goldAlpha12,
   },
   labelDot: {
     width: 5,

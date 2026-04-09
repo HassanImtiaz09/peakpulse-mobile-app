@@ -18,6 +18,7 @@ import Animated, {
 import { MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useColors } from "@/hooks/use-colors";
+import { UI, SF } from "@/constants/ui-colors";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const CARD_WIDTH = SCREEN_WIDTH - 64;
@@ -100,7 +101,7 @@ export function QuickInsightsCarousel({
     {
       id: "streak",
       emoji: streakDays >= 7 ? "\u{1F525}" : "\u{1F4AA}",
-      accentColor: "#F97316",
+      accentColor: UI.orange2,
       accentBg: "#FFF7ED",
       title: "Streak",
       value: `${streakDays}-Day`,
@@ -132,7 +133,7 @@ export function QuickInsightsCarousel({
           {
             id: "volume",
             emoji: isUp ? "\u{1F4C8}" : "\u{1F4C9}",
-            accentColor: isUp ? "#22C55E" : "#EF4444",
+            accentColor: isUp ? UI.green : UI.red,
             accentBg: isUp ? "#F0FDF4" : "#FEF2F2",
             title: "Weekly Volume",
             value: `${isUp ? "+" : ""}${Math.abs(volumeChange)}%`,

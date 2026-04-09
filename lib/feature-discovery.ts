@@ -4,6 +4,7 @@
  * at the moment they become relevant. Each prompt shows only once.
  */
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { UI } from "@/constants/ui-colors";
 
 const DISCOVERY_KEY = "@peakpulse_feature_discovery";
 
@@ -62,7 +63,7 @@ const PROMPT_DEFINITIONS: Array<{
       icon: "record-voice-over",
       route: "/voice-coach-settings",
       ctaText: "Enable Voice Coach",
-      accentColor: "#F59E0B",
+      accentColor: UI.gold,
     },
     shouldShow: (s) => s.timerUsed,
   },
@@ -74,7 +75,7 @@ const PROMPT_DEFINITIONS: Array<{
       icon: "emoji-events",
       route: "/workout-analytics",
       ctaText: "View Records",
-      accentColor: "#22C55E",
+      accentColor: UI.green,
     },
     shouldShow: (s) => s.workoutsCompleted >= 3,
   },
@@ -86,7 +87,7 @@ const PROMPT_DEFINITIONS: Array<{
       icon: "camera-alt",
       route: "/(tabs)/scan",
       ctaText: "Try Body Scan",
-      accentColor: "#22D3EE",
+      accentColor: UI.ice,
     },
     shouldShow: (s) => s.progressPhotoTaken,
   },
@@ -98,7 +99,7 @@ const PROMPT_DEFINITIONS: Array<{
       icon: "restaurant",
       route: "/subscription",
       ctaText: "Learn More",
-      accentColor: "#14B8A6",
+      accentColor: UI.teal,
     },
     shouldShow: (s) => s.mealsLogged >= 5,
   },
@@ -110,7 +111,7 @@ const PROMPT_DEFINITIONS: Array<{
       icon: "calendar-today",
       route: "/workout-calendar",
       ctaText: "View Summary",
-      accentColor: "#F59E0B",
+      accentColor: UI.gold,
     },
     shouldShow: (s) => s.firstWeekComplete,
   },

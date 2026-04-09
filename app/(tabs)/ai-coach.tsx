@@ -18,7 +18,7 @@ import { useGuestAuth } from "@/lib/guest-auth";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { FeatureGate } from "@/components/feature-gate";
 import { useSubscription } from "@/hooks/use-subscription";
-import { UI as SF } from "@/constants/ui-colors";
+import { UI, SF } from "@/constants/ui-colors";
 import { useAiLimit } from "@/components/ai-limit-modal";
 import { ErrorBoundary } from "@/components/error-boundary";
 import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
@@ -324,10 +324,10 @@ function AICoachScreenContent() {
                   )}
                   {insights.formAnalysis.topIssues?.length > 0 && (
                     <View style={{ marginBottom: 12 }}>
-                      <Text style={{ color: "#EF4444", fontFamily: "DMSans_700Bold", fontSize: 12, marginBottom: 8 }}>⚠️ Priority Fixes</Text>
+                      <Text style={{ color: UI.red, fontFamily: "DMSans_700Bold", fontSize: 12, marginBottom: 8 }}>⚠️ Priority Fixes</Text>
                       {insights.formAnalysis.topIssues.map((issue: string, i: number) => (
                         <View key={i} style={{ flexDirection: "row", gap: 8, marginBottom: 4 }}>
-                          <Text style={{ color: "#EF4444", fontSize: 13 }}>•</Text>
+                          <Text style={{ color: UI.red, fontSize: 13 }}>•</Text>
                           <Text style={{ color: SF.fg, fontFamily: "DMSans_400Regular", fontSize: 13, flex: 1, lineHeight: 18 }}>{issue}</Text>
                         </View>
                       ))}

@@ -17,7 +17,7 @@ import { useSubscription } from "@/hooks/use-subscription";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 import { GOLDEN_PRIMARY, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgrounds";
-import { UI as SF } from "@/constants/ui-colors";
+import { UI, SF } from "@/constants/ui-colors";
 import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
 import { ScreenErrorBoundary } from "@/components/error-boundary";
 const { width: W } = Dimensions.get("window");
@@ -276,7 +276,7 @@ const styles = StyleSheet.create({
   saveBadgeText: { color: "#fff", fontFamily: "DMSans_700Bold", fontSize: 10 },
   planCard: { marginHorizontal: 16, marginBottom: 12, backgroundColor: SF.surface, borderRadius: 20, padding: 20, borderWidth: 1, borderColor: SF.border },
   planCardSelected: { borderColor: SF.gold, borderWidth: 2 },
-  planCardAdvanced: { borderColor: "rgba(245,158,11,0.35)" },
+  planCardAdvanced: { borderColor: UI.borderGold4 },
   planHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 16 },
   planName: { color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 18, marginBottom: 4 },
   planPrice: { color: SF.fg, fontFamily: "BebasNeue_400Regular", fontSize: 28, lineHeight: 34 },
@@ -290,7 +290,7 @@ const styles = StyleSheet.create({
   featureRow: { flexDirection: "row", alignItems: "center", gap: 8 },
   featureText: { color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 13, flex: 1 },
   featureMore: { color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 12, marginTop: 4, fontStyle: "italic" },
-  selectedBanner: { marginTop: 14, backgroundColor: "rgba(245,158,11,0.12)", borderRadius: 10, paddingVertical: 8, alignItems: "center" },
+  selectedBanner: { marginTop: 14, backgroundColor: UI.goldAlpha12, borderRadius: 10, paddingVertical: 8, alignItems: "center" },
   selectedBannerText: { color: SF.gold, fontFamily: "DMSans_700Bold", fontSize: 13 },
   popularBadge: { backgroundColor: SF.gold, borderRadius: 8, paddingHorizontal: 10, paddingVertical: 4, alignSelf: "flex-start", marginBottom: 12 },
   popularBadgeText: { color: SF.bg, fontFamily: "DMSans_700Bold", fontSize: 11, letterSpacing: 1 },

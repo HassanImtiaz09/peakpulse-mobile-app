@@ -47,7 +47,7 @@ import { loadOrCreateSocialCircle, getActiveFriendsCount, type SocialCircleData 
 import { loadTDEEBreakdown, type TDEEBreakdown } from "@/lib/tdee-calculator";
 import { loadWorkoutLogs, type WorkoutLogEntry } from "@/lib/workout-analytics";
 import { getHistoricalMeals } from "@/lib/calorie-context";
-import { UI as SF } from "@/constants/ui-colors";
+import { UI, SF } from "@/constants/ui-colors";
 import { ErrorBoundary } from "@/components/error-boundary";
 import { a11yButton, a11yHeader, a11yImage, a11yProgress, A11Y_LABELS } from "@/lib/accessibility";
 import TransformationCard from "@/components/transformation-card";
@@ -723,10 +723,10 @@ function HomeScreenContent() {
                 <View style={[styles.workoutCard, { borderColor: "rgba(34,197,94,0.25)" }]}>
                   <View style={{ flexDirection: "row", alignItems: "center", gap: 14, marginBottom: 16 }}>
                     <View style={[styles.workoutPlayBtn, { backgroundColor: "rgba(34,197,94,0.15)" }]}>
-                      <MaterialIcons name="spa" size={24} color="#22C55E" />
+                      <MaterialIcons name="spa" size={24} color={UI.green} />
                     </View>
                     <View style={{ flex: 1 }}>
-                      <Text style={[styles.workoutCardTitle, { color: "#22C55E" }]}>Rest & Recover</Text>
+                      <Text style={[styles.workoutCardTitle, { color: UI.green }]}>Rest & Recover</Text>
                       <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 12, marginTop: 2 }}>
                         Your muscles grow during rest. Try some light stretching today.
                       </Text>
@@ -745,7 +745,7 @@ function HomeScreenContent() {
                       }}
                     >
                       <View style={{ width: 36, height: 36, borderRadius: 10, backgroundColor: "rgba(34,197,94,0.08)", alignItems: "center", justifyContent: "center" }}>
-                        <MaterialIcons name={routine.icon} size={18} color="#22C55E" />
+                        <MaterialIcons name={routine.icon} size={18} color={UI.green} />
                       </View>
                       <View style={{ flex: 1 }}>
                         <Text style={{ color: SF.fg, fontFamily: "DMSans_600SemiBold", fontSize: 13 }}>{routine.name}</Text>
@@ -807,7 +807,7 @@ function HomeScreenContent() {
               <View style={styles.section}>
                 <SectionTitle title="Today's Target Muscles" />
                 <View style={[styles.workoutCard, { alignItems: "center", justifyContent: "center", paddingVertical: 24 }]}>
-                  <ActivityIndicator color="#F59E0B" size="small" />
+                  <ActivityIndicator color={UI.gold} size="small" />
                   <Text style={[styles.workoutCardTitle, { marginTop: 12 }]}>
                     {isPlanGenerating ? "Generating Your Plan..." : "Loading Your Plan..."}
                   </Text>
@@ -857,22 +857,22 @@ function HomeScreenContent() {
                 style={{
                   flexDirection: "row",
                   alignItems: "center",
-                  backgroundColor: "rgba(245,158,11,0.08)",
+                  backgroundColor: UI.dim,
                   borderRadius: 16,
                   padding: 16,
                   marginHorizontal: 20,
                   marginBottom: 8,
                   borderWidth: 1,
-                  borderColor: "rgba(245,158,11,0.15)",
+                  borderColor: UI.borderGold,
                   gap: 14,
                 }}
               >
                 <View style={{
                   width: 44, height: 44, borderRadius: 22,
-                  backgroundColor: "rgba(245,158,11,0.15)",
+                  backgroundColor: UI.borderGold,
                   alignItems: "center", justifyContent: "center",
                 }}>
-                  <MaterialIcons name="flash-on" size={22} color="#F59E0B" />
+                  <MaterialIcons name="flash-on" size={22} color={UI.gold} />
                 </View>
                 <View style={{ flex: 1 }}>
                   <Text style={{ color: "#F9FAFB", fontFamily: "DMSans_600SemiBold", fontSize: 14 }}>Just One Exercise</Text>
@@ -966,7 +966,7 @@ function HomeScreenContent() {
 
                 {/* TDEE Breakdown detail */}
                 {showTdeeBreakdown && tdeeBreakdown && (
-                  <View style={{ marginTop: 8, backgroundColor: "rgba(245,158,11,0.06)", borderRadius: 12, padding: 12, borderWidth: 1, borderColor: SF.border }}>
+                  <View style={{ marginTop: 8, backgroundColor: UI.goldAlpha6, borderRadius: 12, padding: 12, borderWidth: 1, borderColor: SF.border }}>
                     <View style={{ gap: 8 }}>
                       <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
                         <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 11 }}>Basal Metabolic Rate (BMR)</Text>
@@ -1101,21 +1101,21 @@ function HomeScreenContent() {
                 flexDirection: "row",
                 alignItems: "center",
                 justifyContent: "space-between",
-                backgroundColor: "#141A22",
+                backgroundColor: UI.surface,
                 borderRadius: 16,
                 padding: 16,
                 borderWidth: 1,
-                borderColor: "rgba(245,158,11,0.25)",
+                borderColor: UI.borderGold2,
                 marginHorizontal: 20,
                 marginBottom: 8,
               }}
             >
               <View style={{ flexDirection: "row", alignItems: "center", gap: 12 }}>
-                <View style={{ width: 40, height: 40, borderRadius: 12, backgroundColor: "rgba(245,158,11,0.12)", alignItems: "center", justifyContent: "center" }}>
-                  <MaterialIcons name="assessment" size={22} color="#F59E0B" />
+                <View style={{ width: 40, height: 40, borderRadius: 12, backgroundColor: UI.goldAlpha12, alignItems: "center", justifyContent: "center" }}>
+                  <MaterialIcons name="assessment" size={22} color={UI.gold} />
                 </View>
                 <View>
-                  <Text style={{ fontSize: 15, fontWeight: "700", color: "#F1F5F9" }}>Weekly Report</Text>
+                  <Text style={{ fontSize: 15, fontWeight: "700", color: UI.fg }}>Weekly Report</Text>
                   <Text style={{ fontSize: 12, color: "#64748B", marginTop: 1 }}>View your progress summary</Text>
                 </View>
               </View>
@@ -1187,12 +1187,12 @@ function HomeScreenContent() {
                 overflow: "hidden",
               }}>
                 {/* Top accent */}
-                <View style={{ height: 3, backgroundColor: "#10B981" }} />
+                <View style={{ height: 3, backgroundColor: UI.emerald }} />
                 <View style={{ padding: 20 }}>
                   {/* Header with icon */}
                   <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 14 }}>
                     <View style={{ width: 48, height: 48, borderRadius: 16, backgroundColor: "rgba(16,185,129,0.12)", alignItems: "center", justifyContent: "center" }}>
-                      <MaterialIcons name="photo-camera" size={24} color="#10B981" />
+                      <MaterialIcons name="photo-camera" size={24} color={UI.emerald} />
                     </View>
                     <View style={{ marginLeft: 14, flex: 1 }}>
                       <Text style={{ fontSize: 16, fontWeight: "700", color: SF.text }}>
@@ -1208,7 +1208,7 @@ function HomeScreenContent() {
                       const daysSince = Math.floor((Date.now() - new Date(lastProgressDate).getTime()) / 86400000);
                       return daysSince >= 7 ? (
                         <View style={{ backgroundColor: "rgba(239,68,68,0.12)", paddingHorizontal: 10, paddingVertical: 4, borderRadius: 10 }}>
-                          <Text style={{ fontSize: 10, fontWeight: "700", color: "#EF4444" }}>DUE</Text>
+                          <Text style={{ fontSize: 10, fontWeight: "700", color: UI.red }}>DUE</Text>
                         </View>
                       ) : null;
                     })()}
@@ -1229,8 +1229,8 @@ function HomeScreenContent() {
                       </View>
                       <View style={{ width: 2, height: 30, backgroundColor: SF.border }} />
                       <View style={{ alignItems: "center" }}>
-                        <MaterialIcons name="flag" size={14} color="#10B981" />
-                        <Text style={{ fontSize: 9, color: "#10B981", fontWeight: "600" }}>GOAL</Text>
+                        <MaterialIcons name="flag" size={14} color={UI.emerald} />
+                        <Text style={{ fontSize: 9, color: UI.emerald, fontWeight: "600" }}>GOAL</Text>
                       </View>
                       <Image source={{ uri: targetTransform.imageUrl }} style={{ width: 44, height: 56, borderRadius: 8, borderWidth: 1, borderColor: "rgba(16,185,129,0.3)" }} resizeMode="cover" />
                     </View>
@@ -1239,7 +1239,7 @@ function HomeScreenContent() {
                   {/* CTA button */}
                   <TouchableOpacity
                     style={{
-                      backgroundColor: "#10B981",
+                      backgroundColor: UI.emerald,
                       paddingVertical: 13,
                       borderRadius: 14,
                       alignItems: "center",
@@ -1414,14 +1414,14 @@ function StreakCelebration({ streakDays, onDismiss }: { streakDays: number; onDi
 
           {/* Streak count */}
           <Text style={{
-            color: "#F59E0B", fontFamily: "BebasNeue_400Regular",
+            color: UI.gold, fontFamily: "BebasNeue_400Regular",
             fontSize: 64, letterSpacing: 4, marginTop: 8,
           }}>
             {streakDays} DAYS
           </Text>
 
           <Text style={{
-            color: "#FBBF24", fontFamily: "DMSans_700Bold",
+            color: UI.gold2, fontFamily: "DMSans_700Bold",
             fontSize: 20, marginTop: 4,
           }}>
             Streak Milestone!
@@ -1490,12 +1490,12 @@ const styles = StyleSheet.create({
   // Hero
   heroSection: { backgroundColor: SF.bg, paddingTop: 56, paddingHorizontal: 20, paddingBottom: 20 },
   heroTopBar: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 20 },
-  heroPill: { backgroundColor: "rgba(245,158,11,0.12)", borderRadius: 10, paddingHorizontal: 10, paddingVertical: 4, borderWidth: 1, borderColor: SF.border2, flexDirection: "row", alignItems: "center", gap: 4 },
+  heroPill: { backgroundColor: UI.goldAlpha12, borderRadius: 10, paddingHorizontal: 10, paddingVertical: 4, borderWidth: 1, borderColor: SF.border2, flexDirection: "row", alignItems: "center", gap: 4 },
   heroPillText: { color: SF.emerald2, fontFamily: "DMSans_500Medium", fontSize: 12 },
   streakBadge: {
-    backgroundColor: "rgba(245,158,11,0.12)", borderRadius: 14,
+    backgroundColor: UI.goldAlpha12, borderRadius: 14,
     paddingHorizontal: 12, paddingVertical: 8,
-    borderWidth: 1, borderColor: "rgba(245,158,11,0.25)",
+    borderWidth: 1, borderColor: UI.borderGold2,
     flexDirection: "row", alignItems: "center", gap: 6,
   },
   streakBadgeText: { color: SF.gold, fontFamily: "SpaceMono_700Bold", fontSize: 14 },
@@ -1512,7 +1512,7 @@ const styles = StyleSheet.create({
   // Workout Card
   workoutCard: {
     backgroundColor: SF.surfacePrimary, borderRadius: 20, padding: 18,
-    borderWidth: 1.5, borderColor: "rgba(245,158,11,0.2)",
+    borderWidth: 1.5, borderColor: UI.goldAlpha20,
   },
   workoutCardTitle: { color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 20, marginTop: 4 },
   workoutPlayBtn: {
@@ -1556,9 +1556,9 @@ const styles = StyleSheet.create({
   guestBannerBtnText: { color: SF.gold, fontFamily: "DMSans_600SemiBold", fontSize: 12 },
   trialBanner: { flexDirection: "row", alignItems: "center", gap: 10, marginHorizontal: 16, marginTop: 16, backgroundColor: "#1c1000", borderRadius: 14, padding: 14, borderWidth: 1, borderColor: "#F59E0B40" },
   trialBannerExpired: { backgroundColor: "#1a0000", borderColor: "#ef444440" },
-  trialBannerTitle: { color: "#F59E0B", fontFamily: "DMSans_600SemiBold", fontSize: 13, marginBottom: 2 },
+  trialBannerTitle: { color: UI.gold, fontFamily: "DMSans_600SemiBold", fontSize: 13, marginBottom: 2 },
   trialBannerSub: { color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 11, lineHeight: 16 },
-  trialBannerBtn: { backgroundColor: "#F59E0B", borderRadius: 10, paddingHorizontal: 12, paddingVertical: 7 },
+  trialBannerBtn: { backgroundColor: UI.gold, borderRadius: 10, paddingHorizontal: 12, paddingVertical: 7 },
   trialBannerBtnText: { color: SF.bg, fontFamily: "DMSans_700Bold", fontSize: 12 },
   // Wearable Metrics
   wearableRow: {
@@ -1572,7 +1572,7 @@ const styles = StyleSheet.create({
   wearableConnectCard: {
     flexDirection: "row", alignItems: "center",
     backgroundColor: SF.surfacePrimary, borderRadius: 18, padding: 16,
-    borderWidth: 1, borderColor: "rgba(245,158,11,0.15)",
+    borderWidth: 1, borderColor: UI.borderGold,
   },
   // Muscle Balance Heatmap
   heatmapCard: {
@@ -1595,7 +1595,7 @@ const styles = StyleSheet.create({
   },
   prRank: {
     width: 28, height: 28, borderRadius: 14,
-    backgroundColor: "rgba(245,158,11,0.12)", alignItems: "center", justifyContent: "center",
+    backgroundColor: UI.goldAlpha12, alignItems: "center", justifyContent: "center",
   },
   prRankText: { color: SF.gold, fontFamily: "SpaceMono_700Bold", fontSize: 12 },
   prExercise: { color: SF.fg, fontFamily: "DMSans_600SemiBold", fontSize: 14 },
@@ -1605,7 +1605,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(34,197,94,0.15)", borderRadius: 4,
     paddingHorizontal: 6, paddingVertical: 2, marginTop: 3,
   },
-  prNewBadgeText: { color: "#22C55E", fontFamily: "DMSans_700Bold", fontSize: 8, letterSpacing: 1 },
+  prNewBadgeText: { color: UI.green, fontFamily: "DMSans_700Bold", fontSize: 8, letterSpacing: 1 },
   prSeeAll: {
     flexDirection: "row", alignItems: "center", justifyContent: "center",
     paddingVertical: 10, gap: 6,
@@ -1619,14 +1619,14 @@ const styles = StyleSheet.create({
   },
   tipIconBox: {
     width: 44, height: 44, borderRadius: 14,
-    backgroundColor: "rgba(245,158,11,0.10)", alignItems: "center", justifyContent: "center",
+    backgroundColor: UI.goldAlpha10, alignItems: "center", justifyContent: "center",
     marginBottom: 12,
   },
   tipText: { color: SF.fg, fontFamily: "DMSans_400Regular", fontSize: 14, lineHeight: 21 },
   tipNextBtn: {
     flexDirection: "row", alignItems: "center", alignSelf: "flex-end",
     marginTop: 14, paddingVertical: 6, paddingHorizontal: 12,
-    borderRadius: 10, backgroundColor: "rgba(245,158,11,0.10)",
+    borderRadius: 10, backgroundColor: UI.goldAlpha10,
   },
   // My Pantry
   pantryCard: {
@@ -1641,8 +1641,8 @@ const styles = StyleSheet.create({
   pantryQuickBtn: {
     flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center",
     gap: 4, paddingVertical: 8, borderRadius: 10,
-    backgroundColor: "rgba(245,158,11,0.08)",
-    borderWidth: 1, borderColor: "rgba(245,158,11,0.15)",
+    backgroundColor: UI.dim,
+    borderWidth: 1, borderColor: UI.borderGold,
   },
   pantryQuickBtnText: { color: SF.gold, fontFamily: "DMSans_600SemiBold", fontSize: 10 },
   // Social & Challenges
@@ -1672,8 +1672,8 @@ const styles = StyleSheet.create({
   socialInviteBtn: {
     flexDirection: "row", alignItems: "center", justifyContent: "center",
     marginTop: 12, paddingVertical: 10, borderRadius: 12,
-    backgroundColor: "rgba(245,158,11,0.08)",
-    borderWidth: 1, borderColor: "rgba(245,158,11,0.20)",
+    backgroundColor: UI.dim,
+    borderWidth: 1, borderColor: UI.goldAlpha20,
   },
 });
 

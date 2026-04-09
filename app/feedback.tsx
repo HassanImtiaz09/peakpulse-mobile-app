@@ -12,17 +12,18 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 import { GOLDEN_PRIMARY, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgrounds";
 import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
+import { UI } from "@/constants/ui-colors";
 // NanoBanana design tokens
-const BG = "#0A0E14";
+const BG = UI.bg;
 const SURFACE = "#111827";
-const SURFACE2 = "#1E293B";
-const FG = "#F1F5F9";
+const SURFACE2 = UI.inactive;
+const FG = UI.fg;
 const MUTED = "#64748B";
-const GOLD = "#F59E0B";
-const GOLD_DIM = "rgba(245,158,11,0.10)";
-const GOLD_BORDER = "rgba(245,158,11,0.25)";
+const GOLD = UI.gold;
+const GOLD_DIM = UI.goldAlpha10;
+const GOLD_BORDER = UI.borderGold2;
 const ICE = "#06B6D4";
-const MINT = "#10B981";
+const MINT = UI.emerald;
 const ROSE = "#F43F5E";
 
 const FEEDBACK_STORAGE_KEY = "@peakpulse_feedback_history";
@@ -177,7 +178,7 @@ export default function FeedbackScreen() {
                   style={{
                     flexDirection: "row", alignItems: "center", gap: 14,
                     backgroundColor: SURFACE, borderRadius: 16, padding: 16, marginBottom: 12,
-                    borderWidth: 1, borderColor: "rgba(30,41,59,0.6)",
+                    borderWidth: 1, borderColor: UI.border,
                   }}
                   onPress={() => handleSelectType(ft.key)}
                 >
@@ -194,11 +195,11 @@ export default function FeedbackScreen() {
 
               {/* Quick Stats */}
               <View style={{ flexDirection: "row", gap: 12, marginTop: 12 }}>
-                <View style={{ flex: 1, backgroundColor: SURFACE, borderRadius: 12, padding: 12, alignItems: "center", borderWidth: 1, borderColor: "rgba(30,41,59,0.6)" }}>
+                <View style={{ flex: 1, backgroundColor: SURFACE, borderRadius: 12, padding: 12, alignItems: "center", borderWidth: 1, borderColor: UI.border }}>
                   <Text style={{ color: GOLD, fontFamily: "SpaceMono_400Regular", fontSize: 18 }}>{history.length}</Text>
                   <Text style={{ color: MUTED, fontSize: 10, marginTop: 2 }}>Submitted</Text>
                 </View>
-                <View style={{ flex: 1, backgroundColor: SURFACE, borderRadius: 12, padding: 12, alignItems: "center", borderWidth: 1, borderColor: "rgba(30,41,59,0.6)" }}>
+                <View style={{ flex: 1, backgroundColor: SURFACE, borderRadius: 12, padding: 12, alignItems: "center", borderWidth: 1, borderColor: UI.border }}>
                   <Text style={{ color: MINT, fontFamily: "SpaceMono_400Regular", fontSize: 18 }}>{history.filter(h => h.status === "acknowledged").length}</Text>
                   <Text style={{ color: MUTED, fontSize: 10, marginTop: 2 }}>Acknowledged</Text>
                 </View>
@@ -228,7 +229,7 @@ export default function FeedbackScreen() {
                     style={{
                       paddingHorizontal: 14, paddingVertical: 8, borderRadius: 10,
                       backgroundColor: category === cat ? typeColor : SURFACE,
-                      borderWidth: 1, borderColor: category === cat ? typeColor : "rgba(30,41,59,0.6)",
+                      borderWidth: 1, borderColor: category === cat ? typeColor : UI.border,
                     }}
                     onPress={() => setCategory(cat)}
                   >
@@ -249,7 +250,7 @@ export default function FeedbackScreen() {
                 style={{
                   backgroundColor: SURFACE, borderRadius: 12, paddingHorizontal: 14, paddingVertical: 12,
                   color: FG, fontSize: 14, fontFamily: "DMSans_500Medium",
-                  borderWidth: 1, borderColor: "rgba(30,41,59,0.6)", marginBottom: 4,
+                  borderWidth: 1, borderColor: UI.border, marginBottom: 4,
                 }}
               />
               <Text style={{ color: MUTED, fontSize: 10, textAlign: "right", marginBottom: 16 }}>{subject.length}/100</Text>
@@ -276,7 +277,7 @@ export default function FeedbackScreen() {
                 style={{
                   backgroundColor: SURFACE, borderRadius: 12, paddingHorizontal: 14, paddingVertical: 12,
                   color: FG, fontSize: 14, fontFamily: "DMSans_500Medium", minHeight: 140,
-                  borderWidth: 1, borderColor: "rgba(30,41,59,0.6)", marginBottom: 4,
+                  borderWidth: 1, borderColor: UI.border, marginBottom: 4,
                 }}
               />
               <Text style={{ color: MUTED, fontSize: 10, textAlign: "right", marginBottom: 20 }}>{description.length}/1000</Text>
@@ -354,7 +355,7 @@ export default function FeedbackScreen() {
                   return (
                     <View
                       key={entry.id}
-                      style={{ backgroundColor: SURFACE, borderRadius: 14, padding: 14, marginBottom: 10, borderWidth: 1, borderColor: "rgba(30,41,59,0.6)" }}
+                      style={{ backgroundColor: SURFACE, borderRadius: 14, padding: 14, marginBottom: 10, borderWidth: 1, borderColor: UI.border }}
                     >
                       <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
                         <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>

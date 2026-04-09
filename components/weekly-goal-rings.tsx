@@ -14,7 +14,7 @@ import { useFocusEffect } from "expo-router";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import * as Haptics from "expo-haptics";
 
-import { UI as SF } from "@/constants/ui-colors";
+import { UI, SF } from "@/constants/ui-colors";
 import {
   getWeeklyGoals, calculateWeeklyProgress, getWorkoutsThisWeek,
   isGoalTrackingEnabled, type WeeklyProgress, type WeeklyGoals,
@@ -32,8 +32,8 @@ interface RingDef {
 }
 
 const RINGS: RingDef[] = [
-  { key: "steps", label: "Steps", icon: "directions-walk", color: "#22C55E", bgColor: "rgba(34,197,94,0.12)" },
-  { key: "calories", label: "Calories", icon: "local-fire-department", color: "#F59E0B", bgColor: "rgba(245,158,11,0.12)" },
+  { key: "steps", label: "Steps", icon: "directions-walk", color: UI.green, bgColor: "rgba(34,197,94,0.12)" },
+  { key: "calories", label: "Calories", icon: "local-fire-department", color: UI.gold, bgColor: UI.goldAlpha12 },
   { key: "workouts", label: "Workouts", icon: "fitness-center", color: "#3B82F6", bgColor: "rgba(59,130,246,0.12)" },
 ];
 

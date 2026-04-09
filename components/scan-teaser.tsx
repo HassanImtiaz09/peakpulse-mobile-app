@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
-import { UI as SF } from "@/constants/ui-colors";
+import { UI, SF } from "@/constants/ui-colors";
 
 const { width: SCREEN_W } = Dimensions.get("window");
 
@@ -59,7 +59,7 @@ export function ScanTeaser({ currentStep, totalSteps }: ScanTeaserProps) {
       ]}
     >
       <LinearGradient
-        colors={["rgba(245,158,11,0.08)", "rgba(245,158,11,0.02)"] as const}
+        colors={[UI.dim, "rgba(245,158,11,0.02)"] as const}
         style={styles.gradient}
       >
         {/* Blurred preview thumbnails */}
@@ -71,12 +71,12 @@ export function ScanTeaser({ currentStep, totalSteps }: ScanTeaserProps) {
               blurRadius={Platform.OS === "ios" ? 20 : 10}
             />
             <View style={styles.previewOverlay}>
-              <Ionicons name="lock-closed" size={16} color="#F59E0B" />
+              <Ionicons name="lock-closed" size={16} color={UI.gold} />
             </View>
             <Text style={styles.previewLabel}>Before</Text>
           </View>
           <View style={styles.arrowWrap}>
-            <Ionicons name="arrow-forward" size={20} color="#F59E0B" />
+            <Ionicons name="arrow-forward" size={20} color={UI.gold} />
           </View>
           <View style={styles.previewBox}>
             <Image
@@ -85,7 +85,7 @@ export function ScanTeaser({ currentStep, totalSteps }: ScanTeaserProps) {
               blurRadius={Platform.OS === "ios" ? 20 : 10}
             />
             <View style={styles.previewOverlay}>
-              <Ionicons name="lock-closed" size={16} color="#F59E0B" />
+              <Ionicons name="lock-closed" size={16} color={UI.gold} />
             </View>
             <Text style={styles.previewLabel}>After</Text>
           </View>
@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     overflow: "hidden",
     borderWidth: 1,
-    borderColor: "rgba(245,158,11,0.15)",
+    borderColor: UI.borderGold,
   },
   gradient: {
     padding: 16,
@@ -160,7 +160,7 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: "rgba(245,158,11,0.1)",
+    backgroundColor: UI.goldAlpha10,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -188,13 +188,13 @@ const styles = StyleSheet.create({
   },
   progressFill: {
     height: "100%",
-    backgroundColor: "#F59E0B",
+    backgroundColor: UI.gold,
     borderRadius: 2,
   },
   progressText: {
     fontSize: 11,
     fontFamily: "DMSans_600SemiBold",
-    color: "#F59E0B",
+    color: UI.gold,
     marginTop: 6,
   },
 });

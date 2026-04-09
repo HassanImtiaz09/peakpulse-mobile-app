@@ -28,7 +28,7 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import * as Haptics from "expo-haptics";
 import { useRouter } from "expo-router";
 import { useSubscription, FEATURE_TIERS, type SubscriptionTier } from "@/hooks/use-subscription";
-import { C } from "@/constants/ui-colors";
+import { UI, C } from "@/constants/ui-colors";
 
 const { width: SCREEN_W } = Dimensions.get("window");
 
@@ -396,7 +396,7 @@ const styles = StyleSheet.create({
     paddingVertical: 3,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: "rgba(245,158,11,0.3)",
+    borderColor: UI.goldAlpha30,
   },
   compactBadgeText: {
     fontFamily: "DMSans_500Medium",

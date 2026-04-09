@@ -27,7 +27,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons"; // FIX: added for error UI
 import { ScreenContainer } from "@/components/screen-container";
 import { GOLDEN_PRIMARY, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgrounds";
-import { UI as SF } from "@/constants/ui-colors";
+import { UI, SF } from "@/constants/ui-colors";
 import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
 
 const { width: W } = Dimensions.get("window");
@@ -303,7 +303,7 @@ const styles = StyleSheet.create({
   dayDotActive: { backgroundColor: SF.gold },
   dayDotRest: { backgroundColor: "#1a0d00", borderWidth: 1, borderColor: SF.border },
   dayDotText: { color: SF.muted, fontFamily: "DMSans_700Bold", fontSize: 12 },
-  dayCard: { backgroundColor: "#0A0E14", borderRadius: 12, padding: 12, marginBottom: 8, borderWidth: 1, borderColor: SF.border },
+  dayCard: { backgroundColor: UI.bg, borderRadius: 12, padding: 12, marginBottom: 8, borderWidth: 1, borderColor: SF.border },
   dayCardTitle: { color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 13, marginBottom: 4 },
   dayCardSub: { color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 12, lineHeight: 18 },
   mealRow: { flexDirection: "row", alignItems: "flex-start", marginBottom: 10 },

@@ -30,21 +30,22 @@ import {
   getPreviousWeekStart,
   type WeeklyProgressReport,
 } from "@/lib/weekly-progress-report";
+import { UI } from "@/constants/ui-colors";
 
 // ── Color Constants (matching app theme) ─────────────────────────────────────
-const BG = "#0A0E14";
-const SURFACE = "#141A22";
+const BG = UI.bg;
+const SURFACE = UI.surface;
 const SURFACE2 = "#1A2332";
-const FG = "#F1F5F9";
+const FG = UI.fg;
 const MUTED = "#64748B";
-const BORDER = "#1E293B";
-const GOLD = "#F59E0B";
-const GOLD_DIM = "rgba(245,158,11,0.12)";
-const GOLD_BORDER = "rgba(245,158,11,0.25)";
-const EMERALD = "#10B981";
-const ICE = "#22D3EE";
-const ROSE = "#F472B6";
-const RED = "#EF4444";
+const BORDER = UI.inactive;
+const GOLD = UI.gold;
+const GOLD_DIM = UI.goldAlpha12;
+const GOLD_BORDER = UI.borderGold2;
+const EMERALD = UI.emerald;
+const ICE = UI.ice;
+const ROSE = UI.rose;
+const RED = UI.red;
 const BLUE = "#3B82F6";
 
 // ── Trend Arrow Component ────────────────────────────────────────────────────

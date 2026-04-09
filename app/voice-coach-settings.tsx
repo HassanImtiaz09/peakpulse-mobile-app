@@ -37,7 +37,7 @@ import {
   DEFAULT_VOICE_COACH_SETTINGS,
 } from "@/lib/voice-coach-settings";
 import { speakCue, stopSpeaking } from "@/lib/audio-form-cues";
-import { C } from "@/constants/ui-colors";
+import { UI, C } from "@/constants/ui-colors";
 import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
 
 const VOICE_MODES: VoiceCoachMode[] = [
@@ -194,7 +194,7 @@ export default function VoiceCoachSettingsScreen() {
             <Switch
               value={settings.autoPlayCues}
               onValueChange={(v) => updateSetting("autoPlayCues", v)}
-              trackColor={{ false: "#333", true: "rgba(245,158,11,0.4)" }}
+              trackColor={{ false: "#333", true: UI.goldAlpha40 }}
               thumbColor={settings.autoPlayCues ? C.gold : "#666"}
             />
           </View>
@@ -212,7 +212,7 @@ export default function VoiceCoachSettingsScreen() {
             <Switch
               value={settings.voiceCountdown}
               onValueChange={(v) => updateSetting("voiceCountdown", v)}
-              trackColor={{ false: "#333", true: "rgba(245,158,11,0.4)" }}
+              trackColor={{ false: "#333", true: UI.goldAlpha40 }}
               thumbColor={settings.voiceCountdown ? C.gold : "#666"}
             />
           </View>
@@ -230,7 +230,7 @@ export default function VoiceCoachSettingsScreen() {
             <Switch
               value={settings.announceTransitions}
               onValueChange={(v) => updateSetting("announceTransitions", v)}
-              trackColor={{ false: "#333", true: "rgba(245,158,11,0.4)" }}
+              trackColor={{ false: "#333", true: UI.goldAlpha40 }}
               thumbColor={settings.announceTransitions ? C.gold : "#666"}
             />
           </View>
@@ -359,9 +359,9 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     padding: 14,
     borderBottomWidth: 1,
-    borderBottomColor: "rgba(245,158,11,0.06)",
+    borderBottomColor: UI.goldAlpha6,
   },
-  modeItemActive: { backgroundColor: "rgba(245,158,11,0.06)" },
+  modeItemActive: { backgroundColor: UI.goldAlpha6 },
   modeLeft: { flexDirection: "row", alignItems: "flex-start", gap: 12, flex: 1 },
   modeRadio: {
     width: 20,
@@ -390,7 +390,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     paddingVertical: 3,
   },
-  recommendedText: { color: "#22C55E", fontFamily: "DMSans_600SemiBold", fontSize: 9 },
+  recommendedText: { color: UI.green, fontFamily: "DMSans_600SemiBold", fontSize: 9 },
   toggleRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -406,18 +406,18 @@ const styles = StyleSheet.create({
   },
   toggleLabel: { color: C.fg, fontFamily: "DMSans_600SemiBold", fontSize: 14 },
   toggleDesc: { color: C.muted, fontFamily: "DMSans_400Regular", fontSize: 11, marginTop: 2 },
-  divider: { height: 1, backgroundColor: "rgba(245,158,11,0.06)" },
+  divider: { height: 1, backgroundColor: UI.goldAlpha6 },
   rateRow: { flexDirection: "row", padding: 14, gap: 8 },
   rateChip: {
     flex: 1,
     alignItems: "center",
     paddingVertical: 10,
     borderRadius: 10,
-    backgroundColor: "rgba(245,158,11,0.06)",
+    backgroundColor: UI.goldAlpha6,
     borderWidth: 1,
     borderColor: "transparent",
   },
-  rateChipActive: { backgroundColor: "rgba(245,158,11,0.15)", borderColor: C.gold },
+  rateChipActive: { backgroundColor: UI.borderGold, borderColor: C.gold },
   rateText: { color: C.muted, fontFamily: "DMSans_700Bold", fontSize: 13 },
   rateTextActive: { color: C.gold },
   rateSubtext: { color: C.muted, fontFamily: "DMSans_400Regular", fontSize: 9, marginTop: 1 },
@@ -427,7 +427,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     gap: 8,
-    backgroundColor: "rgba(245,158,11,0.10)",
+    backgroundColor: UI.goldAlpha10,
     borderRadius: 14,
     paddingVertical: 14,
     marginTop: 20,
@@ -439,12 +439,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "flex-start",
     gap: 10,
-    backgroundColor: "rgba(245,158,11,0.04)",
+    backgroundColor: UI.goldAlpha4,
     borderRadius: 12,
     padding: 14,
     marginTop: 16,
     borderWidth: 1,
-    borderColor: "rgba(245,158,11,0.08)",
+    borderColor: UI.dim,
   },
   infoText: {
     color: C.muted,

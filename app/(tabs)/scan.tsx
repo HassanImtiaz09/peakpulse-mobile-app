@@ -29,22 +29,23 @@ import { useAiLimit } from "@/components/ai-limit-modal";
 import { ErrorBoundary } from "@/components/error-boundary";
 import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
 import ScanLoadingOverlay from "@/components/scan-loading-overlay";
+import { UI } from "@/constants/ui-colors";
 
 const SCAN_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/OdDCyHFnLhvyAyWV.jpg";
 
 // NanoBanana scan-screen accent: ice-blue (#22D3EE)
-const ICE = "#22D3EE";
+const ICE = UI.ice;
 const ICE_DIM = "rgba(34,211,238,0.12)";
 const ICE_BORDER = "rgba(34,211,238,0.25)";
-const BG = "#0A0E14";
-const SURFACE = "#141A22";
-const FG = "#F1F5F9";
+const BG = UI.bg;
+const SURFACE = UI.surface;
+const FG = UI.fg;
 const MUTED = "#64748B";
 
 const EFFORT_COLORS: Record<string, string> = {
-  moderate: "#FDE68A",
-  high: "#FBBF24",
-  very_high: "#F59E0B",
+  moderate: UI.gold3,
+  high: UI.gold2,
+  very_high: UI.gold,
   extreme: "#A855F7",
 };
 
@@ -377,21 +378,21 @@ function ScanScreenContent() {
 
           {/* Tab Switcher */}
           {beforeUrl ? (
-            <View style={{ flexDirection: "row", marginHorizontal: 20, marginBottom: 16, backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 12, padding: 4 }}>
+            <View style={{ flexDirection: "row", marginHorizontal: 20, marginBottom: 16, backgroundColor: UI.goldAlpha10, borderRadius: 12, padding: 4 }}>
               <TouchableOpacity
-                style={{ flex: 1, paddingVertical: 8, borderRadius: 8, alignItems: "center", backgroundColor: previewTab === "after" ? "#F59E0B" : "transparent" }}
+                style={{ flex: 1, paddingVertical: 8, borderRadius: 8, alignItems: "center", backgroundColor: previewTab === "after" ? UI.gold : "transparent" }}
                 onPress={() => setPreviewTab("after")}
               >
                 <Text style={{ color: previewTab === "after" ? FG : MUTED, fontFamily: "DMSans_700Bold", fontSize: 13 }}>AI Transformation</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={{ flex: 1, paddingVertical: 8, borderRadius: 8, alignItems: "center", backgroundColor: previewTab === "compare" ? "#F59E0B" : "transparent" }}
+                style={{ flex: 1, paddingVertical: 8, borderRadius: 8, alignItems: "center", backgroundColor: previewTab === "compare" ? UI.gold : "transparent" }}
                 onPress={() => setPreviewTab("compare")}
               >
                 <Text style={{ color: previewTab === "compare" ? FG : MUTED, fontFamily: "DMSans_700Bold", fontSize: 13 }}>Body</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={{ flex: 1, paddingVertical: 8, borderRadius: 8, alignItems: "center", backgroundColor: previewTab === "face" ? "#F59E0B" : "transparent" }}
+                style={{ flex: 1, paddingVertical: 8, borderRadius: 8, alignItems: "center", backgroundColor: previewTab === "face" ? UI.gold : "transparent" }}
                 onPress={() => setPreviewTab("face")}
               >
                 <Text style={{ color: previewTab === "face" ? FG : MUTED, fontFamily: "DMSans_700Bold", fontSize: 13 }}>Face</Text>
@@ -407,8 +408,8 @@ function ScanScreenContent() {
                 style={{ width: screenW - 32, height: screenH * 0.62, borderRadius: 20 }}
                 resizeMode="contain"
               />
-              <View style={{ marginTop: 20, backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 16, paddingHorizontal: 20, paddingVertical: 12, borderWidth: 1, borderColor: "rgba(245,158,11,0.18)" }}>
-                <Text style={{ color: "#FBBF24", fontFamily: "DMSans_700Bold", fontSize: 14, textAlign: "center" }}>AI-Generated Transformation Preview</Text>
+              <View style={{ marginTop: 20, backgroundColor: UI.goldAlpha10, borderRadius: 16, paddingHorizontal: 20, paddingVertical: 12, borderWidth: 1, borderColor: UI.borderGold3 }}>
+                <Text style={{ color: UI.gold2, fontFamily: "DMSans_700Bold", fontSize: 14, textAlign: "center" }}>AI-Generated Transformation Preview</Text>
                 <Text style={{ color: MUTED, fontSize: 12, textAlign: "center", marginTop: 4 }}>Your potential look with consistent training</Text>
               </View>
             </View>
@@ -416,9 +417,9 @@ function ScanScreenContent() {
             <View style={{ flex: 1, paddingHorizontal: 16 }}>
               {/* Face Zoom Header */}
               <View style={{ alignItems: "center", marginBottom: 12 }}>
-                <View style={{ flexDirection: "row", alignItems: "center", gap: 6, backgroundColor: "rgba(245,158,11,0.10)", paddingHorizontal: 14, paddingVertical: 6, borderRadius: 20, borderWidth: 1, borderColor: "rgba(245,158,11,0.15)" }}>
-                  <MaterialIcons name="face" size={16} color="#FBBF24" />
-                  <Text style={{ color: "#FBBF24", fontFamily: "DMSans_700Bold", fontSize: 12 }}>Face Comparison</Text>
+                <View style={{ flexDirection: "row", alignItems: "center", gap: 6, backgroundColor: UI.goldAlpha10, paddingHorizontal: 14, paddingVertical: 6, borderRadius: 20, borderWidth: 1, borderColor: UI.borderGold }}>
+                  <MaterialIcons name="face" size={16} color={UI.gold2} />
+                  <Text style={{ color: UI.gold2, fontFamily: "DMSans_700Bold", fontSize: 12 }}>Face Comparison</Text>
                 </View>
               </View>
               {/* Side-by-side face crops */}
@@ -439,22 +440,22 @@ function ScanScreenContent() {
                 </View>
                 {/* After face */}
                 <View style={{ flex: 1, alignItems: "center" }}>
-                  <Text style={{ color: "#F59E0B", fontFamily: "DMSans_700Bold", fontSize: 11, marginBottom: 8, textTransform: "uppercase", letterSpacing: 1 }}>After</Text>
-                  <View style={{ width: "100%", aspectRatio: 0.8, borderRadius: 20, overflow: "hidden", borderWidth: 1.5, borderColor: "rgba(245,158,11,0.35)" }}>
+                  <Text style={{ color: UI.gold, fontFamily: "DMSans_700Bold", fontSize: 11, marginBottom: 8, textTransform: "uppercase", letterSpacing: 1 }}>After</Text>
+                  <View style={{ width: "100%", aspectRatio: 0.8, borderRadius: 20, overflow: "hidden", borderWidth: 1.5, borderColor: UI.borderGold4 }}>
                     <Image
                       source={{ uri: imageUrl }}
                       style={{ width: "200%", height: "200%", position: "absolute", top: "-10%", left: "-50%" }}
                       resizeMode="cover"
                     />
                   </View>
-                  <View style={{ marginTop: 8, backgroundColor: "rgba(245,158,11,0.10)", paddingHorizontal: 10, paddingVertical: 4, borderRadius: 8 }}>
-                    <Text style={{ color: "#FBBF24", fontFamily: "DMSans_700Bold", fontSize: 11 }}>{bf}% BF</Text>
+                  <View style={{ marginTop: 8, backgroundColor: UI.goldAlpha10, paddingHorizontal: 10, paddingVertical: 4, borderRadius: 8 }}>
+                    <Text style={{ color: UI.gold2, fontFamily: "DMSans_700Bold", fontSize: 11 }}>{bf}% BF</Text>
                   </View>
                 </View>
               </View>
               {/* Face change description */}
-              <View style={{ marginTop: 16, backgroundColor: "rgba(245,158,11,0.06)", borderRadius: 14, padding: 14, borderWidth: 1, borderColor: "rgba(245,158,11,0.12)" }}>
-                <Text style={{ color: "#FBBF24", fontFamily: "DMSans_700Bold", fontSize: 12, marginBottom: 4 }}>What changes in the face?</Text>
+              <View style={{ marginTop: 16, backgroundColor: UI.goldAlpha6, borderRadius: 14, padding: 14, borderWidth: 1, borderColor: UI.goldAlpha12 }}>
+                <Text style={{ color: UI.gold2, fontFamily: "DMSans_700Bold", fontSize: 12, marginBottom: 4 }}>What changes in the face?</Text>
                 <Text style={{ color: MUTED, fontSize: 11, lineHeight: 16 }}>
                   {bf >= 20
                     ? "Subtle reduction in facial puffiness with a slightly more defined jawline."
@@ -479,7 +480,7 @@ function ScanScreenContent() {
                   />
                 </View>
                 <View style={{ flex: 1, alignItems: "center" }}>
-                  <Text style={{ color: "#F59E0B", fontFamily: "DMSans_700Bold", fontSize: 12, marginBottom: 8, textTransform: "uppercase", letterSpacing: 1 }}>After ({bf}% BF)</Text>
+                  <Text style={{ color: UI.gold, fontFamily: "DMSans_700Bold", fontSize: 12, marginBottom: 8, textTransform: "uppercase", letterSpacing: 1 }}>After ({bf}% BF)</Text>
                   <Image
                     source={{ uri: imageUrl }}
                     style={{ width: "100%", flex: 1, borderRadius: 16, maxHeight: screenH * 0.55 }}
@@ -494,7 +495,7 @@ function ScanScreenContent() {
           {/* CTA */}
           <View style={{ paddingHorizontal: 20, paddingBottom: 40 }}>
             <TouchableOpacity
-              style={{ backgroundColor: "#F59E0B", borderRadius: 16, paddingVertical: 16, alignItems: "center", shadowColor: "#F59E0B", shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.5, shadowRadius: 12 }}
+              style={{ backgroundColor: UI.gold, borderRadius: 16, paddingVertical: 16, alignItems: "center", shadowColor: UI.gold, shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.5, shadowRadius: 12 }}
               onPress={() => { setPreviewModal(null); selectTargetAndProceed(bf); }}
             >
               <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}><MaterialIcons name="gps-fixed" size={16} color={FG} /><Text style={{ color: FG, fontFamily: "BebasNeue_400Regular", fontSize: 16 }}>Set {bf}% as My Goal</Text></View>
@@ -520,11 +521,11 @@ function ScanScreenContent() {
       <View style={{ flex: 1, backgroundColor: BG }}>
         <ImageBackground source={{ uri: SCAN_BG }} style={{ flex: 1 }} resizeMode="cover">
           <View style={{ flex: 1, backgroundColor: "rgba(8,8,16,0.75)", alignItems: "center", justifyContent: "center", padding: 32 }}>
-            <MaterialIcons name="photo-camera" size={48} color="#F59E0B" style={{ marginBottom: 16 }} />
+            <MaterialIcons name="photo-camera" size={48} color={UI.gold} style={{ marginBottom: 16 }} />
             <Text style={{ color: FG, fontFamily: "BebasNeue_400Regular", fontSize: 22, textAlign: "center", marginBottom: 8 }}>AI Body Scan</Text>
             <Text style={{ color: MUTED, fontSize: 14, textAlign: "center", lineHeight: 20, marginBottom: 24 }}>Sign in or continue as guest to get started.</Text>
             <TouchableOpacity
-              style={{ backgroundColor: "#F59E0B", borderRadius: 16, paddingVertical: 14, paddingHorizontal: 32, shadowColor: "#F59E0B", shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.5, shadowRadius: 12 }}
+              style={{ backgroundColor: UI.gold, borderRadius: 16, paddingVertical: 14, paddingHorizontal: 32, shadowColor: UI.gold, shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.5, shadowRadius: 12 }}
               onPress={() => router.push("/login" as any)}
             >
               <Text style={{ color: FG, fontFamily: "BebasNeue_400Regular", fontSize: 16 }}>Get Started â</Text>
@@ -715,7 +716,7 @@ function ScanScreenContent() {
                 key={i}
                 style={{
                   backgroundColor: SURFACE, borderRadius: 16, padding: 14, marginBottom: 10,
-                  borderWidth: 2, borderColor: selectedTransform === t.target_bf ? ICE : "rgba(30,41,59,0.6)",
+                  borderWidth: 2, borderColor: selectedTransform === t.target_bf ? ICE : UI.border,
                 }}
               >
                 <View style={{ flexDirection: "row", gap: 12 }}>
@@ -743,7 +744,7 @@ function ScanScreenContent() {
                       </View>
                     ) : (
                       <View style={{ width: 90, height: 115, borderRadius: 12, backgroundColor: SURFACE, alignItems: "center", justifyContent: "center" }}>
-                        <MaterialIcons name="directions-run" size={28} color="#F59E0B" />
+                        <MaterialIcons name="directions-run" size={28} color={UI.gold} />
                       </View>
                     )}
                   </TouchableOpacity>
@@ -947,21 +948,21 @@ function ScanScreenContent() {
                             setShowShareOverlay(true);
                           }}
                           style={{
-                            marginTop: 8, backgroundColor: "rgba(245,158,11,0.08)", borderRadius: 12,
+                            marginTop: 8, backgroundColor: UI.dim, borderRadius: 12,
                             paddingVertical: 10, alignItems: "center",
-                            borderWidth: 1, borderColor: "rgba(245,158,11,0.25)",
+                            borderWidth: 1, borderColor: UI.borderGold2,
                             flexDirection: "row", justifyContent: "center", gap: 6,
                           }}
                         >
-                          <MaterialIcons name="share" size={18} color="#F59E0B" />
-                          <Text style={{ color: "#F59E0B", fontFamily: "DMSans_700Bold", fontSize: 13 }}>Share Progress</Text>
+                          <MaterialIcons name="share" size={18} color={UI.gold} />
+                          <Text style={{ color: UI.gold, fontFamily: "DMSans_700Bold", fontSize: 13 }}>Share Progress</Text>
                         </TouchableOpacity>
                       </View>
                     )}
 
                     {/* Progress Photo Timeline */}
                     {progressPhotos.length > 0 && (
-                      <View style={{ backgroundColor: SURFACE, borderRadius: 18, padding: 16, borderWidth: 1, borderColor: "rgba(30,41,59,0.6)" }}>
+                      <View style={{ backgroundColor: SURFACE, borderRadius: 18, padding: 16, borderWidth: 1, borderColor: UI.border }}>
                         <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
                           <Text style={{ color: FG, fontFamily: "DMSans_700Bold", fontSize: 14 }}>Progress Timeline</Text>
                           <Text style={{ color: MUTED, fontSize: 12 }}>{progressPhotos.length} photo{progressPhotos.length !== 1 ? "s" : ""}</Text>
@@ -992,7 +993,7 @@ function ScanScreenContent() {
                     title="AI Body Transformation Tracking"
                     description="Unlock AI-powered body composition analysis, progress photo reminders, and before/after comparisons to visualise your transformation."
                     icon="body"
-                    accentColor="#22D3EE"
+                    accentColor={UI.ice}
                     requiredTier="basic"
                   />
                   <PremiumFeatureTeaser
@@ -1029,7 +1030,7 @@ function ScanScreenContent() {
                   style={{
                     width: "47%", backgroundColor: workoutStyle === w.key ? ICE_DIM : SURFACE,
                     borderRadius: 14, padding: 14, borderWidth: 2,
-                    borderColor: workoutStyle === w.key ? ICE : "rgba(30,41,59,0.6)",
+                    borderColor: workoutStyle === w.key ? ICE : UI.border,
                     alignItems: "center", gap: 4,
                   }}
                   onPress={() => setWorkoutStyle(w.key)}
@@ -1047,7 +1048,7 @@ function ScanScreenContent() {
               {[3, 4, 5, 6].map(d => (
                 <TouchableOpacity
                   key={d}
-                  style={{ flex: 1, paddingVertical: 12, borderRadius: 12, alignItems: "center", backgroundColor: daysPerWeek === d ? ICE : SURFACE, borderWidth: 1, borderColor: daysPerWeek === d ? ICE : "rgba(30,41,59,0.6)" }}
+                  style={{ flex: 1, paddingVertical: 12, borderRadius: 12, alignItems: "center", backgroundColor: daysPerWeek === d ? ICE : SURFACE, borderWidth: 1, borderColor: daysPerWeek === d ? ICE : UI.border }}
                   onPress={() => setDaysPerWeek(d)}
                 >
                   <Text style={{ color: daysPerWeek === d ? BG : MUTED, fontFamily: "SpaceMono_700Bold", fontSize: 16 }}>{d}</Text>
@@ -1066,7 +1067,7 @@ function ScanScreenContent() {
                   style={{
                     width: "30%", backgroundColor: dietaryPref === d.key ? ICE_DIM : SURFACE,
                     borderRadius: 12, padding: 12, borderWidth: 2,
-                    borderColor: dietaryPref === d.key ? ICE : "rgba(30,41,59,0.6)",
+                    borderColor: dietaryPref === d.key ? ICE : UI.border,
                     alignItems: "center", gap: 4,
                   }}
                   onPress={() => setDietaryPref(d.key)}
@@ -1330,13 +1331,13 @@ function ShareProgressOverlay({
         <TouchableOpacity onPress={onClose} style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: "rgba(255,255,255,0.1)", alignItems: "center", justifyContent: "center" }}>
           <MaterialIcons name="close" size={22} color="#fff" />
         </TouchableOpacity>
-        <Text style={{ color: "#F1F5F9", fontFamily: "DMSans_700Bold", fontSize: 18 }}>Share Progress</Text>
+        <Text style={{ color: UI.fg, fontFamily: "DMSans_700Bold", fontSize: 18 }}>Share Progress</Text>
         <View style={{ width: 40 }} />
       </View>
 
       <ScrollView contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 40 }}>
         {/* Preview card */}
-        <View style={{ backgroundColor: "#141A22", borderRadius: 24, overflow: "hidden", borderWidth: 2, borderColor: "rgba(245,158,11,0.25)" }}>
+        <View style={{ backgroundColor: UI.surface, borderRadius: 24, overflow: "hidden", borderWidth: 2, borderColor: UI.borderGold2 }}>
           {/* Photos side by side */}
           <View style={{ flexDirection: "row" }}>
             <View style={{ flex: 1, position: "relative" }}>
@@ -1348,7 +1349,7 @@ function ShareProgressOverlay({
                 <Text style={{ color: "rgba(255,255,255,0.7)", fontSize: 9 }}>{fmtDate(beforeDate)}</Text>
               </View>
             </View>
-            <View style={{ width: 2, backgroundColor: "#F59E0B" }} />
+            <View style={{ width: 2, backgroundColor: UI.gold }} />
             <View style={{ flex: 1, position: "relative" }}>
               <Image source={{ uri: afterUri }} style={{ width: "100%", height: 240 }} resizeMode="cover" />
               <View style={{ position: "absolute", top: 10, left: 10, backgroundColor: "rgba(74,222,128,0.9)", borderRadius: 8, paddingHorizontal: 8, paddingVertical: 3 }}>
@@ -1364,8 +1365,8 @@ function ShareProgressOverlay({
           {statsOverlay && (
             <View style={{ padding: 16, gap: 10 }}>
               <View style={{ flexDirection: "row", justifyContent: "center", alignItems: "center", gap: 8 }}>
-                <MaterialIcons name="schedule" size={14} color="#F59E0B" />
-                <Text style={{ color: "#FBBF24", fontFamily: "DMSans_700Bold", fontSize: 14 }}>{daysElapsed} Days of Progress</Text>
+                <MaterialIcons name="schedule" size={14} color={UI.gold} />
+                <Text style={{ color: UI.gold2, fontFamily: "DMSans_700Bold", fontSize: 14 }}>{daysElapsed} Days of Progress</Text>
               </View>
               {bodyFatStart && bodyFatCurrent ? (
                 <View style={{ flexDirection: "row", justifyContent: "space-around", marginTop: 4 }}>
@@ -1378,7 +1379,7 @@ function ShareProgressOverlay({
                   </View>
                   <View style={{ alignItems: "center" }}>
                     <Text style={{ color: "#64748B", fontSize: 10, fontFamily: "DMSans_500Medium" }}>CURRENT</Text>
-                    <Text style={{ color: "#22D3EE", fontFamily: "SpaceMono_700Bold", fontSize: 20 }}>{bodyFatCurrent}%</Text>
+                    <Text style={{ color: UI.ice, fontFamily: "SpaceMono_700Bold", fontSize: 20 }}>{bodyFatCurrent}%</Text>
                   </View>
                   {bodyFatTarget ? (
                     <>
@@ -1387,7 +1388,7 @@ function ShareProgressOverlay({
                       </View>
                       <View style={{ alignItems: "center" }}>
                         <Text style={{ color: "#64748B", fontSize: 10, fontFamily: "DMSans_500Medium" }}>TARGET</Text>
-                        <Text style={{ color: "#F59E0B", fontFamily: "SpaceMono_700Bold", fontSize: 20 }}>{bodyFatTarget}%</Text>
+                        <Text style={{ color: UI.gold, fontFamily: "SpaceMono_700Bold", fontSize: 20 }}>{bodyFatTarget}%</Text>
                       </View>
                     </>
                   ) : null}
@@ -1398,8 +1399,8 @@ function ShareProgressOverlay({
 
           {/* Watermark */}
           {watermarkEnabled && (
-            <View style={{ paddingVertical: 12, borderTopWidth: 1, borderTopColor: "rgba(245,158,11,0.1)", alignItems: "center" }}>
-              <Text style={{ color: "#F59E0B", fontFamily: "DMSans_700Bold", fontSize: 12, letterSpacing: 3 }}>PEAKPULSE AI</Text>
+            <View style={{ paddingVertical: 12, borderTopWidth: 1, borderTopColor: UI.goldAlpha10, alignItems: "center" }}>
+              <Text style={{ color: UI.gold, fontFamily: "DMSans_700Bold", fontSize: 12, letterSpacing: 3 }}>PEAKPULSE AI</Text>
               <Text style={{ color: "#64748B", fontSize: 9, marginTop: 2 }}>Precision Performance</Text>
             </View>
           )}
@@ -1414,17 +1415,17 @@ function ShareProgressOverlay({
             onPress={() => setWatermarkEnabled(!watermarkEnabled)}
             style={{
               flexDirection: "row", alignItems: "center", justifyContent: "space-between",
-              backgroundColor: "#141A22", borderRadius: 14, padding: 14,
-              borderWidth: 1, borderColor: "rgba(30,41,59,0.6)",
+              backgroundColor: UI.surface, borderRadius: 14, padding: 14,
+              borderWidth: 1, borderColor: UI.border,
             }}
           >
             <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
-              <MaterialIcons name="branding-watermark" size={20} color={watermarkEnabled ? "#F59E0B" : "#64748B"} />
-              <Text style={{ color: "#F1F5F9", fontFamily: "DMSans_600SemiBold", fontSize: 14 }}>PeakPulse Watermark</Text>
+              <MaterialIcons name="branding-watermark" size={20} color={watermarkEnabled ? UI.gold : "#64748B"} />
+              <Text style={{ color: UI.fg, fontFamily: "DMSans_600SemiBold", fontSize: 14 }}>PeakPulse Watermark</Text>
             </View>
             <View style={{
               width: 44, height: 24, borderRadius: 12,
-              backgroundColor: watermarkEnabled ? "#F59E0B" : "rgba(255,255,255,0.1)",
+              backgroundColor: watermarkEnabled ? UI.gold : "rgba(255,255,255,0.1)",
               justifyContent: "center", paddingHorizontal: 2,
             }}>
               <View style={{
@@ -1439,17 +1440,17 @@ function ShareProgressOverlay({
             onPress={() => setStatsOverlay(!statsOverlay)}
             style={{
               flexDirection: "row", alignItems: "center", justifyContent: "space-between",
-              backgroundColor: "#141A22", borderRadius: 14, padding: 14,
-              borderWidth: 1, borderColor: "rgba(30,41,59,0.6)",
+              backgroundColor: UI.surface, borderRadius: 14, padding: 14,
+              borderWidth: 1, borderColor: UI.border,
             }}
           >
             <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
-              <MaterialIcons name="analytics" size={20} color={statsOverlay ? "#22D3EE" : "#64748B"} />
-              <Text style={{ color: "#F1F5F9", fontFamily: "DMSans_600SemiBold", fontSize: 14 }}>Progress Stats</Text>
+              <MaterialIcons name="analytics" size={20} color={statsOverlay ? UI.ice : "#64748B"} />
+              <Text style={{ color: UI.fg, fontFamily: "DMSans_600SemiBold", fontSize: 14 }}>Progress Stats</Text>
             </View>
             <View style={{
               width: 44, height: 24, borderRadius: 12,
-              backgroundColor: statsOverlay ? "#22D3EE" : "rgba(255,255,255,0.1)",
+              backgroundColor: statsOverlay ? UI.ice : "rgba(255,255,255,0.1)",
               justifyContent: "center", paddingHorizontal: 2,
             }}>
               <View style={{
@@ -1465,18 +1466,18 @@ function ShareProgressOverlay({
           onPress={handleShare}
           disabled={sharing}
           style={{
-            marginTop: 24, backgroundColor: "#F59E0B", borderRadius: 16,
+            marginTop: 24, backgroundColor: UI.gold, borderRadius: 16,
             paddingVertical: 16, alignItems: "center",
             flexDirection: "row", justifyContent: "center", gap: 8,
             opacity: sharing ? 0.6 : 1,
           }}
         >
           {sharing ? (
-            <ActivityIndicator size="small" color="#0A0E14" />
+            <ActivityIndicator size="small" color={UI.bg} />
           ) : (
             <>
-              <MaterialIcons name="share" size={20} color="#0A0E14" />
-              <Text style={{ color: "#0A0E14", fontFamily: "DMSans_700Bold", fontSize: 16 }}>Share Transformation</Text>
+              <MaterialIcons name="share" size={20} color={UI.bg} />
+              <Text style={{ color: UI.bg, fontFamily: "DMSans_700Bold", fontSize: 16 }}>Share Transformation</Text>
             </>
           )}
         </TouchableOpacity>

@@ -12,7 +12,7 @@ import {
   GOAL_PRESETS, type WeeklyGoals, type GoalPreset,
   getGoalHistory, type GoalHistory,
 } from "@/lib/goal-tracking";
-import { UI as SF } from "@/constants/ui-colors";
+import { UI, SF } from "@/constants/ui-colors";
 import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
 
 const DASHBOARD_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/PZcnawJwIZkQHTEM.jpg";
@@ -81,7 +81,7 @@ export default function WeeklyGoalsScreen() {
             paddingTop: 8, paddingBottom: 12, gap: 12,
           }}>
             <TouchableOpacity onPress={() => router.back()} style={{
-              width: 40, height: 40, borderRadius: 20, backgroundColor: "rgba(245,158,11,0.10)",
+              width: 40, height: 40, borderRadius: 20, backgroundColor: UI.goldAlpha10,
               alignItems: "center", justifyContent: "center",
             }}>
               <MaterialIcons name="arrow-back" size={22} color={SF.gold3} />
@@ -114,13 +114,13 @@ export default function WeeklyGoalsScreen() {
                 }}
                 style={{
                   width: 52, height: 30, borderRadius: 15,
-                  backgroundColor: enabled ? SF.gold : "rgba(245,158,11,0.15)",
+                  backgroundColor: enabled ? SF.gold : UI.borderGold,
                   justifyContent: "center", paddingHorizontal: 2,
                 }}
               >
                 <View style={{
                   width: 26, height: 26, borderRadius: 13,
-                  backgroundColor: enabled ? SF.bg : "#B45309",
+                  backgroundColor: enabled ? SF.bg : UI.secondaryLight,
                   alignSelf: enabled ? "flex-end" : "flex-start",
                 }} />
               </TouchableOpacity>
@@ -140,13 +140,13 @@ export default function WeeklyGoalsScreen() {
                     key={preset.name}
                     onPress={() => applyPreset(preset)}
                     style={{
-                      flex: 1, minWidth: "45%", backgroundColor: isActive ? "rgba(245,158,11,0.15)" : SF.surface,
+                      flex: 1, minWidth: "45%", backgroundColor: isActive ? UI.borderGold : SF.surface,
                       borderRadius: 14, padding: 14, borderWidth: 1,
                       borderColor: isActive ? SF.gold : SF.border,
                     }}
                   >
                     <View style={{ flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 6 }}>
-                      <MaterialIcons name={preset.icon as any} size={18} color={isActive ? SF.gold : "#B45309"} />
+                      <MaterialIcons name={preset.icon as any} size={18} color={isActive ? SF.gold : UI.secondaryLight} />
                       <Text style={{ color: isActive ? SF.gold : SF.fg, fontFamily: "DMSans_700Bold", fontSize: 14 }}>
                         {preset.name}
                       </Text>
@@ -154,7 +154,7 @@ export default function WeeklyGoalsScreen() {
                     <Text style={{ color: SF.muted, fontFamily: "DMSans_400Regular", fontSize: 10 }}>
                       {preset.description}
                     </Text>
-                    <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 9, marginTop: 4 }}>
+                    <Text style={{ color: UI.secondaryLight, fontFamily: "DMSans_400Regular", fontSize: 9, marginTop: 4 }}>
                       {preset.goals.stepsTarget.toLocaleString()} steps · {preset.goals.caloriesTarget} kcal · {preset.goals.workoutsTarget} workouts
                     </Text>
                   </TouchableOpacity>
@@ -173,7 +173,7 @@ export default function WeeklyGoalsScreen() {
               {/* Steps */}
               <View style={{ marginBottom: 18 }}>
                 <View style={{ flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 8 }}>
-                  <MaterialIcons name="directions-walk" size={18} color="#22C55E" />
+                  <MaterialIcons name="directions-walk" size={18} color={UI.green} />
                   <Text style={{ color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 14 }}>Daily Steps Target</Text>
                 </View>
                 <TextInput
@@ -186,7 +186,7 @@ export default function WeeklyGoalsScreen() {
                     borderWidth: 1, borderColor: SF.border,
                   }}
                 />
-                <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 10, marginTop: 4 }}>
+                <Text style={{ color: UI.secondaryLight, fontFamily: "DMSans_400Regular", fontSize: 10, marginTop: 4 }}>
                   Average: 7,000-12,000 steps/day is recommended
                 </Text>
               </View>
@@ -194,7 +194,7 @@ export default function WeeklyGoalsScreen() {
               {/* Calories */}
               <View style={{ marginBottom: 18 }}>
                 <View style={{ flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 8 }}>
-                  <MaterialIcons name="local-fire-department" size={18} color="#F59E0B" />
+                  <MaterialIcons name="local-fire-department" size={18} color={UI.gold} />
                   <Text style={{ color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 14 }}>Daily Calories Burned Target</Text>
                 </View>
                 <TextInput
@@ -207,7 +207,7 @@ export default function WeeklyGoalsScreen() {
                     borderWidth: 1, borderColor: SF.border,
                   }}
                 />
-                <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 10, marginTop: 4 }}>
+                <Text style={{ color: UI.secondaryLight, fontFamily: "DMSans_400Regular", fontSize: 10, marginTop: 4 }}>
                   Active calories burned through exercise
                 </Text>
               </View>
@@ -215,7 +215,7 @@ export default function WeeklyGoalsScreen() {
               {/* Workouts */}
               <View>
                 <View style={{ flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 8 }}>
-                  <MaterialIcons name="fitness-center" size={18} color="#EF4444" />
+                  <MaterialIcons name="fitness-center" size={18} color={UI.red} />
                   <Text style={{ color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 14 }}>Workouts Per Week</Text>
                 </View>
                 <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
@@ -238,7 +238,7 @@ export default function WeeklyGoalsScreen() {
                     </TouchableOpacity>
                   ))}
                 </View>
-                <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 10, marginTop: 4 }}>
+                <Text style={{ color: UI.secondaryLight, fontFamily: "DMSans_400Regular", fontSize: 10, marginTop: 4 }}>
                   3-5 workouts/week is optimal for most people
                 </Text>
               </View>
@@ -267,7 +267,7 @@ export default function WeeklyGoalsScreen() {
                           <Text style={{ color: SF.fg, fontFamily: "DMSans_600SemiBold", fontSize: 13 }}>
                             Week of {h.weekStart}
                           </Text>
-                          <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 10, marginTop: 2 }}>
+                          <Text style={{ color: UI.secondaryLight, fontFamily: "DMSans_400Regular", fontSize: 10, marginTop: 2 }}>
                             {h.progress.steps.current.toLocaleString()} steps · {h.progress.calories.current} kcal · {h.progress.workouts.current} workouts
                           </Text>
                         </View>
@@ -276,7 +276,7 @@ export default function WeeklyGoalsScreen() {
                           paddingHorizontal: 8, paddingVertical: 3, borderRadius: 8,
                         }}>
                           <Text style={{
-                            color: overallPct >= 80 ? "#22C55E" : overallPct >= 50 ? "#F59E0B" : "#EF4444",
+                            color: overallPct >= 80 ? UI.green : overallPct >= 50 ? UI.gold : UI.red,
                             fontFamily: "DMSans_700Bold", fontSize: 12,
                           }}>
                             {overallPct}%

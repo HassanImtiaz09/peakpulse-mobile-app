@@ -35,6 +35,7 @@ import { getActiveChallenges, type Challenge } from "@/lib/challenge-service";
 import { getActiveGroupGoals, type GroupGoal } from "@/lib/group-goals";
 import { getTotalUnreadCount } from "@/lib/chat-service";
 import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
+import { UI } from "@/constants/ui-colors";
 
 const HERO_BG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/golden-social-bg-6XESYMXaHwooBovbKXUgYi.webp";
 
@@ -196,7 +197,7 @@ export default function SocialCircleScreen() {
         >
           <Text style={{ fontSize: 14 }}>⚔️</Text>
         </TouchableOpacity>
-        <Text style={{ color: "#B45309", fontSize: 18 }}>›</Text>
+        <Text style={{ color: UI.secondaryLight, fontSize: 18 }}>›</Text>
       </View>
     </TouchableOpacity>
   );
@@ -226,7 +227,7 @@ export default function SocialCircleScreen() {
     const isTop3 = item.rank <= 3;
     const rankEmoji = item.rank === 1 ? "🥇" : item.rank === 2 ? "🥈" : item.rank === 3 ? "🥉" : "";
     const trendIcon = item.trend === "up" ? "↑" : item.trend === "down" ? "↓" : "";
-    const trendColor = item.trend === "up" ? "#10B981" : item.trend === "down" ? "#EF4444" : "#B45309";
+    const trendColor = item.trend === "up" ? UI.emerald : item.trend === "down" ? UI.red : UI.secondaryLight;
 
     return (
       <View style={[
@@ -243,7 +244,7 @@ export default function SocialCircleScreen() {
         </View>
         <Text style={{ fontSize: 22, marginRight: 8 }}>{item.avatarEmoji}</Text>
         <View style={{ flex: 1 }}>
-          <Text style={[styles.leaderboardName, item.isCurrentUser && { color: "#FDE68A" }]}>
+          <Text style={[styles.leaderboardName, item.isCurrentUser && { color: UI.gold3 }]}>
             {item.isCurrentUser ? `${item.name} (You)` : item.name}
           </Text>
         </View>
@@ -260,12 +261,12 @@ export default function SocialCircleScreen() {
   // ── Main Render ───────────────────────────────────────────────
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#0A0E14" }}>
+    <View style={{ flex: 1, backgroundColor: UI.bg }}>
       {/* Hero */}
       <ImageBackground source={{ uri: HERO_BG }} style={{ height: 180 }} resizeMode="cover">
         <View style={styles.heroOverlay}>
           <TouchableOpacity style={styles.backBtn} onPress={() => router.back()} {...a11yButton(A11Y_LABELS.backButton)}>
-            <Text style={{ color: "#F1F5F9", fontSize: 18 }}>←</Text>
+            <Text style={{ color: UI.fg, fontSize: 18 }}>←</Text>
           </TouchableOpacity>
           <Text style={styles.heroLabel}>SOCIAL CIRCLE</Text>
           <Text style={styles.heroTitle}>Your Fitness Crew</Text>
@@ -277,7 +278,7 @@ export default function SocialCircleScreen() {
               🟢 {activeFriends} active
             </Text>
             {discountData?.activeDiscount && (
-              <Text style={[styles.heroStat, { color: "#10B981" }]}>
+              <Text style={[styles.heroStat, { color: UI.emerald }]}>
                 🎁 {discountData.activeDiscount.description}
               </Text>
             )}
@@ -310,7 +311,7 @@ export default function SocialCircleScreen() {
                 </Text>
                 {tab === "chat" && chatUnreadCount > 0 && (
                   <View style={{
-                    backgroundColor: "#EF4444", borderRadius: 9, minWidth: 18, height: 18,
+                    backgroundColor: UI.red, borderRadius: 9, minWidth: 18, height: 18,
                     alignItems: "center", justifyContent: "center", paddingHorizontal: 4,
                   }}>
                     <Text style={{ color: "#fff", fontSize: 10, fontWeight: "800" }}>
@@ -326,7 +327,7 @@ export default function SocialCircleScreen() {
 
       {loading ? (
         <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-          <ActivityIndicator size="large" color="#F59E0B" />
+          <ActivityIndicator size="large" color={UI.gold} />
         </View>
       ) : (
         <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 40 }} showsVerticalScrollIndicator={false}>
@@ -453,9 +454,9 @@ export default function SocialCircleScreen() {
               <View style={styles.legendCard}>
                 <Text style={[styles.sectionTitle, { fontSize: 14, marginBottom: 10 }]}>Activity Types</Text>
                 {[
-                  { emoji: "💪", label: "Workout completed", color: "#10B981" },
-                  { emoji: "🏆", label: "Milestone unlocked", color: "#F59E0B" },
-                  { emoji: "🔥", label: "Streak update", color: "#EF4444" },
+                  { emoji: "💪", label: "Workout completed", color: UI.emerald },
+                  { emoji: "🏆", label: "Milestone unlocked", color: UI.gold },
+                  { emoji: "🔥", label: "Streak update", color: UI.red },
                   { emoji: "🥇", label: "Challenge won", color: "#8B5CF6" },
                   { emoji: "🎯", label: "Group goal contribution", color: "#3B82F6" },
                   { emoji: "👋", label: "Friend joined circle", color: "#06B6D4" },
@@ -507,7 +508,7 @@ export default function SocialCircleScreen() {
                             {e.isCurrentUser ? "You" : e.name.split(" ")[0]}
                           </Text>
                           <Text style={styles.podiumValue}>{metricDisplay.format(e.value)}</Text>
-                          <View style={[styles.podiumBar, { height: heights[i] - 60, backgroundColor: i === 1 ? "#F59E0B" : "#B45309" }]} />
+                          <View style={[styles.podiumBar, { height: heights[i] - 60, backgroundColor: i === 1 ? UI.gold : UI.secondaryLight }]} />
                         </View>
                       );
                     })}
@@ -535,15 +536,15 @@ export default function SocialCircleScreen() {
           {/* ── Chat Tab ──────────────────────────────────────── */}
           {activeTab === "chat" && (
             <View style={{ alignItems: "center", paddingVertical: 30, gap: 16 }}>
-              <View style={{ width: 80, height: 80, borderRadius: 40, backgroundColor: "rgba(245,158,11,0.12)", alignItems: "center", justifyContent: "center" }}>
+              <View style={{ width: 80, height: 80, borderRadius: 40, backgroundColor: UI.goldAlpha12, alignItems: "center", justifyContent: "center" }}>
                 <Text style={{ fontSize: 36 }}>💬</Text>
               </View>
-              <Text style={{ color: "#F1F5F9", fontSize: 20, fontWeight: "800" }}>Circle Chat</Text>
-              <Text style={{ color: "#B45309", fontSize: 13, textAlign: "center", paddingHorizontal: 30, lineHeight: 19 }}>
+              <Text style={{ color: UI.fg, fontSize: 20, fontWeight: "800" }}>Circle Chat</Text>
+              <Text style={{ color: UI.secondaryLight, fontSize: 13, textAlign: "center", paddingHorizontal: 30, lineHeight: 19 }}>
                 Chat with your circle members, share progress updates, and motivate each other in real time.
               </Text>
               <TouchableOpacity
-                style={{ backgroundColor: "#F59E0B", borderRadius: 14, paddingHorizontal: 28, paddingVertical: 14, marginTop: 8 }}
+                style={{ backgroundColor: UI.gold, borderRadius: 14, paddingHorizontal: 28, paddingVertical: 14, marginTop: 8 }}
                 onPress={() => {
                   if (Platform.OS !== "web") Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                   router.push({ pathname: "/chat" as any, params: { roomId: `circle_${circleData?.circleCode ?? "default"}`, roomName: `${circleData?.circleCode ?? "My"} Circle Chat`, roomType: "circle" } });
@@ -554,10 +555,10 @@ export default function SocialCircleScreen() {
 
               {/* Recent messages preview */}
               <View style={{ width: "100%", marginTop: 16, gap: 8 }}>
-                <Text style={{ color: "#FBBF24", fontSize: 13, fontWeight: "700", paddingHorizontal: 4 }}>Recent Messages</Text>
+                <Text style={{ color: UI.gold2, fontSize: 13, fontWeight: "700", paddingHorizontal: 4 }}>Recent Messages</Text>
                 {["Alex M. 💪: Great workout today!", "Sarah K. 🏃: Just hit my step goal!", "James T. 🎯: Who's up for a challenge?"].map((msg, i) => (
-                  <View key={i} style={{ backgroundColor: "rgba(20,26,34,0.85)", borderRadius: 12, padding: 12, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)" }}>
-                    <Text style={{ color: "#F1F5F9", fontSize: 13 }}>{msg}</Text>
+                  <View key={i} style={{ backgroundColor: "rgba(20,26,34,0.85)", borderRadius: 12, padding: 12, borderWidth: 1, borderColor: UI.goldAlpha10 }}>
+                    <Text style={{ color: UI.fg, fontSize: 13 }}>{msg}</Text>
                   </View>
                 ))}
               </View>
@@ -655,7 +656,7 @@ export default function SocialCircleScreen() {
                         <Text style={styles.pendingSent}>{timeAgo(inv.sentAt)}</Text>
                       </View>
                       <View style={[styles.statusBadge, inv.status === "accepted" && { backgroundColor: "rgba(16,185,129,0.15)" }]}>
-                        <Text style={[styles.statusText, inv.status === "accepted" && { color: "#10B981" }]}>
+                        <Text style={[styles.statusText, inv.status === "accepted" && { color: UI.emerald }]}>
                           {inv.status === "accepted" ? "Joined" : inv.status === "expired" ? "Expired" : "Pending"}
                         </Text>
                       </View>
@@ -742,16 +743,16 @@ export default function SocialCircleScreen() {
                     <Text style={styles.primaryBtnText}>⚔️ Challenge to a Duel</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
-                    style={[styles.primaryBtn, { backgroundColor: "#DC2626" }]}
+                    style={[styles.primaryBtn, { backgroundColor: UI.red2 }]}
                     onPress={() => handleRemoveFriend(selectedFriend.id, selectedFriend.name)}
                   >
                     <Text style={styles.primaryBtnText}>Remove from Circle</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
-                    style={[styles.primaryBtn, { backgroundColor: "#1A2030" }]}
+                    style={[styles.primaryBtn, { backgroundColor: UI.surface2 }]}
                     onPress={() => { setShowFriendModal(false); setSelectedFriend(null); }}
                   >
-                    <Text style={[styles.primaryBtnText, { color: "#F1F5F9" }]}>Close</Text>
+                    <Text style={[styles.primaryBtnText, { color: UI.fg }]}>Close</Text>
                   </TouchableOpacity>
                 </View>
               </>
@@ -774,67 +775,67 @@ const styles = StyleSheet.create({
     position: "absolute", top: 52, left: 20, backgroundColor: "#FFFFFF20",
     borderRadius: 20, width: 36, height: 36, alignItems: "center", justifyContent: "center",
   },
-  heroLabel: { color: "#FDE68A", fontFamily: "DMSans_700Bold", fontSize: 11, letterSpacing: 1.5 },
-  heroTitle: { color: "#F1F5F9", fontFamily: "BebasNeue_400Regular", fontSize: 24 },
-  heroStat: { color: "#FDE68A", fontSize: 12, fontFamily: "DMSans_400Regular" },
+  heroLabel: { color: UI.gold3, fontFamily: "DMSans_700Bold", fontSize: 11, letterSpacing: 1.5 },
+  heroTitle: { color: UI.fg, fontFamily: "BebasNeue_400Regular", fontSize: 24 },
+  heroStat: { color: UI.gold3, fontSize: 12, fontFamily: "DMSans_400Regular" },
 
   tabBar: {
-    backgroundColor: "#141A22", borderBottomWidth: 1,
-    borderBottomColor: "rgba(245,158,11,0.10)", flexGrow: 0,
+    backgroundColor: UI.surface, borderBottomWidth: 1,
+    borderBottomColor: UI.goldAlpha10, flexGrow: 0,
   },
   tab: { paddingVertical: 12, paddingHorizontal: 16, alignItems: "center" },
-  tabActive: { borderBottomWidth: 2, borderBottomColor: "#F59E0B" },
-  tabText: { color: "#B45309", fontSize: 13, fontFamily: "DMSans_700Bold" },
-  tabTextActive: { color: "#FDE68A" },
+  tabActive: { borderBottomWidth: 2, borderBottomColor: UI.gold },
+  tabText: { color: UI.secondaryLight, fontSize: 13, fontFamily: "DMSans_700Bold" },
+  tabTextActive: { color: UI.gold3 },
 
-  sectionTitle: { color: "#F1F5F9", fontFamily: "BebasNeue_400Regular", fontSize: 18, marginBottom: 8 },
-  sectionSubtitle: { color: "#B45309", fontSize: 13, marginBottom: 12, lineHeight: 18 },
+  sectionTitle: { color: UI.fg, fontFamily: "BebasNeue_400Regular", fontSize: 18, marginBottom: 8 },
+  sectionSubtitle: { color: UI.secondaryLight, fontSize: 13, marginBottom: 12, lineHeight: 18 },
 
   quickLinksRow: { flexDirection: "row", gap: 10, marginBottom: 16 },
   quickLinkCard: {
-    flex: 1, backgroundColor: "#141A22", borderRadius: 20, padding: 16,
-    borderWidth: 1, borderColor: "rgba(245,158,11,0.12)", alignItems: "center", gap: 6,
+    flex: 1, backgroundColor: UI.surface, borderRadius: 20, padding: 16,
+    borderWidth: 1, borderColor: UI.goldAlpha12, alignItems: "center", gap: 6,
   },
-  quickLinkTitle: { color: "#F1F5F9", fontFamily: "DMSans_700Bold", fontSize: 14 },
-  quickLinkSub: { color: "#B45309", fontSize: 11 },
+  quickLinkTitle: { color: UI.fg, fontFamily: "DMSans_700Bold", fontSize: 14 },
+  quickLinkSub: { color: UI.secondaryLight, fontSize: 11 },
 
   statsRow: { flexDirection: "row", gap: 8, marginBottom: 16 },
   statCard: {
-    flex: 1, backgroundColor: "#141A22", borderRadius: 16, padding: 12,
-    borderWidth: 1, borderColor: "rgba(245,158,11,0.10)", alignItems: "center",
+    flex: 1, backgroundColor: UI.surface, borderRadius: 16, padding: 12,
+    borderWidth: 1, borderColor: UI.goldAlpha10, alignItems: "center",
   },
-  statValue: { color: "#FDE68A", fontFamily: "BebasNeue_400Regular", fontSize: 16 },
-  statLabel: { color: "#B45309", fontSize: 10, marginTop: 2 },
+  statValue: { color: UI.gold3, fontFamily: "BebasNeue_400Regular", fontSize: 16 },
+  statLabel: { color: UI.secondaryLight, fontSize: 10, marginTop: 2 },
 
   friendCard: {
-    backgroundColor: "#141A22", borderRadius: 16, padding: 14,
+    backgroundColor: UI.surface, borderRadius: 16, padding: 14,
     flexDirection: "row", alignItems: "center", gap: 12,
-    borderWidth: 1, borderColor: "rgba(245,158,11,0.08)",
+    borderWidth: 1, borderColor: UI.dim,
   },
   friendAvatar: {
-    width: 48, height: 48, borderRadius: 24, backgroundColor: "rgba(245,158,11,0.10)",
+    width: 48, height: 48, borderRadius: 24, backgroundColor: UI.goldAlpha10,
     alignItems: "center", justifyContent: "center",
   },
-  friendName: { color: "#F1F5F9", fontFamily: "DMSans_700Bold", fontSize: 15 },
-  friendStat: { color: "#FDE68A", fontSize: 12, fontFamily: "DMSans_400Regular" },
-  friendLastActive: { color: "#B45309", fontSize: 11, marginTop: 4 },
-  activeDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: "#10B981" },
+  friendName: { color: UI.fg, fontFamily: "DMSans_700Bold", fontSize: 15 },
+  friendStat: { color: UI.gold3, fontSize: 12, fontFamily: "DMSans_400Regular" },
+  friendLastActive: { color: UI.secondaryLight, fontSize: 11, marginTop: 4 },
+  activeDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: UI.emerald },
   challengeBtn: {
-    width: 32, height: 32, borderRadius: 16, backgroundColor: "rgba(245,158,11,0.10)",
+    width: 32, height: 32, borderRadius: 16, backgroundColor: UI.goldAlpha10,
     alignItems: "center", justifyContent: "center",
   },
 
   emptyState: {
-    alignItems: "center", padding: 32, backgroundColor: "#141A22",
-    borderRadius: 20, borderWidth: 1, borderColor: "rgba(245,158,11,0.10)",
+    alignItems: "center", padding: 32, backgroundColor: UI.surface,
+    borderRadius: 20, borderWidth: 1, borderColor: UI.goldAlpha10,
   },
-  emptyTitle: { color: "#F1F5F9", fontFamily: "BebasNeue_400Regular", fontSize: 18, marginBottom: 6 },
-  emptySubtitle: { color: "#B45309", fontSize: 13, textAlign: "center", lineHeight: 18, marginBottom: 16 },
+  emptyTitle: { color: UI.fg, fontFamily: "BebasNeue_400Regular", fontSize: 18, marginBottom: 6 },
+  emptySubtitle: { color: UI.secondaryLight, fontSize: 13, textAlign: "center", lineHeight: 18, marginBottom: 16 },
 
   primaryBtn: {
-    backgroundColor: "#F59E0B", borderRadius: 14, paddingVertical: 14, alignItems: "center",
+    backgroundColor: UI.gold, borderRadius: 14, paddingVertical: 14, alignItems: "center",
   },
-  primaryBtnText: { color: "#F1F5F9", fontFamily: "DMSans_700Bold", fontSize: 15 },
+  primaryBtnText: { color: UI.fg, fontFamily: "DMSans_700Bold", fontSize: 15 },
 
   // Activity Feed
   activityItem: {
@@ -843,159 +844,159 @@ const styles = StyleSheet.create({
   activityIcon: {
     width: 44, height: 44, borderRadius: 22, alignItems: "center", justifyContent: "center",
   },
-  activityUser: { color: "#F1F5F9", fontFamily: "DMSans_700Bold", fontSize: 14 },
+  activityUser: { color: UI.fg, fontFamily: "DMSans_700Bold", fontSize: 14 },
   activityText: { color: "#D1D5DB", fontSize: 13, lineHeight: 18, marginTop: 2 },
-  activityTime: { color: "#B45309", fontSize: 11, marginTop: 4 },
+  activityTime: { color: UI.secondaryLight, fontSize: 11, marginTop: 4 },
   activityBadge: {
     borderRadius: 10, paddingHorizontal: 10, paddingVertical: 5, alignSelf: "center",
   },
   activityBadgeText: { fontFamily: "DMSans_700Bold", fontSize: 12 },
   activitySeparator: {
-    height: 1, backgroundColor: "rgba(245,158,11,0.06)",
+    height: 1, backgroundColor: UI.goldAlpha6,
   },
   legendCard: {
-    marginTop: 20, backgroundColor: "#141A22", borderRadius: 20, padding: 16,
-    borderWidth: 1, borderColor: "rgba(245,158,11,0.10)",
+    marginTop: 20, backgroundColor: UI.surface, borderRadius: 20, padding: 16,
+    borderWidth: 1, borderColor: UI.goldAlpha10,
   },
   legendDot: { width: 8, height: 8, borderRadius: 4 },
   legendText: { color: "#D1D5DB", fontSize: 13 },
 
   // Leaderboard
   leaderboardContainer: {
-    backgroundColor: "#141A22", borderRadius: 20, padding: 16,
-    borderWidth: 1, borderColor: "rgba(245,158,11,0.10)",
+    backgroundColor: UI.surface, borderRadius: 20, padding: 16,
+    borderWidth: 1, borderColor: UI.goldAlpha10,
   },
   metricPill: {
     paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20,
-    backgroundColor: "#141A22", borderWidth: 1, borderColor: "rgba(245,158,11,0.15)",
+    backgroundColor: UI.surface, borderWidth: 1, borderColor: UI.borderGold,
   },
-  metricPillActive: { backgroundColor: "#F59E0B", borderColor: "#F59E0B" },
-  metricPillText: { color: "#B45309", fontSize: 13, fontFamily: "DMSans_700Bold" },
-  metricPillTextActive: { color: "#F1F5F9" },
+  metricPillActive: { backgroundColor: UI.gold, borderColor: UI.gold },
+  metricPillText: { color: UI.secondaryLight, fontSize: 13, fontFamily: "DMSans_700Bold" },
+  metricPillTextActive: { color: UI.fg },
 
   podium: {
     flexDirection: "row", justifyContent: "center", alignItems: "flex-end",
     gap: 8, marginBottom: 8, paddingTop: 16,
   },
   podiumItem: { alignItems: "center", width: 90, justifyContent: "flex-end" },
-  podiumName: { color: "#F1F5F9", fontSize: 12, fontFamily: "DMSans_700Bold", marginTop: 4 },
-  podiumValue: { color: "#FDE68A", fontSize: 13, fontFamily: "BebasNeue_400Regular", marginTop: 2 },
+  podiumName: { color: UI.fg, fontSize: 12, fontFamily: "DMSans_700Bold", marginTop: 4 },
+  podiumValue: { color: UI.gold3, fontSize: 13, fontFamily: "BebasNeue_400Regular", marginTop: 2 },
   podiumBar: {
     width: "100%", borderTopLeftRadius: 8, borderTopRightRadius: 8, marginTop: 6,
   },
 
   leaderboardRow: {
     flexDirection: "row", alignItems: "center", paddingVertical: 12, gap: 8,
-    borderTopWidth: 1, borderTopColor: "rgba(245,158,11,0.06)",
+    borderTopWidth: 1, borderTopColor: UI.goldAlpha6,
   },
   leaderboardRowHighlight: {
-    backgroundColor: "rgba(245,158,11,0.08)", borderRadius: 12,
+    backgroundColor: UI.dim, borderRadius: 12,
     marginHorizontal: -8, paddingHorizontal: 8,
   },
   rankBadge: { width: 32, alignItems: "center" },
-  rankText: { color: "#B45309", fontFamily: "BebasNeue_400Regular", fontSize: 16 },
-  leaderboardName: { color: "#F1F5F9", fontFamily: "DMSans_700Bold", fontSize: 14 },
-  leaderboardValue: { color: "#FDE68A", fontFamily: "BebasNeue_400Regular", fontSize: 15 },
+  rankText: { color: UI.secondaryLight, fontFamily: "BebasNeue_400Regular", fontSize: 16 },
+  leaderboardName: { color: UI.fg, fontFamily: "DMSans_700Bold", fontSize: 14 },
+  leaderboardValue: { color: UI.gold3, fontFamily: "BebasNeue_400Regular", fontSize: 15 },
 
   // Invite
   inviteCodeCard: {
-    backgroundColor: "#141A22", borderRadius: 24, padding: 24,
-    borderWidth: 2, borderColor: "rgba(245,158,11,0.18)", marginBottom: 20, alignItems: "center",
+    backgroundColor: UI.surface, borderRadius: 24, padding: 24,
+    borderWidth: 2, borderColor: UI.borderGold3, marginBottom: 20, alignItems: "center",
   },
-  inviteCodeLabel: { color: "#B45309", fontSize: 13, marginBottom: 10 },
+  inviteCodeLabel: { color: UI.secondaryLight, fontSize: 13, marginBottom: 10 },
   inviteCodeBox: {
-    backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 16,
+    backgroundColor: UI.goldAlpha10, borderRadius: 16,
     paddingHorizontal: 32, paddingVertical: 16, borderWidth: 2,
     borderColor: "rgba(245,158,11,0.28)", marginBottom: 10,
   },
-  inviteCode: { color: "#FDE68A", fontFamily: "BebasNeue_400Regular", fontSize: 28, letterSpacing: 3 },
-  inviteCodeHint: { color: "#B45309", fontSize: 12, textAlign: "center" },
+  inviteCode: { color: UI.gold3, fontFamily: "BebasNeue_400Regular", fontSize: 28, letterSpacing: 3 },
+  inviteCodeHint: { color: UI.secondaryLight, fontSize: 12, textAlign: "center" },
 
   shareBtn: {
-    backgroundColor: "#F59E0B", borderRadius: 14, paddingVertical: 16, alignItems: "center",
+    backgroundColor: UI.gold, borderRadius: 14, paddingVertical: 16, alignItems: "center",
   },
-  shareBtnText: { color: "#F1F5F9", fontFamily: "DMSans_700Bold", fontSize: 16 },
-  shareHint: { color: "#B45309", fontSize: 11, textAlign: "center", lineHeight: 16 },
+  shareBtnText: { color: UI.fg, fontFamily: "DMSans_700Bold", fontSize: 16 },
+  shareHint: { color: UI.secondaryLight, fontSize: 11, textAlign: "center", lineHeight: 16 },
 
   tierCard: {
-    backgroundColor: "#141A22", borderRadius: 16, padding: 14,
+    backgroundColor: UI.surface, borderRadius: 16, padding: 14,
     flexDirection: "row", alignItems: "center", gap: 12, marginBottom: 8,
-    borderWidth: 1, borderColor: "rgba(245,158,11,0.10)",
+    borderWidth: 1, borderColor: UI.goldAlpha10,
   },
   tierCardAchieved: { backgroundColor: "#052e16", borderColor: "rgba(16,185,129,0.20)" },
-  tierBadge: { width: 40, height: 40, borderRadius: 20, backgroundColor: "rgba(245,158,11,0.10)", alignItems: "center", justifyContent: "center" },
-  tierTitle: { color: "#F1F5F9", fontFamily: "DMSans_700Bold", fontSize: 14 },
-  tierSub: { color: "#B45309", fontSize: 12, marginTop: 2 },
+  tierBadge: { width: 40, height: 40, borderRadius: 20, backgroundColor: UI.goldAlpha10, alignItems: "center", justifyContent: "center" },
+  tierTitle: { color: UI.fg, fontFamily: "DMSans_700Bold", fontSize: 14 },
+  tierSub: { color: UI.secondaryLight, fontSize: 12, marginTop: 2 },
   tierEarned: { backgroundColor: "rgba(16,185,129,0.15)", borderRadius: 10, paddingHorizontal: 10, paddingVertical: 5 },
-  tierEarnedText: { color: "#10B981", fontFamily: "DMSans_700Bold", fontSize: 12 },
-  tierProgress: { backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 10, paddingHorizontal: 10, paddingVertical: 5 },
-  tierProgressText: { color: "#B45309", fontFamily: "DMSans_700Bold", fontSize: 12 },
+  tierEarnedText: { color: UI.emerald, fontFamily: "DMSans_700Bold", fontSize: 12 },
+  tierProgress: { backgroundColor: UI.goldAlpha10, borderRadius: 10, paddingHorizontal: 10, paddingVertical: 5 },
+  tierProgressText: { color: UI.secondaryLight, fontFamily: "DMSans_700Bold", fontSize: 12 },
 
   howItWorks: {
-    marginTop: 20, backgroundColor: "#141A22", borderRadius: 20, padding: 20,
-    borderWidth: 1, borderColor: "rgba(245,158,11,0.10)",
+    marginTop: 20, backgroundColor: UI.surface, borderRadius: 20, padding: 20,
+    borderWidth: 1, borderColor: UI.goldAlpha10,
   },
   stepRow: { flexDirection: "row", alignItems: "flex-start", gap: 12, marginBottom: 12 },
   stepBadge: {
-    width: 28, height: 28, borderRadius: 14, backgroundColor: "#F59E0B",
+    width: 28, height: 28, borderRadius: 14, backgroundColor: UI.gold,
     alignItems: "center", justifyContent: "center",
   },
-  stepNum: { color: "#F1F5F9", fontFamily: "BebasNeue_400Regular", fontSize: 13 },
+  stepNum: { color: UI.fg, fontFamily: "BebasNeue_400Regular", fontSize: 13 },
   stepText: { color: "#D1D5DB", fontSize: 13, flex: 1, lineHeight: 18, paddingTop: 4 },
 
   pendingRow: {
     flexDirection: "row", alignItems: "center", paddingVertical: 10,
-    borderBottomWidth: 1, borderBottomColor: "rgba(245,158,11,0.06)",
+    borderBottomWidth: 1, borderBottomColor: UI.goldAlpha6,
   },
-  pendingName: { color: "#F1F5F9", fontFamily: "DMSans_700Bold", fontSize: 14 },
-  pendingSent: { color: "#B45309", fontSize: 11, marginTop: 2 },
+  pendingName: { color: UI.fg, fontFamily: "DMSans_700Bold", fontSize: 14 },
+  pendingSent: { color: UI.secondaryLight, fontSize: 11, marginTop: 2 },
   statusBadge: {
-    backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 10,
+    backgroundColor: UI.goldAlpha10, borderRadius: 10,
     paddingHorizontal: 10, paddingVertical: 4,
   },
-  statusText: { color: "#B45309", fontFamily: "DMSans_700Bold", fontSize: 11 },
+  statusText: { color: UI.secondaryLight, fontFamily: "DMSans_700Bold", fontSize: 11 },
 
   inviteStats: {
     flexDirection: "row", gap: 8, marginTop: 20,
   },
   inviteStatItem: {
-    flex: 1, backgroundColor: "#141A22", borderRadius: 16, padding: 14,
-    borderWidth: 1, borderColor: "rgba(245,158,11,0.10)", alignItems: "center",
+    flex: 1, backgroundColor: UI.surface, borderRadius: 16, padding: 14,
+    borderWidth: 1, borderColor: UI.goldAlpha10, alignItems: "center",
   },
-  inviteStatValue: { color: "#FDE68A", fontFamily: "BebasNeue_400Regular", fontSize: 22 },
-  inviteStatLabel: { color: "#B45309", fontSize: 10, marginTop: 4 },
+  inviteStatValue: { color: UI.gold3, fontFamily: "BebasNeue_400Regular", fontSize: 22 },
+  inviteStatLabel: { color: UI.secondaryLight, fontSize: 10, marginTop: 4 },
 
   // Discount
   discountCard: {
-    backgroundColor: "#141A22", borderRadius: 16, padding: 14,
+    backgroundColor: UI.surface, borderRadius: 16, padding: 14,
     flexDirection: "row", alignItems: "center", gap: 12, marginBottom: 8,
     borderWidth: 1, borderColor: "rgba(16,185,129,0.15)",
   },
-  discountTitle: { color: "#F1F5F9", fontFamily: "DMSans_700Bold", fontSize: 14 },
-  discountSub: { color: "#B45309", fontSize: 11, marginTop: 2 },
+  discountTitle: { color: UI.fg, fontFamily: "DMSans_700Bold", fontSize: 14 },
+  discountSub: { color: UI.secondaryLight, fontSize: 11, marginTop: 2 },
 
   // Modal
   modalOverlay: {
     flex: 1, backgroundColor: "rgba(0,0,0,0.85)", justifyContent: "flex-end",
   },
   modalContent: {
-    backgroundColor: "#141A22", borderTopLeftRadius: 28, borderTopRightRadius: 28,
+    backgroundColor: UI.surface, borderTopLeftRadius: 28, borderTopRightRadius: 28,
     padding: 24, paddingBottom: 40, maxHeight: "85%",
   },
-  modalName: { color: "#F1F5F9", fontFamily: "BebasNeue_400Regular", fontSize: 22 },
-  modalStatus: { color: "#B45309", fontSize: 13 },
+  modalName: { color: UI.fg, fontFamily: "BebasNeue_400Regular", fontSize: 22 },
+  modalStatus: { color: UI.secondaryLight, fontSize: 13 },
   modalStatsGrid: {
     flexDirection: "row", flexWrap: "wrap", gap: 8,
   },
   modalStatItem: {
-    width: "23%", backgroundColor: "rgba(245,158,11,0.06)", borderRadius: 14,
+    width: "23%", backgroundColor: UI.goldAlpha6, borderRadius: 14,
     padding: 10, alignItems: "center",
   },
-  modalStatValue: { color: "#FDE68A", fontFamily: "BebasNeue_400Regular", fontSize: 14, marginTop: 4 },
-  modalStatLabel: { color: "#B45309", fontSize: 10, marginTop: 2 },
+  modalStatValue: { color: UI.gold3, fontFamily: "BebasNeue_400Regular", fontSize: 14, marginTop: 4 },
+  modalStatLabel: { color: UI.secondaryLight, fontSize: 10, marginTop: 2 },
   modalMilestone: {
-    marginTop: 12, backgroundColor: "rgba(245,158,11,0.08)", borderRadius: 12,
+    marginTop: 12, backgroundColor: UI.dim, borderRadius: 12,
     padding: 12, alignItems: "center",
   },
-  modalMilestoneText: { color: "#FDE68A", fontFamily: "DMSans_700Bold", fontSize: 13 },
+  modalMilestoneText: { color: UI.gold3, fontFamily: "DMSans_700Bold", fontSize: 13 },
 });

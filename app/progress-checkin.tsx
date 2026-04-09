@@ -13,6 +13,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { trpc } from "@/lib/trpc";
 import { useColors } from "@/hooks/use-colors";
 import { ScreenErrorBoundary } from "@/components/error-boundary";
+import { UI, SF } from "@/constants/ui-colors";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -209,7 +210,7 @@ export default function ProgressCheckinScreen() {
           {/* Camera option */}
           <TouchableOpacity
             onPress={() => pickImage(true)}
-            style={{ backgroundColor: "#10B981", borderRadius: 16, padding: 20, flexDirection: "row", alignItems: "center", marginBottom: 12 }}
+            style={{ backgroundColor: UI.emerald, borderRadius: 16, padding: 20, flexDirection: "row", alignItems: "center", marginBottom: 12 }}
             activeOpacity={0.85}
           >
             <View style={{ width: 48, height: 48, borderRadius: 14, backgroundColor: "rgba(255,255,255,0.2)", alignItems: "center", justifyContent: "center" }}>
@@ -276,7 +277,7 @@ export default function ProgressCheckinScreen() {
                 Current Weight (kg)
               </Text>
               <View style={{ flexDirection: "row", alignItems: "center" }}>
-                <MaterialIcons name="monitor-weight" size={22} color="#10B981" />
+                <MaterialIcons name="monitor-weight" size={22} color={UI.emerald} />
                 <TextInput
                   style={{
                     flex: 1, marginLeft: 12, fontSize: 24, fontWeight: "700", color: SF.text,
@@ -305,7 +306,7 @@ export default function ProgressCheckinScreen() {
             {/* Submit */}
             <TouchableOpacity
               onPress={submitAnalysis}
-              style={{ backgroundColor: "#10B981", borderRadius: 14, paddingVertical: 16, alignItems: "center", flexDirection: "row", justifyContent: "center", gap: 8 }}
+              style={{ backgroundColor: UI.emerald, borderRadius: 14, paddingVertical: 16, alignItems: "center", flexDirection: "row", justifyContent: "center", gap: 8 }}
               activeOpacity={0.85}
             >
               <MaterialIcons name="auto-awesome" size={20} color="#fff" />
@@ -326,7 +327,7 @@ export default function ProgressCheckinScreen() {
     return (
       <ScreenContainer>
         <View style={{ flex: 1, alignItems: "center", justifyContent: "center", padding: 40 }}>
-          <ActivityIndicator size="large" color="#10B981" />
+          <ActivityIndicator size="large" color={UI.emerald} />
           <Text style={{ fontSize: 18, fontWeight: "700", color: SF.text, marginTop: 20 }}>Analysing Your Progress</Text>
           <Text style={{ fontSize: 13, color: SF.muted, marginTop: 8, textAlign: "center" }}>
             AI is comparing your photo against your baseline and goal...
@@ -344,12 +345,12 @@ export default function ProgressCheckinScreen() {
         {analysisResult && (
           <>
             <View style={{ backgroundColor: SF.surface, borderRadius: 20, overflow: "hidden", borderWidth: 1, borderColor: SF.border, marginBottom: 20 }}>
-              <View style={{ height: 4, backgroundColor: "#10B981" }} />
+              <View style={{ height: 4, backgroundColor: UI.emerald }} />
               <View style={{ padding: 20 }}>
                 {/* Rating badge */}
                 {analysisResult.progressRating && (
                   <View style={{ alignSelf: "center", backgroundColor: "rgba(16,185,129,0.12)", paddingHorizontal: 16, paddingVertical: 6, borderRadius: 20, marginBottom: 14 }}>
-                    <Text style={{ fontSize: 13, fontWeight: "700", color: "#10B981" }}>{analysisResult.progressRating}</Text>
+                    <Text style={{ fontSize: 13, fontWeight: "700", color: UI.emerald }}>{analysisResult.progressRating}</Text>
                   </View>
                 )}
 
@@ -361,7 +362,7 @@ export default function ProgressCheckinScreen() {
                 <View style={{ flexDirection: "row", justifyContent: "center", gap: 20, marginBottom: 16 }}>
                   {analysisResult.bodyFatEstimate && (
                     <View style={{ alignItems: "center" }}>
-                      <Text style={{ fontSize: 24, fontWeight: "800", color: "#10B981" }}>{analysisResult.bodyFatEstimate}%</Text>
+                      <Text style={{ fontSize: 24, fontWeight: "800", color: UI.emerald }}>{analysisResult.bodyFatEstimate}%</Text>
                       <Text style={{ fontSize: 11, color: SF.muted }}>Est. Body Fat</Text>
                     </View>
                   )}
@@ -384,13 +385,13 @@ export default function ProgressCheckinScreen() {
                   <View style={{ marginBottom: 16 }}>
                     <View style={{ flexDirection: "row", justifyContent: "space-between", marginBottom: 4 }}>
                       <Text style={{ fontSize: 10, color: SF.muted }}>Start: {baselineBodyFat}%</Text>
-                      <Text style={{ fontSize: 10, color: "#10B981" }}>Goal: {targetBodyFat}%</Text>
+                      <Text style={{ fontSize: 10, color: UI.emerald }}>Goal: {targetBodyFat}%</Text>
                     </View>
                     <View style={{ height: 8, backgroundColor: SF.surface, borderRadius: 4, overflow: "hidden" }}>
                       <View style={{
                         height: "100%",
                         borderRadius: 4,
-                        backgroundColor: "#10B981",
+                        backgroundColor: UI.emerald,
                         width: `${Math.min(100, Math.max(5, ((baselineBodyFat - analysisResult.bodyFatEstimate) / (baselineBodyFat - targetBodyFat)) * 100))}%`,
                       }} />
                     </View>
@@ -404,7 +405,7 @@ export default function ProgressCheckinScreen() {
               <Text style={{ fontSize: 14, fontWeight: "700", color: SF.text, marginBottom: 10 }}>Observations</Text>
               {analysisResult.details.map((d, i) => (
                 <View key={i} style={{ flexDirection: "row", marginBottom: 8 }}>
-                  <MaterialIcons name="check-circle" size={16} color="#10B981" style={{ marginTop: 2 }} />
+                  <MaterialIcons name="check-circle" size={16} color={UI.emerald} style={{ marginTop: 2 }} />
                   <Text style={{ fontSize: 13, color: SF.muted, marginLeft: 8, flex: 1, lineHeight: 19 }}>{d}</Text>
                 </View>
               ))}
@@ -415,7 +416,7 @@ export default function ProgressCheckinScreen() {
               <Text style={{ fontSize: 14, fontWeight: "700", color: SF.text, marginBottom: 10 }}>Areas to Focus On</Text>
               {analysisResult.improvements.map((imp, i) => (
                 <View key={i} style={{ flexDirection: "row", marginBottom: 8 }}>
-                  <MaterialIcons name="trending-up" size={16} color="#F59E0B" style={{ marginTop: 2 }} />
+                  <MaterialIcons name="trending-up" size={16} color={UI.gold} style={{ marginTop: 2 }} />
                   <Text style={{ fontSize: 13, color: SF.muted, marginLeft: 8, flex: 1, lineHeight: 19 }}>{imp}</Text>
                 </View>
               ))}
@@ -433,7 +434,7 @@ export default function ProgressCheckinScreen() {
             {/* Actions */}
             <TouchableOpacity
               onPress={() => router.back()}
-              style={{ backgroundColor: "#10B981", borderRadius: 14, paddingVertical: 15, alignItems: "center", marginBottom: 10 }}
+              style={{ backgroundColor: UI.emerald, borderRadius: 14, paddingVertical: 15, alignItems: "center", marginBottom: 10 }}
               activeOpacity={0.85}
             >
               <Text style={{ fontSize: 15, fontWeight: "700", color: "#fff" }}>Back to Home</Text>

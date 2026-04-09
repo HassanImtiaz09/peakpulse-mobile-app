@@ -15,6 +15,7 @@
 import * as Notifications from "expo-notifications";
 import { Platform } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { UI } from "@/constants/ui-colors";
 
 // ── Storage Keys ──
 const PREFIX = "@ai_notif_";
@@ -395,7 +396,7 @@ export async function scheduleAllAINotifications(): Promise<void> {
       name: "AI Reminders",
       importance: Notifications.AndroidImportance.HIGH,
       vibrationPattern: [0, 250, 250, 250],
-      lightColor: "#F59E0B",
+      lightColor: UI.gold,
     });
   }
 

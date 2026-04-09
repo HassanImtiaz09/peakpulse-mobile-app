@@ -66,7 +66,7 @@ import { awardXP } from "@/lib/xp-engine";
 import { incrementCounter } from "@/lib/achievements";
 import { evaluateAndScheduleSmartReminders } from "@/lib/smart-reminders";
 import { GOLDEN_WORKOUT, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgrounds";
-import { UI as SF } from "@/constants/ui-colors";
+import { UI, SF } from "@/constants/ui-colors";
 import { useAiLimit } from "@/components/ai-limit-modal";
 import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
 import { getExerciseDbGifUrl } from "@/lib/exercisedb-api";
@@ -148,7 +148,7 @@ function ExerciseDemoVideo({
                   <View
                     key={m}
                     style={{
-                      backgroundColor: "rgba(245,158,11,0.12)",
+                      backgroundColor: UI.goldAlpha12,
                       borderRadius: 4,
                       paddingHorizontal: 5,
                       paddingVertical: 1,
@@ -178,13 +178,13 @@ function ExerciseDemoVideo({
               borderRadius: 8,
               alignItems: "center",
               justifyContent: "center",
-              backgroundColor: "rgba(245,158,11,0.08)",
+              backgroundColor: UI.dim,
             }}
           >
             <MaterialIcons
               name={favorited ? "favorite" : "favorite-border"}
               size={16}
-              color={favorited ? "#EF4444" : SF.muted}
+              color={favorited ? UI.red : SF.muted}
             />
           </TouchableOpacity>
           {exerciseInfo && exerciseInfo.angleViews.length > 0 && (
@@ -196,7 +196,7 @@ function ExerciseDemoVideo({
                 borderRadius: 8,
                 alignItems: "center",
                 justifyContent: "center",
-                backgroundColor: showEnhanced ? SF.gold : "rgba(245,158,11,0.08)",
+                backgroundColor: showEnhanced ? SF.gold : UI.dim,
               }}
             >
               <MaterialIcons
@@ -316,7 +316,7 @@ function FullscreenTimerModal({
           </View>
           <View
             style={{
-              backgroundColor: "rgba(245,158,11,0.10)",
+              backgroundColor: UI.goldAlpha10,
               borderRadius: 10,
               paddingHorizontal: 10,
               paddingVertical: 5,
@@ -495,7 +495,7 @@ function FullscreenTimerModal({
               <View
                 style={{
                   marginTop: 10,
-                  backgroundColor: "rgba(245,158,11,0.06)",
+                  backgroundColor: UI.goldAlpha6,
                   borderRadius: 10,
                   padding: 10,
                 }}
@@ -1041,7 +1041,7 @@ export default function ActiveWorkoutScreen() {
             width: 36,
             height: 36,
             borderRadius: 12,
-            backgroundColor: focusModePreference ? "rgba(245,158,11,0.15)" : SF.surface,
+            backgroundColor: focusModePreference ? UI.borderGold : SF.surface,
             alignItems: "center",
             justifyContent: "center",
             borderWidth: 1,
@@ -1056,7 +1056,7 @@ export default function ActiveWorkoutScreen() {
         </TouchableOpacity>
         <View
           style={{
-            backgroundColor: "rgba(245,158,11,0.10)",
+            backgroundColor: UI.goldAlpha10,
             borderRadius: 12,
             paddingHorizontal: 12,
             paddingVertical: 6,
@@ -1116,7 +1116,7 @@ export default function ActiveWorkoutScreen() {
                 if (restRef.current) clearInterval(restRef.current);
                 if (Platform.OS !== "web") Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
               }}
-              style={{ backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 8, paddingHorizontal: 12, paddingVertical: 4 }}
+              style={{ backgroundColor: UI.goldAlpha10, borderRadius: 8, paddingHorizontal: 12, paddingVertical: 4 }}
             >
               <Text style={{ color: SF.gold, fontFamily: "DMSans_700Bold", fontSize: 12 }}>Skip</Text>
             </TouchableOpacity>
@@ -1132,8 +1132,8 @@ export default function ActiveWorkoutScreen() {
               {formatTime(restTimer)}
             </Text>
             {/* Progress bar */}
-            <View style={{ width: "100%", height: 4, backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 2, marginTop: 4 }}>
-              <View style={{ height: 4, backgroundColor: restTimer <= 5 ? "#EF4444" : SF.gold, borderRadius: 2, width: `${Math.max(0, (restTimer / (getRestTimeForExercise(exercise?.name ?? "", restSettings) || 60)) * 100)}%` }} />
+            <View style={{ width: "100%", height: 4, backgroundColor: UI.goldAlpha10, borderRadius: 2, marginTop: 4 }}>
+              <View style={{ height: 4, backgroundColor: restTimer <= 5 ? UI.red : SF.gold, borderRadius: 2, width: `${Math.max(0, (restTimer / (getRestTimeForExercise(exercise?.name ?? "", restSettings) || 60)) * 100)}%` }} />
             </View>
           </View>
           <View style={{ flexDirection: "row", justifyContent: "center", gap: 12 }}>
@@ -1142,7 +1142,7 @@ export default function ActiveWorkoutScreen() {
                 setRestTimer((prev) => Math.max(1, (prev ?? 0) - 15));
                 if (Platform.OS !== "web") Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
               }}
-              style={{ backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 10, paddingHorizontal: 14, paddingVertical: 6 }}
+              style={{ backgroundColor: UI.goldAlpha10, borderRadius: 10, paddingHorizontal: 14, paddingVertical: 6 }}
             >
               <Text style={{ color: SF.gold, fontFamily: "DMSans_700Bold", fontSize: 13 }}>-15s</Text>
             </TouchableOpacity>
@@ -1151,7 +1151,7 @@ export default function ActiveWorkoutScreen() {
                 setRestTimer((prev) => (prev ?? 0) + 15);
                 if (Platform.OS !== "web") Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
               }}
-              style={{ backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 10, paddingHorizontal: 14, paddingVertical: 6 }}
+              style={{ backgroundColor: UI.goldAlpha10, borderRadius: 10, paddingHorizontal: 14, paddingVertical: 6 }}
             >
               <Text style={{ color: SF.gold, fontFamily: "DMSans_700Bold", fontSize: 13 }}>+15s</Text>
             </TouchableOpacity>
@@ -1178,7 +1178,7 @@ export default function ActiveWorkoutScreen() {
         <View
           style={{
             height: 4,
-            backgroundColor: "rgba(245,158,11,0.10)",
+            backgroundColor: UI.goldAlpha10,
             borderRadius: 2,
           }}
         >
@@ -1270,11 +1270,11 @@ export default function ActiveWorkoutScreen() {
                       return (
                         <View
                           style={{
-                            backgroundColor: "rgba(245,158,11,0.04)",
+                            backgroundColor: UI.goldAlpha4,
                             borderRadius: 12,
                             padding: 4,
                             borderWidth: 1,
-                            borderColor: "rgba(245,158,11,0.1)",
+                            borderColor: UI.goldAlpha10,
                           }}
                         >
                           <BodyDiagramInline
@@ -1324,12 +1324,12 @@ export default function ActiveWorkoutScreen() {
                       flexDirection: "row",
                       alignItems: "center",
                       gap: 3,
-                      backgroundColor: "rgba(245,158,11,0.08)",
+                      backgroundColor: UI.dim,
                       paddingHorizontal: 8,
                       paddingVertical: 4,
                       borderRadius: 8,
                       borderWidth: 1,
-                      borderColor: "rgba(245,158,11,0.15)",
+                      borderColor: UI.borderGold,
                     }}
                   >
                     <MaterialIcons
@@ -1353,7 +1353,7 @@ export default function ActiveWorkoutScreen() {
               {exercise.notes && (
                 <View
                   style={{
-                    backgroundColor: "rgba(245,158,11,0.06)",
+                    backgroundColor: UI.goldAlpha6,
                     borderRadius: 10,
                     padding: 10,
                   }}
@@ -1498,7 +1498,7 @@ export default function ActiveWorkoutScreen() {
                           gap: 10,
                           paddingVertical: 8,
                           borderTopWidth: 1,
-                          borderTopColor: "rgba(245,158,11,0.08)",
+                          borderTopColor: UI.dim,
                         }}
                       >
                         <View
@@ -1627,7 +1627,7 @@ export default function ActiveWorkoutScreen() {
                       height: 28,
                       borderRadius: 8,
                       backgroundColor: log.completed
-                        ? "rgba(245,158,11,0.10)"
+                        ? UI.goldAlpha10
                         : SF.surface,
                       alignItems: "center",
                       justifyContent: "center",
@@ -1654,7 +1654,7 @@ export default function ActiveWorkoutScreen() {
                     editable={!log.completed}
                     style={{
                       flex: 1,
-                      backgroundColor: "#141A22",
+                      backgroundColor: UI.surface,
                       borderRadius: 8,
                       paddingHorizontal: 10,
                       paddingVertical: 6,
@@ -1676,7 +1676,7 @@ export default function ActiveWorkoutScreen() {
                     editable={!log.completed}
                     style={{
                       flex: 1,
-                      backgroundColor: "#141A22",
+                      backgroundColor: UI.surface,
                       borderRadius: 8,
                       paddingHorizontal: 10,
                       paddingVertical: 6,
@@ -1694,7 +1694,7 @@ export default function ActiveWorkoutScreen() {
                       borderRadius: 8,
                       backgroundColor: log.completed
                         ? SF.gold2
-                        : "rgba(245,158,11,0.10)",
+                        : UI.goldAlpha10,
                       alignItems: "center",
                       justifyContent: "center",
                     }}
@@ -1733,7 +1733,7 @@ export default function ActiveWorkoutScreen() {
                 style={{
                   flex: 1,
                   backgroundColor: isAdvancedOrTrial
-                    ? "rgba(245,158,11,0.12)"
+                    ? UI.goldAlpha12
                     : SF.surface,
                   borderRadius: 14,
                   paddingVertical: 12,
@@ -1769,7 +1769,7 @@ export default function ActiveWorkoutScreen() {
                 style={{
                   flex: 1,
                   backgroundColor: isAdvancedOrTrial
-                    ? "rgba(245,158,11,0.12)"
+                    ? UI.goldAlpha12
                     : SF.surface,
                   borderRadius: 14,
                   paddingVertical: 12,

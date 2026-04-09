@@ -17,7 +17,7 @@ import {
   getOfflineCacheStatus, clearOfflineCache, preCacheAllCuesAndDemos,
   type OfflineCacheStatus,
 } from "@/lib/offline-workout-cache";
-import { C } from "@/constants/ui-colors";
+import { UI, C } from "@/constants/ui-colors";
 import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
 
 export default function OfflineCacheScreen() {
@@ -305,7 +305,7 @@ const s = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 10,
-    backgroundColor: "rgba(245,158,11,0.10)",
+    backgroundColor: UI.goldAlpha10,
     alignItems: "center",
     justifyContent: "center",
     marginTop: 2,

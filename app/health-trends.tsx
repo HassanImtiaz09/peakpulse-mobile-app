@@ -18,6 +18,7 @@ import {
 } from "@/lib/health-report-generator";
 import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
 import { ScreenErrorBoundary } from "@/components/error-boundary";
+import { UI } from "@/constants/ui-colors";
 
 const DASHBOARD_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/PZcnawJwIZkQHTEM.jpg";
 
@@ -39,7 +40,7 @@ const METRICS: MetricConfig[] = [
     key: "steps",
     label: "Steps",
     unit: "steps",
-    color: "#22C55E",
+    color: UI.green,
     icon: "directions-walk",
     decimals: 0,
     formatValue: (v) => v >= 1000 ? `${(v / 1000).toFixed(1)}k` : `${v}`,
@@ -48,7 +49,7 @@ const METRICS: MetricConfig[] = [
     key: "heartRate",
     label: "Heart Rate",
     unit: "bpm",
-    color: "#EF4444",
+    color: UI.red,
     icon: "favorite",
     decimals: 0,
     formatValue: (v) => `${Math.round(v)}`,
@@ -57,7 +58,7 @@ const METRICS: MetricConfig[] = [
     key: "activeCalories",
     label: "Calories Burnt",
     unit: "kcal",
-    color: "#F59E0B",
+    color: UI.gold,
     icon: "local-fire-department",
     decimals: 0,
     formatValue: (v) => `${Math.round(v)}`,
@@ -84,7 +85,7 @@ const METRICS: MetricConfig[] = [
     key: "hrv",
     label: "HRV",
     unit: "ms",
-    color: "#F472B6",
+    color: UI.rose,
     icon: "monitor-heart",
     decimals: 0,
     formatValue: (v) => `${Math.round(v)}`,
@@ -176,14 +177,14 @@ function HealthChart({ data, metricKey, color, formatValue, decimals }: ChartPro
             y1={gl.y}
             x2={CHART_PADDING.left + chartWidth}
             y2={gl.y}
-            stroke="rgba(245,158,11,0.08)"
+            stroke={UI.dim}
             strokeWidth={1}
           />
           <SvgText
             x={CHART_PADDING.left - 6}
             y={gl.y + 4}
             fontSize={9}
-            fill="#B45309"
+            fill={UI.secondaryLight}
             textAnchor="end"
           >
             {gl.label}
@@ -199,7 +200,7 @@ function HealthChart({ data, metricKey, color, formatValue, decimals }: ChartPro
 
       {/* Data points */}
       {points.map((p, i) => (
-        <Circle key={i} cx={p.x} cy={p.y} r={3} fill={color} stroke="#0A0E14" strokeWidth={1.5} />
+        <Circle key={i} cx={p.x} cy={p.y} r={3} fill={color} stroke={UI.bg} strokeWidth={1.5} />
       ))}
 
       {/* X-axis labels */}
@@ -209,7 +210,7 @@ function HealthChart({ data, metricKey, color, formatValue, decimals }: ChartPro
           x={xl.x}
           y={CHART_PADDING.top + chartHeight + 18}
           fontSize={9}
-          fill="#B45309"
+          fill={UI.secondaryLight}
           textAnchor="middle"
         >
           {xl.label}
@@ -245,7 +246,7 @@ function StatSummary({
   if (values.length === 0) {
     return (
       <View style={{ flexDirection: "row", justifyContent: "space-around", marginTop: 8 }}>
-        <Text style={{ color: "#B45309", fontSize: 12 }}>No data available</Text>
+        <Text style={{ color: UI.secondaryLight, fontSize: 12 }}>No data available</Text>
       </View>
     );
   }
@@ -267,30 +268,30 @@ function StatSummary({
         <Text style={{ color: config.color, fontFamily: "DMSans_700Bold", fontSize: 16 }}>
           {config.formatValue(avg)}
         </Text>
-        <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 9 }}>Average</Text>
+        <Text style={{ color: UI.secondaryLight, fontFamily: "DMSans_400Regular", fontSize: 9 }}>Average</Text>
       </View>
       <View style={{ alignItems: "center", flex: 1 }}>
-        <Text style={{ color: "#22C55E", fontFamily: "DMSans_700Bold", fontSize: 16 }}>
+        <Text style={{ color: UI.green, fontFamily: "DMSans_700Bold", fontSize: 16 }}>
           {config.formatValue(max)}
         </Text>
-        <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 9 }}>Best</Text>
+        <Text style={{ color: UI.secondaryLight, fontFamily: "DMSans_400Regular", fontSize: 9 }}>Best</Text>
       </View>
       <View style={{ alignItems: "center", flex: 1 }}>
-        <Text style={{ color: "#F59E0B", fontFamily: "DMSans_700Bold", fontSize: 16 }}>
+        <Text style={{ color: UI.gold, fontFamily: "DMSans_700Bold", fontSize: 16 }}>
           {config.formatValue(min)}
         </Text>
-        <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 9 }}>Lowest</Text>
+        <Text style={{ color: UI.secondaryLight, fontFamily: "DMSans_400Regular", fontSize: 9 }}>Lowest</Text>
       </View>
       <View style={{ alignItems: "center", flex: 1 }}>
         <View style={{ flexDirection: "row", alignItems: "center", gap: 2 }}>
           <MaterialIcons
             name={trendUp ? "trending-up" : trendDown ? "trending-down" : "trending-flat"}
             size={14}
-            color={trendUp ? "#22C55E" : trendDown ? "#EF4444" : "#B45309"}
+            color={trendUp ? UI.green : trendDown ? UI.red : UI.secondaryLight}
           />
           <Text
             style={{
-              color: trendUp ? "#22C55E" : trendDown ? "#EF4444" : "#B45309",
+              color: trendUp ? UI.green : trendDown ? UI.red : UI.secondaryLight,
               fontFamily: "DMSans_700Bold",
               fontSize: 14,
             }}
@@ -298,7 +299,7 @@ function StatSummary({
             {Math.abs(trendPct).toFixed(0)}%
           </Text>
         </View>
-        <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 9 }}>Trend</Text>
+        <Text style={{ color: UI.secondaryLight, fontFamily: "DMSans_400Regular", fontSize: 9 }}>Trend</Text>
       </View>
     </View>
   );
@@ -379,7 +380,7 @@ export default function HealthTrendsScreen() {
 
   return (
     <ScreenErrorBoundary screenName="health-trends">
-    <View style={{ flex: 1, backgroundColor: "#0A0E14" }}>
+    <View style={{ flex: 1, backgroundColor: UI.bg }}>
       {/* Hero Header */}
       <ImageBackground source={{ uri: DASHBOARD_BG }} style={{ height: 150 }} resizeMode="cover">
         <View style={{ flex: 1, backgroundColor: "rgba(8,8,16,0.72)", justifyContent: "flex-end", padding: 20, paddingTop: 52 }}>
@@ -389,31 +390,31 @@ export default function HealthTrendsScreen() {
               backgroundColor: "rgba(255,255,255,0.1)", alignItems: "center", justifyContent: "center",
             }}
             onPress={() => router.back()} {...a11yButton(A11Y_LABELS.backButton)}>
-            <Text style={{ color: "#F1F5F9", fontSize: 18 }}>←</Text>
+            <Text style={{ color: UI.fg, fontSize: 18 }}>←</Text>
           </TouchableOpacity>
-          <Text style={{ color: "#FBBF24", fontFamily: "DMSans_700Bold", fontSize: 12, letterSpacing: 1 }}>ANALYTICS</Text>
-          <Text style={{ color: "#F1F5F9", fontFamily: "BebasNeue_400Regular", fontSize: 26, letterSpacing: -0.5 }}>Health Trends</Text>
+          <Text style={{ color: UI.gold2, fontFamily: "DMSans_700Bold", fontSize: 12, letterSpacing: 1 }}>ANALYTICS</Text>
+          <Text style={{ color: UI.fg, fontFamily: "BebasNeue_400Regular", fontSize: 26, letterSpacing: -0.5 }}>Health Trends</Text>
         </View>
       </ImageBackground>
 
       <ScrollView contentContainerStyle={{ padding: 20, paddingBottom: 40 }} showsVerticalScrollIndicator={false}>
         {/* Period Selector */}
         <View style={{
-          flexDirection: "row", backgroundColor: "#141A22", borderRadius: 14, padding: 4,
-          marginBottom: 16, borderWidth: 1, borderColor: "rgba(245,158,11,0.15)",
+          flexDirection: "row", backgroundColor: UI.surface, borderRadius: 14, padding: 4,
+          marginBottom: 16, borderWidth: 1, borderColor: UI.borderGold,
         }}>
           {([7, 30] as const).map((p) => (
             <TouchableOpacity
               key={p}
               style={{
                 flex: 1, paddingVertical: 10, borderRadius: 10, alignItems: "center",
-                backgroundColor: period === p ? "#F59E0B" : "transparent",
+                backgroundColor: period === p ? UI.gold : "transparent",
               }}
               onPress={() => setPeriod(p)}
             >
               <Text
                 style={{
-                  color: period === p ? "#0A0E14" : "#B45309",
+                  color: period === p ? UI.bg : UI.secondaryLight,
                   fontFamily: "DMSans_700Bold",
                   fontSize: 14,
                 }}
@@ -442,16 +443,16 @@ export default function HealthTrendsScreen() {
                   paddingHorizontal: 14,
                   paddingVertical: 8,
                   borderRadius: 12,
-                  backgroundColor: isActive ? m.color + "20" : "#141A22",
+                  backgroundColor: isActive ? m.color + "20" : UI.surface,
                   borderWidth: 1,
-                  borderColor: isActive ? m.color + "50" : "rgba(245,158,11,0.10)",
+                  borderColor: isActive ? m.color + "50" : UI.goldAlpha10,
                 }}
                 onPress={() => setSelectedMetric(m.key)}
               >
-                <MaterialIcons name={m.icon as any} size={16} color={isActive ? m.color : "#B45309"} />
+                <MaterialIcons name={m.icon as any} size={16} color={isActive ? m.color : UI.secondaryLight} />
                 <Text
                   style={{
-                    color: isActive ? m.color : "#B45309",
+                    color: isActive ? m.color : UI.secondaryLight,
                     fontFamily: isActive ? "DMSans_700Bold" : "DMSans_500Medium",
                     fontSize: 12,
                   }}
@@ -465,7 +466,7 @@ export default function HealthTrendsScreen() {
 
         {/* Chart Card */}
         <View style={{
-          backgroundColor: "#141A22",
+          backgroundColor: UI.surface,
           borderRadius: 20,
           padding: 16,
           marginBottom: 16,
@@ -475,11 +476,11 @@ export default function HealthTrendsScreen() {
           {/* Chart Header */}
           <View style={{ flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 4 }}>
             <MaterialIcons name={currentConfig.icon as any} size={20} color={currentConfig.color} />
-            <Text style={{ color: "#F1F5F9", fontFamily: "DMSans_700Bold", fontSize: 16 }}>
+            <Text style={{ color: UI.fg, fontFamily: "DMSans_700Bold", fontSize: 16 }}>
               {currentConfig.label}
             </Text>
             <View style={{ flex: 1 }} />
-            <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 11 }}>
+            <Text style={{ color: UI.secondaryLight, fontFamily: "DMSans_400Regular", fontSize: 11 }}>
               {period === 7 ? "Past 7 Days" : "Past 30 Days"}
             </Text>
           </View>
@@ -488,7 +489,7 @@ export default function HealthTrendsScreen() {
           {loading ? (
             <View style={{ height: 200, alignItems: "center", justifyContent: "center" }}>
               <ActivityIndicator color={currentConfig.color} size="large" />
-              <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 12, marginTop: 8 }}>
+              <Text style={{ color: UI.secondaryLight, fontFamily: "DMSans_400Regular", fontSize: 12, marginTop: 8 }}>
                 Loading health data...
               </Text>
             </View>
@@ -505,11 +506,11 @@ export default function HealthTrendsScreen() {
             </>
           ) : (
             <View style={{ height: 200, alignItems: "center", justifyContent: "center" }}>
-              <MaterialIcons name="show-chart" size={40} color="#B45309" />
-              <Text style={{ color: "#B45309", fontFamily: "DMSans_500Medium", fontSize: 14, marginTop: 8 }}>
+              <MaterialIcons name="show-chart" size={40} color={UI.secondaryLight} />
+              <Text style={{ color: UI.secondaryLight, fontFamily: "DMSans_500Medium", fontSize: 14, marginTop: 8 }}>
                 No data available
               </Text>
-              <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 12, marginTop: 4, textAlign: "center" }}>
+              <Text style={{ color: UI.secondaryLight, fontFamily: "DMSans_400Regular", fontSize: 12, marginTop: 4, textAlign: "center" }}>
                 Connect a wearable or health platform to see your trends.
               </Text>
             </View>
@@ -519,8 +520,8 @@ export default function HealthTrendsScreen() {
         {/* All Metrics Overview */}
         <View style={{ marginBottom: 12 }}>
           <View style={{ flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 12 }}>
-            <View style={{ width: 3, height: 16, backgroundColor: "#F59E0B", borderRadius: 2 }} />
-            <Text style={{ color: "#F1F5F9", fontFamily: "DMSans_700Bold", fontSize: 15 }}>
+            <View style={{ width: 3, height: 16, backgroundColor: UI.gold, borderRadius: 2 }} />
+            <Text style={{ color: UI.fg, fontFamily: "DMSans_700Bold", fontSize: 15 }}>
               {period === 7 ? "7-Day" : "30-Day"} Summary
             </Text>
           </View>
@@ -544,29 +545,29 @@ export default function HealthTrendsScreen() {
                 key={m.key}
                 style={{
                   width: "47%",
-                  backgroundColor: selectedMetric === m.key ? m.color + "12" : "#141A22",
+                  backgroundColor: selectedMetric === m.key ? m.color + "12" : UI.surface,
                   borderRadius: 16,
                   padding: 14,
                   borderWidth: 1,
-                  borderColor: selectedMetric === m.key ? m.color + "40" : "rgba(245,158,11,0.10)",
+                  borderColor: selectedMetric === m.key ? m.color + "40" : UI.goldAlpha10,
                 }}
                 onPress={() => setSelectedMetric(m.key)}
               >
                 <View style={{ flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 8 }}>
                   <MaterialIcons name={m.icon as any} size={16} color={m.color} />
-                  <Text style={{ color: "#B45309", fontFamily: "DMSans_600SemiBold", fontSize: 11 }}>{m.label}</Text>
+                  <Text style={{ color: UI.secondaryLight, fontFamily: "DMSans_600SemiBold", fontSize: 11 }}>{m.label}</Text>
                 </View>
                 <Text style={{ color: m.color, fontFamily: "DMSans_700Bold", fontSize: 22 }}>
                   {m.formatValue(todayNum)}
                 </Text>
-                <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 10 }}>
+                <Text style={{ color: UI.secondaryLight, fontFamily: "DMSans_400Regular", fontSize: 10 }}>
                   Today
                 </Text>
-                <View style={{ height: 1, backgroundColor: "rgba(245,158,11,0.08)", marginVertical: 8 }} />
-                <Text style={{ color: "#B45309", fontFamily: "DMSans_700Bold", fontSize: 14 }}>
+                <View style={{ height: 1, backgroundColor: UI.dim, marginVertical: 8 }} />
+                <Text style={{ color: UI.secondaryLight, fontFamily: "DMSans_700Bold", fontSize: 14 }}>
                   {m.formatValue(avg)}
                 </Text>
-                <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 10 }}>
+                <Text style={{ color: UI.secondaryLight, fontFamily: "DMSans_400Regular", fontSize: 10 }}>
                   {period}-Day Avg
                 </Text>
               </TouchableOpacity>
@@ -576,14 +577,14 @@ export default function HealthTrendsScreen() {
 
         {/* Data Source Info */}
         <View style={{
-          backgroundColor: "#141A22", borderRadius: 16, padding: 16, marginTop: 16,
-          borderWidth: 1, borderColor: "rgba(245,158,11,0.10)",
+          backgroundColor: UI.surface, borderRadius: 16, padding: 16, marginTop: 16,
+          borderWidth: 1, borderColor: UI.goldAlpha10,
         }}>
           <View style={{ flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 8 }}>
-            <MaterialIcons name="info-outline" size={18} color="#F59E0B" />
-            <Text style={{ color: "#F1F5F9", fontFamily: "DMSans_700Bold", fontSize: 14 }}>Data Source</Text>
+            <MaterialIcons name="info-outline" size={18} color={UI.gold} />
+            <Text style={{ color: UI.fg, fontFamily: "DMSans_700Bold", fontSize: 14 }}>Data Source</Text>
           </View>
-          <Text style={{ color: "#B45309", fontSize: 12, lineHeight: 18 }}>
+          <Text style={{ color: UI.secondaryLight, fontSize: 12, lineHeight: 18 }}>
             {stats.dataSource === "healthkit"
               ? "Data is sourced from Apple HealthKit. Trends include all data written by your wearable devices."
               : stats.dataSource === "healthconnect"
@@ -592,12 +593,12 @@ export default function HealthTrendsScreen() {
           </Text>
           <TouchableOpacity
             style={{
-              marginTop: 12, backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 12,
+              marginTop: 12, backgroundColor: UI.goldAlpha10, borderRadius: 12,
               paddingVertical: 10, alignItems: "center",
             }}
             onPress={() => router.push("/wearable-sync" as any)}
           >
-            <Text style={{ color: "#F59E0B", fontFamily: "DMSans_600SemiBold", fontSize: 13 }}>
+            <Text style={{ color: UI.gold, fontFamily: "DMSans_600SemiBold", fontSize: 13 }}>
               Manage Wearable Connections
             </Text>
           </TouchableOpacity>
@@ -605,28 +606,28 @@ export default function HealthTrendsScreen() {
 
         {/* ═══ Export Health Report ═══ */}
         <View style={{
-          backgroundColor: "#141A22", borderRadius: 16, padding: 16, marginTop: 16,
-          borderWidth: 1, borderColor: "rgba(245,158,11,0.20)",
+          backgroundColor: UI.surface, borderRadius: 16, padding: 16, marginTop: 16,
+          borderWidth: 1, borderColor: UI.goldAlpha20,
         }}>
           <TouchableOpacity
             onPress={() => setShowReportConfig(!showReportConfig)}
             style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}
           >
             <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-              <MaterialIcons name="picture-as-pdf" size={18} color="#F59E0B" />
-              <Text style={{ color: "#F1F5F9", fontFamily: "DMSans_700Bold", fontSize: 14 }}>Export Health Report</Text>
+              <MaterialIcons name="picture-as-pdf" size={18} color={UI.gold} />
+              <Text style={{ color: UI.fg, fontFamily: "DMSans_700Bold", fontSize: 14 }}>Export Health Report</Text>
             </View>
-            <MaterialIcons name={showReportConfig ? "expand-less" : "expand-more"} size={20} color="#B45309" />
+            <MaterialIcons name={showReportConfig ? "expand-less" : "expand-more"} size={20} color={UI.secondaryLight} />
           </TouchableOpacity>
 
-          <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 12, marginTop: 8, marginBottom: showReportConfig ? 14 : 0, lineHeight: 18 }}>
+          <Text style={{ color: UI.secondaryLight, fontFamily: "DMSans_400Regular", fontSize: 12, marginTop: 8, marginBottom: showReportConfig ? 14 : 0, lineHeight: 18 }}>
             Generate a customised PDF report to share with your trainer, physio, or doctor.
           </Text>
 
           {showReportConfig && (
             <View>
               {/* Metric Selection */}
-              <Text style={{ color: "#FDE68A", fontFamily: "DMSans_600SemiBold", fontSize: 12, marginBottom: 8 }}>
+              <Text style={{ color: UI.gold3, fontFamily: "DMSans_600SemiBold", fontSize: 12, marginBottom: 8 }}>
                 Select Metrics to Include
               </Text>
               <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 6, marginBottom: 14 }}>
@@ -639,13 +640,13 @@ export default function HealthTrendsScreen() {
                       style={{
                         flexDirection: "row", alignItems: "center", gap: 4,
                         paddingHorizontal: 10, paddingVertical: 7, borderRadius: 8,
-                        backgroundColor: active ? "#F59E0B20" : "rgba(245,158,11,0.06)",
-                        borderWidth: 1, borderColor: active ? "#F59E0B60" : "rgba(245,158,11,0.10)",
+                        backgroundColor: active ? "#F59E0B20" : UI.goldAlpha6,
+                        borderWidth: 1, borderColor: active ? "#F59E0B60" : UI.goldAlpha10,
                       }}
                     >
-                      <MaterialIcons name={active ? "check-box" : "check-box-outline-blank"} size={14} color={active ? "#F59E0B" : "#B45309"} />
+                      <MaterialIcons name={active ? "check-box" : "check-box-outline-blank"} size={14} color={active ? UI.gold : UI.secondaryLight} />
                       <Text style={{
-                        color: active ? "#FDE68A" : "#B45309",
+                        color: active ? UI.gold3 : UI.secondaryLight,
                         fontFamily: active ? "DMSans_600SemiBold" : "DMSans_400Regular", fontSize: 11,
                       }}>
                         {m.label}
@@ -656,7 +657,7 @@ export default function HealthTrendsScreen() {
               </View>
 
               {/* Personal Notes */}
-              <Text style={{ color: "#FDE68A", fontFamily: "DMSans_600SemiBold", fontSize: 12, marginBottom: 8 }}>
+              <Text style={{ color: UI.gold3, fontFamily: "DMSans_600SemiBold", fontSize: 12, marginBottom: 8 }}>
                 Notes for Healthcare Provider
               </Text>
               <TextInput
@@ -668,13 +669,13 @@ export default function HealthTrendsScreen() {
                 numberOfLines={4}
                 textAlignVertical="top"
                 style={{
-                  backgroundColor: "#0A0E14", borderRadius: 10, padding: 12,
-                  color: "#FDE68A", fontFamily: "DMSans_400Regular", fontSize: 12,
-                  borderWidth: 1, borderColor: "rgba(245,158,11,0.15)",
+                  backgroundColor: UI.bg, borderRadius: 10, padding: 12,
+                  color: UI.gold3, fontFamily: "DMSans_400Regular", fontSize: 12,
+                  borderWidth: 1, borderColor: UI.borderGold,
                   minHeight: 80, lineHeight: 18,
                 }}
               />
-              <Text style={{ color: "#B45309", fontFamily: "DMSans_400Regular", fontSize: 10, marginTop: 4, marginBottom: 14 }}>
+              <Text style={{ color: UI.secondaryLight, fontFamily: "DMSans_400Regular", fontSize: 10, marginTop: 4, marginBottom: 14 }}>
                 These notes will appear at the top of your PDF report.
               </Text>
             </View>
@@ -684,7 +685,7 @@ export default function HealthTrendsScreen() {
           <View style={{ flexDirection: "row", gap: 10, marginTop: showReportConfig ? 0 : 12 }}>
             <TouchableOpacity
               style={{
-                flex: 1, backgroundColor: "#F59E0B", borderRadius: 12,
+                flex: 1, backgroundColor: UI.gold, borderRadius: 12,
                 paddingVertical: 12, alignItems: "center", flexDirection: "row",
                 justifyContent: "center", gap: 6, opacity: exporting ? 0.6 : 1,
               }}
@@ -692,24 +693,24 @@ export default function HealthTrendsScreen() {
               onPress={() => handleExport("share")}
             >
               {exporting ? (
-                <ActivityIndicator color="#0A0E14" size="small" />
+                <ActivityIndicator color={UI.bg} size="small" />
               ) : (
-                <MaterialIcons name="share" size={16} color="#0A0E14" />
+                <MaterialIcons name="share" size={16} color={UI.bg} />
               )}
-              <Text style={{ color: "#0A0E14", fontFamily: "DMSans_700Bold", fontSize: 13 }}>
+              <Text style={{ color: UI.bg, fontFamily: "DMSans_700Bold", fontSize: 13 }}>
                 {exporting ? "Generating..." : `Share ${period}-Day Report`}
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={{
-                backgroundColor: "rgba(245,158,11,0.10)", borderRadius: 12,
+                backgroundColor: UI.goldAlpha10, borderRadius: 12,
                 paddingVertical: 12, paddingHorizontal: 16, alignItems: "center",
-                justifyContent: "center", borderWidth: 1, borderColor: "rgba(245,158,11,0.20)",
+                justifyContent: "center", borderWidth: 1, borderColor: UI.goldAlpha20,
               }}
               disabled={exporting}
               onPress={() => handleExport("print")}
             >
-              <MaterialIcons name="print" size={18} color="#F59E0B" />
+              <MaterialIcons name="print" size={18} color={UI.gold} />
             </TouchableOpacity>
           </View>
         </View>
