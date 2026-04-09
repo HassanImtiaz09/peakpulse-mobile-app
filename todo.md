@@ -3388,3 +3388,16 @@
 - [x] Already wired: ThemeProvider respects manual override
 - [x] Enhanced: Added visual theme preview strip with mini mockups of light/dark modes
 - [x] Write unit tests for theme resolution logic
+
+## Round 97 Step 19: Visual Weekly Progress Report
+- [x] Create lib/weekly-progress-report.ts with data aggregation from all sources
+- [x] Aggregate weekly weight lifted from workout analytics
+- [x] Aggregate weekly calories/macros from calorie context
+- [x] Aggregate body measurement changes from scan data
+- [x] Include streak stats and XP earned this week
+- [x] Create app/weekly-report.tsx visual report screen with summary cards
+- [x] Display week-over-week comparison with trend arrows
+- [x] Add visual progress bars and mini charts for each metric
+- [x] Add navigation entry point from Home tab (Weekly Report button)
+- [x] Add social sharing via native share sheet
+- [x] Write unit tests for report data aggregation logic (46 tests)

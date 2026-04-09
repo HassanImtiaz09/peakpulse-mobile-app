@@ -1092,6 +1092,36 @@ function HomeScreenContent() {
               />
             </View>
           </StaggeredCard>
+          {/* ── Weekly Report Button ── */}
+          <StaggeredCard index={4}>
+            <TouchableOpacity
+              onPress={() => router.push("/weekly-report" as any)}
+              activeOpacity={0.8}
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-between",
+                backgroundColor: "#141A22",
+                borderRadius: 16,
+                padding: 16,
+                borderWidth: 1,
+                borderColor: "rgba(245,158,11,0.25)",
+                marginHorizontal: 20,
+                marginBottom: 8,
+              }}
+            >
+              <View style={{ flexDirection: "row", alignItems: "center", gap: 12 }}>
+                <View style={{ width: 40, height: 40, borderRadius: 12, backgroundColor: "rgba(245,158,11,0.12)", alignItems: "center", justifyContent: "center" }}>
+                  <MaterialIcons name="assessment" size={22} color="#F59E0B" />
+                </View>
+                <View>
+                  <Text style={{ fontSize: 15, fontWeight: "700", color: "#F1F5F9" }}>Weekly Report</Text>
+                  <Text style={{ fontSize: 12, color: "#64748B", marginTop: 1 }}>View your progress summary</Text>
+                </View>
+              </View>
+              <MaterialIcons name="chevron-right" size={22} color="#64748B" />
+            </TouchableOpacity>
+          </StaggeredCard>
           {/* SECTION 5: Quick Insights Carousel (R6) */}
           <StaggeredCard index={4}>
             <View style={styles.section}>
