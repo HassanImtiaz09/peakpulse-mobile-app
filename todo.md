@@ -3401,3 +3401,7 @@
 - [x] Add navigation entry point from Home tab (Weekly Report button)
 - [x] Add social sharing via native share sheet
 - [x] Write unit tests for report data aggregation logic (46 tests)
+
+## Round 98: Dev Server Memory Optimization
+- [x] Reduce NODE_OPTIONS --max-old-space-size from 5120 to 2048
+- [x] Disable continuous TypeScript watcher (tsc --watch) during dev
