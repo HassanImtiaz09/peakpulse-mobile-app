@@ -31,6 +31,7 @@
  */
 
 import * as FileSystem from "expo-file-system/legacy";
+import { Platform } from "react-native";
 import { EXERCISE_GIFS } from "@/lib/exercise-gif-registry";
 
 // ─── Constants ───────────────────────────────────────────────────────────────
@@ -47,8 +48,11 @@ function urlToFilename(url: string): string {
   return segment.replace(/[^a-zA-Z0-9._-]/g, "_");
 }
 
+const isWeb = Platform.OS === "web";
+
 /** Ensure the cache directory exists */
 async function ensureCacheDir(): Promise<void> {
+  if (isWeb) return;
   const info = await FileSystem.getInfoAsync(CACHE_DIR);
   if (!info.exists) {
     await FileSystem.makeDirectoryAsync(CACHE_DIR, { intermediates: true });
@@ -67,7 +71,7 @@ async function ensureCacheDir(): Promise<void> {
  * @returns          file:// URI (cached) or the original https:// URL (fallback)
  */
 export async function resolveVideoUri(remoteUrl: string): Promise<string> {
-  if (!remoteUrl) return remoteUrl;
+  if (!remoteUrl || isWeb) return remoteUrl;
 
   try {
     await ensureCacheDir();
@@ -98,6 +102,7 @@ export async function resolveVideoUri(remoteUrl: string): Promise<string> {
  *   useEffect(() => { prefetchExerciseVideos(); }, []);
  */
 export async function prefetchExerciseVideos(): Promise<void> {
+  if (isWeb) return;
   try {
     await ensureCacheDir();
 
@@ -156,6 +161,7 @@ export async function prefetchExerciseVideos(): Promise<void> {
  * Useful for a "Clear cache" button in Settings.
  */
 export async function clearVideoCache(): Promise<void> {
+  if (isWeb) return;
   try {
     const info = await FileSystem.getInfoAsync(CACHE_DIR);
     if (info.exists) {
@@ -171,6 +177,7 @@ export async function clearVideoCache(): Promise<void> {
  * Returns 0 if the cache directory doesn't exist.
  */
 export async function getVideoCacheSize(): Promise<number> {
+  if (isWeb) return 0;
   try {
     const info = await FileSystem.getInfoAsync(CACHE_DIR);
     if (info.exists && "size" in info) {

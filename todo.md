@@ -3405,3 +3405,7 @@
 ## Round 98: Dev Server Memory Optimization
 - [x] Reduce NODE_OPTIONS --max-old-space-size from 5120 to 2048
 - [x] Disable continuous TypeScript watcher (tsc --watch) during dev
+
+## Round 99: Bug Fixes — Preview Error & Expo Go
+- [x] Fix uncaught error on web preview screen (Platform.OS web guards for FileSystem in progress-photo-gallery.tsx and gif-cache.ts)
+- [x] Diagnose Expo Go connectivity issue (sandbox network isolation — users should use the exps:// QR code from the Preview panel)

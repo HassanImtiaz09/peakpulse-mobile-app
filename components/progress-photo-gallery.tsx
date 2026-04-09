@@ -24,6 +24,7 @@ import {
   RefreshControl,
   Modal,
   Alert,
+  Platform,
 } from "react-native";
 import * as FileSystem from "expo-file-system/legacy";
 import * as ImagePicker from "expo-image-picker";
@@ -36,7 +37,8 @@ const SCREEN_W = Dimensions.get("window").width;
 const COL_COUNT = 3;
 const GAP = 3;
 const THUMB_SIZE = (SCREEN_W - 48 - GAP * (COL_COUNT - 1)) / COL_COUNT;
-const LOCAL_DIR = `${FileSystem.documentDirectory}progress-photos/`;
+const isWeb = Platform.OS === "web";
+const LOCAL_DIR = isWeb ? "" : `${FileSystem.documentDirectory}progress-photos/`;
 
 // ── Types ────────────────────────────────────────────────────────────────────
 export type LocalProgressPhoto = {
@@ -54,6 +56,7 @@ export type LocalProgressPhoto = {
 const MANIFEST_FILE = LOCAL_DIR + "manifest.json";
 
 async function ensureDir() {
+  if (isWeb) return;
   const info = await FileSystem.getInfoAsync(LOCAL_DIR);
   if (!info.exists) {
     await FileSystem.makeDirectoryAsync(LOCAL_DIR, { intermediates: true });
@@ -61,6 +64,7 @@ async function ensureDir() {
 }
 
 async function readManifest(): Promise<LocalProgressPhoto[]> {
+  if (isWeb) return [];
   await ensureDir();
   const info = await FileSystem.getInfoAsync(MANIFEST_FILE);
   if (!info.exists) return [];
@@ -73,6 +77,7 @@ async function readManifest(): Promise<LocalProgressPhoto[]> {
 }
 
 async function writeManifest(photos: LocalProgressPhoto[]) {
+  if (isWeb) return;
   await ensureDir();
   await FileSystem.writeAsStringAsync(MANIFEST_FILE, JSON.stringify(photos));
 }
@@ -81,8 +86,11 @@ async function savePhotoLocally(
   sourceUri: string,
   metadata: Omit<LocalProgressPhoto, "localUri" | "id">,
 ): Promise<LocalProgressPhoto> {
-  await ensureDir();
   const id = `pp_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+  if (isWeb) {
+    return { id, localUri: sourceUri, ...metadata };
+  }
+  await ensureDir();
   const ext = sourceUri.split(".").pop()?.split("?")[0] || "jpg";
   const localUri = `${LOCAL_DIR}${id}.${ext}`;
   await FileSystem.copyAsync({ from: sourceUri, to: localUri });
@@ -94,6 +102,7 @@ async function savePhotoLocally(
 }
 
 async function deletePhotoLocally(id: string) {
+  if (isWeb) return;
   const photos = await readManifest();
   const target = photos.find((p) => p.id === id);
   if (target) {
