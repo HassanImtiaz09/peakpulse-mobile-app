@@ -734,7 +734,7 @@ export default function WorkoutCalendarScreen() {
             borderWidth: 1, borderColor: SF.border,
           }}>
             <Text style={{ color: SF.gold, fontFamily: "DMSans_700Bold", fontSize: 10, letterSpacing: 1.5, marginBottom: 8 }}>
-              PEAKPULSE AI
+              FYTNOVA
             </Text>
             <Text style={{ color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 18, marginBottom: 4 }}>
               {MONTHS[currentMonth.month]} {currentMonth.year} Summary

@@ -184,8 +184,8 @@ describe("Social Card Generator (lib/social-card-generator.ts)", () => {
   });
 
   it("generates HTML with FytNova branding", () => {
-    expect(src).toContain("PEAKPULSE AI");
-    expect(src).toContain("Precision Performance");
+    expect(src).toContain("FYTNOVA");
+    expect(src).toContain("Your New Star in Fitness");
   });
 
   it("includes workout type icons mapping", () => {

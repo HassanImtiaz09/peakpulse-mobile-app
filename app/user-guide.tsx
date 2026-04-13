@@ -114,7 +114,7 @@ export default function UserGuideScreen() {
             onPress={() => router.back()} {...a11yButton(A11Y_LABELS.backButton)}>
             <MaterialIcons name="arrow-back" size={20} color={SF.gold} />
           </TouchableOpacity>
-          <Text style={{ color: SF.gold, fontFamily: "DMSans_700Bold", fontSize: 11, letterSpacing: 2, marginBottom: 6 }}>PEAKPULSE AI</Text>
+          <Text style={{ color: SF.gold, fontFamily: "DMSans_700Bold", fontSize: 11, letterSpacing: 2, marginBottom: 6 }}>FYTNOVA</Text>
           <Text style={{ color: SF.fg, fontFamily: "BebasNeue_400Regular", fontSize: 28 }}>User Guide</Text>
           <Text style={{ color: SF.gold3, fontFamily: "DMSans_400Regular", fontSize: 13, marginTop: 4 }}>
             Everything you need to get the most out of the app

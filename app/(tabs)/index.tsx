@@ -76,7 +76,7 @@ const TIPS_AND_TRICKS = [
   { icon: "bolt" as const, tip: "Eat fast-digesting carbs (banana, white rice) within 30 min post-workout to replenish glycogen." },
   { icon: "science" as const, tip: "Creatine monohydrate is the most researched supplement in sports science \u2014 3-5g daily is proven to work." },
 ];
-const APP_LOGO = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/PZcnawJwIZkQHTEM.jpg";
+const APP_LOGO = "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/fytnova-logo-3-KVA7CDeCPkvHBPhUSFyQzi.png";
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 const AnimatedView = Animated.View;

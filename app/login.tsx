@@ -84,13 +84,13 @@ export default function LoginScreen() {
               color: C.fg, fontFamily: "BebasNeue_400Regular",
               fontSize: 48, letterSpacing: 4, textAlign: "center",
             }}>
-              PEAKPULSE
+              FYTNOVA
             </Text>
             <Text style={{
               color: C.muted, fontFamily: "DMSans_500Medium",
               fontSize: 14, textAlign: "center", marginTop: 4, marginBottom: 40,
             }}>
-              AI-Powered Fitness Transformation
+              Your New Star in Fitness
             </Text>
 
             {/* Auth Card */}

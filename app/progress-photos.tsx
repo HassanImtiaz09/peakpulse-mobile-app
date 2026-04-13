@@ -121,7 +121,7 @@ const CollageTemplate = React.forwardRef<View, {
     >
       {/* Header */}
       <View style={{ height: 100, backgroundColor: UI.bg, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 12 }}>
-        <Text style={{ color: UI.gold, fontSize: 36, fontWeight: "900", letterSpacing: 2 }}>⚡ PEAKPULSE</Text>
+        <Text style={{ color: UI.gold, fontSize: 36, fontWeight: "900", letterSpacing: 2 }}>⚡ FYTNOVA</Text>
         <Text style={{ color: UI.secondaryLight, fontSize: 28 }}>TRANSFORMATION</Text>
       </View>
 
@@ -167,13 +167,12 @@ const CollageTemplate = React.forwardRef<View, {
           </View>
         )}
         {weightDelta == null && bfDelta == null && (
-          <Text style={{ color: "#451A03", fontSize: 26 }}>peakpulse.ai  •  #FytNovaTransformation</Text>
-        )}
-      </View>
+          <Text style={{ color: "#451A03", fontSize: 26 }}>fytnova.com  •  #FytNovaTransformation</Text>
+        )}      </View>
 
       {/* Footer */}
       <View style={{ height: 60, backgroundColor: UI.bg, alignItems: "center", justifyContent: "center" }}>
-        <Text style={{ color: "#451A03", fontSize: 22, letterSpacing: 1 }}>peakpulse.ai  •  #FytNovaTransformation</Text>
+        <Text style={{ color: "#451A03", fontSize: 22, letterSpacing: 1 }}>fytnova.com  •  #FytNovaTransformation</Text>
       </View>
     </View>
   );

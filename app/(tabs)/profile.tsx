@@ -39,8 +39,8 @@ const GOLD_BORDER = UI.borderGold2;
 const ICE = "#06B6D4";
 const CREAM = UI.gold3;
 
-const HERO_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/hXdqoCBElSGntMHm.jpg";
-const APP_LOGO = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/hXdqoCBElSGntMHm.jpg";
+const HERO_BG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/fytnova-logo-3-KVA7CDeCPkvHBPhUSFyQzi.png";
+const APP_LOGO = "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/fytnova-logo-3-KVA7CDeCPkvHBPhUSFyQzi.png";
 
 const GOALS = [
   { key: "build_muscle", label: "Build Muscle", iconName: "fitness-center" as const },

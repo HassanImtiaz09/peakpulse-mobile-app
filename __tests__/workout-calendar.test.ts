@@ -277,7 +277,7 @@ describe("Sharing", () => {
   it("generates a shareable summary card with stats", () => {
     const src = readFile("app/workout-calendar.tsx");
     expect(src).toContain("shareCardRef");
-    expect(src).toContain("PEAKPULSE AI");
+    expect(src).toContain("FYTNOVA");
     expect(src).toContain("Summary");
   });
 

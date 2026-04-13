@@ -22,7 +22,7 @@ describe("Social Card Generator", () => {
   });
 
   it("includes FytNova branding in workout card", () => {
-    expect(src).toContain("PEAKPULSE AI");
+    expect(src).toContain("FYTNOVA");
   });
 
   it("escapes HTML to prevent XSS", () => {

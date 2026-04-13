@@ -144,8 +144,8 @@ export async function hasStoreReviewAction(): Promise<boolean> {
  */
 export function openStoreListing(): void {
   const storeUrl = Platform.select({
-    ios: "https://apps.apple.com/app/peakpulse-ai/id_PLACEHOLDER",
-    android: "https://play.google.com/store/apps/details?id=com.peakpulseai.app",
+    ios: "https://apps.apple.com/app/fytnova/id_PLACEHOLDER",
+    android: "https://play.google.com/store/apps/details?id=com.fytnova.app",
   });
   if (storeUrl) {
     // Use Linking to open, imported lazily to keep this module lightweight

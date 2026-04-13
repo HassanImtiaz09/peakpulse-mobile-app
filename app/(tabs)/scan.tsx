@@ -1400,8 +1400,8 @@ function ShareProgressOverlay({
           {/* Watermark */}
           {watermarkEnabled && (
             <View style={{ paddingVertical: 12, borderTopWidth: 1, borderTopColor: UI.goldAlpha10, alignItems: "center" }}>
-              <Text style={{ color: UI.gold, fontFamily: "DMSans_700Bold", fontSize: 12, letterSpacing: 3 }}>PEAKPULSE AI</Text>
-              <Text style={{ color: "#64748B", fontSize: 9, marginTop: 2 }}>Precision Performance</Text>
+              <Text style={{ color: UI.gold, fontFamily: "DMSans_700Bold", fontSize: 12, letterSpacing: 3 }}>FYTNOVA</Text>
+              <Text style={{ color: "#64748B", fontSize: 9, marginTop: 2 }}>Your New Star in Fitness</Text>
             </View>
           )}
         </View>

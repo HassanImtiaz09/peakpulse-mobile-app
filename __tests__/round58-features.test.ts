@@ -304,7 +304,7 @@ describe("PDF Health Report Generator", () => {
   });
 
   it("HTML includes FytNova branding", () => {
-    expect(report).toContain("PEAKPULSE AI");
+    expect(report).toContain("FYTNOVA");
     expect(report).toContain("Health Report");
     expect(report).toContain("#F59E0B"); // brand amber color
   });

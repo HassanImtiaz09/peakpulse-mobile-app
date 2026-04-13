@@ -3469,3 +3469,23 @@
 - [x] Replace all "PeakPulse" references across the codebase (223 replacements in 63 files- [x] Update theme/branding assets (icon, splash, favicon, android icons)
 - [x] Run TypeScript check (0 errors) and test suite (2617 passed, 3 network-only failures)
 - [x] Save checkpoint
+
+## FytNova UI Branding Integration
+
+- [x] Audit all screens for branding touchpoints (25+ touchpoints found)
+- [x] Update login screen (FYTNOVA + "Your New Star in Fitness")
+- [x] Update home screen APP_LOGO URL to new FytNova FN monogram
+- [x] Update profile screen APP_LOGO and HERO_BG URLs
+- [x] Update AI Coach headers (both tab and standalone screens)
+- [x] Update scan screen watermark text and tagline
+- [x] Update share-workout card headers and footer URLs (3 templates)
+- [x] Update progress-photos collage header and footer (fytnova.com)
+- [x] Update subscription hero label
+- [x] Update user-guide header
+- [x] Update workout-calendar summary card
+- [x] Update health-report-generator HTML header/footer
+- [x] Update social-card-generator HTML branding (3 templates, new tagline)
+- [x] Update in-app-review store URLs (fytnova)
+- [x] Update 4 test assertion files (PEAKPULSE AI → FYTNOVA)
+- [x] TypeScript: 0 errors, Tests: 2618 passed (2 network-only failures)
+- [x] Save checkpoint

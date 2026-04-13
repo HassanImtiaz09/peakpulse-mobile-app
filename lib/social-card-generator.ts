@@ -185,8 +185,8 @@ export function generateWorkoutCardHTML(data: WorkoutCardData): string {
     </div>` : ""}
   </div>
   <div class="branding">
-    <div class="brand-name">PEAKPULSE AI</div>
-    <div class="brand-sub">Precision Performance</div>
+    <div class="brand-name">FYTNOVA</div>
+    <div class="brand-sub">Your New Star in Fitness</div>
     ${data.userName ? `<div class="user-name">${escapeHtml(data.userName)}</div>` : ""}
     <div class="accent-line"></div>
   </div>
@@ -329,8 +329,8 @@ export function generateWeeklySummaryCardHTML(data: WeeklySummaryCardData): stri
     </div>
   </div>
   <div class="branding">
-    <div class="brand-name">PEAKPULSE AI</div>
-    <div class="brand-sub">Precision Performance</div>
+    <div class="brand-name">FYTNOVA</div>
+    <div class="brand-sub">Your New Star in Fitness</div>
     ${data.userName ? `<div class="user-name">${escapeHtml(data.userName)}</div>` : ""}
     <div class="accent-line"></div>
   </div>
@@ -475,8 +475,8 @@ export function generateMilestoneCardHTML(data: MilestoneCardData): string {
     <span>\uD83D\uDD25\uD83D\uDD25\uD83D\uDD25</span>
   </div>
   <div class="branding">
-    <div class="brand-name">PEAKPULSE AI</div>
-    <div class="brand-sub">Precision Performance</div>
+    <div class="brand-name">FYTNOVA</div>
+    <div class="brand-sub">Your New Star in Fitness</div>
     ${data.userName ? `<div class="user-name">${escapeHtml(data.userName)}</div>` : ""}
     <div class="accent-line"></div>
   </div>

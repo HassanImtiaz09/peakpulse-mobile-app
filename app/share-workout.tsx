@@ -60,7 +60,7 @@ const StreakCard = React.forwardRef<View, { data: ShareData }>(({ data }, ref) =
     <View style={{ flex: 1, padding: 28, justifyContent: "space-between" }}>
       {/* Header */}
       <View>
-        <Text style={{ color: SF.gold, fontWeight: "900", fontSize: 14, letterSpacing: 2 }}>⚡ PEAKPULSE</Text>
+        <Text style={{ color: SF.gold, fontWeight: "900", fontSize: 14, letterSpacing: 2 }}>⚡ FYTNOVA</Text>
         <Text style={{ color: SF.fg, fontWeight: "900", fontSize: 36, marginTop: 8, letterSpacing: -1 }}>
           {data.currentStreak} Day{data.currentStreak !== 1 ? "s" : ""}
         </Text>
@@ -89,7 +89,7 @@ const StreakCard = React.forwardRef<View, { data: ShareData }>(({ data }, ref) =
 
       {/* Footer */}
       <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
-        <Text style={{ color: "#451A03", fontSize: 12, letterSpacing: 1 }}>peakpulse.ai</Text>
+        <Text style={{ color: "#451A03", fontSize: 12, letterSpacing: 1 }}>fytnova.com</Text>
         <Text style={{ color: "#451A03", fontSize: 11 }}>#FytNovaStreak</Text>
       </View>
     </View>
@@ -107,7 +107,7 @@ const SessionCard = React.forwardRef<View, { data: ShareData }>(({ data }, ref) 
     <View style={{ height: 6, backgroundColor: SF.green }} />
     <View style={{ flex: 1, padding: 28, justifyContent: "space-between" }}>
       <View>
-        <Text style={{ color: SF.green, fontWeight: "900", fontSize: 14, letterSpacing: 2 }}>⚡ PEAKPULSE</Text>
+        <Text style={{ color: SF.green, fontWeight: "900", fontSize: 14, letterSpacing: 2 }}>⚡ FYTNOVA</Text>
         <Text style={{ color: SF.fg, fontWeight: "900", fontSize: 28, marginTop: 8, letterSpacing: -0.5 }}>
           Workout Complete ✅
         </Text>
@@ -143,7 +143,7 @@ const SessionCard = React.forwardRef<View, { data: ShareData }>(({ data }, ref) 
       </View>
 
       <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
-        <Text style={{ color: "#451A03", fontSize: 12, letterSpacing: 1 }}>peakpulse.ai</Text>
+        <Text style={{ color: "#451A03", fontSize: 12, letterSpacing: 1 }}>fytnova.com</Text>
         <Text style={{ color: "#451A03", fontSize: 11 }}>#FytNovaWorkout</Text>
       </View>
     </View>
@@ -160,7 +160,7 @@ const MilestoneCard = React.forwardRef<View, { data: ShareData; milestone: strin
   >
     <View style={{ height: 6, backgroundColor: "#A855F7" }} />
     <View style={{ flex: 1, padding: 28, justifyContent: "space-between", alignItems: "center" }}>
-      <Text style={{ color: "#A855F7", fontWeight: "900", fontSize: 14, letterSpacing: 2 }}>⚡ PEAKPULSE</Text>
+      <Text style={{ color: "#A855F7", fontWeight: "900", fontSize: 14, letterSpacing: 2 }}>⚡ FYTNOVA</Text>
 
       <View style={{ alignItems: "center" }}>
         <Text style={{ fontSize: 64, marginBottom: 8 }}>🏆</Text>
@@ -188,7 +188,7 @@ const MilestoneCard = React.forwardRef<View, { data: ShareData; milestone: strin
       </View>
 
       <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
-        <Text style={{ color: "#451A03", fontSize: 12, letterSpacing: 1 }}>peakpulse.ai</Text>
+        <Text style={{ color: "#451A03", fontSize: 12, letterSpacing: 1 }}>fytnova.com</Text>
         <Text style={{ color: "#451A03", fontSize: 11 }}>#FytNovaMilestone</Text>
       </View>
     </View>

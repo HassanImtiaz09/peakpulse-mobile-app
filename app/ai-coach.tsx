@@ -205,7 +205,7 @@ export default function AICoachScreen() {
             onPress={() => router.back()} {...a11yButton(A11Y_LABELS.backButton)}>
             <MaterialIcons name="arrow-back" size={20} color={SF.fg} />
           </TouchableOpacity>
-          <Text style={{ color: SF.gold, fontFamily: "DMSans_700Bold", fontSize: 11, letterSpacing: 1.5 }}>🤖 PEAKPULSE</Text>
+          <Text style={{ color: SF.gold, fontFamily: "DMSans_700Bold", fontSize: 11, letterSpacing: 1.5 }}>🤖 FYTNOVA</Text>
           <Text style={{ color: SF.fg, fontFamily: "BebasNeue_400Regular", fontSize: 28, letterSpacing: -0.5 }}>AI Coach</Text>
           <Text style={{ color: SF.gold3, fontFamily: "DMSans_400Regular", fontSize: 12, marginTop: 2 }}>
             Form analysis · Progress insights · Personalised tips

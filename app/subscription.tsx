@@ -117,7 +117,7 @@ export default function SubscriptionScreen() {
               <Text style={styles.backText}>Back</Text>
             </TouchableOpacity>
             <View style={styles.heroContent}>
-              <Text style={styles.heroLabel}>PEAKPULSE AI</Text>
+              <Text style={styles.heroLabel}>FYTNOVA</Text>
               <Text style={styles.heroTitle}>Unlock Your{"\n"}Full Potential</Text>
               <Text style={styles.heroSub}>Join thousands transforming their bodies with AI-powered coaching</Text>
             </View>

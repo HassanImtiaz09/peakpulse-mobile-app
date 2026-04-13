@@ -382,7 +382,7 @@ export function generateReportHTML(
 <body>
   <!-- Header -->
   <div class="header">
-    <div class="header-brand">PEAKPULSE AI</div>
+    <div class="header-brand">FYTNOVA</div>
     <div class="header-title">${periodLabel} Health Report</div>
     <div class="header-sub">Comprehensive health metrics analysis</div>
     <div class="header-meta">
@@ -446,7 +446,7 @@ export function generateReportHTML(
 
   <!-- Footer -->
   <div class="footer">
-    <div class="footer-brand">PEAKPULSE AI</div>
+    <div class="footer-brand">FYTNOVA</div>
     <div>Generated on ${reportDate} · ${periodLabel} Health Report</div>
     <div style="margin-top: 4px;">© ${now.getFullYear()} FytNova. All rights reserved.</div>
   </div>

@@ -228,7 +228,7 @@ function AICoachScreenContent() {
         <View style={{ flex: 1, backgroundColor: "rgba(8,5,0,0.78)", justifyContent: "flex-end", padding: 20, paddingTop: 52 }}>
           <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
             <Image source={{ uri: "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/ai-coach-icon_c7090906.png" }} style={{ width: 28, height: 28, borderRadius: 6 }} />
-            <Text style={{ color: SF.gold, fontFamily: "DMSans_700Bold", fontSize: 11, letterSpacing: 1.5 }}>PEAKPULSE</Text>
+            <Text style={{ color: SF.gold, fontFamily: "DMSans_700Bold", fontSize: 11, letterSpacing: 1.5 }}>FYTNOVA</Text>
           </View>
           <Text style={{ color: SF.fg, fontFamily: "BebasNeue_400Regular", fontSize: 28, letterSpacing: -0.5 }}>AI Coach</Text>
           <Text style={{ color: SF.gold3, fontFamily: "DMSans_400Regular", fontSize: 12, marginTop: 2 }}>
