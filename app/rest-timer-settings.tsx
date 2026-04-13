@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import {
-  ScrollView, Text, View, TouchableOpacity, Alert, Platform, ImageBackground} from "react-native";
+  ScrollView, Text, View, TouchableOpacity, Alert, Platform, ImageBackground, Switch} from "react-native";
 import { useRouter } from "expo-router";
 import { ScreenContainer } from "@/components/screen-container";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
@@ -15,6 +15,7 @@ import {
 import { GOLDEN_WORKOUT, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgrounds";
 import { UI, SF } from "@/constants/ui-colors";
 import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
+import { isRestTimerSoundEnabled, setRestTimerSoundEnabled, playRestTimerChime } from "@/lib/rest-timer-audio";
 
 interface TimerConfig {
   key: ExerciseType;
@@ -81,12 +82,14 @@ export default function RestTimerSettingsScreen() {
   const router = useRouter();
   const [settings, setSettings] = useState<RestTimerSettings>(DEFAULT_REST_TIMERS);
   const [loaded, setLoaded] = useState(false);
+  const [soundOn, setSoundOn] = useState(true);
 
   useEffect(() => {
     loadRestTimerSettings().then((s) => {
       setSettings(s);
       setLoaded(true);
     });
+    isRestTimerSoundEnabled().then(setSoundOn).catch(() => {});
   }, []);
 
   function adjustTimer(key: ExerciseType, delta: number, config: TimerConfig) {
@@ -223,6 +226,34 @@ export default function RestTimerSettingsScreen() {
             </View>
           </View>
         ))}
+
+        {/* Sound toggle */}
+        <View style={{
+          marginHorizontal: 20, marginTop: 16, marginBottom: 4,
+          backgroundColor: SF.surface, borderRadius: 18,
+          padding: 16, borderWidth: 1, borderColor: SF.border,
+          flexDirection: "row", alignItems: "center", gap: 12,
+        }}>
+          <MaterialIcons name="volume-up" size={24} color={soundOn ? SF.gold : SF.muted} />
+          <View style={{ flex: 1 }}>
+            <Text style={{ color: SF.fg, fontFamily: "DMSans_700Bold", fontSize: 15 }}>Completion Sound</Text>
+            <Text style={{ color: SF.muted, fontSize: 11, marginTop: 1 }}>Play a bell chime when rest timer ends</Text>
+          </View>
+          <Switch
+            value={soundOn}
+            onValueChange={(val) => {
+              setSoundOn(val);
+              setRestTimerSoundEnabled(val);
+              if (val) {
+                // Preview the sound when enabling
+                playRestTimerChime().catch(() => {});
+              }
+              if (Platform.OS !== "web") Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            }}
+            trackColor={{ false: SF.surface2, true: SF.gold + "60" }}
+            thumbColor={soundOn ? SF.gold : SF.muted}
+          />
+        </View>
 
         {/* Tip */}
         <View style={{

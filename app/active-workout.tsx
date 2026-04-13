@@ -73,6 +73,7 @@ import { getExerciseDbGifUrl } from "@/lib/exercisedb-api";
 import { ScreenErrorBoundary } from "@/components/error-boundary";
 import { FocusMode } from "@/components/focus-mode";
 import { checkProgressionForExercises, type ProgressionSuggestion } from "@/lib/workout-progression";
+import { playRestTimerChime, releaseRestTimerAudio, isRestTimerSoundEnabled } from "@/lib/rest-timer-audio";
 import { LevelUpPrompt } from "@/components/level-up-prompt";
 
 const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get("window");
@@ -560,14 +561,16 @@ export default function ActiveWorkoutScreen() {
   const [restSettings, setRestSettings] = useState<RestTimerSettings>(DEFAULT_REST_TIMERS);
   const [focusModeVisible, setFocusModeVisible] = useState(false);
   const [focusModePreference, setFocusModePreference] = useState(false);
+  const [soundEnabled, setSoundEnabled] = useState(true);
   const [progressionSuggestions, setProgressionSuggestions] = useState<ProgressionSuggestion[]>([]);
   const [showLevelUp, setShowLevelUp] = useState(false);
 
-  // Load focus mode preference
+  // Load focus mode preference + sound preference
   useEffect(() => {
     AsyncStorage.getItem("@peakpulse_focus_mode").then((val) => {
       if (val === "true") setFocusModePreference(true);
     }).catch(() => {});
+    isRestTimerSoundEnabled().then(setSoundEnabled).catch(() => {});
   }, []);
 
   const logSession = trpc.workoutPlan.logSession.useMutation({
@@ -692,6 +695,7 @@ export default function ActiveWorkoutScreen() {
   useEffect(() => {
     return () => {
       if (restRef.current) clearInterval(restRef.current);
+      releaseRestTimerAudio();
     };
   }, []);
 
@@ -702,7 +706,7 @@ export default function ActiveWorkoutScreen() {
       setRestTimer((prev) => {
         if (prev === null || prev <= 1) {
           if (restRef.current) clearInterval(restRef.current);
-          // Haptic buzz when rest timer completes
+          // Haptic buzz + audio chime when rest timer completes
           if (Platform.OS !== "web") {
             Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
             // Double buzz after a short delay for emphasis
@@ -712,6 +716,10 @@ export default function ActiveWorkoutScreen() {
             setTimeout(() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy).catch(() => {});
             }, 600);
+          }
+          // Play bell chime audio cue (if user has sound enabled)
+          if (soundEnabled) {
+            playRestTimerChime().catch(() => {});
           }
           return null;
         }

@@ -3449,3 +3449,14 @@
 - [x] Updated theme-toggle test assertions to match new warm cream/amber palette values
 - [x] TypeScript: 0 errors
 - [x] Tests: 2,592 passing, 0 failures
+
+## Rest Timer Audio Cue
+
+- [x] Find and download a suitable short chime/bell sound for rest timer completion
+- [x] Create lib/rest-timer-audio.ts utility for loading and playing the audio cue
+- [x] Integrate audio cue into active-workout.tsx rest timer completion flow
+- [x] Add user setting to enable/disable rest timer sound in rest-timer-settings
+- [x] Ensure audio plays in iOS silent mode (setAudioModeAsync)
+- [x] Write unit tests for the audio cue feature
+- [x] TypeScript: 0 errors
+- [x] Tests: 2,620 passing (28 new)
