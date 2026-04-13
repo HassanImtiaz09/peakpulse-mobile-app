@@ -250,7 +250,7 @@ export default function SubscriptionScreen() {
                 <Text style={[styles.compareCell, styles.compareHeaderText]}>Form AI</Text>
               </View>
               {[
-                { name: "PeakPulse", price: "\u00a35.99", aiPlans: "\u2713", formAI: "\u2713", highlight: true },
+                { name: "FytNova", price: "\u00a35.99", aiPlans: "\u2713", formAI: "\u2713", highlight: true },
                 { name: "MyFitnessPal", price: "\u00a317.99", aiPlans: "\u2717", formAI: "\u2717", highlight: false },
                 { name: "Caliber", price: "\u00a329.99", aiPlans: "~", formAI: "\u2717", highlight: false },
                 { name: "Future", price: "\u00a3149", aiPlans: "\u2713", formAI: "\u2717", highlight: false },
@@ -264,7 +264,7 @@ export default function SubscriptionScreen() {
                 </View>
               ))}
             </View>
-            <Text style={styles.compareNote}>PeakPulse offers more AI features than competitors at a fraction of the price.</Text>
+            <Text style={styles.compareNote}>FytNova offers more AI features than competitors at a fraction of the price.</Text>
           </View>
 
           {/* Free Trial CTA */}

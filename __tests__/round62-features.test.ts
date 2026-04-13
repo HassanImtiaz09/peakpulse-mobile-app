@@ -136,7 +136,7 @@ describe("Milestone Sharing Card (lib/social-card-generator.ts)", () => {
     // expect(src).toContain("export function generateMilestoneCardHTML"); // Not in streamlined dashboard
   });
 
-  it("milestone card HTML has PeakPulse branding", () => {
+  it("milestone card HTML has FytNova branding", () => {
     // expect(src).toContain("PEAKPULSE AI"); // Not in streamlined dashboard
     // expect(src).toContain("Precision Performance"); // Not in streamlined dashboard
   });

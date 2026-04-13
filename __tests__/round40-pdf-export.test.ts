@@ -28,8 +28,8 @@ describe("Round 40 — Workout Plan PDF Export", () => {
     expect(pdfModuleCode).toContain("shareAsync(uri");
   });
 
-  it("generates HTML with PeakPulse branding", () => {
-    expect(pdfModuleCode).toContain("PeakPulse AI");
+  it("generates HTML with FytNova branding", () => {
+    expect(pdfModuleCode).toContain("FytNova");
     expect(pdfModuleCode).toContain("Your Personal Workout Plan");
     expect(pdfModuleCode).toContain("AI-Powered Fitness Companion");
   });

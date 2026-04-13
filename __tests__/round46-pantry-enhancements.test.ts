@@ -99,8 +99,8 @@ describe("Round 46 — Shopping List Export", () => {
     expect(shoppingPdfSrc).toContain("nice-to-have");
   });
 
-  it("should generate branded HTML with PeakPulse header", () => {
-    expect(shoppingPdfSrc).toContain("PeakPulse AI");
+  it("should generate branded HTML with FytNova header", () => {
+    expect(shoppingPdfSrc).toContain("FytNova");
     expect(shoppingPdfSrc).toContain("Shopping List");
   });
 

@@ -21,7 +21,7 @@ describe("Social Card Generator", () => {
     expect(src).toContain("export function generateMilestoneCardHTML");
   });
 
-  it("includes PeakPulse branding in workout card", () => {
+  it("includes FytNova branding in workout card", () => {
     expect(src).toContain("PEAKPULSE AI");
   });
 
@@ -221,7 +221,7 @@ describe("Weekly Summary Screen", () => {
   it("has share functionality", () => {
     expect(src).toContain("handleShare");
     expect(src).toContain("Share.share");
-    // expect(src).toContain("PeakPulse Weekly Summary"); // Weekly Summary removed from dashboard
+    // expect(src).toContain("FytNova Weekly Summary"); // Weekly Summary removed from dashboard
   });
 
   it("includes streak and photos stats", () => {
@@ -245,7 +245,7 @@ describe("Share Progress Overlay in Scan Screen", () => {
 
   it("has watermark toggle", () => {
     expect(src).toContain("watermarkEnabled");
-    expect(src).toContain("PeakPulse Watermark");
+    expect(src).toContain("FytNova Watermark");
   });
 
   it("has stats overlay toggle", () => {

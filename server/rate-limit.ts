@@ -62,7 +62,7 @@ export function checkRateLimit(
   };
 }
 
-// ── Pre-configured limiters for PeakPulse AI endpoints ──
+// ── Pre-configured limiters for FytNova endpoints ──
 
 /** AI chat / coach endpoints: 20 requests per minute per user */
 export const AI_CHAT_LIMIT: RateLimitConfig = {

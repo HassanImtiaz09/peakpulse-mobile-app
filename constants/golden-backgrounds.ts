@@ -1,7 +1,7 @@
 import { UI } from "@/constants/ui-colors";
 /**
  * Golden-themed HD background URLs for all screens.
- * These are the AI-generated golden coach backgrounds used throughout PeakPulse.
+ * These are the AI-generated golden coach backgrounds used throughout FytNova.
  */
 
 // Primary golden AI coach image (used for dashboard, plans, meals hero cards)

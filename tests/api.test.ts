@@ -7,7 +7,7 @@ function getErrorCode(data: any): string | undefined {
   return data.error?.json?.data?.code ?? data.error?.data?.code;
 }
 
-describe("PeakPulse AI Backend API", () => {
+describe("FytNova Backend API", () => {
   it("health endpoint returns ok", async () => {
     const res = await fetch(`${API_BASE}/api/health`);
     expect(res.ok).toBe(true);

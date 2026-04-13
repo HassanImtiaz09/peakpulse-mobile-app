@@ -530,7 +530,7 @@ function HomeScreenContent() {
         <ImageBackground source={{ uri: AT_DASHBOARD_BG }} style={{ flex: 1 }} resizeMode="cover">
           <View style={styles.welcomeOverlay}>
             <Image source={{ uri: APP_LOGO }} style={styles.welcomeLogo} />
-            <Text style={styles.welcomeTitle}>PeakPulse AI</Text>
+            <Text style={styles.welcomeTitle}>FytNova</Text>
             <Text style={styles.welcomeSub}>Precision performance.{"\n"}Your AI-powered fitness companion.</Text>
             <TouchableOpacity style={styles.welcomeBtn} onPress={() => router.push("/login" as any)} {...a11yButton("Get Started", "Sign in or create an account")}>
               <Text style={styles.welcomeBtnText}>Get Started</Text>

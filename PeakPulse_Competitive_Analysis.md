@@ -1,4 +1,4 @@
-# PeakPulse AI: Competitive Analysis and Strategic Improvement Report
+# FytNova: Competitive Analysis and Strategic Improvement Report
 
 **Author:** Manus AI
 **Date:** April 8, 2026
@@ -8,9 +8,9 @@
 
 ## Executive Summary
 
-PeakPulse AI has grown into a feature-rich fitness application with 63 screens, 200 source files, and over 23,000 lines of code. It offers AI-generated workout and meal plans, body scanning, form analysis, streak tracking, challenges, and a comprehensive exercise library. However, a critical audit against leading competitors — Fitbod, MyFitnessPal, Strong, JEFIT, and Noom — reveals three systemic gaps that limit user retention and differentiation: **static plan intelligence** (plans do not adapt to real-life disruptions), **passive personalization** (the app collects user data during onboarding but rarely acts on it dynamically), and **cognitive overload in the workout UX** (the Plans tab and active workout screen present dense, list-heavy interfaces that can overwhelm users, particularly those who are neurodivergent).
+FytNova has grown into a feature-rich fitness application with 63 screens, 200 source files, and over 23,000 lines of code. It offers AI-generated workout and meal plans, body scanning, form analysis, streak tracking, challenges, and a comprehensive exercise library. However, a critical audit against leading competitors — Fitbod, MyFitnessPal, Strong, JEFIT, and Noom — reveals three systemic gaps that limit user retention and differentiation: **static plan intelligence** (plans do not adapt to real-life disruptions), **passive personalization** (the app collects user data during onboarding but rarely acts on it dynamically), and **cognitive overload in the workout UX** (the Plans tab and active workout screen present dense, list-heavy interfaces that can overwhelm users, particularly those who are neurodivergent).
 
-This report provides a structured analysis of each gap, benchmarks PeakPulse against competitors, and proposes 24 actionable improvements organized into three strategic pillars: Adaptive Plan Intelligence, Deep Personalization, and Neurodivergent-Friendly UX.
+This report provides a structured analysis of each gap, benchmarks FytNova against competitors, and proposes 24 actionable improvements organized into three strategic pillars: Adaptive Plan Intelligence, Deep Personalization, and Neurodivergent-Friendly UX.
 
 ---
 
@@ -18,9 +18,9 @@ This report provides a structured analysis of each gap, benchmarks PeakPulse aga
 
 ### 1.1 Feature Comparison Matrix
 
-The following table compares PeakPulse's current capabilities against five leading fitness applications across the features most relevant to personalization, adaptiveness, and user experience.
+The following table compares FytNova's current capabilities against five leading fitness applications across the features most relevant to personalization, adaptiveness, and user experience.
 
-| Feature | PeakPulse AI | Fitbod | MyFitnessPal | Strong | JEFIT | Noom |
+| Feature | FytNova | Fitbod | MyFitnessPal | Strong | JEFIT | Noom |
 |---|---|---|---|---|---|---|
 | AI-generated workout plans | Yes | Yes (algorithm) | No | No | Yes (PO system) | No |
 | AI-generated meal plans | Yes | No | No (manual logging) | No | No | Partial (lessons) |
@@ -47,17 +47,17 @@ The following table compares PeakPulse's current capabilities against five leadi
 
 **Noom** takes an entirely different approach by grounding its product in behavioral psychology. Its "4 C's" framework (Clinical, Coaching, Community, Content) focuses on sustainable behavior change rather than workout optimization [4]. The key insight from Noom's approach is that **understanding why a user missed a workout matters more than rescheduling it**. Was it fatigue? Motivation? Schedule conflict? Each reason demands a different response.
 
-**Strong** succeeds through radical simplicity. Its interface is "stripped down to essentials — log your sets, track your progress, move on" [5]. This minimalist approach is particularly effective for experienced lifters who find feature-rich apps distracting, and it offers a useful lesson for PeakPulse: not every screen needs to show everything at once.
+**Strong** succeeds through radical simplicity. Its interface is "stripped down to essentials — log your sets, track your progress, move on" [5]. This minimalist approach is particularly effective for experienced lifters who find feature-rich apps distracting, and it offers a useful lesson for FytNova: not every screen needs to show everything at once.
 
 **MyFitnessPal** drives engagement primarily through streaks and social accountability. Its gamification is subtle — no points or levels, just streak badges (7-day, 30-day, 90-day) and community challenges that create intrinsic motivation through tangible progress visualization [6].
 
 ---
 
-## 2. Critical Gap Analysis: PeakPulse AI
+## 2. Critical Gap Analysis: FytNova
 
 ### 2.1 Gap 1: Static Plan Intelligence
 
-PeakPulse generates workout plans through a single LLM call that produces a fixed 7-day schedule. The generation prompt is:
+FytNova generates workout plans through a single LLM call that produces a fixed 7-day schedule. The generation prompt is:
 
 > "Generate a complete 7-day workout plan as JSON for: Goal: [goal], Style: [style], Days/week: [days], Level: [level]."
 
@@ -65,7 +65,7 @@ Once generated, this plan never changes. There is no mechanism to detect that a 
 
 The `streak-tracking.ts` library detects missed weeks for streak calculation purposes (line 389: "There's a gap — the previous week was missed"), but this information is never fed back into plan adjustment. The `muscle-balance.ts` module calculates which muscle groups are over- or under-exercised, but this analysis is purely informational — it does not influence the next generated workout.
 
-**Impact:** Users who miss workouts (which is most users, most weeks) receive no acknowledgment or adaptation. The plan feels robotic rather than personal. This is the single largest gap between PeakPulse and Fitbod.
+**Impact:** Users who miss workouts (which is most users, most weeks) receive no acknowledgment or adaptation. The plan feels robotic rather than personal. This is the single largest gap between FytNova and Fitbod.
 
 ### 2.2 Gap 2: Passive Personalization
 
@@ -85,7 +85,7 @@ The active workout screen (`active-workout.tsx`, 1,826 lines) uses a horizontal 
 
 The home screen (`index.tsx`, 1,583 lines) contains at least 7 distinct sections: greeting, streak badge, today's workout preview, muscle balance diagram, weekly progress, recent activity, and quick actions. The meals tab (`meals.tsx`, 4,606 lines) is the largest single file in the application.
 
-**Impact for neurodivergent users:** Research on designing for neurodivergence identifies "too many elements competing for attention" as the primary cause of overwhelm [7]. Executive function challenges make large tasks harder to manage, and the recommended solution is to "use progress indicators, micro-flows, and immediate feedback" [7]. The current PeakPulse workout UX violates these principles by presenting the full scope of a workout upfront rather than revealing it progressively.
+**Impact for neurodivergent users:** Research on designing for neurodivergence identifies "too many elements competing for attention" as the primary cause of overwhelm [7]. Executive function challenges make large tasks harder to manage, and the recommended solution is to "use progress indicators, micro-flows, and immediate feedback" [7]. The current FytNova workout UX violates these principles by presenting the full scope of a workout upfront rather than revealing it progressively.
 
 A user with ADHD on the r/ADHDFitness subreddit articulated this precisely: "The main problem for ADHD is building consistent habits and as soon as one workout requires more energy or executive function than you have for the day, the downward spiral starts and it will be months before you pick it up again" [8]. The proposed solution was an energy-level-based workout selection system: "Is it zero? Here's one exercise. Is it low? Here's 2-3 exercises in a circuit for 10 minutes. Is it medium? Here's 4-6 exercises" [8].
 
@@ -95,12 +95,12 @@ A user with ADHD on the r/ADHDFitness subreddit articulated this precisely: "The
 
 ### 3.1 Pillar 1: Adaptive Plan Intelligence
 
-These recommendations transform PeakPulse from a static plan generator into a dynamic training system that responds to real-life disruptions.
+These recommendations transform FytNova from a static plan generator into a dynamic training system that responds to real-life disruptions.
 
 | Priority | Feature | Description | Complexity |
 |---|---|---|---|
 | P0 | **Missed Workout Detection and Rescheduling** | When a scheduled workout day passes without a logged session, prompt the user the next day with three options: (a) do the missed workout today, (b) merge key exercises into the next scheduled day, or (c) skip it and let the AI redistribute volume across the remaining week. Store the decision to learn the user's preference over time. | Medium |
-| P0 | **Return-from-Break Deload** | When the app detects a gap of 7+ days since the last workout, automatically reduce suggested weights by 20-30% and volume by 1-2 sets per exercise for the first week back. Show a "Welcome Back" card explaining the adjustment. Fitbod does this automatically [1]; PeakPulse should too. | Medium |
+| P0 | **Return-from-Break Deload** | When the app detects a gap of 7+ days since the last workout, automatically reduce suggested weights by 20-30% and volume by 1-2 sets per exercise for the first week back. Show a "Welcome Back" card explaining the adjustment. Fitbod does this automatically [1]; FytNova should too. | Medium |
 | P1 | **Progressive Overload Engine** | After each completed workout, compare performance (weight x reps x sets) against the previous session for each exercise. If the user completed all prescribed reps, suggest a small increase (2.5 kg / 5 lbs for compounds, 1 kg / 2 lbs for isolation) for the next session. Store a performance history per exercise. JEFIT's new PO system is the benchmark here [3]. | High |
 | P1 | **Muscle Recovery Awareness** | Use the existing `muscle-balance.ts` data to prevent scheduling exercises for muscle groups that were trained less than 48 hours ago. When the user opens the Plans tab, visually indicate which muscle groups are "fresh" vs "recovering" vs "recovered" using the body diagram. | Medium |
 | P2 | **Weekly Plan Regeneration** | At the start of each week, offer to regenerate the plan based on the previous week's actual performance, missed days, and updated goals. The LLM prompt should include: "Last week the user completed 3 of 5 planned workouts, skipping Tuesday (legs) and Friday (shoulders). They increased bench press by 5 lbs. Adjust this week's plan accordingly." | Medium |
@@ -201,7 +201,7 @@ Everything else — video player, muscle diagram, form tips, rest timer, notes, 
 
 ### 5.4 The "Just Start" Principle
 
-The most critical insight from ADHD fitness research is that **the barrier to starting is higher than the barrier to continuing** [8]. Once a person begins exercising, momentum often carries them through. The current PeakPulse UX requires the user to: open the app, navigate to the Plans tab, find today's workout, expand it, review the exercises, and tap "Start Workout." That is six decision points before any exercise begins.
+The most critical insight from ADHD fitness research is that **the barrier to starting is higher than the barrier to continuing** [8]. Once a person begins exercising, momentum often carries them through. The current FytNova UX requires the user to: open the app, navigate to the Plans tab, find today's workout, expand it, review the exercises, and tap "Start Workout." That is six decision points before any exercise begins.
 
 The recommended flow: open the app, see "Today: Push Day — 6 exercises, ~45 min" with a single large "Start" button. One decision point. For low-energy days, a secondary "Quick 10 min" button that requires zero decisions — it picks the exercises automatically.
 
@@ -211,7 +211,7 @@ The recommended flow: open the app, see "Today: Push Day — 6 exercises, ~45 mi
 
 ### 6.1 Current State
 
-PeakPulse has streaks, challenges, and a social feed — but these are largely independent systems. The streak tracks consecutive workout days. Challenges are template-based (e.g., "30-day push-up challenge"). The social feed shows activity from connected users. None of these systems interact with each other or with the workout plan.
+FytNova has streaks, challenges, and a social feed — but these are largely independent systems. The streak tracks consecutive workout days. Challenges are template-based (e.g., "30-day push-up challenge"). The social feed shows activity from connected users. None of these systems interact with each other or with the workout plan.
 
 ### 6.2 Recommendations for Deeper Engagement
 

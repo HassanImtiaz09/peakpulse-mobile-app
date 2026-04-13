@@ -1,4 +1,4 @@
-# PeakPulse AI â Comprehensive App Overview
+# FytNova â Comprehensive App Overview
 
 **Version:** 1.0.0  
 **Platform:** iOS, Android, Web (via Expo / React Native)  
@@ -30,7 +30,7 @@
 
 ## Introduction
 
-PeakPulse AI is a comprehensive, AI-powered fitness companion mobile application designed to transform how users approach their fitness journey. The app combines artificial intelligence with personalised fitness planning, nutrition tracking, body composition analysis, and social features to deliver a premium, all-in-one fitness experience.
+FytNova is a comprehensive, AI-powered fitness companion mobile application designed to transform how users approach their fitness journey. The app combines artificial intelligence with personalised fitness planning, nutrition tracking, body composition analysis, and social features to deliver a premium, all-in-one fitness experience.
 
 The application features a cinematic dark theme with golden/amber accents (the "Aurora Titan" design language), full-screen AI-generated backgrounds, animated transitions, and a polished user interface that feels like a first-party iOS application. Every interaction includes haptic feedback, smooth animations, and thoughtful micro-interactions.
 
@@ -38,7 +38,7 @@ The application features a cinematic dark theme with golden/amber accents (the "
 
 ## App Architecture
 
-PeakPulse AI follows a modern mobile architecture with clear separation of concerns.
+FytNova follows a modern mobile architecture with clear separation of concerns.
 
 | Layer | Technology | Purpose |
 |-------|-----------|---------|
@@ -76,7 +76,7 @@ PeakPulse AI follows a modern mobile architecture with clear separation of conce
 The onboarding experience is designed to collect essential user information while showcasing the app's capabilities through a visually stunning, multi-slide introduction.
 
 ### Slide 1: Welcome
-A full-screen cinematic background showing a dramatic gym scene with golden lighting. The slide introduces PeakPulse AI with feature badges highlighting the core capabilities: AI Workout Plans, Smart Meal Plans, AI Body Scan, and Wearable Sync. Users can skip the onboarding at any time.
+A full-screen cinematic background showing a dramatic gym scene with golden lighting. The slide introduces FytNova with feature badges highlighting the core capabilities: AI Workout Plans, Smart Meal Plans, AI Body Scan, and Wearable Sync. Users can skip the onboarding at any time.
 
 ### Slide 2: AI-Powered Features
 Showcases the app's AI capabilities with animated feature cards and descriptions of what the AI can do for the user's fitness journey.
@@ -521,7 +521,7 @@ Collaborative fitness goals with friend groups, tracking collective progress tow
 
 ### Social Sharing
 
-**Branded Templates** â 3 shareable card designs (Streak, Session Complete, Milestone) with PeakPulse branding.
+**Branded Templates** â 3 shareable card designs (Streak, Session Complete, Milestone) with FytNova branding.
 
 **Share Targets** â Instagram Stories, TikTok, Facebook, WhatsApp via system share sheet.
 
@@ -643,7 +643,7 @@ Fasting-aware meal timing and prayer-time workout scheduling for users with hala
 
 ### Local-First Architecture
 
-PeakPulse AI is designed with a local-first approach:
+FytNova is designed with a local-first approach:
 - **Guest Mode** â Full app functionality without any account or cloud storage
 - **AsyncStorage** â All user data (profile, plans, meals, progress, settings) persisted locally
 - **Offline Workouts** â Last generated plan cached for offline access
@@ -707,15 +707,15 @@ All AI-generated workout and meal plans include disclaimers noting that they are
 ## Screenshots
 
 ### Onboarding Welcome Screen
-The onboarding welcome screen features a full-screen cinematic background showing a dramatic gym scene with golden lighting. "Welcome to PeakPulse AI" heading with feature badges (AI Workout Plans, Smart Meal Plans, AI Body Scan, Wearable Sync). A golden "Next" CTA button and Skip option are provided.
+The onboarding welcome screen features a full-screen cinematic background showing a dramatic gym scene with golden lighting. "Welcome to FytNova" heading with feature badges (AI Workout Plans, Smart Meal Plans, AI Body Scan, Wearable Sync). A golden "Next" CTA button and Skip option are provided.
 
 ![Onboarding Welcome](https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/01-onboarding-welcome_03a03bdc.png)
 
 ### Login / Get Started Screen
-The login screen displays the app logo with a fire/light burst effect, "PeakPulse AI" branding, and feature badges (AI Body Scan, Smart Plans, Meal Prep, Progress AI, Wearables, Gym Finder). Authentication options include Continue with Google, Continue with Email, and Skip as Guest. The AI coach chat bubble appears in the corner.
+The login screen displays the app logo with a fire/light burst effect, "FytNova" branding, and feature badges (AI Body Scan, Smart Plans, Meal Prep, Progress AI, Wearables, Gym Finder). Authentication options include Continue with Google, Continue with Email, and Skip as Guest. The AI coach chat bubble appears in the corner.
 
 ![Login Screen](screenshots/02-after-skip.png)
 
 ---
 
-*PeakPulse AI â Precision Performance. Your AI-powered fitness companion.*
+*FytNova â Precision Performance. Your AI-powered fitness companion.*

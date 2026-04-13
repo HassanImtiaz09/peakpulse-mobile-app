@@ -90,7 +90,7 @@ const StreakCard = React.forwardRef<View, { data: ShareData }>(({ data }, ref) =
       {/* Footer */}
       <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
         <Text style={{ color: "#451A03", fontSize: 12, letterSpacing: 1 }}>peakpulse.ai</Text>
-        <Text style={{ color: "#451A03", fontSize: 11 }}>#PeakPulseStreak</Text>
+        <Text style={{ color: "#451A03", fontSize: 11 }}>#FytNovaStreak</Text>
       </View>
     </View>
   </View>
@@ -144,7 +144,7 @@ const SessionCard = React.forwardRef<View, { data: ShareData }>(({ data }, ref) 
 
       <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
         <Text style={{ color: "#451A03", fontSize: 12, letterSpacing: 1 }}>peakpulse.ai</Text>
-        <Text style={{ color: "#451A03", fontSize: 11 }}>#PeakPulseWorkout</Text>
+        <Text style={{ color: "#451A03", fontSize: 11 }}>#FytNovaWorkout</Text>
       </View>
     </View>
   </View>
@@ -189,7 +189,7 @@ const MilestoneCard = React.forwardRef<View, { data: ShareData; milestone: strin
 
       <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
         <Text style={{ color: "#451A03", fontSize: 12, letterSpacing: 1 }}>peakpulse.ai</Text>
-        <Text style={{ color: "#451A03", fontSize: 11 }}>#PeakPulseMilestone</Text>
+        <Text style={{ color: "#451A03", fontSize: 11 }}>#FytNovaMilestone</Text>
       </View>
     </View>
   </View>
@@ -319,7 +319,7 @@ export default function ShareWorkoutScreen() {
       if (available) {
         await Sharing.shareAsync(uri, {
           mimeType: "image/png",
-          dialogTitle: "Share your PeakPulse workout",
+          dialogTitle: "Share your FytNova workout",
           UTI: "public.png",
         });
       } else {

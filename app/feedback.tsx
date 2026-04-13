@@ -169,7 +169,7 @@ export default function FeedbackScreen() {
             <View style={{ paddingHorizontal: 20 }}>
               <Text style={{ color: FG, fontFamily: "BebasNeue_400Regular", fontSize: 28, marginBottom: 4 }}>Send Feedback</Text>
               <Text style={{ color: MUTED, fontSize: 13, lineHeight: 18, marginBottom: 24 }}>
-                Help us improve PeakPulse. Choose the type of feedback you'd like to share.
+                Help us improve FytNova. Choose the type of feedback you'd like to share.
               </Text>
 
               {FEEDBACK_TYPES.map(ft => (
@@ -267,7 +267,7 @@ export default function FeedbackScreen() {
                     ? "Describe your idea and how it would improve the app..."
                     : feedbackType === "question"
                     ? "What do you need help with?"
-                    : "What do you love about PeakPulse?"
+                    : "What do you love about FytNova?"
                 }
                 placeholderTextColor={MUTED}
                 multiline
@@ -321,7 +321,7 @@ export default function FeedbackScreen() {
               </View>
               <Text style={{ color: FG, fontFamily: "BebasNeue_400Regular", fontSize: 26, marginBottom: 8 }}>Thank You!</Text>
               <Text style={{ color: MUTED, fontSize: 14, textAlign: "center", lineHeight: 20, marginBottom: 32, maxWidth: 280 }}>
-                Your feedback has been recorded. We review all submissions to improve PeakPulse.
+                Your feedback has been recorded. We review all submissions to improve FytNova.
               </Text>
 
               <TouchableOpacity

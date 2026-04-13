@@ -137,7 +137,7 @@ interface MilestoneShareData {
 
 function generateShareCardText(data: MilestoneShareData): string {
   const divider = "━━━━━━━━━━━━━━━━━━━━";
-  const appTag = "#PeakPulse #FitnessJourney";
+  const appTag = "#FytNova #FitnessJourney";
 
   switch (data.type) {
     case "level_up":
@@ -148,7 +148,7 @@ function generateShareCardText(data: MilestoneShareData): string {
         `📊 Total XP: ${data.totalXP.toLocaleString()}`,
         data.streakDays > 0 ? `🔥 ${data.streakDays}-day streak` : "",
         divider,
-        "Crushing my fitness goals with PeakPulse AI!",
+        "Crushing my fitness goals with FytNova!",
         appTag,
       ]
         .filter(Boolean)
@@ -162,7 +162,7 @@ function generateShareCardText(data: MilestoneShareData): string {
         `📅 ${data.streakDays} consecutive days`,
         `⚡ ${data.totalXP.toLocaleString()} XP earned`,
         divider,
-        "Consistency is key! Building healthy habits with PeakPulse AI.",
+        "Consistency is key! Building healthy habits with FytNova.",
         appTag,
       ]
         .filter(Boolean)
@@ -176,7 +176,7 @@ function generateShareCardText(data: MilestoneShareData): string {
         `${data.subtitle}`,
         `⚡ ${data.totalXP.toLocaleString()} XP`,
         divider,
-        "Making progress every day with PeakPulse AI!",
+        "Making progress every day with FytNova!",
         appTag,
       ]
         .filter(Boolean)
@@ -427,7 +427,7 @@ describe("Milestone Share Card Text", () => {
     expect(text).toContain("Committed");
     expect(text).toContain("5,000");
     expect(text).toContain("14-day streak");
-    expect(text).toContain("#PeakPulse");
+    expect(text).toContain("#FytNova");
   });
 
   it("generates level-up card without streak when 0", () => {
@@ -444,7 +444,7 @@ describe("Milestone Share Card Text", () => {
     expect(text).toContain("Badge: Flame");
     expect(text).toContain("7 consecutive days");
     expect(text).toContain("3,000");
-    expect(text).toContain("#PeakPulse");
+    expect(text).toContain("#FytNova");
   });
 
   it("generates achievement card", () => {

@@ -187,7 +187,7 @@ function getStreakProtectionMessages(name: string, streak: number): Array<{ titl
   }
   return [
     { title: "Keep your streak alive!", body: `${firstName}, you haven't worked out today yet. A quick session is all it takes.` },
-    { title: `${firstName}, your streak needs you!`, body: `Day ${streak + 1} is waiting. Open PeakPulse and get moving.` },
+    { title: `${firstName}, your streak needs you!`, body: `Day ${streak + 1} is waiting. Open FytNova and get moving.` },
   ];
 }
 
@@ -216,7 +216,7 @@ function getMilestoneMessages(name: string, streak: number): Array<{ title: stri
     3:   { title: `3-day streak! Nice start, ${firstName}!`, body: "You're building a habit. Keep it going — the first week is the hardest." },
     7:   { title: `7 days straight! Week 1 complete!`, body: `${firstName}, you've completed a full week. This is where real progress begins.` },
     14:  { title: `2 weeks strong!`, body: `${firstName}, 14 consecutive days of training. You're officially in the habit zone.` },
-    30:  { title: `30-day streak! Legendary!`, body: `${firstName}, one full month of consistency. You're in the top 5% of PeakPulse users.` },
+    30:  { title: `30-day streak! Legendary!`, body: `${firstName}, one full month of consistency. You're in the top 5% of FytNova users.` },
     50:  { title: `50 days! Unstoppable!`, body: `${firstName}, 50 days of dedication. Your discipline is inspiring.` },
     100: { title: `100-DAY STREAK!`, body: `${firstName}, you've reached the century mark. This is elite-level consistency.` },
   };
@@ -239,7 +239,7 @@ function getMorningBoostMessages(name: string, streak: number, isWorkoutDay: boo
     if (streak > 0) {
       return [
         { title: `Good morning, ${firstName}!`, body: `Day ${streak + 1} of your streak. Your workout is ready — let's make it count.` },
-        { title: `Rise and train, ${firstName}!`, body: `${streak}-day streak on the line. Open PeakPulse to see today's plan.` },
+        { title: `Rise and train, ${firstName}!`, body: `${streak}-day streak on the line. Open FytNova to see today's plan.` },
       ];
     }
     return [
@@ -257,7 +257,7 @@ function getEveningPushMessages(name: string, streak: number): Array<{ title: st
   if (streak > 0) {
     return [
       { title: `${firstName}, still time to train!`, body: `Your ${streak}-day streak expires at midnight. Even a quick 15-minute session counts.` },
-      { title: "Last chance today!", body: `${firstName}, don't let your ${streak}-day streak slip. Open PeakPulse for a quick workout.` },
+      { title: "Last chance today!", body: `${firstName}, don't let your ${streak}-day streak slip. Open FytNova for a quick workout.` },
     ];
   }
   return [

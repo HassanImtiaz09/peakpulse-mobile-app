@@ -1,6 +1,6 @@
 /** @type {const} */
 const themeColors = {
-  // PeakPulse — warm gold brand identity in both modes
+  // FytNova — warm gold brand identity in both modes
   // Light mode: warm cream/amber tones (NOT plain white)
   // Dark mode: deep navy-black with gold accents
   primary:    { light: '#B45309', dark: '#F59E0B' },   // Gold — rich amber in light

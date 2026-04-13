@@ -24,7 +24,7 @@ const BG = {
 };
 
 const INTRO_SLIDES = [
-  { bg: BG.ob1, iconName: "bolt" as const, label: "WELCOME",        title: "Welcome to\nPeakPulse AI",  subtitle: "Workouts, nutrition, body scans, wearable sync, smart pantry, and AI coaching — all in one.", accent: SF.gold,
+  { bg: BG.ob1, iconName: "bolt" as const, label: "WELCOME",        title: "Welcome to\nFytNova",  subtitle: "Workouts, nutrition, body scans, wearable sync, smart pantry, and AI coaching — all in one.", accent: SF.gold,
     features: [
       { icon: "fitness-center" as const, text: "AI Workout Plans" },
       { icon: "restaurant" as const, text: "Smart Meal Plans" },

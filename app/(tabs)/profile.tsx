@@ -508,10 +508,10 @@ function ProfileScreenContent() {
           </CollapsibleSection>
 
           <CollapsibleSection title="Social & Community" count={4}>
-            <FeatureLink icon="group" label="Social Feed" onPress={() => gatedNav("/social-feed", "social_feed", "group", "pro", "Join the PeakPulse community, share progress, and compete in challenges — Pro plan only.")} />
+            <FeatureLink icon="group" label="Social Feed" onPress={() => gatedNav("/social-feed", "social_feed", "group", "pro", "Join the FytNova community, share progress, and compete in challenges — Pro plan only.")} />
             <FeatureLink icon="bolt" label="7-Day Challenge" onPress={() => gatedNav("/challenge-onboarding", "challenges", "bolt", "pro", "Unlock 7-day fitness challenges and leaderboards with a Pro plan.")} />
             <FeatureLink icon="card-giftcard" label="Refer a Friend" onPress={() => gatedNav("/referral", "referral", "card-giftcard", "basic", "Refer friends and earn rewards — available on Basic and Pro plans.")} />
-            <FeatureLink icon="watch" label="Wearable Sync" onPress={() => gatedNav("/wearable-sync", "wearable_sync", "watch", "basic", "Sync your fitness wearable (Apple Watch, Fitbit, Garmin) with PeakPulse — Basic plan and above.")} />
+            <FeatureLink icon="watch" label="Wearable Sync" onPress={() => gatedNav("/wearable-sync", "wearable_sync", "watch", "basic", "Sync your fitness wearable (Apple Watch, Fitbit, Garmin) with FytNova — Basic plan and above.")} />
           </CollapsibleSection>
 
           <CollapsibleSection title="Settings & Preferences" count={5}>

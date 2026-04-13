@@ -1,15 +1,15 @@
-# PeakPulse AI — UX, Feature & Monetization Analysis Report
+# FytNova — UX, Feature & Monetization Analysis Report
 
 **Prepared:** March 2026  
-**Scope:** Critical analysis of PeakPulse's current features, app layout, subscription model, and competitive positioning against leading AI fitness apps, with actionable improvement recommendations.
+**Scope:** Critical analysis of FytNova's current features, app layout, subscription model, and competitive positioning against leading AI fitness apps, with actionable improvement recommendations.
 
 ---
 
 ## 1. Executive Summary
 
-PeakPulse AI is a feature-rich fitness application that combines AI-powered workout planning, meal planning, body scanning, voice coaching, wearable integration, and progress tracking into a single platform. However, the app suffers from a **feature discoverability crisis** — the sheer volume of capabilities is paradoxically its greatest weakness. Users opening the app encounter an overwhelming dashboard with 20+ scrollable sections, while many of the most compelling features remain buried in nested menus. The subscription model undervalues the core AI capabilities by offering them free, weakening the conversion funnel from free to paid tiers.
+FytNova is a feature-rich fitness application that combines AI-powered workout planning, meal planning, body scanning, voice coaching, wearable integration, and progress tracking into a single platform. However, the app suffers from a **feature discoverability crisis** — the sheer volume of capabilities is paradoxically its greatest weakness. Users opening the app encounter an overwhelming dashboard with 20+ scrollable sections, while many of the most compelling features remain buried in nested menus. The subscription model undervalues the core AI capabilities by offering them free, weakening the conversion funnel from free to paid tiers.
 
-This report identifies four critical areas for improvement: **dashboard information architecture**, **feature discoverability and progressive disclosure**, **subscription tier restructuring**, and **navigation simplification**. Implementing these recommendations would bring PeakPulse in line with the UX standards set by market leaders like Fitbod, Hevy, and Strong, while better monetizing its genuinely differentiated AI capabilities.
+This report identifies four critical areas for improvement: **dashboard information architecture**, **feature discoverability and progressive disclosure**, **subscription tier restructuring**, and **navigation simplification**. Implementing these recommendations would bring FytNova in line with the UX standards set by market leaders like Fitbod, Hevy, and Strong, while better monetizing its genuinely differentiated AI capabilities.
 
 ---
 
@@ -17,7 +17,7 @@ This report identifies four critical areas for improvement: **dashboard informat
 
 ### 2.1 Feature Inventory
 
-PeakPulse currently offers an extensive feature set that rivals or exceeds most competitors in breadth. The table below catalogues every major feature and its current accessibility path.
+FytNova currently offers an extensive feature set that rivals or exceeds most competitors in breadth. The table below catalogues every major feature and its current accessibility path.
 
 | Feature | Access Path | Tier | Discoverability |
 |---------|-------------|------|-----------------|
@@ -48,7 +48,7 @@ PeakPulse currently offers an extensive feature set that rivals or exceeds most 
 | Suggested Plan Changes | Home dashboard (14th section) | Free | Very Low |
 | Muscle Balance Trend | Home dashboard (15th section) | Free | Very Low |
 
-The pattern is clear: PeakPulse has built approximately 25 distinct features, but only 4-5 of them are readily discoverable. The remaining 20 features require either extensive scrolling past the fold or navigating into collapsed sections within the Profile tab.
+The pattern is clear: FytNova has built approximately 25 distinct features, but only 4-5 of them are readily discoverable. The remaining 20 features require either extensive scrolling past the fold or navigating into collapsed sections within the Profile tab.
 
 ### 2.2 Current Dashboard Layout
 
@@ -81,7 +81,7 @@ Research from the fitness app industry indicates that **97% of users churn by da
 
 ### 2.3 Current Tab Navigation
 
-PeakPulse uses 6 bottom tabs:
+FytNova uses 6 bottom tabs:
 
 | Tab | Purpose | Usage Frequency |
 |-----|---------|----------------|
@@ -108,12 +108,12 @@ UX best practice recommends **3-5 tabs maximum** for mobile apps [2]. The curren
 
 ### 3.1 Pricing Comparison
 
-The following table compares PeakPulse's pricing against the leading AI fitness apps in the market, based on data from PaywallPro's analysis of 1,200 paywall configurations and publicly available pricing as of early 2026 [3][4].
+The following table compares FytNova's pricing against the leading AI fitness apps in the market, based on data from PaywallPro's analysis of 1,200 paywall configurations and publicly available pricing as of early 2026 [3][4].
 
 | App | Monthly | Annual (total) | Annual (per mo) | Free Tier Scope |
 |-----|---------|---------------|-----------------|-----------------|
-| **PeakPulse Basic** | **£4.99** | **£41.88** | **£3.49** | **AI plans, meal plans, calorie tracking, timer, voice coach, analytics** |
-| **PeakPulse Advanced** | **£9.99** | **£83.88** | **£6.99** | — |
+| **FytNova Basic** | **£4.99** | **£41.88** | **£3.49** | **AI plans, meal plans, calorie tracking, timer, voice coach, analytics** |
+| **FytNova Advanced** | **£9.99** | **£83.88** | **£6.99** | — |
 | Fitbod | $15.99 | $95.99 | $8.00 | Very limited (3 free workouts) |
 | Alpha Progression | $9.99 | $59.99 | $5.00 | Limited logging |
 | Caliber | $12.00 | — | — | Basic tracking |
@@ -122,32 +122,32 @@ The following table compares PeakPulse's pricing against the leading AI fitness 
 | Strong | $4.99 | $29.99 | $2.50 | 3 routines, basic logging |
 | Industry Median (H&F) | $17.86 | $56.66 | $4.72 | Varies |
 
-**Key finding:** PeakPulse's pricing is competitive, but its free tier is dramatically more generous than any competitor. Fitbod limits free users to 3 workouts before requiring a subscription. Freeletics offers only basic bodyweight content for free. PeakPulse gives away its most valuable AI capabilities — workout plan generation, meal plan generation, and calorie estimation — entirely free. This undermines the conversion incentive.
+**Key finding:** FytNova's pricing is competitive, but its free tier is dramatically more generous than any competitor. Fitbod limits free users to 3 workouts before requiring a subscription. Freeletics offers only basic bodyweight content for free. FytNova gives away its most valuable AI capabilities — workout plan generation, meal plan generation, and calorie estimation — entirely free. This undermines the conversion incentive.
 
 ### 3.2 Navigation Comparison
 
 | App | Tab Count | Tab Structure | Primary Action |
 |-----|-----------|--------------|----------------|
-| **PeakPulse** | **6** | Home, Scan, Plans, Coach, Meals, Profile | Scroll to "Start Workout" |
+| **FytNova** | **6** | Home, Scan, Plans, Coach, Meals, Profile | Scroll to "Start Workout" |
 | Fitbod | 3 | Workout, Log, Profile | One-tap "Start Workout" |
 | Hevy | 4 | Workout, Routines, Feed, Profile | Prominent "Start Workout" button |
 | Strong | 3 | Workout, History, Profile | "Start Workout" always visible |
 | Freeletics | 4 | Coach, Explore, Community, Profile | AI Coach is the home screen |
 | MyFitnessPal | 5 | Dashboard, Diary, Newsfeed, Plans, More | Quick-log food button |
 
-The most successful fitness apps use 3-4 tabs and make the primary action (starting a workout) accessible within one tap from any screen. PeakPulse requires navigating through the dashboard or switching to the Plans tab to begin a workout.
+The most successful fitness apps use 3-4 tabs and make the primary action (starting a workout) accessible within one tap from any screen. FytNova requires navigating through the dashboard or switching to the Plans tab to begin a workout.
 
 ### 3.3 Home Screen Comparison
 
 | App | Home Screen Content | Sections Above Fold |
 |-----|-------------------|-------------------|
-| **PeakPulse** | 20+ sections, extensive scroll | 2-3 (greeting, today's workout, nutrition) |
+| **FytNova** | 20+ sections, extensive scroll | 2-3 (greeting, today's workout, nutrition) |
 | Fitbod | Today's workout, muscle recovery status | 2 (workout + recovery) |
 | Hevy | Recent workouts, quick start | 2 (start button + recent) |
 | Strong | Workout list, quick start | 2 (start button + history) |
 | MyFitnessPal | Calorie summary, recent meals | 3 (calories + macros + meals) |
 
-The top-performing apps show **2-3 focused sections** above the fold. PeakPulse shows 2-3 above the fold but then continues for 17 more sections, creating a "content waterfall" that dilutes the impact of every individual section.
+The top-performing apps show **2-3 focused sections** above the fold. FytNova shows 2-3 above the fold but then continues for 17 more sections, creating a "content waterfall" that dilutes the impact of every individual section.
 
 ---
 
@@ -161,17 +161,17 @@ The practical consequence is that features positioned below the 5th section (app
 
 ### 4.2 Issue 2: Feature Discoverability Failure
 
-PeakPulse has built approximately 25 distinct features, but the app provides no mechanism for progressive disclosure or contextual feature introduction. New features (Workout Analytics, Voice Coach Settings, Timer Sounds, Offline Cache) are added as links in the Profile screen's collapsible settings sections, where they compete with 15+ other items for attention.
+FytNova has built approximately 25 distinct features, but the app provides no mechanism for progressive disclosure or contextual feature introduction. New features (Workout Analytics, Voice Coach Settings, Timer Sounds, Offline Cache) are added as links in the Profile screen's collapsible settings sections, where they compete with 15+ other items for attention.
 
-The industry best practice is to introduce features contextually — for example, showing a "Try Voice Coaching" prompt when a user starts their first workout timer, or surfacing "View Your Analytics" after completing a week of workouts. PeakPulse currently relies on users proactively exploring the Profile tab to discover these capabilities.
+The industry best practice is to introduce features contextually — for example, showing a "Try Voice Coaching" prompt when a user starts their first workout timer, or surfacing "View Your Analytics" after completing a week of workouts. FytNova currently relies on users proactively exploring the Profile tab to discover these capabilities.
 
 ### 4.3 Issue 3: Subscription Value Misalignment
 
-The free tier includes PeakPulse's most technically impressive and resource-intensive features: AI workout plan generation, AI meal plan generation, and photo-based calorie estimation. These are the features that would create the strongest "aha moment" for new users and drive conversion to paid tiers.
+The free tier includes FytNova's most technically impressive and resource-intensive features: AI workout plan generation, AI meal plan generation, and photo-based calorie estimation. These are the features that would create the strongest "aha moment" for new users and drive conversion to paid tiers.
 
 By contrast, the Basic tier (£4.99/month) primarily adds body scanning and limited progress photos — features that are less immediately compelling than the AI planning capabilities already available for free. This creates a weak conversion funnel where users receive the core value proposition without any payment incentive.
 
-Industry data from RevenueCat's State of Subscription Apps 2026 report shows that the median freemium conversion rate is just 2.1% within 35 days [5]. The most effective strategy is to demonstrate value first (let users experience one AI-generated workout), then gate continued access behind a paywall. PeakPulse currently does the opposite: it gives unlimited access to AI features and gates secondary features.
+Industry data from RevenueCat's State of Subscription Apps 2026 report shows that the median freemium conversion rate is just 2.1% within 35 days [5]. The most effective strategy is to demonstrate value first (let users experience one AI-generated workout), then gate continued access behind a paywall. FytNova currently does the opposite: it gives unlimited access to AI features and gates secondary features.
 
 ### 4.4 Issue 4: Navigation Complexity
 
@@ -219,7 +219,7 @@ This restructuring reduces the dashboard from 20+ sections to 6, bringing it in 
 
 ### 5.2 Recommendation 2: Implement Progressive Feature Disclosure (HIGH PRIORITY)
 
-Rather than expecting users to discover features through the Profile tab, PeakPulse should introduce features contextually at the moment they become relevant. The following triggers are recommended:
+Rather than expecting users to discover features through the Profile tab, FytNova should introduce features contextually at the moment they become relevant. The following triggers are recommended:
 
 | Trigger | Feature to Surface | Prompt |
 |---------|-------------------|--------|
@@ -291,7 +291,7 @@ This 4-tab structure (Home, Train, Nutrition, Profile) aligns with the navigatio
 
 ### 5.5 Recommendation 5: Add a Floating "Start Workout" Button (MEDIUM PRIORITY)
 
-Every major competitor makes starting a workout accessible within one tap. PeakPulse should add a persistent floating action button (FAB) that appears on the Home and Train tabs. This button should:
+Every major competitor makes starting a workout accessible within one tap. FytNova should add a persistent floating action button (FAB) that appears on the Home and Train tabs. This button should:
 
 - Display prominently at the bottom-center of the screen, above the tab bar
 - Use the app's gold accent colour for high visibility
@@ -322,7 +322,7 @@ The current paywall is a standard feature comparison list. Based on industry bes
 
 **Visual hierarchy:** Make the annual plan the default selection with a prominent "Best Value" badge. Show the monthly price first as an anchor, then present the annual price as a per-month equivalent with explicit savings ("Save £48/year").
 
-**Social proof:** Add a line such as "Join 10,000+ athletes training with PeakPulse Pro" (once user numbers support this).
+**Social proof:** Add a line such as "Join 10,000+ athletes training with FytNova Pro" (once user numbers support this).
 
 **Urgency elements:** For trial users, show a countdown ("3 days left in your trial") with a clear CTA.
 
@@ -381,9 +381,9 @@ After implementing these changes, the following metrics should be monitored to m
 
 ## 8. Conclusion
 
-PeakPulse AI has built a genuinely impressive feature set that competes with — and in many areas exceeds — established players like Fitbod, Hevy, and Strong. The AI workout planning, voice coaching, body scanning, and analytics capabilities represent real technical differentiation. However, these features are currently trapped behind a dashboard that overwhelms rather than guides, a navigation structure that obscures rather than reveals, and a pricing model that gives away the crown jewels for free.
+FytNova has built a genuinely impressive feature set that competes with — and in many areas exceeds — established players like Fitbod, Hevy, and Strong. The AI workout planning, voice coaching, body scanning, and analytics capabilities represent real technical differentiation. However, these features are currently trapped behind a dashboard that overwhelms rather than guides, a navigation structure that obscures rather than reveals, and a pricing model that gives away the crown jewels for free.
 
-The recommendations in this report focus on three principles drawn from the most successful fitness apps in the market: **simplify the surface** (show less, link to more), **guide the journey** (introduce features when they matter, not all at once), and **earn the conversion** (demonstrate AI value first, then gate continued access). Implementing these changes would transform PeakPulse from a feature-rich but overwhelming experience into a focused, habit-forming fitness companion that converts free users into paying subscribers.
+The recommendations in this report focus on three principles drawn from the most successful fitness apps in the market: **simplify the surface** (show less, link to more), **guide the journey** (introduce features when they matter, not all at once), and **earn the conversion** (demonstrate AI value first, then gate continued access). Implementing these changes would transform FytNova from a feature-rich but overwhelming experience into a focused, habit-forming fitness companion that converts free users into paying subscribers.
 
 ---
 

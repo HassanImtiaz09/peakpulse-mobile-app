@@ -1,16 +1,16 @@
-# Alternative Bundling Solutions for PeakPulse: A Memory-Efficiency Analysis
+# Alternative Bundling Solutions for FytNova: A Memory-Efficiency Analysis
 
 **Author:** Manus AI
 **Date:** April 9, 2026
-**Project:** PeakPulse Mobile (Expo SDK 54, React Native 0.81)
+**Project:** FytNova Mobile (Expo SDK 54, React Native 0.81)
 
 ---
 
 ## Executive Summary
 
-The PeakPulse mobile application has grown to **241 source files** containing approximately **97,000 lines of TypeScript** across 74 screens, plus 92 test files with an additional 22,000 lines. This scale, combined with a sandbox environment limited to **3.8 GB RAM and 2 GB swap**, causes the Metro bundler's Node.js process to consume 1.3--2.1 GB of resident memory during development, triggering repeated **OOM (Out-of-Memory) kills** by the Linux kernel.
+The FytNova mobile application has grown to **241 source files** containing approximately **97,000 lines of TypeScript** across 74 screens, plus 92 test files with an additional 22,000 lines. This scale, combined with a sandbox environment limited to **3.8 GB RAM and 2 GB swap**, causes the Metro bundler's Node.js process to consume 1.3--2.1 GB of resident memory during development, triggering repeated **OOM (Out-of-Memory) kills** by the Linux kernel.
 
-This report evaluates four alternative bundling approaches to determine whether any can meaningfully reduce dev-server memory consumption for a project of this size and dependency profile. The conclusion is nuanced: while alternatives exist, **none offer a drop-in, low-risk solution** for PeakPulse's specific combination of Expo Router, NativeWind, and constrained RAM. The most practical path forward involves Metro-level optimizations rather than a bundler replacement.
+This report evaluates four alternative bundling approaches to determine whether any can meaningfully reduce dev-server memory consumption for a project of this size and dependency profile. The conclusion is nuanced: while alternatives exist, **none offer a drop-in, low-risk solution** for FytNova's specific combination of Expo Router, NativeWind, and constrained RAM. The most practical path forward involves Metro-level optimizations rather than a bundler replacement.
 
 ---
 
@@ -23,7 +23,7 @@ A critical distinction must be drawn between two separate concerns that are ofte
 | **Production bundle size** | The size of the final JS bundle shipped to users | `expo export` / `react-native bundle` |
 | **Dev server memory** | RAM consumed by the bundler process during development | `expo start` / `npx expo start` |
 
-PeakPulse's problem is exclusively the latter. The Metro dev server must parse, transform, and hold in memory the entire module graph (source files + `node_modules`) while watching for changes. With 74 dependencies and 97K lines of source code, this graph is substantial. Most "alternative bundler" discussions focus on production bundle size improvements (tree shaking, code splitting), which **do not address dev-time memory pressure** [1].
+FytNova's problem is exclusively the latter. The Metro dev server must parse, transform, and hold in memory the entire module graph (source files + `node_modules`) while watching for changes. With 74 dependencies and 97K lines of source code, this graph is substantial. Most "alternative bundler" discussions focus on production bundle size improvements (tree shaking, code splitting), which **do not address dev-time memory pressure** [1].
 
 ---
 
@@ -47,11 +47,11 @@ Re.Pack is the most mature Metro alternative for React Native, developed by Call
 - **Expo Go does not work** with Re.Pack -- native development builds are required [5]
 - **EAS Build** integration is unverified and likely requires custom build scripts
 - A draft `@callstack/repack-plugin-expo` was mentioned in the Re.Pack 5.2 release notes but has not been officially released [3]
-- The community template targets a simpler project structure than PeakPulse's 74-screen app
+- The community template targets a simpler project structure than FytNova's 74-screen app
 
 **Memory implications:** Rspack is written in Rust and performs bundling in native code, which should theoretically use less memory than Metro's JavaScript-based bundling. However, Rspack has its own **documented memory leak issues** in dev server mode. GitHub issue #8976 reports dev server processes growing to 20--50 GB of RAM on large projects, traced partly to the `parallelCodeSplitting` feature enabled by default since Rspack 1.3.0 [6]. While a workaround exists (disabling `parallelCodeSplitting`), the issue remains open as of April 2026. This means **Rspack is not a guaranteed improvement** for dev-time memory consumption.
 
-**Migration effort for PeakPulse:** Very high. Would require ejecting from Expo's managed workflow, replacing Expo CLI, rewriting Metro configuration, verifying all 74 Expo SDK module integrations, and accepting the loss of Expo Go for development testing.
+**Migration effort for FytNova:** Very high. Would require ejecting from Expo's managed workflow, replacing Expo CLI, rewriting Metro configuration, verifying all 74 Expo SDK module integrations, and accepting the loss of Expo Go for development testing.
 
 ---
 
@@ -65,13 +65,13 @@ Microsoft's `@rnx-kit/metro-serializer-esbuild` takes a different approach: it k
 | **Tree shaking** | Yes, via esbuild |
 | **Bundle size reduction** | 0--20% typically, sometimes more [1] |
 | **Status** | Beta |
-| **Metro version** | Requires Metro 0.66.1+ (PeakPulse uses a compatible version) |
+| **Metro version** | Requires Metro 0.66.1+ (FytNova uses a compatible version) |
 
 The fundamental limitation is stated clearly in the documentation:
 
 > `esbuildTransformerConfig` is incompatible with dev server and debug builds. It should only be set when bundling for production. [7]
 
-This means `metro-serializer-esbuild` **cannot help with dev server memory** at all. It only affects production bundle generation. For PeakPulse's OOM problem during `expo start`, this tool provides zero benefit.
+This means `metro-serializer-esbuild` **cannot help with dev server memory** at all. It only affects production bundle generation. For FytNova's OOM problem during `expo start`, this tool provides zero benefit.
 
 **Migration effort:** Low for production builds (add a Metro config plugin), but irrelevant to the problem at hand.
 
@@ -90,7 +90,7 @@ The `react-native-esbuild` project by leegeunhyeok replaces Metro entirely with 
 | **NativeWind** | Not supported |
 | **Status** | Under development, not production-ready [8] |
 
-This project is the most promising in terms of raw memory efficiency, since esbuild's Go runtime has fundamentally different memory characteristics than Node.js. However, it lacks support for Hermes (React Native's default JS engine since RN 0.70), Expo Router, and NativeWind -- three technologies that PeakPulse depends on critically.
+This project is the most promising in terms of raw memory efficiency, since esbuild's Go runtime has fundamentally different memory characteristics than Node.js. However, it lacks support for Hermes (React Native's default JS engine since RN 0.70), Expo Router, and NativeWind -- three technologies that FytNova depends on critically.
 
 **Migration effort:** Not feasible. Would require rewriting the entire build pipeline and losing core dependencies.
 
@@ -119,9 +119,9 @@ However, all of these optimizations **only apply to production bundles**. The tr
 
 ---
 
-## Practical Recommendations for PeakPulse
+## Practical Recommendations for FytNova
 
-Given that no alternative bundler offers a safe, compatible path to reducing dev-server memory for PeakPulse, the recommended approach is to **optimize within Metro and the existing environment**:
+Given that no alternative bundler offers a safe, compatible path to reducing dev-server memory for FytNova, the recommended approach is to **optimize within Metro and the existing environment**:
 
 ### Immediate Actions (Low Risk)
 
@@ -154,13 +154,13 @@ config.server = {
 
 **8. Watch for Metro improvements.** The Metro team has been working on tree shaking (experimental in SDK 54) and performance improvements. React Native 0.83 and Expo SDK 55 may bring further optimizations to Metro's memory footprint.
 
-**9. Consider project modularization.** If PeakPulse continues to grow beyond 100K lines, consider splitting it into a monorepo with separate packages. This allows Metro to resolve only the packages needed for the current development context.
+**9. Consider project modularization.** If FytNova continues to grow beyond 100K lines, consider splitting it into a monorepo with separate packages. This allows Metro to resolve only the packages needed for the current development context.
 
 ---
 
 ## Conclusion
 
-The investigation reveals that **Metro remains the only fully compatible bundler** for PeakPulse's technology stack (Expo SDK 54, Expo Router 6, NativeWind 4, Reanimated 4, tRPC). The alternatives either lack critical compatibility (Re.Pack with Expo Router, react-native-esbuild with Hermes/NativeWind) or only optimize production bundles without addressing dev-server memory (rnx-kit, Expo tree shaking).
+The investigation reveals that **Metro remains the only fully compatible bundler** for FytNova's technology stack (Expo SDK 54, Expo Router 6, NativeWind 4, Reanimated 4, tRPC). The alternatives either lack critical compatibility (Re.Pack with Expo Router, react-native-esbuild with Hermes/NativeWind) or only optimize production bundles without addressing dev-server memory (rnx-kit, Expo tree shaking).
 
 The most impactful immediate action is reducing `NODE_OPTIONS --max-old-space-size` from 5120 to 2048 and disabling the continuous TypeScript watcher. These changes alone should reduce peak memory by 500 MB--1 GB, potentially eliminating or significantly reducing OOM kill frequency within the current sandbox constraints.
 

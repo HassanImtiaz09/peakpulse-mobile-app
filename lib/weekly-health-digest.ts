@@ -172,7 +172,7 @@ export function buildDigestNotificationContent(digest: WeeklyDigestData): Notifi
 
   return {
     title: "Your Weekly Health Digest",
-    subtitle: "PeakPulse Weekly Summary",
+    subtitle: "FytNova Weekly Summary",
     body: body + suffix,
     data: { type: "weekly_digest", screen: "/health-trends" },
     sound: true,

@@ -42,7 +42,7 @@ export interface MilestoneShareData {
  */
 export function generateShareCardText(data: MilestoneShareData): string {
   const divider = "━━━━━━━━━━━━━━━━━━━━";
-  const appTag = "#PeakPulse #FitnessJourney";
+  const appTag = "#FytNova #FitnessJourney";
 
   switch (data.type) {
     case "level_up":
@@ -53,7 +53,7 @@ export function generateShareCardText(data: MilestoneShareData): string {
         `📊 Total XP: ${data.totalXP.toLocaleString()}`,
         data.streakDays > 0 ? `🔥 ${data.streakDays}-day streak` : "",
         divider,
-        "Crushing my fitness goals with PeakPulse AI!",
+        "Crushing my fitness goals with FytNova!",
         appTag,
       ]
         .filter(Boolean)
@@ -67,7 +67,7 @@ export function generateShareCardText(data: MilestoneShareData): string {
         `📅 ${data.streakDays} consecutive days`,
         `⚡ ${data.totalXP.toLocaleString()} XP earned`,
         divider,
-        "Consistency is key! Building healthy habits with PeakPulse AI.",
+        "Consistency is key! Building healthy habits with FytNova.",
         appTag,
       ]
         .filter(Boolean)
@@ -81,7 +81,7 @@ export function generateShareCardText(data: MilestoneShareData): string {
         `${data.subtitle}`,
         `⚡ ${data.totalXP.toLocaleString()} XP`,
         divider,
-        "Making progress every day with PeakPulse AI!",
+        "Making progress every day with FytNova!",
         appTag,
       ]
         .filter(Boolean)
@@ -130,7 +130,7 @@ export function generateShareCardSVG(data: MilestoneShareData): string {
   <line x1="100" y1="260" x2="300" y2="260" stroke="${accentColor}" stroke-opacity="0.3" stroke-width="1" />
   <text x="200" y="300" text-anchor="middle" font-family="system-ui, sans-serif" font-size="16" fill="#9BA1A6">${data.totalXP.toLocaleString()} XP earned</text>
   ${data.streakDays > 0 ? `<text x="200" y="330" text-anchor="middle" font-family="system-ui, sans-serif" font-size="16" fill={UI.red}>🔥 ${data.streakDays}-day streak</text>` : ""}
-  <text x="200" y="440" text-anchor="middle" font-family="system-ui, sans-serif" font-weight="700" font-size="18" fill="${accentColor}">PeakPulse AI</text>
+  <text x="200" y="440" text-anchor="middle" font-family="system-ui, sans-serif" font-weight="700" font-size="18" fill="${accentColor}">FytNova</text>
   <text x="200" y="465" text-anchor="middle" font-family="system-ui, sans-serif" font-size="12" fill="#64748B">Your AI Fitness Companion</text>
 </svg>`;
 }

@@ -309,21 +309,21 @@ export async function shareCircleInvite(
   const storeUrl = getStoreUrl();
 
   const message =
-    `💪 ${userName} invited you to their PeakPulse AI fitness circle!\n\n` +
+    `💪 ${userName} invited you to their FytNova fitness circle!\n\n` +
     `Join our circle to track each other's streaks, compete on leaderboards, ` +
     `and stay motivated together.\n\n` +
     `🔥 Circle Code: ${circleCode}\n\n` +
     `✨ You'll get a FREE 14-day Advanced trial when you join!\n\n` +
-    `Download PeakPulse AI:\n` +
+    `Download FytNova:\n` +
     `📱 ${url}\n\n` +
-    `Or search "PeakPulse AI" on the App Store / Google Play`;
+    `Or search "FytNova" on the App Store / Google Play`;
 
   try {
     await Share.share(
       Platform.OS === "ios"
         ? { message, url }
         : { message },
-      { dialogTitle: "Invite to PeakPulse Circle" },
+      { dialogTitle: "Invite to FytNova Circle" },
     );
   } catch {
     // User cancelled

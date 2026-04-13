@@ -4,7 +4,7 @@ import { UI } from "@/constants/ui-colors";
  *
  * Pre-populated example posts and weekly challenge templates to make the
  * Community and 7-Day Challenge sections feel populated for new users.
- * All posts are clearly labelled as examples from the PeakPulse team.
+ * All posts are clearly labelled as examples from the FytNova team.
  *
  * These appear when the real feed is empty (no server posts yet).
  */
@@ -44,7 +44,7 @@ export const SEED_POSTS: SeedPost[] = [
   {
     id: -1,
     userId: -1,
-    userName: "Alex (PeakPulse Team)",
+    userName: "Alex (FytNova Team)",
     userAvatar: "💪",
     type: "progress",
     caption: "Crushed a new PR on bench press today — 100 kg for 3 reps! The progressive overload program is really paying off. Feeling strong 💪",
@@ -120,7 +120,7 @@ export const SEED_POSTS: SeedPost[] = [
   {
     id: -7,
     userId: -7,
-    userName: "Team PeakPulse",
+    userName: "Team FytNova",
     userAvatar: "⚡",
     type: "challenge",
     caption: "This week's community challenge: 7-Day Step Challenge — hit 10,000 steps every day! 1,243 people have already joined. Are you in? 🚶‍♂️",
@@ -147,7 +147,7 @@ export const SEED_POSTS: SeedPost[] = [
     userName: "Jordan T.",
     userAvatar: "📈",
     type: "progress",
-    caption: "3-month progress check: Deadlift went from 80 kg to 140 kg. Squat from 60 kg to 110 kg. Tracking every session in PeakPulse made the difference.",
+    caption: "3-month progress check: Deadlift went from 80 kg to 140 kg. Squat from 60 kg to 110 kg. Tracking every session in FytNova made the difference.",
     likes: 124,
     createdAt: daysAgo(3),
     isSeed: true,
@@ -155,7 +155,7 @@ export const SEED_POSTS: SeedPost[] = [
   {
     id: -10,
     userId: -10,
-    userName: "Nutrition Tip (PeakPulse)",
+    userName: "Nutrition Tip (FytNova)",
     userAvatar: "🥗",
     type: "progress",
     caption: "Quick tip: Meal prepping on Sunday saves 5+ hours during the week. Use the My Pantry feature to track what you have and plan meals around it!",

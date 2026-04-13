@@ -79,7 +79,7 @@ const GUIDE_SECTIONS = [
     title: "Community & Challenges",
     color: SF.orange,
     steps: [
-      "The Social Feed (Quick Actions → Community) shows progress posts from other PeakPulse users.",
+      "The Social Feed (Quick Actions → Community) shows progress posts from other FytNova users.",
       "Share your own progress by tapping the '+' button in the feed.",
       "Join the 7-Day Challenge (Quick Actions → 7-Day Challenge) for a structured beginner programme.",
       "Refer a friend (Quick Actions → Refer a Friend) to earn Premium credits.",

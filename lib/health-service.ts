@@ -530,7 +530,7 @@ export async function writeWorkoutToHealthConnect(workout: WorkoutData): Promise
         startTime: workout.startDate,
         endTime: workout.endDate,
         exerciseType: HEALTH_CONNECT_EXERCISE_MAP[workout.type] ?? "EXERCISE",
-        title: workout.title ?? `PeakPulse ${workout.type.replace(/_/g, " ")}`,
+        title: workout.title ?? `FytNova ${workout.type.replace(/_/g, " ")}`,
       },
     ]);
 

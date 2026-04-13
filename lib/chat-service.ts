@@ -356,7 +356,7 @@ export async function seedChatRoom(roomId: string, roomName: string, type: "circ
       id: generateId(),
       roomId,
       senderId: "system",
-      senderName: "PeakPulse",
+      senderName: "FytNova",
       senderAvatar: "⚡",
       text: `Welcome to ${roomName}! This is your group chat. Share progress, motivate each other, and stay accountable together.`,
       type: "system",

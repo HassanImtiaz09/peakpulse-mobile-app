@@ -183,7 +183,7 @@ describe("Social Card Generator (lib/social-card-generator.ts)", () => {
     expect(src).toMatch(/export\s+(async\s+)?function\s+shareWeeklySummaryCard/);
   });
 
-  it("generates HTML with PeakPulse branding", () => {
+  it("generates HTML with FytNova branding", () => {
     expect(src).toContain("PEAKPULSE AI");
     expect(src).toContain("Precision Performance");
   });

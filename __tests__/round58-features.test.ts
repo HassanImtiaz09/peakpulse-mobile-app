@@ -303,7 +303,7 @@ describe("PDF Health Report Generator", () => {
     expect(report).toContain("export function generateReportHTML");
   });
 
-  it("HTML includes PeakPulse branding", () => {
+  it("HTML includes FytNova branding", () => {
     expect(report).toContain("PEAKPULSE AI");
     expect(report).toContain("Health Report");
     expect(report).toContain("#F59E0B"); // brand amber color
@@ -360,7 +360,7 @@ describe("PDF Health Report Generator", () => {
   });
 
   it("HTML includes footer with copyright", () => {
-    expect(report).toContain("PeakPulse AI. All rights reserved");
+    expect(report).toContain("FytNova. All rights reserved");
   });
 
   it("exports generateHealthReport function", () => {
@@ -468,7 +468,7 @@ describe("Report HTML Quality", () => {
     expect(report).toContain("margin:");
   });
 
-  it("uses professional color scheme matching PeakPulse brand", () => {
+  it("uses professional color scheme matching FytNova brand", () => {
     expect(report).toContain("#F59E0B"); // amber primary
     expect(report).toContain("#0A0E14"); // dark background
     expect(report).toContain("#FFFBEB"); // amber light bg

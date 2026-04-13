@@ -1,4 +1,4 @@
-# PeakPulse AI — Mobile App Design
+# FytNova — Mobile App Design
 
 ## Brand Identity
 - **Primary Color**: Deep violet-purple (#7C3AED) with electric blue accents (#3B82F6)

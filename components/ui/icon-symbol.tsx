@@ -6,7 +6,7 @@ import { ComponentProps } from "react";
 import { OpaqueColorValue, type StyleProp, type TextStyle } from "react-native";
 
 /**
- * SF Symbols to Material Icons mappings for PeakPulse AI
+ * SF Symbols to Material Icons mappings for FytNova
  */
 const MAPPING = {
   // Navigation

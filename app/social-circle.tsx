@@ -630,7 +630,7 @@ export default function SocialCircleScreen() {
                 <Text style={styles.sectionTitle}>How It Works</Text>
                 {[
                   { step: "1", text: "Share your circle invite link with friends and family" },
-                  { step: "2", text: "They download PeakPulse from the App Store or Play Store" },
+                  { step: "2", text: "They download FytNova from the App Store or Play Store" },
                   { step: "3", text: "They enter your circle code during setup" },
                   { step: "4", text: "They get a FREE 14-day Advanced trial (double the standard!)" },
                   { step: "5", text: "You earn discounts and free months as rewards" },

@@ -1,4 +1,4 @@
-# PeakPulse AI — Pre-Launch Checklist & Marketing Strategy
+# FytNova — Pre-Launch Checklist & Marketing Strategy
 
 *Prepared by Manus AI — March 2026*
 
@@ -6,9 +6,9 @@
 
 ## Executive Summary
 
-PeakPulse AI is an AI-powered fitness and nutrition companion that combines meal planning, calorie tracking, pantry management, wearable integration, and personalised coaching into a single mobile experience. This document provides a comprehensive roadmap for taking the app from its current development state to a successful launch on the Apple App Store and Google Play Store, followed by a data-driven marketing strategy to acquire and retain users.
+FytNova is an AI-powered fitness and nutrition companion that combines meal planning, calorie tracking, pantry management, wearable integration, and personalised coaching into a single mobile experience. This document provides a comprehensive roadmap for taking the app from its current development state to a successful launch on the Apple App Store and Google Play Store, followed by a data-driven marketing strategy to acquire and retain users.
 
-The global fitness app market is projected to grow from USD 12.1 billion in 2025 to USD 45.45 billion by 2035, reflecting a compound annual growth rate of approximately 14% [1]. This represents a significant opportunity for a well-positioned, AI-differentiated product like PeakPulse AI.
+The global fitness app market is projected to grow from USD 12.1 billion in 2025 to USD 45.45 billion by 2035, reflecting a compound annual growth rate of approximately 14% [1]. This represents a significant opportunity for a well-positioned, AI-differentiated product like FytNova.
 
 ---
 
@@ -41,7 +41,7 @@ Health and fitness apps face heightened scrutiny from both app stores and regula
 | AI Disclosure | Apple (2025 policy) | Disclose use of AI/ML features and obtain user consent |
 | EULA | Apple (optional for Google) | End-user licence agreement for subscription apps |
 
-**Key considerations for PeakPulse AI specifically:**
+**Key considerations for FytNova specifically:**
 
 Since the app collects calorie data, workout logs, and integrates with wearable health platforms, the privacy policy must explicitly describe what health-related data is collected, how it is processed (including AI analysis of food photos), whether it is stored on-device or server-side, and under what circumstances it might be shared. Apple's 2025 policy update requires that apps using external AI services disclose this to users and obtain consent [2]. The app should include a clear disclaimer that it is not a medical device and does not provide medical advice.
 
@@ -77,7 +77,7 @@ The server must be live, stable, and accessible during the review period. Apple 
 
 **Demo Account for Reviewers:**
 
-Since PeakPulse AI supports user authentication, you must provide demo credentials in the App Store Connect review notes. Pre-populate this demo account with sample data (meals logged, pantry items, workout history) so reviewers can experience the full app without spending time setting it up.
+Since FytNova supports user authentication, you must provide demo credentials in the App Store Connect review notes. Pre-populate this demo account with sample data (meals logged, pantry items, workout history) so reviewers can experience the full app without spending time setting it up.
 
 **Account Deletion:**
 
@@ -85,11 +85,11 @@ Apple requires that any app offering account creation must also provide a way to
 
 **Permissions:**
 
-Request only the permissions the app actually needs, and only at the point of use (not on first launch). For PeakPulse AI, this includes camera (barcode/receipt scanning, food photos), notifications, and potentially HealthKit/Google Fit access. Each permission request must include a clear, human-readable explanation of why it is needed.
+Request only the permissions the app actually needs, and only at the point of use (not on first launch). For FytNova, this includes camera (barcode/receipt scanning, food photos), notifications, and potentially HealthKit/Google Fit access. Each permission request must include a clear, human-readable explanation of why it is needed.
 
 ### 1.5 Stripe Payment Integration
 
-Since PeakPulse AI will offer a subscription model, Stripe integration is essential for handling payments. However, there are important platform-specific rules to understand.
+Since FytNova will offer a subscription model, Stripe integration is essential for handling payments. However, there are important platform-specific rules to understand.
 
 | Scenario | Payment Method | Commission |
 |----------|---------------|------------|
@@ -97,9 +97,9 @@ Since PeakPulse AI will offer a subscription model, Stripe integration is essent
 | Physical goods or services | Stripe or any payment processor | 0% to stores |
 | Web-based subscription (outside the app) | Stripe | 0% to stores |
 
-**Important:** For digital subscriptions accessed within the app (such as premium AI coaching, advanced meal plans, or unlimited food photo scans), Apple and Google require the use of their native in-app purchase systems. You cannot use Stripe directly for these within the app. However, Stripe can power your web-based subscription flow (on the PeakPulse website), and users who subscribe via the web can access premium features in the app without the 30% store commission.
+**Important:** For digital subscriptions accessed within the app (such as premium AI coaching, advanced meal plans, or unlimited food photo scans), Apple and Google require the use of their native in-app purchase systems. You cannot use Stripe directly for these within the app. However, Stripe can power your web-based subscription flow (on the FytNova website), and users who subscribe via the web can access premium features in the app without the 30% store commission.
 
-**Recommended approach:** Implement both Apple IAP and Google Play Billing for in-app subscriptions (using a library like `react-native-purchases` from RevenueCat, which abstracts both platforms), and also offer Stripe-powered subscriptions on the PeakPulse website as an alternative channel with better margins.
+**Recommended approach:** Implement both Apple IAP and Google Play Billing for in-app subscriptions (using a library like `react-native-purchases` from RevenueCat, which abstracts both platforms), and also offer Stripe-powered subscriptions on the FytNova website as an alternative channel with better margins.
 
 ### 1.6 Analytics and Monitoring
 
@@ -117,7 +117,7 @@ Before launch, instrument the app with analytics to understand user behaviour an
 
 ASO is the equivalent of SEO for app stores. Optimising your listing before launch significantly impacts organic discovery.
 
-**Title and subtitle** should include high-value keywords. For example: "PeakPulse AI — Meal Planner & Fitness Coach" (Apple) or "PeakPulse AI: Meal Planner, Calorie Tracker & Workout Coach" (Google, which allows longer titles).
+**Title and subtitle** should include high-value keywords. For example: "FytNova — Meal Planner & Fitness Coach" (Apple) or "FytNova: Meal Planner, Calorie Tracker & Workout Coach" (Google, which allows longer titles).
 
 **Keywords** to target include: AI meal planner, calorie tracker, food photo scanner, pantry manager, workout planner, fitness coach, macro tracker, meal prep, recipe generator, wearable fitness, nutrition tracker, and health companion.
 
@@ -129,7 +129,7 @@ ASO is the equivalent of SEO for app stores. Optimising your listing before laun
 
 ### 2.1 Positioning and Target Audience
 
-PeakPulse AI differentiates itself through its AI-first approach to the full nutrition-fitness lifecycle. Unlike apps that focus on just calorie counting or just workouts, PeakPulse connects pantry management, meal planning, recipe generation, food photo recognition, and fitness tracking into a single intelligent system.
+FytNova differentiates itself through its AI-first approach to the full nutrition-fitness lifecycle. Unlike apps that focus on just calorie counting or just workouts, FytNova connects pantry management, meal planning, recipe generation, food photo recognition, and fitness tracking into a single intelligent system.
 
 | Segment | Description | Key Value Proposition |
 |---------|-------------|----------------------|
@@ -140,7 +140,7 @@ PeakPulse AI differentiates itself through its AI-first approach to the full nut
 
 ### 2.2 Pre-Launch Phase (4-6 Weeks Before Launch)
 
-**Landing page and email waitlist** are the foundation of pre-launch marketing. The PeakPulse website (which I will build next) should capture email addresses from interested users and build anticipation. A well-designed landing page with a clear value proposition, feature highlights, and a waitlist signup can generate thousands of leads before launch.
+**Landing page and email waitlist** are the foundation of pre-launch marketing. The FytNova website (which I will build next) should capture email addresses from interested users and build anticipation. A well-designed landing page with a clear value proposition, feature highlights, and a waitlist signup can generate thousands of leads before launch.
 
 **Social media presence** should be established on Instagram, TikTok, and Twitter/X at minimum. Content should focus on short-form videos demonstrating the app's AI features — scanning a receipt and watching items populate the pantry, photographing a meal and seeing instant calorie estimates, or the Meal Prep Planner generating zero-waste recipes. These "magic moment" demonstrations perform exceptionally well on social media.
 
@@ -156,13 +156,13 @@ PeakPulse AI differentiates itself through its AI-first approach to the full nut
 
 ### 2.4 Post-Launch Growth (Ongoing)
 
-**Content marketing** through a blog on the PeakPulse website covering topics like "How to Reduce Food Waste with AI," "The Science of Macro Tracking," and "Meal Prep for Beginners" will drive organic search traffic and establish authority. Each article should include a clear call-to-action to download the app.
+**Content marketing** through a blog on the FytNova website covering topics like "How to Reduce Food Waste with AI," "The Science of Macro Tracking," and "Meal Prep for Beginners" will drive organic search traffic and establish authority. Each article should include a clear call-to-action to download the app.
 
 **Referral program** where existing users can invite friends and earn premium time or features is one of the most cost-effective growth channels for consumer apps. Implement a simple "Share with friends, get 1 week free" mechanic.
 
 **Paid acquisition** through Apple Search Ads and Google App Campaigns should be tested with a small budget ($500-1000/month initially) once organic acquisition establishes baseline metrics. Target keywords like "meal planner app," "calorie tracker AI," and "pantry manager" where intent is high.
 
-**Retention strategy** is critical because the average fitness app loses 75% of users within the first week. PeakPulse AI's push notification system (meal reminders, workout nudges, streak alerts) is already a strong retention mechanism. Consider adding a weekly email digest summarising the user's nutrition and fitness progress, and gamification elements like achievement badges.
+**Retention strategy** is critical because the average fitness app loses 75% of users within the first week. FytNova's push notification system (meal reminders, workout nudges, streak alerts) is already a strong retention mechanism. Consider adding a weekly email digest summarising the user's nutrition and fitness progress, and gamification elements like achievement badges.
 
 ### 2.5 Monetisation Model
 
@@ -182,7 +182,7 @@ Offer a 7-day free trial for Premium to reduce friction. The annual plan should 
 
 ### 3.1 Domain Acquisition
 
-For the PeakPulse AI brand, the following domain options should be considered:
+For the FytNova brand, the following domain options should be considered:
 
 | Domain | Estimated Cost | Recommendation |
 |--------|---------------|----------------|
@@ -198,7 +198,7 @@ For the PeakPulse AI brand, the following domain options should be considered:
 
 ### 3.2 Website Requirements
 
-The PeakPulse AI website should serve as both a marketing landing page and a hub for legal documents. At minimum, it needs:
+The FytNova website should serve as both a marketing landing page and a hub for legal documents. At minimum, it needs:
 
 - Hero section with app value proposition and download links
 - Feature showcase highlighting key differentiators

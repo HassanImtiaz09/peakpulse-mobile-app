@@ -1687,7 +1687,7 @@ function MealsScreenContent() {
   const sharePantryShoppingList = React.useCallback(async () => {
     const unchecked = pantryShoppingList.filter(i => !i.checked);
     const items = unchecked.length > 0 ? unchecked : pantryShoppingList;
-    const text = `PeakPulse Shopping List\n\n${items.map(i => `\u25a1 ${i.name}${i.quantity ? " — " + i.quantity : ""}`).join("\n")}`;
+    const text = `FytNova Shopping List\n\n${items.map(i => `\u25a1 ${i.name}${i.quantity ? " — " + i.quantity : ""}`).join("\n")}`;
     await Clipboard.setStringAsync(text);
     Alert.alert("\u2705 Copied!", `${items.length} items copied to clipboard. Paste anywhere to share.`);
   }, [pantryShoppingList]);
@@ -3000,7 +3000,7 @@ function MealsScreenContent() {
                         const uncheckedItems = sortedIngredients.filter(i => !checkedIngredients[i.key]);
                         const allItems = uncheckedItems.length > 0 ? uncheckedItems : sortedIngredients;
                         const text = allItems.map(i => `\u25a1 ${i.display}${i.count > 1 ? ` (x${i.count})` : ""}`).join("\n");
-                        await Clipboard.setStringAsync(`PeakPulse Shopping List:\n\n${text}`);
+                        await Clipboard.setStringAsync(`FytNova Shopping List:\n\n${text}`);
                         Alert.alert("\u2705 Copied!", `${allItems.length} items copied to clipboard.`);
                       }}>
                         <Text style={{ color: "#3B82F6", fontFamily: "DMSans_700Bold", fontSize: 10 }}>Copy</Text>

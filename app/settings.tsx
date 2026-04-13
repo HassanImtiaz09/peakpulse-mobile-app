@@ -548,7 +548,7 @@ export default function SettingsScreen() {
           </View>
           <View style={[styles.aboutRow, { borderTopWidth: 1, borderTopColor: SF.border }]}>
             <Text style={styles.aboutLabel}>Build</Text>
-            <Text style={styles.aboutValue}>PeakPulse AI</Text>
+            <Text style={styles.aboutValue}>FytNova</Text>
           </View>
         </View>
       </ScrollView>

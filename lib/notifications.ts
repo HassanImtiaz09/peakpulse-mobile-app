@@ -28,7 +28,7 @@ export async function requestNotificationPermissions(): Promise<boolean> {
 
   if (Platform.OS === "android") {
     await Notifications.setNotificationChannelAsync("peakpulse", {
-      name: "PeakPulse AI",
+      name: "FytNova",
       importance: Notifications.AndroidImportance.HIGH,
       vibrationPattern: [0, 250, 250, 250],
       lightColor: "#7C3AED",
@@ -55,7 +55,7 @@ export async function scheduleWorkoutReminder(hour: number = 8, minute: number =
   const messages = [
     { title: "💪 Time to Train!", body: "Your workout is waiting. Let's crush today's session!" },
     { title: "🔥 Workout Time", body: "Consistency is key. Your future self will thank you." },
-    { title: "⚡ PeakPulse Reminder", body: "Don't skip today — every rep counts toward your goal." },
+    { title: "⚡ FytNova Reminder", body: "Don't skip today — every rep counts toward your goal." },
     { title: "🏋️ Let's Go!", body: "Your personalized workout plan is ready. Time to move!" },
   ];
   const msg = messages[Math.floor(Math.random() * messages.length)];
@@ -325,7 +325,7 @@ export async function scheduleMealTimeReminders(
   const lId = await Notifications.scheduleNotificationAsync({
     content: {
       title: "🥗 Lunch Time!",
-      body: "Midday fuel-up — your planned lunch is waiting in PeakPulse.",
+      body: "Midday fuel-up — your planned lunch is waiting in FytNova.",
       data: { type: "meal_lunch", url: "/(tabs)/meals" },
     },
     trigger: { type: Notifications.SchedulableTriggerInputTypes.DAILY, hour: lunchHour, minute: lunchMinute },

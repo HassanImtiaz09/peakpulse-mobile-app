@@ -1,7 +1,7 @@
 /**
  * Health Report PDF Generator
  *
- * Generates a branded PeakPulse health report as a PDF using expo-print.
+ * Generates a branded FytNova health report as a PDF using expo-print.
  * Supports 7-day and 30-day reports with daily breakdown tables,
  * summary stats, trend indicators, and health insights.
  *
@@ -90,10 +90,10 @@ async function getUserName(): Promise<string> {
     const raw = await AsyncStorage.getItem("@user_profile");
     if (raw) {
       const profile = JSON.parse(raw);
-      return profile.name || profile.displayName || "PeakPulse User";
+      return profile.name || profile.displayName || "FytNova User";
     }
   } catch {}
-  return "PeakPulse User";
+  return "FytNova User";
 }
 
 // ── Stats Calculation ──
@@ -448,7 +448,7 @@ export function generateReportHTML(
   <div class="footer">
     <div class="footer-brand">PEAKPULSE AI</div>
     <div>Generated on ${reportDate} · ${periodLabel} Health Report</div>
-    <div style="margin-top: 4px;">© ${now.getFullYear()} PeakPulse AI. All rights reserved.</div>
+    <div style="margin-top: 4px;">© ${now.getFullYear()} FytNova. All rights reserved.</div>
   </div>
 </body>
 </html>`;
@@ -494,7 +494,7 @@ export async function generateAndShareHealthReport(config: ReportConfig): Promis
   try {
     await shareAsync(result.uri, {
       mimeType: "application/pdf",
-      dialogTitle: `PeakPulse ${config.period}-Day Health Report`,
+      dialogTitle: `FytNova ${config.period}-Day Health Report`,
       UTI: "com.adobe.pdf",
     });
     return result;

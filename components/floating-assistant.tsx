@@ -437,7 +437,7 @@ export function FloatingAssistant() {
                   <Text style={{ fontSize: 20 }}>✨</Text>
                 </View>
                 <View>
-                  <Text style={styles.chatTitle}>PeakPulse AI</Text>
+                  <Text style={styles.chatTitle}>FytNova</Text>
                   <Text style={styles.chatSubtitle}>
                     {isPremium ? "Premium Coach • Full Context" : "Your Fitness Companion"}
                   </Text>

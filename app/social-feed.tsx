@@ -211,7 +211,7 @@ export default function SocialFeedScreen() {
 
   return (
     <ScreenErrorBoundary screenName="social-feed">
-    <FeatureGate feature="social_feed" message="Join the PeakPulse community, share progress, and compete in challenges. Available on Pro plan.">
+    <FeatureGate feature="social_feed" message="Join the FytNova community, share progress, and compete in challenges. Available on Pro plan.">
     <ScreenContainer edges={["top", "left", "right"]} containerClassName="bg-black">
       {/* Hero */}
       <ImageBackground source={{ uri: HERO_BG }} style={styles.hero}>
@@ -270,7 +270,7 @@ export default function SocialFeedScreen() {
                     <Text style={styles.seedBannerEmoji}>✨</Text>
                     <View style={{ flex: 1 }}>
                       <Text style={styles.seedBannerTitle}>Community Highlights</Text>
-                      <Text style={styles.seedBannerText}>Example posts from the PeakPulse community. Share your own progress to join the conversation!</Text>
+                      <Text style={styles.seedBannerText}>Example posts from the FytNova community. Share your own progress to join the conversation!</Text>
                     </View>
                   </View>
                 ) : null

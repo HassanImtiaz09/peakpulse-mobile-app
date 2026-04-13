@@ -1,5 +1,5 @@
 /**
- * Accessibility utilities for PeakPulse.
+ * Accessibility utilities for FytNova.
  * 
  * Provides helpers for generating consistent accessibility props,
  * checking contrast ratios, and ensuring WCAG AA compliance.
@@ -94,7 +94,7 @@ export function announceForAccessibility(message: string) {
 }
 
 /**
- * Common accessibility labels for PeakPulse screens.
+ * Common accessibility labels for FytNova screens.
  * Use these for consistency across the app.
  */
 export const A11Y_LABELS = {

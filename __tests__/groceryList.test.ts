@@ -113,7 +113,7 @@ describe("generateGroceryText", () => {
     const categories = extractGroceryList(MOCK_MEAL_PLAN);
     const text = generateGroceryText(categories);
     expect(text).toContain("Weekly Grocery List");
-    expect(text).toContain("PeakPulse AI");
+    expect(text).toContain("FytNova");
     expect(text).toContain("Total:");
   });
 

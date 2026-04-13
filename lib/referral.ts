@@ -1,5 +1,5 @@
 /**
- * PeakPulse AI — Referral Service
+ * FytNova — Referral Service
  *
  * Handles:
  * - Generating and persisting a unique referral code per user
@@ -84,7 +84,7 @@ export function buildReferralUrl(code: string): string {
 export async function shareReferralCode(code: string): Promise<void> {
   const url = buildReferralUrl(code);
   const message =
-    `🏋️ Join me on PeakPulse AI — the AI-powered fitness app that transforms your body!\n\n` +
+    `🏋️ Join me on FytNova — the AI-powered fitness app that transforms your body!\n\n` +
     `Use my referral code: ${code}\n\n` +
     `✨ You'll get a FREE 14-day Advanced trial (double the normal 7 days)!\n\n` +
     `Download: ${url}`;
@@ -94,7 +94,7 @@ export async function shareReferralCode(code: string): Promise<void> {
       Platform.OS === "ios"
         ? { message, url }
         : { message: `${message}\n${url}` },
-      { dialogTitle: "Invite a Friend to PeakPulse AI" }
+      { dialogTitle: "Invite a Friend to FytNova" }
     );
   } catch {
     // User cancelled — silently ignore

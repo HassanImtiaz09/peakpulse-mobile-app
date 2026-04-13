@@ -1,10 +1,10 @@
-# PeakPulse AI — TODO
+# FytNova — TODO
 
 ## Core Setup
 - [x] Configure theme colors (dark fitness aesthetic — deep black/purple)
 - [x] Set up tab navigation (5 tabs: Home, Scan, Plans, Meals, Profile)
 - [x] Configure icon mappings for all tabs and screens
-- [x] Update app.config.ts branding (PeakPulse AI)
+- [x] Update app.config.ts branding (FytNova)
 - [x] Generate and set app logo (lightning bolt + pulse line)
 
 ## Onboarding
@@ -504,7 +504,7 @@
 - [x] Body scan progress comparison: display stats diff (weight, body fat, measurements) between dates
 - [x] Social sharing: branded template card for workout streaks and completed sessions
 - [x] Social sharing: share to Instagram Stories, TikTok, Facebook, WhatsApp via system share sheet
-- [x] Social sharing: template includes PeakPulse branding, streak count, workout stats
+- [x] Social sharing: template includes FytNova branding, streak count, workout stats
 - [x] Social sharing: capture branded card as image using ViewShot
 - [x] Rest Timer Settings link added to Profile screen
 - [x] Progress Comparison link added to Body Scan tab
@@ -567,7 +567,7 @@
 ## Round 40 — Workout Plan PDF Export
 
 - [x] Client-side PDF generation module (lib/workout-pdf.ts) using expo-print HTML-to-PDF
-- [x] PDF content: branded header with PeakPulse gold gradient, user name, and date
+- [x] PDF content: branded header with FytNova gold gradient, user name, and date
 - [x] PDF content: day-by-day workout breakdown with exercises, sets, reps, and rest times
 - [x] PDF content: exercise type badges (compound/isolation/cardio/stretching) with color coding
 - [x] PDF content: summary stats cards (workout days, rest days, total exercises, total sets)
@@ -1076,7 +1076,7 @@
 
 ### Feature 3: PDF Health Report Export
 - [x] Create lib/health-report-generator.ts for building HTML report content
-- [x] Generate report with user name, date range, and PeakPulse branding
+- [x] Generate report with user name, date range, and FytNova branding
 - [x] Include summary stats: avg steps, calories, sleep, heart rate, distance, HRV
 - [x] Include daily breakdown table for all metrics
 - [x] Include trend indicators and health insights
@@ -1156,7 +1156,7 @@
 
 ### Feature 3: Social Sharing Cards
 - [x] Create lib/social-card-generator.ts for generating branded HTML cards
-- [x] Build workout completion card (type, duration, calories, distance, PeakPulse branding)
+- [x] Build workout completion card (type, duration, calories, distance, FytNova branding)
 - [x] Build weekly summary card (steps avg, calories, workouts, sleep, branding)
 - [x] Use expo-print to render HTML to image/PDF
 - [x] Use expo-sharing to share generated card
@@ -1213,7 +1213,7 @@
 
 ### Feature 2: Milestone Sharing Card
 - [x] Add generateMilestoneCardHTML() to social-card-generator.ts
-- [x] Include milestone emoji, name, description, streak count, PeakPulse branding
+- [x] Include milestone emoji, name, description, streak count, FytNova branding
 - [x] Add shareMilestoneCard() function using expo-print and expo-sharing
 - [x] Add "Share Achievement" button to celebration modal in dashboard
 - [x] Add "Share" button to milestone cards in streak-details.tsx
@@ -1679,7 +1679,7 @@
 ### Screen 2 — Auth / Login
 - [x] Dominant Google button, email as ghost button, guest as text link
 - [x] Social proof stats at bottom (4.9 stars, 77 exercises, 7 wearables)
-- [x] PeakPulse logo with radial golden glow
+- [x] FytNova logo with radial golden glow
 - [x] Clean minimal centered layout
 
 ### Screen 3 — Dashboard
@@ -2604,7 +2604,7 @@
 - [x] Add TODO comment reminder to disable guest re-onboarding before app store publish
 - [x] Run tests and verify TypeScript compiles (2088 tests pass, 0 TS errors)
 
-## Refactor (Round 37) — PeakPulse Non-Native Refactoring (6 Changes)
+## Refactor (Round 37) — FytNova Non-Native Refactoring (6 Changes)
 - [x] Change 1: Create constants/ui-colors.ts with centralized UI color constants
 - [x] Change 1: Migrate ~55 files from local SF/C color objects to centralized import
 - [x] Change 2: Create components/empty-state.tsx with reusable empty state component and presets
@@ -3460,3 +3460,12 @@
 - [x] Write unit tests for the audio cue feature
 - [x] TypeScript: 0 errors
 - [x] Tests: 2,620 passing (28 new)
+
+## FytNova Rebranding
+
+- [x] Generate new FytNova app logo (4 concepts: nova starburst, geometric crystal, FN monogram, golden phoenix)
+- [x] Draft marketing slogans for FytNova
+- [x] Update app.config.ts with new name and logo
+- [x] Replace all "PeakPulse" references across the codebase (223 replacements in 63 files- [x] Update theme/branding assets (icon, splash, favicon, android icons)
+- [x] Run TypeScript check (0 errors) and test suite (2617 passed, 3 network-only failures)
+- [x] Save checkpoint

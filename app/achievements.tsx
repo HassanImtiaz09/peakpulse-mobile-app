@@ -80,7 +80,7 @@ export default function AchievementsScreen() {
     if (Platform.OS !== "web") Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     try {
       await Share.share({
-        message: `🏅 PeakPulse Achievements: ${stats.unlocked}/${stats.total} unlocked (${stats.pct}%)! Total XP earned: ${stats.totalXPEarned} ⚡ #PeakPulse #FitnessGoals`,
+        message: `🏅 FytNova Achievements: ${stats.unlocked}/${stats.total} unlocked (${stats.pct}%)! Total XP earned: ${stats.totalXPEarned} ⚡ #FytNova #FitnessGoals`,
       });
     } catch {}
   }, [stats]);

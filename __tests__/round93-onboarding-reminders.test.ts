@@ -280,7 +280,7 @@ describe("Tutorial Overlay — Initial Walkthrough", () => {
     const getTutorialSlides = () => [] as any[];
     const slides = getTutorialSlides();
     expect(slides).toHaveLength(5);
-    expect(slides[0].title).toBe("Welcome to PeakPulse");
+    expect(slides[0].title).toBe("Welcome to FytNova");
     expect(slides[1].title).toBe("The Today Screen");
     expect(slides[1].text).toContain("your daily command center");
     expect(slides[2].title).toBe("The Logbook");

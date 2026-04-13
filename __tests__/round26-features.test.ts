@@ -90,9 +90,9 @@ describe("Copy to Clipboard — Text Formatting", () => {
     const uncheckedCount = 5;
     const totalCount = 12;
     const header = uncheckedCount > 0 && uncheckedCount < totalCount
-      ? `PeakPulse Shopping List (${uncheckedCount} remaining):\n\n`
-      : `PeakPulse Shopping List (${totalCount} items):\n\n`;
-    expect(header).toBe("PeakPulse Shopping List (5 remaining):\n\n");
+      ? `FytNova Shopping List (${uncheckedCount} remaining):\n\n`
+      : `FytNova Shopping List (${totalCount} items):\n\n`;
+    expect(header).toBe("FytNova Shopping List (5 remaining):\n\n");
   });
 });
 

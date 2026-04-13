@@ -1307,7 +1307,7 @@ function ShareProgressOverlay({
     setSharing(true);
     try {
       // Build a text-based share message with stats
-      let msg = `My PeakPulse Transformation\n\n`;
+      let msg = `My FytNova Transformation\n\n`;
       msg += `Before: ${fmtDate(beforeDate)}\n`;
       msg += `After: ${fmtDate(afterDate)}\n`;
       msg += `${daysElapsed} days of progress\n`;
@@ -1317,7 +1317,7 @@ function ShareProgressOverlay({
         msg += `\n`;
       }
       if (watermarkEnabled) {
-        msg += `\n#PeakPulse #FitnessTransformation #BodyTransformation`;
+        msg += `\n#FytNova #FitnessTransformation #BodyTransformation`;
       }
       await Share.share({ message: msg });
     } catch {}
@@ -1421,7 +1421,7 @@ function ShareProgressOverlay({
           >
             <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
               <MaterialIcons name="branding-watermark" size={20} color={watermarkEnabled ? UI.gold : "#64748B"} />
-              <Text style={{ color: UI.fg, fontFamily: "DMSans_600SemiBold", fontSize: 14 }}>PeakPulse Watermark</Text>
+              <Text style={{ color: UI.fg, fontFamily: "DMSans_600SemiBold", fontSize: 14 }}>FytNova Watermark</Text>
             </View>
             <View style={{
               width: 44, height: 24, borderRadius: 12,
@@ -1486,9 +1486,9 @@ function ShareProgressOverlay({
         <TouchableOpacity
           onPress={async () => {
             if (Platform.OS !== "web") Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-            let msg = `My PeakPulse Transformation - ${daysElapsed} days\n`;
+            let msg = `My FytNova Transformation - ${daysElapsed} days\n`;
             if (bodyFatStart && bodyFatCurrent) msg += `Body Fat: ${bodyFatStart}% \u2192 ${bodyFatCurrent}%\n`;
-            msg += `#PeakPulse #FitnessTransformation`;
+            msg += `#FytNova #FitnessTransformation`;
             try {
               const Clipboard = await import("expo-clipboard");
               await Clipboard.setStringAsync(msg);

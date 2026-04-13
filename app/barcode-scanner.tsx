@@ -98,7 +98,7 @@ interface NutritionResult {
 async function lookupBarcode(barcode: string): Promise<NutritionResult> {
   try {
     const resp = await fetch(`${OFF_API}/${barcode}.json`, {
-      headers: { "User-Agent": "PeakPulseAI/1.0 (contact@peakpulse.app)" },
+      headers: { "User-Agent": "FytNovaAI/1.0 (contact@peakpulse.app)" },
     });
     const data = await resp.json();
     if (data.status !== 1 || !data.product) {
@@ -527,7 +527,7 @@ export default function BarcodeScannerScreen() {
           />
           <Text style={styles.permTitle}>Camera Access Required</Text>
           <Text style={styles.permSub}>
-            PeakPulse needs camera access to scan product barcodes and look up
+            FytNova needs camera access to scan product barcodes and look up
             nutrition information.
           </Text>
           <TouchableOpacity style={styles.permBtn} onPress={requestPermission}>

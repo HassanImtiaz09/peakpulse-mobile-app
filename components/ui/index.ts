@@ -1,5 +1,5 @@
 /**
- * PeakPulse UI Component Library
+ * FytNova UI Component Library
  *
  * Shared, reusable components for consistent UI across the app.
  * Import from "@/components/ui" for clean imports:

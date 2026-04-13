@@ -6,7 +6,7 @@
 export type * from "../drizzle/schema";
 export * from "./_core/errors";
 
-// ─── PeakPulse AI App Types ───────────────────────────────────────────────────
+// ─── FytNova App Types ───────────────────────────────────────────────────
 
 export interface Exercise {
   name: string;

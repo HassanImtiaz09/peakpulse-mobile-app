@@ -6,7 +6,7 @@ import type { ExpoConfig } from "expo/config";
 // e.g., "my-app" created at 2024-01-15 10:30:45 -> "space.manus.my.app.t20240115103045"
 // Bundle ID can only contain letters, numbers, and dots
 // Android requires each dot-separated segment to start with a letter
-const rawBundleId = "com.peakpulseai.app";
+const rawBundleId = "com.fytnova.app";
 const bundleId =
   rawBundleId
     .replace(/[-_]/g, ".") // Replace hyphens/underscores with dots
@@ -23,15 +23,15 @@ const bundleId =
     .join(".") || "space.manus.app";
 // Deep link scheme
 
-const schemeFromBundleId = "peakpulse";
+const schemeFromBundleId = "fytnova";
 
 
 const env = {
   // App branding - update these values directly (do not use env vars)
-  appName: "PeakPulse AI",
+  appName: "FytNova",
   appSlug: "peakpulse-mobile",
   // S3 URL of the app logo - set this to the URL returned by generate_image when creating custom logo
-  logoUrl: "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/peakpulse-icon-gold-YiX4BJBytdrvjawHWNT3Ta.png",
+  logoUrl: "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/fytnova-logo-3-KVA7CDeCPkvHBPhUSFyQzi.png",
   scheme: schemeFromBundleId,
   iosBundleId: bundleId,
   androidPackage: bundleId,
@@ -52,9 +52,9 @@ const config: ExpoConfig = {
     infoPlist: {
       ITSAppUsesNonExemptEncryption: false,
       NSHealthShareUsageDescription:
-        "PeakPulse reads your health data (steps, heart rate, calories, sleep, HRV, SpO2) to personalize your fitness plans and track progress.",
+        "FytNova reads your health data (steps, heart rate, calories, sleep, HRV, SpO2) to personalize your fitness plans and track progress.",
       NSHealthUpdateUsageDescription:
-        "PeakPulse writes workout data to Apple Health so your activity is tracked across all your health apps.",
+        "FytNova writes workout data to Apple Health so your activity is tracked across all your health apps.",
     },
   },
   android: {
@@ -110,14 +110,14 @@ const config: ExpoConfig = {
     [
       "expo-camera",
       {
-        "cameraPermission": "Allow PeakPulse to access your camera for barcode scanning and food photos."
+        "cameraPermission": "Allow FytNova to access your camera for barcode scanning and food photos."
       }
     ],
     [
       "expo-media-library",
       {
-        "photosPermission": "Allow PeakPulse to save your progress collage to your photo library.",
-        "savePhotosPermission": "Allow PeakPulse to save your progress collage to your photo library.",
+        "photosPermission": "Allow FytNova to save your progress collage to your photo library.",
+        "savePhotosPermission": "Allow FytNova to save your progress collage to your photo library.",
         "isAccessMediaLocationEnabled": true
       }
     ],

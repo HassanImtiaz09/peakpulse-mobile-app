@@ -102,7 +102,7 @@ export default function SubscriptionPlansScreen() {
         {/* Header */}
         <View style={styles.header}>
           <Text style={styles.badge}>⚡ UNLOCK YOUR POTENTIAL</Text>
-          <Text style={styles.title}>Choose Your{"\n"}PeakPulse Plan</Text>
+          <Text style={styles.title}>Choose Your{"\n"}FytNova Plan</Text>
           <Text style={styles.subtitle}>Start with a 14-day free trial — no credit card required.</Text>
         </View>
 

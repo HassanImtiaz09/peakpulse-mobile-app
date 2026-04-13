@@ -168,7 +168,7 @@ export default function WearableSyncScreen() {
       } else if (result.status === "denied") {
         Alert.alert(
           "Permission Denied",
-          `Please enable health data access in your device Settings to use ${healthSourceName} with PeakPulse.`
+          `Please enable health data access in your device Settings to use ${healthSourceName} with FytNova.`
         );
       } else {
         Alert.alert(
@@ -237,7 +237,7 @@ export default function WearableSyncScreen() {
   // to the useWearable hook (see file header comment for instructions).
   async function handleDisconnect(id: string) {
     const name = THIRD_PARTY_WEARABLES.find((w) => w.id === id)?.name ?? "device";
-    Alert.alert("Disconnect", `Remove ${name} from PeakPulse?`, [
+    Alert.alert("Disconnect", `Remove ${name} from FytNova?`, [
       { text: "Cancel", style: "cancel" },
       {
         text: "Disconnect",
@@ -278,7 +278,7 @@ export default function WearableSyncScreen() {
   return (
     <FeatureGate
       feature="wearable_sync"
-      message="Sync your fitness wearable (Apple Watch, Fitbit, Garmin) with PeakPulse. Available on Basic plan and above."
+      message="Sync your fitness wearable (Apple Watch, Fitbit, Garmin) with FytNova. Available on Basic plan and above."
     >
       <View style={{ flex: 1, backgroundColor: UI.bg }}>
         {/* Hero */}
@@ -540,8 +540,8 @@ export default function WearableSyncScreen() {
                 </Text>
                 <Text style={{ color: "#D1D5DB", fontSize: 13, lineHeight: 20 }}>
                   {Platform.OS === "ios"
-                    ? "PeakPulse reads health data from Apple Health. Any wearable that writes to Apple Health (Apple Watch, Oura, Garmin, Fitbit, etc.) will automatically sync."
-                    : "PeakPulse reads health data from Health Connect. Any wearable that writes to Health Connect (Samsung, Fitbit, Garmin, etc.) will automatically sync."}
+                    ? "FytNova reads health data from Apple Health. Any wearable that writes to Apple Health (Apple Watch, Oura, Garmin, Fitbit, etc.) will automatically sync."
+                    : "FytNova reads health data from Health Connect. Any wearable that writes to Health Connect (Samsung, Fitbit, Garmin, etc.) will automatically sync."}
                 </Text>
               </View>
             )}
@@ -1003,7 +1003,7 @@ export default function WearableSyncScreen() {
             >
               {nativeAvailable
                 ? `These apps write data to ${healthSourceName}. Connect ${healthSourceName} above, then open your wearable app to enable data sharing.`
-                : "Connect these apps to sync fitness data to PeakPulse."}
+                : "Connect these apps to sync fitness data to FytNova."}
             </Text>
           </View>
 
@@ -1277,7 +1277,7 @@ export default function WearableSyncScreen() {
                 marginBottom: 12,
               }}
             >
-              You can manually log steps, weight, and workouts in PeakPulse.
+              You can manually log steps, weight, and workouts in FytNova.
               Your dashboard updates automatically.
             </Text>
             <TouchableOpacity

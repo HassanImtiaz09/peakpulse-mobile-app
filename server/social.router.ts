@@ -182,7 +182,7 @@ Return a JSON coaching report with this exact structure:
         const premiumInstructions = hasPremiumContext
           ? " You have access to their form check history, body scan data, and meal logs. Reference specific data points when giving advice. Track their form improvements over time and celebrate progress. If their nutrition doesn't align with their goal, mention it tactfully."
           : "";
-        const systemPrompt = `You are PeakPulse AI Coach — an elite, no-nonsense fitness coach. You give specific, evidence-based advice. You know the user's profile: ${profileContext}.${premiumInstructions} Keep responses concise (2-4 sentences max) and always end with one actionable next step.`;
+        const systemPrompt = `You are FytNova Coach — an elite, no-nonsense fitness coach. You give specific, evidence-based advice. You know the user's profile: ${profileContext}.${premiumInstructions} Keep responses concise (2-4 sentences max) and always end with one actionable next step.`;
         const messages: any[] = [
           { role: "system", content: systemPrompt },
           ...(input.history ?? []),

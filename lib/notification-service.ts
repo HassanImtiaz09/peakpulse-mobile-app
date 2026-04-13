@@ -35,7 +35,7 @@ export async function requestNotificationPermissions(): Promise<boolean> {
   // Set up Android notification channel
   if (Platform.OS === "android") {
     await Notifications.setNotificationChannelAsync("peakpulse-default", {
-      name: "PeakPulse Reminders",
+      name: "FytNova Reminders",
       importance: Notifications.AndroidImportance.HIGH,
       vibrationPattern: [0, 250, 250, 250],
       lightColor: UI.gold,

@@ -344,11 +344,11 @@ export default function NotificationPreferencesScreen() {
     const granted = await requestNotificationPermissions();
     setHasPermission(granted);
     if (granted) {
-      Alert.alert("✅ Notifications Enabled", "You'll now receive reminders from PeakPulse AI.");
+      Alert.alert("✅ Notifications Enabled", "You'll now receive reminders from FytNova.");
     } else {
       Alert.alert(
         "Permission Required",
-        "Please go to Settings → Notifications → PeakPulse AI and enable notifications.",
+        "Please go to Settings → Notifications → FytNova and enable notifications.",
         [{ text: "OK" }]
       );
     }
@@ -365,7 +365,7 @@ export default function NotificationPreferencesScreen() {
             <Text style={styles.backText}>← Back</Text>
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Notification Preferences</Text>
-          <Text style={styles.headerSub}>Choose when PeakPulse AI reminds you</Text>
+          <Text style={styles.headerSub}>Choose when FytNova reminds you</Text>
         </View>
 
         {/* Permission Banner */}
@@ -374,7 +374,7 @@ export default function NotificationPreferencesScreen() {
             <Text style={styles.permBannerIcon}>🔔</Text>
             <View style={{ flex: 1 }}>
               <Text style={styles.permBannerTitle}>Enable Notifications</Text>
-              <Text style={styles.permBannerSub}>Tap to allow PeakPulse AI to send you reminders</Text>
+              <Text style={styles.permBannerSub}>Tap to allow FytNova to send you reminders</Text>
             </View>
             <Text style={styles.permBannerArrow}>→</Text>
           </TouchableOpacity>

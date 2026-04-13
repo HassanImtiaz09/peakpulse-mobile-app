@@ -101,7 +101,7 @@ export default function VoiceCoachSettingsScreen() {
     } catch {
       Alert.alert(
         "Voice Unavailable",
-        "Text-to-speech could not start. Please check your device audio settings and ensure PeakPulse has audio access.",
+        "Text-to-speech could not start. Please check your device audio settings and ensure FytNova has audio access.",
         [{ text: "OK" }]
       );
     }

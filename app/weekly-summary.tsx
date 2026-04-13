@@ -177,7 +177,7 @@ export default function WeeklySummaryScreen() {
     if (Platform.OS !== "web") {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     }
-    const msg = `\u{1F4CA} PeakPulse Weekly Summary\n${weekData.weekLabel}\n\n\u{1F4AA} Workouts: ${weekData.workoutsCompleted}/${weekData.workoutsPlanned}\n\u{1F525} Exercises: ${weekData.totalExercisesDone} completed\n\u{1F34E} Avg Calories: ${weekData.avgCalories} kcal\n\u{1F3AF} Calorie Adherence: ${weekData.calorieAdherence}%\n${weekData.bodyFatCurrent > 0 ? `\u{1F4F8} Body Fat: ${weekData.bodyFatCurrent}%\n` : ""}\u{1F4F7} Progress Photos: ${weekData.progressPhotos}\n\u{1F525} Streak: ${weekData.streak} days\n\n#PeakPulse #FitnessJourney`;
+    const msg = `\u{1F4CA} FytNova Weekly Summary\n${weekData.weekLabel}\n\n\u{1F4AA} Workouts: ${weekData.workoutsCompleted}/${weekData.workoutsPlanned}\n\u{1F525} Exercises: ${weekData.totalExercisesDone} completed\n\u{1F34E} Avg Calories: ${weekData.avgCalories} kcal\n\u{1F3AF} Calorie Adherence: ${weekData.calorieAdherence}%\n${weekData.bodyFatCurrent > 0 ? `\u{1F4F8} Body Fat: ${weekData.bodyFatCurrent}%\n` : ""}\u{1F4F7} Progress Photos: ${weekData.progressPhotos}\n\u{1F525} Streak: ${weekData.streak} days\n\n#FytNova #FitnessJourney`;
     try {
       await Share.share({ message: msg });
     } catch {}

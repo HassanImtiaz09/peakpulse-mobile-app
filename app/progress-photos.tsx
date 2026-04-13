@@ -97,9 +97,9 @@ function buildDefaultCaption(params: { name?: string; goal?: string; firstDate: 
     ``,
     `${greeting}transformation journey — working towards ${goalLabel}.`,
     ``,
-    `Tracking every step with @PeakPulseAI ⚡`,
+    `Tracking every step with @FytNovaAI ⚡`,
     ``,
-    `#PeakPulseTransformation #FitnessJourney #Transformation #BodyRecomposition`,
+    `#FytNovaTransformation #FitnessJourney #Transformation #BodyRecomposition`,
   ].join("\n");
 }
 
@@ -167,13 +167,13 @@ const CollageTemplate = React.forwardRef<View, {
           </View>
         )}
         {weightDelta == null && bfDelta == null && (
-          <Text style={{ color: "#451A03", fontSize: 26 }}>peakpulse.ai  •  #PeakPulseTransformation</Text>
+          <Text style={{ color: "#451A03", fontSize: 26 }}>peakpulse.ai  •  #FytNovaTransformation</Text>
         )}
       </View>
 
       {/* Footer */}
       <View style={{ height: 60, backgroundColor: UI.bg, alignItems: "center", justifyContent: "center" }}>
-        <Text style={{ color: "#451A03", fontSize: 22, letterSpacing: 1 }}>peakpulse.ai  •  #PeakPulseTransformation</Text>
+        <Text style={{ color: "#451A03", fontSize: 22, letterSpacing: 1 }}>peakpulse.ai  •  #FytNovaTransformation</Text>
       </View>
     </View>
   );
@@ -209,7 +209,7 @@ function CaptionSheet({ visible, caption, onChangeCaption, onClose, onShare, sha
           </View>
           <Text style={{ color: "#451A03", fontSize: 11, textAlign: "right", marginBottom: 14 }}>{caption.length} characters</Text>
           <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 6, marginBottom: 18 }}>
-            {["#Transformation", "#FitnessJourney", "#BodyRecomposition", "#PeakPulse", "#GymLife", "#FatLoss", "#BulkSeason"].map((tag) => (
+            {["#Transformation", "#FitnessJourney", "#BodyRecomposition", "#FytNova", "#GymLife", "#FatLoss", "#BulkSeason"].map((tag) => (
               <TouchableOpacity key={tag}
                 style={{ backgroundColor: UI.goldAlpha10, borderRadius: 20, paddingHorizontal: 10, paddingVertical: 5, borderWidth: 1, borderColor: UI.borderGold3 }}
                 onPress={() => { if (!caption.includes(tag)) onChangeCaption(caption.trimEnd() + " " + tag); }}>
@@ -361,12 +361,12 @@ function ComparisonSlider({ leftPhoto, rightPhoto, userName, userGoal }: {
       await Clipboard.setStringAsync(caption);
       const uri = await captureRef(collageRef, { format: "jpg", quality: 0.95, width: COLLAGE_W, height: COLLAGE_H, result: "tmpfile" });
       const { status } = await MediaLibrary.requestPermissionsAsync();
-      if (status !== "granted") { Alert.alert("Permission needed", "Allow PeakPulse to save to your photo library."); setExporting(false); return; }
+      if (status !== "granted") { Alert.alert("Permission needed", "Allow FytNova to save to your photo library."); setExporting(false); return; }
       await MediaLibrary.saveToLibraryAsync(uri);
       setCaptionVisible(false);
       const canShare = await Sharing.isAvailableAsync();
       if (canShare) {
-        await Sharing.shareAsync(uri, { mimeType: "image/jpeg", dialogTitle: "Share your PeakPulse transformation", UTI: "public.jpeg" });
+        await Sharing.shareAsync(uri, { mimeType: "image/jpeg", dialogTitle: "Share your FytNova transformation", UTI: "public.jpeg" });
       } else {
         Alert.alert("Saved! 🎉", "Collage saved to your photo library. Caption is copied to clipboard — paste it when you post!");
       }
