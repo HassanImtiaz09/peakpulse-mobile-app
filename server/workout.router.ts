@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { router, protectedProcedure, publicProcedure, guestOrUserProcedure } from "./_core/trpc";
 import { db, invokeLLM, checkAiLimit, getFallbackWorkoutPlan, randomSuffix, uploadVideoToGeminiFileAPI } from "./helpers";
+import { callClaudeVision } from "./claude";
 
 export const workoutRouter = router({
   workoutPlan: router({
@@ -41,37 +42,59 @@ export const workoutRouter = router({
     // AI form analysis — works for guests
     // Uses Gemini File API resumable upload for video instead of raw base64 in body
     analyzeForm: guestOrUserProcedure
-      .input(z.object({ exerciseName: z.string(), videoBase64: z.string().optional(), hasVideo: z.boolean().default(false) }))
+      .input(z.object({ exerciseName: z.string(), videoBase64: z.string().optional(), hasVideo: z.boolean().default(false), imageBase64: z.string().optional() }))
       .mutation(async ({ ctx, input }) => {
         await checkAiLimit(ctx.user?.id, "workout.analyzeForm");
-        const prompt = `You are an expert personal trainer and biomechanics coach. Analyse the ${input.exerciseName} exercise form${input.hasVideo ? " from the provided video" : " based on common form mistakes"}. Return a JSON object with this exact structure: {"score":75,"grade":"good","exerciseName":"${input.exerciseName}","positives":["Good depth achieved","Neutral spine maintained"],"corrections":["Knees caving inward slightly","Elbows flaring too wide"],"feedback":["Overall your form is solid. Focus on keeping your knees tracking over your toes throughout the movement.","Remember to brace your core before each rep."]}. Score 0-100: 0-44 poor, 45-64 fair, 65-79 good, 80-100 excellent. Be specific and actionable.`;
+        const prompt = `You are an expert personal trainer and biomechanics coach. Analyse the ${input.exerciseName} exercise form${input.hasVideo || input.imageBase64 ? " from the provided media" : " based on common form mistakes"}. Return a JSON object with this exact structure: {"score":75,"grade":"good","exerciseName":"${input.exerciseName}","positives":["Good depth achieved","Neutral spine maintained"],"corrections":["Knees caving inward slightly","Elbows flaring too wide"],"feedback":["Overall your form is solid. Focus on keeping your knees tracking over your toes throughout the movement.","Remember to brace your core before each rep."],"keyJointAngles":{"knee":"~90 degrees","hip":"~100 degrees","spine":"neutral"},"injuryRisk":"low","overallTip":"Focus on bracing your core before initiating each rep."}. Score 0-100: 0-44 poor, 45-64 fair, 65-79 good, 80-100 excellent. Be specific, actionable, and reference visible body mechanics.`;
+
+        let source: "claude" | "gemini" = "gemini";
+
+        // Try Claude Vision first if we have image data (extracted frame from video)
+        if (input.imageBase64 && input.imageBase64.length > 0) {
+          const claudeResult = await callClaudeVision(
+            "You are an expert personal trainer and biomechanics coach. Analyse exercise form from images. Always respond with valid JSON only.",
+            prompt,
+            input.imageBase64,
+            "image/jpeg",
+            { maxTokens: 1024 }
+          );
+          if (claudeResult) {
+            try {
+              const parsed = JSON.parse(claudeResult);
+              return { ...parsed, source: "claude" as const };
+            } catch {
+              // Claude returned non-JSON, fall through to Gemini
+              console.warn("[Form Check] Claude returned non-JSON, falling back to Gemini");
+            }
+          }
+        }
+
+        // Gemini path (original logic)
         const messages: any[] = [{ role: "system", content: "You are an expert personal trainer. Always respond with valid JSON." }, { role: "user", content: prompt }];
 
         if (input.hasVideo && input.videoBase64 && input.videoBase64.length > 0) {
           try {
-            // Upload video via Gemini File API resumable upload (proper method)
             const videoBuffer = Buffer.from(input.videoBase64, "base64");
             const { fileUri, mimeType } = await uploadVideoToGeminiFileAPI(
               videoBuffer,
               "video/mp4",
               `form-check-${input.exerciseName.replace(/\s+/g, "-").toLowerCase()}`,
             );
-            // Reference the uploaded file URI in the prompt
             messages[1].content = [
               { type: "text", text: prompt },
               { type: "file_url", file_url: { url: fileUri, mime_type: mimeType } },
             ];
           } catch (uploadErr: any) {
-            // If Gemini File API upload fails (e.g. no key), fall back to text-only analysis
             console.warn("Gemini File API upload failed, falling back to text-only:", uploadErr.message);
           }
         }
 
         const response = await invokeLLM({ messages, response_format: { type: "json_object" } });
+        source = "gemini";
         let result: any;
         try { result = JSON.parse((response.choices[0].message.content as string) ?? "{}"); }
         catch { result = { score: 65, grade: "good", exerciseName: input.exerciseName, positives: ["Good effort on the exercise"], corrections: ["Focus on controlled movement throughout"], feedback: ["Keep practising and your form will improve with each session."] }; }
-        return result;
+        return { ...result, source };
       }),
 
   }),

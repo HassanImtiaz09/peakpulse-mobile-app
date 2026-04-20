@@ -186,6 +186,9 @@ function ScanScreenContent() {
   const generateWorkoutPlan = trpc.workoutPlan.generate.useMutation();
   const generateMealPlan = trpc.mealPlan.generate.useMutation();
   const goalsSave = trpc.goals.save.useMutation();
+  const enhancedVisMutation = trpc.bodyVisualization.generate.useMutation();
+  const [enhancedImages, setEnhancedImages] = useState<Record<number, { url: string; source: string }>>({});
+  const [enhancingBF, setEnhancingBF] = useState<number | null>(null);
 
   async function pickImage(useCamera: boolean) {
     try {
@@ -338,6 +341,28 @@ function ScanScreenContent() {
 
   // Get scan data (real or guest)
   // Fullscreen preview state
+  async function enhanceTransformation(targetBF: number) {
+    if (!uploadedPhotoUrl || !scan?.estimatedBodyFat || enhancingBF) return;
+    setEnhancingBF(targetBF);
+    try {
+      if (Platform.OS !== "web") Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      const result = await enhancedVisMutation.mutateAsync({
+        photoUrl: uploadedPhotoUrl,
+        currentBF: scan.estimatedBodyFat,
+        targetBF,
+        gender: "male",
+        additionalContext: "Athletic physique, natural lighting, fitness magazine quality",
+      });
+      setEnhancedImages(prev => ({ ...prev, [targetBF]: { url: result.imageUrl, source: result.source } }));
+      if (Platform.OS !== "web") Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    } catch (e: any) {
+      if (e?.message?.includes?.("AI_LIMIT_EXCEEDED") || e?.message?.includes?.("rate limit")) { showLimitModal(e.message); return; }
+      Alert.alert("Enhanced Preview Failed", e.message || "Please try again.");
+    } finally {
+      setEnhancingBF(null);
+    }
+  }
+
   const [previewModal, setPreviewModal] = useState<{ visible: boolean; imageUrl: string; bf: number; beforeUrl: string | null } | null>(null);
   const [previewTab, setPreviewTab] = useState<"after" | "compare" | "face">("after");
   const screenW = Dimensions.get("window").width;
@@ -792,10 +817,39 @@ function ScanScreenContent() {
                     onPress={() => selectTargetAndProceed(t.target_bf)}
                   >
                     <Text style={{ color: selectedTransform === t.target_bf ? BG : ICE, fontFamily: "DMSans_700Bold", fontSize: 13 }}>
-                      {selectedTransform === t.target_bf ? "Selected â Create Plan" : "Select This Goal"}
+                      {selectedTransform === t.target_bf ? "Selected ✓ Create Plan" : "Select This Goal"}
                     </Text>
                   </TouchableOpacity>
                 </View>
+                {/* Enhanced fal.ai Preview */}
+                {uploadedPhotoUrl && (
+                  <TouchableOpacity
+                    style={{
+                      flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6,
+                      marginTop: 8, backgroundColor: enhancedImages[t.target_bf] ? "rgba(34,211,238,0.08)" : UI.gold + "18",
+                      borderRadius: 10, paddingVertical: 8, paddingHorizontal: 12,
+                      borderWidth: 1, borderColor: enhancedImages[t.target_bf] ? ICE_BORDER : UI.gold + "40",
+                      opacity: enhancingBF === t.target_bf ? 0.6 : 1,
+                    }}
+                    onPress={() => {
+                      if (enhancedImages[t.target_bf]) {
+                        setPreviewTab("after");
+                        setPreviewModal({ visible: true, imageUrl: enhancedImages[t.target_bf].url, bf: t.target_bf, beforeUrl: uploadedPhotoUrl ?? selectedImage });
+                      } else {
+                        enhanceTransformation(t.target_bf);
+                      }
+                    }}
+                    disabled={enhancingBF !== null && enhancingBF !== t.target_bf}
+                  >
+                    {enhancingBF === t.target_bf ? (
+                      <><ActivityIndicator size="small" color={UI.gold} /><Text style={{ color: UI.gold, fontSize: 11, fontFamily: "DMSans_700Bold" }}>Generating HD Preview...</Text></>
+                    ) : enhancedImages[t.target_bf] ? (
+                      <><MaterialIcons name="auto-awesome" size={14} color={ICE} /><Text style={{ color: ICE, fontSize: 11, fontFamily: "DMSans_700Bold" }}>View HD Preview</Text><Text style={{ color: MUTED, fontSize: 9 }}>via {enhancedImages[t.target_bf].source === "fal" ? "fal.ai" : "AI"}</Text></>
+                    ) : (
+                      <><MaterialIcons name="auto-awesome" size={14} color={UI.gold} /><Text style={{ color: UI.gold, fontSize: 11, fontFamily: "DMSans_700Bold" }}>Generate HD Preview</Text></>
+                    )}
+                  </TouchableOpacity>
+                )}
               </View>
             ))}
 

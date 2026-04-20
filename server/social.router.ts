@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { router, protectedProcedure, publicProcedure, guestOrUserProcedure } from "./_core/trpc";
 import { db, invokeLLM, checkAiLimit, randomSuffix } from "./helpers";
+import { getCoachMessage, chatWithCoach, type CoachContext, type CoachTrigger } from "./claude";
 
 export const socialRouter = router({
   social: router({
@@ -149,15 +150,20 @@ Return a JSON coaching report with this exact structure:
         }
         return result;
       }),
-    // AI Coach chat — conversational coaching
+    // AI Coach chat — conversational coaching (Claude-powered with Gemini fallback)
     chat: guestOrUserProcedure
       .input(z.object({
         message: z.string(),
         history: z.array(z.object({ role: z.enum(["user", "assistant"]), content: z.string() })).optional(),
         profile: z.object({
+          name: z.string().optional(),
           goal: z.string().optional(),
           currentBF: z.number().optional(),
           targetBF: z.number().optional(),
+          age: z.number().optional(),
+          weightKg: z.number().optional(),
+          heightCm: z.number().optional(),
+          gender: z.string().optional(),
           workoutsCompleted: z.number().optional(),
           // Premium context fields
           streakDays: z.number().optional(),
@@ -165,31 +171,97 @@ Return a JSON coaching report with this exact structure:
           totalScans: z.number().optional(),
           recentFormScores: z.string().optional(),
           recentMeals: z.string().optional(),
+          // Health data fields
+          steps: z.number().optional(),
+          heartRate: z.number().optional(),
+          sleepHours: z.number().optional(),
+          sleepQuality: z.string().optional(),
+          activeCalories: z.number().optional(),
+          vo2Max: z.number().nullable().optional(),
+          hrv: z.number().nullable().optional(),
+          activeMinutes: z.number().optional(),
         }).optional(),
       }))
       .mutation(async ({ ctx, input }) => {
         await checkAiLimit(ctx.user?.id, "aiCoach.chat");
         const p = input.profile ?? {};
-        // Build base profile context
-        let profileContext = `Goal: ${p.goal ?? "general fitness"}, Current BF: ${p.currentBF ?? "unknown"}%, Target BF: ${p.targetBF ?? "unknown"}%, Workouts completed: ${p.workoutsCompleted ?? 0}`;
-        // Premium context: form memory, body progress, meal awareness
-        const hasPremiumContext = p.streakDays !== undefined || p.recentFormScores || p.recentMeals;
-        if (hasPremiumContext) {
-          profileContext += `, Streak: ${p.streakDays ?? 0} days, Total meals logged: ${p.totalMeals ?? 0}, Total body scans: ${p.totalScans ?? 0}`;
-          if (p.recentFormScores) profileContext += `. Recent form scores: ${p.recentFormScores}`;
-          if (p.recentMeals) profileContext += `. Recent meals: ${p.recentMeals}`;
-        }
-        const premiumInstructions = hasPremiumContext
-          ? " You have access to their form check history, body scan data, and meal logs. Reference specific data points when giving advice. Track their form improvements over time and celebrate progress. If their nutrition doesn't align with their goal, mention it tactfully."
-          : "";
-        const systemPrompt = `You are FytNova Coach — an elite, no-nonsense fitness coach. You give specific, evidence-based advice. You know the user's profile: ${profileContext}.${premiumInstructions} Keep responses concise (2-4 sentences max) and always end with one actionable next step.`;
-        const messages: any[] = [
-          { role: "system", content: systemPrompt },
-          ...(input.history ?? []),
-          { role: "user", content: input.message },
-        ];
-        const response = await invokeLLM({ messages, model: "flash-lite" });
-        return { reply: (response.choices[0].message.content as string) ?? "I'm here to help. What would you like to work on today?" };
+        const context: CoachContext = {
+          name: p.name,
+          goal: p.goal,
+          currentBF: p.currentBF,
+          targetBF: p.targetBF,
+          age: p.age,
+          weightKg: p.weightKg,
+          heightCm: p.heightCm,
+          gender: p.gender,
+          workoutsCompleted: p.workoutsCompleted,
+          streakDays: p.streakDays,
+          totalMealsLogged: p.totalMeals,
+          totalScans: p.totalScans,
+          recentFormScores: p.recentFormScores,
+          recentMeals: p.recentMeals,
+          steps: p.steps,
+          heartRate: p.heartRate,
+          sleepHours: p.sleepHours,
+          sleepQuality: p.sleepQuality,
+          activeCalories: p.activeCalories,
+          vo2Max: p.vo2Max,
+          hrv: p.hrv,
+          activeMinutes: p.activeMinutes,
+        };
+        const result = await chatWithCoach(
+          input.message,
+          input.history ?? [],
+          context,
+        );
+        return { reply: result.reply, source: result.source };
+      }),
+
+    // Context-aware coaching message (morning briefing, post-workout, re-engagement)
+    getContextMessage: guestOrUserProcedure
+      .input(z.object({
+        trigger: z.enum(["morning_briefing", "post_workout", "re_engagement", "general"]),
+        context: z.object({
+          name: z.string().optional(),
+          goal: z.string().optional(),
+          currentBF: z.number().optional(),
+          targetBF: z.number().optional(),
+          age: z.number().optional(),
+          weightKg: z.number().optional(),
+          heightCm: z.number().optional(),
+          gender: z.string().optional(),
+          dietaryPreference: z.string().optional(),
+          workoutStyle: z.string().optional(),
+          steps: z.number().optional(),
+          heartRate: z.number().optional(),
+          sleepHours: z.number().optional(),
+          sleepQuality: z.string().optional(),
+          activeCalories: z.number().optional(),
+          vo2Max: z.number().nullable().optional(),
+          hrv: z.number().nullable().optional(),
+          activeMinutes: z.number().optional(),
+          workoutsCompleted: z.number().optional(),
+          streakDays: z.number().optional(),
+          lastWorkoutDate: z.string().optional(),
+          daysSinceLastWorkout: z.number().optional(),
+          recentFormScores: z.string().optional(),
+          formWeaknesses: z.string().optional(),
+          totalMealsLogged: z.number().optional(),
+          recentMeals: z.string().optional(),
+          calorieGoal: z.number().optional(),
+          caloriesToday: z.number().optional(),
+          totalScans: z.number().optional(),
+          lastScanBF: z.number().optional(),
+          bfTrend: z.string().optional(),
+        }),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        await checkAiLimit(ctx.user?.id, "aiCoach.getContextMessage");
+        const result = await getCoachMessage(
+          input.trigger as CoachTrigger,
+          input.context as CoachContext,
+        );
+        return result;
       }),
   }),
 });

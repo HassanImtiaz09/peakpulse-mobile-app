@@ -3489,3 +3489,30 @@
 - [x] Update 4 test assertion files (PEAKPULSE AI → FYTNOVA)
 - [x] TypeScript: 0 errors, Tests: 2618 passed (2 network-only failures)
 - [x] Save checkpoint
+
+## Feature 1: Enhanced AI Coach with Claude API + Health Integration
+
+- [x] Part A: Health sync service aggregates wearable data (steps, HR, sleep, HRV, VO2max) for coach context
+- [x] Part B: Claude API (claude-sonnet-4-20250514) integrated via server/claude.ts with Gemini fallback
+- [x] Part C: Coach UI upgraded: typing animation, FN avatar, source badges (Claude/Gemini), thumbs up/down feedback
+- [x] Morning briefing card auto-fetches contextual greeting on mount
+- [x] Fallback to Gemini LLM if Claude API unreachable
+- [x] Feature gate: existing subscription tiers preserved
+
+## Feature 2: Body Shape Visualization with AI Image Generation
+
+- [x] Part A: Body composition input already in onboarding (bodyFat, weight, height)
+- [x] Part B: fal.ai Flux Schnell integrated via server/fal-ai.ts with built-in generateImage fallback
+- [x] Part C: Enhanced HD Preview button on transformation cards with fal.ai generation
+- [x] Part D: Share card and progress timeline already comprehensive (FytNova branded)
+- [x] Feature gate: Available to ALL tiers
+
+## Feature 3: Exercise Form Checking with Vision AI + Enhanced Analysis
+
+- [x] Part A: Camera recording (30s max) + gallery upload with ImagePicker
+- [x] Part B: Claude Vision primary analysis + Gemini fallback with source tracking
+- [x] Part C: 8 exercises with tips and key points (Squat, Deadlift, Bench, Push-up, Pull-up, OHP, Lunge, Plank)
+- [x] Part D: Form history with AsyncStorage, stats summary (total/avg/best), exercise-specific tracking
+- [x] Key joint angles display, injury risk assessment, source badges
+- [x] Feature gate: Advanced tier (existing)
+- [x] 38 new tests, 2661 total passing, 0 TypeScript errors

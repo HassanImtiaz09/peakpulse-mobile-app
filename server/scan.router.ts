@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { router, protectedProcedure, publicProcedure, guestOrUserProcedure } from "./_core/trpc";
 import { db, invokeLLM, generateImage, storagePut, checkAiLimit, getBFDescription, getFaceTransformationDesc, randomSuffix } from "./helpers";
+import { generateBodyVisualization, generateTransformationImage } from "./fal-ai";
 
 export const scanRouter = router({
   bodyScan: router({
@@ -228,6 +229,47 @@ ${input.baselinePhotoUrl ? "The first image is the BASELINE photo from their ini
         return db.getActiveUserGoal(ctx.user!.id);
       }),
 
+  }),
+  /** Enhanced body visualization using fal.ai Flux Schnell */
+  bodyVisualization: router({
+    /** Generate a high-quality body transformation preview using fal.ai */
+    generate: guestOrUserProcedure
+      .input(z.object({
+        photoUrl: z.string(),
+        currentBF: z.number(),
+        targetBF: z.number(),
+        gender: z.string().default("male"),
+        additionalContext: z.string().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        await checkAiLimit(ctx.user?.id, "bodyVisualization.generate");
+        const result = await generateTransformationImage(
+          input.photoUrl,
+          input.currentBF,
+          input.targetBF,
+          input.gender,
+          input.additionalContext,
+        );
+        return { imageUrl: result.imageUrl, source: result.source };
+      }),
+    /** Generate a custom body visualization from a text prompt */
+    generateCustom: guestOrUserProcedure
+      .input(z.object({
+        prompt: z.string(),
+        imageUrl: z.string().optional(),
+        width: z.number().optional(),
+        height: z.number().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        await checkAiLimit(ctx.user?.id, "bodyVisualization.generateCustom");
+        const result = await generateBodyVisualization({
+          prompt: input.prompt,
+          imageUrl: input.imageUrl,
+          width: input.width,
+          height: input.height,
+        });
+        return { imageUrl: result.imageUrl, source: result.source };
+      }),
   }),
   progressCheckin: router({
     /** Save a progress check-in result */
