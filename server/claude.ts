@@ -69,6 +69,20 @@ export interface CoachContext {
   totalScans?: number;
   lastScanBF?: number;
   bfTrend?: string;
+
+  // Personality engine (client-side enrichment from coach-personality.ts)
+  personalityHint?: "motivator" | "analyst" | "mentor";
+  systemPromptAdditions?: string;
+
+  // Daily state enrichment
+  caloriesConsumed?: number;
+  caloriesRemaining?: number;
+  mealsLogged?: number;
+  mealsPlanned?: number;
+  macroSummary?: string;
+  workoutStatus?: string;
+  yesterdayWorkoutSummary?: string;
+  progressionSuggestions?: string;
 }
 
 export type CoachTrigger = "morning_briefing" | "post_workout" | "re_engagement" | "general" | "chat";
@@ -163,12 +177,32 @@ function buildTriggerPrompt(trigger: CoachTrigger, ctx: CoachContext): string {
       triggerInstruction = `Generate a personalized coaching insight based on all available data. Pick the most impactful observation and actionable advice.`;
   }
 
+  // Daily state enrichment from personality engine
+  const dailyState = [
+    ctx.caloriesConsumed !== undefined ? `Calories consumed today: ${ctx.caloriesConsumed}` : null,
+    ctx.caloriesRemaining !== undefined ? `Calories remaining: ${ctx.caloriesRemaining}` : null,
+    ctx.mealsLogged !== undefined ? `Meals logged: ${ctx.mealsLogged}/${ctx.mealsPlanned ?? "?"}` : null,
+    ctx.macroSummary ? `Macro balance: ${ctx.macroSummary}` : null,
+    ctx.workoutStatus ? `Today's workout status: ${ctx.workoutStatus}` : null,
+    ctx.yesterdayWorkoutSummary ? `Yesterday's workout: ${ctx.yesterdayWorkoutSummary}` : null,
+    ctx.progressionSuggestions ? `Progression suggestions: ${ctx.progressionSuggestions}` : null,
+  ].filter(Boolean).join(", ");
+
+  // Client-side personality engine additions
+  const personalitySection = ctx.personalityHint
+    ? `\nPERSONALITY MODE: Use ${ctx.personalityHint.toUpperCase()} personality for this response.`
+    : "";
+  const clientAdditions = ctx.systemPromptAdditions
+    ? `\nADDITIONAL CONTEXT: ${ctx.systemPromptAdditions}`
+    : "";
+
   return `USER PROFILE: ${profile || "Limited profile data"}
 HEALTH DATA: ${health || "No health data synced"}
 ACTIVITY: ${activity || "No activity data"}
 NUTRITION: ${nutrition || "No nutrition data"}
+DAILY STATE: ${dailyState || "No daily state data"}
 FORM HISTORY: ${form || "No form checks"}
-BODY COMPOSITION: ${body || "No body scans"}
+BODY COMPOSITION: ${body || "No body scans"}${personalitySection}${clientAdditions}
 
 TRIGGER: ${triggerInstruction}
 

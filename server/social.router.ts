@@ -261,6 +261,18 @@ Return a JSON coaching report with this exact structure:
           totalScans: z.number().optional(),
           lastScanBF: z.number().optional(),
           bfTrend: z.string().optional(),
+          // Personality engine enrichment
+          personalityHint: z.enum(["motivator", "analyst", "mentor"]).optional(),
+          systemPromptAdditions: z.string().optional(),
+          // Daily state enrichment
+          caloriesConsumed: z.number().optional(),
+          caloriesRemaining: z.number().optional(),
+          mealsLogged: z.number().optional(),
+          mealsPlanned: z.number().optional(),
+          macroSummary: z.string().optional(),
+          workoutStatus: z.string().optional(),
+          yesterdayWorkoutSummary: z.string().optional(),
+          progressionSuggestions: z.string().optional(),
         }),
       }))
       .mutation(async ({ ctx, input }) => {

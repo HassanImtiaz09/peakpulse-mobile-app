@@ -39,6 +39,15 @@ import {
   type VoicePlaybackStatus,
 } from "@/lib/voice-playback";
 import { loadVoiceCoachSettings } from "@/lib/voice-coach-settings";
+import {
+  buildMorningBriefingContext,
+  buildReEngagementContext,
+  buildWorkoutDataPipeline,
+  shouldShowReEngagement,
+  recordReEngagementNudge,
+  selectPersonality,
+  getPersonalityPrompt,
+} from "@/lib/coach-personality";
 
 const HERO_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/PZcnawJwIZkQHTEM.jpg";
 const COACH_AVATAR = "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/ai-coach-icon_c7090906.png";
@@ -413,9 +422,48 @@ function AICoachScreenContent() {
 
     setBriefingLoading(true);
     try {
+      // Check for re-engagement nudge first (2+ days inactive)
+      const needsReEngagement = await shouldShowReEngagement();
+      let trigger: "morning_briefing" | "re_engagement" = "morning_briefing";
+      let personalityContext: { personalityHint?: "motivator" | "analyst" | "mentor"; systemPromptAdditions?: string; contextData?: Record<string, unknown> } = {};
+
+      if (needsReEngagement) {
+        const reEngCtx = await buildReEngagementContext();
+        if (reEngCtx) {
+          trigger = "re_engagement";
+          personalityContext = {
+            personalityHint: reEngCtx.personality,
+            systemPromptAdditions: reEngCtx.systemPromptAdditions,
+            contextData: reEngCtx.contextData,
+          };
+          await recordReEngagementNudge();
+        }
+      }
+
+      // If not re-engagement, use morning briefing with personality engine
+      if (trigger === "morning_briefing") {
+        try {
+          const morningCtx = await buildMorningBriefingContext();
+          personalityContext = {
+            personalityHint: morningCtx.personality,
+            systemPromptAdditions: morningCtx.systemPromptAdditions,
+            contextData: morningCtx.contextData,
+          };
+        } catch {
+          // Fallback: use basic personality selection
+          const personality = selectPersonality();
+          personalityContext = {
+            personalityHint: personality,
+            systemPromptAdditions: getPersonalityPrompt(personality),
+          };
+        }
+      }
+
       const stats = wearableData.stats;
+      const dailyData = personalityContext.contextData ?? {};
+
       const result = await contextMutation.mutateAsync({
-        trigger: "morning_briefing",
+        trigger,
         context: {
           name: user?.name ?? undefined,
           goal: profile.goal,
@@ -431,6 +479,19 @@ function AICoachScreenContent() {
           activeMinutes: stats.activeMinutes || undefined,
           workoutsCompleted: profile.workoutsCompleted,
           streakDays: profile.streakDays,
+          // Personality engine enrichment
+          personalityHint: personalityContext.personalityHint,
+          systemPromptAdditions: personalityContext.systemPromptAdditions,
+          // Daily state enrichment from personality engine
+          caloriesConsumed: typeof dailyData.caloriesConsumed === "number" ? dailyData.caloriesConsumed : undefined,
+          caloriesRemaining: typeof dailyData.caloriesRemaining === "number" ? dailyData.caloriesRemaining : undefined,
+          mealsLogged: typeof dailyData.mealsLogged === "number" ? dailyData.mealsLogged : undefined,
+          mealsPlanned: typeof dailyData.mealsPlanned === "number" ? dailyData.mealsPlanned : undefined,
+          macroSummary: dailyData.macros ? JSON.stringify(dailyData.macros) : undefined,
+          workoutStatus: typeof dailyData.workoutStatus === "string" ? dailyData.workoutStatus : undefined,
+          yesterdayWorkoutSummary: dailyData.yesterdayWorkout ? JSON.stringify(dailyData.yesterdayWorkout) : undefined,
+          // Re-engagement specific fields
+          daysSinceLastWorkout: typeof dailyData.daysSinceLastWorkout === "number" ? dailyData.daysSinceLastWorkout : undefined,
         },
       });
       const briefingData = { ...result, fetchedAt: new Date().toISOString() };
@@ -515,11 +576,28 @@ function AICoachScreenContent() {
     setChatLoading(true);
     setTimeout(() => chatListRef.current?.scrollToEnd({ animated: true }), 100);
     try {
+      // Enrich profile with workout data pipeline from personality engine
       const fullProfile = buildFullProfile();
+      let enrichedProfile = { ...fullProfile };
+      try {
+        const pipelineData = await buildWorkoutDataPipeline();
+        const daily = (pipelineData.daily ?? {}) as Record<string, unknown>;
+        enrichedProfile = {
+          ...fullProfile,
+          streakDays: typeof daily.streakDays === "number" ? daily.streakDays : fullProfile.streakDays,
+          // Add recent workout context as a string summary for the AI
+          recentMeals: fullProfile.recentMeals ?? (pipelineData.recentWorkouts
+            ? `Recent workouts: ${JSON.stringify(pipelineData.recentWorkouts).slice(0, 200)}`
+            : undefined),
+        };
+      } catch {
+        // Pipeline enrichment failed — proceed with basic profile
+      }
+
       const result = await chatMutation.mutateAsync({
         message: msg,
         history: chatMessages.slice(-8).map(m => ({ role: m.role, content: m.content })),
-        profile: fullProfile,
+        profile: enrichedProfile,
       });
       const updated: ChatMessage[] = [
         ...newMessages,

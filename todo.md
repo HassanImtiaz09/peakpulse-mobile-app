@@ -3579,4 +3579,15 @@
 - [x] Write unit tests for lib/voice-playback.ts (1 test — export verification)
 - [x] Write unit tests for coach personality (16 tests) + voice settings ElevenLabs fields (3 tests)
 - [x] Run TypeScript check (0 errors) and full test suite (2,790 tests passing, 99 files)
+- [x] Save checkpoint (version ef112e7d)
+
+## Coach Personality Integration into AI Coach Chat
+
+- [x] Wire buildMorningBriefingContext into fetchBriefing() for personality-driven morning briefings
+- [x] Wire buildReEngagementContext into fetchBriefing() — checks shouldShowReEngagement() on mount, auto-triggers re_engagement nudge for 2+ days inactive
+- [x] Wire buildWorkoutDataPipeline into sendChat() — enriches chat profile with streak, recent workouts, progression data
+- [x] MorningBriefingCard already shows personality indicator (personalityIcon + personalityLabel) — now fed by personality engine
+- [x] Add personalityHint, systemPromptAdditions, and daily state fields to server CoachContext + zod schema
+- [x] Enhance buildTriggerPrompt in server/claude.ts to use personality engine fields
+- [x] Run TypeScript check (0 errors) and full test suite (2,788 passing, 2 network-timeout skips)
 - [ ] Save checkpoint
