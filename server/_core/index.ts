@@ -51,6 +51,22 @@ async function startServer() {
     next();
   });
 
+  // Stripe webhook endpoint — MUST be before express.json() to receive raw body
+  app.post("/api/stripe/webhook", express.raw({ type: "application/json" }), async (req, res) => {
+    try {
+      const { constructWebhookEvent, processWebhookEvent } = await import("../stripe");
+      const sig = req.headers["stripe-signature"] as string;
+      if (!sig) { res.status(400).json({ error: "Missing stripe-signature header" }); return; }
+      const event = constructWebhookEvent(req.body, sig);
+      if (!event) { res.status(400).json({ error: "Webhook verification failed" }); return; }
+      await processWebhookEvent(event);
+      res.json({ received: true });
+    } catch (err: any) {
+      console.error("[Stripe Webhook] Error:", err.message);
+      res.status(500).json({ error: "Webhook processing failed" });
+    }
+  });
+
   app.use(express.json({ limit: "50mb" }));
   app.use(express.urlencoded({ limit: "50mb", extended: true }));
 

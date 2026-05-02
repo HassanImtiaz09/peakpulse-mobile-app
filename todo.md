@@ -3599,4 +3599,22 @@
 - [x] After morning briefing arrives in fetchBriefing(), auto-trigger voice synthesis with 500ms delay
 - [x] Auto-play respects voice mode 'off', checks voiceStatusRef.current.state === 'idle' to prevent double-play
 - [x] Run TypeScript check (0 errors) and full test suite (2,790 passing, 99 files)
+- [x] Save checkpoint (version 344b4597)
+
+## Batch 3: Stripe Subscriptions
+
+- [x] Install Stripe SDK on server (stripe v22.x)
+- [x] STRIPE_SECRET_KEY and STRIPE_WEBHOOK_SECRET already configured as built-in secrets
+- [x] Create server/stripe.ts — Stripe service (checkout session, webhook verification, subscription management)
+- [x] Create DB schema for subscriptions (user_subscriptions table with drizzle migration applied)
+- [x] Add tRPC routes: createCheckout, getSubscription, cancelSubscription, reactivateSubscription, createPortal
+- [x] Add Express webhook endpoint for Stripe events (raw body parser before JSON middleware)
+- [x] Wire subscription status into useSubscription hook (syncs server Stripe status when authenticated, falls back to local AsyncStorage)
+- [x] FeatureGate already works via useSubscription — now backed by real Stripe data when authenticated
+- [x] Tier-gated features defined in FEATURE_TIERS (free/basic/pro) — existing structure preserved
+- [x] Create subscription-success.tsx callback screen after Stripe checkout
+- [x] Update subscription-plans.tsx to use Stripe checkout via WebBrowser when authenticated
+- [x] Write unit tests for Stripe service and subscription logic (56 tests)
+- [x] Fix round92 test mocks for new Stripe-backed useSubscription (expo-secure-store, expo-linking, expo-constants)
+- [x] Run TypeScript check (0 errors) and full test suite (2,846 tests passing, 100 files)
 - [ ] Save checkpoint

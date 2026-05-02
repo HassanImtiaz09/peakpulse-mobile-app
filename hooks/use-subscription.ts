@@ -1,6 +1,8 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { scheduleTrialReminders, cancelTrialReminders } from "@/lib/notifications";
+import { useAuth } from "@/hooks/use-auth";
+import { trpc } from "@/lib/trpc";
 
 export type SubscriptionTier = "free" | "basic" | "pro";
 
@@ -30,6 +32,12 @@ export interface SubscriptionState {
   isPaid: boolean;
   /** Effective Pro access — true if tier is pro OR trial is active */
   hasProAccess: boolean;
+  /** Whether the subscription is managed by Stripe (server-side) */
+  stripeManaged: boolean;
+  /** Stripe subscription status (active, past_due, canceled, etc.) */
+  stripeStatus: string | null;
+  /** Whether the subscription will cancel at period end */
+  cancelAtPeriodEnd: boolean;
 }
 
 export type FullSubscriptionState = SubscriptionState & TrialState;
@@ -42,6 +50,9 @@ const DEFAULT_STATE: FullSubscriptionState = {
   isPro: false,
   isPaid: false,
   hasProAccess: false,
+  stripeManaged: false,
+  stripeStatus: null,
+  cancelAtPeriodEnd: false,
   hasUsedTrial: false,
   isTrialActive: false,
   trialStartDate: null,
@@ -121,8 +132,38 @@ export function useSubscription(): FullSubscriptionState & {
   startTrial: (durationDays?: number) => Promise<void>;
   canAccess: (feature: string) => boolean;
   refresh: () => Promise<void>;
+  /** Open Stripe checkout for a plan */
+  openCheckout: (plan: "basic" | "pro", billingCycle: "monthly" | "annual") => Promise<string | null>;
+  /** Open Stripe customer portal for managing subscription */
+  openPortal: () => Promise<string | null>;
+  /** Cancel the Stripe subscription at period end */
+  cancelStripeSubscription: () => Promise<boolean>;
+  /** Reactivate a Stripe subscription that was set to cancel */
+  reactivateStripeSubscription: () => Promise<boolean>;
 } {
   const [state, setState] = useState<FullSubscriptionState>(DEFAULT_STATE);
+  const { user } = useAuth({ autoFetch: false });
+  const isAuthenticated = !!user;
+  const serverSubRef = useRef<{ plan: string; status: string; billingCycle: string; currentPeriodEnd: string | null; cancelAtPeriodEnd: boolean } | null>(null);
+
+  // tRPC mutations for Stripe operations
+  const checkoutMutation = trpc.subscription.createCheckout.useMutation();
+  const portalMutation = trpc.subscription.createPortal.useMutation();
+  const cancelMutation = trpc.subscription.cancel.useMutation();
+  const reactivateMutation = trpc.subscription.reactivate.useMutation();
+
+  // Query server subscription status when authenticated
+  const { data: serverSub, refetch: refetchServerSub } = trpc.subscription.getCurrentPlan.useQuery(
+    undefined,
+    { enabled: isAuthenticated, staleTime: 60_000, refetchOnWindowFocus: true },
+  );
+
+  // Track server subscription data
+  useEffect(() => {
+    if (serverSub) {
+      serverSubRef.current = serverSub as any;
+    }
+  }, [serverSub]);
 
   const load = useCallback(async () => {
     try {
@@ -135,12 +176,26 @@ export function useSubscription(): FullSubscriptionState & {
       const trialData = rawTrial ? JSON.parse(rawTrial) : null;
       const trialState = computeTrialState(trialData);
 
-      // Parse subscription state
+      // Parse local subscription state
       let tier: SubscriptionTier = "free";
       let billingCycle: "monthly" | "annual" | null = null;
       let expiresAt: string | null = null;
+      let stripeManaged = false;
+      let stripeStatus: string | null = null;
+      let cancelAtPeriodEnd = false;
 
-      if (rawSub) {
+      // Check server-side Stripe subscription first (takes priority)
+      const srv = serverSubRef.current;
+      if (srv && srv.plan !== "free") {
+        tier = srv.plan as SubscriptionTier;
+        billingCycle = (srv.billingCycle as "monthly" | "annual") ?? null;
+        expiresAt = srv.currentPeriodEnd ?? null;
+        stripeManaged = true;
+        stripeStatus = srv.status;
+        cancelAtPeriodEnd = srv.cancelAtPeriodEnd;
+        // Sync to local storage so offline access works
+        await AsyncStorage.setItem(SUBSCRIPTION_KEY, JSON.stringify({ tier, billingCycle, expiresAt, stripeManaged: true }));
+      } else if (rawSub) {
         const saved = JSON.parse(rawSub);
         if (saved.expiresAt && new Date(saved.expiresAt) < new Date()) {
           // Subscription expired — clean up
@@ -149,6 +204,7 @@ export function useSubscription(): FullSubscriptionState & {
           tier = saved.tier ?? "free";
           billingCycle = saved.billingCycle ?? null;
           expiresAt = saved.expiresAt ?? null;
+          stripeManaged = saved.stripeManaged ?? false;
         }
       }
 
@@ -163,6 +219,9 @@ export function useSubscription(): FullSubscriptionState & {
         isPro: tier === "pro",
         isPaid: tier !== "free",
         hasProAccess,
+        stripeManaged,
+        stripeStatus,
+        cancelAtPeriodEnd,
         ...trialState,
       });
     } catch {
@@ -170,7 +229,8 @@ export function useSubscription(): FullSubscriptionState & {
     }
   }, []);
 
-  useEffect(() => { load(); }, [load]);
+  // Reload when server subscription data changes
+  useEffect(() => { load(); }, [load, serverSub]);
 
   const setSubscription = useCallback(async (tier: SubscriptionTier, billingCycle: "monthly" | "annual") => {
     const months = billingCycle === "annual" ? 12 : 1;
@@ -211,5 +271,69 @@ export function useSubscription(): FullSubscriptionState & {
     return false;
   }, [state.tier, state.isTrialActive]);
 
-  return { ...state, setSubscription, clearSubscription, startTrial, canAccess, refresh: load };
+  // ── Stripe operations ──────────────────────────────────────────────────
+
+  const openCheckout = useCallback(async (plan: "basic" | "pro", billingCycle: "monthly" | "annual"): Promise<string | null> => {
+    try {
+      const baseUrl = typeof window !== "undefined" ? window.location.origin : "https://fytnova.app";
+      const result = await checkoutMutation.mutateAsync({
+        plan,
+        billingCycle,
+        successUrl: `${baseUrl}/subscription-success`,
+        cancelUrl: `${baseUrl}/subscription-plans`,
+      });
+      return result.url;
+    } catch (err) {
+      console.error("[Subscription] Checkout failed:", err);
+      return null;
+    }
+  }, [checkoutMutation]);
+
+  const openPortal = useCallback(async (): Promise<string | null> => {
+    try {
+      const baseUrl = typeof window !== "undefined" ? window.location.origin : "https://fytnova.app";
+      const result = await portalMutation.mutateAsync({ returnUrl: `${baseUrl}/settings` });
+      return result.url;
+    } catch (err) {
+      console.error("[Subscription] Portal failed:", err);
+      return null;
+    }
+  }, [portalMutation]);
+
+  const cancelStripeSubscription = useCallback(async (): Promise<boolean> => {
+    try {
+      await cancelMutation.mutateAsync();
+      await refetchServerSub();
+      await load();
+      return true;
+    } catch (err) {
+      console.error("[Subscription] Cancel failed:", err);
+      return false;
+    }
+  }, [cancelMutation, refetchServerSub, load]);
+
+  const reactivateStripeSubscription = useCallback(async (): Promise<boolean> => {
+    try {
+      await reactivateMutation.mutateAsync();
+      await refetchServerSub();
+      await load();
+      return true;
+    } catch (err) {
+      console.error("[Subscription] Reactivate failed:", err);
+      return false;
+    }
+  }, [reactivateMutation, refetchServerSub, load]);
+
+  return {
+    ...state,
+    setSubscription,
+    clearSubscription,
+    startTrial,
+    canAccess,
+    refresh: load,
+    openCheckout,
+    openPortal,
+    cancelStripeSubscription,
+    reactivateStripeSubscription,
+  };
 }

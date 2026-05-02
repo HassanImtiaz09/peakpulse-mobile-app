@@ -10,6 +10,15 @@ import {
   estimateAudioDuration,
   COACHING_VOICES,
 } from "./elevenlabs";
+import {
+  isStripeConfigured,
+  createCheckoutSession,
+  createPortalSession,
+  getSubscriptionStatus,
+  cancelSubscription,
+  reactivateSubscription,
+  PLAN_PRICING,
+} from "./stripe";
 
 export const socialRouter = router({
   social: router({
@@ -36,19 +45,64 @@ export const socialRouter = router({
       }),
 
   }),
-  subscription: router({
+   subscription: router({
     getPlans: publicProcedure.query(() => ({
       plans: [
         { id: "basic", name: "Basic", price: 5.99, currency: "GBP", interval: "month", features: ["Unlimited AI Workout Plans", "Unlimited AI Meal Plans", "Unlimited Calorie Scans", "Voice Coaching & Audio Cues", "Workout Analytics & Charts", "Progress Photos (5/month)", "Basic Body Scan", "Offline Workout Mode", "PR Tracking", "Custom Timer Sounds"], notIncluded: ["Wearable Sync", "AI Coach Chat", "Form Checker", "Social Feed", "Meal Prep Plans"] },
         { id: "pro", name: "Pro", price: 11.99, currency: "GBP", interval: "month", popular: true, features: ["Everything in Basic", "Wearable Device Sync", "AI Coach Chat", "Exercise Form Checker", "Social Feed & Challenges", "Meal Prep Plans", "Unlimited Progress Photos", "Priority AI Processing", "Advanced AI Body Scan", "Real-time Form Analysis"], notIncluded: [] },
       ],
+      stripeConfigured: isStripeConfigured(),
     })),
     getCurrentPlan: guestOrUserProcedure.query(async ({ ctx }) => {
-      if (!ctx.user) return { plan: "free", expiresAt: null };
+      if (!ctx.user) return { plan: "free" as const, status: "active", billingCycle: "monthly" as const, currentPeriodEnd: null, cancelAtPeriodEnd: false };
+      if (isStripeConfigured()) {
+        return getSubscriptionStatus(ctx.user.id);
+      }
+      // Fallback: local-only subscription (no Stripe)
       const sub = await db.getUserSubscription(ctx.user.id);
-      return sub ?? { plan: "free", expiresAt: null };
+      return { plan: (sub?.plan ?? "free") as "free" | "basic" | "pro", status: "active", billingCycle: "monthly" as const, currentPeriodEnd: null, cancelAtPeriodEnd: false };
     }),
-
+    createCheckout: protectedProcedure
+      .input(z.object({
+        plan: z.enum(["basic", "pro"]),
+        billingCycle: z.enum(["monthly", "annual"]),
+        successUrl: z.string().url(),
+        cancelUrl: z.string().url(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        if (!isStripeConfigured()) throw new Error("Stripe is not configured");
+        const result = await createCheckoutSession({
+          userId: ctx.user.id,
+          plan: input.plan,
+          billingCycle: input.billingCycle,
+          email: ctx.user.email ?? undefined,
+          name: ctx.user.name ?? undefined,
+          successUrl: input.successUrl,
+          cancelUrl: input.cancelUrl,
+        });
+        if (!result) throw new Error("Failed to create checkout session");
+        return result;
+      }),
+    createPortal: protectedProcedure
+      .input(z.object({ returnUrl: z.string().url() }))
+      .mutation(async ({ ctx, input }) => {
+        if (!isStripeConfigured()) throw new Error("Stripe is not configured");
+        const url = await createPortalSession(ctx.user.id, input.returnUrl);
+        if (!url) throw new Error("Failed to create portal session");
+        return { url };
+      }),
+    cancel: protectedProcedure.mutation(async ({ ctx }) => {
+      if (!isStripeConfigured()) throw new Error("Stripe is not configured");
+      const success = await cancelSubscription(ctx.user.id);
+      if (!success) throw new Error("Failed to cancel subscription");
+      return { success: true };
+    }),
+    reactivate: protectedProcedure.mutation(async ({ ctx }) => {
+      if (!isStripeConfigured()) throw new Error("Stripe is not configured");
+      const success = await reactivateSubscription(ctx.user.id);
+      if (!success) throw new Error("Failed to reactivate subscription");
+      return { success: true };
+    }),
   }),
   aiCoach: router({
     // Comprehensive AI coach analysis: form history + progress + personalised tips

@@ -29,6 +29,13 @@
       "when": 1773486620771,
       "tag": "0003_fearless_weapon_omega",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1777707044098,
+      "tag": "0004_familiar_prowler",
+      "breakpoints": true
     }
   ]
 }

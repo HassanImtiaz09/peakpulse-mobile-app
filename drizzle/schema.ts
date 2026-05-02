@@ -167,3 +167,22 @@ export const progressCheckins = mysqlTable("progress_checkins", {
 
 export type ProgressEntry = typeof progressEntries.$inferSelect;
 export type InsertProgressEntry = typeof progressEntries.$inferInsert;
+
+// ── User Subscriptions (Stripe-backed) ──────────────────────────────────────
+export const userSubscriptions = mysqlTable("user_subscriptions", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  stripeCustomerId: varchar("stripeCustomerId", { length: 255 }),
+  stripeSubscriptionId: varchar("stripeSubscriptionId", { length: 255 }),
+  plan: mysqlEnum("plan", ["free", "basic", "pro"]).default("free").notNull(),
+  billingCycle: mysqlEnum("billingCycle", ["monthly", "annual"]).default("monthly").notNull(),
+  status: mysqlEnum("status", ["active", "trialing", "past_due", "canceled", "incomplete", "incomplete_expired", "unpaid"]).default("active").notNull(),
+  currentPeriodStart: timestamp("currentPeriodStart"),
+  currentPeriodEnd: timestamp("currentPeriodEnd"),
+  cancelAtPeriodEnd: boolean("cancelAtPeriodEnd").default(false).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type UserSubscription = typeof userSubscriptions.$inferSelect;
+export type InsertUserSubscription = typeof userSubscriptions.$inferInsert;

@@ -34,6 +34,10 @@ vi.mock("expo-speech", () => ({
 
 vi.mock("react-native", () => ({
   Platform: { OS: "ios" },
+  Linking: { openURL: vi.fn(), canOpenURL: vi.fn(() => Promise.resolve(true)), addEventListener: vi.fn(), getInitialURL: vi.fn(() => Promise.resolve(null)) },
+  Alert: { alert: vi.fn() },
+  NativeModules: {},
+  TurboModuleRegistry: { get: vi.fn(), getEnforcing: vi.fn() },
 }));
 
 vi.mock("expo/src/winter/runtime", () => ({}));
@@ -54,6 +58,36 @@ vi.mock("expo-modules-core", () => ({
   EventEmitter: vi.fn(),
   NativeModulesProxy: {},
   requireNativeModule: vi.fn(),
+  requireOptionalNativeModule: vi.fn(() => null),
+  Platform: { OS: "ios", select: vi.fn((obj: any) => obj.ios ?? obj.default) },
+}));
+
+vi.mock("expo-constants", () => ({
+  default: { expoConfig: { scheme: "test", name: "test" }, executionEnvironment: "standalone" },
+}));
+
+vi.mock("expo-linking", () => ({
+  createURL: vi.fn((path: string) => `test:///${path}`),
+  parse: vi.fn(),
+  openURL: vi.fn(),
+}));
+
+vi.mock("expo-secure-store", () => ({
+  getItemAsync: vi.fn(() => Promise.resolve(null)),
+  setItemAsync: vi.fn(() => Promise.resolve()),
+  deleteItemAsync: vi.fn(() => Promise.resolve()),
+  AFTER_FIRST_UNLOCK: 1,
+  ALWAYS: 2,
+  WHEN_UNLOCKED: 3,
+  WHEN_UNLOCKED_THIS_DEVICE_ONLY: 4,
+  WHEN_PASSCODE_SET_THIS_DEVICE_ONLY: 5,
+  AFTER_FIRST_UNLOCK_THIS_DEVICE_ONLY: 6,
+}));
+
+vi.mock("expo-web-browser", () => ({
+  openBrowserAsync: vi.fn(() => Promise.resolve({ type: "cancel" })),
+  openAuthSessionAsync: vi.fn(() => Promise.resolve({ type: "cancel" })),
+  maybeCompleteAuthSession: vi.fn(),
 }));
 
 vi.mock("@/lib/notifications", () => ({

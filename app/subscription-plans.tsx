@@ -9,11 +9,13 @@
 import React, { useState } from "react";
 import {
   View, Text, ScrollView, TouchableOpacity,
-  StyleSheet, Dimensions, ActivityIndicator, ImageBackground} from "react-native";
+  StyleSheet, Dimensions, ActivityIndicator, ImageBackground, Platform, Alert} from "react-native";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as WebBrowser from "expo-web-browser";
 import { ScreenContainer } from "@/components/screen-container";
 import { useSubscription } from "@/hooks/use-subscription";
+import { useAuth } from "@/hooks/use-auth";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 import { GOLDEN_PRIMARY, GOLDEN_OVERLAY_STYLE } from "@/constants/golden-backgrounds";
@@ -60,7 +62,9 @@ const PRICES = {
 
 export default function SubscriptionPlansScreen() {
   const router = useRouter();
-  const { startTrial, setSubscription, hasUsedTrial } = useSubscription();
+  const { startTrial, setSubscription, hasUsedTrial, openCheckout, refresh } = useSubscription();
+  const { user } = useAuth({ autoFetch: false });
+  const isAuthenticated = !!user;
   const [selectedPlan, setSelectedPlan] = useState<"free" | "basic" | "pro">("pro");
   const [billing, setBilling] = useState<"monthly" | "annual">("monthly");
   const [loading, setLoading] = useState(false);
@@ -73,12 +77,46 @@ export default function SubscriptionPlansScreen() {
         if (!hasUsedTrial) {
           await startTrial(14);
         }
-      } else {
-        await setSubscription(selectedPlan, billing);
+        await AsyncStorage.setItem("@subscription_selected", "true");
+        router.replace("/(tabs)" as any);
+        return;
       }
+
+      // Authenticated users: use Stripe checkout
+      if (isAuthenticated) {
+        const checkoutUrl = await openCheckout(selectedPlan, billing);
+        if (checkoutUrl) {
+          if (Platform.OS === "web") {
+            // Web: redirect to Stripe checkout page
+            window.location.href = checkoutUrl;
+          } else {
+            // Native: open in-app browser
+            const result = await WebBrowser.openBrowserAsync(checkoutUrl, {
+              dismissButtonStyle: "cancel",
+              presentationStyle: WebBrowser.WebBrowserPresentationStyle.FULL_SCREEN,
+            });
+            // After returning from Stripe, refresh subscription status
+            if (result.type === "cancel" || result.type === "dismiss") {
+              await refresh();
+              await AsyncStorage.setItem("@subscription_selected", "true");
+              router.replace("/(tabs)" as any);
+            }
+          }
+          return;
+        }
+        // Stripe checkout failed — fall through to local subscription
+        console.warn("[Subscription] Stripe checkout unavailable, using local subscription");
+      }
+
+      // Fallback: local subscription (guest users or Stripe unavailable)
+      await setSubscription(selectedPlan, billing);
       await AsyncStorage.setItem("@subscription_selected", "true");
       router.replace("/(tabs)" as any);
-    } catch {
+    } catch (err) {
+      console.error("[Subscription] Error:", err);
+      if (Platform.OS !== "web") {
+        Alert.alert("Error", "Something went wrong. Please try again.");
+      }
       router.replace("/(tabs)" as any);
     } finally {
       setLoading(false);
