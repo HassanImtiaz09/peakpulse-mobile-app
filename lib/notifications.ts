@@ -2,6 +2,7 @@ import * as Notifications from "expo-notifications";
 import { Platform } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { initWeeklyNutritionNotification } from "@/lib/weekly-nutrition-notification";
+import { NotificationManager } from "@/lib/notification-manager";
 
 // Configure how notifications appear when app is in foreground
 Notifications.setNotificationHandler({
@@ -131,14 +132,25 @@ export async function cancelAllReminders(): Promise<void> {
   await AsyncStorage.multiRemove([WORKOUT_NOTIF_ID_KEY, MEAL_NOTIF_ID_KEY, CHECKIN_NOTIF_ID_KEY]);
 }
 
+/**
+ * Schedule all default reminders via the centralized NotificationManager.
+ * Core daily reminders (workout, meal, evening recap) are handled by
+ * NotificationManager.rescheduleAll() with deduplication, throttling,
+ * and quiet hours support.
+ *
+ * Supplementary reminders (water, weekly AI coach, weekly recap,
+ * meal plan renewal, weekly nutrition) are still scheduled individually
+ * as they have unique cadences not yet migrated to the manager.
+ */
 export async function scheduleAllDefaultReminders(): Promise<void> {
   const granted = await requestNotificationPermissions();
   if (!granted) return;
-  await scheduleWorkoutReminder(8, 0);
-  await scheduleMealLogReminder(12, 30);
-  await scheduleDailyCheckInReminder(7, 0);
+
+  // Core daily reminders via centralized manager (deduplicated + throttled)
+  await NotificationManager.rescheduleAll();
+
+  // Supplementary reminders (unique cadences)
   await scheduleWeeklyAICoachReminder(19, 0);
-  await scheduleMealTimeReminders(8, 0, 12, 30, 18, 30);
   await scheduleWaterReminder(2);
   await scheduleWeeklyRecapNotification(19, 0);
   await scheduleMealPlanRenewalReminder(18, 0);

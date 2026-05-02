@@ -48,6 +48,8 @@ import { loadTDEEBreakdown, type TDEEBreakdown } from "@/lib/tdee-calculator";
 import { loadWorkoutLogs, type WorkoutLogEntry } from "@/lib/workout-analytics";
 import { getHistoricalMeals } from "@/lib/calorie-context";
 import { UI, SF } from "@/constants/ui-colors";
+import { DashboardHeroCard } from "@/components/dashboard-hero-card";
+import { DashboardActionRow } from "@/components/dashboard-action-row";
 import { ErrorBoundary } from "@/components/error-boundary";
 import { a11yButton, a11yHeader, a11yImage, a11yProgress, A11Y_LABELS } from "@/lib/accessibility";
 import TransformationCard from "@/components/transformation-card";
@@ -633,6 +635,13 @@ function HomeScreenContent() {
               />
             </StaggeredCard>
           )}
+
+
+          {/* ── DASHBOARD HERO CARD + ACTION ROW (Batch 1) ── */}
+          <StaggeredCard index={0}>
+            <DashboardHeroCard displayName={displayName} />
+            <DashboardActionRow hasWorkoutPlan={!!(workoutPlan ?? localWorkoutPlan)} />
+          </StaggeredCard>
 
           {/* âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 

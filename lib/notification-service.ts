@@ -9,6 +9,7 @@ import * as Notifications from "expo-notifications";
 import { Platform } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { UI } from "@/constants/ui-colors";
+import { NotificationManager } from "@/lib/notification-manager";
 
 const PUSH_TOKEN_KEY = "@peakpulse_push_token";
 const PUSH_ENABLED_KEY = "@peakpulse_push_notifications";
@@ -125,72 +126,22 @@ export async function setNotificationsEnabled(enabled: boolean): Promise<boolean
 }
 
 /**
- * Schedule default daily reminders:
- * - Morning workout reminder at 8:00 AM
- * - Lunch meal log reminder at 12:30 PM
- * - Evening progress check at 8:00 PM
+ * Schedule default daily reminders via the centralized NotificationManager.
+ * Replaces the previous scattered Notifications.scheduleNotificationAsync calls
+ * with a single rescheduleAll() that handles deduplication, throttling, and quiet hours.
+ *
+ * Scheduled reminders:
+ * - Morning briefing at 7:30 AM
+ * - Workout reminder at 8:00 AM
+ * - Lunch meal reminder at 12:30 PM
+ * - Dinner meal nudge at 6:30 PM
+ * - Evening recap at 8:00 PM
  */
 export async function scheduleDefaultReminders(): Promise<void> {
-  // Cancel existing scheduled notifications first
-  await Notifications.cancelAllScheduledNotificationsAsync();
-
-  const ids: string[] = [];
-
   try {
-    // Morning workout reminder
-    const morningId = await Notifications.scheduleNotificationAsync({
-      content: {
-        title: "Time to Train",
-        body: "Your workout plan is ready. Let's crush today's session!",
-        data: { type: "workout_reminder" },
-        sound: "default",
-        ...(Platform.OS === "android" && { channelId: "peakpulse-workout" }),
-      },
-      trigger: {
-        type: Notifications.SchedulableTriggerInputTypes.DAILY,
-        hour: 8,
-        minute: 0,
-      },
-    });
-    ids.push(morningId);
-
-    // Lunch meal log reminder
-    const lunchId = await Notifications.scheduleNotificationAsync({
-      content: {
-        title: "Log Your Lunch",
-        body: "Don't forget to track your midday meal. Stay on top of your nutrition!",
-        data: { type: "meal_reminder" },
-        sound: "default",
-        ...(Platform.OS === "android" && { channelId: "peakpulse-meals" }),
-      },
-      trigger: {
-        type: Notifications.SchedulableTriggerInputTypes.DAILY,
-        hour: 12,
-        minute: 30,
-      },
-    });
-    ids.push(lunchId);
-
-    // Evening progress check
-    const eveningId = await Notifications.scheduleNotificationAsync({
-      content: {
-        title: "Daily Check-In",
-        body: "How was your day? Review your progress and plan tomorrow's meals.",
-        data: { type: "progress_reminder" },
-        sound: "default",
-        ...(Platform.OS === "android" && { channelId: "peakpulse-default" }),
-      },
-      trigger: {
-        type: Notifications.SchedulableTriggerInputTypes.DAILY,
-        hour: 20,
-        minute: 0,
-      },
-    });
-    ids.push(eveningId);
-
-    await AsyncStorage.setItem(SCHEDULED_IDS_KEY, JSON.stringify(ids));
+    await NotificationManager.rescheduleAll();
   } catch (err) {
-    console.warn("[Notifications] Failed to schedule reminders:", err);
+    console.warn("[Notifications] Failed to schedule reminders via NotificationManager:", err);
   }
 }
 

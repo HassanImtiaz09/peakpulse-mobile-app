@@ -71,8 +71,10 @@ describe("Round 27 — Push Notification Reminders", () => {
     expect(notifCode).toContain("TIME_INTERVAL");
   });
 
-  it("includes meal-time and water reminders in scheduleAllDefaultReminders", () => {
-    expect(notifCode).toContain("scheduleMealTimeReminders(8, 0, 12, 30, 18, 30)");
+  it("includes centralized NotificationManager and supplementary reminders in scheduleAllDefaultReminders", () => {
+    // Core daily reminders now go through NotificationManager.rescheduleAll()
+    expect(notifCode).toContain("NotificationManager.rescheduleAll()");
+    // Water reminder is still scheduled individually (unique cadence)
     expect(notifCode).toContain("scheduleWaterReminder(2)");
   });
 

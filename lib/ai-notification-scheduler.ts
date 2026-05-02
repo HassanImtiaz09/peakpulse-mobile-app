@@ -16,6 +16,7 @@ import * as Notifications from "expo-notifications";
 import { Platform } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { UI } from "@/constants/ui-colors";
+import { NotificationManager, type NotificationCategory } from "@/lib/notification-manager";
 
 // ── Storage Keys ──
 const PREFIX = "@ai_notif_";
@@ -113,6 +114,20 @@ async function cancelStored(key: string): Promise<void> {
 
 // ── Helper: Schedule and store ──
 
+/**
+ * Map storage keys to NotificationManager categories for deduplication.
+ */
+function keyToCategory(key: string): NotificationCategory {
+  if (key.includes("workout") || key.includes("nudge")) return "workout_reminder";
+  if (key.includes("breakfast") || key.includes("lunch") || key.includes("dinner") || key.includes("snack") || key.includes("meal")) return "meal_reminder";
+  if (key.includes("morning")) return "morning_briefing";
+  if (key.includes("evening") || key.includes("recap")) return "evening_recap";
+  if (key.includes("weekly") || key.includes("summary")) return "weekly_digest";
+  if (key.includes("streak")) return "streak_protection";
+  if (key.includes("pantry")) return "meal_nudge";
+  return "general";
+}
+
 async function scheduleAndStore(
   key: string,
   content: Notifications.NotificationContentInput,
@@ -121,8 +136,24 @@ async function scheduleAndStore(
   if (Platform.OS === "web") return null;
   await cancelStored(key);
   try {
-    const id = await Notifications.scheduleNotificationAsync({ content, trigger });
-    await AsyncStorage.setItem(key, id);
+    // Route through centralized NotificationManager for dedup + throttling
+    const category = keyToCategory(key);
+    let triggerInput: { type: "daily"; hour: number; minute: number } | { type: "delay"; seconds: number } | { type: "immediate" };
+    if (trigger && trigger.hour !== undefined) {
+      triggerInput = { type: "daily", hour: trigger.hour, minute: trigger.minute ?? 0 };
+    } else if (trigger && trigger.seconds) {
+      triggerInput = { type: "delay", seconds: trigger.seconds };
+    } else {
+      triggerInput = { type: "immediate" };
+    }
+    const id = await NotificationManager.schedule({
+      category,
+      title: String(content.title ?? ""),
+      body: String(content.body ?? ""),
+      data: content.data as Record<string, any>,
+      trigger: triggerInput,
+    });
+    if (id) await AsyncStorage.setItem(key, id);
     return id;
   } catch (err) {
     console.warn(`Failed to schedule notification [${key}]:`, err);
@@ -601,10 +632,19 @@ export async function sendContextualNotification(
       return;
   }
 
-  await Notifications.scheduleNotificationAsync({
-    content,
-    trigger: null, // Immediate
-  });
+  // Route through centralized NotificationManager
+  const categoryMap: Record<string, NotificationCategory> = {
+    workout_complete: "workout_reminder",
+    meal_logged: "meal_reminder",
+    streak_milestone: "streak_protection",
+    pantry_expiry: "meal_nudge",
+  };
+  await NotificationManager.sendContextual(
+    categoryMap[type] ?? "general",
+    String(content.title ?? ""),
+    String(content.body ?? ""),
+    content.data as Record<string, any>,
+  );
 }
 
 /**

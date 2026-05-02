@@ -3544,4 +3544,19 @@
 - [x] Write unit tests for daily-state.ts (34 tests)
 - [x] Write unit tests for notification-manager.ts (26 tests)
 - [x] Run TypeScript check (0 errors) and full test suite (2,722 tests passing, 96 files)
+- [x] Save checkpoint (version 92f3f4c6)
+
+## Batch 1 (continued): Progression Engine, Dashboard Hero/Actions, Notification Wiring
+
+- [x] Create lib/progression-engine.ts — linear/double progression logic analyzing last session data
+- [x] Progression engine: suggest weight/rep increases based on performance
+- [x] Progression engine: store suggestions in AsyncStorage
+- [x] Dashboard Hero Card — time-of-day adaptive card (morning/midday/evening) reading from daily state
+- [x] Dashboard Action Row — 3-4 contextual action buttons (Log Meal, Start Workout, Scan Food, View Plan)
+- [x] Wire NotificationManager into notification-service.ts (scheduleDefaultReminders → rescheduleAll)
+- [x] Wire NotificationManager into notifications.ts (scheduleAllDefaultReminders → rescheduleAll + supplementary)
+- [x] Wire NotificationManager into ai-notification-scheduler.ts (scheduleAndStore + sendImmediateNotification)
+- [x] Write unit tests for progression-engine.ts (28 tests)
+- [x] Write unit tests verifying notification wiring (13 tests)
+- [x] Run TypeScript check (0 errors) and full test suite (2,763 tests passing, 97 files)
 - [ ] Save checkpoint
