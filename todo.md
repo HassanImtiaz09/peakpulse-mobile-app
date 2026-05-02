@@ -3530,4 +3530,18 @@
 - [x] Add eas-build and dev-client scripts to package.json (5 scripts)
 - [x] Run TypeScript check (0 errors) and full test suite (2,662 tests passing)
 - [x] Fix vision-camera-utils.ts TS errors (VisionCamera v5 API + expo-file-system/legacy)
+- [x] Save checkpoint (version 6e9ce7fb)
+
+## Batch 1: Foundation Layer — Daily State Aggregator + Notification Deduplication
+
+- [x] Create lib/daily-state.ts — centralized daily state singleton (meals logged/planned, calories consumed/remaining, workout status, streak, macro balance)
+- [x] Daily state refreshes on app open and log events, persists to AsyncStorage
+- [x] Create lib/notification-manager.ts — centralized notification scheduler replacing scattered calls
+- [x] Notification manager: cancel-all-before-reschedule pattern for deduplication
+- [x] Notification manager: category-based deduplication (workout, meal, streak, etc.)
+- [x] Notification manager: 5/day throttle per category
+- [x] Notification manager: quiet hours support (configurable, default 10pm-7am)
+- [x] Write unit tests for daily-state.ts (34 tests)
+- [x] Write unit tests for notification-manager.ts (26 tests)
+- [x] Run TypeScript check (0 errors) and full test suite (2,722 tests passing, 96 files)
 - [ ] Save checkpoint
