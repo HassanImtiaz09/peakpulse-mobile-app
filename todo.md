@@ -3590,4 +3590,13 @@
 - [x] Add personalityHint, systemPromptAdditions, and daily state fields to server CoachContext + zod schema
 - [x] Enhance buildTriggerPrompt in server/claude.ts to use personality engine fields
 - [x] Run TypeScript check (0 errors) and full test suite (2,788 passing, 2 network-timeout skips)
+- [x] Save checkpoint (version 11bbfed2)
+
+## Auto-Play Voice for New Assistant Messages
+
+- [x] Add autoPlayVoice state flag loaded from VoiceCoachSettings (useElevenLabs + mode !== 'off')
+- [x] After new assistant message arrives in sendChat(), auto-trigger handleSynthesize with 300ms delay
+- [x] After morning briefing arrives in fetchBriefing(), auto-trigger voice synthesis with 500ms delay
+- [x] Auto-play respects voice mode 'off', checks voiceStatusRef.current.state === 'idle' to prevent double-play
+- [x] Run TypeScript check (0 errors) and full test suite (2,790 passing, 99 files)
 - [ ] Save checkpoint

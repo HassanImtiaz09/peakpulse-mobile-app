@@ -281,6 +281,17 @@ function AICoachScreenContent() {
   voiceStatusRef.current = voiceStatus;
   const synthesizeMutation = trpc.voice.synthesize.useMutation();
 
+  // Auto-play voice: load settings on mount to check if ElevenLabs auto-play is enabled
+  const [autoPlayVoice, setAutoPlayVoice] = useState(false);
+  const autoPlayRef = useRef(false);
+  useEffect(() => {
+    loadVoiceCoachSettings().then((s) => {
+      const enabled = s.useElevenLabs && s.mode !== "off";
+      setAutoPlayVoice(enabled);
+      autoPlayRef.current = enabled;
+    }).catch(() => {});
+  }, []);
+
   // Subscribe to voice playback status changes
   useEffect(() => {
     const unsub = subscribeToVoicePlayback((status) => {
@@ -497,6 +508,11 @@ function AICoachScreenContent() {
       const briefingData = { ...result, fetchedAt: new Date().toISOString() };
       setBriefing(briefingData);
       await AsyncStorage.setItem("@coach_briefing", JSON.stringify(briefingData));
+
+      // Auto-play voice for morning briefing if enabled
+      if (autoPlayRef.current && result.message && voiceStatusRef.current.state === "idle") {
+        setTimeout(() => handleSynthesize("briefing_voice", result.message), 500);
+      }
     } catch (e: any) {
       if (e?.message?.includes?.("AI_LIMIT_EXCEEDED")) { showLimitModal(e.message); }
     } finally {
@@ -599,12 +615,19 @@ function AICoachScreenContent() {
         history: chatMessages.slice(-8).map(m => ({ role: m.role, content: m.content })),
         profile: enrichedProfile,
       });
+      const asstId = `asst_${msgId}`;
       const updated: ChatMessage[] = [
         ...newMessages,
-        { role: "assistant", content: result.reply, source: result.source as any, feedback: null, id: `asst_${msgId}` },
+        { role: "assistant", content: result.reply, source: result.source as any, feedback: null, id: asstId },
       ];
       setChatMessages(updated);
       setTimeout(() => chatListRef.current?.scrollToEnd({ animated: true }), 100);
+
+      // Auto-play voice for the new assistant message if enabled
+      if (autoPlayRef.current && result.reply && voiceStatusRef.current.state === "idle") {
+        // Small delay to let the UI update before starting synthesis
+        setTimeout(() => handleSynthesize(asstId, result.reply), 300);
+      }
     } catch (e: any) {
       const updated: ChatMessage[] = [
         ...newMessages,
