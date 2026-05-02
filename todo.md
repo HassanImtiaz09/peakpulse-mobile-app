@@ -170,10 +170,10 @@
 
 ## Follow-Up Integrations (Round 7)
 
-- [ ] Stripe: add STRIPE_SECRET_KEY and STRIPE_WEBHOOK_SECRET via secrets panel
-- [ ] Stripe: server-side checkout session creation for Basic and Advanced plans
-- [ ] Stripe: webhook handler for subscription activation/cancellation
-- [ ] Stripe: subscription status stored in DB and surfaced in Profile
+- [x] Stripe: add STRIPE_SECRET_KEY and STRIPE_WEBHOOK_SECRET via secrets panel (Batch 3)
+- [x] Stripe: server-side checkout session creation for Basic and Advanced plans (Batch 3)
+- [x] Stripe: webhook handler for subscription activation/cancellation (Batch 3)
+- [x] Stripe: subscription status stored in DB and surfaced in Profile (Batch 3)
 - [x] Notification preferences screen: custom workout reminder time picker
 - [x] Notification preferences screen: custom meal log nudge time picker
 - [x] Notification preferences: persist to AsyncStorage and reschedule notifications on change
@@ -3617,4 +3617,15 @@
 - [x] Write unit tests for Stripe service and subscription logic (56 tests)
 - [x] Fix round92 test mocks for new Stripe-backed useSubscription (expo-secure-store, expo-linking, expo-constants)
 - [x] Run TypeScript check (0 errors) and full test suite (2,846 tests passing, 100 files)
-- [ ] Save checkpoint
+- [x] Save checkpoint (version c98165c5)
+
+## Subscription Management Screen
+
+- [x] Create app/subscription-manage.tsx — shows current plan, billing period, renewal date, and tier benefits
+- [x] Add "Manage Subscription" button that opens Stripe customer portal via WebBrowser
+- [x] Add cancel/reactivate subscription actions with confirmation dialogs
+- [x] Wire "Manage Subscription" entry point into profile screen (SubscriptionStatusCard "Manage" button for paid users)
+- [x] Wire "Change Plan" action in manage screen (opens Stripe portal for Stripe-managed, or subscription-plans for others)
+- [x] Write 28 unit tests for subscription-manage screen logic and profile onManage prop
+- [x] Run TypeScript check (0 errors) and full test suite (2,873+ tests passing)
+- [x] Save checkpoint

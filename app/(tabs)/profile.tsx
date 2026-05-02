@@ -316,6 +316,7 @@ function ProfileScreenContent() {
             isTrialActive={subscription.isTrialActive}
             daysLeftInTrial={subscription.daysLeftInTrial}
             onUpgrade={() => router.push("/subscription" as any)}
+            onManage={() => router.push("/subscription-manage" as any)}
           />
         </View>
 
@@ -703,6 +704,7 @@ function SubscriptionStatusCard({
   isTrialActive,
   daysLeftInTrial,
   onUpgrade,
+  onManage,
 }: {
   tier: string;
   billingCycle: string | null;
@@ -710,6 +712,7 @@ function SubscriptionStatusCard({
   isTrialActive: boolean;
   daysLeftInTrial: number;
   onUpgrade: () => void;
+  onManage?: () => void;
 }) {
   const tierLabel = tier === "pro" ? "Pro" : tier === "basic" ? "Basic" : "Free";
   const tierColor = tier === "pro" ? GOLD : tier === "basic" ? ICE : MUTED;
@@ -730,14 +733,21 @@ function SubscriptionStatusCard({
             {billingLabel && <Text style={{ color: MUTED, fontSize: 11, marginTop: 1 }}>{billingLabel} billing</Text>}
           </View>
         </View>
-        {tier === "free" && (
+        {tier === "free" ? (
           <TouchableOpacity
             style={{ backgroundColor: GOLD, borderRadius: 10, paddingHorizontal: 14, paddingVertical: 6 }}
             onPress={onUpgrade}
           >
             <Text style={{ color: FG, fontFamily: "DMSans_700Bold", fontSize: 12 }}>Upgrade</Text>
           </TouchableOpacity>
-        )}
+        ) : onManage ? (
+          <TouchableOpacity
+            style={{ backgroundColor: SURFACE2, borderRadius: 10, paddingHorizontal: 14, paddingVertical: 6, borderWidth: 1, borderColor: GOLD_BORDER }}
+            onPress={onManage}
+          >
+            <Text style={{ color: GOLD, fontFamily: "DMSans_700Bold", fontSize: 12 }}>Manage</Text>
+          </TouchableOpacity>
+        ) : null}
       </View>
 
       {/* Trial Status */}
