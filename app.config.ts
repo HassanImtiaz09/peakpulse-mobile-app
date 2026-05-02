@@ -51,6 +51,9 @@ const config: ExpoConfig = {
     bundleIdentifier: env.iosBundleId,
     infoPlist: {
       ITSAppUsesNonExemptEncryption: false,
+      UIBackgroundModes: ["audio"],
+      NSCameraUsageDescription:
+        "FytNova needs camera access for exercise form checking and body scan analysis.",
       NSHealthShareUsageDescription:
         "FytNova reads your health data (steps, heart rate, calories, sleep, HRV, SpO2) to personalize your fitness plans and track progress.",
       NSHealthUpdateUsageDescription:
@@ -82,6 +85,10 @@ const config: ExpoConfig = {
       "android.permission.health.WRITE_EXERCISE",
       "android.permission.health.WRITE_ACTIVE_CALORIES_BURNED",
       "android.permission.health.WRITE_DISTANCE",
+      "android.permission.CAMERA",
+      "android.permission.FOREGROUND_SERVICE",
+      "android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK",
+      "android.permission.WAKE_LOCK",
     ],
     intentFilters: [
       {
@@ -107,6 +114,29 @@ const config: ExpoConfig = {
     "expo-background-task",
     "react-native-health",
     "expo-health-connect",
+    [
+      "react-native-vision-camera",
+      {
+        cameraPermissionText: "FytNova needs camera access for exercise form checking and body scan analysis.",
+        enableMicrophonePermission: false,
+        enableFrameProcessors: true,
+        enableCodeScanner: false,
+      },
+    ],
+    [
+      "react-native-track-player",
+      {
+        capabilities: [
+          "play",
+          "pause",
+          "stop",
+          "skipToNext",
+          "skipToPrevious",
+          "seekTo",
+        ],
+        compactCapabilities: ["play", "pause", "skipToNext"],
+      },
+    ],
     [
       "expo-camera",
       {

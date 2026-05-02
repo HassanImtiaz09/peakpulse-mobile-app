@@ -3516,3 +3516,18 @@
 - [x] Key joint angles display, injury risk assessment, source badges
 - [x] Feature gate: Advanced tier (existing)
 - [x] 38 new tests, 2661 total passing, 0 TypeScript errors
+
+## Batch 0: EAS Build Configuration + Native Dependencies
+
+- [x] Create eas.json with development/preview/production build profiles
+- [x] Install react-native-vision-camera for camera frame processing (M5, M12)
+- [x] Install react-native-track-player for background audio with lock screen controls (M6)
+- [x] Install react-native-worklets-core for frame processor support
+- [x] Update app.config.ts with vision-camera and track-player plugins and permissions
+- [x] Create services/track-player-service.ts for background audio event handling
+- [x] Add track player initialization hook (hooks/use-track-player.ts) — web-safe with dynamic import
+- [x] Write EAS-BUILD-GUIDE.md with step-by-step instructions
+- [x] Add eas-build and dev-client scripts to package.json (5 scripts)
+- [x] Run TypeScript check (0 errors) and full test suite (2,662 tests passing)
+- [x] Fix vision-camera-utils.ts TS errors (VisionCamera v5 API + expo-file-system/legacy)
+- [ ] Save checkpoint
