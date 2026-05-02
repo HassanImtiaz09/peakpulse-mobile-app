@@ -11,7 +11,7 @@
  * - Morning briefing card auto-fetched on mount
  * - Contextual coaching triggers (post-workout, re-engagement)
  */
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import {
   View, Text, ScrollView, TouchableOpacity, TextInput,
   ActivityIndicator, ImageBackground, KeyboardAvoidingView,
@@ -30,6 +30,15 @@ import { UI, SF } from "@/constants/ui-colors";
 import { useAiLimit } from "@/components/ai-limit-modal";
 import { ErrorBoundary } from "@/components/error-boundary";
 import { a11yButton, a11yHeader } from "@/lib/accessibility";
+import {
+  playVoiceAudio,
+  stopVoiceAudio,
+  pauseVoiceAudio,
+  resumeVoiceAudio,
+  subscribeToVoicePlayback,
+  type VoicePlaybackStatus,
+} from "@/lib/voice-playback";
+import { loadVoiceCoachSettings } from "@/lib/voice-coach-settings";
 
 const HERO_BG = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663430072618/PZcnawJwIZkQHTEM.jpg";
 const COACH_AVATAR = "https://d2xsxph8kpxj0f.cloudfront.net/310519663430072618/TCxddYfhYS3he4wae2YPUE/ai-coach-icon_c7090906.png";
@@ -120,6 +129,46 @@ function SourceBadge({ source }: { source?: string }) {
   );
 }
 
+// ── Voice Play Button ────────────────────────────────────────────────────────
+function VoicePlayButton({
+  messageId,
+  content,
+  voiceStatus,
+  onSynthesize,
+}: {
+  messageId: string;
+  content: string;
+  voiceStatus: VoicePlaybackStatus & { playingMessageId: string | null; synthesizingId: string | null };
+  onSynthesize: (messageId: string, text: string) => void;
+}) {
+  const isThisPlaying = voiceStatus.playingMessageId === messageId && voiceStatus.state === "playing";
+  const isThisPaused = voiceStatus.playingMessageId === messageId && voiceStatus.state === "paused";
+  const isThisLoading = voiceStatus.synthesizingId === messageId;
+
+  const handlePress = () => {
+    if (isThisPlaying) {
+      pauseVoiceAudio();
+    } else if (isThisPaused) {
+      resumeVoiceAudio();
+    } else {
+      onSynthesize(messageId, content);
+    }
+  };
+
+  const iconName = isThisLoading ? "hourglass-empty" : isThisPlaying ? "pause" : "volume-up";
+  const iconColor = isThisPlaying || isThisPaused ? SF.gold : SF.muted;
+
+  return (
+    <TouchableOpacity
+      onPress={handlePress}
+      disabled={isThisLoading}
+      style={{ padding: 4, opacity: isThisLoading ? 0.5 : 1 }}
+      {...a11yButton(isThisPlaying ? "Pause voice" : "Play voice")}
+    >
+      <MaterialIcons name={iconName as any} size={14} color={iconColor} />
+    </TouchableOpacity>
+  );
+}
 // ── Feedback Buttons ─────────────────────────────────────────────────────────
 function FeedbackButtons({ feedback, onFeedback }: { feedback?: "up" | "down" | null; onFeedback: (type: "up" | "down") => void }) {
   return (
@@ -214,6 +263,49 @@ function AICoachScreenContent() {
   const chatListRef = useRef<FlatList>(null);
   const { canAccess: canAccessFeature } = useSubscription();
   const hasCoachAccess = canAccessFeature("ai_coaching");
+
+  // Voice playback state
+  const [voiceStatus, setVoiceStatus] = useState<VoicePlaybackStatus & { playingMessageId: string | null; synthesizingId: string | null }>({
+    state: "idle", currentUrl: null, error: null, isFallback: false, playingMessageId: null, synthesizingId: null,
+  });
+  const voiceStatusRef = useRef(voiceStatus);
+  voiceStatusRef.current = voiceStatus;
+  const synthesizeMutation = trpc.voice.synthesize.useMutation();
+
+  // Subscribe to voice playback status changes
+  useEffect(() => {
+    const unsub = subscribeToVoicePlayback((status) => {
+      setVoiceStatus((prev) => ({
+        ...status,
+        playingMessageId: status.state === "idle" ? null : prev.playingMessageId,
+        synthesizingId: status.state === "idle" ? null : prev.synthesizingId,
+      }));
+    });
+    return () => { unsub(); stopVoiceAudio(); };
+  }, []);
+
+  // Handle voice synthesis and playback for a message
+  const handleSynthesize = useCallback(async (messageId: string, text: string) => {
+    stopVoiceAudio();
+    setVoiceStatus((prev) => ({ ...prev, synthesizingId: messageId, playingMessageId: messageId }));
+    try {
+      const settings = await loadVoiceCoachSettings();
+      if (settings.mode === "off") return;
+      const result = await synthesizeMutation.mutateAsync({
+        text,
+        voiceId: (settings as any).voiceId ?? undefined,
+      });
+      if (result.success && result.audioUrl) {
+        await playVoiceAudio(result.audioUrl, text);
+      } else {
+        // Fallback to expo-speech
+        await playVoiceAudio("", text);
+      }
+    } catch {
+      // Fallback to expo-speech on error
+      await playVoiceAudio("", text);
+    }
+  }, [synthesizeMutation]);
 
   const getInsightsMutation = trpc.aiCoach.getInsights.useMutation();
   const chatMutation = trpc.aiCoach.chat.useMutation();
@@ -764,6 +856,12 @@ function AICoachScreenContent() {
                     {item.role === "assistant" && (
                       <View style={{ flexDirection: "row", alignItems: "center", gap: 12, marginTop: 4, paddingLeft: 4 }}>
                         <SourceBadge source={item.source} />
+                        <VoicePlayButton
+                          messageId={item.id}
+                          content={item.content}
+                          voiceStatus={voiceStatus}
+                          onSynthesize={handleSynthesize}
+                        />
                         <FeedbackButtons feedback={item.feedback} onFeedback={(type) => handleFeedback(item.id, type)} />
                       </View>
                     )}

@@ -3559,4 +3559,24 @@
 - [x] Write unit tests for progression-engine.ts (28 tests)
 - [x] Write unit tests verifying notification wiring (13 tests)
 - [x] Run TypeScript check (0 errors) and full test suite (2,763 tests passing, 97 files)
+- [x] Save checkpoint (version 4e1372e4)
+
+## Batch 2: Voice Coach (ElevenLabs) + AI Coach Enhancements
+
+- [x] Install ElevenLabs SDK on server (elevenlabs package)
+- [x] Create server/elevenlabs.ts — TTS service with voice selection, caching, streaming
+- [x] Request ELEVENLABS_API_KEY via webdev_request_secrets
+- [x] Add tRPC voice routes: voice.synthesize, voice.listVoices, voice.getStatus
+- [x] Create lib/voice-playback.ts — client-side audio player with play/pause/stop/subscribe
+- [x] Integrate voice playback into AI Coach chat screen (VoicePlayButton on assistant messages)
+- [x] Enhance voice-coach-settings.tsx with ElevenLabs voice selector (voice ID, name, preview)
+- [x] Add voiceId and useElevenLabs fields to VoiceCoachSettings
+- [x] Coach personality: morning briefing context builder (buildMorningBriefingContext)
+- [x] Coach personality: post-workout analysis context builder (buildPostWorkoutContext)
+- [x] Coach personality: re-engagement nudge (buildReEngagementContext, shouldShowReEngagement)
+- [x] Workout data pipeline: buildWorkoutDataPipeline (last 7 sessions, XP, body comp, progression)
+- [x] Write unit tests for server/elevenlabs.ts (6 tests)
+- [x] Write unit tests for lib/voice-playback.ts (1 test — export verification)
+- [x] Write unit tests for coach personality (16 tests) + voice settings ElevenLabs fields (3 tests)
+- [x] Run TypeScript check (0 errors) and full test suite (2,790 tests passing, 99 files)
 - [ ] Save checkpoint

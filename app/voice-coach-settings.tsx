@@ -39,6 +39,9 @@ import {
 import { speakCue, stopSpeaking } from "@/lib/audio-form-cues";
 import { UI, C } from "@/constants/ui-colors";
 import { a11yButton, a11yHeader, a11yImage, a11yProgress, a11ySwitch, A11Y_LABELS } from "@/lib/accessibility";
+import { trpc } from "@/lib/trpc";
+import { playVoiceAudio, stopVoiceAudio } from "@/lib/voice-playback";
+import { ActivityIndicator } from "react-native";
 
 const VOICE_MODES: VoiceCoachMode[] = [
   "full",
@@ -53,6 +56,9 @@ export default function VoiceCoachSettingsScreen() {
     DEFAULT_VOICE_COACH_SETTINGS
   );
   const [loaded, setLoaded] = useState(false);
+  const [previewLoading, setPreviewLoading] = useState<string | null>(null);
+  const { data: voiceData } = trpc.voice.getStatus.useQuery();
+  const synthesizeMutation = trpc.voice.synthesize.useMutation();
 
   useEffect(() => {
     // FIX: Wrap settings load in catch — malformed AsyncStorage data falls
@@ -275,21 +281,101 @@ export default function VoiceCoachSettingsScreen() {
           </View>
         </View>
 
+        {/* ElevenLabs Voice Selection */}
+        {voiceData?.available && (
+          <>
+            <Text style={styles.sectionLabel}>AI VOICE (ELEVENLABS)</Text>
+            <View style={styles.card}>
+              <View style={styles.toggleRow}>
+                <View style={styles.toggleLeft}>
+                  <MaterialIcons name="record-voice-over" size={18} color={C.gold} />
+                  <View>
+                    <Text style={styles.toggleLabel}>Use AI Voice</Text>
+                    <Text style={styles.toggleDesc}>
+                      Premium voice synthesis for coaching messages
+                    </Text>
+                  </View>
+                </View>
+                <Switch
+                  value={(settings as any).useElevenLabs ?? false}
+                  onValueChange={(v) => updateSetting("useElevenLabs" as any, v)}
+                  trackColor={{ false: "#333", true: UI.goldAlpha40 }}
+                  thumbColor={(settings as any).useElevenLabs ? C.gold : "#666"}
+                />
+              </View>
+              {(settings as any).useElevenLabs && voiceData.defaultVoices && (
+                <>
+                  <View style={styles.divider} />
+                  <Text style={[styles.toggleDesc, { paddingHorizontal: 16, paddingTop: 8 }]}>Select a coaching voice:</Text>
+                  {voiceData.defaultVoices.map((voice: any) => {
+                    const isSelected = (settings as any).voiceId === voice.voiceId;
+                    return (
+                      <TouchableOpacity
+                        key={voice.voiceId}
+                        style={[styles.modeItem, isSelected && styles.modeItemActive]}
+                        onPress={() => updateSetting("voiceId" as any, voice.voiceId)}
+                      >
+                        <View style={styles.modeLeft}>
+                          <View style={[styles.modeRadio, isSelected && styles.modeRadioActive]}>
+                            {isSelected && <View style={styles.modeRadioDot} />}
+                          </View>
+                          <View style={{ flex: 1 }}>
+                            <Text style={[styles.modeLabel, isSelected && styles.modeLabelActive]}>
+                              {voice.name}
+                            </Text>
+                            <Text style={styles.modeDesc}>{voice.description}</Text>
+                            <Text style={[styles.modeDesc, { fontSize: 10, marginTop: 2 }]}>
+                              {voice.labels?.gender ?? ""} · {voice.labels?.accent ?? ""}
+                            </Text>
+                          </View>
+                        </View>
+                        <TouchableOpacity
+                          style={{ padding: 8 }}
+                          onPress={async () => {
+                            setPreviewLoading(voice.voiceId);
+                            try {
+                              stopVoiceAudio();
+                              const result = await synthesizeMutation.mutateAsync({
+                                text: "Great form on that set. Keep your core tight and breathe steadily.",
+                                voiceId: voice.voiceId,
+                              });
+                              if (result.success && result.audioUrl) {
+                                await playVoiceAudio(result.audioUrl);
+                              }
+                            } catch {
+                              Alert.alert("Preview Unavailable", "Could not preview this voice right now.");
+                            } finally {
+                              setPreviewLoading(null);
+                            }
+                          }}
+                        >
+                          {previewLoading === voice.voiceId ? (
+                            <ActivityIndicator size="small" color={C.gold} />
+                          ) : (
+                            <MaterialIcons name="play-arrow" size={20} color={C.gold} />
+                          )}
+                        </TouchableOpacity>
+                      </TouchableOpacity>
+                    );
+                  })}
+                </>
+              )}
+            </View>
+          </>
+        )}
+
         {/* Test Voice */}
         <TouchableOpacity style={styles.testBtn} onPress={testVoice}>
           <MaterialIcons name="volume-up" size={18} color={C.gold} />
-          <Text style={styles.testBtnText}>Test Voice</Text>
+          <Text style={styles.testBtnText}>Test Device Voice</Text>
         </TouchableOpacity>
 
-        {/* FIX: Info card updated to accurately reflect coverage and roadmap */}
         <View style={styles.infoCard}>
           <MaterialIcons name="info-outline" size={16} color={C.muted} />
           <Text style={styles.infoText}>
-            Voice coaching uses your device's built-in text-to-speech engine.
-            Detailed 5-phase form cues (setup, execution, peak, return,
-            breathing) are currently available for 13 core exercises. Generic
-            countdown and exercise-name announcements work for all exercises
-            regardless of mode.
+            {voiceData?.available
+              ? "AI Voice uses ElevenLabs for premium coaching audio. Device voice is used as fallback. Detailed 5-phase form cues are available for 13 core exercises."
+              : "Voice coaching uses your device's built-in text-to-speech engine. Detailed 5-phase form cues (setup, execution, peak, return, breathing) are currently available for 13 core exercises."}
           </Text>
         </View>
       </ScrollView>

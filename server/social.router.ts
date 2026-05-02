@@ -1,7 +1,15 @@
 import { z } from "zod";
 import { router, protectedProcedure, publicProcedure, guestOrUserProcedure } from "./_core/trpc";
-import { db, invokeLLM, checkAiLimit, randomSuffix } from "./helpers";
+import { db, invokeLLM, checkAiLimit, randomSuffix, storagePut } from "./helpers";
 import { getCoachMessage, chatWithCoach, type CoachContext, type CoachTrigger } from "./claude";
+import {
+  synthesizeSpeech,
+  listVoices,
+  isElevenLabsAvailable,
+  prepareTextForSpeech,
+  estimateAudioDuration,
+  COACHING_VOICES,
+} from "./elevenlabs";
 
 export const socialRouter = router({
   social: router({
@@ -262,6 +270,93 @@ Return a JSON coaching report with this exact structure:
           input.context as CoachContext,
         );
         return result;
+      }),
+  }),
+
+  // ── Voice Coach (ElevenLabs TTS) ────────────────────────────────────────────
+  voice: router({
+    /** Check if ElevenLabs TTS is available */
+    getStatus: publicProcedure.query(() => ({
+      available: isElevenLabsAvailable(),
+      defaultVoices: COACHING_VOICES.map((v) => ({
+        voiceId: v.voiceId,
+        name: v.name,
+        description: v.description,
+        labels: v.labels,
+      })),
+    })),
+
+    /** List available voices (curated coaching voices or all) */
+    listVoices: guestOrUserProcedure
+      .input(z.object({ includeAll: z.boolean().default(false) }).optional())
+      .query(async ({ input }) => {
+        const voices = await listVoices(input?.includeAll ?? false);
+        return {
+          voices: voices.map((v) => ({
+            voiceId: v.voiceId,
+            name: v.name,
+            category: v.category,
+            description: v.description,
+            previewUrl: v.previewUrl,
+            labels: v.labels,
+          })),
+        };
+      }),
+
+    /** Synthesize text to speech and return audio URL */
+    synthesize: guestOrUserProcedure
+      .input(z.object({
+        text: z.string().min(1).max(5000),
+        voiceId: z.string().optional(),
+        modelId: z.string().optional(),
+        stability: z.number().min(0).max(1).optional(),
+        similarityBoost: z.number().min(0).max(1).optional(),
+      }))
+      .mutation(async ({ input }) => {
+        if (!isElevenLabsAvailable()) {
+          return {
+            success: false as const,
+            error: "Voice synthesis is not available. ElevenLabs API key not configured.",
+            audioUrl: null,
+            cached: false,
+            durationEstimate: 0,
+            characterCount: 0,
+          };
+        }
+
+        try {
+          const cleanText = prepareTextForSpeech(input.text);
+          const result = await synthesizeSpeech({
+            text: cleanText,
+            voiceId: input.voiceId,
+            modelId: input.modelId,
+            stability: input.stability,
+            similarityBoost: input.similarityBoost,
+          });
+
+          // Upload audio to S3 for client access
+          const audioKey = `voice-coach/tts-${Date.now()}-${randomSuffix()}.mp3`;
+          const { url } = await storagePut(audioKey, result.audioBuffer, "audio/mpeg");
+
+          return {
+            success: true as const,
+            error: null,
+            audioUrl: url,
+            cached: result.cached,
+            durationEstimate: estimateAudioDuration(cleanText),
+            characterCount: result.characterCount,
+          };
+        } catch (err: any) {
+          console.error("[Voice] Synthesis error:", err.message);
+          return {
+            success: false as const,
+            error: err.message ?? "Synthesis failed",
+            audioUrl: null,
+            cached: false,
+            durationEstimate: 0,
+            characterCount: 0,
+          };
+        }
       }),
   }),
 });

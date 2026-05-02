@@ -407,6 +407,8 @@ describe("Voice Coach Settings Service", () => {
       voiceCountdown: true,
       announceTransitions: true,
       speechRate: 1.2,
+      useElevenLabs: false,
+      voiceId: null,
     });
     const loaded = await loadVoiceCoachSettings();
     expect(loaded.mode).toBe("cues_only");

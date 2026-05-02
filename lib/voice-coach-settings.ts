@@ -22,6 +22,10 @@ export interface VoiceCoachSettings {
   announceTransitions: boolean;
   /** Speech rate multiplier (0.5 – 1.5) */
   speechRate: number;
+  /** Use ElevenLabs AI voice instead of device TTS */
+  useElevenLabs: boolean;
+  /** ElevenLabs voice ID (null = default Rachel) */
+  voiceId: string | null;
 }
 
 export const DEFAULT_VOICE_COACH_SETTINGS: VoiceCoachSettings = {
@@ -30,6 +34,8 @@ export const DEFAULT_VOICE_COACH_SETTINGS: VoiceCoachSettings = {
   voiceCountdown: true,
   announceTransitions: true,
   speechRate: 1.0,
+  useElevenLabs: false,
+  voiceId: null,
 };
 
 /**
